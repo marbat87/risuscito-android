@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pagina_render_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true" >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/risuscito_toolbar"
+        android:layout_height="?attr/actionBarSize"
+        risuscito:theme="@style/ActionBarThemeOverlay"
+        risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
+        risuscito:titleTextAppearance="@style/ActionBar.TitleText"
+        android:layout_width="match_parent"
+        android:background="?attr/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:paddingLeft="@dimen/activity_min_margin"
+            android:paddingRight="@dimen/activity_min_margin"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:orientation="horizontal" >
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/rewind_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/play_song"
+                android:layout_toStartOf="@+id/play_song"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/button_icon_padding"
+                android:layout_marginEnd="@dimen/button_icon_padding"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/ic_av_rewind_active"
+                android:soundEffectsEnabled="true"  />
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/play_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/fast_forward_song"
+                android:layout_toStartOf="@+id/fast_forward_song"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/button_icon_padding"
+                android:layout_marginEnd="@dimen/button_icon_padding"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/play_button_drawable"
+                android:soundEffectsEnabled="true"  />
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/fast_forward_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/stop_song"
+                android:layout_toStartOf="@+id/stop_song"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/button_icon_padding"
+                android:layout_marginEnd="@dimen/button_icon_padding"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/ic_av_fast_forward_active"
+                android:soundEffectsEnabled="true"  />
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/stop_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/delete_file"
+                android:layout_toStartOf="@+id/delete_file"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/button_icon_padding"
+                android:layout_marginEnd="@dimen/button_icon_padding"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/ic_av_stop_active"
+                android:soundEffectsEnabled="true"  />
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/delete_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toLeftOf="@+id/save_file"
+                android:layout_toStartOf="@+id/save_file"
+                android:layout_centerVertical="true"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/ic_delete_black_48dp"
+                android:soundEffectsEnabled="true"  />
+
+            <com.gc.materialdesign.views.ButtonIcon
+                android:id="@+id/save_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@color/theme_accent"
+                risuscito:clickAfterRipple="false"
+                risuscito:iconSize="28dip"
+                risuscito:iconDrawable="@drawable/ic_av_download_active"
+                android:soundEffectsEnabled="true"  />
+
+        </RelativeLayout>
+
+        <WebView
+            android:id="@+id/cantoView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_gravity="bottom"
+        android:background="@color/theme_primary"
+        android:divider="?attr/dividerVertical"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:orientation="horizontal" >
+
+        <com.gc.materialdesign.views.ButtonIcon
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/theme_accent"
+            risuscito:clickAfterRipple="false"
+            risuscito:iconSize="28dip"
+            risuscito:iconDrawable="@drawable/ic_rating_favorite_normal_light"
+            android:soundEffectsEnabled="true"  />
+
+        <com.gc.materialdesign.views.Slider
+            android:id="@+id/speed_seekbar"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/theme_accent"
+            risuscito:max="50"
+            risuscito:min="0"
+            risuscito:clickAfterRipple="false"
+            risuscito:iconSize="28dip"
+            android:soundEffectsEnabled="true"
+            risuscito:showNumberIndicator="true"/>
+
+        <com.gc.materialdesign.views.ButtonIcon
+            android:id="@+id/play_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/theme_accent"
+            risuscito:clickAfterRipple="false"
+            risuscito:iconSize="28dip"
+            risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp"
+            android:soundEffectsEnabled="true"  />
+
+        <com.gc.materialdesign.views.ButtonIcon
+            android:id="@+id/stop_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/theme_accent"
+            risuscito:clickAfterRipple="false"
+            risuscito:iconSize="28dip"
+            risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp"
+            android:soundEffectsEnabled="true"  />
+
+    </LinearLayout>
+
+</LinearLayout>

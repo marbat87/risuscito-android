@@ -1,0 +1,16 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+
+materialDesign
+alertdialogpro-theme-material
+alertdialogpro-core
+app/app.iml
+app/build
+aFileChooser/build
+aFileChooser/aFileChooser.iml
+utilities/build
+utilities/utilities.iml

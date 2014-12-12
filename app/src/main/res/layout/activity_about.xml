@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_min_margin"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin"
+    android:paddingTop="@dimen/activity_min_margin"
+    android:orientation="vertical" >
+
+    <ImageView
+    	android:id="@+id/imageView1"
+    	android:layout_height="@dimen/about_image_width"
+    	android:layout_width="fill_parent"
+    	android:layout_gravity="top"
+    	android:contentDescription="@string/app_name"
+    	android:src="@drawable/copertina_about" />
+    
+	<TextView
+    	android:text="@string/about_subtitle"
+    	android:gravity="center_horizontal"
+    	android:textStyle="bold"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+	<view xmlns:chg="http://schemas.android.com/apk/res-auto"
+    	class="it.gmariotti.changelibs.library.view.ChangeLogListView"
+       	android:layout_width="match_parent"
+       	android:layout_height="match_parent"
+       	chg:changeLogFileResourceId="@raw/changelog_full"
+       	android:id="@+id/aboutText"/>
+    
+</LinearLayout>

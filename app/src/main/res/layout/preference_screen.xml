@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.gc.materialdesign.views.ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingLeft="@dimen/preference_min_margin"
+    android:paddingRight="@dimen/preference_min_margin"
+    android:overScrollMode="never"
+    android:weightSum="1.0"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:id="@+id/screen_on_layout"
+            android:clickable="true"
+            android:background="@drawable/list_selector_group">
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/screen_on"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
+                android:background="@android:color/transparent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@id/screen_on"
+                android:layout_toStartOf="@id/screen_on"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/always_on"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/always_on_summary"
+                    android:textColor="@color/secondary_text_default_material_light"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <include layout="@layout/preferences_separator" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:id="@+id/show_seconda_eucarestia_layout"
+            android:clickable="true"
+            android:background="@drawable/list_selector_group">
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/show_seconda_eucarestia"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
+                android:background="@android:color/transparent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@id/show_seconda_eucarestia"
+                android:layout_toStartOf="@id/show_seconda_eucarestia"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/show_seconda_title"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/show_seconda_summary"
+                    android:textColor="@color/secondary_text_default_material_light"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <include layout="@layout/preferences_separator" />
+
+        <LinearLayout
+            android:id="@+id/default_index_layout"
+            android:layout_gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="10dp"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:background="@drawable/list_selector_group">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/default_index_title"
+                android:textColor="@color/primary_text_default_material_light"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/default_index_summary"
+                android:textColor="@color/secondary_text_default_material_light"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        </LinearLayout>
+
+        <include layout="@layout/preferences_separator" />
+
+        <LinearLayout
+            android:id="@+id/save_location_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="start"
+            android:padding="10dp"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:background="@drawable/list_selector_group">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/save_location_title"
+                android:textColor="@color/primary_text_default_material_light"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/save_location_summary"
+                android:textColor="@color/secondary_text_default_material_light"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        </LinearLayout>
+
+        <include layout="@layout/preferences_separator" />
+
+    </LinearLayout>
+
+</com.gc.materialdesign.views.ScrollView>

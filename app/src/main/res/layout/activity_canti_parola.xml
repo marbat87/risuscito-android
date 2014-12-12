@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin" >
+
+    <com.melnykov.fab.ObservableScrollView
+        android:id="@+id/parolaScrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:overScrollMode="never"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_iniziale"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoIniziale"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_inizio"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView1"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cantoInizialeContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cantoIniziale"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/prima_lettura"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addPrimaLettura"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_prima"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView2"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/primaLetturaContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/primaLettura"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/seconda_lettura"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addSecondaLettura"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_seconda"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView3"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/secondaLetturaContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/secondaLettura"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/terza_lettura"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addTerzaLettura"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_terza"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView4"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/terzaLetturaContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/terzaLettura"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_fine"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoFinale"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_fine"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView5"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cantoFinaleContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cantoFinale"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+        </LinearLayout>
+
+    </com.melnykov.fab.ObservableScrollView>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab_parola"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_icon_broom"
+        risuscito:fab_colorNormal="@color/theme_accent"
+        risuscito:fab_colorPressed="@color/theme_primary"
+        risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+
+</FrameLayout>

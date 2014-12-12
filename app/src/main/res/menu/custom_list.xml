@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="97"
+        android:icon="@drawable/ic_action_share"
+        risuscito:showAsAction="ifRoom"
+        android:title="@string/action_share"
+        risuscito:actionProviderClass="it.cammino.risuscito.HomeAwayShareProvider" />
+
+    <item
+        android:id="@+id/action_add_list"
+        android:orderInCategory="98"
+        android:icon="@drawable/ic_action_content_new"
+        risuscito:showAsAction="ifRoom"
+        android:title="@string/action_add_list" />
+
+</menu>

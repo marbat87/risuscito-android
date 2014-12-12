@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <declare-styleable name="customAttrs">
+        <attr name="customChord" format="reference" />
+        <attr name="customEdit" format="reference" />
+        <attr name="customNew" format="reference" />
+        <attr name="customFavorite" format="reference" />
+        <attr name="customHelp" format="reference" />
+        <attr name="customDelete" format="reference" />
+        <attr name="customSettings" format="reference" />
+        <attr name="customShare" format="reference" />
+        <attr name="customReset" format="reference" />
+        <attr name="customSave" format="reference" />
+        <attr name="customStar" format="reference" />
+        <attr name="customSaveFile" format="reference" />
+        <attr name="customDeleteFile" format="reference" />
+        <attr name="customRewind" format="reference" />
+        <attr name="customPlay" format="reference" />
+        <attr name="customFF" format="reference" />
+        <attr name="customStop" format="reference" />
+        <attr name="customNoSong" format="reference" />
+        <attr name="customBottomBarColor" format="reference" />
+        <attr name="customSlidePlay" format="reference" />
+        <attr name="customSlideStop" format="reference" />
+        <attr name="customExpPDF" format="reference" />
+        <attr name="tabText" format="color" />
+        <attr name="tabBackground" format="color" />
+        <attr name="tabDivider" format="color" />
+        <attr name="customSearch" format="reference" />
+        <attr name="customThanks" format="reference" />
+        <attr name="customIndexes" format="reference" />
+        <attr name="customLists" format="reference" />
+        <attr name="customHome" format="reference" />
+        <attr name="customInsertItem" format="reference" />
+        <attr name="customChangelog" format="reference" />
+        <attr name="customDrawer" format="reference" />
+        <attr name="mainDarkLightColor" format="color" />
+        <attr name="customDots" format="reference" />
+        <attr name="customPstsIndicatorColor" format="color" />
+        <attr name ="menuDrawerTextColor" format="reference" />
+        <attr name ="customTabBackground" format="reference" />
+        <attr name="customDialogButtonBackground" format="reference" />
+        <attr name="customInnerSwitch" format="reference" />
+        <attr name="customTrackSwitch" format="reference" />
+        <attr name="customRadioButton" format="reference" />
+        <attr name="drawerIcons" format="reference" />
+        <attr name="drawerBackground" format="reference" />
+        <attr name="drawerIconsSecondary" format="reference" />
+        <attr name="customLightColor" format="color" />
+        <attr name="customSaveList" format="reference" />
+        <attr name="accentColor" format="color" />
+        <attr name="actionBarEditTextBackground" format="reference" />
+        <attr name="customButtonStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="insetForeground" format="reference|color" />
+    </declare-styleable>
+</resources>

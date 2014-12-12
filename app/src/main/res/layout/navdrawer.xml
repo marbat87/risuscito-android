@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<it.cammino.risuscito.ScrimInsetsScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/navdrawer_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:id="@+id/navdrawer"
+    android:background="@color/navdrawer_background"
+    android:fitsSystemWindows="true"
+    app:insetForeground="#4000" >
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/navdrawer_chosen_account_height"
+            android:gravity="start|center_vertical"
+            android:src="@drawable/copertina_about"
+            android:contentDescription="@string/copertina"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"/>
+
+        <LinearLayout
+            android:id="@+id/navdrawer_items_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</it.cammino.risuscito.ScrimInsetsScrollView>
+

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/tonalita"
+        android:orderInCategory="88"
+        risuscito:showAsAction="always"
+        android:icon="@drawable/ic_note_change"
+        android:title="@string/action_tonalita" >
+
+        <menu>
+            <item
+                android:id="@+id/action_trasporta"
+                android:title="@string/action_trasporta"
+                android:orderInCategory="89"
+                android:icon="@drawable/ic_action_content_chord_dark">
+
+                <menu>
+                    <group android:id="@+id/menu_gruppo_note">
+                        <item android:id="@+id/notaDo" android:title="@string/action_trasporta_do" android:titleCondensed="Do" />
+                        <item android:id="@+id/notaDod" android:title="@string/action_trasporta_dod" android:titleCondensed="Do#" />
+                        <item android:id="@+id/notaRe" android:title="@string/action_trasporta_re" android:titleCondensed="Re" />
+                        <item android:id="@+id/notaMib" android:title="@string/action_trasporta_mib" android:titleCondensed="Mib" />
+                        <item android:id="@+id/notaMi" android:title="@string/action_trasporta_mi" android:titleCondensed="Mi" />
+                        <item android:id="@+id/notaFa" android:title="@string/action_trasporta_fa" android:titleCondensed="Fa" />
+                        <item android:id="@+id/notaFad" android:title="@string/action_trasporta_fad" android:titleCondensed="Fa#" />
+                        <item android:id="@+id/notaSol" android:title="@string/action_trasporta_sol" android:titleCondensed="Sol" />
+                        <item android:id="@+id/notaSold" android:title="@string/action_trasporta_sold" android:titleCondensed="Sol#" />
+                        <item android:id="@+id/notaLa" android:title="@string/action_trasporta_la" android:titleCondensed="La" />
+                        <item android:id="@+id/notaSib" android:title="@string/action_trasporta_sib" android:titleCondensed="Sib" />
+                        <item android:id="@+id/notaSi" android:title="@string/action_trasporta_si" android:titleCondensed="Si" />
+                    </group>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/action_save_tab"
+                android:icon="@drawable/ic_action_tab_save_dark"
+                android:orderInCategory="90"
+                android:title="@string/action_salva_tonalita" />
+
+            <item
+                android:id="@+id/action_reset_tab"
+                android:icon="@drawable/ic_action_tab_reset_dark"
+                android:orderInCategory="91"
+                android:title="@string/action_reset_tonalita" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/barre"
+        android:orderInCategory="92"
+        risuscito:showAsAction="always"
+        android:icon="@drawable/ic_change_barre"
+        android:title="@string/action_barre" >
+
+        <menu>
+
+            <item
+                android:id="@+id/action_trasporta_barre"
+                android:title="@string/action_trasporta"
+                android:orderInCategory="93"
+                android:icon="@drawable/ic_action_content_chord_dark">
+
+                <menu>
+                    <group android:id="@+id/menu_gruppo_barre">
+                        <item android:id="@+id/nobarre" android:title="@string/action_trabar_NO" android:titleCondensed="0" />
+                        <item android:id="@+id/barre1" android:title="@string/action_trabar_I" android:titleCondensed="I" />
+                        <item android:id="@+id/barre2" android:title="@string/action_trabar_II" android:titleCondensed="II" />
+                        <item android:id="@+id/barre3" android:title="@string/action_trabar_III" android:titleCondensed="III" />
+                        <item android:id="@+id/barre4" android:title="@string/action_trabar_IV" android:titleCondensed="IV" />
+                        <item android:id="@+id/barre5" android:title="@string/action_trabar_V" android:titleCondensed="V" />
+                        <item android:id="@+id/barre6" android:title="@string/action_trabar_VI" android:titleCondensed="VI" />
+                        <item android:id="@+id/barre7" android:title="@string/action_trabar_VII" android:titleCondensed="VII" />
+                    </group>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/action_save_barre"
+                android:icon="@drawable/ic_action_tab_save_dark"
+                android:orderInCategory="94"
+                android:title="@string/action_salva_tonalita" />
+
+            <item
+                android:id="@+id/action_reset_barre"
+                android:icon="@drawable/ic_action_tab_reset_dark"
+                android:orderInCategory="95"
+                android:title="@string/action_reset_barre" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/action_exp_pdf"
+        android:orderInCategory="96"
+        android:icon="@drawable/ic_action_pdf"
+        risuscito:showAsAction="ifRoom"
+        android:title="@string/action_exp_pdf" />
+
+    <item
+        android:id="@+id/action_help_canto"
+        android:orderInCategory="98"
+        android:icon="@drawable/ic_action_help"
+        risuscito:showAsAction="ifRoom"
+        android:title="@string/action_help" />
+
+</menu>

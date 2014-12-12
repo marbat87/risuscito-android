@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Set AppCompat’s actionBarStyle -->
+        <!--     <item name="actionBarStyle">@style/MyActionBarStyle</item> -->
+
+        <!-- Set AppCompat’s color theming attrs -->
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated,
+            which is used to tint widgets -->
+        <item name="colorAccent">@color/theme_accent</item>
+
+        <!-- The rest of your attributes -->
+        <item name="customHelp">@drawable/ic_action_help</item>
+        <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
+    </style>
+
+    <style name="RisuscitoTheme" parent="Theme.MyTheme" />
+
+    <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />
+
+</resources>

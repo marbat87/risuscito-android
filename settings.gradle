@@ -1,0 +1,3 @@
+include ':app', ':utilities', ':alertdialogpro-theme-material', ':alertdialogpro-core'
+include ':aFileChooser'
+include ':materialDesign'

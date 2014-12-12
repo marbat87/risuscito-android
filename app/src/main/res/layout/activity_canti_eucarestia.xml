@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin" >
+
+    <com.melnykov.fab.ObservableScrollView
+        android:id="@+id/eucarestiaScrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:overScrollMode="never"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_iniziale"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoIniziale1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_inizio"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView6"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cantoIniziale1Container"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cantoIniziale1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:id="@+id/groupCantoSeconda"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/seconda_lettura"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <RelativeLayout
+                    android:id="@+id/addCantoSeconda"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:orientation="horizontal"
+                    android:background="@drawable/list_selector_group" >
+
+                    <ImageView
+                        android:id="@+id/imageView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/add_seconda"
+                        android:src="?customInsertItem" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/imageView7"
+                        android:text="@string/select_canto"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cantoSecondaContainer"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cantoSeconda"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:clickable="true"
+                        android:textColor="@android:color/black"
+                        android:paddingLeft="@dimen/default_padding_selectable"
+                        android:paddingRight="@dimen/default_padding_selectable"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/list_preferred_item_height_small"
+                        android:background="@drawable/list_selector_neutral_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip"
+                    android:background="@android:color/darker_gray"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_pace"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoPace"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_pace"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView8"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cantoPaceContainer"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cantoPace"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_pane"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <LinearLayout
+                android:id="@+id/cantiPaneList"
+                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoPane"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_pane"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView9"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_vino"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <LinearLayout
+                android:id="@+id/cantiVinoList"
+                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoVino"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_vino"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView10"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/canto_fine"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <RelativeLayout
+                android:id="@+id/addCantoFinale1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:minHeight="@dimen/list_preferred_item_height_small"
+                android:orientation="horizontal"
+                android:background="@drawable/list_selector_group" >
+
+                <ImageView
+                    android:id="@+id/imageView11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/add_fine"
+                    android:src="?customInsertItem" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView11"
+                    android:text="@string/select_canto"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cantoFinale1Container"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cantoFinale1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/black"
+                    android:paddingLeft="@dimen/default_padding_selectable"
+                    android:paddingRight="@dimen/default_padding_selectable"
+                    android:minHeight="@dimen/list_preferred_item_height_small"
+                    android:background="@drawable/list_selector_neutral_light"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:background="@android:color/darker_gray" />
+
+        </LinearLayout>
+
+    </com.melnykov.fab.ObservableScrollView>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab_eucarestia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_icon_broom"
+        risuscito:fab_colorNormal="@color/theme_accent"
+        risuscito:fab_colorPressed="@color/theme_primary"
+        risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+
+</FrameLayout>
