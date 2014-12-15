@@ -34,6 +34,10 @@
             android:label="Canto">
         </activity>
         <activity
+            android:name="it.cammino.risuscito.PaginaRenderFullScreen"
+            android:label="Canto">
+        </activity>
+        <activity
             android:name="it.cammino.risuscito.GeneralInsertSearch"
             android:label="@string/title_activity_inserisci_titolo" >
             <meta-data
