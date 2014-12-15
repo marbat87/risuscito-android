@@ -112,10 +112,29 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <WebView android:id="@+id/cantoView"
+            <FrameLayout
                 android:layout_weight="1"
-                android:layout_width="fill_parent"
-                android:layout_height="0dip"/>
+                android:layout_width="match_parent"
+                android:layout_height="0dip" >
+
+                <WebView
+                    android:id="@+id/cantoView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"/>
+
+                <com.melnykov.fab.FloatingActionButton
+                    android:id="@+id/fab_fullscreen_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/ic_fullscreen_white_24dp"
+                    risuscito:fab_type="mini"
+                    risuscito:fab_colorNormal="@color/theme_accent"
+                    risuscito:fab_colorPressed="@color/theme_primary"
+                    risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"

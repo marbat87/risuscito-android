@@ -55,6 +55,13 @@ public class Utility {
 	public static final int DELETE_ONLY_LINK_OK = 29;
 	public static final int SAVE_TAB_OK = 30;
 	public static final int DISMISS_EXIT = 31;
+
+    //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
+    public static final String URL_CANTO = "urlCanto";
+    public static final String SPEED_VALUE = "speedValue";
+    public static final String SCROLL_PLAYING = "scrollPlaying";
+    public static final String ID_CANTO = "idCanto";
+    public static final String TAG_TRANSIZIONE = "fullscreen";
 	
     @SuppressLint("NewApi")
 	public static void setAccessibilityIgnore(View view) {

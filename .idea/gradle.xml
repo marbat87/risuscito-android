@@ -10,8 +10,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/aFileChooser" />
-            <option value="$PROJECT_DIR$/alertdialogpro-core" />
-            <option value="$PROJECT_DIR$/alertdialogpro-theme-material" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/materialDesign" />
             <option value="$PROJECT_DIR$/utilities" />

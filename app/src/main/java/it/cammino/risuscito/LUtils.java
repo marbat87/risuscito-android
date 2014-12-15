@@ -61,10 +61,31 @@ public class LUtils {
         }
 //        	mActivity.startActivity(intent, (options != null) ? options.toBundle() : null);
     }
-    
+
+    public void startActivityWithFadeIn(Intent intent, final View clickedView,
+                                            final String transitionName) {
+        ActivityOptions options = null;
+        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
+            options = ActivityOptions.makeSceneTransitionAnimation(
+                    mActivity, clickedView, transitionName);
+            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
+        }
+        else {
+            mActivity.startActivity(intent);
+            mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
+        }
+//        	mActivity.startActivity(intent, (options != null) ? options.toBundle() : null);
+    }
+
     public void closeActivityWithTransition() {
-    	if (!hasL())
+    	if (hasL())
+            mActivity.overridePendingTransition(0, R.anim.image_fade_out);
+        else
     		mActivity.overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
+    public void closeActivityWithFadeOut() {
+        mActivity.overridePendingTransition(0, R.anim.image_fade_out);
     }
 
 //    public void setMediumTypeface(TextView textView) {
