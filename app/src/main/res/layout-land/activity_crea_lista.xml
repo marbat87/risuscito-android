@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:textColor="?attr/colorAccent"
+            android:textColor="@android:color/white"
             android:text="@string/list_title" />
 
         <android.support.v7.internal.widget.TintEditText
