@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         applicationId "it.cammino.risuscito"
@@ -28,11 +28,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
     compile 'com.melnykov:floatingactionbutton:1.1.0'
-    compile 'com.nispok:snackbar:2.5.2'
     compile 'com.itextpdf:itextpdf:5.5.3'
     compile project(':utilities')
     compile project(':aFileChooser')
     compile project(':materialDesign')
     compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.0'
     provided 'com.github.andkulikov:transitions-everywhere:1.2.1'
+    compile 'com.nispok:snackbar:2.5.2'
 }
