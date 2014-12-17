@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -54,11 +55,13 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+        mLUtils = LUtils.getInstance(PaginaRenderFullScreen.this);
+        mLUtils.goFullscreen();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pagina_render_fullscreen);
         
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(PaginaRenderFullScreen.this);
+//        Utility.setupTransparentTints(PaginaRenderFullScreen.this);
         
         listaCanti = new DatabaseCanti(this);
 
@@ -86,15 +89,18 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
             }
         });
 
-        mLUtils = LUtils.getInstance(PaginaRenderFullScreen.this);
         ViewCompat.setTransitionName(findViewById(R.id.fullscreen_view), Utility.TAG_TRANSIZIONE);
         
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return keyCode == KeyEvent.KEYCODE_BACK
-                || super.onKeyUp(keyCode, event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+            mLUtils.closeActivityWithFadeOut();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
     
     @Override

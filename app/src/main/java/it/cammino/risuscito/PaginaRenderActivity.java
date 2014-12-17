@@ -251,7 +251,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                stop_button.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 cmdStop();
             }
         });
@@ -440,7 +440,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-                    play_button.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
                             && !localFile)  {
@@ -609,7 +609,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    save_file.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     blockOrientation();
 //					GenericDialogFragment dialog = new GenericDialogFragment();
 //					dialog.setCustomMessage(getString(R.string.dialog_download_mp3));
@@ -675,7 +675,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             delete_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    delete_file.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     if (personalUrl.equalsIgnoreCase("")) {
                         blockOrientation();
 //						GenericDialogFragment dialog = new GenericDialogFragment();
@@ -771,7 +771,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-                    play_button.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     switch (mediaPlayerState) {
                         case Paused:
                             cmdStart();
@@ -804,7 +804,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    save_file.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     blockOrientation();
 //					GenericDialogFragment dialog = new GenericDialogFragment();
 //					dialog.setCustomMessage(getString(R.string.only_link));
@@ -851,7 +851,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             delete_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    delete_file.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     blockOrientation();
 //					GenericDialogFragment dialog = new GenericDialogFragment();
 //					dialog.setCustomMessage(getString(R.string.dialog_delete_link));
@@ -1014,7 +1014,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                play_scroll.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 play_scroll.setVisibility(View.GONE);
                 stop_scroll.setVisibility(View.VISIBLE);
                 scrollPlaying = true;
@@ -1026,7 +1026,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                stop_scroll.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 play_scroll.setVisibility(View.VISIBLE);
                 stop_scroll.setVisibility(View.GONE);
                 scrollPlaying = false;
@@ -1385,7 +1385,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         favouriteCheckBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                favouriteCheckBox.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 if (favoriteFlag == 0) {
                     favoriteFlag = 1;
                     favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);

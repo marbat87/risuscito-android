@@ -42,8 +42,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/ic_av_rewind_active"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/ic_av_rewind_active" />
 
             <com.gc.materialdesign.views.ButtonIcon
                 android:id="@+id/play_song"
@@ -57,8 +56,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/play_button_drawable"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/play_button_drawable" />
 
             <com.gc.materialdesign.views.ButtonIcon
                 android:id="@+id/fast_forward_song"
@@ -72,8 +70,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/ic_av_fast_forward_active"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/ic_av_fast_forward_active" />
 
             <com.gc.materialdesign.views.ButtonIcon
                 android:id="@+id/stop_song"
@@ -87,8 +84,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/ic_av_stop_active"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/ic_av_stop_active" />
 
             <com.gc.materialdesign.views.ButtonIcon
                 android:id="@+id/delete_file"
@@ -102,8 +98,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/ic_delete_black_48dp"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/ic_delete_black_48dp" />
 
             <com.gc.materialdesign.views.ButtonIcon
                 android:id="@+id/save_file"
@@ -115,8 +110,7 @@
                 android:background="@color/theme_accent"
                 risuscito:clickAfterRipple="false"
                 risuscito:iconSize="28dip"
-                risuscito:iconDrawable="@drawable/ic_av_download_active"
-                android:soundEffectsEnabled="true"  />
+                risuscito:iconDrawable="@drawable/ic_av_download_active" />
 
         </RelativeLayout>
 
@@ -186,8 +180,7 @@
             android:background="@color/theme_accent"
             risuscito:clickAfterRipple="false"
             risuscito:iconSize="28dip"
-            risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp"
-            android:soundEffectsEnabled="true"  />
+            risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp" />
 
         <com.gc.materialdesign.views.ButtonIcon
             android:id="@+id/stop_scroll"
@@ -197,8 +190,7 @@
             android:background="@color/theme_accent"
             risuscito:clickAfterRipple="false"
             risuscito:iconSize="28dip"
-            risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp"
-            android:soundEffectsEnabled="true"  />
+            risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp" />
 
     </LinearLayout>
 

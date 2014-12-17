@@ -24,6 +24,8 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
@@ -86,6 +88,20 @@ public class LUtils {
 
     public void closeActivityWithFadeOut() {
         mActivity.overridePendingTransition(0, R.anim.image_fade_out);
+    }
+
+    public void goFullscreen() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+        else mActivity.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
 //    public void setMediumTypeface(TextView textView) {

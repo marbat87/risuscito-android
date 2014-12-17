@@ -172,6 +172,7 @@ public class InsertAvanzataFragment extends Fragment {
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 				searchPar.setText("");
 				rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 				lv.setVisibility(View.GONE);
