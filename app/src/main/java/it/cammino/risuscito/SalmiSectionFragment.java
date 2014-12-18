@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,9 +53,6 @@ public class SalmiSectionFragment extends Fragment {
 	private final int ID_BASE = 100;
 	
 	private LUtils mLUtils;
-	
-//	private final String LISTA_PERSONALIZZATA_TAG = "1";
-//	private final String LISTA_PREDEFINITA_TAG = "2";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -181,9 +179,7 @@ public class SalmiSectionFragment extends Fragment {
     private void startSubActivity(Bundle bundle, View view) {
     	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
    	}
     
     private class SongRowAdapter extends ArrayAdapter<String> implements Scrollable {
@@ -207,7 +203,7 @@ public class SalmiSectionFragment extends Fragment {
 	        		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
@@ -320,28 +316,6 @@ public class SalmiSectionFragment extends Fragment {
 		    		    	}
 		    		    	else {
 			    		    	blockOrientation();
-//			    				GenericDialogFragment dialog = new GenericDialogFragment();
-//			    				dialog.setListener(SalmiSectionFragment.this);
-//			    				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " 
-//			    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//			    						.substring(10)
-//			    						+ getString(R.string.dialog_wonna_replace));
-//			    				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//			    		            @Override
-//			    		            public boolean onKey(DialogInterface arg0, int keyCode,
-//			    		                    KeyEvent event) {
-//			    		                if (keyCode == KeyEvent.KEYCODE_BACK
-//			    		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//			    		                    arg0.dismiss();
-//			    							getActivity().setRequestedOrientation(prevOrientation);
-//			    							return true;
-//			    		                }
-//			    		                return false;
-//			    		            }
-//			    		        });
-//			    	            dialog.show(getChildFragmentManager(), LISTA_PERSONALIZZATA_TAG);
-//			    	            dialog.setCancelable(false);
 			    		    	AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
 			                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 			    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
@@ -394,9 +368,6 @@ public class SalmiSectionFragment extends Fragment {
 		Toast toast = Toast.makeText(getActivity()
 				, getString(R.string.favorite_added), Toast.LENGTH_SHORT);
 		toast.show();
-		
-		//permette di aggiornare il numero dei preferiti nel menu laterale
-//		((MainActivity) getActivity()).onResume();
 		
     }
     
@@ -461,26 +432,6 @@ public class SalmiSectionFragment extends Fragment {
 				posizioneDaAgg = listPosition;
 				
 	    		blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setListener(SalmiSectionFragment.this);
-//				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//						+ getString(R.string.dialog_wonna_replace));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//	            dialog.show(getChildFragmentManager(), LISTA_PREDEFINITA_TAG);
-//	            dialog.setCancelable(false);
 	    		AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -575,54 +526,6 @@ public class SalmiSectionFragment extends Fragment {
 			}
         }
     }
-    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//        // User touched the dialog's positive button
-//    	SQLiteDatabase db = listaCanti.getReadableDatabase();
-//    	String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);	
-//    	
-//    	if (dialog.getTag().equals(LISTA_PREDEFINITA_TAG)) {   	
-//    		String sql = "UPDATE CUST_LISTS "
-//	    			+ "SET id_canto = (SELECT _id  FROM SALMI_MUSICA"
-//	    			+ " WHERE titolo_salmo = \'" + cantoCliccatoNoApex + "\')"
-//	    			+ "WHERE _id = " + idListaDaAgg 
-//	    			+ "  AND position = " + posizioneDaAgg;
-//	    	db.execSQL(sql);	    	
-//    	}
-//    	else if (dialog.getTag().equals(LISTA_PERSONALIZZATA_TAG)){
-//	        String query = "SELECT B.color, B.pagina" +
-//	        		"       FROM SALMI_MUSICA A" +
-//    				"		   , ELENCO B" +
-//    				"		WHERE A.titolo_salmo = '" + cantoCliccatoNoApex + "'" +
-//    				"       AND A._id = B._id";
-//    		Cursor cursor = db.rawQuery(query, null);
-//			
-//    		cursor.moveToFirst();
-//    							    		
-//    		listePers[idListaClick].addCanto(Utility.intToString(
-//    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-//						    				
-//	    	ContentValues  values = new  ContentValues( );
-//	    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//	    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-//	    	
-//    	}
-//    	
-//    	db.close();
-//        dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//		
-//		Toast.makeText(getActivity()
-//				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's negative button
-//        dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//    }
     
     public void blockOrientation() {
         prevOrientation = getActivity().getRequestedOrientation();

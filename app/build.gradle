@@ -3,13 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 21
     buildToolsVersion '21.1.2'
-
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 53
-        versionName "3.0.0_BETA7"
+        versionCode 54
+        versionName '3.0.0'
     }
     buildTypes {
         release {
@@ -17,9 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
@@ -34,5 +35,5 @@ dependencies {
     compile project(':materialDesign')
     compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.0'
     provided 'com.github.andkulikov:transitions-everywhere:1.2.1'
-    compile 'com.nispok:snackbar:2.5.2'
+    compile 'com.nispok:snackbar:2.6.0'
 }

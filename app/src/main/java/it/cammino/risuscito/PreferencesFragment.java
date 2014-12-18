@@ -28,11 +28,6 @@ public class PreferencesFragment extends Fragment {
 	
 	private int checkedItem;
 	
-//	private static final String SCREEN_ON = "screenOn";
-//	private static final String SHOW_SECONDA = "showSecondaEucarestia";
-//	private static final String DEFAULT_INDEX = "defaultIndex";
-//	private static final String SAVE_LOCATION = "saveLocation";
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

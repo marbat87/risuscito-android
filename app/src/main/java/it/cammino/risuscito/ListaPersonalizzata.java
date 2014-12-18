@@ -18,7 +18,6 @@ public class ListaPersonalizzata implements Serializable {
 	private String[] posizioni;
 	private String[] canti;
 	private int numPosizioni;
-//	private final int MAX_POSIZIONI = 20;
 	private final int MAX_POSIZIONI = 30;
 	
 
@@ -102,8 +101,8 @@ public class ListaPersonalizzata implements Serializable {
 	}
 	
 	/*aggiunge una nuova canto alla posizione indicata
-	 ritorna -1 se il nome inserito � nullo o vuoto
-	 ritorna -2 se l'indice non � valido
+	 ritorna -1 se il nome inserito è nullo o vuoto
+	 ritorna -2 se l'indice non è valido
 	 */
 	public int addCanto(String titoloCanto, int posizione) {
 		if (titoloCanto == null || titoloCanto.trim().equalsIgnoreCase(""))

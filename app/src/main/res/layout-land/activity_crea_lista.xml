@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="@string/no_elements_added" />
 
-        <it.cammino.utilities.dslv.DragSortItemView
+        <it.cammino.utilities.dslv.DragSortListView
             android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -96,7 +96,7 @@
             risuscito:remove_enabled="true"
             risuscito:drag_start_mode="onMove"
             risuscito:remove_mode="flingRemove"
-            risuscito:float_background_color="?attr/colorPrimary" />
+            risuscito:float_background_color="@color/neutral_color_for_group" />
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab_crea_lista"

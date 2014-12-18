@@ -66,23 +66,15 @@ public class CreaListaActivity extends ActionBarActivity {
 	private ArrayList<String> nomiCanti;
 	private int positionLI;
 	private Bundle tempArgs;
-//	private FloatingActionButton floatingActionButton;
-	
-//	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista";
+
 	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 	
-//	private final String AGGIUNGI_POSIZIONE_TAG = "1";
-//	private final String RINOMINA_POSIZIONE_TAG = "2";
-//	private final String SALVA_LISTA_TAG = "3";
 	private final String TEMP_TITLE = "temp_title";
 	
 	private AlertDialogPro dialog, dialogAdd;
 	
     private TintEditText titleInputRename, titleInputAdd;
-//    private View positiveActionRename;
-//    private TintEditText titleInputAdd;
-//    private View positiveActionAdd;
-			
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -119,8 +111,6 @@ public class CreaListaActivity extends ActionBarActivity {
         else
         	titoloLista = bundle.getString("titolo");
         
-//        getSupportActionBar().setTitle(titoloLista);
-				
 		lv = (DragSortListView) findViewById(android.R.id.list);
 		
         lv.setDropListener(onDrop);
@@ -167,18 +157,6 @@ public class CreaListaActivity extends ActionBarActivity {
         
         positionLI = R.layout.position_list_item_light;
         
-        //Serve per settare il colore del testo a seconda del tema.
-        //A quanto parae non si riesce usando gli attributes direttamente nel layout
-//        if (Utility.getChoosedTheme(CreaListaActivity.this) == 1
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 3
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 5
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 7
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 9
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 11)
-//        	positionLI = R.layout.position_list_item_dark;
-//        else
-//        	positionLI = R.layout.position_list_item_light;
-        
         adapter = new PositionAdapter();
         lv.setAdapter(adapter);
         
@@ -186,26 +164,6 @@ public class CreaListaActivity extends ActionBarActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				blockOrientation();
 				positionToRename = position;
-//				TextDialogFragment dialog = new TextDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.posizione_rename));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setDefaultText(nomiElementi.get(positionToRename));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), RINOMINA_POSIZIONE_TAG);
-//		        dialog.setCancelable(false);
 		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialog = builder.setTitle(R.string.posizione_rename)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
@@ -245,47 +203,12 @@ public class CreaListaActivity extends ActionBarActivity {
 			}
 		});	
         
-//		floatingActionButton = (FloatingActionButton) findViewById(R.id.button_floating_action);
-//		floatingActionButton.attachToListView(lv);
-		
-//		View addPosizione = (View) findViewById(R.id.addPosizione);
-//		addPosizione.setOnClickListener(new View.OnClickListener() {
-//		floatingActionButton.setOnClickListener(new View.OnClickListener() {
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
 		fab.attachToListView(lv);
-//		fab.setBackgroundColor(getResources().getColor(R.color.theme_accent));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				blockOrientation();
-//				TextDialogFragment dialog = new TextDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.posizione_add_desc));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), AGGIUNGI_POSIZIONE_TAG);
-//		        dialog.setCancelable(false);
-////				titleInputAdd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-////				    @Override
-////				    public void onFocusChange(View v, boolean hasFocus) {
-////				        if (hasFocus) {
-////				            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-////				        }
-////				    }
-////				});
-////		        titleInputAdd.requestFocus();
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
@@ -355,7 +278,6 @@ public class CreaListaActivity extends ActionBarActivity {
        	
         findViewById(R.id.textTitleDescription).requestFocus();
         
-//		checkScreenAwake();
 	}
 	
 	@Override
@@ -381,25 +303,6 @@ public class CreaListaActivity extends ActionBarActivity {
 		case android.R.id.home:
 			if (nomiElementi.size() > 0) {
 				blockOrientation();
-//				ThreeButtonsDialogFragment dialog3 = new ThreeButtonsDialogFragment();
-//				dialog3.setCustomMessage(getString(R.string.save_list_question));
-//				dialog3.setListener(CreaListaActivity.this);
-//				dialog3.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog3.show(getSupportFragmentManager(), SALVA_LISTA_TAG);
-//		        dialog3.setCancelable(false);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -437,25 +340,6 @@ public class CreaListaActivity extends ActionBarActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (nomiElementi.size() > 0) {
 				blockOrientation();
-//				ThreeButtonsDialogFragment dialog = new ThreeButtonsDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.save_list_question));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), SALVA_LISTA_TAG);
-//		        dialog.setCancelable(false);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -485,7 +369,6 @@ public class CreaListaActivity extends ActionBarActivity {
 				return true;
 			}
         }
-//        return super.onKeyDown(keyCode, event);
         return super.onKeyUp(keyCode, event);
     }
 	
@@ -666,68 +549,7 @@ public class CreaListaActivity extends ActionBarActivity {
         }
     }
     
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog, String titolo) {
-//    	if (dialog.getTag().equals(AGGIUNGI_POSIZIONE_TAG)) {
-//	    	if (titolo == null || titolo.trim().equalsIgnoreCase("")) {
-//	    		Toast toast = Toast.makeText(getApplicationContext()
-//	    				, getString(R.string.titolo_pos_vuoto), Toast.LENGTH_SHORT);
-//	    		toast.show();
-//	    	}
-//	    	else {
-//	    		findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-//	    		nomiElementi.add(titolo);
-//	    		if (modifica)
-//	    			nomiCanti.add("");
-//	            adapter.notifyDataSetChanged();
-//	    	}
-//    	}
-//    	else if (dialog.getTag().equals(RINOMINA_POSIZIONE_TAG)) {
-//	    	if (titolo == null || titolo.trim().equalsIgnoreCase("")) {
-//	    		Toast toast = Toast.makeText(getApplicationContext()
-//	    				, getString(R.string.titolo_pos_vuoto), Toast.LENGTH_SHORT);
-//	    		toast.show();
-//	    	}
-//	    	else {
-//	    		nomiElementi.set(positionToRename, titolo);
-//	            adapter.notifyDataSetChanged();
-//	    	}
-//    	}
-//    	dialog.dismiss();
-//    	setRequestedOrientation(prevOrientation);
-//    }
-//    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//		setRequestedOrientation(prevOrientation);
-//    	if (saveList()) {
-//    		finish();
-//    		overridePendingTransition(0, R.anim.slide_out_bottom);
-//    	}
-//    }
-//    
-//    @Override
-//    public void onDialogNeutralClick(DialogFragment dialog) {
-//    	dialog.dismiss();
-//    	setRequestedOrientation(prevOrientation);
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//    	if (dialog.getTag().equals(AGGIUNGI_POSIZIONE_TAG)
-//    			|| dialog.getTag().equals(RINOMINA_POSIZIONE_TAG)) {
-//    		dialog.dismiss();
-//    		setRequestedOrientation(prevOrientation);
-//    	}
-//    	else if (dialog.getTag().equals(SALVA_LISTA_TAG)) {
-//    		dialog.dismiss();
-//    		setRequestedOrientation(prevOrientation);
-//    		finish();
-//    		overridePendingTransition(0, R.anim.slide_out_bottom);
-//    	}
-//    }
-    
-    private class PositionAdapter extends ArrayAdapter<String> {    
+    private class PositionAdapter extends ArrayAdapter<String> {
         public PositionAdapter() {
         	super(getApplicationContext(), positionLI, R.id.position_name, nomiElementi);
         }
@@ -766,18 +588,10 @@ public class CreaListaActivity extends ActionBarActivity {
         }
     }
     
-    public int getNavigationBarHeight() {
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return getResources().getDimensionPixelSize(resourceId);
-        }
-        return 0;
-    }
-    
    	private void showHelp() {
    		if (nomiElementi.size() == 0) {
    			findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-   			nomiElementi.add("CANTO DI ESEMPIO");
+   			nomiElementi.add(getResources().getString(R.string.example_title));
    			adapter.notifyDataSetChanged();
    			fakeItemCreated = true;
    		}
@@ -807,9 +621,7 @@ public class CreaListaActivity extends ActionBarActivity {
 		co.buttonLayoutParams = lps;
 		
 		//benvenuto del tutorial
-//		floatingActionButton.show();
    		ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
-//        		new ViewTarget(R.id.imagePlus, CreaListaActivity.this)
         		new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
         		, CreaListaActivity.this
         		, R.string.title_activity_nuova_lista
@@ -828,7 +640,6 @@ public class CreaListaActivity extends ActionBarActivity {
         		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         		co.buttonLayoutParams = lps;
 		   		showcaseView = ShowcaseView.insertShowcaseView(
-//		        		new ViewTarget(R.id.imagePlus, CreaListaActivity.this)
 		        		new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
 		        		, CreaListaActivity.this
 		        		, R.string.add_position
@@ -884,7 +695,6 @@ public class CreaListaActivity extends ActionBarActivity {
 						        		, R.string.showcase_rename_desc
 						        		, co);
 								showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//								showcaseView.setScaleMultiplier(0.5f);
 								int[] coords = new int[2];
 								adapter.getView(0, lv, lv).getLocationOnScreen(coords);
 								coords[0] = (coords[0]*2 + 
@@ -914,7 +724,6 @@ public class CreaListaActivity extends ActionBarActivity {
 								        		, co);
 										showcaseView.setButtonText(getString(R.string.showcase_button_next));
 										int[] coords = new int[2];
-//										adapter.getView(0, lv, lv).findViewById(R.id.position_name).getLocationOnScreen(coords);
 										adapter.getView(0, lv, lv).getLocationOnScreen(coords);
 										coords[0] = (coords[0]*2 + 
 												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getWidth())
@@ -933,18 +742,6 @@ public class CreaListaActivity extends ActionBarActivity {
 												//spiegazione di come salvare
 								        		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
 								        		co.buttonLayoutParams = lps;
-//										   		showcaseView = ShowcaseView.insertShowcaseView(
-//										        		new ViewTarget(R.id.button_save_exit, CreaListaActivity.this)
-//										        		, CreaListaActivity.this
-//										        		, R.string.list_save_exit
-//										        		, R.string.showcase_saveexit_desc
-//										        		, co);
-//										        ActionItemTarget target = new ActionItemTarget(CreaListaActivity.this, R.id.action_save_list);
-//										        showcaseView = ShowcaseView.insertShowcaseView(target
-//										        		, CreaListaActivity.this
-//										        		, R.string.list_save_exit
-//										        		, R.string.showcase_saveexit_desc
-//										        		,co);
 										   		showcaseView = ShowcaseView.insertShowcaseView(
 										        		new ViewTarget(R.id.action_save_list, CreaListaActivity.this)
 										        		, CreaListaActivity.this
@@ -952,7 +749,6 @@ public class CreaListaActivity extends ActionBarActivity {
 										        		, R.string.showcase_saveexit_desc
 										        		, co);
 												showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//												showcaseView.setScaleMultiplier(0.7f);
 												showcaseView.setScaleMultiplier(0.3f);
 												showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 		
@@ -964,12 +760,6 @@ public class CreaListaActivity extends ActionBarActivity {
 														//spiegazione di come rivedere il tutorial
 														ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
 														co.buttonLayoutParams = lps;	
-//												        ActionItemTarget target = new ActionItemTarget(CreaListaActivity.this, R.id.action_help);
-//												        showcaseView = ShowcaseView.insertShowcaseView(target
-//												        		, CreaListaActivity.this
-//												        		, R.string.showcase_end_title
-//												        		, R.string.showcase_help_general
-//												        		,co);
 												   		showcaseView = ShowcaseView.insertShowcaseView(
 												        		new ViewTarget(R.id.action_help, CreaListaActivity.this)
 												        		, CreaListaActivity.this

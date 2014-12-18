@@ -681,7 +681,7 @@ public class RicercaVeloceFragment extends Fragment {
 //		startActivity(intent);
 //		getActivity().overridePendingTransition(R.anim.slide_in_right,
 //				R.anim.hold_on);
-		mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+		mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
 	}
 
 	private class SongRowAdapter extends ArrayAdapter<String> {

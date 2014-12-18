@@ -38,7 +38,6 @@ public class Risuscito extends Fragment {
 	private static final String NO_VERSION = "";
 	private static final String FIRST_OPEN_MENU = "FIRST_OPEN_MENU4";
 	private int prevOrientation;
-	private View rootView;
 	private int screenWidth;
 	private int screenHeight;
 		
@@ -48,10 +47,8 @@ public class Risuscito extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
+		View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 		
-//		Toolbar toolbar = ((Toolbar) getActivity().findViewById(R.id.risuscito_toolbar));
-//		toolbar.setTitle(R.string.activity_homepage);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
 		
 		rootView.findViewById(R.id.imageView1)
@@ -80,7 +77,7 @@ public class Risuscito extends Fragment {
         
         // get version numbers
         String lastVersion = sp.getString(VERSION_KEY, NO_VERSION);
-        String thisVersion = "";
+        String thisVersion;
 //        Log.i("Changelog", "lastVersion: " + lastVersion);
         try {
             thisVersion = getActivity().getPackageManager().getPackageInfo(
@@ -93,40 +90,7 @@ public class Risuscito extends Fragment {
 //        Log.i("Changelog", "appVersion: " + thisVersion);
         
         if (!thisVersion.equals(lastVersion)) {
-//        if (true) {
         	blockOrientation();
-//	    	ChangelogDialogFragment dialog = new ChangelogDialogFragment();
-//	    	dialog.setListener(this);
-//			dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//	            @Override
-//	            public boolean onKey(DialogInterface arg0, int keyCode,
-//	                    KeyEvent event) {
-//	                if (keyCode == KeyEvent.KEYCODE_BACK
-//	                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//	                    arg0.dismiss();
-//						getActivity().setRequestedOrientation(prevOrientation);
-//				        if(PreferenceManager
-//				                .getDefaultSharedPreferences(getActivity())
-//				                .getBoolean(FIRST_OPEN_MENU, true)) { 
-//				            SharedPreferences.Editor editor = PreferenceManager
-//				                    .getDefaultSharedPreferences(getActivity())
-//				                    .edit();
-//				            editor.putBoolean(FIRST_OPEN_MENU, false);
-//				            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-//				            	editor.commit();
-//				            } else {
-//				            	editor.apply();
-//				            }
-//				        	showHelp();
-//				        }
-//						return true;
-//	                }
-//	                return false;
-//	            }
-//	        });
-//	    	dialog.show(getFragmentManager(), null);
-//	    	dialog.setCancelable(false);
         	AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
         	AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
         			.setView(new ChangeLogListView(getActivity()))
@@ -216,26 +180,6 @@ public class Risuscito extends Fragment {
 		}
 		return false;
 	}
-    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//    	dialog.dismiss();
-//    	getActivity().setRequestedOrientation(prevOrientation);
-//        if(PreferenceManager
-//                .getDefaultSharedPreferences(getActivity())
-//                .getBoolean(FIRST_OPEN_MENU, true)) { 
-//            SharedPreferences.Editor editor = PreferenceManager
-//                    .getDefaultSharedPreferences(getActivity())
-//                    .edit();
-//            editor.putBoolean(FIRST_OPEN_MENU, false);
-//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-//            	editor.commit();
-//            } else {
-//            	editor.apply();
-//            }
-//        	showHelp();
-//        }
-//    }
     
     @SuppressLint("NewApi")
     private class ButtonClickedListener implements DialogInterface.OnClickListener {

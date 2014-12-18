@@ -1,10 +1,5 @@
 package it.cammino.risuscito;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -31,23 +26,24 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ArgumentsSectionFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
 
 	private DatabaseCanti listaCanti;
 	private List<Map<String, String>> groupData;
     private List<List<Map<String, String>>> childData;
   	private static final String NAME = "NAME";
-  	private SongRowAdapter mAdapter;
     private ExpandableListView expList;
     int lastExpandedGroupPosition = 0;
 	private String titoloDaAgg;
@@ -63,10 +59,7 @@ public class ArgumentsSectionFragment extends Fragment {
 	private final int ID_BASE = 100;
 	
 	private LUtils mLUtils;
-	
-//	private final String LISTA_PERSONALIZZATA_TAG = "1";
-//	private final String LISTA_PREDEFINITA_TAG = "2";
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -128,84 +121,80 @@ public class ArgumentsSectionFragment extends Fragment {
             argCanti.close();
             
         }
-        
-        mAdapter = new SongRowAdapter();
-        
-        expList.setAdapter(mAdapter);
+
+        expList.setAdapter(new SongRowAdapter());
         
         arguments.close();
-		
+
         // fa in modo che la visuale scolli al gruppo cliccato
         expList.setOnGroupClickListener(new OnGroupClickListener() {
-			
-        	@Override
-        	public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition,
-        	        long id) {
 
-        	    parent.smoothScrollToPosition(groupPosition);
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition,
+                                        long id) {
 
-        	    if (parent.isGroupExpanded(groupPosition)) {
-        	        parent.collapseGroup(groupPosition);
-        	    } else {
-        	        parent.expandGroup(groupPosition);
-        	    }
+                parent.smoothScrollToPosition(groupPosition);
 
-        	    return true;
-        	}
-		});
-        
+                if (parent.isGroupExpanded(groupPosition)) {
+                    parent.collapseGroup(groupPosition);
+                } else {
+                    parent.expandGroup(groupPosition);
+                }
+
+                return true;
+            }
+        });
+
         expList.setOnGroupExpandListener(new OnGroupExpandListener() {
-			@Override
-			public void onGroupExpand(int arg0) {
-				if(arg0 != lastExpandedGroupPosition){
-					expList.collapseGroup(lastExpandedGroupPosition);
-				}
-		        lastExpandedGroupPosition = arg0;
-			}
-		});
+            @Override
+            public void onGroupExpand(int arg0) {
+                if(arg0 != lastExpandedGroupPosition){
+                    expList.collapseGroup(lastExpandedGroupPosition);
+                }
+                lastExpandedGroupPosition = arg0;
+            }
+        });
         
-//        db.close();
-        
-		// setta l'azione al click su ogni voce dell'elenco
+        // setta l'azione al click su ogni voce dell'elenco
         expList.setOnChildClickListener(new OnChildClickListener() {
-			
-			@Override
-			public boolean onChildClick(ExpandableListView parent, View v,
-					int groupPosition, int childPosition, long id) {
-				TextView exptv = (TextView)v.findViewById(R.id.text_title);
-	    		
-	    		String cantoCliccato = exptv.getText().toString();
-	    		cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-	    			    		
-	    		// crea un manipolatore per il Database in modalità READ
-	    		SQLiteDatabase db = listaCanti.getReadableDatabase();
-	    		
-	    		// esegue la query per il recupero del nome del file della pagina da visualizzare
-			    String query = "SELECT source, _id" +
-			      		"  FROM ELENCO" +
-			      		"  WHERE titolo =  '" + cantoCliccato + "'";   
-			    Cursor cursor = db.rawQuery(query, null);
-			      
-			    // recupera il nome del file
-			    cursor.moveToFirst();
-			    String pagina = cursor.getString(0);
-			    int idCanto = cursor.getInt(1);
-			    
-			    // chiude il cursore
-			    cursor.close();
-			    db.close();
 
-			    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare  
-			    Bundle bundle = new Bundle();
-			    bundle.putString("pagina", pagina);
-			    bundle.putInt("idCanto", idCanto);
-			    			    
-			    // lancia l'activity che visualizza il canto passando il parametro creato
-			    startSubActivity(bundle, v);
-	    		
-				return false;
-			}
-		
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                TextView exptv = (TextView)v.findViewById(R.id.text_title);
+
+                String cantoCliccato = exptv.getText().toString();
+                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+
+                // crea un manipolatore per il Database in modalità READ
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                // esegue la query per il recupero del nome del file della pagina da visualizzare
+                String query = "SELECT source, _id" +
+                        "  FROM ELENCO" +
+                        "  WHERE titolo =  '" + cantoCliccato + "'";
+                Cursor cursor = db.rawQuery(query, null);
+
+                // recupera il nome del file
+                cursor.moveToFirst();
+                String pagina = cursor.getString(0);
+                int idCanto = cursor.getInt(1);
+
+                // chiude il cursore
+                cursor.close();
+                db.close();
+
+                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", pagina);
+                bundle.putInt("idCanto", idCanto);
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, v);
+
+                return false;
+            }
+
         });
 			
 		query = "SELECT _id, lista" +
@@ -244,9 +233,7 @@ public class ArgumentsSectionFragment extends Fragment {
     private void startSubActivity(Bundle bundle, View view) {
     	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
    	}
     
     private class SongRowAdapter extends SimpleExpandableListAdapter {
@@ -281,7 +268,7 @@ public class ArgumentsSectionFragment extends Fragment {
 	        		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+            LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return row;
@@ -312,136 +299,114 @@ public class ArgumentsSectionFragment extends Fragment {
 	        inflater.inflate(R.menu.add_to, menu);
         }
     }
-    
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-    	if (getUserVisibleHint()) {
-	        switch (item.getItemId()) {
-	            case R.id.add_to_favorites:
-	                addToFavorites(titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_iniziale:
-	                addToListaNoDup(1, 1, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_prima:
-	            	addToListaNoDup(1, 2, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_seconda:
-	            	addToListaNoDup(1, 3, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_terza:
-	            	addToListaNoDup(1, 4, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_fine:
-	            	addToListaNoDup(1, 5, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_iniziale:
-	            	addToListaNoDup(2, 1, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_pace:
-	            	addToListaNoDup(2, 2, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_pane:
-	                addToListaDup(2, 3, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_vino:
-	            	addToListaDup(2, 4, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_fine:
-	            	addToListaNoDup(2, 5, titoloDaAgg);
-	                return true;
-	            default:
-	            	idListaClick = item.getGroupId();
-	            	idPosizioneClick = item.getItemId();
-	            	if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
-	            		idListaClick -= 100;
-	            		if (listePers[idListaClick]
-	            				.getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
-		            		String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);		    			    
-		    		        SQLiteDatabase db = listaCanti.getReadableDatabase();
-		            		
-		    		        String query = "SELECT color, pagina" +
-				    				"		FROM ELENCO" +
-				    				"		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-				    		Cursor cursor = db.rawQuery(query, null);
-			    			
-				    		cursor.moveToFirst();
-				    							    		
-				    		listePers[idListaClick].addCanto(Utility.intToString(
-				    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-			    						    				
-		    		    	ContentValues  values = new  ContentValues( );
-		    		    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-		    		    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-		    		    	db.close();
-		    		    	
-		    	    		Toast.makeText(getActivity()
-		    	    				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-	            		}
-		    		    else {
-		    		    	if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-		    		    			.equalsIgnoreCase(titoloDaAgg)) {
-		    		    		Toast toast = Toast.makeText(getActivity()
-		    		    				, getString(R.string.present_yet), Toast.LENGTH_SHORT);
-		    		    		toast.show();
-		    		    	}
-		    		    	else {
-			    		    	blockOrientation();
-//			    				GenericDialogFragment dialog = new GenericDialogFragment();
-//			    				dialog.setListener(ArgumentsSectionFragment.this);
-//			    				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " 
-//			    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//			    						.substring(10)
-//			    						+ getString(R.string.dialog_wonna_replace));
-//			    				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//			    		            @Override
-//			    		            public boolean onKey(DialogInterface arg0, int keyCode,
-//			    		                    KeyEvent event) {
-//			    		                if (keyCode == KeyEvent.KEYCODE_BACK
-//			    		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//			    		                    arg0.dismiss();
-//			    							getActivity().setRequestedOrientation(prevOrientation);
-//			    							return true;
-//			    		                }
-//			    		                return false;
-//			    		            }
-//			    		        });
-//			    	            dialog.show(getChildFragmentManager(), LISTA_PERSONALIZZATA_TAG);
-//			    	            dialog.setCancelable(false);
-			                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-			                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-			    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
-					    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-					    						.substring(10)
-					    						+ getString(R.string.dialog_wonna_replace))
-			    	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPERS_OK))
-			    	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-			    	                    .show();
-			                    dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-			    			        @Override
-			    			        public boolean onKey(DialogInterface arg0, int keyCode,
-			    			        		KeyEvent event) {
-			    			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			    			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			    			        		arg0.dismiss();
-			    			        		getActivity().setRequestedOrientation(prevOrientation);
-			    			        		return true;
-			    			            }
-			    			            return false;
-			    			        }
-			    		        });
-			                    dialog.setCancelable(false);
-		    		    	}
-		    		    }    		
-		    		    return true;
-	            	}
-	            	else
-	            		return super.onContextItemSelected(item);
-	        }
-    	}
-    	else
-    		return false;
+        if (getUserVisibleHint()) {
+            switch (item.getItemId()) {
+                case R.id.add_to_favorites:
+                    addToFavorites(titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_iniziale:
+                    addToListaNoDup(1, 1, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_prima:
+                    addToListaNoDup(1, 2, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_seconda:
+                    addToListaNoDup(1, 3, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_terza:
+                    addToListaNoDup(1, 4, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_fine:
+                    addToListaNoDup(1, 5, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_iniziale:
+                    addToListaNoDup(2, 1, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_pace:
+                    addToListaNoDup(2, 2, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_pane:
+                    addToListaDup(2, 3, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_vino:
+                    addToListaDup(2, 4, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_fine:
+                    addToListaNoDup(2, 5, titoloDaAgg);
+                    return true;
+                default:
+                    idListaClick = item.getGroupId();
+                    idPosizioneClick = item.getItemId();
+                    if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
+                        idListaClick -= 100;
+                        if (listePers[idListaClick]
+                                .getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
+                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                            String query = "SELECT color, pagina" +
+                                    "		FROM ELENCO" +
+                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+                            Cursor cursor = db.rawQuery(query, null);
+
+                            cursor.moveToFirst();
+
+                            listePers[idListaClick].addCanto(Utility.intToString(
+                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+
+                            ContentValues  values = new  ContentValues( );
+                            values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.close();
+
+                            Toast.makeText(getActivity()
+                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
+                                    .equalsIgnoreCase(titoloDaAgg)) {
+                                Toast toast = Toast.makeText(getActivity()
+                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                            else {
+                                blockOrientation();
+                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+                                        .setMessage(getString(R.string.dialog_present_yet) + " "
+                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+                                                .substring(10)
+                                                + getString(R.string.dialog_wonna_replace))
+                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPERS_OK))
+                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                                        .show();
+                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                                    @Override
+                                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                                         KeyEvent event) {
+                                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                                && event.getAction() == KeyEvent.ACTION_UP) {
+                                            arg0.dismiss();
+                                            getActivity().setRequestedOrientation(prevOrientation);
+                                            return true;
+                                        }
+                                        return false;
+                                    }
+                                });
+                                dialog.setCancelable(false);
+                            }
+                        }
+                        return true;
+                    }
+                    else
+                        return super.onContextItemSelected(item);
+            }
+        }
+        else
+            return false;
     }
    
     //aggiunge il canto premuto ai preferiti
@@ -526,26 +491,6 @@ public class ArgumentsSectionFragment extends Fragment {
 				idListaDaAgg = idLista;
 				posizioneDaAgg = listPosition;
 	    		blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setListener(ArgumentsSectionFragment.this);
-//				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " +  titoloPresente
-//						+ getString(R.string.dialog_wonna_replace));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//	            dialog.show(getChildFragmentManager(), LISTA_PREDEFINITA_TAG);
-//	            dialog.setCancelable(false);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -638,51 +583,7 @@ public class ArgumentsSectionFragment extends Fragment {
 			}
         }
     }
-    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//    	SQLiteDatabase db = listaCanti.getReadableDatabase();
-//    	String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);	
-//    	
-//    	if (dialog.getTag().equals(LISTA_PREDEFINITA_TAG)) {
-//        	String sql = "UPDATE CUST_LISTS "
-//        			+ "SET id_canto = (SELECT _id  FROM ELENCO"
-//        			+ " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//        			+ "WHERE _id = " + idListaDaAgg 
-//        			+ "  AND position = " + posizioneDaAgg;
-//        	db.execSQL(sql);      	
-//        	
-//    	}
-//    	else if (dialog.getTag().equals(LISTA_PERSONALIZZATA_TAG)){    		
-//	        String query = "SELECT color, pagina" +
-//    				"		FROM ELENCO" +
-//    				"		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//    		Cursor cursor = db.rawQuery(query, null);
-//			
-//    		cursor.moveToFirst();
-//    							    		
-//    		listePers[idListaClick].addCanto(Utility.intToString(
-//    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-//						    				
-//	    	ContentValues  values = new  ContentValues( );
-//	    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//	    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-//    	}
-//    	db.close();
-//        dialog.dismiss();
-//        getActivity().setRequestedOrientation(prevOrientation);
-//        
-//		Toast.makeText(getActivity()
-//				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's negative button
-//        dialog.dismiss();
-//        getActivity().setRequestedOrientation(prevOrientation);
-//    }
-    
+
     public void blockOrientation() {
         prevOrientation = getActivity().getRequestedOrientation();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {

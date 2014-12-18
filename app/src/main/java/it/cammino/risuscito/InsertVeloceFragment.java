@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,10 +35,7 @@ public class InsertVeloceFragment extends Fragment {
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
-		
-	//constructor
-	public InsertVeloceFragment() {}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -214,8 +212,6 @@ public class InsertVeloceFragment extends Fragment {
 	    });
 		
 	    ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-//		pulisci.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button pulisci = (Button) rootView.findViewById(R.id.button_pulisci);
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -230,11 +226,6 @@ public class InsertVeloceFragment extends Fragment {
 		return rootView;
 	}
 	
-//    @Override
-//    public void onResume() {
-//    	super.onResume();
-//    }
-    
 	@Override
 	public void onDestroy() {
 		if (listaCanti != null)
@@ -265,7 +256,7 @@ public class InsertVeloceFragment extends Fragment {
     		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);

@@ -1,22 +1,15 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.transition.ChangeTransform;
-import android.transition.Explode;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -59,9 +52,6 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
         mLUtils.goFullscreen();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pagina_render_fullscreen);
-        
-        // setta il colore della barra di stato, solo su KITKAT
-//        Utility.setupTransparentTints(PaginaRenderFullScreen.this);
         
         listaCanti = new DatabaseCanti(this);
 

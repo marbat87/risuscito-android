@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import java.util.Locale;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -32,14 +30,13 @@ import com.alertdialogpro.AlertDialogPro;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
 import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import java.util.Locale;
+
 public class ListaPersonalizzataFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
-	
+
 	private int posizioneDaCanc;
 	private View rootView;
 	private ShareActionProvider mShareActionProvider;
@@ -48,15 +45,9 @@ public class ListaPersonalizzataFragment extends Fragment {
 	private int fragmentIndex;
 	private int idLista;
 	private ListaPersonalizzata listaPersonalizzata;
-	private int cantoIndex;
 	private int prevOrientation;
 	
 	private LUtils mLUtils;
-	
-	Snackbar snackbar;
-	
-//	private final String RESET_LIST_TAG = "1";
-//	private final String RIMUOVI_CANTO_TAG = "2";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,29 +60,10 @@ public class ListaPersonalizzataFragment extends Fragment {
 		
 		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_personalizzata);
 		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
-//		fab.setBackgroundColor(getResources().getColor(R.color.theme_accent));
-		fab.setOnClickListener(new OnClickListener() {	
+		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.reset_list_question));
-//				dialog.setListener(ListaPersonalizzataFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//		                }
-//		                return true;
-//		            }
-//		        });
-//				dialog.show(getChildFragmentManager(), RESET_LIST_TAG);
-//				dialog.setCancelable(false);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
 	        			.setMessage(R.string.reset_list_question)
@@ -144,10 +116,6 @@ public class ListaPersonalizzataFragment extends Fragment {
 			deserializeObject(cursor.getBlob(0));
 		
 		updateLista();
-//		ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-//		if (mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
-//			//aggiorna lo share intent usato per condividere la lista
-//			mShareActionProvider.setShareIntent(getDefaultIntent());
     }
     
 	@Override
@@ -205,9 +173,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 	    
     	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, v, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
     }
     
     private void updateLista() {
@@ -219,8 +185,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 		LinearLayout linLayout = (LinearLayout) rootView.findViewById(R.id.listaScroll);
 		linLayout.removeAllViews();
 
-		for (cantoIndex = 0; cantoIndex < listaPersonalizzata.getNumPosizioni(); cantoIndex++) {
-//			View view = getActivity().getLayoutInflater().inflate(R.layout.oggetto_lista_generico, null, false);
+		for (int cantoIndex = 0; cantoIndex < listaPersonalizzata.getNumPosizioni(); cantoIndex++) {
 			View view = getActivity().getLayoutInflater().inflate(R.layout.oggetto_lista_generico, linLayout, false);
 			
 	   		((TextView) view.findViewById(R.id.titoloPosizioneGenerica))
@@ -246,7 +211,6 @@ public class ListaPersonalizzataFragment extends Fragment {
 					    bundle.putInt("position", (Integer.valueOf(
 					    		((TextView) v.findViewById(R.id.id_posizione))
 					    		.getText().toString())));
-//					    startSubActivity(bundle);
 				    	Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
 				    	intent.putExtras(bundle);
 				    	startActivity(intent);
@@ -262,7 +226,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 				temp.setVisibility(View.VISIBLE);
 				
 				temp.setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
-				((View) view.findViewById(R.id.cantoGenericoContainer))
+				(view.findViewById(R.id.cantoGenericoContainer))
 				.setBackgroundColor(Color.parseColor(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10)));
 		   		((TextView) view.findViewById(R.id.id_da_canc))
 	   			.setText(String.valueOf(cantoIndex));
@@ -278,29 +242,10 @@ public class ListaPersonalizzataFragment extends Fragment {
 		   		view.findViewById(R.id.cantoGenerico).setOnLongClickListener(new OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View view) {
-//						blockOrientation();
 						posizioneDaCanc = Integer.valueOf(
 					    		((TextView) ((LinearLayout)view.getParent()).findViewById(R.id.id_da_canc))
 					    		.getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
-//						GenericDialogFragment dialog = new GenericDialogFragment();
-//						dialog.setCustomMessage(getString(R.string.list_remove));
-//						dialog.setListener(ListaPersonalizzataFragment.this);
-//						dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//				            @Override
-//				            public boolean onKey(DialogInterface arg0, int keyCode,
-//				                    KeyEvent event) {
-//				                if (keyCode == KeyEvent.KEYCODE_BACK
-//				                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//				                    arg0.dismiss();
-//									getActivity().setRequestedOrientation(prevOrientation);
-//				                }
-//				                return true;
-//				            }
-//				        });
-//		                dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//		                dialog.setCancelable(false);
 						snackBarRimuoviCanto();
 						return true;
 					}
@@ -369,36 +314,6 @@ public class ListaPersonalizzataFragment extends Fragment {
         }
     }
     
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//    	db = listaCanti.getReadableDatabase();
-//    	ContentValues  values = new  ContentValues( );
-//    	
-//    	if (dialog.getTag().equals(RIMUOVI_CANTO_TAG)) { 	    	
-//    		listaPersonalizzata.removeCanto(posizioneDaCanc);		
-//			
-//    	}
-//    	else if (dialog.getTag().equals(RESET_LIST_TAG)) {    		
-//    		for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-//    			listaPersonalizzata.removeCanto(i);
-//    	}
-//			
-//    	values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//    	db.update("LISTE_PERS", values, "_id = " + idLista, null );
-//		db.close();
-//		updateLista();
-//		//aggiorna lo share intent usato per condividere la lista
-//		mShareActionProvider.setShareIntent(getDefaultIntent());
-//		getActivity().setRequestedOrientation(prevOrientation);
-//		
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        dialog.dismiss();
-//        getActivity().setRequestedOrientation(prevOrientation);
-//    }
-    
     public void blockOrientation() {
         prevOrientation = getActivity().getRequestedOrientation();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -411,48 +326,25 @@ public class ListaPersonalizzataFragment extends Fragment {
     }
     
     public void snackBarRimuoviCanto() {
-//    	SnackBar snackbar = 
-//    	new SnackBar(getActivity(),
-//    			getString(R.string.list_remove),
-//    			getString(R.string.snackbar_remove),
-//			new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				db = listaCanti.getReadableDatabase();
-//		    	ContentValues  values = new  ContentValues( );
-//				listaPersonalizzata.removeCanto(posizioneDaCanc);
-//				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//		    	db.update("LISTE_PERS", values, "_id = " + idLista, null );
-//				db.close();
-//				updateLista();
-//				mShareActionProvider.setShareIntent(getDefaultIntent());
-//			}
-//		});
-////    	snackbar.setColorButton(getResources().getColor(R.color.theme_accent));
-//    	snackbar.setColorButton(getResources().getColor(android.R.color.transparent));
-//    	snackbar.show();
-    	if (snackbar != null) {
-			snackbar.dismiss();
-        }
-		snackbar = Snackbar.with(getActivity())
-                .text(getString(R.string.list_remove))
-                .actionLabel(getString(R.string.snackbar_remove))
-                .actionListener(new ActionClickListener() {
-                    @Override
-                    public void onActionClicked(Snackbar snackbar) {
-                    	db = listaCanti.getReadableDatabase();
-        		    	ContentValues  values = new  ContentValues( );
-        				listaPersonalizzata.removeCanto(posizioneDaCanc);
-        				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-        		    	db.update("LISTE_PERS", values, "_id = " + idLista, null );
-        				db.close();
-        				updateLista();
-        				mShareActionProvider.setShareIntent(getDefaultIntent());
-                    }
-                })
-                .actionColor(getResources().getColor(R.color.theme_accent));
-		snackbar.show(getActivity());
+        SnackbarManager.show(
+                Snackbar.with(getActivity())
+                        .text(getString(R.string.list_remove))
+                        .actionLabel(getString(R.string.snackbar_remove))
+                        .actionListener(new ActionClickListener() {
+                            @Override
+                            public void onActionClicked(Snackbar snackbar) {
+                                db = listaCanti.getReadableDatabase();
+                                ContentValues  values = new  ContentValues( );
+                                listaPersonalizzata.removeCanto(posizioneDaCanc);
+                                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+                                db.update("LISTE_PERS", values, "_id = " + idLista, null );
+                                db.close();
+                                updateLista();
+                                mShareActionProvider.setShareIntent(getDefaultIntent());
+                            }
+                        })
+                        .actionColor(getResources().getColor(R.color.theme_accent))
+                , getActivity());
     }
     
 }
