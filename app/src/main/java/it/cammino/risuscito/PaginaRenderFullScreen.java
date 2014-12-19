@@ -75,7 +75,7 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 saveZoom();
-                finish();
+//                finish();
                 mLUtils.closeActivityWithFadeOut();
             }
         });
@@ -85,7 +85,7 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+//            finish();
             mLUtils.closeActivityWithFadeOut();
             return true;
         }

@@ -72,13 +72,20 @@ public class LUtils {
 
     public void closeActivityWithTransition() {
         if (hasL())
-            mActivity.overridePendingTransition(0, R.anim.image_fade_out);
-        else
+            mActivity.finishAfterTransition();
+        else {
+            mActivity.finish();
             mActivity.overridePendingTransition(0, R.anim.slide_out_right);
+        }
     }
 
     public void closeActivityWithFadeOut() {
-        mActivity.overridePendingTransition(0, R.anim.image_fade_out);
+        if (hasL())
+            mActivity.finishAfterTransition();
+        else {
+            mActivity.finish();
+            mActivity.overridePendingTransition(0, R.anim.image_fade_out);
+        }
     }
 
     public void goFullscreen() {

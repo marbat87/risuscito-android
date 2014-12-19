@@ -861,7 +861,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         || (notaCambio.equals(notaSalvata)
                         && barreCambio.equals(barreSalvato))) {
                     pulisciVars();
-                    finish();
+//                    finish();
                     mLUtils.closeActivityWithTransition();
                     return true;
                 }
@@ -1009,7 +1009,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     || (notaCambio.equals(notaSalvata)
                     && barreCambio.equals(barreSalvato))) {
                 pulisciVars();
-                finish();
+//                finish();
                 mLUtils.closeActivityWithTransition();
                 return true;
             }
@@ -1521,7 +1521,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     break;
                 case Utility.DISMISS_EXIT:
                     pulisciVars();
-                    finish();
+//                    finish();
                     mLUtils.closeActivityWithTransition();
                     break;
                 case Utility.DOWNLOAD_CANCEL:
@@ -1654,7 +1654,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     db.execSQL(sql);
                     db.close();
                     pulisciVars();
-                    finish();
+//                    finish();
                     mLUtils.closeActivityWithTransition();
                     break;
                 default:
