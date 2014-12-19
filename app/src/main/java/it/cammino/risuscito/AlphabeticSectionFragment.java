@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -310,7 +308,8 @@ public class AlphabeticSectionFragment extends Fragment {
                                 toast.show();
                             }
                             else {
-                                blockOrientation();
+                                prevOrientation = getActivity().getRequestedOrientation();
+                                Utility.blockOrientation(getActivity());
                                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
                                         .setMessage(getString(R.string.dialog_present_yet) + " "
@@ -424,8 +423,9 @@ public class AlphabeticSectionFragment extends Fragment {
 			else {
 				idListaDaAgg = idLista;
 				posizioneDaAgg = listPosition;
-				
-	    		blockOrientation();
+
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -516,17 +516,6 @@ public class AlphabeticSectionFragment extends Fragment {
 				getActivity().setRequestedOrientation(prevOrientation);
 				break;
 			}
-        }
-    }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         }
     }
     

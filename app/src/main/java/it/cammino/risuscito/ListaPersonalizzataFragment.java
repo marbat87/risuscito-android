@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -63,7 +61,8 @@ public class ListaPersonalizzataFragment extends Fragment {
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				blockOrientation();
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
 	        			.setMessage(R.string.reset_list_question)
@@ -313,18 +312,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 			}
         }
     }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-    
+
     public void snackBarRimuoviCanto() {
         SnackbarManager.show(
                 Snackbar.with(getActivity())

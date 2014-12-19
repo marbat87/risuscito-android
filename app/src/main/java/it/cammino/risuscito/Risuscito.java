@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -90,7 +88,8 @@ public class Risuscito extends Fragment {
 //        Log.i("Changelog", "appVersion: " + thisVersion);
         
         if (!thisVersion.equals(lastVersion)) {
-        	blockOrientation();
+        	prevOrientation = getActivity().getRequestedOrientation();
+            Utility.blockOrientation(getActivity());
         	AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
         	AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
         			.setView(new ChangeLogListView(getActivity()))
@@ -202,20 +201,10 @@ public class Risuscito extends Fragment {
 	        }
         }
     }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-    
+
    	private void showHelp() {
-   		blockOrientation();
+        prevOrientation = getActivity().getRequestedOrientation();
+        Utility.blockOrientation(getActivity());
 		
 		//nuovo menu
    		ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(

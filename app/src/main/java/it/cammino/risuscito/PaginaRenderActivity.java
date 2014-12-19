@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -471,7 +470,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                    blockOrientation();
+                    prevOrientation = getRequestedOrientation();
+                    Utility.blockOrientation(PaginaRenderActivity.this);
                     AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                     AlertDialogPro dialog = builder.setTitle(R.string.download_link_title)
                             .setMessage(R.string.downlink_message)
@@ -501,7 +501,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     if (personalUrl.equalsIgnoreCase("")) {
-                        blockOrientation();
+                        prevOrientation = getRequestedOrientation();
+                        Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                         AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_mp3_title)
                                 .setMessage(R.string.dialog_delete_mp3)
@@ -524,7 +525,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         dialog.setCancelable(false);
                     }
                     else {
-                        blockOrientation();
+                        prevOrientation = getRequestedOrientation();
+                        Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                         AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
                                 .setMessage(R.string.dialog_delete_link)
@@ -589,7 +591,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                    blockOrientation();
+                    prevOrientation = getRequestedOrientation();
+                    Utility.blockOrientation(PaginaRenderActivity.this);
                     AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                     AlertDialogPro dialog = builder.setTitle(R.string.only_link_title)
                             .setMessage(R.string.only_link)
@@ -617,7 +620,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                    blockOrientation();
+                    prevOrientation = getRequestedOrientation();
+                    Utility.blockOrientation(PaginaRenderActivity.this);
                     AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                     AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
                             .setMessage(R.string.dialog_delete_link)
@@ -786,7 +790,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 } else {
                     editor.apply();
                 }
-                blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(PaginaRenderActivity.this);
                 showScrollHelp();
             }
         }
@@ -861,7 +866,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     return true;
                 }
                 else {
-                    blockOrientation();
+                    prevOrientation = getRequestedOrientation();
+                    Utility.blockOrientation(PaginaRenderActivity.this);
                     AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                     AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
                             .setMessage(R.string.dialog_save_tab)
@@ -1008,7 +1014,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 return true;
             }
             else {
-                blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(PaginaRenderActivity.this);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
                         .setMessage(R.string.dialog_save_tab)
@@ -1313,7 +1320,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
     }
 
     private void cmdPrepare(){
-        blockOrientation();
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(PaginaRenderActivity.this);
         mp3Dialog.show();
         mediaPlayer.setOnPreparedListener(mediaPlayerOnPreparedListener);
         mediaPlayer.setOnCompletionListener(mediaPlayerOnCompletedListener);
@@ -1681,17 +1689,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
         db.close();
     }
 
-    protected void blockOrientation() {
-        prevOrientation = getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -1818,7 +1815,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
     }
 
     private void showHelp() {
-        blockOrientation();
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(PaginaRenderActivity.this);
         ShowcaseView showCase = ShowcaseView.insertShowcaseView(
                 new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
                 , PaginaRenderActivity.this
@@ -2289,7 +2287,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            blockOrientation();
+            prevOrientation = getRequestedOrientation();
+            Utility.blockOrientation(PaginaRenderActivity.this);
             exportDialog.show();
         }
 

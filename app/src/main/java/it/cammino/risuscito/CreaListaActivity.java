@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,10 +37,10 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.dslv.DragSortListView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
+import it.cammino.utilities.showcaseview.ShowcaseView;
+import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
 @SuppressLint("NewApi") @SuppressWarnings("deprecation")
 public class CreaListaActivity extends ActionBarActivity {
@@ -162,7 +161,8 @@ public class CreaListaActivity extends ActionBarActivity {
         
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				positionToRename = position;
 		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialog = builder.setTitle(R.string.posizione_rename)
@@ -208,7 +208,8 @@ public class CreaListaActivity extends ActionBarActivity {
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
@@ -302,7 +303,8 @@ public class CreaListaActivity extends ActionBarActivity {
 			return true;
 		case android.R.id.home:
 			if (nomiElementi.size() > 0) {
-				blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -339,7 +341,8 @@ public class CreaListaActivity extends ActionBarActivity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (nomiElementi.size() > 0) {
-				blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -577,17 +580,6 @@ public class CreaListaActivity extends ActionBarActivity {
         }
     }
     
-    public void blockOrientation() {
-        prevOrientation = getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-    
    	private void showHelp() {
    		if (nomiElementi.size() == 0) {
    			findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
@@ -598,7 +590,8 @@ public class CreaListaActivity extends ActionBarActivity {
    		else {
    			fakeItemCreated = false;
    		}
-   		blockOrientation();
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(CreaListaActivity.this);
 	 	lps = new RelativeLayout.LayoutParams(
 	 			ViewGroup.LayoutParams.WRAP_CONTENT,
 	 			ViewGroup.LayoutParams.WRAP_CONTENT);

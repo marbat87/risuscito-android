@@ -3,8 +3,6 @@ package it.cammino.risuscito;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -101,7 +99,8 @@ public class CustomLists extends Fragment  {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_add_list:
-			blockOrientation();
+            prevOrientation = getActivity().getRequestedOrientation();
+            Utility.blockOrientation(getActivity());
 	        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
         	dialog = builder.setTitle(R.string.lista_add_desc)
         			.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_customview, null))
@@ -288,15 +287,4 @@ public class CustomLists extends Fragment  {
         }
     }
 
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-	
 }
