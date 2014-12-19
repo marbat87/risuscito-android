@@ -69,6 +69,7 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
         getSavedZoom();
         
 		pageView = (WebView) findViewById(R.id.cantoView);
+        ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
         findViewById(R.id.fab_fullscreen_off).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,8 +80,6 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
             }
         });
 
-        ViewCompat.setTransitionName(findViewById(R.id.fullscreen_view), Utility.TAG_TRANSIZIONE);
-        
     }
 
     @Override

@@ -29,13 +29,8 @@ import android.view.WindowManager;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
-//    private static final int[] STATE_CHECKED = new int[]{android.R.attr.state_checked};
-//    private static final int[] STATE_UNCHECKED = new int[]{};
-//
-//    private static Typeface sMediumTypeface;
 
     protected Activity mActivity;
-//    private Handler mHandler = new Handler();
 
     private LUtils(Activity activity) {
         mActivity = activity;
