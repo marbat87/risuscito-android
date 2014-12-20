@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,9 +11,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.TintEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -192,6 +196,19 @@ public class InsertVeloceFragment extends Fragment {
 			public void afterTextChanged(Editable s) { }
 			
 		});
+
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
 		
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 

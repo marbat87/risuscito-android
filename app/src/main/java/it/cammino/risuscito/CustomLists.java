@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -23,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.nispok.snackbar.Snackbar;
@@ -41,7 +43,7 @@ public class CustomLists extends Fragment  {
 	private int prevOrientation;
 	private ViewPager mViewPager;
 	SlidingTabLayout mSlidingTabLayout = null;
-	
+
 	private AlertDialogPro dialog;
     private TintEditText titleInput;
     
@@ -51,7 +53,7 @@ public class CustomLists extends Fragment  {
 		
 		View rootView = inflater.inflate(R.layout.activity_custom_lists, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
-		
+
 		//crea un istanza dell'oggetto DatabaseCanti
 		listaCanti = new DatabaseCanti(getActivity());
 		
@@ -94,84 +96,87 @@ public class CustomLists extends Fragment  {
 		getActivity().getMenuInflater().inflate(R.menu.custom_list, menu);
 	    super.onCreateOptionsMenu(menu, inflater);
 	}
-    
+
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_add_list:
-            prevOrientation = getActivity().getRequestedOrientation();
-            Utility.blockOrientation(getActivity());
-	        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-        	dialog = builder.setTitle(R.string.lista_add_desc)
-        			.setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_customview, null))
-                    .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
-                    .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-                    .show();
-        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-		        @Override
-		        public boolean onKey(DialogInterface arg0, int keyCode,
-		        		KeyEvent event) {
-		        	if (keyCode == KeyEvent.KEYCODE_BACK
-		        			&& event.getAction() == KeyEvent.ACTION_UP) {
-		        		arg0.dismiss();
-		        		getActivity().setRequestedOrientation(prevOrientation);
-		        		return true;
-		            }
-		            return false;
-		        }
-	        });
-        	dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-        	titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
-        	titleInput.addTextChangedListener(new TextWatcher() {
-		        @Override
-		        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-		
-		        @Override
-		        public void onTextChanged(CharSequence s, int start, int before, int count) {
-		        	dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
-		        }
-		
-		        @Override
-		        public void afterTextChanged(Editable s) {}
-		    });
-        	dialog.setCancelable(false);
-			return true;
-		case R.id.action_edit_list:
-			Bundle bundle = new Bundle();
-			bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
-			bundle.putBoolean("modifica", true);
-			startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-			getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-			return true;
-		case R.id.action_remove_list:
-			listaDaCanc = mViewPager.getCurrentItem() - 2;
-            SnackbarManager.show(
-                    Snackbar.with(getActivity())
-                            .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
-                            .actionLabel(getString(R.string.snackbar_remove))
-                            .actionListener(new ActionClickListener() {
-                                @Override
-                                public void onActionClicked(Snackbar snackbar) {
-                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_list:
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
+                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+                dialog = builder.setTitle(R.string.lista_add_desc)
+                        .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_customview, null))
+                        .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
+                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
+                titleInput.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                });
+                dialog.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                return true;
+            case R.id.action_edit_list:
+                Bundle bundle = new Bundle();
+                bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
+                bundle.putBoolean("modifica", true);
+                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+                return true;
+            case R.id.action_remove_list:
+                listaDaCanc = mViewPager.getCurrentItem() - 2;
+                SnackbarManager.show(
+                        Snackbar.with(getActivity())
+                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
+                                .actionLabel(getString(R.string.snackbar_remove))
+                                .actionListener(new ActionClickListener() {
+                                    @Override
+                                    public void onActionClicked(Snackbar snackbar) {
+                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
 
 //					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
 
-                                    String sql = "DELETE FROM LISTE_PERS"
-                                            + " WHERE _id = " + idListe[listaDaCanc];
-                                    db.execSQL(sql);
-                                    db.close();
+                                        String sql = "DELETE FROM LISTE_PERS"
+                                                + " WHERE _id = " + idListe[listaDaCanc];
+                                        db.execSQL(sql);
+                                        db.close();
 
-                                    updateLista();
-                                    mSectionsPagerAdapter.notifyDataSetChanged();
-                                    mSlidingTabLayout.setViewPager(mViewPager);
-                                }
-                            })
-                            .actionColor(getResources().getColor(R.color.theme_accent))
-                    , getActivity());
-			return true;
-		}
-		return false;
-	}
+                                        updateLista();
+                                        mSectionsPagerAdapter.notifyDataSetChanged();
+                                        mSlidingTabLayout.setViewPager(mViewPager);
+                                    }
+                                })
+                                .actionColor(getResources().getColor(R.color.theme_accent))
+                        , getActivity());
+                return true;
+        }
+        return false;
+    }
 
     private void updateLista() {
 		
@@ -258,32 +263,38 @@ public class CustomLists extends Fragment  {
 	        return PagerAdapter.POSITION_NONE;
 	    }
 	}
-	
+
     private class ButtonClickedListener implements DialogInterface.OnClickListener {
         private int clickedCode;
 
         public ButtonClickedListener(int code) {
-        	clickedCode = code;
+            clickedCode = code;
         }
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (clickedCode) {
-			case Utility.DISMISS:
-				getActivity().setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.ADD_LIST_OK:
-				getActivity().setRequestedOrientation(prevOrientation);
-        		Bundle bundle = new Bundle();
-        		bundle.putString("titolo", titleInput.getText().toString());
-        		bundle.putBoolean("modifica", false);
-        		startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-        		getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-				break;
-			default:
-				getActivity().setRequestedOrientation(prevOrientation);
-				break;
-			}
+                case Utility.DISMISS:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
+                    getActivity().setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.ADD_LIST_OK:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
+                    getActivity().setRequestedOrientation(prevOrientation);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("titolo", titleInput.getText().toString());
+                    bundle.putBoolean("modifica", false);
+                    startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                    getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+                    break;
+                default:
+                    getActivity().setRequestedOrientation(prevOrientation);
+                    break;
+            }
         }
     }
 

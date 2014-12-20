@@ -60,6 +60,8 @@ public class Utility {
 	public static final int DELETE_ONLY_LINK_OK = 29;
 	public static final int SAVE_TAB_OK = 30;
 	public static final int DISMISS_EXIT = 31;
+    public static final int DISMISS_RENAME = 32;
+    public static final int DISMISS_ADD = 33;
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     public static final String URL_CANTO = "urlCanto";

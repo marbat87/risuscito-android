@@ -50,6 +50,7 @@
             android:textSize="30sp"
             android:textColor="@android:color/white"
             android:textCursorDrawable="@null"
+            android:imeOptions="actionDone"
             android:hint="@string/list_title_modif" />
 
     </RelativeLayout>

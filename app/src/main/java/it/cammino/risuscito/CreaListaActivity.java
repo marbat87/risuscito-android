@@ -1,8 +1,8 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -26,10 +26,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
@@ -42,7 +45,6 @@ import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
-@SuppressLint("NewApi") @SuppressWarnings("deprecation")
 public class CreaListaActivity extends ActionBarActivity {
 
 	private ListaPersonalizzata celebrazione;
@@ -74,7 +76,8 @@ public class CreaListaActivity extends ActionBarActivity {
 	
     private TintEditText titleInputRename, titleInputAdd;
 
-	@Override
+	@SuppressWarnings("deprecation")
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_crea_lista);
@@ -168,7 +171,7 @@ public class CreaListaActivity extends ActionBarActivity {
 	        	dialog = builder.setTitle(R.string.posizione_rename)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
 	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS))
+	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
 	                    .show();
 	        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
@@ -199,10 +202,27 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void afterTextChanged(Editable s) {}
 			    });
 	        	dialog.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		        return true;
 			}
-		});	
-        
+		});
+
+        TintEditText titleText = (TintEditText) findViewById(R.id.textfieldTitle);
+        titleText.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(findViewById(R.id.textfieldTitle).getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
 		fab.attachToListView(lv);
 		fab.setOnClickListener(new OnClickListener() {
@@ -214,7 +234,7 @@ public class CreaListaActivity extends ActionBarActivity {
 	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
 	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS))
+	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
 	                    .show();
 	        	dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
@@ -244,6 +264,9 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void afterTextChanged(Editable s) {}
 			    });
 	        	dialogAdd.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			}
 		});
 		
@@ -517,38 +540,56 @@ public class CreaListaActivity extends ActionBarActivity {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (clickedCode) {
-			case Utility.DISMISS:
-				setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.RENAME_CONFERMA:
-				nomiElementi.set(positionToRename, titleInputRename.getText().toString());
-	            adapter.notifyDataSetChanged();
-	            setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.AGGIUNGI_CONFERMA:
-				findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-	    		nomiElementi.add(titleInputAdd.getText().toString());
-	    		if (modifica)
-	    			nomiCanti.add("");
-	            adapter.notifyDataSetChanged();
-	            setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.SAVE_LIST_OK:
-				setRequestedOrientation(prevOrientation);
-            	if (saveList()) {
-            		finish();
-            		overridePendingTransition(0, R.anim.slide_out_bottom);
-            	}
-				break;
-			case Utility.SAVE_LIST_KO:
-				setRequestedOrientation(prevOrientation);
-        		finish();
-        		overridePendingTransition(0, R.anim.slide_out_bottom);
-				break;
-			default:
-				setRequestedOrientation(prevOrientation);
-				break;
-			}
+                case Utility.DISMISS:
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.DISMISS_RENAME:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.DISMISS_ADD:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.RENAME_CONFERMA:
+                    nomiElementi.set(positionToRename, titleInputRename.getText().toString());
+                    adapter.notifyDataSetChanged();
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.AGGIUNGI_CONFERMA:
+                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+                    nomiElementi.add(titleInputAdd.getText().toString());
+                    if (modifica)
+                        nomiCanti.add("");
+                    adapter.notifyDataSetChanged();
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.SAVE_LIST_OK:
+                    setRequestedOrientation(prevOrientation);
+                    if (saveList()) {
+                        finish();
+                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                    }
+                    break;
+                case Utility.SAVE_LIST_KO:
+                    setRequestedOrientation(prevOrientation);
+                    finish();
+                    overridePendingTransition(0, R.anim.slide_out_bottom);
+                    break;
+                default:
+                    setRequestedOrientation(prevOrientation);
+                    break;
+            }
         }
     }
     

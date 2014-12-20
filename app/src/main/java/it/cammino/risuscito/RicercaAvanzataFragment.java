@@ -2,6 +2,7 @@ package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,6 +26,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -124,24 +127,39 @@ public class RicercaAvanzataFragment extends Fragment {
 			public void afterTextChanged(Editable s) { }
 			
 		});
+
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
 		
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				String tempText = searchPar.getText().toString();
-				if (!tempText.equals(s.toString()))
-					searchPar.setText(s);
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                String tempText = searchPar.getText().toString();
+                if (!tempText.equals(s.toString()))
+                    searchPar.setText(s);
+            }
 
-			@Override
-			public void afterTextChanged(Editable s) { }
-			
-	    });
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+        });
 		
 		ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
 		pulisci.setOnClickListener(new View.OnClickListener() {
