@@ -8,6 +8,7 @@
         <changelogtext>Corretti alcuni testi e titoli</changelogtext>
         <changelogtext>Aggiunto il nuovo canto "Il Messia leone per vincere"</changelogtext>
         <changelogtext>Nuova modalità tutto schermo per i canti</changelogtext>
+        <changelogtext>Corretto grave bug nei risultati della ricerca avanzata</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="2.7.1" changeDate="11 Novembre 2014">
