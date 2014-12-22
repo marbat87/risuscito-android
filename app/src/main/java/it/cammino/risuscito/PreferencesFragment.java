@@ -14,14 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.alertdialogpro.AlertDialogPro;
 
 public class PreferencesFragment extends Fragment {
 	
 	private int prevOrientation;
-	private SwitchCompat screenSwitch;
-	private SwitchCompat secondaSwitch;
+	private SwitchCompat screenSwitch, secondaSwitch, paceSwitch;
 	private int saveEntries;
 	
 	private int checkedItem;
@@ -34,85 +34,117 @@ public class PreferencesFragment extends Fragment {
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
 		
 		screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
-		
-		View screenSwitchView = rootView.findViewById(R.id.screen_on_layout);
-		screenSwitchView.setOnClickListener(new OnClickListener() {
-			
-			@SuppressLint("NewApi")
-			@Override
-			public void onClick(View v) {
-				
-				SharedPreferences.Editor editor = PreferenceManager
-	                    .getDefaultSharedPreferences(getActivity())
-	                    .edit();
-				
-				if (screenSwitch.isChecked()) {
-					screenSwitch.setChecked(false);
-		            editor.putBoolean(Utility.SCREEN_ON, false);
 
-				}
-				else {
-					screenSwitch.setChecked(true);
-					editor.putBoolean(Utility.SCREEN_ON, true);
-				}
-				
-	            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-	            	editor.commit();
-	            } else {
-	            	editor.apply();
-	            }
-	            
-	            ((MainActivity) getActivity()).checkScreenAwake();
-			}
-		});
-		
-		// controllo l'attuale impostazione di always on
-		if (PreferenceManager
-				.getDefaultSharedPreferences(getActivity())
-				.getBoolean(Utility.SCREEN_ON, false))
-			screenSwitch.setChecked(true);
-		else
-			screenSwitch.setChecked(false);
-		
+        // controllo l'attuale impostazione di always on
+        if (PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SCREEN_ON, false))
+            screenSwitch.setChecked(true);
+        else
+            screenSwitch.setChecked(false);
+
+        screenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(Utility.SCREEN_ON, isChecked);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                    editor.commit();
+                } else {
+                    editor.apply();
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.screen_on_layout).setOnClickListener(new OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                if (screenSwitch.isChecked())
+                    screenSwitch.setChecked(false);
+                else
+                    screenSwitch.setChecked(true);
+
+                ((MainActivity) getActivity()).checkScreenAwake();
+            }
+        });
+
+
 		secondaSwitch = (SwitchCompat) rootView.findViewById(R.id.show_seconda_eucarestia);
-		
-		View secondaSwitchView = rootView.findViewById(R.id.show_seconda_eucarestia_layout);
-		secondaSwitchView.setOnClickListener(new OnClickListener() {
-			
+
+        // controllo l'attuale impostazione della visualizzazione seconda lettura
+        if (PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SHOW_SECONDA, false))
+            secondaSwitch.setChecked(true);
+        else
+            secondaSwitch.setChecked(false);
+
+        secondaSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(Utility.SHOW_SECONDA, isChecked);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                    editor.commit();
+                } else {
+                    editor.apply();
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.show_seconda_eucarestia_layout).setOnClickListener(new OnClickListener() {
 			@SuppressLint("NewApi")
 			@Override
 			public void onClick(View v) {
-				
-				SharedPreferences.Editor editor = PreferenceManager
-	                    .getDefaultSharedPreferences(getActivity())
-	                    .edit();
-				
-				if (secondaSwitch.isChecked()) {
+				if (secondaSwitch.isChecked())
 					secondaSwitch.setChecked(false);
-		            editor.putBoolean(Utility.SHOW_SECONDA, false);
-
-				}
-				else {
+				else
 					secondaSwitch.setChecked(true);
-					editor.putBoolean(Utility.SHOW_SECONDA, true);
-				}
-				
-	            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-	            	editor.commit();
-	            } else {
-	            	editor.apply();
-	            }
 			}
 		});
-		
-		// controllo l'attuale impostazione della visualizzazione seconda lettura
-		if (PreferenceManager
-				.getDefaultSharedPreferences(getActivity())
-				.getBoolean(Utility.SHOW_SECONDA, false))
-			secondaSwitch.setChecked(true);
-		else
-			secondaSwitch.setChecked(false);
-		
+
+
+        paceSwitch = (SwitchCompat) rootView.findViewById(R.id.show_pace_parola);
+
+        // controllo l'attuale impostazione della visualizzazione canto alla pace
+        if (PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SHOW_PACE, false))
+            paceSwitch.setChecked(true);
+        else
+            paceSwitch.setChecked(false);
+
+        paceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(Utility.SHOW_PACE, isChecked);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                    editor.commit();
+                } else {
+                    editor.apply();
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.show_pace_parola_layout).setOnClickListener(new OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                if (paceSwitch.isChecked())
+                    paceSwitch.setChecked(false);
+                else
+                    paceSwitch.setChecked(true);
+            }
+        });
+
 		View defaultIndexView = rootView.findViewById(R.id.default_index_layout);
 		defaultIndexView.setOnClickListener(new OnClickListener() {
 			
