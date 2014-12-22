@@ -344,7 +344,7 @@ public class CantiParolaFragment extends Fragment {
                 });
 
                 // setta l'azione tenendo premuto sul canto
-                rootView.findViewById(R.id.cantoSeconda).setOnLongClickListener(new OnLongClickListener() {
+                rootView.findViewById(R.id.cantoPace).setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = 6;

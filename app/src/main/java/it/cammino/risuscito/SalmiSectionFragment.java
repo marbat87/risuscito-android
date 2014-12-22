@@ -4,11 +4,13 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -237,6 +239,10 @@ public class SalmiSectionFragment extends Fragment {
         
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.add_to, menu);
+
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+        menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
+        menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
     }
     
     @Override
@@ -258,12 +264,18 @@ public class SalmiSectionFragment extends Fragment {
 	            case R.id.add_to_p_terza:
 	            	addToListaNoDup(1, 4, titoloDaAgg);
 	                return true;
+                case R.id.add_to_p_pace:
+                    addToListaNoDup(1, 6, titoloDaAgg);
+                    return true;
 	            case R.id.add_to_p_fine:
 	            	addToListaNoDup(1, 5, titoloDaAgg);
 	                return true;
 	            case R.id.add_to_e_iniziale:
 	            	addToListaNoDup(2, 1, titoloDaAgg);
 	                return true;
+                case R.id.add_to_e_seconda:
+                    addToListaNoDup(2, 6, titoloDaAgg);
+                    return true;
 	            case R.id.add_to_e_pace:
 	            	addToListaNoDup(2, 2, titoloDaAgg);
 	                return true;

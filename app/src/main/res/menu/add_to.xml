@@ -26,6 +26,11 @@
                 android:title="@string/terza_lettura" />
 
             <item
+                android:id="@+id/add_to_p_pace"
+                android:title="@string/canto_pace"
+                android:visible="false"/>
+
+            <item
                 android:id="@+id/add_to_p_fine"
                 android:title="@string/canto_fine" />
         </menu>
@@ -39,6 +44,11 @@
             <item
                 android:id="@+id/add_to_e_iniziale"
                 android:title="@string/canto_iniziale" />
+
+            <item
+                android:id="@+id/add_to_e_seconda"
+                android:title="@string/seconda_lettura"
+                android:visible="false"/>
 
             <item
                 android:id="@+id/add_to_e_pace"

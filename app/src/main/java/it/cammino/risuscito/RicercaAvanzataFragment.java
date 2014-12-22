@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.TintEditText;
 import android.text.Editable;
@@ -225,116 +227,126 @@ public class RicercaAvanzataFragment extends Fragment {
         
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.add_to, menu);
+
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+        menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
+        menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
     }
-    
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-    	if (getUserVisibleHint()) {
-	        switch (item.getItemId()) {
-	            case R.id.add_to_favorites:
-	                addToFavorites(titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_iniziale:
-	                addToListaNoDup(1, 1, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_prima:
-	            	addToListaNoDup(1, 2, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_seconda:
-	            	addToListaNoDup(1, 3, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_terza:
-	            	addToListaNoDup(1, 4, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_p_fine:
-	            	addToListaNoDup(1, 5, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_iniziale:
-	            	addToListaNoDup(2, 1, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_pace:
-	            	addToListaNoDup(2, 2, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_pane:
-	                addToListaDup(2, 3, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_vino:
-	            	addToListaDup(2, 4, titoloDaAgg);
-	                return true;
-	            case R.id.add_to_e_fine:
-	            	addToListaNoDup(2, 5, titoloDaAgg);
-	                return true;
-	            default:
-	            	idListaClick = item.getGroupId();
-	            	idPosizioneClick = item.getItemId();
-	            	if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
-	            		idListaClick -= 100;
-	            		if (listePers[idListaClick]
-	            				.getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
-		            		String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);		    			    
-		    		        SQLiteDatabase db = listaCanti.getReadableDatabase();
-		            		
-		    		        String query = "SELECT color, pagina" +
-				    				"		FROM ELENCO" +
-				    				"		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-				    		Cursor cursor = db.rawQuery(query, null);
-			    			
-				    		cursor.moveToFirst();
-				    							    		
-				    		listePers[idListaClick].addCanto(Utility.intToString(
-				    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-			    						    				
-		    		    	ContentValues  values = new  ContentValues( );
-		    		    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-		    		    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-		    		    	db.close();
-		    		    	
-		    	    		Toast.makeText(getActivity()
-		    	    				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-	            		}
-		    		    else {
-		    		    	if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-		    		    			.equalsIgnoreCase(titoloDaAgg)) {
-		    		    		Toast toast = Toast.makeText(getActivity()
-		    		    				, getString(R.string.present_yet), Toast.LENGTH_SHORT);
-		    		    		toast.show();
-		    		    	}
-		    		    	else {
+        if (getUserVisibleHint()) {
+            switch (item.getItemId()) {
+                case R.id.add_to_favorites:
+                    addToFavorites(titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_iniziale:
+                    addToListaNoDup(1, 1, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_prima:
+                    addToListaNoDup(1, 2, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_seconda:
+                    addToListaNoDup(1, 3, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_terza:
+                    addToListaNoDup(1, 4, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_pace:
+                    addToListaNoDup(1, 6, titoloDaAgg);
+                    return true;
+                case R.id.add_to_p_fine:
+                    addToListaNoDup(1, 5, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_iniziale:
+                    addToListaNoDup(2, 1, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_seconda:
+                    addToListaNoDup(2, 6, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_pace:
+                    addToListaNoDup(2, 2, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_pane:
+                    addToListaDup(2, 3, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_vino:
+                    addToListaDup(2, 4, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_fine:
+                    addToListaNoDup(2, 5, titoloDaAgg);
+                    return true;
+                default:
+                    idListaClick = item.getGroupId();
+                    idPosizioneClick = item.getItemId();
+                    if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
+                        idListaClick -= 100;
+                        if (listePers[idListaClick]
+                                .getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
+                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                            String query = "SELECT color, pagina" +
+                                    "		FROM ELENCO" +
+                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+                            Cursor cursor = db.rawQuery(query, null);
+
+                            cursor.moveToFirst();
+
+                            listePers[idListaClick].addCanto(Utility.intToString(
+                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+
+                            ContentValues  values = new  ContentValues( );
+                            values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.close();
+
+                            Toast.makeText(getActivity()
+                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
+                                    .equalsIgnoreCase(titoloDaAgg)) {
+                                Toast toast = Toast.makeText(getActivity()
+                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                            else {
                                 prevOrientation = getActivity().getRequestedOrientation();
                                 Utility.blockOrientation(getActivity());
-			                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-			                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-			    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
-					    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-					    						.substring(10)
-					    						+ getString(R.string.dialog_wonna_replace))
-			    	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPERS_OK))
-			    	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-			    	                    .show();
-			                    dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-			    			        @Override
-			    			        public boolean onKey(DialogInterface arg0, int keyCode,
-			    			        		KeyEvent event) {
-			    			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			    			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			    			        		arg0.dismiss();
-			    			        		getActivity().setRequestedOrientation(prevOrientation);
-			    			        		return true;
-			    			            }
-			    			            return false;
-			    			        }
-			    		        });
-			                    dialog.setCancelable(false);
-		    		    	}
-		    		    }	    		
-		    		    return true;
-	            	}
-	            	else
-	            		return super.onContextItemSelected(item);
-	        }
-    	}
-    	else
-    		return false;
+                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+                                        .setMessage(getString(R.string.dialog_present_yet) + " "
+                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+                                                .substring(10)
+                                                + getString(R.string.dialog_wonna_replace))
+                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPERS_OK))
+                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                                        .show();
+                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                                    @Override
+                                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                                         KeyEvent event) {
+                                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                                && event.getAction() == KeyEvent.ACTION_UP) {
+                                            arg0.dismiss();
+                                            getActivity().setRequestedOrientation(prevOrientation);
+                                            return true;
+                                        }
+                                        return false;
+                                    }
+                                });
+                                dialog.setCancelable(false);
+                            }
+                        }
+                        return true;
+                    }
+                    else
+                        return super.onContextItemSelected(item);
+            }
+        }
+        else
+            return false;
     }
    
     //aggiunge il canto premuto ai preferiti

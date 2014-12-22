@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.0.0" changeDate="20 Dicembre 2014">
-        <changelogtext>Il codice è stato completamente rivisto per alleggerire l'applicazione</changelogtext>
-        <changelogtext>Più material design!</changelogtext>
-        <changelogtext>Al momento è presente un solo tema, come quello base del playstore. Verrà valutato in seguito se riaggiungere i temi.</changelogtext>
-        <changelogtext>Corretti alcuni testi e titoli</changelogtext>
-        <changelogtext>Aggiunto il nuovo canto "Il Messia leone per vincere"</changelogtext>
-        <changelogtext>Nuova modalità tutto schermo per i canti</changelogtext>
-        <changelogtext>Corretto grave bug nei risultati della ricerca avanzata</changelogtext>
+    <changelogversion versionName="3.1.0" changeDate="XX Gennaio 2015">
+        <changelogtext>Aggiunto il canto alla pace per la celebrazione della Parola (attivabile dalle impostazioni)</changelogtext>
+        <changelogtext>Corretto un bug nel popolamento dei menù "aggiungi a":
+            ora compaiono anche le posizioni opzionali (canto alla pace per la Parola
+            e seconda lettura per l'Eucraestia)</changelogtext>
+        <changelogtext>Corretto un bug negli switch delle impostazioni</changelogtext>
     </changelogversion>
 
 </changelog>
