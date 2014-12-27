@@ -1,6 +1,8 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,12 +11,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,7 +29,6 @@ import java.util.ArrayList;
 public class MainActivity extends ActionBarActivity {
     
     private DrawerLayout mDrawerLayout;
-    private ViewGroup mDrawerItemsListContainer;
     private Toolbar mActionBarToolbar;
 
     // list of navdrawer items that were actually added to the navdrawer, in order
@@ -69,6 +75,10 @@ public class MainActivity extends ActionBarActivity {
             R.drawable.ic_action_about_dark,
             R.drawable.ic_action_good_dark
     };
+
+    private static final int TALBLET_DP = 600;
+    private static final int WIDTH_320 = 320;
+    private static final int WIDTH_400 = 400;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
         	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
         	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
         }
-        
+
         setupNavDrawer();
         
         if (findViewById(R.id.content_frame) != null) {
@@ -131,8 +141,6 @@ public class MainActivity extends ActionBarActivity {
      * event on-site vs. attending remotely.
      */
     private void setupNavDrawer() {
-        // What nav drawer item should be selected?
-//        int selfItem = getSelfNavDrawerItem();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
         if (mDrawerLayout == null) {
@@ -154,6 +162,22 @@ public class MainActivity extends ActionBarActivity {
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
 
+        int drawerWidth  = calculateDrawerWidth();
+
+        DrawerLayout.LayoutParams lps = new DrawerLayout.LayoutParams(
+                drawerWidth,
+                DrawerLayout.LayoutParams.MATCH_PARENT);
+        lps.gravity = Gravity.START;
+
+        findViewById(R.id.navdrawer).setLayoutParams(lps);
+
+        LinearLayout.LayoutParams lps2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                Math.round(drawerWidth * 9 / 19));
+        lps2.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
+
+        findViewById(R.id.navdrawer_image).setLayoutParams(lps2);
+//
         // populate the nav drawer with the correct items
         populateNavDrawer();
 
@@ -179,7 +203,7 @@ public class MainActivity extends ActionBarActivity {
     }
     
     private void createNavDrawerItems() {
-        mDrawerItemsListContainer = (ViewGroup) findViewById(R.id.navdrawer_items_list);
+        ViewGroup mDrawerItemsListContainer = (ViewGroup) findViewById(R.id.navdrawer_items_list);
         if (mDrawerItemsListContainer == null) {
             return;
         }
@@ -304,7 +328,7 @@ public class MainActivity extends ActionBarActivity {
         	break;
     	}
         
-        //creo il nuovo fragment solo se non � lo stesso che sto gi� visualizzando
+        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
     	Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item));
     	if (myFragment == null || !myFragment.isVisible()) {
     		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -328,7 +352,38 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
-    
+
+    private int calculateDrawerWidth() {
+
+        //Recupero dp di larghezza e altezza dello schermo
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        Log.i(getClass().toString(), "dpHeight:" + dpHeight);
+        Log.i(getClass().toString(), "dpWidth:" + dpWidth);
+
+        //recupero l'altezza dell'actionbar
+        TypedValue value = new TypedValue();
+        getTheme().resolveAttribute(R.attr.actionBarSize, value, true);
+        TypedValue.coerceToString(value.type, value.data);
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float actionBarSize = value.getDimension(displayMetrics) / displayMetrics.density;
+        Log.i(getClass().toString(), "actionBarSize:" + actionBarSize);
+
+        // min(altezza, larghezza) - altezza actionbar
+        float smallestDim = Math.min(dpWidth, dpHeight);
+        Log.i(getClass().toString(), "smallestDim:" + smallestDim);
+        int difference = Math.round((smallestDim - actionBarSize) * displayMetrics.density);
+        Log.i(getClass().toString(), "difference:" + difference);
+
+        int maxWidth = Math.round(WIDTH_320 * displayMetrics.density);
+        if (smallestDim > TALBLET_DP)
+            maxWidth = Math.round(WIDTH_400 * displayMetrics.density);
+        Log.i(getClass().toString(), "maxWidth:" + maxWidth);
+
+        return Math.min(difference, maxWidth);
+    }
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

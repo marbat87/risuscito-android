@@ -26,7 +26,7 @@
         <item name="android:paddingLeft">12dip</item>
         <item name="android:paddingRight">12dip</item>
         <item name="android:minWidth">@dimen/abc_action_button_min_width_material</item>
-        <item name="android:minHeight">@dimen/material_action_bar_size</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">2</item>
     </style>
