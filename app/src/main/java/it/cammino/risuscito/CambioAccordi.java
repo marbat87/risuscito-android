@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -94,7 +92,7 @@ public class CambioAccordi {
 	        
 	        while (line != null && !found) {
 	        	if (line.contains("Barrè") || line.contains("Barr&#232;")) {      		
-	        		Log.i("RIGA", line);
+//	        		Log.i("RIGA", line);
 	        		found = true;
 	        		int start = line.indexOf("al") + 3;
 	        		
@@ -109,7 +107,7 @@ public class CambioAccordi {
 	        	line = br.readLine();
 	        }
 	        br.close();	        
-  	        Log.i("risultato", primoBarre);
+//  	        Log.i("risultato", primoBarre);
 	        return primoBarre;
 		}
         catch (Exception ex)
