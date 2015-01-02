@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +36,7 @@ import it.cammino.utilities.quickscroll.QuickScroll;
 import it.cammino.utilities.quickscroll.Scrollable;
 
 public class NumericSectionFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
-	
+
 	private String[] titoli;
 	private DatabaseCanti listaCanti;
 	private SQLiteDatabase db;
@@ -58,9 +53,6 @@ public class NumericSectionFragment extends Fragment {
 	private final int ID_BASE = 100;
 	
 	private LUtils mLUtils;
-	
-//	private final String LISTA_PERSONALIZZATA_TAG = "1";
-//	private final String LISTA_PREDEFINITA_TAG = "2";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -183,9 +175,7 @@ public class NumericSectionFragment extends Fragment {
     private void startSubActivity(Bundle bundle, View view) {
     	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
    	}
     
     private class SongRowAdapter extends ArrayAdapter<String> implements Scrollable{
@@ -209,7 +199,7 @@ public class NumericSectionFragment extends Fragment {
 		        		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
@@ -319,29 +309,8 @@ public class NumericSectionFragment extends Fragment {
 		    		    		toast.show();
 		    		    	}
 		    		    	else {
-			    		    	blockOrientation();
-//			    				GenericDialogFragment dialog = new GenericDialogFragment();
-//			    				dialog.setListener(NumericSectionFragment.this);
-//			    				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " 
-//			    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//			    						.substring(10)
-//			    						+ getString(R.string.dialog_wonna_replace));
-//			    				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//			    		            @Override
-//			    		            public boolean onKey(DialogInterface arg0, int keyCode,
-//			    		                    KeyEvent event) {
-//			    		                if (keyCode == KeyEvent.KEYCODE_BACK
-//			    		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//			    		                    arg0.dismiss();
-//			    							getActivity().setRequestedOrientation(prevOrientation);
-//			    							return true;
-//			    		                }
-//			    		                return false;
-//			    		            }
-//			    		        });
-//			    	            dialog.show(getChildFragmentManager(), LISTA_PERSONALIZZATA_TAG);
-//			    	            dialog.setCancelable(false);
+                                prevOrientation = getActivity().getRequestedOrientation();
+                                Utility.blockOrientation(getActivity());
 			    		    	AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
 			                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 			    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
@@ -458,29 +427,10 @@ public class NumericSectionFragment extends Fragment {
 			}
 			else {
 				idListaDaAgg = idLista;
-				posizioneDaAgg = listPosition;	
-	
-	    		blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setListener(NumericSectionFragment.this);
-//				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//						+ getString(R.string.dialog_wonna_replace));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//	            dialog.show(getChildFragmentManager(), LISTA_PREDEFINITA_TAG);
-//	            dialog.setCancelable(false);
+				posizioneDaAgg = listPosition;
+
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
 	    		AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -571,61 +521,6 @@ public class NumericSectionFragment extends Fragment {
 				getActivity().setRequestedOrientation(prevOrientation);
 				break;
 			}
-        }
-    }
-    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//        // User touched the dialog's positive button
-//    	SQLiteDatabase db = listaCanti.getReadableDatabase();
-//    	String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);	
-//    	
-//    	if (dialog.getTag().equals(LISTA_PREDEFINITA_TAG)) {	    	
-//	    	String sql = "UPDATE CUST_LISTS "
-//	    			+ "SET id_canto = (SELECT _id  FROM ELENCO"
-//	    			+ " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//	    			+ "WHERE _id = " + idListaDaAgg 
-//	    			+ "  AND position = " + posizioneDaAgg;	    	
-//	    	db.execSQL(sql);
-//    	}
-//    	else if (dialog.getTag().equals(LISTA_PERSONALIZZATA_TAG)){    		
-//	        String query = "SELECT color, pagina" +
-//    				"		FROM ELENCO" +
-//    				"		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//    		Cursor cursor = db.rawQuery(query, null);
-//			
-//    		cursor.moveToFirst();
-//    							    		
-//    		listePers[idListaClick].addCanto(Utility.intToString(
-//    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-//						    				
-//	    	ContentValues  values = new  ContentValues( );
-//	    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//	    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-//    	}
-//    	db.close();
-//		dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//		
-//		Toast.makeText(getActivity()
-//				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's negative button
-//        dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//    }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         }
     }
 }

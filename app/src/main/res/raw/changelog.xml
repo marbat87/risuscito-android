@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.0.0" changeDate="XX Dicembre 2014">
+    <changelogversion versionName="3.0.0" changeDate="20 Dicembre 2014">
         <changelogtext>Il codice è stato completamente rivisto per alleggerire l'applicazione</changelogtext>
         <changelogtext>Più material design!</changelogtext>
+        <changelogtext>Al momento è presente un solo tema, come quello base del playstore. Verrà valutato in seguito se riaggiungere i temi.</changelogtext>
         <changelogtext>Corretti alcuni testi e titoli</changelogtext>
         <changelogtext>Aggiunto il nuovo canto "Il Messia leone per vincere"</changelogtext>
+        <changelogtext>Nuova modalità tutto schermo per i canti</changelogtext>
+        <changelogtext>Corretto grave bug nei risultati della ricerca avanzata</changelogtext>
     </changelogversion>
 
 </changelog>

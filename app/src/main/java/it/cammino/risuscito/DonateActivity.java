@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
 
 public class DonateActivity extends Fragment {
 
@@ -29,9 +28,9 @@ public class DonateActivity extends Fragment {
 		
 		WebView donateView = (WebView) rootView.findViewById(R.id.donate_text);
 		donateView.setBackgroundColor(0);
-		String text = "";
+//		String text;
 		
-    	text = "<html><head>"
+    	String text = "<html><head>"
         + "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
         + "</style></head>"
         + "<body>"                          
@@ -68,7 +67,7 @@ public class DonateActivity extends Fragment {
 		else
 			wSettings.setTextSize(WebSettings.TextSize.SMALLER);
 		
-		((Button) rootView.findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
+		(rootView.findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

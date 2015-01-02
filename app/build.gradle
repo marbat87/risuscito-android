@@ -2,32 +2,38 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
-
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 55
+        versionName '3.0.0'
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
     compile 'com.melnykov:floatingactionbutton:1.1.0'
-    compile 'com.nispok:snackbar:2.5.2'
     compile 'com.itextpdf:itextpdf:5.5.3'
     compile project(':utilities')
     compile project(':aFileChooser')
-    compile project(':alertdialogpro-theme-material')
     compile project(':materialDesign')
+    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.0'
+    provided 'com.github.andkulikov:transitions-everywhere:1.2.1'
+    compile 'com.nispok:snackbar:2.6.0'
 }

@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import java.util.Locale;
-
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
@@ -17,25 +15,18 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import java.util.Locale;
+
 public class GeneralInsertSearch extends ActionBarActivity {
 
-	private SectionsPagerAdapter mSectionsPagerAdapter;
-//	private ViewPager mViewPager;
-//	SlidingTabLayout mSlidingTabLayout = null;
-	
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-//		Utility.updateTheme(GeneralInsertSearch.this);
 		super.onCreate(savedInstanceState);
-//		
-//		ActionBar actionbar = getSupportActionBar();
-//		actionbar.setDisplayHomeAsUpEnabled(true);
-//		actionbar.setLogo(R.drawable.transparent);
-		
+
 		setContentView(R.layout.activity_insert_search);
 		
 		Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
@@ -50,21 +41,8 @@ public class GeneralInsertSearch extends ActionBarActivity {
         idLista = bundle.getInt("idLista");
         listPosition = bundle.getInt("position");
 		
-//		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-//		mViewPager = (ViewPager) findViewById(R.id.pager);
-//	    mViewPager.setAdapter(mSectionsPagerAdapter);
-//	    mViewPager.setCurrentItem(0);
-//	    
-//	    PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-//	    tabs.setViewPager(mViewPager);
-//		
-////				mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-//	    mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-//        mViewPager.setAdapter(mSectionsPagerAdapter);
-        
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 		ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
         
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
@@ -73,8 +51,6 @@ public class GeneralInsertSearch extends ActionBarActivity {
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
-        
-//		checkScreenAwake();
 
 	}
 

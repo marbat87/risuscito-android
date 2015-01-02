@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import java.util.Locale;
-
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
@@ -15,13 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Locale;
+
 public class GeneralIndex extends Fragment { 
 
-	private SectionsPagerAdapter mSectionsPagerAdapter;
 	private ViewPager mViewPager;
 	SlidingTabLayout mSlidingTabLayout = null;
-	private int defaultIndex;
-	
+
 	private static final String PAGE_VIEWED = "pageViewed";
   	
 	@Override
@@ -31,11 +29,8 @@ public class GeneralIndex extends Fragment {
 		View rootView = inflater.inflate(R.layout.activity_general_index, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
 		
-		// Create the adapter that will return a fragment for each of the three
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-
 	    mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 	    
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
@@ -47,15 +42,7 @@ public class GeneralIndex extends Fragment {
         
 	    if (savedInstanceState == null) {
 	    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-			defaultIndex = pref.getInt(Utility.DEFAULT_INDEX, 0);
-			mViewPager.setCurrentItem(defaultIndex);
-//			mViewPager.postDelayed(new Runnable() {
-//	
-//		        @Override
-//		        public void run() {
-//		        	mViewPager.setCurrentItem(defaultIndex);
-//		        }
-//		    }, 100);
+			mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
 	    }
 	    else {
 	    	mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));

@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import java.util.ArrayList;
-
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,15 +17,14 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends ActionBarActivity {
     
-//    private ActionBarDrawerToggle drawerToggle;
-//    private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ViewGroup mDrawerItemsListContainer;
     private Toolbar mActionBarToolbar;
-//    private Handler mHandler;
-    
+
     // list of navdrawer items that were actually added to the navdrawer, in order
     private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
 
@@ -35,8 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private View[] mNavDrawerItemViews = null;
     
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
-    protected static final String TOOLBAR_TITLE = "titolo_selezionato";
-    
+
     protected int selectedItem;
     
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
@@ -74,14 +70,6 @@ public class MainActivity extends ActionBarActivity {
             R.drawable.ic_action_good_dark
     };
     
-    // delay to launch nav drawer item, to allow close animation to play
-//    private static final int NAVDRAWER_LAUNCH_DELAY = 250;
-    
-    // fade in and fade out durations for the main content when switching between
-    // different Activities of the app through the Nav Drawer
-//    private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
-//    private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
-        
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +99,6 @@ public class MainActivity extends ActionBarActivity {
             }
             
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(NAVDRAWER_ITEM_HOMEPAGE)).commit();
-//            goToNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
             setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
         }
 
@@ -209,11 +196,9 @@ public class MainActivity extends ActionBarActivity {
     
     private View makeNavDrawerItem(final int itemId, ViewGroup container) {
         boolean selected = getSelfNavDrawerItem() == itemId;
-        int layoutToInflate = 0;
+        int layoutToInflate;
         if (itemId == NAVDRAWER_ITEM_SEPARATOR) {
             layoutToInflate = R.layout.navdrawer_separator;
-//        } else if (itemId == NAVDRAWER_ITEM_COVER) {
-//            layoutToInflate = R.layout.navdrawer;
         } else {
             layoutToInflate = R.layout.navdrawer_item;
         }
@@ -287,35 +272,35 @@ public class MainActivity extends ActionBarActivity {
     
     private void goToNavDrawerItem(int item) {
     	
-    	Fragment fragment = null;
+    	Fragment fragment;
         
         switch (item) {
 		case NAVDRAWER_ITEM_HOMEPAGE:
-			fragment = (Fragment) new Risuscito();
+			fragment = new Risuscito();
 			break;
 		case NAVDRAWER_ITEM_SEARCH:
-			fragment = (Fragment) new GeneralSearch();
+			fragment = new GeneralSearch();
 			break;
 		case NAVDRAWER_ITEM_INDEXES:
-			fragment = (Fragment) new GeneralIndex();
+			fragment = new GeneralIndex();
             break;
 		case NAVDRAWER_ITEM_LISTS:
-        	fragment = (Fragment) new CustomLists();
+        	fragment = new CustomLists();
         	break;
 		case NAVDRAWER_ITEM_FAVORITES:
-        	fragment = (Fragment) new FavouritesActivity();
+        	fragment = new FavouritesActivity();
         	break;
 		case NAVDRAWER_ITEM_SETTINGS:
-        	fragment = (Fragment) new PreferencesFragment();
+        	fragment = new PreferencesFragment();
         	break;
 		case NAVDRAWER_ITEM_ABOUT:
-        	fragment = (Fragment) new AboutActivity();
+        	fragment = new AboutActivity();
         	break;
 		case NAVDRAWER_ITEM_DONATE:
-        	fragment = (Fragment) new DonateActivity();
+        	fragment = new DonateActivity();
         	break;
 		default:
-        	fragment = (Fragment) new Risuscito();
+        	fragment = new Risuscito();
         	break;
     	}
         

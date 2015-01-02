@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.cammino.risuscito"
     android:installLocation="auto"
-    android:versionCode="52"
-    android:versionName="3.0.0_BETA6" >
+    android:versionCode="53"
+    android:versionName="3.0.0_BETA7" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -31,6 +31,10 @@
         </activity>
         <activity
             android:name="it.cammino.risuscito.PaginaRenderActivity"
+            android:label="Canto">
+        </activity>
+        <activity
+            android:name="it.cammino.risuscito.PaginaRenderFullScreen"
             android:label="Canto">
         </activity>
         <activity

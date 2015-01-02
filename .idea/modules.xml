@@ -5,8 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/Risuscito.iml" filepath="$PROJECT_DIR$/Risuscito.iml" />
       <module fileurl="file://$PROJECT_DIR$/RisuscitoProject.iml" filepath="$PROJECT_DIR$/RisuscitoProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/aFileChooser/aFileChooser.iml" />
-      <module fileurl="file://$PROJECT_DIR$/alertdialogpro-core/alertdialogpro-core.iml" filepath="$PROJECT_DIR$/alertdialogpro-core/alertdialogpro-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/alertdialogpro-theme-material/alertdialogpro-theme-material.iml" filepath="$PROJECT_DIR$/alertdialogpro-theme-material/alertdialogpro-theme-material.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/materialDesign/materialDesign.iml" filepath="$PROJECT_DIR$/materialDesign/materialDesign.iml" />
       <module fileurl="file://$PROJECT_DIR$/utilities/utilities.iml" filepath="$PROJECT_DIR$/utilities/utilities.iml" />

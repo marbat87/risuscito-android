@@ -1,11 +1,10 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,10 +26,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
@@ -38,12 +40,11 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.dslv.DragSortListView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
+import it.cammino.utilities.showcaseview.ShowcaseView;
+import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
-@SuppressLint("NewApi") @SuppressWarnings("deprecation")
 public class CreaListaActivity extends ActionBarActivity {
 
 	private ListaPersonalizzata celebrazione;
@@ -66,24 +67,17 @@ public class CreaListaActivity extends ActionBarActivity {
 	private ArrayList<String> nomiCanti;
 	private int positionLI;
 	private Bundle tempArgs;
-//	private FloatingActionButton floatingActionButton;
-	
-//	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista";
+
 	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 	
-//	private final String AGGIUNGI_POSIZIONE_TAG = "1";
-//	private final String RINOMINA_POSIZIONE_TAG = "2";
-//	private final String SALVA_LISTA_TAG = "3";
 	private final String TEMP_TITLE = "temp_title";
 	
 	private AlertDialogPro dialog, dialogAdd;
 	
     private TintEditText titleInputRename, titleInputAdd;
-//    private View positiveActionRename;
-//    private TintEditText titleInputAdd;
-//    private View positiveActionAdd;
-			
-	@Override
+
+	@SuppressWarnings("deprecation")
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_crea_lista);
@@ -119,8 +113,6 @@ public class CreaListaActivity extends ActionBarActivity {
         else
         	titoloLista = bundle.getString("titolo");
         
-//        getSupportActionBar().setTitle(titoloLista);
-				
 		lv = (DragSortListView) findViewById(android.R.id.list);
 		
         lv.setDropListener(onDrop);
@@ -167,50 +159,19 @@ public class CreaListaActivity extends ActionBarActivity {
         
         positionLI = R.layout.position_list_item_light;
         
-        //Serve per settare il colore del testo a seconda del tema.
-        //A quanto parae non si riesce usando gli attributes direttamente nel layout
-//        if (Utility.getChoosedTheme(CreaListaActivity.this) == 1
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 3
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 5
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 7
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 9
-//        		|| Utility.getChoosedTheme(CreaListaActivity.this) == 11)
-//        	positionLI = R.layout.position_list_item_dark;
-//        else
-//        	positionLI = R.layout.position_list_item_light;
-        
         adapter = new PositionAdapter();
         lv.setAdapter(adapter);
         
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				blockOrientation();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				positionToRename = position;
-//				TextDialogFragment dialog = new TextDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.posizione_rename));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setDefaultText(nomiElementi.get(positionToRename));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), RINOMINA_POSIZIONE_TAG);
-//		        dialog.setCancelable(false);
 		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialog = builder.setTitle(R.string.posizione_rename)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
 	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS))
+	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
 	                    .show();
 	        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
@@ -241,56 +202,39 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void afterTextChanged(Editable s) {}
 			    });
 	        	dialog.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		        return true;
 			}
-		});	
-        
-//		floatingActionButton = (FloatingActionButton) findViewById(R.id.button_floating_action);
-//		floatingActionButton.attachToListView(lv);
-		
-//		View addPosizione = (View) findViewById(R.id.addPosizione);
-//		addPosizione.setOnClickListener(new View.OnClickListener() {
-//		floatingActionButton.setOnClickListener(new View.OnClickListener() {
+		});
+
+        TintEditText titleText = (TintEditText) findViewById(R.id.textfieldTitle);
+        titleText.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(findViewById(R.id.textfieldTitle).getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
 		fab.attachToListView(lv);
-//		fab.setBackgroundColor(getResources().getColor(R.color.theme_accent));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				blockOrientation();
-//				TextDialogFragment dialog = new TextDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.posizione_add_desc));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), AGGIUNGI_POSIZIONE_TAG);
-//		        dialog.setCancelable(false);
-////				titleInputAdd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-////				    @Override
-////				    public void onFocusChange(View v, boolean hasFocus) {
-////				        if (hasFocus) {
-////				            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-////				        }
-////				    }
-////				});
-////		        titleInputAdd.requestFocus();
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
 	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
 	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS))
+	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
 	                    .show();
 	        	dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
@@ -320,6 +264,9 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void afterTextChanged(Editable s) {}
 			    });
 	        	dialogAdd.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			}
 		});
 		
@@ -355,7 +302,6 @@ public class CreaListaActivity extends ActionBarActivity {
        	
         findViewById(R.id.textTitleDescription).requestFocus();
         
-//		checkScreenAwake();
 	}
 	
 	@Override
@@ -380,26 +326,8 @@ public class CreaListaActivity extends ActionBarActivity {
 			return true;
 		case android.R.id.home:
 			if (nomiElementi.size() > 0) {
-				blockOrientation();
-//				ThreeButtonsDialogFragment dialog3 = new ThreeButtonsDialogFragment();
-//				dialog3.setCustomMessage(getString(R.string.save_list_question));
-//				dialog3.setListener(CreaListaActivity.this);
-//				dialog3.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog3.show(getSupportFragmentManager(), SALVA_LISTA_TAG);
-//		        dialog3.setCancelable(false);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -436,26 +364,8 @@ public class CreaListaActivity extends ActionBarActivity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (nomiElementi.size() > 0) {
-				blockOrientation();
-//				ThreeButtonsDialogFragment dialog = new ThreeButtonsDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.save_list_question));
-//				dialog.setListener(CreaListaActivity.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//		        dialog.show(getSupportFragmentManager(), SALVA_LISTA_TAG);
-//		        dialog.setCancelable(false);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
                 AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
 	        			.setMessage(R.string.save_list_question)
@@ -485,7 +395,6 @@ public class CreaListaActivity extends ActionBarActivity {
 				return true;
 			}
         }
-//        return super.onKeyDown(keyCode, event);
         return super.onKeyUp(keyCode, event);
     }
 	
@@ -631,103 +540,60 @@ public class CreaListaActivity extends ActionBarActivity {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (clickedCode) {
-			case Utility.DISMISS:
-				setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.RENAME_CONFERMA:
-				nomiElementi.set(positionToRename, titleInputRename.getText().toString());
-	            adapter.notifyDataSetChanged();
-	            setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.AGGIUNGI_CONFERMA:
-				findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-	    		nomiElementi.add(titleInputAdd.getText().toString());
-	    		if (modifica)
-	    			nomiCanti.add("");
-	            adapter.notifyDataSetChanged();
-	            setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.SAVE_LIST_OK:
-				setRequestedOrientation(prevOrientation);
-            	if (saveList()) {
-            		finish();
-            		overridePendingTransition(0, R.anim.slide_out_bottom);
-            	}
-				break;
-			case Utility.SAVE_LIST_KO:
-				setRequestedOrientation(prevOrientation);
-        		finish();
-        		overridePendingTransition(0, R.anim.slide_out_bottom);
-				break;
-			default:
-				setRequestedOrientation(prevOrientation);
-				break;
-			}
+                case Utility.DISMISS:
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.DISMISS_RENAME:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.DISMISS_ADD:
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.RENAME_CONFERMA:
+                    nomiElementi.set(positionToRename, titleInputRename.getText().toString());
+                    adapter.notifyDataSetChanged();
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.AGGIUNGI_CONFERMA:
+                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+                    nomiElementi.add(titleInputAdd.getText().toString());
+                    if (modifica)
+                        nomiCanti.add("");
+                    adapter.notifyDataSetChanged();
+                    //to hide soft keyboard
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+                    setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.SAVE_LIST_OK:
+                    setRequestedOrientation(prevOrientation);
+                    if (saveList()) {
+                        finish();
+                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                    }
+                    break;
+                case Utility.SAVE_LIST_KO:
+                    setRequestedOrientation(prevOrientation);
+                    finish();
+                    overridePendingTransition(0, R.anim.slide_out_bottom);
+                    break;
+                default:
+                    setRequestedOrientation(prevOrientation);
+                    break;
+            }
         }
     }
     
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog, String titolo) {
-//    	if (dialog.getTag().equals(AGGIUNGI_POSIZIONE_TAG)) {
-//	    	if (titolo == null || titolo.trim().equalsIgnoreCase("")) {
-//	    		Toast toast = Toast.makeText(getApplicationContext()
-//	    				, getString(R.string.titolo_pos_vuoto), Toast.LENGTH_SHORT);
-//	    		toast.show();
-//	    	}
-//	    	else {
-//	    		findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-//	    		nomiElementi.add(titolo);
-//	    		if (modifica)
-//	    			nomiCanti.add("");
-//	            adapter.notifyDataSetChanged();
-//	    	}
-//    	}
-//    	else if (dialog.getTag().equals(RINOMINA_POSIZIONE_TAG)) {
-//	    	if (titolo == null || titolo.trim().equalsIgnoreCase("")) {
-//	    		Toast toast = Toast.makeText(getApplicationContext()
-//	    				, getString(R.string.titolo_pos_vuoto), Toast.LENGTH_SHORT);
-//	    		toast.show();
-//	    	}
-//	    	else {
-//	    		nomiElementi.set(positionToRename, titolo);
-//	            adapter.notifyDataSetChanged();
-//	    	}
-//    	}
-//    	dialog.dismiss();
-//    	setRequestedOrientation(prevOrientation);
-//    }
-//    
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//		setRequestedOrientation(prevOrientation);
-//    	if (saveList()) {
-//    		finish();
-//    		overridePendingTransition(0, R.anim.slide_out_bottom);
-//    	}
-//    }
-//    
-//    @Override
-//    public void onDialogNeutralClick(DialogFragment dialog) {
-//    	dialog.dismiss();
-//    	setRequestedOrientation(prevOrientation);
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//    	if (dialog.getTag().equals(AGGIUNGI_POSIZIONE_TAG)
-//    			|| dialog.getTag().equals(RINOMINA_POSIZIONE_TAG)) {
-//    		dialog.dismiss();
-//    		setRequestedOrientation(prevOrientation);
-//    	}
-//    	else if (dialog.getTag().equals(SALVA_LISTA_TAG)) {
-//    		dialog.dismiss();
-//    		setRequestedOrientation(prevOrientation);
-//    		finish();
-//    		overridePendingTransition(0, R.anim.slide_out_bottom);
-//    	}
-//    }
-    
-    private class PositionAdapter extends ArrayAdapter<String> {    
+    private class PositionAdapter extends ArrayAdapter<String> {
         public PositionAdapter() {
         	super(getApplicationContext(), positionLI, R.id.position_name, nomiElementi);
         }
@@ -755,36 +621,18 @@ public class CreaListaActivity extends ActionBarActivity {
         }
     }
     
-    public void blockOrientation() {
-        prevOrientation = getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-    
-    public int getNavigationBarHeight() {
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return getResources().getDimensionPixelSize(resourceId);
-        }
-        return 0;
-    }
-    
    	private void showHelp() {
    		if (nomiElementi.size() == 0) {
    			findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-   			nomiElementi.add("CANTO DI ESEMPIO");
+   			nomiElementi.add(getResources().getString(R.string.example_title));
    			adapter.notifyDataSetChanged();
    			fakeItemCreated = true;
    		}
    		else {
    			fakeItemCreated = false;
    		}
-   		blockOrientation();
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(CreaListaActivity.this);
 	 	lps = new RelativeLayout.LayoutParams(
 	 			ViewGroup.LayoutParams.WRAP_CONTENT,
 	 			ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -807,9 +655,7 @@ public class CreaListaActivity extends ActionBarActivity {
 		co.buttonLayoutParams = lps;
 		
 		//benvenuto del tutorial
-//		floatingActionButton.show();
    		ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
-//        		new ViewTarget(R.id.imagePlus, CreaListaActivity.this)
         		new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
         		, CreaListaActivity.this
         		, R.string.title_activity_nuova_lista
@@ -828,7 +674,6 @@ public class CreaListaActivity extends ActionBarActivity {
         		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         		co.buttonLayoutParams = lps;
 		   		showcaseView = ShowcaseView.insertShowcaseView(
-//		        		new ViewTarget(R.id.imagePlus, CreaListaActivity.this)
 		        		new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
 		        		, CreaListaActivity.this
 		        		, R.string.add_position
@@ -884,7 +729,6 @@ public class CreaListaActivity extends ActionBarActivity {
 						        		, R.string.showcase_rename_desc
 						        		, co);
 								showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//								showcaseView.setScaleMultiplier(0.5f);
 								int[] coords = new int[2];
 								adapter.getView(0, lv, lv).getLocationOnScreen(coords);
 								coords[0] = (coords[0]*2 + 
@@ -914,7 +758,6 @@ public class CreaListaActivity extends ActionBarActivity {
 								        		, co);
 										showcaseView.setButtonText(getString(R.string.showcase_button_next));
 										int[] coords = new int[2];
-//										adapter.getView(0, lv, lv).findViewById(R.id.position_name).getLocationOnScreen(coords);
 										adapter.getView(0, lv, lv).getLocationOnScreen(coords);
 										coords[0] = (coords[0]*2 + 
 												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getWidth())
@@ -933,18 +776,6 @@ public class CreaListaActivity extends ActionBarActivity {
 												//spiegazione di come salvare
 								        		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
 								        		co.buttonLayoutParams = lps;
-//										   		showcaseView = ShowcaseView.insertShowcaseView(
-//										        		new ViewTarget(R.id.button_save_exit, CreaListaActivity.this)
-//										        		, CreaListaActivity.this
-//										        		, R.string.list_save_exit
-//										        		, R.string.showcase_saveexit_desc
-//										        		, co);
-//										        ActionItemTarget target = new ActionItemTarget(CreaListaActivity.this, R.id.action_save_list);
-//										        showcaseView = ShowcaseView.insertShowcaseView(target
-//										        		, CreaListaActivity.this
-//										        		, R.string.list_save_exit
-//										        		, R.string.showcase_saveexit_desc
-//										        		,co);
 										   		showcaseView = ShowcaseView.insertShowcaseView(
 										        		new ViewTarget(R.id.action_save_list, CreaListaActivity.this)
 										        		, CreaListaActivity.this
@@ -952,7 +783,6 @@ public class CreaListaActivity extends ActionBarActivity {
 										        		, R.string.showcase_saveexit_desc
 										        		, co);
 												showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//												showcaseView.setScaleMultiplier(0.7f);
 												showcaseView.setScaleMultiplier(0.3f);
 												showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 		
@@ -964,12 +794,6 @@ public class CreaListaActivity extends ActionBarActivity {
 														//spiegazione di come rivedere il tutorial
 														ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
 														co.buttonLayoutParams = lps;	
-//												        ActionItemTarget target = new ActionItemTarget(CreaListaActivity.this, R.id.action_help);
-//												        showcaseView = ShowcaseView.insertShowcaseView(target
-//												        		, CreaListaActivity.this
-//												        		, R.string.showcase_end_title
-//												        		, R.string.showcase_help_general
-//												        		,co);
 												   		showcaseView = ShowcaseView.insertShowcaseView(
 												        		new ViewTarget(R.id.action_help, CreaListaActivity.this)
 												        		, CreaListaActivity.this

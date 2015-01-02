@@ -1,21 +1,10 @@
 package it.cammino.risuscito;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.Normalizer;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,11 +26,14 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +42,16 @@ import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.material.ProgressBarCompat;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.gc.materialdesign.widgets.Dialog;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.Normalizer;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class RicercaAvanzataFragment extends Fragment {
 
@@ -61,8 +63,6 @@ public class RicercaAvanzataFragment extends Fragment {
 	ListView lv;
 	private ProgressBarCompat progress;
 	private int prevOrientation;
-//	private ProgressDialog mProgressDialog;
-//	private MaterialDialog mDialog;
 	private static Map<Character, Character> MAP_NORM;
 	
 	private String titoloDaAgg;
@@ -80,11 +80,6 @@ public class RicercaAvanzataFragment extends Fragment {
 	
 	private SearchTask searchTask ;
 	
-//	private final String LISTA_PERSONALIZZATA_TAG = "1";
-//	private final String LISTA_PREDEFINITA_TAG = "2";
-	
-//	ButtonRectangle ricercaButton;
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -97,25 +92,17 @@ public class RicercaAvanzataFragment extends Fragment {
 		lv = (ListView) rootView.findViewById(R.id.matchedList);
 		progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
 		searchPar.setText("");
-//		rootView.findViewById(R.id.button_search).setEnabled(false);
-//		ricercaButton = (ButtonRectangle) rootView.findViewById(R.id.search_ripple);
-//		ricercaButton.setEnabled(false);
-//		ricercaButton.setTextColor(getResources().getColor(R.color.btn_disabled_text));
-		
+
 		try {
-//        	InputStream in = getActivity().getAssets().open("fileout.xml");
 			InputStream in = getActivity().getAssets().open("fileout_new.xml");
         	CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();
-        } 	catch (XmlPullParserException e) {
+        } 	catch (XmlPullParserException | IOException e) {
         	e.printStackTrace();
         }
-        	catch (IOException e) {
-        	e.printStackTrace();
-        }
-		
-		searchPar.addTextChangedListener(new TextWatcher() {
+
+        searchPar.addTextChangedListener(new TextWatcher() {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -126,19 +113,11 @@ public class RicercaAvanzataFragment extends Fragment {
 				
 				//abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
 				if (s.toString().trim().length() >= 3) {
-//					ricercaButton.setEnabled(true);
-//					ricercaButton.setTextColor(getResources().getColor(android.R.color.white));
-//					rootView.findViewById(R.id.search_ripple).setEnabled(true);
 					if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
 						searchTask.cancel(true);
 					searchTask = new SearchTask();
 					searchTask.execute(searchPar.getText().toString());
 				}
-//				else {
-////					ricercaButton.setEnabled(false);
-////					ricercaButton.setTextColor(getResources().getColor(R.color.btn_disabled_text));
-////					rootView.findViewById(R.id.search_ripple).setEnabled(false); 
-//				}
 			}
 			
 			@Override
@@ -148,63 +127,45 @@ public class RicercaAvanzataFragment extends Fragment {
 			public void afterTextChanged(Editable s) { }
 			
 		});
+
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
 		
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				String tempText = searchPar.getText().toString();
-				if (!tempText.equals(s.toString()))
-					searchPar.setText(s);
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                String tempText = searchPar.getText().toString();
+                if (!tempText.equals(s.toString()))
+                    searchPar.setText(s);
+            }
 
-			@Override
-			public void afterTextChanged(Editable s) { }
-			
-	    });
-		
-//	    ButtonRectangle ricerca = (ButtonRectangle) rootView.findViewById(R.id.search_ripple);
-//		ricerca.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button ricerca = (Button) rootView.findViewById(R.id.button_search);
-//		ricercaButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-////				if (mProgressDialog == null) {
-////					mProgressDialog = new ProgressDialog(getActivity());
-////					mProgressDialog.setMessage(getString(R.string.search_running));
-////					mProgressDialog.setIndeterminate(true);
-////					mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-////					mProgressDialog.setCancelable(true);
-////					mProgressDialog.setCanceledOnTouchOutside(false);
-////				}
-////				mProgressDialog.show();
-////				mDialog = new MaterialDialog.Builder(getActivity())
-////	            .customView(R.layout.dialog_loadindeterminate)
-////	            .build();
-////				((TextView) mDialog.getCustomView().findViewById(R.id.circularText)).setText(R.string.search_running);
-////				mDialog.show();
-////				mDialog.setOnDismissListener(new OnDismissListener() {
-////	    			@Override
-////	    			public void onDismiss(DialogInterface arg0) {
-////	    				getActivity().setRequestedOrientation(prevOrientation);
-////	    			}
-////	    		});
-////				mDialog.setCancelable(false);
-//				final SearchTask searchTask = new SearchTask();
-//				searchTask.execute(searchPar.getText().toString());
-//			}
-//		});
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+        });
 		
 		ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-//		pulisci.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button pulisci = (Button) rootView.findViewById(R.id.button_pulisci);
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 				searchPar.setText("");
 				rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 				lv.setVisibility(View.GONE);
@@ -235,30 +196,9 @@ public class RicercaAvanzataFragment extends Fragment {
 		
 		mLUtils = LUtils.getInstance(getActivity());
 		
-//		mDialog = new MaterialDialog.Builder(getActivity())
-//        .customView(R.layout.dialog_loadindeterminate)
-//        .build();
-//		((TextView) mDialog.getCustomView().findViewById(R.id.circularText)).setText(R.string.search_running);
-//		mDialog.setOnDismissListener(new OnDismissListener() {
-//			@Override
-//			public void onDismiss(DialogInterface arg0) {
-//				getActivity().setRequestedOrientation(prevOrientation);
-//			}
-//		});
-//		mDialog.setCancelable(false);
-		
 		return rootView;
 	}
 
-//    @Override
-//    public void onResume() {
-//    	Log.i("RICERCA AVANZATA", "RESUMED");
-//    	super.onResume();
-//		if (getActivity().findViewById(R.id.tempTextField) != null)
-//			((EditText) rootView.findViewById(R.id.textfieldRicerca))
-//			.setText(((EditText) getActivity().findViewById(R.id.tempTextField)).getText());
-//    }
-    
 	@Override
 	public void onDestroy() {
 		if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
@@ -360,29 +300,8 @@ public class RicercaAvanzataFragment extends Fragment {
 		    		    		toast.show();
 		    		    	}
 		    		    	else {
-			    		    	blockOrientation();
-//			    				GenericDialogFragment dialog = new GenericDialogFragment();
-//			    				dialog.setListener(this);
-//			    				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " 
-//			    						+ listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//			    						.substring(10)
-//			    						+ getString(R.string.dialog_wonna_replace));
-//			    				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//			    		            @Override
-//			    		            public boolean onKey(DialogInterface arg0, int keyCode,
-//			    		                    KeyEvent event) {
-//			    		                if (keyCode == KeyEvent.KEYCODE_BACK
-//			    		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//			    		                    arg0.dismiss();
-//			    							getActivity().setRequestedOrientation(prevOrientation);
-//			    							return true;
-//			    		                }
-//			    		                return false;
-//			    		            }
-//			    		        });
-//			    	            dialog.show(getChildFragmentManager(), LISTA_PERSONALIZZATA_TAG);	    
-//			    	            dialog.setCancelable(false);
+                                prevOrientation = getActivity().getRequestedOrientation();
+                                Utility.blockOrientation(getActivity());
 			                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
 			                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 			    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
@@ -434,10 +353,7 @@ public class RicercaAvanzataFragment extends Fragment {
 		Toast toast = Toast.makeText(getActivity()
 				, getString(R.string.favorite_added), Toast.LENGTH_SHORT);
 		toast.show();
-		
-		//permette di aggiornare il numero dei preferiti nel menu laterale
-//		((MainActivity) getActivity()).onResume();
-		
+
     }
     
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
@@ -499,28 +415,9 @@ public class RicercaAvanzataFragment extends Fragment {
 			else {
 				idListaDaAgg = idLista;
 				posizioneDaAgg = listPosition;
-				
-	    		blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setListener(this);
-//				dialog.setCustomMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//						+ getString(R.string.dialog_wonna_replace));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//	
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//	            dialog.show(getChildFragmentManager(), LISTA_PREDEFINITA_TAG);
-//	            dialog.setCancelable(false);
+
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -560,18 +457,7 @@ public class RicercaAvanzataFragment extends Fragment {
 		Toast.makeText(getActivity()
 				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
     }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-	
+
 	private class ButtonClickedListener implements DialogInterface.OnClickListener {
         private int clickedCode;
 
@@ -625,55 +511,10 @@ public class RicercaAvanzataFragment extends Fragment {
         }
     }
     
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//    	SQLiteDatabase db = listaCanti.getReadableDatabase();
-//		String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);		    			    
-//  
-//    	if (dialog.getTag().equals(LISTA_PREDEFINITA_TAG)) {
-//	    	String sql = "UPDATE CUST_LISTS "
-//	    			+ "SET id_canto = (SELECT _id  FROM ELENCO"
-//	    			+ " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//	    			+ "WHERE _id = " + idListaDaAgg 
-//	    			+ "  AND position = " + posizioneDaAgg;	    	
-//	    	db.execSQL(sql);	    	
-//    	}
-//    	else if (dialog.getTag().equals(LISTA_PERSONALIZZATA_TAG)){	
-//	        String query = "SELECT color, pagina" +
-//    				"		FROM ELENCO" +
-//    				"		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//    		Cursor cursor = db.rawQuery(query, null);
-//			
-//    		cursor.moveToFirst();
-//    							    		
-//    		listePers[idListaClick].addCanto(Utility.intToString(
-//    				cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-//						    				
-//	    	ContentValues  values = new  ContentValues( );
-//	    	values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//	    	db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );	
-//    	}
-//    	db.close();
-//        dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//		
-//		Toast.makeText(getActivity()
-//				, getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's negative button
-//        dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//    }
-    
     private void startSubActivity(Bundle bundle, View view) {
     	Intent intent = new Intent(getActivity().getApplicationContext(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
    	}
     
     private class SongRowAdapter extends ArrayAdapter<String> {
@@ -700,7 +541,7 @@ public class RicercaAvanzataFragment extends Fragment {
     		    		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
@@ -721,7 +562,7 @@ public class RicercaAvanzataFragment extends Fragment {
 //			for (int j = 0; j < words.length; j++)
 //				if (words[j].trim().length() > 2)
 //					Log.i("PAROLA[" + j + "]:", words[j].trim());
-        	
+
 			String text = "";
 			String[] aResults = new String[300];
 			int totalResults = 0;
@@ -734,8 +575,6 @@ public class RicercaAvanzataFragment extends Fragment {
 				boolean found = true;
 				for (int j = 0; j < words.length; j++) {
 					if (words[j].trim().length() > 1) {
-//						if (words[j].trim().length() > 2
-//					&& !words[j].trim().equalsIgnoreCase("SOL")) {
 						text = words[j].trim();
 						text = text.toLowerCase(Locale.getDefault());
 						
@@ -775,8 +614,7 @@ public class RicercaAvanzataFragment extends Fragment {
 			}
 			
 			titoli = new String[totalResults];
-			for (int i = 0; i < totalResults; i++)
-				titoli[i] = aResults[i];
+            System.arraycopy(aResults, 0, titoli, 0, totalResults);
 			
             return null;
         }
@@ -787,27 +625,10 @@ public class RicercaAvanzataFragment extends Fragment {
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             lv.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
-//            blockOrientation();
-//			mDialog.show();
-//            prevOrientation = getActivity().getRequestedOrientation();
-//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            } else {
-//            	getActivity(). setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-//            }
         }
 
         @Override
         protected void onPostExecute(String result) {
-//        	if (mProgressDialog.isShowing())
-//        		mProgressDialog.dismiss();
-//        	if (mDialog.isShowing())
-//        		mDialog.dismiss();
-        	
-//        	getActivity().setRequestedOrientation(prevOrientation);
-        	
     		// crea un list adapter per l'oggetto di tipo ListView
     		lv.setAdapter(new SongRowAdapter());
     		

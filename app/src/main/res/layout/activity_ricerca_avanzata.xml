@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:imeOptions="actionDone"
         android:hint="@string/search_hint" />
 
     <LinearLayout

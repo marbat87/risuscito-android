@@ -2,10 +2,9 @@ package it.cammino.risuscito;
 
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,11 +24,14 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,9 +61,6 @@ public class RicercaVeloceFragment extends Fragment {
 
 	private LUtils mLUtils;
 	
-//	private final String LISTA_PERSONALIZZATA_TAG = "1";
-//	private final String LISTA_PREDEFINITA_TAG = "2";
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -190,6 +189,19 @@ public class RicercaVeloceFragment extends Fragment {
 
 		});
 
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -209,11 +221,10 @@ public class RicercaVeloceFragment extends Fragment {
 	    });
 		
 	    ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-//		pulisci.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-		// Button pulisci = (Button) rootView.findViewById(R.id.button_pulisci);
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 				searchPar.setText("");
 				rootView.findViewById(R.id.search_no_results).setVisibility(
 						View.GONE);
@@ -244,15 +255,6 @@ public class RicercaVeloceFragment extends Fragment {
 		
 		return rootView;
 	}
-
-//	@Override
-//	public void onResume() {
-//		Log.i("RICERCA VELOCE", "RESUMED");
-//		super.onResume();
-//		if (getActivity().findViewById(R.id.tempTextField) != null)
-//			((EditText) rootView.findViewById(R.id.textfieldRicerca))
-//			.setText(((EditText) getActivity().findViewById(R.id.tempTextField)).getText());
-//	}
 
 	@Override
 	public void onDestroy() {
@@ -361,33 +363,8 @@ public class RicercaVeloceFragment extends Fragment {
 									Toast.LENGTH_SHORT);
 							toast.show();
 						} else {
-							blockOrientation();
-//							GenericDialogFragment dialog = new GenericDialogFragment();
-//							dialog.setListener(this);
-//							dialog.setCustomMessage(getString(R.string.dialog_present_yet)
-//									+ " "
-//									+ listePers[idListaClick]
-//											.getCantoPosizione(idPosizioneClick)
-//											.substring(10)
-//									+ getString(R.string.dialog_wonna_replace));
-//							dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//								@Override
-//								public boolean onKey(DialogInterface arg0,
-//										int keyCode, KeyEvent event) {
-//									if (keyCode == KeyEvent.KEYCODE_BACK
-//											&& event.getAction() == KeyEvent.ACTION_UP) {
-//										arg0.dismiss();
-//										getActivity().setRequestedOrientation(
-//												prevOrientation);
-//										return true;
-//									}
-//									return false;
-//								}
-//							});
-//							dialog.show(getChildFragmentManager(),
-//									LISTA_PERSONALIZZATA_TAG);
-//							dialog.setCancelable(false);
+                            prevOrientation = getActivity().getRequestedOrientation();
+                            Utility.blockOrientation(getActivity());
 		                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
 		                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 		    	        			.setMessage(getString(R.string.dialog_present_yet) + " " 
@@ -436,9 +413,6 @@ public class RicercaVeloceFragment extends Fragment {
 		Toast toast = Toast.makeText(getActivity(),
 				getString(R.string.favorite_added), Toast.LENGTH_SHORT);
 		toast.show();
-
-		// permette di aggiornare il numero dei preferiti nel menu laterale
-		// ((MainActivity) getActivity()).onResume();
 
 	}
 
@@ -499,29 +473,8 @@ public class RicercaVeloceFragment extends Fragment {
 				idListaDaAgg = idLista;
 				posizioneDaAgg = listPosition;
 
-				blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setListener(this);
-//				dialog.setCustomMessage(getString(R.string.dialog_present_yet)
-//						+ " " + titoloPresente
-//						+ getString(R.string.dialog_wonna_replace));
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//					@Override
-//					public boolean onKey(DialogInterface arg0, int keyCode,
-//							KeyEvent event) {
-//						if (keyCode == KeyEvent.KEYCODE_BACK
-//								&& event.getAction() == KeyEvent.ACTION_UP) {
-//							arg0.dismiss();
-//							getActivity().setRequestedOrientation(
-//									prevOrientation);
-//							return true;
-//						}
-//						return false;
-//					}
-//				});
-//				dialog.show(getChildFragmentManager(), LISTA_PREDEFINITA_TAG);
-//				dialog.setCancelable(false);
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
 	        			.setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -558,20 +511,6 @@ public class RicercaVeloceFragment extends Fragment {
 
 		Toast.makeText(getActivity(), getString(R.string.list_added),
 				Toast.LENGTH_SHORT).show();
-	}
-
-	public void blockOrientation() {
-		prevOrientation = getActivity().getRequestedOrientation();
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			getActivity().setRequestedOrientation(
-					ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		} else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-			getActivity().setRequestedOrientation(
-					ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		} else {
-			getActivity().setRequestedOrientation(
-					ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-		}
 	}
 
 	private class ButtonClickedListener implements DialogInterface.OnClickListener {
@@ -627,60 +566,12 @@ public class RicercaVeloceFragment extends Fragment {
 			}
         }
     }
-	
-//	@Override
-//	public void onDialogPositiveClick(DialogFragment dialog) {
-//		SQLiteDatabase db = listaCanti.getReadableDatabase();
-//		String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//
-//		if (dialog.getTag().equals(LISTA_PREDEFINITA_TAG)) {
-//			String sql = "UPDATE CUST_LISTS "
-//					+ "SET id_canto = (SELECT _id  FROM ELENCO"
-//					+ " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//					+ "WHERE _id = " + idListaDaAgg + "  AND position = "
-//					+ posizioneDaAgg;
-//			db.execSQL(sql);
-//
-//		} else if (dialog.getTag().equals(LISTA_PERSONALIZZATA_TAG)) {
-//			String query = "SELECT color, pagina" + "		FROM ELENCO"
-//					+ "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//			Cursor cursor = db.rawQuery(query, null);
-//
-//			cursor.moveToFirst();
-//
-//			listePers[idListaClick].addCanto(
-//					Utility.intToString(cursor.getInt(1), 3)
-//							+ cursor.getString(0) + titoloDaAgg,
-//					idPosizioneClick);
-//
-//			ContentValues values = new ContentValues();
-//			values.put("lista", ListaPersonalizzata
-//					.serializeObject(listePers[idListaClick]));
-//			db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick],
-//					null);
-//		}
-//		db.close();
-//		dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//
-//		Toast.makeText(getActivity(), getString(R.string.list_added),
-//				Toast.LENGTH_SHORT).show();
-//	}
-//
-//	@Override
-//	public void onDialogNegativeClick(DialogFragment dialog) {
-//		dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//	}
 
 	private void startSubActivity(Bundle bundle, View view) {
 		Intent intent = new Intent(getActivity().getApplicationContext(),
 				PaginaRenderActivity.class);
 		intent.putExtras(bundle);
-//		startActivity(intent);
-//		getActivity().overridePendingTransition(R.anim.slide_in_right,
-//				R.anim.hold_on);
-		mLUtils.startActivityWithTransition(intent, view, "CLICKED");
+		mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
 	}
 
 	private class SongRowAdapter extends ArrayAdapter<String> {
@@ -707,7 +598,7 @@ public class RicercaVeloceFragment extends Fragment {
 
 			TextView textPage = (TextView) row.findViewById(R.id.text_page);
 			textPage.setText(pagina);
-			View fullRow = (View) row.findViewById(R.id.full_row);
+			LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
 			fullRow.setBackgroundColor(Color.parseColor(colore));
 
 			return (row);

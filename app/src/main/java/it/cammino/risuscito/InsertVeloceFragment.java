@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,13 +11,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.TintEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,10 +39,7 @@ public class InsertVeloceFragment extends Fragment {
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
-		
-	//constructor
-	public InsertVeloceFragment() {}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -194,6 +196,19 @@ public class InsertVeloceFragment extends Fragment {
 			public void afterTextChanged(Editable s) { }
 			
 		});
+
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
 		
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -214,11 +229,10 @@ public class InsertVeloceFragment extends Fragment {
 	    });
 		
 	    ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-//		pulisci.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button pulisci = (Button) rootView.findViewById(R.id.button_pulisci);
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 				searchPar.setText("");
 				rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 			}
@@ -229,11 +243,6 @@ public class InsertVeloceFragment extends Fragment {
 		return rootView;
 	}
 	
-//    @Override
-//    public void onResume() {
-//    	super.onResume();
-//    }
-    
 	@Override
 	public void onDestroy() {
 		if (listaCanti != null)
@@ -264,7 +273,7 @@ public class InsertVeloceFragment extends Fragment {
     		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);

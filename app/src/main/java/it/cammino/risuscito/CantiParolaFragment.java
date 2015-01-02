@@ -1,12 +1,8 @@
 package it.cammino.risuscito;
 
-import java.util.Locale;
-
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -30,13 +26,12 @@ import com.alertdialogpro.AlertDialogPro;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
 import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import java.util.Locale;
+
 public class CantiParolaFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
 
 	private int posizioneDaCanc;
 	private String titoloDaCanc;
@@ -47,11 +42,6 @@ public class CantiParolaFragment extends Fragment {
 	private int prevOrientation;
 	
 	private LUtils mLUtils;
-	
-	Snackbar snackbar;
-	
-//	private final String RIMUOVI_CANTO_TAG = "1";
-//	private final String RESETTA_LISTA_TAG = "2";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,28 +64,8 @@ public class CantiParolaFragment extends Fragment {
    		rootView.findViewById(R.id.cantoIniziale).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-//				blockOrientation();
 				posizioneDaCanc = 1;
 				titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.list_remove));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//				dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//		        dialog.setCancelable(false);
 				snackBarRimuoviCanto();
 				return true;
 			}
@@ -124,28 +94,8 @@ public class CantiParolaFragment extends Fragment {
    		rootView.findViewById(R.id.primaLettura).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-//				blockOrientation();
 				posizioneDaCanc = 2;
 				titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.list_remove));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//                dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//                dialog.setCancelable(false);
 				snackBarRimuoviCanto();
 				return true;
 			}
@@ -174,28 +124,8 @@ public class CantiParolaFragment extends Fragment {
    		rootView.findViewById(R.id.secondaLettura).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-//				blockOrientation();
 				posizioneDaCanc = 3;
 				titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.list_remove));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//                dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//                dialog.setCancelable(false);
 				snackBarRimuoviCanto();
 				return true;
 			}
@@ -224,28 +154,8 @@ public class CantiParolaFragment extends Fragment {
    		rootView.findViewById(R.id.terzaLettura).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-//				blockOrientation();
 				posizioneDaCanc = 4;
 				titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.list_remove));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//                dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//                dialog.setCancelable(false);
 				snackBarRimuoviCanto();
 				return true;
 			}
@@ -274,28 +184,8 @@ public class CantiParolaFragment extends Fragment {
    		rootView.findViewById(R.id.cantoFinale).setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
-//				blockOrientation();
 				posizioneDaCanc = 5;
 				titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.list_remove));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//                dialog.show(getChildFragmentManager(), RIMUOVI_CANTO_TAG);
-//                dialog.setCancelable(false);
 				snackBarRimuoviCanto();
 				return true;
 			}
@@ -315,30 +205,11 @@ public class CantiParolaFragment extends Fragment {
 		
 		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_parola);
 		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView));
-//		fab.setBackgroundColor(getResources().getColor(R.color.theme_accent));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				blockOrientation();
-//				GenericDialogFragment dialog = new GenericDialogFragment();
-//				dialog.setCustomMessage(getString(R.string.reset_list_question));
-//				dialog.setListener(CantiParolaFragment.this);
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//
-//		            @Override
-//		            public boolean onKey(DialogInterface arg0, int keyCode,
-//		                    KeyEvent event) {
-//		                if (keyCode == KeyEvent.KEYCODE_BACK
-//		                		&& event.getAction() == KeyEvent.ACTION_UP) {
-//		                    arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//		                }
-//		                return false;
-//		            }
-//		        });
-//                dialog.show(getChildFragmentManager(), RESETTA_LISTA_TAG);			
-//                dialog.setCancelable(false);
+                prevOrientation = getActivity().getRequestedOrientation();
+				Utility.blockOrientation(getActivity());
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
 	        			.setMessage(R.string.reset_list_question)
@@ -374,10 +245,6 @@ public class CantiParolaFragment extends Fragment {
 //    	Log.i("CANTI PAROLA", "ON RESUME");
     	super.onResume();
 		updateLista();
-//	    ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-//		Log.i("CURRENT ITEM PAROLA", tempPager.getCurrentItem()+"");
-//		if (mShareActionProvider != null && tempPager.getCurrentItem() == 0)
-//			mShareActionProvider.setShareIntent(getDefaultIntent());
     }
 	
     @Override
@@ -416,7 +283,7 @@ public class CantiParolaFragment extends Fragment {
 			rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			((View) rootView.findViewById(R.id.cantoInizialeContainer))
+			(rootView.findViewById(R.id.cantoInizialeContainer))
 					.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
 		}
 		
@@ -431,7 +298,7 @@ public class CantiParolaFragment extends Fragment {
 			rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			((View) rootView.findViewById(R.id.primaLetturaContainer))
+			(rootView.findViewById(R.id.primaLetturaContainer))
 			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
 		}
 		
@@ -446,7 +313,7 @@ public class CantiParolaFragment extends Fragment {
 			rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			((View) rootView.findViewById(R.id.secondaLetturaContainer))
+			(rootView.findViewById(R.id.secondaLetturaContainer))
 			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
 		}
 		
@@ -461,7 +328,7 @@ public class CantiParolaFragment extends Fragment {
 			rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			((View) rootView.findViewById(R.id.terzaLetturaContainer))
+			(rootView.findViewById(R.id.terzaLetturaContainer))
 			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
 		}
 		
@@ -476,7 +343,7 @@ public class CantiParolaFragment extends Fragment {
 			rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			((View) rootView.findViewById(R.id.cantoFinaleContainer))
+			(rootView.findViewById(R.id.cantoFinaleContainer))
 			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
 		}
 		
@@ -519,9 +386,7 @@ public class CantiParolaFragment extends Fragment {
 	    
     	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
     	intent.putExtras(bundle);
-//    	startActivity(intent);
-//    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    	mLUtils.startActivityWithTransition(intent, v, "CLICKED");
+    	mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
     }
     
     //recupera il titolo del canto in posizione "position" nella lista
@@ -555,7 +420,7 @@ public class CantiParolaFragment extends Fragment {
     	
     	Locale l = Locale.getDefault();
     	String result = "";
-    	String temp = "";
+    	String temp;
     	
     	//titolo
     	result +=  "-- CELEBRAZIONE DELLA PAROLA --\n";
@@ -683,95 +548,28 @@ public class CantiParolaFragment extends Fragment {
         }
     }
     
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//		db = listaCanti.getReadableDatabase();
-//		String sql = "";
-//		if (dialog.getTag().equals(RIMUOVI_CANTO_TAG)) {
-//			sql = "DELETE FROM CUST_LISTS" +
-//	      		"  WHERE _id =  1 " +
-//  				"    AND position = " + posizioneDaCanc +
-//  				"	 AND id_canto = (SELECT _id FROM ELENCO" +
-//  				"					WHERE titolo = '" + titoloDaCanc + "')";
-//		}
-//		else if (dialog.getTag().equals(RESETTA_LISTA_TAG)) {
-//			sql = "DELETE FROM CUST_LISTS" +
-//				" WHERE _id =  1 ";
-//		}
-//		db.execSQL(sql);
-//		db.close();
-//		updateLista();
-//		//aggiorna lo share intent usato per condividere la lista
-//		mShareActionProvider.setShareIntent(getDefaultIntent());
-//		dialog.dismiss();
-//		getActivity().setRequestedOrientation(prevOrientation);
-//		
-//    }
-//
-//    @Override
-//    public void onDialogNegativeClick(DialogFragment dialog) {
-//        dialog.dismiss();
-//        getActivity().setRequestedOrientation(prevOrientation);
-//    }
-    
-    public void blockOrientation() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        } else {
-        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        }
-    }
-    
     public void snackBarRimuoviCanto() {
-//    	SnackBar snackbar = 
-//    	new SnackBar(getActivity(),
-//    			getString(R.string.list_remove),
-//    			getString(R.string.snackbar_remove),
-//			new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				db = listaCanti.getReadableDatabase();
-//				String sql = "DELETE FROM CUST_LISTS" +
-//			      		"  WHERE _id =  1 " +
-//		  				"    AND position = " + posizioneDaCanc +
-//		  				"	 AND id_canto = (SELECT _id FROM ELENCO" +
-//		  				"					WHERE titolo = '" + titoloDaCanc + "')"; 
-//				db.execSQL(sql);
-//				db.close();
-//				updateLista();
-//				mShareActionProvider.setShareIntent(getDefaultIntent());
-//			}
-//		});
-////    	snackbar.setColorButton(getResources().getColor(R.color.theme_accent));
-//    	snackbar.setColorButton(getResources().getColor(android.R.color.transparent));
-//    	snackbar.show();
-    	if (snackbar != null) {
-			snackbar.dismiss();
-        }
-		snackbar = Snackbar.with(getActivity())
-                .text(getString(R.string.list_remove))
-                .actionLabel(getString(R.string.snackbar_remove))
-                .actionListener(new ActionClickListener() {
-                    @Override
-                    public void onActionClicked(Snackbar snackbar) {
-                    	db = listaCanti.getReadableDatabase();
-        				String sql = "DELETE FROM CUST_LISTS" +
-        			      		"  WHERE _id =  1 " +
-        		  				"    AND position = " + posizioneDaCanc +
-        		  				"	 AND id_canto = (SELECT _id FROM ELENCO" +
-        		  				"					WHERE titolo = '" + titoloDaCanc + "')"; 
-        				db.execSQL(sql);
-        				db.close();
-        				updateLista();
-        				mShareActionProvider.setShareIntent(getDefaultIntent());
-                    }
-                })
-                .actionColor(getResources().getColor(R.color.theme_accent));
-		snackbar.show(getActivity());
+        SnackbarManager.show(
+                Snackbar.with(getActivity())
+                        .text(getString(R.string.list_remove))
+                        .actionLabel(getString(R.string.snackbar_remove))
+                        .actionListener(new ActionClickListener() {
+                            @Override
+                            public void onActionClicked(Snackbar snackbar) {
+                                db = listaCanti.getReadableDatabase();
+                                String sql = "DELETE FROM CUST_LISTS" +
+                                        "  WHERE _id =  1 " +
+                                        "    AND position = " + posizioneDaCanc +
+                                        "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                                        "					WHERE titolo = '" + titoloDaCanc + "')";
+                                db.execSQL(sql);
+                                db.close();
+                                updateLista();
+                                mShareActionProvider.setShareIntent(getDefaultIntent());
+                            }
+                        })
+                        .actionColor(getResources().getColor(R.color.theme_accent))
+                , getActivity());
     }
     
 }

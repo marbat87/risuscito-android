@@ -1,17 +1,8 @@
 package it.cammino.risuscito;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.Normalizer;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,19 +14,33 @@ import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.TintEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.material.ProgressBarCompat;
 import com.gc.materialdesign.views.ButtonRectangle;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.Normalizer;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -46,17 +51,12 @@ public class InsertAvanzataFragment extends Fragment {
 	private static String[][] aTexts;
 	ListView lv;
 	private ProgressBarCompat progress;
-//	private int prevOrientation;
-//	private ProgressDialog mProgressDialog;
-//	private MaterialDialog mDialog;
 	private static Map<Character, Character> MAP_NORM;
 	
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
-	
-//	ButtonRectangle ricercaButton;
-	
+
 	private SearchTask searchTask;
 	
 	@Override
@@ -71,12 +71,7 @@ public class InsertAvanzataFragment extends Fragment {
 		lv = (ListView) rootView.findViewById(R.id.matchedList);
 		progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
 		searchPar.setText("");
-//		rootView.findViewById(R.id.button_search).setEnabled(false);
-//		rootView.findViewById(R.id.search_ripple).setEnabled(false);
-//		ricercaButton = (ButtonRectangle) rootView.findViewById(R.id.search_ripple);
-//		ricercaButton.setEnabled(false);
-			
-		
+
 		Bundle bundle = getArguments(); 
 		fromAdd = bundle.getInt("fromAdd");
         idLista = bundle.getInt("idLista");
@@ -87,14 +82,11 @@ public class InsertAvanzataFragment extends Fragment {
         	CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();
-        } 	catch (XmlPullParserException e) {
+        } 	catch (XmlPullParserException | IOException e) {
         	e.printStackTrace();
         }
-        	catch (IOException e) {
-        	e.printStackTrace();
-        }
-		
-		searchPar.addTextChangedListener(new TextWatcher() {
+
+        searchPar.addTextChangedListener(new TextWatcher() {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -105,19 +97,11 @@ public class InsertAvanzataFragment extends Fragment {
 				
 				//abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
 				if (s.toString().trim().length() >= 3) {
-//					rootView.findViewById(R.id.button_search).setEnabled(true);
-//					rootView.findViewById(R.id.search_ripple).setEnabled(true);
-//					ricercaButton.setEnabled(true);
 					if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
 						searchTask.cancel(true);
 					searchTask = new SearchTask();
 					searchTask.execute(searchPar.getText().toString());
 				}
-//				else {
-////					rootView.findViewById(R.id.button_search).setEnabled(false);
-////					rootView.findViewById(R.id.search_ripple).setEnabled(false);
-////					ricercaButton.setEnabled(false);
-//				}
 			}
 			
 			@Override
@@ -127,6 +111,19 @@ public class InsertAvanzataFragment extends Fragment {
 			public void afterTextChanged(Editable s) { }
 			
 		});
+
+        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //to hide soft keyboard
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
 		
 	    ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -146,32 +143,11 @@ public class InsertAvanzataFragment extends Fragment {
 			
 	    });
 		
-//	    ButtonRectangle ricerca = (ButtonRectangle) rootView.findViewById(R.id.search_ripple);
-//		ricerca.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button ricerca = (Button) rootView.findViewById(R.id.button_search);
-//	    ricercaButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-////				if (mProgressDialog == null) {
-////					mProgressDialog = new ProgressDialog(getActivity());
-////					mProgressDialog.setMessage(getString(R.string.search_running));
-////					mProgressDialog.setIndeterminate(true);
-////					mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-////					mProgressDialog.setCancelable(true);
-////					mProgressDialog.setCanceledOnTouchOutside(false);
-////				}
-////				mProgressDialog.show();
-//				final SearchTask downloadTask = new SearchTask();
-//				downloadTask.execute(searchPar.getText().toString());
-//			}
-//		});
-		
 	    ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-//		pulisci.setTypeface(FontLoader.ROBOTO_MEDIUM.getTypeface(getActivity()));
-//		Button pulisci = (Button) rootView.findViewById(R.id.button_pulisci);
 		pulisci.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 				searchPar.setText("");
 				rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 				lv.setVisibility(View.GONE);
@@ -180,26 +156,8 @@ public class InsertAvanzataFragment extends Fragment {
 		
 		setHasOptionsMenu(true);
 		
-//		mDialog = new MaterialDialog.Builder(getActivity())
-//        .customView(R.layout.dialog_loadindeterminate)
-//        .build();
-//		((TextView) mDialog.getCustomView().findViewById(R.id.circularText)).setText(R.string.search_running);
-//		mDialog.setOnDismissListener(new OnDismissListener() {
-//			@Override
-//			public void onDismiss(DialogInterface arg0) {
-//				getActivity().setRequestedOrientation(prevOrientation);
-//			}
-//		});
-//		mDialog.setCancelable(false);
-		
 		return rootView;
 	}
-
-//    @Override
-//    public void onResume() {
-//    	super.onResume();
-//    }
-    
 	@Override
 	public void onDestroy() {
 		if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
@@ -208,18 +166,7 @@ public class InsertAvanzataFragment extends Fragment {
 			listaCanti.close();
 		super.onDestroy();
 	}
-    
-//    public void blockOrientation() {
-//        prevOrientation = getActivity().getRequestedOrientation();
-//        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        } else {
-//        	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-//        }
-//    }
-    
+
     private class SongRowAdapter extends ArrayAdapter<String> {
     	
     	SongRowAdapter() {
@@ -243,7 +190,7 @@ public class InsertAvanzataFragment extends Fragment {
     		
     		TextView textPage = (TextView) row.findViewById(R.id.text_page);
     		textPage.setText(pagina);
-    		View fullRow = (View) row.findViewById(R.id.full_row);
+            LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
     		fullRow.setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
@@ -261,10 +208,10 @@ public class InsertAvanzataFragment extends Fragment {
         	
         	String[] words = sSearchText[0].split("\\W");
         	
-			String text = "";
+			String text;
 			String[] aResults = new String[300];
 			int totalResults = 0;
-			
+
 			for (int k = 0; k < aTexts.length; k++) {
 				
 				if (aTexts[k][0] == null || aTexts[k][0].equalsIgnoreCase(""))
@@ -309,8 +256,7 @@ public class InsertAvanzataFragment extends Fragment {
 			}
 			
 			titoli = new String[totalResults];
-			for (int i = 0; i < totalResults; i++)
-				titoli[i] = aResults[i];
+            System.arraycopy(aResults, 0, titoli, 0, totalResults);
 			
             return null;
         }
@@ -320,27 +266,10 @@ public class InsertAvanzataFragment extends Fragment {
         	rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             lv.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
-//        	blockOrientation();
-//			mDialog.show();
-//            super.onPreExecute();
-//            prevOrientation = getActivity().getRequestedOrientation();
-//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            	getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            } else {
-//            	getActivity(). setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-//            }
         }
 
         @Override
         protected void onPostExecute(String result) {
-//        	if (mProgressDialog.isShowing())
-//        		mProgressDialog.dismiss();
-//        	if (mDialog.isShowing())
-//        		mDialog.dismiss();
-//        	getActivity().setRequestedOrientation(prevOrientation);
-        	
     		// crea un list adapter per l'oggetto di tipo ListView
     		lv.setAdapter(new SongRowAdapter());
     		
@@ -505,9 +434,8 @@ public class InsertAvanzataFragment extends Fragment {
 
         for(int i = 0; i < value.length(); i++) {
             Character c = MAP_NORM.get(sb.charAt(i));
-            if(c != null) {
+            if(c != null)
                 sb.setCharAt(i, c.charValue());
-            }
         }
 
         return sb.toString();

@@ -211,5 +211,6 @@
     <string name="dialog_delete_link_title">Scollega file locale</string>
     <string name="only_link_title">Associa file locale</string>
     <string name="dialog_save_tab_title">Salva modifiche</string>
+    <string name="example_title">CANTO DI ESEMPIO</string>
 
 </resources>
