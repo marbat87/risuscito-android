@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -177,7 +177,7 @@ public class FavouritesActivity extends Fragment {
     private class SongRowAdapter extends ArrayAdapter<String> {
     	
     	SongRowAdapter() {
-    		super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
+    		super(getActivity(), R.layout.row_item_nopage, R.id.text_title, titoli);
     	}
     	
     	@Override
@@ -188,14 +188,13 @@ public class FavouritesActivity extends Fragment {
     		TextView canto = (TextView) row.findViewById(R.id.text_title);
     		String cantoCliccato = canto.getText().toString();
     		String colore = cantoCliccato.substring(0, 7);
-    		
-    		((TextView) row.findViewById(R.id.text_title))
-    			.setText(cantoCliccato.substring(7));
-		        		
-    		TextView textPage = (TextView) row.findViewById(R.id.text_page);
-    		textPage.setVisibility(View.GONE);
-    		LinearLayout fullRow = (LinearLayout) row.findViewById(R.id.full_row);
-    		fullRow.setBackgroundColor(Color.parseColor(colore));
+
+            canto.setText(cantoCliccato.substring(7));
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                canto.setBackgroundColor(Color.parseColor(colore));
+            else
+                row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
     	}

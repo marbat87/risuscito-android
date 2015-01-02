@@ -16,6 +16,7 @@
     <ListView
         android:id="@+id/favouritesList"
         android:layout_weight="0.99"
+        android:drawSelectorOnTop="false"
         android:layout_width="fill_parent"
         android:layout_height="0dp" />
 

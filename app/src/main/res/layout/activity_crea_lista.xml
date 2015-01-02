@@ -90,7 +90,8 @@
             risuscito:remove_enabled="true"
             risuscito:drag_start_mode="onMove"
             risuscito:remove_mode="flingRemove"
-            risuscito:float_background_color="@color/neutral_color_for_group" />
+            android:drawSelectorOnTop="false"
+            risuscito:float_background_color="@color/ripple_color" />
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab_crea_lista"

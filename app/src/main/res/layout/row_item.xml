@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/full_row"
     android:gravity="center_vertical"
@@ -11,10 +10,10 @@
     <TextView
         android:id="@+id/text_page"
         android:layout_width="50dip"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
         android:textColor="@color/primary_text_default_material_light"
-        android:background="@drawable/list_selector_neutral_light"
+        android:background="?attr/customSelector"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="@dimen/myListPreferredItemPaddingStart"
         android:paddingRight="@dimen/myListPreferredItemPaddingStart"
@@ -22,10 +21,10 @@
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_selector_neutral_light"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:background="?attr/customSelector"
         android:gravity="center_vertical|start"
         android:paddingLeft="@dimen/myListPreferredItemPaddingStart"
         android:paddingRight="@dimen/myListPreferredItemPaddingStart"

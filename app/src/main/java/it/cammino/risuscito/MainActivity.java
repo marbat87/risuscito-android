@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -21,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -291,7 +287,15 @@ public class MainActivity extends ActionBarActivity {
         goToNavDrawerItem(itemId);
         setSelectedNavDrawerItem(itemId);
 
-        mDrawerLayout.closeDrawer(Gravity.START);
+        android.os.Handler mHandler = new android.os.Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerLayout.closeDrawer(Gravity.START);
+            }
+        }, 250);
+
+//        mDrawerLayout.closeDrawer(Gravity.START);
     }
     
     private void goToNavDrawerItem(int item) {
@@ -359,8 +363,8 @@ public class MainActivity extends ActionBarActivity {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        Log.i(getClass().toString(), "dpHeight:" + dpHeight);
-        Log.i(getClass().toString(), "dpWidth:" + dpWidth);
+//        Log.i(getClass().toString(), "dpHeight:" + dpHeight);
+//        Log.i(getClass().toString(), "dpWidth:" + dpWidth);
 
         //recupero l'altezza dell'actionbar
         TypedValue value = new TypedValue();
@@ -368,18 +372,18 @@ public class MainActivity extends ActionBarActivity {
         TypedValue.coerceToString(value.type, value.data);
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         float actionBarSize = value.getDimension(displayMetrics) / displayMetrics.density;
-        Log.i(getClass().toString(), "actionBarSize:" + actionBarSize);
+//        Log.i(getClass().toString(), "actionBarSize:" + actionBarSize);
 
         // min(altezza, larghezza) - altezza actionbar
         float smallestDim = Math.min(dpWidth, dpHeight);
-        Log.i(getClass().toString(), "smallestDim:" + smallestDim);
+//        Log.i(getClass().toString(), "smallestDim:" + smallestDim);
         int difference = Math.round((smallestDim - actionBarSize) * displayMetrics.density);
-        Log.i(getClass().toString(), "difference:" + difference);
+//        Log.i(getClass().toString(), "difference:" + difference);
 
         int maxWidth = Math.round(WIDTH_320 * displayMetrics.density);
-        if (smallestDim > TALBLET_DP)
+        if (smallestDim >= TALBLET_DP)
             maxWidth = Math.round(WIDTH_400 * displayMetrics.density);
-        Log.i(getClass().toString(), "maxWidth:" + maxWidth);
+//        Log.i(getClass().toString(), "maxWidth:" + maxWidth);
 
         return Math.min(difference, maxWidth);
     }

@@ -39,6 +39,7 @@
             android:layout_marginEnd="@dimen/min_button_margin"
             android:background="@color/theme_primary"
             risuscito:clickAfterRipple="false"
+            risuscito:rippleColor="@color/ripple_color"
             android:soundEffectsEnabled="true"
             android:text="@string/button_pulisci" />
 
@@ -64,7 +65,8 @@
     <ListView
         android:id="@+id/matchedList"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop="false"
         android:visibility="gone" />
 
 </LinearLayout>

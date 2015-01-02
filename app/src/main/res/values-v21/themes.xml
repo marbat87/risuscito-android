@@ -4,6 +4,7 @@
     <style name="RisuscitoTheme" parent="Theme.MyTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+        <item name="customSelector">?android:attr/selectableItemBackground</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme">

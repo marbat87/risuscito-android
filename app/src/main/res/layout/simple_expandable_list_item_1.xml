@@ -11,7 +11,7 @@
         android:paddingLeft="40dip"
         android:paddingStart="40dip"
         android:textColor="@color/secondary_text_default_material_light"
-        android:background="@drawable/list_selector_group"
+        android:background="?attr/customSelector"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_vertical" />
 

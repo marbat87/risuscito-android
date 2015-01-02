@@ -53,7 +53,8 @@
     <color name="theme_accent_semi_tr">@color/teal_semi_transparent</color>
     <color name="theme_primary_dark">@color/BlueGreyDark</color>
     <color name="item_disabled">#808080</color>
-    <color name="snackbar_black">#323232</color>
     <color name="favorite_accent">#F48FB1</color>
+    <color name="ripple_shape">#8080CBC4</color>
+    <color name="ripple_color">@color/theme_accent_semi_tr</color>
 
 </resources> 

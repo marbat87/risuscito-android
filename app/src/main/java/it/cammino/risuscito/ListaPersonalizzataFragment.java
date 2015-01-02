@@ -242,7 +242,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 					@Override
 					public boolean onLongClick(View view) {
 						posizioneDaCanc = Integer.valueOf(
-					    		((TextView) ((LinearLayout)view.getParent()).findViewById(R.id.id_da_canc))
+					    		((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
 					    		.getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
 						snackBarRimuoviCanto();

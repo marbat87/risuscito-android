@@ -129,7 +129,6 @@ public class CantiParolaFragment extends Fragment {
 		if (titoloCanto.equalsIgnoreCase("")) {
 			rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.VISIBLE);
 			rootView.findViewById(R.id.cantoIniziale).setVisibility(View.GONE);
-
             rootView.findViewById(R.id.addCantoIniziale).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -143,22 +142,19 @@ public class CantiParolaFragment extends Fragment {
             });
 		}
 		else {
-			TextView temp = (TextView) rootView.findViewById(R.id.cantoIniziale);
 			rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
+            rootView.findViewById(R.id.cantoInizialeContainer)
+                    .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+            TextView temp = (TextView) rootView.findViewById(R.id.cantoIniziale);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			(rootView.findViewById(R.id.cantoInizialeContainer))
-					.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-            rootView.findViewById(R.id.cantoIniziale).setOnClickListener(new OnClickListener() {
+            temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openPagina(v);
                 }
             });
-
-            // setta l'azione tenendo premuto sul canto
-            rootView.findViewById(R.id.cantoIniziale).setOnLongClickListener(new OnLongClickListener() {
+            temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 1;
@@ -174,7 +170,6 @@ public class CantiParolaFragment extends Fragment {
 		if (titoloCanto.equalsIgnoreCase("")) {
 			rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.VISIBLE);
 			rootView.findViewById(R.id.primaLettura).setVisibility(View.GONE);
-
             rootView.findViewById(R.id.addPrimaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -188,22 +183,19 @@ public class CantiParolaFragment extends Fragment {
             });
 		}
 		else {
-			TextView temp = (TextView) rootView.findViewById(R.id.primaLettura);
 			rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
+            rootView.findViewById(R.id.primaLetturaContainer)
+                    .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+            TextView temp = (TextView) rootView.findViewById(R.id.primaLettura);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			(rootView.findViewById(R.id.primaLetturaContainer))
-			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-            rootView.findViewById(R.id.primaLettura).setOnClickListener(new OnClickListener() {
+            temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openPagina(v);
                 }
             });
-
-            // setta l'azione tenendo premuto sul canto
-            rootView.findViewById(R.id.primaLettura).setOnLongClickListener(new OnLongClickListener() {
+            temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 2;
@@ -219,7 +211,6 @@ public class CantiParolaFragment extends Fragment {
 		if (titoloCanto.equalsIgnoreCase("")) {
 			rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.VISIBLE);
 			rootView.findViewById(R.id.secondaLettura).setVisibility(View.GONE);
-
             rootView.findViewById(R.id.addSecondaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -233,22 +224,19 @@ public class CantiParolaFragment extends Fragment {
             });
 		}
 		else {
-			TextView temp = (TextView) rootView.findViewById(R.id.secondaLettura);
 			rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
+            rootView.findViewById(R.id.secondaLetturaContainer)
+                    .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+            TextView temp = (TextView) rootView.findViewById(R.id.secondaLettura);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			(rootView.findViewById(R.id.secondaLetturaContainer))
-			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-            rootView.findViewById(R.id.secondaLettura).setOnClickListener(new OnClickListener() {
+            temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openPagina(v);
                 }
             });
-
-            // setta l'azione tenendo premuto sul canto
-            rootView.findViewById(R.id.secondaLettura).setOnLongClickListener(new OnLongClickListener() {
+            temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 3;
@@ -264,7 +252,6 @@ public class CantiParolaFragment extends Fragment {
 		if (titoloCanto.equalsIgnoreCase("")) {
 			rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.VISIBLE);
 			rootView.findViewById(R.id.terzaLettura).setVisibility(View.GONE);
-
             rootView.findViewById(R.id.addTerzaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -278,22 +265,19 @@ public class CantiParolaFragment extends Fragment {
             });
 		}
 		else {
-			TextView temp = (TextView) rootView.findViewById(R.id.terzaLettura);
 			rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
+            rootView.findViewById(R.id.terzaLetturaContainer)
+                    .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+            TextView temp = (TextView) rootView.findViewById(R.id.terzaLettura);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			(rootView.findViewById(R.id.terzaLetturaContainer))
-			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-            rootView.findViewById(R.id.terzaLettura).setOnClickListener(new OnClickListener() {
+            temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openPagina(v);
                 }
             });
-
-            // setta l'azione tenendo premuto sul canto
-            rootView.findViewById(R.id.terzaLettura).setOnLongClickListener(new OnLongClickListener() {
+            temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 4;
@@ -315,7 +299,6 @@ public class CantiParolaFragment extends Fragment {
             if (titoloCanto.equalsIgnoreCase("")) {
                 rootView.findViewById(R.id.addCantoPace).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.cantoPace).setVisibility(View.GONE);
-
                 rootView.findViewById(R.id.addCantoPace).setOnClickListener(new OnClickListener() {
 
                     @Override
@@ -329,22 +312,19 @@ public class CantiParolaFragment extends Fragment {
                 });
             }
             else {
-                TextView temp = (TextView) rootView.findViewById(R.id.cantoPace);
                 rootView.findViewById(R.id.addCantoPace).setVisibility(View.GONE);
+                rootView.findViewById(R.id.cantoPaceContainer)
+                        .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+                TextView temp = (TextView) rootView.findViewById(R.id.cantoPace);
                 temp.setVisibility(View.VISIBLE);
                 temp.setText(titoloCanto.substring(7));
-                (rootView.findViewById(R.id.cantoPaceContainer))
-                        .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-                rootView.findViewById(R.id.cantoPace).setOnClickListener(new OnClickListener() {
+                temp.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         openPagina(v);
                     }
                 });
-
-                // setta l'azione tenendo premuto sul canto
-                rootView.findViewById(R.id.cantoPace).setOnLongClickListener(new OnLongClickListener() {
+                temp.setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = 6;
@@ -363,7 +343,6 @@ public class CantiParolaFragment extends Fragment {
 		if (titoloCanto.equalsIgnoreCase("")) {
 			rootView.findViewById(R.id.addCantoFinale).setVisibility(View.VISIBLE);
 			rootView.findViewById(R.id.cantoFinale).setVisibility(View.GONE);
-
             rootView.findViewById(R.id.addCantoFinale).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -377,22 +356,19 @@ public class CantiParolaFragment extends Fragment {
             });
 		}
 		else {
-			TextView temp = (TextView) rootView.findViewById(R.id.cantoFinale);
 			rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
+            rootView.findViewById(R.id.cantoFinaleContainer)
+                    .setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
+            TextView temp = (TextView) rootView.findViewById(R.id.cantoFinale);
 			temp.setVisibility(View.VISIBLE);
 			temp.setText(titoloCanto.substring(7));
-			(rootView.findViewById(R.id.cantoFinaleContainer))
-			.setBackgroundColor(Color.parseColor(titoloCanto.substring(0,7)));
-
-            rootView.findViewById(R.id.cantoFinale).setOnClickListener(new OnClickListener() {
+            temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openPagina(v);
                 }
             });
-
-            // setta l'azione tenendo premuto sul canto
-            rootView.findViewById(R.id.cantoFinale).setOnLongClickListener(new OnLongClickListener() {
+            temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 5;

@@ -23,7 +23,7 @@
             android:padding="10dp"
             android:id="@+id/screen_on_layout"
             android:clickable="true"
-            android:background="@drawable/list_selector_group">
+            android:background="?attr/customSelector">
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/screen_on"
@@ -71,7 +71,7 @@
             android:padding="10dp"
             android:id="@+id/show_seconda_eucarestia_layout"
             android:clickable="true"
-            android:background="@drawable/list_selector_group">
+            android:background="?attr/customSelector">
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/show_seconda_eucarestia"
@@ -119,7 +119,7 @@
             android:padding="10dp"
             android:id="@+id/show_pace_parola_layout"
             android:clickable="true"
-            android:background="@drawable/list_selector_group">
+            android:background="?attr/customSelector">
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/show_pace_parola"
@@ -170,7 +170,7 @@
             android:padding="10dp"
             android:clickable="true"
             android:orientation="vertical"
-            android:background="@drawable/list_selector_group">
+            android:background="?attr/customSelector">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -199,7 +199,7 @@
             android:padding="10dp"
             android:clickable="true"
             android:orientation="vertical"
-            android:background="@drawable/list_selector_group">
+            android:background="?attr/customSelector">
 
             <TextView
                 android:layout_width="wrap_content"

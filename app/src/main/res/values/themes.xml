@@ -12,11 +12,13 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
         <item name="colorAccent">@color/theme_accent</item>
+        <item name="colorControlHighlight">@color/theme_accent_semi_tr</item>
 
         <!-- The rest of your attributes -->
         <item name="customHelp">@drawable/ic_action_help</item>
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
         <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
+        <item name="customSelector">@drawable/custom_list_selector</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" />
