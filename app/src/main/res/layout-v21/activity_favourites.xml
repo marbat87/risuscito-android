@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin"
+    android:orientation="vertical"
+    android:weightSum="1.0" >
+
+    <TextView
+        android:id="@+id/no_favourites"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_favourites" />
+
+    <ListView
+        android:id="@+id/favouritesList"
+        android:layout_weight="0.99"
+        android:drawSelectorOnTop="true"
+        android:listSelector="?selectableItemBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/hint_remove"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hint_remove" />
+
+</LinearLayout>
