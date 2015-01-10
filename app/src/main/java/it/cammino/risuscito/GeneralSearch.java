@@ -31,7 +31,8 @@ public class GeneralSearch extends Fragment {
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
         Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
+        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 	    

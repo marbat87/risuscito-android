@@ -8,10 +8,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -28,10 +29,17 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Set;
 
 import it.cammino.utilities.quickscroll.QuickScroll;
 import it.cammino.utilities.quickscroll.Scrollable;
@@ -89,9 +97,26 @@ public class NumericSectionFragment extends Fragment {
         // chiude il cursore
         lista.close();
 
-        // crea un list adapter per l'oggetto di tipo ListView
-        SongRowAdapter adapter = new SongRowAdapter();
-        lv.setAdapter(adapter);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            // crea un list adapter per l'oggetto di tipo ListView
+            OldSongRowAdapter adapter = new OldSongRowAdapter();
+            lv.setAdapter(adapter);
+
+            final QuickScroll quickscroll = (QuickScroll) rootView.findViewById(R.id.quickscroll);
+            quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, lv, adapter, QuickScroll.STYLE_HOLO);
+            quickscroll.setHandlebarColor(getResources().getColor(R.color.theme_accent)
+                    , getResources().getColor(R.color.theme_accent)
+                    , getResources().getColor(R.color.theme_accent_semi_tr));
+            quickscroll.setIndicatorColor(getResources().getColor(R.color.theme_accent_semi_tr)
+                    , getResources().getColor(R.color.theme_accent_semi_tr)
+                    , getResources().getColor(android.R.color.white));
+            quickscroll.setFixedSize(2);
+            quickscroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
+        }
+        else {
+            // crea un list adapter per l'oggetto di tipo ListView
+            lv.setAdapter(new NewSongRowAdapter());
+        }
 
 
         // setta l'azione al click su ogni voce dell'elenco
@@ -132,14 +157,6 @@ public class NumericSectionFragment extends Fragment {
             }
         });
 
-        final QuickScroll quickscroll = (QuickScroll) rootView.findViewById(R.id.quickscroll);
-        quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, lv, adapter, QuickScroll.STYLE_HOLO);
-        quickscroll.setHandlebarColor(getResources().getColor(R.color.theme_accent)
-                , getResources().getColor(R.color.theme_accent)
-                , getResources().getColor(R.color.theme_accent_semi_tr));
-        quickscroll.setFixedSize(2);
-        quickscroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
-
         query = "SELECT _id, lista" +
                 "		FROM LISTE_PERS" +
                 "		ORDER BY _id ASC";
@@ -179,9 +196,9 @@ public class NumericSectionFragment extends Fragment {
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private class SongRowAdapter extends ArrayAdapter<String> implements Scrollable{
+    private class OldSongRowAdapter extends ArrayAdapter<String> implements Scrollable {
 
-        SongRowAdapter() {
+        OldSongRowAdapter() {
             super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
         }
 
@@ -200,7 +217,17 @@ public class NumericSectionFragment extends Fragment {
 
             TextView textPage = (TextView) row.findViewById(R.id.text_page);
             textPage.setText(pagina);
-            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+//            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
             return(row);
         }
@@ -215,6 +242,92 @@ public class NumericSectionFragment extends Fragment {
         public int getScrollPosition(int childposition, int groupposition) {
             return childposition;
         }
+
+    }
+
+    private class NewSongRowAdapter extends ArrayAdapter<String> implements SectionIndexer {
+
+        HashMap<String, Integer> alphaIndexer;
+        String[] sections;
+
+        public NewSongRowAdapter() {
+            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
+
+            alphaIndexer = new HashMap<String, Integer>();
+            int size = titoli.length;
+            String prevLetter = " ";
+
+            for (int x = 0; x < size; x++) {
+                // get the first letter of the store
+                int pagina = Integer.valueOf(titoli[x].substring(0,3));
+                String ch = String.valueOf(pagina);
+                Log.i("TEST", "CH: " + ch);
+
+                if (!ch.equals(prevLetter)) {
+                    // HashMap will prevent duplicates
+                    alphaIndexer.put(ch, x);
+                    prevLetter = ch;
+                }
+            }
+
+            Set<String> sectionLetters = alphaIndexer.keySet();
+            // create a list from the set to sort
+            ArrayList<String> sectionList = new ArrayList<String>(sectionLetters);
+            Collections.sort(sectionList, new CustomComparator());
+            sections = new String[sectionList.size()];
+            sectionList.toArray(sections);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View row=super.getView(position, convertView, parent);
+            TextView canto = (TextView) row.findViewById(R.id.text_title);
+
+            String totalString = canto.getText().toString();
+            int tempPagina = Integer.valueOf(totalString.substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            String colore = totalString.substring(3, 10);
+
+            canto.setText(totalString.substring(10));
+
+            TextView textPage = (TextView) row.findViewById(R.id.text_page);
+            textPage.setText(pagina);
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+
+            return(row);
+        }
+
+        @Override
+        public String[] getSections() {
+            return sections;
+        }
+
+        @Override
+        public int getPositionForSection(int section) {
+            return alphaIndexer.get(sections[section]);
+        }
+
+        @Override
+        public int getSectionForPosition(int position) {
+            int pagina = Integer.valueOf(titoli[position].substring(0, 3));
+            String first = String.valueOf(pagina);
+            for (int i = 0; i < sections.length ; i++) {
+                if (first.equals(sections[i]))
+                    return i;
+            }
+            return 0;
+        }
+
     }
 
     @Override
@@ -533,4 +646,12 @@ public class NumericSectionFragment extends Fragment {
             }
         }
     }
+
+    private class CustomComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            return Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
+        }
+    }
+
 }

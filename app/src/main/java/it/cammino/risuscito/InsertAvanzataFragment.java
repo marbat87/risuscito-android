@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -189,7 +188,17 @@ public class InsertAvanzataFragment extends Fragment {
 
             TextView textPage = (TextView) row.findViewById(R.id.text_page);
             textPage.setText(pagina);
-            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+//            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
             return(row);
         }

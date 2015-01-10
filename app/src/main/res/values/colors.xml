@@ -6,6 +6,7 @@
     <color name="cyan_accent">#EEFF41</color>
     <color name="Indigo">#3f51b5</color>
     <color name="BlueGrey">#607d8b</color>
+    <color name="BlueGrey_semi_transparent">#80607d8b</color>
     <color name="RedTheme">#e51c23</color>
     <color name="DeepPurple">#673ab7</color>
     <color name="Teal">#009688</color>
@@ -56,5 +57,9 @@
     <color name="favorite_accent">#F48FB1</color>
     <color name="ripple_shape">#8080CBC4</color>
     <color name="ripple_color">@color/theme_accent_semi_tr</color>
+    <color name="theme_primary_semi_tr">@color/BlueGrey_semi_transparent</color>
+
+    <color name="dialtacts_secondary_text_color">#737373</color>
+    <color name="dialtacts_theme_color">#0288d1</color>
 
 </resources> 

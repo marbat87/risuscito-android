@@ -49,6 +49,7 @@
         android:id="@+id/matchedList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawSelectorOnTop="false" />
+        android:drawSelectorOnTop="false"
+        android:divider="@null" />
 
 </LinearLayout>
