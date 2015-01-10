@@ -70,7 +70,7 @@ public class FavouritesActivity extends Fragment {
 		SQLiteDatabase db = listaCanti.getReadableDatabase();
 		
 		// lancia la ricerca dei preferiti
-		String query = "SELECT titolo, color" +
+		String query = "SELECT titolo, color, pagina" +
 				"		FROM ELENCO" +
 				"		WHERE favourite = 1" +
 				"		ORDER BY TITOLO ASC";
@@ -95,8 +95,8 @@ public class FavouritesActivity extends Fragment {
 		titoli = new String[lista.getCount()];		                      
 		lista.moveToFirst();    		    		
 		for (int i = 0; i < total; i++) {
-			
-			titoli[i] = lista.getString(1) + lista.getString(0);
+//			titoli[i] = lista.getString(1) + lista.getString(0);
+            titoli[i] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
 			lista.moveToNext();
 		}
 		
@@ -177,7 +177,7 @@ public class FavouritesActivity extends Fragment {
     private class SongRowAdapter extends ArrayAdapter<String> {
     	
     	SongRowAdapter() {
-    		super(getActivity(), R.layout.row_item_nopage, R.id.text_title, titoli);
+    		super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
     	}
     	
     	@Override
@@ -187,14 +187,29 @@ public class FavouritesActivity extends Fragment {
     		
     		TextView canto = (TextView) row.findViewById(R.id.text_title);
     		String cantoCliccato = canto.getText().toString();
-    		String colore = cantoCliccato.substring(0, 7);
+            int tempPagina = Integer.valueOf(cantoCliccato.substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+    		String colore = cantoCliccato.substring(3, 10);
 
-            canto.setText(cantoCliccato.substring(7));
+            canto.setText(cantoCliccato.substring(10));
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                canto.setBackgroundColor(Color.parseColor(colore));
-            else
-                row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+            TextView textPage = (TextView) row.findViewById(R.id.text_page);
+            textPage.setText(pagina);
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+
+//            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+//                canto.setBackgroundColor(Color.parseColor(colore));
+//            else
+//                row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
     		
     		return(row);
     	}
