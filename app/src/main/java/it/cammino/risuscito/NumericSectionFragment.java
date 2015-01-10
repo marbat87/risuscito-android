@@ -261,7 +261,6 @@ public class NumericSectionFragment extends Fragment {
                 // get the first letter of the store
                 int pagina = Integer.valueOf(titoli[x].substring(0,3));
                 String ch = String.valueOf(pagina);
-                Log.i("TEST", "CH: " + ch);
 
                 if (!ch.equals(prevLetter)) {
                     // HashMap will prevent duplicates

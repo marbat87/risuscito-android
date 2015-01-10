@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -270,6 +271,10 @@ public class MainActivity extends ActionBarActivity {
         TextView titleView = (TextView) view.findViewById(R.id.title);
 
         // configure its appearance according to whether or not it's selected
+        view.setBackgroundResource(selected ?
+                R.drawable.selected_navdrawer_item_background :
+                R.drawable.navdrawer_item_background);
+        view.setSoundEffectsEnabled(!selected);
         titleView.setTextColor(selected ?
                 getResources().getColor(R.color.navdrawer_text_color_selected) :
                 getResources().getColor(R.color.navdrawer_text_color));
@@ -286,14 +291,6 @@ public class MainActivity extends ActionBarActivity {
         	
         goToNavDrawerItem(itemId);
         setSelectedNavDrawerItem(itemId);
-
-        android.os.Handler mHandler = new android.os.Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerLayout.closeDrawer(Gravity.START);
-            }
-        }, 250);
 
 //        mDrawerLayout.closeDrawer(Gravity.START);
     }
@@ -338,6 +335,14 @@ public class MainActivity extends ActionBarActivity {
     		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
     		transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
     		transaction.replace(R.id.content_frame, fragment, String.valueOf(item)).commit();
+
+            android.os.Handler mHandler = new android.os.Handler();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.closeDrawer(Gravity.START);
+                }
+            }, 250);
     	}
     }
     
