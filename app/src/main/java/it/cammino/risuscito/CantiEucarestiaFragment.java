@@ -1,7 +1,6 @@
 package it.cammino.risuscito;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alertdialogpro.AlertDialogPro;
@@ -32,6 +32,8 @@ import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -85,7 +87,7 @@ public class CantiEucarestiaFragment extends Fragment {
             }
         });
 
-        updateLista();
+//        updateLista();
 
         setHasOptionsMenu(true);
 
@@ -349,108 +351,155 @@ public class CantiEucarestiaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
         }
 
-        String[] titoliCanti = getTitoliFromPosition(3);
+        OnClickListener clickListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPagina(v, R.id.text_title);
+            }
+        };
 
-        LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.cantiPaneList);
-        lv.removeAllViews();
+        OnLongClickListener longClickListener = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                posizioneDaCanc = 3;
+                titoloDaCanc = Utility.duplicaApostrofi(((TextView) v.findViewById(R.id.text_title)).getText().toString());
+                snackBarRimuoviCanto();
+                return true;
+            }
+        };
 
-        LayoutInflater inflater = (LayoutInflater) getActivity()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (String titoloTemp: titoliCanti) {
-            View view = inflater.inflate(R.layout.row_item, lv, false);
+//        String[] titoliCanti = getTitoliFromPosition(3);
+        List<CantoItem> dataItems = getTitoliListFromPosition(3);
 
-            String colore = titoloTemp.substring(3, 10);
-//            view.findViewById(R.id.canto_container).
-//                    setBackgroundColor(Color.parseColor(colore));
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiPaneList);
 
-            TextView temp = (TextView) view.findViewById(R.id.text_title);
-            temp.setText(titoloTemp.substring(10));
-            temp.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openPagina(v, R.id.text_title);
-                }
-            });
-            temp.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 3;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
-                    snackBarRimuoviCanto();
-                    return true;
-                }
-            });
+        // Creating new adapter object
+        recyclerView.setAdapter(new CantoRecyclerAdapter(dataItems, clickListener, longClickListener));
 
-            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.text_page);
-            textPage.setText(pagina);
+        // Setting the layoutManager
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.cantiPaneList);
+//        lv.removeAllViews();
 
-            lv.addView(view);
-        }
+//        LayoutInflater inflater = (LayoutInflater) getActivity()
+//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        for (CantoItem titoloTemp: titoliCanti) {
+//            View view = inflater.inflate(R.layout.row_item, lv, false);
+//
+//            String colore = titoloTemp.substring(3, 10);
+////            view.findViewById(R.id.canto_container).
+////                    setBackgroundColor(Color.parseColor(colore));
+//
+//            TextView temp = (TextView) view.findViewById(R.id.text_title);
+//            temp.setText(titoloTemp.substring(10));
+//            temp.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    openPagina(v, R.id.text_title);
+//                }
+//            });
+//            temp.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 3;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
+//                    snackBarRimuoviCanto();
+//                    return true;
+//                }
+//            });
+//
+//            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.text_page);
+//            textPage.setText(pagina);
+//
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//
+//            lv.addView(view);
+//        }
 
-        titoliCanti = getTitoliFromPosition(4);
+        longClickListener = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                posizioneDaCanc = 4;
+                titoloDaCanc = Utility.duplicaApostrofi(((TextView) v.findViewById(R.id.text_title)).getText().toString());
+                snackBarRimuoviCanto();
+                return true;
+            }
+        };
 
-        lv = (LinearLayout) rootView.findViewById(R.id.cantiVinoList);
-        lv.removeAllViews();
+        dataItems = getTitoliListFromPosition(4);
 
-        inflater = (LayoutInflater) getActivity()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiVinoList);
 
-        for (String titoloTemp: titoliCanti) {
-            View view = inflater.inflate(R.layout.row_item, lv, false);
+        // Creating new adapter object
+        recyclerView.setAdapter(new CantoRecyclerAdapter(dataItems, clickListener, longClickListener));
 
-            String colore = titoloTemp.substring(3, 10);
-//            view.findViewById(R.id.canto_container).
-//                    setBackgroundColor(Color.parseColor(colore));
+        // Setting the layoutManager
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-            TextView temp = (TextView) view.findViewById(R.id.text_title);
-            temp.setText(titoloTemp.substring(10));
-            temp.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openPagina(v, R.id.text_title);
-                }
-            });
-            temp.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 4;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
-                    snackBarRimuoviCanto();
-                    return true;
-                }
-            });
 
-            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.text_page);
-            textPage.setText(pagina);
-
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-
-            lv.addView(view);
-        }
+//        String[] titoliCanti = getTitoliFromPosition(4);
+//
+//        LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.cantiVinoList);
+//        lv.removeAllViews();
+//
+//        LayoutInflater inflater = (LayoutInflater) getActivity()
+//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//        for (String titoloTemp: titoliCanti) {
+//            View view = inflater.inflate(R.layout.row_item, lv, false);
+//
+//            String colore = titoloTemp.substring(3, 10);
+////            view.findViewById(R.id.canto_container).
+////                    setBackgroundColor(Color.parseColor(colore));
+//
+//            TextView temp = (TextView) view.findViewById(R.id.text_title);
+//            temp.setText(titoloTemp.substring(10));
+//            temp.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    openPagina(v, R.id.text_title);
+//                }
+//            });
+//            temp.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 4;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
+//                    snackBarRimuoviCanto();
+//                    return true;
+//                }
+//            });
+//
+//            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.text_page);
+//            textPage.setText(pagina);
+//
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//
+//            lv.addView(view);
+//        }
 
         titoloCanto = getTitoliFromPosition(5);
 
@@ -670,6 +719,35 @@ public class CantiEucarestiaFragment extends Fragment {
         for (int i = 0; i < total; i++) {
 //            result[i] =  cursor.getString(1) + cursor.getString(0);
             result[i] =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    private List<CantoItem> getTitoliListFromPosition(int position) {
+
+        List<CantoItem> result = new ArrayList<CantoItem>();
+
+        db = listaCanti.getReadableDatabase();
+
+        String query = "SELECT B.titolo, color, pagina" +
+                "  FROM CUST_LISTS A" +
+                "  	   , ELENCO B" +
+                "  WHERE A._id = 2" +
+                "  AND   A.position = " + position +
+                "  AND   A.id_canto = B._id" +
+                "  ORDER BY A.timestamp ASC";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int total = cursor.getCount();
+
+        cursor.moveToFirst();
+        for (int i = 0; i < total; i++) {
+            result.add(new CantoItem(Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0)));
             cursor.moveToNext();
         }
 
