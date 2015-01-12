@@ -53,26 +53,43 @@
 
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/cantoInizialeContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/cantoInizialeContainer">
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/cantoIniziale"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:background="?customSelector"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/cantoInizialePage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/cantoInizialeText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 
@@ -111,26 +128,43 @@
 
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/primaLetturaContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/primaLetturaContainer">
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/primaLettura"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="?customSelector"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/primaLetturaPage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/primaLetturaText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 
@@ -169,26 +203,43 @@
 
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/secondaLetturaContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/secondaLetturaContainer">
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/secondaLettura"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="?customSelector"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/secondaLetturaPage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/secondaLetturaText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 
@@ -227,26 +278,43 @@
 
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/terzaLetturaContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/terzaLetturaContainer">
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/terzaLettura"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="?customSelector"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/terzaLetturaPage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/terzaLetturaText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 
@@ -292,26 +360,43 @@
 
                 </RelativeLayout>
 
-                <FrameLayout
+                <RelativeLayout
+                    android:id="@+id/cantoPaceContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/cantoPaceContainer">
+                    android:background="?attr/customSelector"
+                    android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/cantoPace"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:clickable="true"
-                        android:textColor="@android:color/black"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/default_padding_selectable"
-                        android:paddingRight="@dimen/default_padding_selectable"
-                        android:minHeight="@dimen/list_preferred_item_height_small"
-                        android:background="?customSelector"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:id="@+id/cantoPacePage"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                        android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                        android:background="@drawable/bkg_round_blue" />
 
-                </FrameLayout>
+                    <TextView
+                        android:id="@+id/cantoPaceText"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textSize="16sp"
+                        android:layout_centerInParent="true"
+                        android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingRight="@dimen/myListPreferredItemPadding"
+                        android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+                </RelativeLayout>
 
                 <include layout="@layout/preferences_separator" />
 
@@ -352,26 +437,43 @@
 
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/cantoFinaleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/cantoFinaleContainer">
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/cantoFinale"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="?customSelector"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/cantoFinalePage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/cantoFinaleText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 

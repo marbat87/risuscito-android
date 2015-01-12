@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -261,7 +260,7 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        posizioneDaCanc = 1;
+                        posizioneDaCanc = 6;
                         titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoSecondaText)).getText().toString());
                         snackBarRimuoviCanto();
                         return true;
@@ -322,7 +321,7 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    posizioneDaCanc = 1;
+                    posizioneDaCanc = 2;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
@@ -483,7 +482,7 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    posizioneDaCanc = 1;
+                    posizioneDaCanc = 5;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinale1Text)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
@@ -670,7 +669,7 @@ public class CantiEucarestiaFragment extends Fragment {
         cursor.moveToFirst();
         for (int i = 0; i < total; i++) {
 //            result[i] =  cursor.getString(1) + cursor.getString(0);
-            result[i] =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);;
+            result[i] =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);
             cursor.moveToNext();
         }
 
