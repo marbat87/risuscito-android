@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -225,9 +224,8 @@ public class ListaPersonalizzataFragment extends Fragment {
                         .setText(String.valueOf(cantoIndex));
 
 				view.findViewById(R.id.addCantoGenerico).setVisibility(View.GONE);
-				view.findViewById(R.id.cantoGenericoContainer).setVisibility(View.VISIBLE);
-
-                View temp = view.findViewById(R.id.rowItemContainer);
+                View temp = view.findViewById(R.id.cantoGenericoContainer);
+                temp.setVisibility(View.VISIBLE);
                 temp.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
