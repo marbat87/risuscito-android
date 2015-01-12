@@ -131,9 +131,9 @@ public class CantiEucarestiaFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
     }
 
-    private void openPagina(View v) {
+    private void openPagina(View v, int id) {
         // recupera il titolo della voce cliccata
-        String cantoCliccato = ((TextView) v).getText().toString();
+        String cantoCliccato = ((TextView) v.findViewById(id)).getText().toString();
         cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
 
         // crea un manipolatore per il DB in modalit� READ
@@ -170,7 +170,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         if (titoloCanto.length == 0) {
             rootView.findViewById(R.id.addCantoIniziale1).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.cantoIniziale1).setVisibility(View.GONE);
+            rootView.findViewById(R.id.cantoIniziale1Container).setVisibility(View.GONE);
             rootView.findViewById(R.id.addCantoIniziale1).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -185,26 +185,43 @@ public class CantiEucarestiaFragment extends Fragment {
         }
         else {
             rootView.findViewById(R.id.addCantoIniziale1).setVisibility(View.GONE);
-            rootView.findViewById(R.id.cantoIniziale1Container)
-                    .setBackgroundColor(Color.parseColor(titoloCanto[0].substring(0,7)));
-            TextView temp = (TextView) rootView.findViewById(R.id.cantoIniziale1);
-            temp.setVisibility(View.VISIBLE);
-            temp.setText(titoloCanto[0].substring(7));
-            temp.setOnClickListener(new OnClickListener() {
+            View view = rootView.findViewById(R.id.cantoIniziale1Container);
+            view.setVisibility(View.VISIBLE);
+            view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v);
+                    openPagina(v, R.id.cantoIniziale1Text);
                 }
             });
-            temp.setOnLongClickListener(new OnLongClickListener() {
+            view.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 1;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoIniziale1Text)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
                 }
             });
+
+            TextView temp = (TextView) view.findViewById(R.id.cantoIniziale1Text);
+            temp.setText(titoloCanto[0].substring(10));
+
+            int tempPagina = Integer.valueOf(titoloCanto[0].substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            TextView textPage = (TextView) view.findViewById(R.id.cantoIniziale1Page);
+            textPage.setText(pagina);
+
+            String colore = titoloCanto[0].substring(3, 10);
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
         }
 
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -218,7 +235,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
             if (titoloCanto.length == 0) {
                 rootView.findViewById(R.id.addCantoSeconda).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.cantoSeconda).setVisibility(View.GONE);
+                rootView.findViewById(R.id.cantoSecondaContainer).setVisibility(View.GONE);
                 rootView.findViewById(R.id.addCantoSeconda).setOnClickListener(new OnClickListener() {
 
                     @Override
@@ -233,26 +250,43 @@ public class CantiEucarestiaFragment extends Fragment {
             }
             else {
                 rootView.findViewById(R.id.addCantoSeconda).setVisibility(View.GONE);
-                rootView.findViewById(R.id.cantoSecondaContainer)
-                        .setBackgroundColor(Color.parseColor(titoloCanto[0].substring(0,7)));
-                TextView temp = (TextView) rootView.findViewById(R.id.cantoSeconda);
-                temp.setVisibility(View.VISIBLE);
-                temp.setText(titoloCanto[0].substring(7));
-                temp.setOnClickListener(new OnClickListener() {
+                View view = rootView.findViewById(R.id.cantoSecondaContainer);
+                view.setVisibility(View.VISIBLE);
+                view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v);
+                        openPagina(v, R.id.cantoSecondaText);
                     }
                 });
-                temp.setOnLongClickListener(new OnLongClickListener() {
+                view.setOnLongClickListener(new OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        posizioneDaCanc = 6;
-                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                        posizioneDaCanc = 1;
+                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoSecondaText)).getText().toString());
                         snackBarRimuoviCanto();
                         return true;
                     }
                 });
+
+                TextView temp = (TextView) view.findViewById(R.id.cantoSecondaText);
+                temp.setText(titoloCanto[0].substring(10));
+
+                int tempPagina = Integer.valueOf(titoloCanto[0].substring(0,3));
+                String pagina = String.valueOf(tempPagina);
+                TextView textPage = (TextView) view.findViewById(R.id.cantoSecondaPage);
+                textPage.setText(pagina);
+
+                String colore = titoloCanto[0].substring(3, 10);
+                if (colore.equalsIgnoreCase(Utility.GIALLO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+                if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+                if (colore.equalsIgnoreCase(Utility.VERDE))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
+                if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+                if (colore.equalsIgnoreCase(Utility.BIANCO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
             }
         }
         else
@@ -262,7 +296,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         if (titoloCanto.length == 0) {
             rootView.findViewById(R.id.addCantoPace).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.cantoPace).setVisibility(View.GONE);
+            rootView.findViewById(R.id.cantoPaceContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addCantoPace).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -277,26 +311,43 @@ public class CantiEucarestiaFragment extends Fragment {
         }
         else {
             rootView.findViewById(R.id.addCantoPace).setVisibility(View.GONE);
-            rootView.findViewById(R.id.cantoPaceContainer)
-                    .setBackgroundColor(Color.parseColor(titoloCanto[0].substring(0, 7)));
-            TextView temp = (TextView) rootView.findViewById(R.id.cantoPace);
-            temp.setVisibility(View.VISIBLE);
-            temp.setText(titoloCanto[0].substring(7));
-            temp.setOnClickListener(new OnClickListener() {
+            View view = rootView.findViewById(R.id.cantoPaceContainer);
+            view.setVisibility(View.VISIBLE);
+            view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v);
+                    openPagina(v, R.id.cantoPaceText);
                 }
             });
-            temp.setOnLongClickListener(new OnLongClickListener() {
+            view.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    posizioneDaCanc = 2;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                    posizioneDaCanc = 1;
+                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
                 }
             });
+
+            TextView temp = (TextView) view.findViewById(R.id.cantoPaceText);
+            temp.setText(titoloCanto[0].substring(10));
+
+            int tempPagina = Integer.valueOf(titoloCanto[0].substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            TextView textPage = (TextView) view.findViewById(R.id.cantoPagePage);
+            textPage.setText(pagina);
+
+            String colore = titoloCanto[0].substring(3, 10);
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
         }
 
         String[] titoliCanti = getTitoliFromPosition(3);
@@ -307,29 +358,45 @@ public class CantiEucarestiaFragment extends Fragment {
         LayoutInflater inflater = (LayoutInflater) getActivity()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (String titoloTemp: titoliCanti) {
-            View view = inflater.inflate(R.layout.canto_added, lv, false);
+            View view = inflater.inflate(R.layout.row_item, lv, false);
 
-            String colore = titoloTemp.substring(0, 7);
-            view.findViewById(R.id.canto_container).
-                    setBackgroundColor(Color.parseColor(colore));
+            String colore = titoloTemp.substring(3, 10);
+//            view.findViewById(R.id.canto_container).
+//                    setBackgroundColor(Color.parseColor(colore));
 
-            TextView temp = (TextView) view.findViewById(R.id.canto);
-            temp.setText(titoloTemp.substring(7));
+            TextView temp = (TextView) view.findViewById(R.id.text_title);
+            temp.setText(titoloTemp.substring(10));
             temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v);
+                    openPagina(v, R.id.text_title);
                 }
             });
             temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 3;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
                 }
             });
+
+            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            TextView textPage = (TextView) view.findViewById(R.id.text_page);
+            textPage.setText(pagina);
+
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
             lv.addView(view);
         }
@@ -343,29 +410,45 @@ public class CantiEucarestiaFragment extends Fragment {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (String titoloTemp: titoliCanti) {
-            View view = inflater.inflate(R.layout.canto_added, lv, false);
+            View view = inflater.inflate(R.layout.row_item, lv, false);
 
-            String colore = titoloTemp.substring(0, 7);
-            view.findViewById(R.id.canto_container).
-                    setBackgroundColor(Color.parseColor(colore));
+            String colore = titoloTemp.substring(3, 10);
+//            view.findViewById(R.id.canto_container).
+//                    setBackgroundColor(Color.parseColor(colore));
 
-            TextView temp = (TextView) view.findViewById(R.id.canto);
-            temp.setText(titoloTemp.substring(7));
+            TextView temp = (TextView) view.findViewById(R.id.text_title);
+            temp.setText(titoloTemp.substring(10));
             temp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v);
+                    openPagina(v, R.id.text_title);
                 }
             });
             temp.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 4;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
                 }
             });
+
+            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            TextView textPage = (TextView) view.findViewById(R.id.text_page);
+            textPage.setText(pagina);
+
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
             lv.addView(view);
         }
@@ -374,7 +457,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         if (titoloCanto.length == 0) {
             rootView.findViewById(R.id.addCantoFinale1).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.cantoFinale1).setVisibility(View.GONE);
+            rootView.findViewById(R.id.cantoFinale1Container).setVisibility(View.GONE);
             rootView.findViewById(R.id.addCantoFinale1).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -389,26 +472,43 @@ public class CantiEucarestiaFragment extends Fragment {
         }
         else {
             rootView.findViewById(R.id.addCantoFinale1).setVisibility(View.GONE);
-            rootView.findViewById(R.id.cantoFinale1Container)
-                    .setBackgroundColor(Color.parseColor(titoloCanto[0].substring(0,7)));
-            TextView temp = (TextView) rootView.findViewById(R.id.cantoFinale1);
-            temp.setVisibility(View.VISIBLE);
-            temp.setText(titoloCanto[0].substring(7));
-            temp.setOnClickListener(new OnClickListener() {
+            View view = rootView.findViewById(R.id.cantoFinale1Container);
+            view.setVisibility(View.VISIBLE);
+            view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v);
+                    openPagina(v, R.id.cantoFinale1Text);
                 }
             });
-            temp.setOnLongClickListener(new OnLongClickListener() {
+            view.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    posizioneDaCanc = 5;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view).getText().toString());
+                    posizioneDaCanc = 1;
+                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinale1Text)).getText().toString());
                     snackBarRimuoviCanto();
                     return true;
                 }
             });
+
+            TextView temp = (TextView) view.findViewById(R.id.cantoFinale1Text);
+            temp.setText(titoloCanto[0].substring(10));
+
+            int tempPagina = Integer.valueOf(titoloCanto[0].substring(0,3));
+            String pagina = String.valueOf(tempPagina);
+            TextView textPage = (TextView) view.findViewById(R.id.cantoFinale1Page);
+            textPage.setText(pagina);
+
+            String colore = titoloCanto[0].substring(3, 10);
+            if (colore.equalsIgnoreCase(Utility.GIALLO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+            if (colore.equalsIgnoreCase(Utility.VERDE))
+                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+            if (colore.equalsIgnoreCase(Utility.BIANCO))
+                textPage.setBackgroundResource(R.drawable.bkg_round_white);
         }
 
         rootView.findViewById(R.id.addCantoPane).setOnClickListener(new OnClickListener() {
@@ -554,7 +654,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         db = listaCanti.getReadableDatabase();
 
-        String query = "SELECT B.titolo, color" +
+        String query = "SELECT B.titolo, color, pagina" +
                 "  FROM CUST_LISTS A" +
                 "  	   , ELENCO B" +
                 "  WHERE A._id = 2" +
@@ -569,7 +669,8 @@ public class CantiEucarestiaFragment extends Fragment {
 
         cursor.moveToFirst();
         for (int i = 0; i < total; i++) {
-            result[i] =  cursor.getString(1) + cursor.getString(0);
+//            result[i] =  cursor.getString(1) + cursor.getString(0);
+            result[i] =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);;
             cursor.moveToNext();
         }
 

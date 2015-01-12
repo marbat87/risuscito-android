@@ -147,7 +147,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 		String cantoCliccato = ((TextView) v).getText().toString();
 		cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
         		
-		// crea un manipolatore per il DB in modalit� READ
+		// crea un manipolatore per il DB in modalità READ
 		db = listaCanti.getReadableDatabase();
 	    
 		// esegue la query per il recupero del nome del file della pagina da visualizzare
@@ -198,7 +198,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 	   		if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() == 0) {
 	   		
 				view.findViewById(R.id.addCantoGenerico).setVisibility(View.VISIBLE);
-				view.findViewById(R.id.cantoGenerico).setVisibility(View.GONE);
+				view.findViewById(R.id.cantoGenericoContainer).setVisibility(View.GONE);
 				
 				view.findViewById(R.id.addCantoGenerico).setOnClickListener(new OnClickListener() {
 					
@@ -219,37 +219,57 @@ public class ListaPersonalizzataFragment extends Fragment {
 				
 	   		}
 	   		else {
-	   			
-				TextView temp = (TextView) view.findViewById(R.id.cantoGenerico);
+
+                //setto l'id del canto nell'apposito canto
+                ((TextView) view.findViewById(R.id.id_da_canc))
+                        .setText(String.valueOf(cantoIndex));
+
 				view.findViewById(R.id.addCantoGenerico).setVisibility(View.GONE);
-				temp.setVisibility(View.VISIBLE);
-				
-				temp.setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
-				(view.findViewById(R.id.cantoGenericoContainer))
-				.setBackgroundColor(Color.parseColor(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10)));
-		   		((TextView) view.findViewById(R.id.id_da_canc))
-	   			.setText(String.valueOf(cantoIndex));
-				
-		   		view.findViewById(R.id.cantoGenerico).setOnClickListener(new OnClickListener() {
-				      @Override
-				      public void onClick(View v) {
-				    	  openPagina(v.findViewById(R.id.cantoGenerico));
-				      }
-		   		});
-			   		
-				// setta l'azione tenendo premuto sul canto
-		   		view.findViewById(R.id.cantoGenerico).setOnLongClickListener(new OnLongClickListener() {
-					@Override
-					public boolean onLongClick(View view) {
-						posizioneDaCanc = Integer.valueOf(
-					    		((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
-					    		.getText().toString());
+				view.findViewById(R.id.cantoGenericoContainer).setVisibility(View.VISIBLE);
+
+                View temp = view.findViewById(R.id.rowItemContainer);
+                temp.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openPagina(v.findViewById(R.id.text_title));
+                    }
+                });
+                // setta l'azione tenendo premuto sul canto
+                temp.setOnLongClickListener(new OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        posizioneDaCanc = Integer.valueOf(
+                                ((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
+                                        .getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
-						snackBarRimuoviCanto();
-						return true;
-					}
-				});
-	   		
+                        snackBarRimuoviCanto();
+                        return true;
+                    }
+                });
+
+                //setto il titolo del canto
+                ((TextView) view.findViewById(R.id.text_title))
+                    .setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
+
+                //setto la pagina
+                int tempPagina = Integer.valueOf(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(0, 3));
+                String pagina = String.valueOf(tempPagina);
+                TextView textPage = (TextView) view.findViewById(R.id.text_page);
+                textPage.setText(pagina);
+
+                //setto il colore
+                String colore = listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10);
+                if (colore.equalsIgnoreCase(Utility.GIALLO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+                if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+                if (colore.equalsIgnoreCase(Utility.VERDE))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
+                if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+                if (colore.equalsIgnoreCase(Utility.BIANCO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
+
 	   		}
 	   		
 	   		linLayout.addView(view);

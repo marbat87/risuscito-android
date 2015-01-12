@@ -56,19 +56,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/cantoGenerico"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:clickable="true"
-            android:textColor="@android:color/black"
-            android:paddingLeft="@dimen/default_padding_selectable"
-            android:paddingRight="@dimen/default_padding_selectable"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/list_preferred_item_height_small"
-            android:background="?customSelector"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <include layout="@layout/row_item" />
 
     </FrameLayout>
 
