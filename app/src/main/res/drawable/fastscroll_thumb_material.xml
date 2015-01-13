@@ -13,11 +13,9 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
-        <bitmap android:src="@drawable/ic_scroll_handle"
-            android:tint="?attr/colorControlActivated" />
+        <bitmap android:src="@drawable/ic_scroll_handle_pressed" />
     </item>
     <item>
-        <bitmap android:src="@drawable/ic_scroll_handle"
-            android:tint="?attr/colorControlNormal" />
+        <bitmap android:src="@drawable/ic_scroll_handle_normal" />
     </item>
 </selector>

@@ -16,8 +16,19 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
     private List<CantoItem> dataItems;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
+    private View.OnCreateContextMenuListener createContextMenuListener;
 
-    // Adapter constructor
+    // Adapter constructor 1
+    public CantoRecyclerAdapter(List<CantoItem> dataItems
+            , View.OnClickListener clickListener) {
+
+        this.dataItems = dataItems;
+        this.clickListener = clickListener;
+        this.longClickListener = null;
+        createContextMenuListener = null;
+    }
+
+    // Adapter constructor 2
     public CantoRecyclerAdapter(List<CantoItem> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
@@ -25,6 +36,18 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
+        this.createContextMenuListener = null;
+    }
+
+    // Adapter constructor 3
+    public CantoRecyclerAdapter(List<CantoItem> dataItems
+            , View.OnClickListener clickListener
+            , View.OnCreateContextMenuListener createContextMenuListener) {
+
+        this.dataItems = dataItems;
+        this.clickListener = clickListener;
+        this.longClickListener = null;
+        this.createContextMenuListener = createContextMenuListener;
     }
 
     @Override
@@ -33,7 +56,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         View layoutView = LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.row_item, null);
-        return new CantoViewHolder(layoutView, clickListener, longClickListener);
+        return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 
     @Override
@@ -68,12 +91,19 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         public TextView cantoPage;
 
 
-        public CantoViewHolder(View itemView, View.OnClickListener clickListener, View.OnLongClickListener onLongClickListener) {
+        public CantoViewHolder(View itemView
+                , View.OnClickListener onClickListener
+                , View.OnLongClickListener onLongClickListener
+                , View.OnCreateContextMenuListener onCreateContextMenuListener) {
             super(itemView);
             cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
             cantoPage = (TextView) itemView.findViewById(R.id.text_page);
-            itemView.setOnClickListener(clickListener);
-            itemView.setOnLongClickListener(onLongClickListener);
+            if (onClickListener != null)
+                itemView.setOnClickListener(onClickListener);
+            if (onLongClickListener != null)
+                itemView.setOnLongClickListener(onLongClickListener);
+            if (onCreateContextMenuListener != null)
+                itemView.setOnCreateContextMenuListener(onCreateContextMenuListener);
         }
 
 

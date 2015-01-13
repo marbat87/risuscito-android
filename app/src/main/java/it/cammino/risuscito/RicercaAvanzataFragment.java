@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.internal.widget.TintEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
@@ -29,12 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,19 +45,24 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class RicercaAvanzataFragment extends Fragment {
+public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private DatabaseCanti listaCanti;
-    private String[] titoli;
+    //    private String[] titoli;
+    private List<CantoItem> titoli;
     private TintEditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-    ListView lv;
+    //    ListView lv;
+    RecyclerView recyclerView;
+    CantoRecyclerAdapter cantoAdapter;
     private ProgressBarCompat progress;
     private int prevOrientation;
     private static Map<Character, Character> MAP_NORM;
@@ -89,7 +91,52 @@ public class RicercaAvanzataFragment extends Fragment {
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
-        lv = (ListView) rootView.findViewById(R.id.matchedList);
+//        lv = (ListView) rootView.findViewById(R.id.matchedList);
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+                        .getText().toString();
+                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+
+                // crea un manipolatore per il DB in modalità READ
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                // esegue la query per il recupero del nome del file della pagina da visualizzare
+                String query = "SELECT source, _id" +
+                        "  FROM ELENCO" +
+                        "  WHERE titolo =  '" + cantoCliccato + "'";
+                Cursor cursor = db.rawQuery(query, null);
+
+                // recupera il nome del file
+                cursor.moveToFirst();
+                String pagina = cursor.getString(0);
+                int idCanto = cursor.getInt(1);
+
+                // chiude il cursore
+                cursor.close();
+
+                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", pagina);
+                bundle.putInt("idCanto", idCanto);
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, v);
+            }
+        };
+
+        // Creating new adapter object
+        titoli = new ArrayList<CantoItem>();
+        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
+        recyclerView.setAdapter(cantoAdapter);
+
+        // Setting the layoutManager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
         searchPar.setText("");
 
@@ -168,7 +215,9 @@ public class RicercaAvanzataFragment extends Fragment {
                 v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                lv.setVisibility(View.GONE);
+//                lv.setVisibility(View.GONE);
+                titoli.clear();
+                cantoAdapter.notifyDataSetChanged();
                 progress.setVisibility(View.GONE);
             }
         });
@@ -212,8 +261,9 @@ public class RicercaAvanzataFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        titoloDaAgg = ((TextView) info.targetView.findViewById(R.id.text_title)).getText().toString();
+//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+//        titoloDaAgg = ((TextView) info.targetView.findViewById(R.id.text_title)).getText().toString();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -527,45 +577,45 @@ public class RicercaAvanzataFragment extends Fragment {
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private class SongRowAdapter extends ArrayAdapter<String> {
-
-        SongRowAdapter() {
-            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View row=super.getView(position, convertView, parent);
-
-            TextView canto = (TextView) row.findViewById(R.id.text_title);
-
-            String totalString = canto.getText().toString();
-
-            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            String colore = totalString.substring(3, 10);
-
-            ((TextView) row.findViewById(R.id.text_title))
-                    .setText(totalString.substring(10));
-
-            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-            textPage.setText(pagina);
-//            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-
-            return(row);
-        }
-    }
+//    private class SongRowAdapter extends ArrayAdapter<String> {
+//
+//        SongRowAdapter() {
+//            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//
+//            View row=super.getView(position, convertView, parent);
+//
+//            TextView canto = (TextView) row.findViewById(R.id.text_title);
+//
+//            String totalString = canto.getText().toString();
+//
+//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            String colore = totalString.substring(3, 10);
+//
+//            ((TextView) row.findViewById(R.id.text_title))
+//                    .setText(totalString.substring(10));
+//
+//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
+//            textPage.setText(pagina);
+////            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//
+//            return(row);
+//        }
+//    }
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
@@ -632,8 +682,14 @@ public class RicercaAvanzataFragment extends Fragment {
                 }
             }
 
-            titoli = new String[totalResults];
-            System.arraycopy(aResults, 0, titoli, 0, totalResults);
+//            titoli = new String[totalResults];
+//            System.arraycopy(aResults, 0, titoli, 0, totalResults);
+            titoli.clear();
+            for (int i = 0; i < aResults.length; i++) {
+                if (aResults[i] == null)
+                    break;
+                titoli.add(new CantoItem(aResults[i]));
+            }
 
             return null;
         }
@@ -642,62 +698,65 @@ public class RicercaAvanzataFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-            lv.setVisibility(View.GONE);
+//            lv.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(String result) {
+
+            cantoAdapter.notifyDataSetChanged();
             // crea un list adapter per l'oggetto di tipo ListView
-            lv.setAdapter(new SongRowAdapter());
+//            lv.setAdapter(new SongRowAdapter());
 
-            // setta l'azione al click su ogni voce dell'elenco
-            lv.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    // recupera il titolo della voce cliccata
-                    String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
-                            .getText().toString();
-                    cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-
-                    // crea un manipolatore per il DB in modalità READ
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                    // esegue la query per il recupero del nome del file della pagina da visualizzare
-                    String query = "SELECT source, _id" +
-                            "  FROM ELENCO" +
-                            "  WHERE titolo =  '" + cantoCliccato + "'";
-                    Cursor cursor = db.rawQuery(query, null);
-
-                    // recupera il nome del file
-                    cursor.moveToFirst();
-                    String pagina = cursor.getString(0);
-                    int idCanto = cursor.getInt(1);
-
-                    // chiude il cursore
-                    cursor.close();
-
-                    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                    Bundle bundle = new Bundle();
-                    bundle.putString("pagina", pagina);
-                    bundle.putInt("idCanto", idCanto);
-
-                    // lancia l'activity che visualizza il canto passando il parametro creato
-                    startSubActivity(bundle, view);
-
-                }
-            });
+//            // setta l'azione al click su ogni voce dell'elenco
+//            lv.setOnItemClickListener(new OnItemClickListener() {
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                    // recupera il titolo della voce cliccata
+//                    String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
+//                            .getText().toString();
+//                    cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                    // crea un manipolatore per il DB in modalità READ
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                    // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                    String query = "SELECT source, _id" +
+//                            "  FROM ELENCO" +
+//                            "  WHERE titolo =  '" + cantoCliccato + "'";
+//                    Cursor cursor = db.rawQuery(query, null);
+//
+//                    // recupera il nome del file
+//                    cursor.moveToFirst();
+//                    String pagina = cursor.getString(0);
+//                    int idCanto = cursor.getInt(1);
+//
+//                    // chiude il cursore
+//                    cursor.close();
+//
+//                    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("pagina", pagina);
+//                    bundle.putInt("idCanto", idCanto);
+//
+//                    // lancia l'activity che visualizza il canto passando il parametro creato
+//                    startSubActivity(bundle, view);
+//
+//                }
+//            });
 
             progress.setVisibility(View.GONE);
 
-            if (titoli.length == 0) {
+//            if (titoli.length == 0) {
+            if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-                lv.setVisibility(View.GONE);
+//                lv.setVisibility(View.GONE);
             }
             else {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                lv.setVisibility(View.VISIBLE);
-                registerForContextMenu(lv);
+//                lv.setVisibility(View.VISIBLE);
+//                registerForContextMenu(lv);
             }
         }
 

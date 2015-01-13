@@ -4,7 +4,6 @@
     android:id="@+id/argomentiList"
     android:layout_width="match_parent"
     android:drawSelectorOnTop="false"
-    android:listSelector="@android:color/transparent"
     android:childDivider="@android:color/transparent"
     android:layout_height="wrap_content"
     android:groupIndicator="@drawable/expander_group_holo_light" />
