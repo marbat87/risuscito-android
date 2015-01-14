@@ -26,6 +26,7 @@ public class Utility {
 	//Costanti per le impostazioni
 	public static final String SCREEN_ON = "sempre_acceso";
 	public static final String SHOW_SECONDA = "mostra_seconda_lettura";
+    public static final String SHOW_PACE = "mostra_canto_pace";
 	public static final String SAVE_LOCATION = "memoria_salvataggio_scelta";
 	public static final String DEFAULT_INDEX = "indice_predefinito"; 
 	
@@ -70,6 +71,12 @@ public class Utility {
     public static final String ID_CANTO = "idCanto";
     public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
+
+    public static final String GIALLO = "#EBD0A5";
+    public static final String BIANCO = "#FCFCFC";
+    public static final String AZZURRO = "#6F949A";
+    public static final String VERDE = "#8FC490";
+    public static final String GRIGIO = "#CAC8BC";
 	
     @SuppressLint("NewApi")
 	public static void setAccessibilityIgnore(View view) {

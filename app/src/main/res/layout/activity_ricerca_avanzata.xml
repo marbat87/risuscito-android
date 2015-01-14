@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_min_margin"
     android:paddingRight="@dimen/activity_min_margin"
     android:paddingTop="@dimen/activity_min_margin"
@@ -39,6 +39,7 @@
             android:layout_marginEnd="@dimen/min_button_margin"
             android:background="@color/theme_primary"
             risuscito:clickAfterRipple="false"
+            risuscito:rippleColor="@color/ripple_color"
             android:soundEffectsEnabled="true"
             android:text="@string/button_pulisci" />
 
@@ -61,10 +62,16 @@
         android:visibility="gone"
         android:layout_gravity="center_horizontal"/>
 
-    <ListView
+    <!--<ListView-->
+        <!--android:id="@+id/matchedList"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:drawSelectorOnTop="false"-->
+        <!--android:divider="@null"-->
+        <!--android:visibility="gone" />-->
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/matchedList"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_width= "match_parent"
+        android:layout_height = "match_parent" />
 
 </LinearLayout>
