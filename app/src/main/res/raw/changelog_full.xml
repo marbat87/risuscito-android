@@ -5,6 +5,7 @@
         <changelogtext>Corretto un bug nello scroller dell'elenco alfabetico</changelogtext>
         <changelogtext>Nuova grafica per tutte le liste dei canti e scroller rapidi</changelogtext>
         <changelogtext>Leggera correzione dello stile del drawer</changelogtext>
+        <changelogtext>Correzioni di testi e accordi vari</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.1.0" changeDate="03 Gennaio 2015">
