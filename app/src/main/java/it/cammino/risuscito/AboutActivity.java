@@ -15,6 +15,8 @@ public class AboutActivity extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.activity_about, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_about);
+        ((MainActivity) getActivity()).getSupportActionBar()
+                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
 		
 		return rootView;
 	}

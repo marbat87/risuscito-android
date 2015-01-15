@@ -23,6 +23,7 @@ public class GeneralSearch extends Fragment {
 		
 		View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_search);
+        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
         ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));

@@ -53,6 +53,7 @@ public class CustomLists extends Fragment  {
 		
 		View rootView = inflater.inflate(R.layout.activity_custom_lists, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
+        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 		//crea un istanza dell'oggetto DatabaseCanti
 		listaCanti = new DatabaseCanti(getActivity());

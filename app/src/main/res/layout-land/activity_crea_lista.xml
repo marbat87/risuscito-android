@@ -15,12 +15,14 @@
         risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
         risuscito:titleTextAppearance="@style/ActionBar.TitleText"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary" />
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation" />
 
     <RelativeLayout
         android:background="?attr/colorPrimary"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/toolbar_elevation">
 
         <TextView
             android:paddingTop="@dimen/action_bar_text_field_margin"

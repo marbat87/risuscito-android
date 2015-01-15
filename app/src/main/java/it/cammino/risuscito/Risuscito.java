@@ -48,6 +48,8 @@ public class Risuscito extends Fragment {
 		View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 		
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
+        ((MainActivity) getActivity()).getSupportActionBar()
+                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
 		
 		rootView.findViewById(R.id.imageView1)
 		.setOnClickListener(new OnClickListener() {			

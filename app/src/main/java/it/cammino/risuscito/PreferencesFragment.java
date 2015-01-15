@@ -32,6 +32,8 @@ public class PreferencesFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.preference_screen, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
+        ((MainActivity) getActivity()).getSupportActionBar()
+                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
 		
 		screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 

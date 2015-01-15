@@ -26,4 +26,7 @@
 
     <dimen name="button_icon_padding">-5dip</dimen>
 
+    <dimen name="toolbar_elevation">8dp</dimen>
+    <integer name="toolbar_elevation">8</integer>
+
 </resources>

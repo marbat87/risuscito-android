@@ -35,6 +35,8 @@ public class FavouritesActivity extends Fragment {
 
         rootView = inflater.inflate(R.layout.activity_favourites, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_favourites);
+        ((MainActivity) getActivity()).getSupportActionBar()
+                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());

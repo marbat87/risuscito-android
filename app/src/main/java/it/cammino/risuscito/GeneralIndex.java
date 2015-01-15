@@ -28,6 +28,7 @@ public class GeneralIndex extends Fragment {
 				
 		View rootView = inflater.inflate(R.layout.activity_general_index, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
+        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 		
 	    mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
