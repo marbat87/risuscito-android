@@ -33,6 +33,6 @@ dependencies {
     compile project(':utilities')
     compile project(':aFileChooser')
     compile project(':materialDesign')
-    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.0'
+    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.1'
     compile 'com.nispok:snackbar:2.7.4'
 }
