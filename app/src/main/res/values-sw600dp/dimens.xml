@@ -7,4 +7,6 @@
     <dimen name="action_bar_text_field_margin">20dip</dimen>
     <dimen name="min_button_margin">15dip</dimen>
 
+    <dimen name="button_playbar_padding">18dp</dimen>
+
 </resources>

@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,7 +95,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private int idCanto;
     private static MediaPlayer mediaPlayer;
     private int favoriteFlag;
-    private ButtonIcon favouriteCheckBox, play_button, stop_button, rewind_button, ff_button, save_file, delete_file, play_scroll, stop_scroll;
+    private ImageButton favouriteCheckBox, play_scroll, stop_scroll;
+    private ButtonIcon play_button, stop_button, rewind_button, ff_button, save_file, delete_file;
     Slider scroll_speed_bar;
     private ProgressDialogPro mp3Dialog, exportDialog;
     private AlertDialogPro mProgressDialog;
@@ -210,8 +212,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
         ff_button = (ButtonIcon) findViewById(R.id.fast_forward_song);
         save_file = (ButtonIcon) findViewById(R.id.save_file);
         delete_file = (ButtonIcon) findViewById(R.id.delete_file);
-        play_scroll = (ButtonIcon) findViewById(R.id.play_scroll);
-        stop_scroll = (ButtonIcon) findViewById(R.id.stop_scroll);
+        play_scroll = (ImageButton) findViewById(R.id.play_scroll);
+        stop_scroll = (ImageButton) findViewById(R.id.stop_scroll);
         scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -729,7 +731,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 play_scroll.setVisibility(View.GONE);
                 stop_scroll.setVisibility(View.VISIBLE);
                 scrollPlaying = true;
@@ -741,7 +743,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 play_scroll.setVisibility(View.VISIBLE);
                 stop_scroll.setVisibility(View.GONE);
                 scrollPlaying = false;
@@ -1046,29 +1048,33 @@ public class PaginaRenderActivity extends ActionBarActivity {
     public void onResume() {
         super.onResume();
 
-        favouriteCheckBox = (ButtonIcon) findViewById(R.id.favorite);
+        favouriteCheckBox = (ImageButton) findViewById(R.id.favorite);
 
 //        favoriteFlag = selectFavouriteFromSource(pagina);
         favoriteFlag = selectFavouriteFromSource();
 
         if (favoriteFlag == 1)
-            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+            favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+//            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
         else
-            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+            favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+//            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         favouriteCheckBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 if (favoriteFlag == 0) {
                     favoriteFlag = 1;
-                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+//                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+                    favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
                     Toast.makeText(PaginaRenderActivity.this
                             , getString(R.string.favorite_added), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     favoriteFlag = 0;
-                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+//                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
                     Toast.makeText(PaginaRenderActivity.this
                             , getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show();
                 }

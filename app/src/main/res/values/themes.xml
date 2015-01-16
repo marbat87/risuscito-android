@@ -21,6 +21,7 @@
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
         <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
+        <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>
         <item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>
         <item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>

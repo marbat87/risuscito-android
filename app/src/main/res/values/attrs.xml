@@ -4,6 +4,7 @@
         <attr name="customHelp" format="reference" />
         <attr name="customInsertItem" format="reference" />
         <attr name="customSelector" format="reference" />
+        <attr name="customSelectorRound" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="ScrimInsetsView">

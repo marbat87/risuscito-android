@@ -146,18 +146,30 @@
         android:background="@color/theme_primary"
         android:divider="?attr/dividerVertical"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
-        <com.gc.materialdesign.views.ButtonIcon
+        <!--<com.gc.materialdesign.views.ButtonIcon-->
+        <!--android:id="@+id/favorite"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:background="@color/ripple_color"-->
+        <!--risuscito:clickAfterRipple="false"-->
+        <!--risuscito:iconSize="28dip"-->
+        <!--risuscito:iconDrawable="@drawable/ic_rating_favorite_normal_light"-->
+        <!--android:soundEffectsEnabled="true"  />-->
+        <ImageButton
             android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
             android:layout_gravity="center_vertical"
-            android:background="@color/ripple_color"
-            risuscito:clickAfterRipple="false"
-            risuscito:iconSize="28dip"
-            risuscito:iconDrawable="@drawable/ic_rating_favorite_normal_light"
-            android:soundEffectsEnabled="true"  />
+            android:scaleType="fitCenter"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            android:src="@drawable/ic_rating_favorite_normal_light"
+            android:soundEffectsEnabled="true" />
 
         <com.gc.materialdesign.views.Slider
             android:id="@+id/speed_seekbar"
@@ -173,25 +185,50 @@
             android:soundEffectsEnabled="true"
             risuscito:showNumberIndicator="true"/>
 
-        <com.gc.materialdesign.views.ButtonIcon
+        <!--<com.gc.materialdesign.views.ButtonIcon-->
+        <!--android:id="@+id/play_scroll"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:background="@color/ripple_color"-->
+        <!--risuscito:clickAfterRipple="false"-->
+        <!--risuscito:iconSize="28dip"-->
+        <!--risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp" />-->
+        <ImageButton
             android:id="@+id/play_scroll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
             android:layout_gravity="center_vertical"
-            android:background="@color/ripple_color"
-            risuscito:clickAfterRipple="false"
-            risuscito:iconSize="28dip"
-            risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp" />
+            android:scaleType="fitCenter"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            android:src="@drawable/ic_play_circle_outline_white_48dp"
+            android:soundEffectsEnabled="true" />
 
-        <com.gc.materialdesign.views.ButtonIcon
+        <!--<com.gc.materialdesign.views.ButtonIcon-->
+        <!--android:id="@+id/stop_scroll"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:background="@color/ripple_color"-->
+        <!--risuscito:clickAfterRipple="false"-->
+        <!--risuscito:iconSize="28dip"-->
+        <!--risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp" />-->
+        <ImageButton
             android:id="@+id/stop_scroll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
             android:layout_gravity="center_vertical"
-            android:background="@color/ripple_color"
-            risuscito:clickAfterRipple="false"
-            risuscito:iconSize="28dip"
-            risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp" />
+            android:scaleType="fitCenter"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            android:src="@drawable/ic_pause_circle_outline_white_48dp"
+            android:soundEffectsEnabled="true" />
+
 
     </LinearLayout>
 
