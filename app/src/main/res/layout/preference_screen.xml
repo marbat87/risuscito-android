@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.gc.materialdesign.views.ScrollView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/preference_min_margin"
     android:paddingRight="@dimen/preference_min_margin"
     android:overScrollMode="never"
@@ -220,4 +218,4 @@
 
     </LinearLayout>
 
-</com.gc.materialdesign.views.ScrollView>
+</ScrollView>

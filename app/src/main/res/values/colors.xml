@@ -61,5 +61,6 @@
 
     <color name="dialtacts_secondary_text_color">#737373</color>
     <color name="dialtacts_theme_color">#0288d1</color>
+    <color name="tab_selected">#3fff</color>
 
 </resources> 

@@ -7,7 +7,7 @@
         <!--         <item name="android:textColorPrimary">#fff</item> -->
         <!--<item name="colorControlNormal">?actionBarIconColor</item>-->
         <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlHighlight">#3fff</item>
+        <item name="colorControlHighlight">@color/tab_selected</item>
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
