@@ -351,6 +351,73 @@ public class CantiEucarestiaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
         }
 
+        boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
+
+        if (showSanto) {
+
+            rootView.findViewById(R.id.groupSanto).setVisibility(View.VISIBLE);
+
+            titoloCanto = getTitoliFromPosition(7);
+
+            if (titoloCanto.length == 0) {
+                rootView.findViewById(R.id.addSanto).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.santoContainer).setVisibility(View.GONE);
+                rootView.findViewById(R.id.addSanto).setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 7);
+                        startSubActivity(bundle);
+                    }
+                });
+            }
+            else {
+                rootView.findViewById(R.id.addSanto).setVisibility(View.GONE);
+                View view = rootView.findViewById(R.id.santoContainer);
+                view.setVisibility(View.VISIBLE);
+                view.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openPagina(v, R.id.santoText);
+                    }
+                });
+                view.setOnLongClickListener(new OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        posizioneDaCanc = 7;
+                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.santoText)).getText().toString());
+                        snackBarRimuoviCanto();
+                        return true;
+                    }
+                });
+
+                TextView temp = (TextView) view.findViewById(R.id.santoText);
+                temp.setText(titoloCanto[0].substring(10));
+
+                int tempPagina = Integer.valueOf(titoloCanto[0].substring(0,3));
+                String pagina = String.valueOf(tempPagina);
+                TextView textPage = (TextView) view.findViewById(R.id.santoPage);
+                textPage.setText(pagina);
+
+                String colore = titoloCanto[0].substring(3, 10);
+                if (colore.equalsIgnoreCase(Utility.GIALLO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+                if (colore.equalsIgnoreCase(Utility.GRIGIO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+                if (colore.equalsIgnoreCase(Utility.VERDE))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
+                if (colore.equalsIgnoreCase(Utility.AZZURRO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+                if (colore.equalsIgnoreCase(Utility.BIANCO))
+                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
+            }
+        }
+        else
+            rootView.findViewById(R.id.groupSanto).setVisibility(View.GONE);
+
         OnClickListener clickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -640,6 +707,26 @@ public class CantiEucarestiaFragment extends Fragment {
             result += temp[0];
 
         result += "\n";
+
+        //deve essere messo anche il Santo? legge le impostazioni
+        boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
+
+        if (showSanto) {
+            //canto alla seconda lettura
+            temp = getTitoloToSendFromPosition(7);
+
+            result += getResources().getString(R.string.santo).toUpperCase(l);
+            result += "\n";
+
+            if (temp[0] == null || temp[0].equalsIgnoreCase(""))
+                result += ">> da scegliere <<";
+            else
+                result += temp[0];
+
+            result += "\n";
+        }
+//		else
+//			Log.i("SANTO", "IGNORATO");
 
         //canti al pane
         temp = getTitoloToSendFromPosition(3);

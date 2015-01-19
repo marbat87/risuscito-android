@@ -214,5 +214,9 @@
     <string name="example_title">CANTO DI ESEMPIO</string>
     <string name="show_pace_title">Parola - Canto alla pace</string>
     <string name="show_pace_summary">Abilita il canto alla pace per la celebrazione della Parola</string>
+    <string name="santo">Santo</string>
+    <string name="add_santo">Aggiungi il Santo</string>
+    <string name="show_santo_title">Eucarestia - Santo</string>
+    <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
 
 </resources>

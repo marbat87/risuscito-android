@@ -21,7 +21,7 @@ import com.alertdialogpro.AlertDialogPro;
 public class PreferencesFragment extends Fragment {
 	
 	private int prevOrientation;
-	private SwitchCompat screenSwitch, secondaSwitch, paceSwitch;
+	private SwitchCompat screenSwitch, secondaSwitch, paceSwitch, santoSwitch;
 	private int saveEntries;
 	
 	private int checkedItem;
@@ -109,6 +109,42 @@ public class PreferencesFragment extends Fragment {
 					secondaSwitch.setChecked(true);
 			}
 		});
+
+        santoSwitch = (SwitchCompat) rootView.findViewById(R.id.show_santo);
+
+        // controllo l'attuale impostazione della visualizzazione seconda lettura
+        if (PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SHOW_SANTO, false))
+            santoSwitch.setChecked(true);
+        else
+            santoSwitch.setChecked(false);
+
+        santoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(Utility.SHOW_SANTO, isChecked);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                    editor.commit();
+                } else {
+                    editor.apply();
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.show_santo_layout).setOnClickListener(new OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                if (santoSwitch.isChecked())
+                    santoSwitch.setChecked(false);
+                else
+                    santoSwitch.setChecked(true);
+            }
+        });
 
 
         paceSwitch = (SwitchCompat) rootView.findViewById(R.id.show_pace_parola);
