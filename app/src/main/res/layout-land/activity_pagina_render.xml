@@ -221,17 +221,28 @@
                     android:src="@drawable/ic_rating_favorite_normal_light"
                     android:soundEffectsEnabled="true" />
 
-                <com.gc.materialdesign.views.Slider
+                <!--<com.gc.materialdesign.views.Slider-->
+                    <!--android:id="@+id/speed_seekbar"-->
+                    <!--android:layout_width="0dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:background="@color/theme_accent"-->
+                    <!--risuscito:max="50"-->
+                    <!--risuscito:min="0"-->
+                    <!--android:soundEffectsEnabled="true"-->
+                    <!--risuscito:showNumberIndicator="true"/>-->
+                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
                     android:id="@+id/speed_seekbar"
                     android:layout_width="0dip"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="@color/theme_accent"
-                    risuscito:max="50"
-                    risuscito:min="0"
-                    android:soundEffectsEnabled="true"
-                    risuscito:showNumberIndicator="true"/>
+                    risuscito:dsb_min="0"
+                    risuscito:dsb_max="50"
+                    risuscito:dsb_rippleColor="@color/ripple_color"
+                    risuscito:dsb_indicatorFormatter="%d%%"
+                    risuscito:dsb_indicatorElevation="6dp" />
 
                 <!--<com.gc.materialdesign.views.ButtonIcon-->
                 <!--android:id="@+id/play_scroll"-->

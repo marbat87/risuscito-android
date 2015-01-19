@@ -51,11 +51,7 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
-import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonIcon;
 import com.gc.materialdesign.views.ProgressBarIndeterminateDeterminate;
-import com.gc.materialdesign.views.Slider;
-import com.gc.materialdesign.views.Slider.OnValueChangedListener;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.itextpdf.text.BaseColor;
@@ -67,6 +63,8 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -98,7 +96,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
 //    private ButtonIcon save_file;
-    Slider scroll_speed_bar;
+    DiscreteSeekBar scroll_speed_bar;
     private ProgressDialogPro mp3Dialog, exportDialog;
     private AlertDialogPro mProgressDialog;
     private PhoneStateListener phoneStateListener;
@@ -215,7 +213,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //        delete_file = (ImageButton) findViewById(R.id.delete_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
 //        stop_scroll = (ImageButton) findViewById(R.id.stop_scroll);
-        scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
+        scroll_speed_bar = (DiscreteSeekBar) findViewById(R.id.speed_seekbar);
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         afChangeListener = new OnAudioFocusChangeListener() {
@@ -805,13 +803,27 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         }
 
-        scroll_speed_bar.setOnValueChangedListener(new OnValueChangedListener() {
-
+        //converte il valore da 0 a 50  in un apercentual
+        scroll_speed_bar.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
             @Override
-            public void onValueChanged(int value) {
+            public int transform(int value) {
+                return value * 2;
+            }
+        });
+        scroll_speed_bar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+            @Override
+            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
                 speedValue = String.valueOf(value);
             }
         });
+
+//        scroll_speed_bar.setOnValueChangedListener(new OnValueChangedListener() {
+//
+//            @Override
+//            public void onValueChanged(int value) {
+//                speedValue = String.valueOf(value);
+//            }
+//        });
 
         play_scroll.setSelected(false);
 
@@ -930,7 +942,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 saveZoom();
                 Bundle bundle = new Bundle();
                 bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
-                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
+                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
+//                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
                 bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
                 bundle.putInt(Utility.ID_CANTO, idCanto);
 
@@ -1253,12 +1266,15 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         if (speedValue == null) {
 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-            scroll_speed_bar.setValue(savedSpeed);
-            speedValue = String.valueOf(scroll_speed_bar.getValue());
+            scroll_speed_bar.setProgress(savedSpeed);
+            speedValue = String.valueOf(scroll_speed_bar.getProgress());
+//            scroll_speed_bar.setValue(savedSpeed);
+//            speedValue = String.valueOf(scroll_speed_bar.getValue())
         }
         else {
 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
-            scroll_speed_bar.setValue(Integer.valueOf(speedValue));
+            scroll_speed_bar.setProgress(Integer.valueOf(speedValue));
+//            scroll_speed_bar.setValue(Integer.valueOf(speedValue));
         }
 
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
