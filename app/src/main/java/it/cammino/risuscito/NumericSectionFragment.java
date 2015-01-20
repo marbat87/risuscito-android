@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -350,6 +349,7 @@ public class NumericSectionFragment extends Fragment {
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
         menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
         menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
+        menu.findItem(R.id.add_to_e_santo).setVisible(pref.getBoolean(Utility.SHOW_SANTO, false));
     }
 
     @Override
@@ -385,6 +385,9 @@ public class NumericSectionFragment extends Fragment {
                     return true;
                 case R.id.add_to_e_pace:
                     addToListaNoDup(2, 2, titoloDaAgg);
+                    return true;
+                case R.id.add_to_e_santo:
+                    addToListaNoDup(2, 7, titoloDaAgg);
                     return true;
                 case R.id.add_to_e_pane:
                     addToListaDup(2, 3, titoloDaAgg);

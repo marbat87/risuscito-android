@@ -236,7 +236,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 cmdStop();
             }
         });
@@ -413,7 +413,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
                             && !localFile)  {
@@ -619,7 +619,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     switch (mediaPlayerState) {
                         case Paused:
                             cmdStart();
