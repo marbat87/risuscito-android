@@ -24,6 +24,7 @@
         android:gravity="top" >
 
         <RelativeLayout
+            android:id="@+id/music_controls"
             android:paddingTop="@dimen/activity_min_margin"
             android:paddingBottom="@dimen/activity_min_margin"
             android:layout_width="@dimen/abc_action_bar_default_height_material"
@@ -177,17 +178,48 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"/>
 
-                <com.melnykov.fab.FloatingActionButton
-                    android:id="@+id/fab_fullscreen_on"
+                <!--<com.melnykov.fab.FloatingActionButton-->
+                    <!--android:id="@+id/fab_fullscreen_on"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="top|end"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:src="@drawable/ic_fullscreen_white_24dp"-->
+                    <!--risuscito:fab_type="mini"-->
+                    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
+                    <!--risuscito:fab_colorPressed="@color/theme_primary"-->
+                    <!--risuscito:fab_colorRipple="@color/theme_primary_dark"/>-->
+                <com.getbase.floatingactionbutton.FloatingActionsMenu
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|end"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_fullscreen_white_24dp"
-                    risuscito:fab_type="mini"
-                    risuscito:fab_colorNormal="@color/theme_accent"
-                    risuscito:fab_colorPressed="@color/theme_primary"
-                    risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+                    risuscito:fab_addButtonColorNormal="@color/favorite_accent"
+                    risuscito:fab_addButtonColorPressed="@color/favorite_accent_dark"
+                    risuscito:fab_addButtonSize="mini"
+                    risuscito:fab_addButtonPlusIconColor="@android:color/white"
+                    risuscito:fab_addButtonStrokeVisible="false"
+                    risuscito:fab_expandDirection="down"
+                    android:layout_margin="5dp">
+
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab_fullscreen_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        risuscito:fab_colorNormal="@color/theme_accent"
+                        risuscito:fab_colorPressed="@color/theme_primary"
+                        risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
+                        risuscito:fab_size="mini" />
+
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab_sound_off"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        risuscito:fab_colorNormal="@color/theme_accent"
+                        risuscito:fab_colorPressed="@color/theme_primary"
+                        risuscito:fab_icon="@drawable/hide_music_background"
+                        risuscito:fab_size="mini" />
+
+                </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
             </FrameLayout>
 

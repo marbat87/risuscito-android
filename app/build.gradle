@@ -36,4 +36,5 @@ dependencies {
     compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.1'
     compile 'com.nispok:snackbar:2.7.4'
     compile project(':discreteSeekBar')
+    compile project(':android-floating-action-button')
 }

@@ -95,7 +95,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private static MediaPlayer mediaPlayer;
     private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
-//    private ButtonIcon save_file;
+    //    private ButtonIcon save_file;
     DiscreteSeekBar scroll_speed_bar;
     private ProgressDialogPro mp3Dialog, exportDialog;
     private AlertDialogPro mProgressDialog;
@@ -954,6 +954,17 @@ public class PaginaRenderActivity extends ActionBarActivity {
             }
         });
 
+        findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.isSelected())
+                    findViewById(R.id.music_controls).setVisibility(View.VISIBLE);
+                else
+                    findViewById(R.id.music_controls).setVisibility(View.GONE);
+                v.setSelected(!v.isSelected());
+            }
+        });
+
     }
 
     @Override
@@ -1259,7 +1270,43 @@ public class PaginaRenderActivity extends ActionBarActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setSupportZoom(true);
         webSettings.setLoadWithOverviewMode(true);
-        webSettings.setBuiltInZoomControls(true);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+            webSettings.setBuiltInZoomControls(false);
+        else {
+            webSettings.setBuiltInZoomControls(true);
+            webSettings.setDisplayZoomControls(false);
+        }
+
+//        final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+//
+//            @Override
+//            public boolean onDoubleTap(MotionEvent e) {
+//                int zoom = (int) (paginaView.getScale() * 100);
+//                Log.i(getClass().toString(), "ZOOM: " + zoom);
+//                if (zoom == 73 || zoom > 25) {
+//                    paginaView.zoomOut();
+//                }
+//                else {
+//                    paginaView.zoomIn();
+//                }
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onDown(MotionEvent e) {
+//                return false;
+//            }
+//        });
+//        gestureDetector.setIsLongpressEnabled(true);
+//
+//        paginaView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return gestureDetector.onTouchEvent(event);
+//            }
+//        });
+
         if (defaultZoomLevel > 0)
             paginaView.setInitialScale(defaultZoomLevel);
         paginaView.setWebViewClient(new MyWebViewClient());
