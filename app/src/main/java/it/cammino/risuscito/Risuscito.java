@@ -166,6 +166,7 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.notaCambio = null;
         PaginaRenderActivity.speedValue = null;
         PaginaRenderActivity.scrollPlaying = false;
+        PaginaRenderActivity.mostraAudio = true;
 
         setHasOptionsMenu(true);
 

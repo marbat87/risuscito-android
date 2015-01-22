@@ -158,6 +158,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
     private LUtils mLUtils;
 
+    public static boolean mostraAudio;
+
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -957,11 +959,9 @@ public class PaginaRenderActivity extends ActionBarActivity {
         findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.isSelected())
-                    findViewById(R.id.music_controls).setVisibility(View.VISIBLE);
-                else
-                    findViewById(R.id.music_controls).setVisibility(View.GONE);
+                findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.VISIBLE : View.GONE);
                 v.setSelected(!v.isSelected());
+                mostraAudio = !v.isSelected();
             }
         });
 
@@ -1332,6 +1332,9 @@ public class PaginaRenderActivity extends ActionBarActivity {
             mScrollDown.run();
         }
 
+        findViewById(R.id.music_controls).setVisibility(mostraAudio ? View.VISIBLE : View.GONE);
+        findViewById(R.id.fab_sound_off).setSelected(!mostraAudio);
+
     }
 
     @Override
@@ -1369,6 +1372,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             mHandler.removeCallbacks(mScrollDown);
         }
         speedValue = null;
+        mostraAudio = true;
     }
 
     //controlla se l'app deve mantenere lo schermo acceso
