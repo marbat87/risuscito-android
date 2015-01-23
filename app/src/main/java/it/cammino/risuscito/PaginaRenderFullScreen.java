@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -108,7 +109,15 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 		webSettings.setUseWideViewPort(true);
 		webSettings.setSupportZoom(true);
 		webSettings.setLoadWithOverviewMode(true);
-		webSettings.setBuiltInZoomControls(true);
+//		webSettings.setBuiltInZoomControls(true);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+            webSettings.setBuiltInZoomControls(false);
+        else {
+            webSettings.setBuiltInZoomControls(true);
+            webSettings.setDisplayZoomControls(false);
+        }
+
 		if (defaultZoomLevel > 0)
             pageView.setInitialScale(defaultZoomLevel);
         pageView.setWebViewClient(new MyWebViewClient());

@@ -1174,7 +1174,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         favoriteFlag = selectFavouriteFromSource();
 
         if (favoriteFlag == 1)
-            favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent));
+            favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent_dark));
 //            favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
 //            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
         else
@@ -1188,7 +1188,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 if (favoriteFlag == 0) {
                     favoriteFlag = 1;
-                    favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent));
+                    favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent_dark));
 //                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
 //                    favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
                     Toast.makeText(PaginaRenderActivity.this
@@ -1372,7 +1372,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             mHandler.removeCallbacks(mScrollDown);
         }
         speedValue = null;
-        mostraAudio = true;
+        mostraAudio = false;
     }
 
     //controlla se l'app deve mantenere lo schermo acceso
