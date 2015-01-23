@@ -242,7 +242,7 @@ public class InsertAvanzataFragment extends Fragment {
             }
         });
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         return rootView;
     }

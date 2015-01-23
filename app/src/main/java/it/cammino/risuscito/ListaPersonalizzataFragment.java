@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -85,13 +86,19 @@ public class ListaPersonalizzataFragment extends Fragment {
 			}
 		});
 		
-		setHasOptionsMenu(true);	
+//		setHasOptionsMenu(true);
 		
 		mLUtils = LUtils.getInstance(getActivity());
 		
 		return rootView;
 	}
-		   
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public void onResume() {
     	super.onResume();

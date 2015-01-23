@@ -10,6 +10,7 @@
         <changelogtext>Adeguato lo stile dei changelog</changelogtext>
         <changelogtext>Rimosso il vecchio controllo a schermo dello zoom nei canti</changelogtext>
         <changelogtext>Aggiunta la possibilità di nascondere solo la barra di riproduzione audio</changelogtext>
+        <changelogtext>Bugfix vari</changelogtext>
     </changelogversion>
 
 </changelog>

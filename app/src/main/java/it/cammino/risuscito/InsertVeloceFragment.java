@@ -330,7 +330,7 @@ public class InsertVeloceFragment extends Fragment {
             }
         });
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         return rootView;
     }

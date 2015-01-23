@@ -241,7 +241,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         lista.close();
         db.close();
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 

@@ -308,7 +308,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         lista.close();
         db.close();
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 

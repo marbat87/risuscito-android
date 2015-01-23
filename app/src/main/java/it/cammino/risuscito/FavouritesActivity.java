@@ -25,7 +25,10 @@ public class FavouritesActivity extends Fragment {
     //  	private String[] titoli;
     private List<CantoItem> titoli;
     private String cantoDaCanc;
+    private int posizDaCanc;
     private View rootView;
+	private RecyclerView recyclerView;
+    private CantoRecyclerAdapter cantoAdapter;
 
     private LUtils mLUtils;
 
@@ -147,6 +150,7 @@ public class FavouritesActivity extends Fragment {
             public boolean onLongClick(View v) {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
                 cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
+                posizDaCanc = recyclerView.getChildPosition(v);
                 SnackbarManager.show(
                         Snackbar.with(getActivity())
                                 .text(getString(R.string.favorite_remove))
@@ -160,7 +164,9 @@ public class FavouritesActivity extends Fragment {
                                                 "  WHERE titolo =  '" + cantoDaCanc + "'";
                                         db.execSQL(sql);
                                         db.close();
-                                        updateFavouritesList();
+                                        // updateFavouritesList();
+										titoli.remove(posizDaCanc);
+                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
                                     }
                                 })
                                 .actionColor(getResources().getColor(R.color.theme_accent))
@@ -169,10 +175,10 @@ public class FavouritesActivity extends Fragment {
             }
         };
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
 
         // Creating new adapter object
-        CantoRecyclerAdapter cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, longClickListener);
+        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, longClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager

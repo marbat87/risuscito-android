@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Display;
@@ -168,9 +169,15 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.scrollPlaying = false;
         PaginaRenderActivity.mostraAudio = false;
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
