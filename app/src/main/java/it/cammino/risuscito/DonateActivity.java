@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +27,7 @@ public class DonateActivity extends Fragment {
 		View rootView = inflater.inflate(R.layout.activity_donate, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_donate);
         ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
+                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 		
 		WebView donateView = (WebView) rootView.findViewById(R.id.donate_text);
 		donateView.setBackgroundColor(0);
@@ -82,5 +83,11 @@ public class DonateActivity extends Fragment {
 		
 		return rootView;
 	}
+
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
 
 }

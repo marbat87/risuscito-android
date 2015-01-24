@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ public class PreferencesFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.preference_screen, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
         ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
+                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 		
 		screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 
@@ -317,6 +318,12 @@ public class PreferencesFragment extends Fragment {
 				break;
 			}
         }
+    }
+
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
 }

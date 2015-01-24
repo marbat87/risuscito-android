@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -51,7 +52,7 @@ public class Risuscito extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
         ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(getResources().getInteger(R.integer.toolbar_elevation));
+                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 
         rootView.findViewById(R.id.imageView1)
                 .setOnClickListener(new OnClickListener() {
@@ -241,6 +242,12 @@ public class Risuscito extends Fragment {
             @Override
             public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
         });
+    }
+
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
 }
