@@ -169,11 +169,11 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 				+ "0, 0, 0, NULL, NULL, 2)";
 		db.execSQL(sql);
 
-		sql = "INSERT INTO ELENCO ";
-		sql += "VALUES (14, 11, 'Benedizione dell''acqua del fonte battesimale (2)', 'benedizione_acqua_fonte_2', 0, '"
-				+ GIALLO + "', 'http://www.resuscicanti.com/05Benedizionedell''acquadelfontebattesimale%208,30.mp3', "
-				+ "0, 0, 0, NULL, NULL, 2)";
-		db.execSQL(sql);
+//		sql = "INSERT INTO ELENCO ";
+//		sql += "VALUES (14, 11, 'Benedizione dell''acqua del fonte battesimale (2)', 'benedizione_acqua_fonte_2', 0, '"
+//				+ GIALLO + "', 'http://www.resuscicanti.com/05Benedizionedell''acquadelfontebattesimale%208,30.mp3', "
+//				+ "0, 0, 0, NULL, NULL, 2)";
+//		db.execSQL(sql);
 
 		sql = "INSERT INTO ELENCO ";
 		sql += "VALUES (15, 12, 'Preconio pasquale', 'preconio_pasquale', 0, '" + GIALLO

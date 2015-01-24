@@ -12,8 +12,8 @@
 <string name="santo_1983_title">Santo (1983)</string>
 <string name="preghiera_eucarestica_II_title">Preghiera Eucaristica II (1)</string>
 <string name="preghiera_eucaristica_II_parte2_title">Preghiera Eucaristica II (1) - parte II</string>
-<string name="benedizione_acqua_fonte_title">Benedizione dell\'\'acqua del fonte battesimale (1)</string>
-<string name="benedizione_acqua_fonte_2_title">Benedizione dell\'\'acqua del fonte battesimale (2)</string>
+<string name="benedizione_acqua_fonte_title">Benedizione dell\'\'acqua del fonte battesimale</string>
+<!--<string name="benedizione_acqua_fonte_2_title">Benedizione dell\'\'acqua del fonte battesimale (2)</string>-->
 <string name="preconio_pasquale_title">Preconio pasquale</string>
 <string name="prefazio_eucarestia_veglia_pasquale_title">Prefazio dell\'\'Eucaristia della Veglia pasquale</string>
 <string name="inno_lodi_avvento_fino16_title">Inno delle lodi di Avvento fino al 16 dicembre</string>
