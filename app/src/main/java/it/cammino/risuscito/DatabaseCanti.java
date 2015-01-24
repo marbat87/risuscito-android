@@ -11,8 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 	private static final String DB_NAME = "DBCanti";	
 	//la versione 20 è la prima con salvataggio tonalità e barrè
 	//la versione 21 è la prima con il salvataggio velocità di scorrimento
-//	private static final int DB_VERSION = 24;
-	private static final int DB_VERSION = 30;
+	private static final int DB_VERSION = 31;
 
 	private final String GIALLO = "#EBD0A5";
 	private final String BIANCO = "#FCFCFC";
@@ -1639,8 +1638,8 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 		db.execSQL(sql);
 		
 		sql = "INSERT INTO ELENCO ";
-		sql += "VALUES (228, 146, 'Se siete risorti con Cristo (Col 3,1-4)', 'se_siete_risorti', 0, '"
-				+ BIANCO
+		sql += "VALUES (228, 297, 'Se siete risorti con Cristo (Col 3,1-4)', 'se_siete_risorti', 0, '"
+				+ AZZURRO
 				+ "', 'http://www.resuscicanti.com/Se%20siete%20risorti%20con%20Cristo%202012.mp3', "
 				+ "0, 0, 0, NULL, NULL, 2)";
 		db.execSQL(sql);
@@ -1653,8 +1652,8 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 		db.execSQL(sql);
 		
 		sql = "INSERT INTO ELENCO ";
-		sql += "VALUES (230, 297, 'Resurrexit (Dialogo di Nostro Signore Gesù Cristo con Marta) (Gv 11,25-27)', 'resurrexit', 0, '"
-				+ AZZURRO
+		sql += "VALUES (230, 146, 'Resurrexit (Dialogo di Nostro Signore Gesù Cristo con Marta) (Gv 11,25-27)', 'resurrexit', 0, '"
+				+ BIANCO
 				+ "', 'http://www.resuscicanti.com/resurrexit%202013.14%20.mp3', "
 				+ "0, 0, 0, NULL, NULL, 2)";
 		db.execSQL(sql);
@@ -1673,7 +1672,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 		db.execSQL(sql);
 		
 		sql = "INSERT INTO ELENCO ";
-		sql += "VALUES (233, 146, 'Il Messia leone per vincere', 'messia_leone_vincere', 0, '"
+		sql += "VALUES (233, 147, 'Il Messia leone per vincere', 'messia_leone_vincere', 0, '"
 				+ BIANCO + "', 'http://www.resuscicanti.com/Il%20Messia%20Italiano.mp3', "
 				+ "0, 0, 0, NULL, NULL, 2)";
 		db.execSQL(sql);
