@@ -11,6 +11,8 @@
         <changelogtext>Rimosso il vecchio controllo a schermo dello zoom nei canti</changelogtext>
         <changelogtext>Aggiunta la possibilità di nascondere solo la barra di riproduzione audio</changelogtext>
         <changelogtext>Bugfix vari</changelogtext>
+        <changelogtext>Cambiata la registrazione di "Benedici anima mia il Signore (Cantico di Tobia) (Tb 13)"</changelogtext>
+        <changelogtext>Il salvataggio nella memoria pubblica, d'ora in poi salva i file in /Music/Risuscitò/</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.1.0" changeDate="03 Gennaio 2015">

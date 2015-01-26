@@ -147,7 +147,16 @@ public class Utility {
 	    }
 	    return false;
 	}
-	
+
+    /* Checks if external storage is available for read and write */
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
 	/* Checks if external storage is available to at least read */
 	public static boolean isExternalStorageReadable() {
 	    String state = Environment.getExternalStorageState();
@@ -163,20 +172,40 @@ public class Utility {
 	    if (link.length() == 0)
 	    	return link;
 	    else {
-	    	int start = link.indexOf(".com/");
-	    	return link.substring(start + 5);
+            if (link.indexOf(".com") > 0) {
+                int start = link.indexOf(".com/");
+                return link.substring(start + 5);
+            }
+            else
+                if (link.indexOf("ITALIANO/") > 0) {
+                    int start = link.indexOf("ITALIANO/");
+                    return link.substring(start + 9);
+                }
+                else
+                    return link;
 	    }
 	}
 	
 	public static String retrieveMediaFileLink(Context activity, String link) {
 		
 		if (isExternalStorageReadable()) {
-			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
-			File fileExt = new File(fileArray[0], filterMediaLink(link));
+//			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
+//			File fileExt = new File(fileArray[0], filterMediaLink(link));
+            File fileExt = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_MUSIC), "/Risuscitò/" + filterMediaLink(link));
 			if (fileExt.exists()) {
 //				Log.i("FILE esterno:", fileExt.getAbsolutePath());
 				return fileExt.getAbsolutePath();
 			}
+            else {
+                File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
+			    fileExt = new File(fileArray[0], filterMediaLink(link));
+                if (fileExt.exists()) {
+//				Log.i("FILE esterno:", fileExt.getAbsolutePath());
+                    return fileExt.getAbsolutePath();
+                }
+            }
+
 //			Log.i("FILE esterno:", "NON TROVATO");
 		}
 		

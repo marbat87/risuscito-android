@@ -226,7 +226,7 @@ public class PreferencesFragment extends Fragment {
 		
 		View saveLocationView = rootView.findViewById(R.id.save_location_layout);
 		
-		if (Utility.isExternalStorageReadable()) {
+		if (Utility.isExternalStorageWritable()) {
 			saveEntries = R.array.save_location_sd_entries;
         }
         else {

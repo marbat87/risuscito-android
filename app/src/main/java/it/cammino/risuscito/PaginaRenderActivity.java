@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -1710,18 +1711,30 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                     int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
                     if (saveLocation == 1) {
-                        File[] fileArray = ContextCompat.getExternalFilesDirs(PaginaRenderActivity.this, null);
-                        String address = fileArray[0].getAbsolutePath();
-                        int replaceIndex = address.indexOf("Android/data");
+                        if (Utility.isExternalStorageWritable()) {
+//                            File[] fileArray = ContextCompat.getExternalFilesDirs(PaginaRenderActivity.this, null);
+//                            String address = fileArray[0].getAbsolutePath();
+//                            int replaceIndex = address.indexOf("Android/data");
 //                        Log.i(getClass().toString(), "INDIRIZZO OLD: " + address);
 //                        Log.i(getClass().toString(), "INDICE ANDROID/DATA: " + replaceIndex);
-                        if (replaceIndex > 0) {
-                            address = address.replace(address.substring(replaceIndex), "risuscito/files");
-                        }
-//                        Log.i(getClass().toString(), "INDIRIZZO NEW: " + address);
+//                            if (replaceIndex > 0) {
+//                                address = address.replace(address.substring(replaceIndex), "risuscito");
+//                            }
+
+//                            Log.i(getClass().toString(), "INDIRIZZO: " + address);
 //                        String localFile = fileArray[0].getAbsolutePath()
-                        String localFile = address + "/" + Utility.filterMediaLink(url);
-                        downloadTask.execute(url, localFile);
+                            boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
+//                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
+                            String localFile = Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
+                                    + "/Risuscitò/" + Utility.filterMediaLink(url);
+//                            Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
+                            downloadTask.execute(url, localFile);
+                        }
+                        else
+                            Toast.makeText(PaginaRenderActivity.this
+                                    , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         String localFile = PaginaRenderActivity.this.getFilesDir()
@@ -2348,7 +2361,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             if (mProgressDialog.isShowing())
                 mProgressDialog.dismiss();
             if (result != null)
-                Toast.makeText(context,"Errore nel download: "+result, Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"Errore nel download: " + result, Toast.LENGTH_LONG).show();
             else {
                 Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
 
@@ -2394,7 +2407,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             // step 2
             try {
                 localPDFPath = "";
-                if (Utility.isExternalStorageReadable()) {
+                if (Utility.isExternalStorageWritable()) {
                     File[] fileArray = ContextCompat.getExternalFilesDirs(PaginaRenderActivity.this, null);
                     localPDFPath = fileArray[0].getAbsolutePath();
                 }
