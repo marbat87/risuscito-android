@@ -19,6 +19,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -1728,7 +1729,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
                             String localFile = Environment.getExternalStoragePublicDirectory(
                                     Environment.DIRECTORY_MUSIC).getAbsolutePath()
-                                    + "/Risuscitò/" + Utility.filterMediaLink(url);
+                                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
 //                            Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
                             downloadTask.execute(url, localFile);
                         }
@@ -1760,6 +1761,14 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 case Utility.DELETE_MP3_OK:
                     File fileToDelete = new File(localUrl);
                     fileToDelete.delete();
+                    if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+                        // initiate media scan and put the new things into the path array to
+                        // make the scanner aware of the location and the files you want to see
+                        MediaScannerConnection.scanFile(getApplicationContext()
+                                , new String[] {fileToDelete.getAbsolutePath()}
+                                , null
+                                , null);
+                    }
                     Toast.makeText(PaginaRenderActivity.this
                             , getString(R.string.file_delete)
                             , Toast.LENGTH_SHORT).show();
@@ -2363,6 +2372,26 @@ public class PaginaRenderActivity extends ActionBarActivity {
             if (result != null)
                 Toast.makeText(context,"Errore nel download: " + result, Toast.LENGTH_LONG).show();
             else {
+                SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+                int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+                if (saveLocation == 1) {
+//                    File[] fList = new File(Environment.getExternalStoragePublicDirectory(
+//                            Environment.DIRECTORY_MUSIC).getAbsolutePath()
+//                            + "/Risuscitò/").listFiles();
+//                    String[] filePaths = new String[fList.length];
+//                    // get all the files from a directory
+//                    for (int i = 0; i < fList.length; i++) {
+//                        filePaths[i] = fList[i].getAbsolutePath();
+//                    }
+                    // initiate media scan and put the new things into the path array to
+                    // make the scanner aware of the location and the files you want to see
+                    MediaScannerConnection.scanFile(context
+                            , new String[] {Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_MUSIC).getAbsolutePath()
+                            + "/Risuscitò/" + Utility.filterMediaLinkNew(url)}
+                            , null
+                            , null);
+                }
                 Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
 
                 if (mediaPlayerState == MP_State.Started

@@ -192,12 +192,12 @@ public class PreferencesFragment extends Fragment {
 			public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
+                checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                        .getInt(Utility.DEFAULT_INDEX, 0);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.default_index_title)
                         .setSingleChoiceItems(getResources().getStringArray(R.array.pref_default_index_entries),
-                        		PreferenceManager
-                				.getDefaultSharedPreferences(getActivity())
-                				.getInt(Utility.DEFAULT_INDEX, 0),
+                                checkedItem,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -240,12 +240,12 @@ public class PreferencesFragment extends Fragment {
 			public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
+                checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                        .getInt(Utility.SAVE_LOCATION, 0);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 AlertDialogPro dialog = builder.setTitle(R.string.save_location_title)
                         .setSingleChoiceItems(getResources().getStringArray(saveEntries),
-                        		PreferenceManager
-                				.getDefaultSharedPreferences(getActivity())
-                				.getInt(Utility.SAVE_LOCATION, 0),
+                                checkedItem,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
