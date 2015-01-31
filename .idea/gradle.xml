@@ -10,8 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/aFileChooser" />
+            <option value="$PROJECT_DIR$/android-floating-action-button" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/materialDesign" />
+            <option value="$PROJECT_DIR$/discreteSeekBar" />
             <option value="$PROJECT_DIR$/utilities" />
           </set>
         </option>

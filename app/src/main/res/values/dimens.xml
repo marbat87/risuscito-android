@@ -2,26 +2,20 @@
 <resources>
 
     <dimen name="activity_min_margin">5dip</dimen>
-    <dimen name="risuscito_land_bottomspacing">20dip</dimen>
     <dimen name="list_preferred_item_height_small">40dip</dimen>
     <dimen name="default_padding_selectable">5dip</dimen>
-    <dimen name="button_height_horizontal">60dip</dimen>
     <dimen name="list_preferred_item_height_medium">50dip</dimen>
-    <dimen name="myListPreferredItemPaddingStart">6dip</dimen>
+    <dimen name="myListPreferredItemPadding">16dip</dimen>
+    <dimen name="myListPreferredExpTextPadding">40dip</dimen>
+    <dimen name="myListPreferredTextPaddingStart">72dip</dimen>
     <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
+    <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="about_image_width">100dip</dimen>
     <dimen name="percent_padding">15dip</dimen>
-    <dimen name="menu_width">250dp</dimen>
 
     <dimen name="navdrawer_chosen_account_height">100dp</dimen>
-    <dimen name="navdrawer_width">220dp</dimen>
-    <dimen name="navdrawer_profile_image_size">40dp</dimen>
-    <dimen name="main_section_item_height">53dp</dimen>
-    <dimen name="secondary_section_item_height">38dp</dimen>
-    <dimen name="main_section_icon_size">35dp</dimen>
-    <dimen name="secondary_section_icon_size">27dp</dimen>
+    <dimen name="navdrawer_width">302dp</dimen>
 
-    <dimen name="material_action_bar_size">56dp</dimen>
     <dimen name="action_bar_text_field_margin">15dip</dimen>
     <dimen name="min_button_margin">10dip</dimen>
 
@@ -31,5 +25,12 @@
     <dimen name="preference_min_margin">15dip</dimen>
 
     <dimen name="button_icon_padding">-5dip</dimen>
+
+    <dimen name="toolbar_elevation">8dp</dimen>
+    <integer name="toolbar_elevation">8</integer>
+
+    <dimen name="button_icon_radius">40dp</dimen>
+    <dimen name="button_icon_drawable">26dp</dimen>
+    <dimen name="button_playbar_padding">14dp</dimen>
 
 </resources>

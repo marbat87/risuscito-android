@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:background="@drawable/list_selector_neutral_light"
+    android:background="?attr/customSelector"
     android:gravity="start|center_vertical"
-    android:paddingLeft="@dimen/keyline_1"
-    android:paddingRight="@dimen/keyline_1"
     android:layout_width="match_parent"
-    android:layout_height="48dp">
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/myListPreferredItemHeightSmall">
 
     <ImageView
         android:id="@+id/icon"
         android:layout_height="36dp"
         android:layout_width="36dp"
+        android:layout_marginLeft="@dimen/keyline_1"
+        android:layout_marginStart="@dimen/keyline_1"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp" />
 
@@ -23,7 +24,7 @@
         android:gravity="start|center_vertical"
         android:fontFamily="@string/font_fontFamily_medium"
         android:textStyle="@integer/font_textStyle_medium"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:text="" />
 
 </LinearLayout>

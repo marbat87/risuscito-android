@@ -7,7 +7,7 @@
         <!--         <item name="android:textColorPrimary">#fff</item> -->
         <!--<item name="colorControlNormal">?actionBarIconColor</item>-->
         <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlHighlight">#3fff</item>
+        <item name="colorControlHighlight">@color/tab_selected</item>
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -15,20 +15,6 @@
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#fff</item>
         <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="myTheme.ActionBar.Text" parent="@android:style/TextAppearance">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="MyActionButton" parent="">
-        <item name="android:background">@drawable/list_selector_neutral_dark</item>
-        <item name="android:paddingLeft">12dip</item>
-        <item name="android:paddingRight">12dip</item>
-        <item name="android:minWidth">@dimen/abc_action_button_min_width_material</item>
-        <item name="android:minHeight">@dimen/material_action_bar_size</item>
-        <item name="android:gravity">center</item>
-        <item name="android:maxLines">2</item>
     </style>
 
     <style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">

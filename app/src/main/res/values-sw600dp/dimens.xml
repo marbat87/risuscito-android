@@ -2,17 +2,11 @@
 <resources>
 
     <dimen name="activity_min_margin">10dip</dimen>
-    <dimen name="button_length_vertical">600dip</dimen>
-    <dimen name="risuscito_land_bottomspacing">10dip</dimen>
-    <dimen name="button_height_vertical">80dip</dimen>
-    <dimen name="button_height_horizontal">100dip</dimen>
-    <dimen name="button_text_size">30sp</dimen>
-    <dimen name="button_text_size_h">40sp</dimen>
     <dimen name="about_image_width">200dip</dimen>
-    <dimen name="menu_width">400dp</dimen>
 
-    <dimen name="material_action_bar_size">64dp</dimen>
     <dimen name="action_bar_text_field_margin">20dip</dimen>
     <dimen name="min_button_margin">15dip</dimen>
+
+    <dimen name="button_playbar_padding">18dp</dimen>
 
 </resources>

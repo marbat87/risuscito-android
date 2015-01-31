@@ -33,7 +33,7 @@
                 android:clickable="true"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="horizontal"
-                android:background="@drawable/list_selector_group" >
+                android:background="?attr/customSelector" >
 
                 <ImageView
                     android:id="@+id/imageView6"
@@ -53,34 +53,45 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+            <RelativeLayout
                 android:id="@+id/cantoIniziale1Container"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/cantoIniziale1"
-                    android:layout_width="fill_parent"
+                    android:id="@+id/cantoIniziale1Page"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
+
+                <TextView
+                    android:id="@+id/cantoIniziale1Text"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:gravity="center_vertical"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="@drawable/list_selector_neutral_light"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip"
-                android:background="@android:color/darker_gray"/>
+            <include layout="@layout/preferences_separator" />
 
             <LinearLayout
                 android:id="@+id/groupCantoSeconda"
@@ -104,7 +115,7 @@
                     android:clickable="true"
                     android:minHeight="@dimen/list_preferred_item_height_small"
                     android:orientation="horizontal"
-                    android:background="@drawable/list_selector_group" >
+                    android:background="?attr/customSelector" >
 
                     <ImageView
                         android:id="@+id/imageView7"
@@ -124,34 +135,45 @@
 
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                <RelativeLayout
                     android:id="@+id/cantoSecondaContainer"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/customSelector"
+                    android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/cantoSeconda"
-                        android:layout_width="fill_parent"
+                        android:id="@+id/cantoSecondaPage"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                        android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                        android:background="@drawable/bkg_round_blue" />
+
+                    <TextView
+                        android:id="@+id/cantoSecondaText"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:clickable="true"
-                        android:textColor="@android:color/black"
-                        android:paddingLeft="@dimen/default_padding_selectable"
-                        android:paddingRight="@dimen/default_padding_selectable"
-                        android:gravity="center_vertical"
-                        android:minHeight="@dimen/list_preferred_item_height_small"
-                        android:background="@drawable/list_selector_neutral_light"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textSize="16sp"
+                        android:layout_centerInParent="true"
+                        android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingRight="@dimen/myListPreferredItemPadding"
+                        android:paddingEnd="@dimen/myListPreferredItemPadding" />
 
-                </LinearLayout>
+                </RelativeLayout>
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="10dip"
-                    android:layout_marginBottom="10dip"
-                    android:background="@android:color/darker_gray"/>
+                <include layout="@layout/preferences_separator" />
 
             </LinearLayout>
 
@@ -170,7 +192,7 @@
                 android:clickable="true"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="horizontal"
-                android:background="@drawable/list_selector_group" >
+                android:background="?attr/customSelector" >
 
                 <ImageView
                     android:id="@+id/imageView8"
@@ -190,34 +212,129 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+            <RelativeLayout
                 android:id="@+id/cantoPaceContainer"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/cantoPace"
+                    android:id="@+id/cantoPagePage"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
+
+                <TextView
+                    android:id="@+id/cantoPaceText"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+            </RelativeLayout>
+
+            <include layout="@layout/preferences_separator" />
+
+            <LinearLayout
+                android:id="@+id/groupSanto"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:gravity="center_horizontal"
+                    android:text="@string/santo"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <RelativeLayout
+                    android:id="@+id/addSanto"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:clickable="true"
-                    android:textColor="@android:color/black"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
                     android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="@drawable/list_selector_neutral_light"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:orientation="horizontal"
+                    android:background="?attr/customSelector" >
+
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/add_seconda"
+                        android:src="?customInsertItem" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/imageView12"
+                        android:text="@string/select_canto"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/santoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/customSelector"
+                    android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/santoPage"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                        android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                        android:background="@drawable/bkg_round_blue" />
+
+                    <TextView
+                        android:id="@+id/santoText"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textSize="16sp"
+                        android:layout_centerInParent="true"
+                        android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                        android:paddingRight="@dimen/myListPreferredItemPadding"
+                        android:paddingEnd="@dimen/myListPreferredItemPadding" />
+
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
 
             </LinearLayout>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip"
-                android:background="@android:color/darker_gray"/>
 
             <TextView
                 android:layout_width="fill_parent"
@@ -226,11 +343,15 @@
                 android:text="@string/canto_pane"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-            <LinearLayout
-                android:id="@+id/cantiPaneList"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content" />
+            <!--<LinearLayout-->
+                <!--android:id="@+id/cantiPaneList"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_height="wrap_content" />-->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width= "match_parent"
+                android:layout_height = "wrap_content"
+                android:id="@+id/cantiPaneList" />
 
             <RelativeLayout
                 android:id="@+id/addCantoPane"
@@ -240,7 +361,7 @@
                 android:clickable="true"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="horizontal"
-                android:background="@drawable/list_selector_group" >
+                android:background="?attr/customSelector" >
 
                 <ImageView
                     android:id="@+id/imageView9"
@@ -260,12 +381,7 @@
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip"
-                android:background="@android:color/darker_gray"/>
+            <include layout="@layout/preferences_separator" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -274,11 +390,15 @@
                 android:text="@string/canto_vino"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <LinearLayout
-                android:id="@+id/cantiVinoList"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content" />
+            <!--<LinearLayout-->
+                <!--android:id="@+id/cantiVinoList"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_height="wrap_content" />-->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width= "match_parent"
+                android:layout_height = "wrap_content"
+                android:id="@+id/cantiVinoList" />
 
             <RelativeLayout
                 android:id="@+id/addCantoVino"
@@ -288,7 +408,7 @@
                 android:clickable="true"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="horizontal"
-                android:background="@drawable/list_selector_group" >
+                android:background="?attr/customSelector" >
 
                 <ImageView
                     android:id="@+id/imageView10"
@@ -308,12 +428,7 @@
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip"
-                android:background="@android:color/darker_gray"/>
+            <include layout="@layout/preferences_separator" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -330,7 +445,7 @@
                 android:clickable="true"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="horizontal"
-                android:background="@drawable/list_selector_group" >
+                android:background="?attr/customSelector" >
 
                 <ImageView
                     android:id="@+id/imageView11"
@@ -350,34 +465,45 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+            <RelativeLayout
                 android:id="@+id/cantoFinale1Container"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/customSelector"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/cantoFinale1"
-                    android:layout_width="fill_parent"
+                    android:id="@+id/cantoFinale1Page"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
+                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:background="@drawable/bkg_round_blue" />
+
+                <TextView
+                    android:id="@+id/cantoFinale1Text"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:textColor="@android:color/black"
-                    android:paddingLeft="@dimen/default_padding_selectable"
-                    android:paddingRight="@dimen/default_padding_selectable"
-                    android:minHeight="@dimen/list_preferred_item_height_small"
-                    android:background="@drawable/list_selector_neutral_light"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="16sp"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
+                    android:paddingRight="@dimen/myListPreferredItemPadding"
+                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip"
-                android:background="@android:color/darker_gray" />
+            <include layout="@layout/preferences_separator" />
 
         </LinearLayout>
 

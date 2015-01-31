@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:paddingBottom="@dimen/activity_min_margin"
@@ -23,11 +24,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
 
-	<view xmlns:chg="http://schemas.android.com/apk/res-auto"
+	<view
     	class="it.gmariotti.changelibs.library.view.ChangeLogListView"
        	android:layout_width="match_parent"
        	android:layout_height="match_parent"
-       	chg:changeLogFileResourceId="@raw/changelog_full"
+        risuscito:changeLogFileResourceId="@raw/changelog_full"
+        risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
+        risuscito:rowLayoutId="@layout/changelogrow_material_layout"
        	android:id="@+id/aboutText"/>
     
 </LinearLayout>

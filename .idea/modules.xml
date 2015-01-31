@@ -5,8 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/Risuscito.iml" filepath="$PROJECT_DIR$/Risuscito.iml" />
       <module fileurl="file://$PROJECT_DIR$/RisuscitoProject.iml" filepath="$PROJECT_DIR$/RisuscitoProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/aFileChooser/aFileChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-floating-action-button/android-floating-action-button.iml" filepath="$PROJECT_DIR$/android-floating-action-button/android-floating-action-button.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/materialDesign/materialDesign.iml" filepath="$PROJECT_DIR$/materialDesign/materialDesign.iml" />
+      <module fileurl="file://$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" filepath="$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" />
       <module fileurl="file://$PROJECT_DIR$/utilities/utilities.iml" filepath="$PROJECT_DIR$/utilities/utilities.iml" />
     </modules>
   </component>

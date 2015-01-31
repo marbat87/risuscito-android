@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -53,6 +54,7 @@ public class CustomLists extends Fragment  {
 		
 		View rootView = inflater.inflate(R.layout.activity_custom_lists, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
+        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 		//crea un istanza dell'oggetto DatabaseCanti
 		listaCanti = new DatabaseCanti(getActivity());
@@ -68,14 +70,21 @@ public class CustomLists extends Fragment  {
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 	    
         Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
+        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
         
-	    setHasOptionsMenu(true);
+//	    setHasOptionsMenu(true);
 	    
         return rootView;
 	}
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public void onResume() {

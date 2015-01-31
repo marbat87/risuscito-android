@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -20,7 +19,7 @@
         android:clickable="true"
         android:minHeight="@dimen/list_preferred_item_height_small"
         android:orientation="horizontal"
-        android:background="@drawable/list_selector_group" >
+        android:background="?attr/customSelector" >
 
         <TextView
             android:id="@+id/id_posizione"
@@ -46,11 +45,10 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cantoGenericoContainer"
-        android:orientation="vertical">
+        android:id="@+id/cantoGenericoContainer">
 
         <TextView
             android:id="@+id/id_da_canc"
@@ -58,27 +56,10 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/cantoGenerico"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:clickable="true"
-            android:textColor="@android:color/black"
-            android:paddingLeft="@dimen/default_padding_selectable"
-            android:paddingRight="@dimen/default_padding_selectable"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/list_preferred_item_height_small"
-            android:background="@drawable/list_selector_neutral_light"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <include layout="@layout/row_item" />
 
-    </LinearLayout>
+    </FrameLayout>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dip"
-        android:layout_marginBottom="10dip"
-        android:background="@android:color/darker_gray"/>
+    <include layout="@layout/preferences_separator" />
 
 </LinearLayout>

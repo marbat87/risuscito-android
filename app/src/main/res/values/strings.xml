@@ -86,7 +86,7 @@
     <string name="search_running">Ricerca in corso&#8230;</string>
     <string name="advanced_search_subtitle">CERCA NEL TITOLO E NEL TESTO</string>
     <string name="fast_search_subtitle">CERCA PER TITOLO</string>
-    <string name="show_seconda_title">Eucarestia 2^ lettura</string>
+    <string name="show_seconda_title">Eucarestia - 2^ lettura</string>
     <string name="show_seconda_summary">Abilita il canto in risposta alla seconda lettura per l\'Eucarestia</string>
     <string name="action_add_list">Nuova lista</string>
     <string name="action_remove_list">Elimina lista</string>
@@ -212,5 +212,11 @@
     <string name="only_link_title">Associa file locale</string>
     <string name="dialog_save_tab_title">Salva modifiche</string>
     <string name="example_title">CANTO DI ESEMPIO</string>
+    <string name="show_pace_title">Parola - Canto alla pace</string>
+    <string name="show_pace_summary">Abilita il canto alla pace per la celebrazione della Parola</string>
+    <string name="santo">Santo</string>
+    <string name="add_santo">Aggiungi il Santo</string>
+    <string name="show_santo_title">Eucarestia - Santo</string>
+    <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
 
 </resources>
