@@ -53,7 +53,6 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
-import com.gc.materialdesign.views.ProgressBarIndeterminateDeterminate;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.itextpdf.text.BaseColor;
@@ -85,6 +84,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.utilities.material.LinearProgress;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
@@ -2359,7 +2359,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-            ((ProgressBarIndeterminateDeterminate) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+//            ((ProgressBarIndeterminateDeterminate) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+            ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
             if (progress[0] != 0)
                 ((TextView) mProgressDialog.findViewById(R.id.percent_text))
                         .setText(progress[0].toString() + " %");
