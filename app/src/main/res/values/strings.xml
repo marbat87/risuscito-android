@@ -218,5 +218,7 @@
     <string name="add_santo">Aggiungi il Santo</string>
     <string name="show_santo_title">Eucarestia - Santo</string>
     <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
+    <string name="fullscreen">Schermo intero</string>
+    <string name="audio_on_off">Mostra/Nascondi audio</string>
 
 </resources>

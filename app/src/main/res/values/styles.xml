@@ -28,4 +28,10 @@
         <item name="android:textColor">@color/dialog_button_text_color</item>
     </style>
 
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/label_layout</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">6dip</item>
+    </style>
+
 </resources>
