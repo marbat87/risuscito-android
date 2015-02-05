@@ -13,8 +13,8 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-        android:layout_marginStart="@dimen/myListPreferredItemPadding"/>
+        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:layout_marginStart="@dimen/myListPreferredItemMargin"/>
 
     <TextView
         android:id="@+id/position_name"

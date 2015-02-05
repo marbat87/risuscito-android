@@ -71,8 +71,8 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:background="@drawable/bkg_round_blue" />
 
                 <TextView
@@ -84,10 +84,10 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="16sp"
                     android:layout_centerInParent="true"
-                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingRight="@dimen/myListPreferredItemPadding"
-                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                    android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
             </RelativeLayout>
 
@@ -153,8 +153,8 @@
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:layout_centerInParent="true"
                         android:gravity="center"
-                        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-                        android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
                         android:background="@drawable/bkg_round_blue" />
 
                     <TextView
@@ -166,10 +166,10 @@
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:textSize="16sp"
                         android:layout_centerInParent="true"
-                        android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
-                        android:paddingStart="@dimen/myListPreferredTextPaddingStart"
-                        android:paddingRight="@dimen/myListPreferredItemPadding"
-                        android:paddingEnd="@dimen/myListPreferredItemPadding" />
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
                 </RelativeLayout>
 
@@ -230,8 +230,8 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:background="@drawable/bkg_round_blue" />
 
                 <TextView
@@ -243,10 +243,10 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="16sp"
                     android:layout_centerInParent="true"
-                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingRight="@dimen/myListPreferredItemPadding"
-                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                    android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
             </RelativeLayout>
 
@@ -312,8 +312,8 @@
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:layout_centerInParent="true"
                         android:gravity="center"
-                        android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-                        android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
                         android:background="@drawable/bkg_round_blue" />
 
                     <TextView
@@ -325,10 +325,10 @@
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:textSize="16sp"
                         android:layout_centerInParent="true"
-                        android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
-                        android:paddingStart="@dimen/myListPreferredTextPaddingStart"
-                        android:paddingRight="@dimen/myListPreferredItemPadding"
-                        android:paddingEnd="@dimen/myListPreferredItemPadding" />
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
                 </RelativeLayout>
 
@@ -483,8 +483,8 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:layout_marginLeft="@dimen/myListPreferredItemPadding"
-                    android:layout_marginStart="@dimen/myListPreferredItemPadding"
+                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:background="@drawable/bkg_round_blue" />
 
                 <TextView
@@ -496,10 +496,10 @@
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="16sp"
                     android:layout_centerInParent="true"
-                    android:paddingLeft="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingStart="@dimen/myListPreferredTextPaddingStart"
-                    android:paddingRight="@dimen/myListPreferredItemPadding"
-                    android:paddingEnd="@dimen/myListPreferredItemPadding" />
+                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                    android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
             </RelativeLayout>
 

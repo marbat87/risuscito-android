@@ -62,8 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:paddingTop="@dimen/activity_min_margin"
-        android:paddingLeft="@dimen/activity_min_margin"
-        android:paddingStart="@dimen/activity_min_margin"
+        android:layout_marginLeft="@dimen/activity_min_margin"
+        android:layout_marginStart="@dimen/activity_min_margin"
         android:text="@string/list_elements" />
 
     <FrameLayout
