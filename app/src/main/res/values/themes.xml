@@ -31,7 +31,9 @@
         <item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>
     </style>
 
-    <style name="RisuscitoTheme" parent="Theme.MyTheme" />
+    <style name="RisuscitoTheme" parent="Theme.MyTheme" >
+        <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
+    </style>
 
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />
 

@@ -3,6 +3,7 @@
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />

@@ -33,5 +33,6 @@
     <dimen name="button_icon_radius">40dp</dimen>
     <dimen name="button_icon_drawable">26dp</dimen>
     <dimen name="button_playbar_padding">14dp</dimen>
+    <dimen name="floating_margin_lateral">5dp</dimen>
 
 </resources>

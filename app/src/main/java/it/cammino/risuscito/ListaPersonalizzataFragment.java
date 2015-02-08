@@ -131,14 +131,13 @@ public class ListaPersonalizzataFragment extends Fragment {
 	}
 	
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.list_with_delete, menu);
 	    MenuItem shareItem = menu.findItem(R.id.action_share);
 	    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 	    ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
 	    if (listaPersonalizzata != null && mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
 	    	mShareActionProvider.setShareIntent(getDefaultIntent());
-	    super.onCreateOptionsMenu(menu, inflater);
-	    
 	}
 
 	private Intent getDefaultIntent() {

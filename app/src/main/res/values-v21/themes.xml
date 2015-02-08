@@ -8,6 +8,7 @@
         <item name="customSelectorTab">?android:attr/selectableItemBackground</item>
         <item name="customSelectorRound">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="customSelectorRoundAccent">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="toolbar_shadow">@null</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme">

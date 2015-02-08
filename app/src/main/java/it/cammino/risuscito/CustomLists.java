@@ -102,8 +102,8 @@ public class CustomLists extends Fragment  {
 	}
     
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
 		getActivity().getMenuInflater().inflate(R.menu.custom_list, menu);
-	    super.onCreateOptionsMenu(menu, inflater);
 	}
 
     @Override

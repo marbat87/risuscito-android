@@ -183,8 +183,8 @@ public class Risuscito extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
     }
 
     @Override

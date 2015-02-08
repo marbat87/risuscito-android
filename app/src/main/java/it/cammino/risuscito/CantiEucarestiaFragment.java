@@ -117,12 +117,12 @@ public class CantiEucarestiaFragment extends Fragment {
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         MenuItem shareItem = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
         if (mShareActionProvider != null && tempPager.getCurrentItem() == 1)
             mShareActionProvider.setShareIntent(getDefaultIntent());
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private Intent getDefaultIntent() {
