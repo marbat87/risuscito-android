@@ -171,7 +171,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            android:background="#CCE1E1E1"
+            android:background="@android:color/transparent"
             tools:ignore="RtlSymmetry" />
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu

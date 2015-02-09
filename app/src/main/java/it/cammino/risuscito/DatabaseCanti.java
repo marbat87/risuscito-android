@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 	private static final String DB_NAME = "DBCanti";	
 	//la versione 20 è la prima con salvataggio tonalità e barrè
 	//la versione 21 è la prima con il salvataggio velocità di scorrimento
-	private static final int DB_VERSION = 33;
+	private static final int DB_VERSION = 34;
 
 	private final String GIALLO = "#EBD0A5";
 	private final String BIANCO = "#FCFCFC";
@@ -1183,7 +1183,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 		sql += "VALUES (144, 120, '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_title) + "', '"
                 + appContext.getResources().getString(R.string.andiamo_gia_pastori_source) + "', 0, '"
 				+ BIANCO
-				+ "', '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_source) + "', "
+				+ "', '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_link) + "', "
 				+ "0, 0, 0, NULL, NULL, 2)";
 		db.execSQL(sql);
 

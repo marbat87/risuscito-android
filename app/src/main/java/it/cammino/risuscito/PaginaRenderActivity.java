@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -43,7 +41,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -68,7 +65,6 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.xmp.impl.Utils;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -1260,58 +1256,58 @@ public class PaginaRenderActivity extends ActionBarActivity {
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                final View container = findViewById(R.id.container);
-                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
-                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
-                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
-                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
-
-                int finalRadius = Math.max(container.getWidth(), container.getHeight());
-                ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, 0, finalRadius).start();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            try {
+//                final View container = findViewById(R.id.container);
+//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
+//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
+//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
+//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
+//
+//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
+//                ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, 0, finalRadius).start();
+//            } catch (IllegalStateException e) {
+//                e.printStackTrace();
+//            }
+//            outerFrame.setVisibility(View.VISIBLE);
+//
+//        } else {
             outerFrame.setVisibility(View.VISIBLE);
-
-        } else {
-            outerFrame.setVisibility(View.VISIBLE);
-        }
+//        }
     }
 
     private void hideOuterFrame() {
         final View outerFrame = findViewById(R.id.outerFrame);
         outerFrame.setOnClickListener(null);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                final View container = findViewById(R.id.container);
-                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
-                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
-                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
-                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
-
-                int finalRadius = Math.max(container.getWidth(), container.getHeight());
-                Animator anim = ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, finalRadius, 0);
-                anim.addListener(new AnimatorListenerAdapter() {
-                    @SuppressLint("NewApi")
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        outerFrame.setVisibility(View.GONE);
-                    }
-                });
-                anim.start();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-                outerFrame.setVisibility(View.GONE);
-            }
-        } else {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            try {
+//                final View container = findViewById(R.id.container);
+//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
+//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
+//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
+//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
+//
+//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
+//                Animator anim = ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, finalRadius, 0);
+//                anim.addListener(new AnimatorListenerAdapter() {
+//                    @SuppressLint("NewApi")
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        super.onAnimationEnd(animation);
+//                        outerFrame.setVisibility(View.GONE);
+//                    }
+//                });
+//                anim.start();
+//            } catch (IllegalStateException e) {
+//                e.printStackTrace();
+//                outerFrame.setVisibility(View.GONE);
+//            }
+//        } else {
             outerFrame.setVisibility(View.GONE);
-        }
+//        }
     }
 
     public void pulisciVars() {
