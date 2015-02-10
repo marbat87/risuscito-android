@@ -220,5 +220,6 @@
     <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
     <string name="fullscreen">Schermo intero</string>
     <string name="audio_on_off">Mostra/Nascondi audio</string>
+    <string name="file_selected">File selezionato</string>
 
 </resources>

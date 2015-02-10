@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -54,8 +55,6 @@ import android.widget.Toast;
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -65,6 +64,7 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -98,7 +98,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private static MediaPlayer mediaPlayer;
     private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
-    //    private ButtonIcon save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
     private ProgressDialogPro mp3Dialog, exportDialog;
@@ -216,9 +215,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         rewind_button = (ImageButton) findViewById(R.id.rewind_song);
         ff_button = (ImageButton) findViewById(R.id.fast_forward_song);
         save_file = (ImageButton) findViewById(R.id.save_file);
-//        delete_file = (ImageButton) findViewById(R.id.delete_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
-//        stop_scroll = (ImageButton) findViewById(R.id.stop_scroll);
         scroll_speed_bar = (DiscreteSeekBar) findViewById(R.id.speed_seekbar);
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -348,18 +345,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 save_file.setSelected(false);
             else
                 save_file.setSelected(true);
-//                    personalUrl.equalsIgnoreCase("")) {
-//                enableButtonIcon(save_file);
-//                save_file.setVisibility(View.VISIBLE);
-//                disableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.GONE);
-//            }
-//            else {
-//                disableButtonIcon(save_file);
-//                save_file.setVisibility(View.GONE);
-//                enableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.VISIBLE);
-//            }
 
             //mostra i pulsanti per il lettore musicale
             play_button.setVisibility(View.VISIBLE);
@@ -419,7 +404,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
                             && !localFile)  {
@@ -447,19 +431,11 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                     localFile = false;
                                     cmdSetDataSource(url);
                                     save_file.setSelected(false);
-//                                    enableButtonIcon(save_file);
-//                                    save_file.setVisibility(View.VISIBLE);
-//                                    disableButtonIcon(delete_file);
-//                                    delete_file.setVisibility(View.GONE);
                                 }
                                 else {
                                     localFile = true;
                                     cmdSetDataSource(personalUrl);
                                     save_file.setSelected(true);
-//                                    disableButtonIcon(save_file);
-//                                    save_file.setVisibility(View.GONE);
-//                                    enableButtonIcon(delete_file);
-//                                    delete_file.setVisibility(View.VISIBLE);
                                 }
 
                             }
@@ -467,10 +443,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                 localFile = true;
                                 cmdSetDataSource(localUrl);
                                 save_file.setSelected(true);
-//                                disableButtonIcon(save_file);
-//                                save_file.setVisibility(View.GONE);
-//                                enableButtonIcon(delete_file);
-//                                delete_file.setVisibility(View.VISIBLE);
                             }
 
                             if (mediaPlayerState == MP_State.Initialized)
@@ -534,7 +506,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         }
                     }
                     else {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
@@ -570,7 +541,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     switch (mediaPlayerState) {
                         case Paused:
                             cmdStart();
@@ -587,10 +557,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                             localFile = true;
                             cmdSetDataSource(personalUrl);
                             save_file.setSelected(true);
-//                            disableButtonIcon(save_file);
-//                            save_file.setVisibility(View.GONE);
-//                            enableButtonIcon(delete_file);
-//                            delete_file.setVisibility(View.VISIBLE);
 
                             if (mediaPlayerState == MP_State.Initialized)
                                 cmdPrepare();
@@ -627,7 +593,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         dialog.setCancelable(false);
                     }
                     else {
-//                        v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
@@ -689,10 +654,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             if (!personalUrl.equalsIgnoreCase("")) {
                 save_file.setSelected(true);
-//                disableButtonIcon(save_file);
-//                save_file.setVisibility(View.GONE);
-//                enableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.VISIBLE);
 
                 //mostra i pulsanti per il lettore musicale
                 play_button.setVisibility(View.VISIBLE);
@@ -703,10 +664,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
             else {
                 // nasconde i pulsanti
                 save_file.setSelected(false);
-//                enableButtonIcon(save_file);
-//                save_file.setVisibility(View.VISIBLE);
-//                disableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.GONE);
                 play_button.setVisibility(View.GONE);
                 stop_button.setVisibility(View.GONE);
                 rewind_button.setVisibility(View.GONE);
@@ -1273,7 +1230,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //            outerFrame.setVisibility(View.VISIBLE);
 //
 //        } else {
-            outerFrame.setVisibility(View.VISIBLE);
+        outerFrame.setVisibility(View.VISIBLE);
 //        }
     }
 
@@ -1306,7 +1263,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //                outerFrame.setVisibility(View.GONE);
 //            }
 //        } else {
-            outerFrame.setVisibility(View.GONE);
+        outerFrame.setVisibility(View.GONE);
 //        }
     }
 
@@ -1716,8 +1673,20 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     break;
                 case Utility.DOWNLOAD_LINK:
                     setRequestedOrientation(prevOrientation);
-                    startActivityForResult(new Intent(
-                            PaginaRenderActivity.this, FileChooserActivity.class), REQUEST_CODE);
+                    // This always works
+                    Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+                    //This works if you defined the intent filter
+//                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+
+                    // Set these depending on your use case. These are the defaults.
+                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                    i.putExtra(FilePickerActivity.BACKGROUND_COLOR, R.color.theme_primary);
+
+                    startActivityForResult(i, REQUEST_CODE);
+//                    startActivityForResult(new Intent(
+//                            PaginaRenderActivity.this, FileChooserActivity.class), REQUEST_CODE);
                     break;
                 case Utility.DELETE_MP3_OK:
                     File fileToDelete = new File(localUrl);
@@ -1865,16 +1834,20 @@ public class PaginaRenderActivity extends ActionBarActivity {
         switch (requestCode) {
             case REQUEST_CODE:
                 // If the file selection was successful
-                if (resultCode == RESULT_OK) {
+//                if (resultCode == RESULT_OK) {
+                if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
                         final Uri uri = data.getData();
 //                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
                         try {
                             // Get the file path from the URI
-                            String path = FileUtils.getPath(this, uri);
+//                            String path = FileUtils.getPath(this, uri);
+                            String path = uri.getPath();
                             Toast.makeText(PaginaRenderActivity.this,
-                                    "File Selected: " + path, Toast.LENGTH_LONG).show();
+                                    getResources().getString(R.string.file_selected)
+                                            + ": "
+                                            + path, Toast.LENGTH_LONG).show();
 
                             if (mediaPlayerState == MP_State.Started
                                     || mediaPlayerState == MP_State.Paused)

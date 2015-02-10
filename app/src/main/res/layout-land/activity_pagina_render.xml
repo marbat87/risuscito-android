@@ -186,8 +186,8 @@
             risuscito:fab_addButtonPlusIconColor="@android:color/white"
             risuscito:fab_addButtonStrokeVisible="false"
             risuscito:fab_expandDirection="up"
-            android:layout_marginRight="@dimen/floating_margin_lateral"
-            android:layout_marginEnd="@dimen/floating_margin_lateral"
+            android:layout_marginRight="@dimen/floating_margin_lateral_menu"
+            android:layout_marginEnd="@dimen/floating_margin_lateral_menu"
             android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">
 
             <com.getbase.floatingactionbutton.FloatingActionButton

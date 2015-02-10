@@ -1,0 +1,64 @@
+<!--
+  Copyright (c) 2014 Jonas Kalderstam
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- This base is overridden for larger displays -->
+    <style name="FilePicker.Theme.Base" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="isDialog">false</item>
+    </style>
+
+    <style name="FilePicker.Theme" parent="FilePicker.Theme.Base">
+        <item name="actionBarStyle">@style/FilePicker.ActionBar</item>
+        <item name="actionOverflowButtonStyle">@style/FilePicker.ActionButton.Overflow</item>
+        <item name="actionBarItemBackground">@drawable/ab_solid_filepickertheme</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
+        <!--<item name="android:windowBackground">@android:color
+        /transparent</item>-->
+        <!--<item name="android:actionBarWidgetTheme">@android:style/Theme.Holo</item>-->
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+
+    <style name="FilePicker.ActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_filepickertheme</item>
+        <item name="displayOptions">disableHome|showTitle</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="FilePicker.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <!--<item name="android:src">@drawable/ic_action_overflow</item>-->
+    </style>
+    
+    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ActionBarThemeOverlay" parent="">
+        <!--         <item name="android:textColorPrimary">#fff</item> -->
+        <!--<item name="colorControlNormal">?actionBarIconColor</item>-->
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlHighlight">#3fff</item>
+    </style>
+
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

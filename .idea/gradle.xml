@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/NonSenseFilePicker" />
             <option value="$PROJECT_DIR$/aFileChooser" />
             <option value="$PROJECT_DIR$/android-floating-action-button" />
             <option value="$PROJECT_DIR$/app" />
