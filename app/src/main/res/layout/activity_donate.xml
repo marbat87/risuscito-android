@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingBottom="@dimen/activity_min_margin"
-    android:paddingLeft="@dimen/activity_min_margin"
-    android:paddingRight="@dimen/activity_min_margin"
-    android:paddingTop="@dimen/activity_min_margin"
-    android:orientation="vertical"
-    android:weightSum="1.0" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <WebView android:id="@+id/donate_text"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.99"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_min_margin"
+        android:paddingLeft="@dimen/activity_min_margin"
+        android:paddingRight="@dimen/activity_min_margin"
+        android:paddingTop="@dimen/activity_min_margin"
+        android:orientation="vertical"
+        android:weightSum="1.0" >
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        <WebView android:id="@+id/donate_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.99"/>
 
-        <Button
-            android:id="@+id/donateButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/content_donate"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/img_donate_button" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/donateButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/content_donate"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/img_donate_button" />
 
-</LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?toolbar_shadow" />
+
+</FrameLayout>

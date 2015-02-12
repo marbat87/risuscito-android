@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" filepath="$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/Risuscito.iml" filepath="$PROJECT_DIR$/Risuscito.iml" />
       <module fileurl="file://$PROJECT_DIR$/RisuscitoProject.iml" filepath="$PROJECT_DIR$/RisuscitoProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/aFileChooser/aFileChooser.iml" />

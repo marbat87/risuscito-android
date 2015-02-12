@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pagina_render_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,314 +18,205 @@
         android:background="?attr/colorPrimary"
         android:elevation="@dimen/toolbar_elevation" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="top" >
-
-        <RelativeLayout
-            android:id="@+id/music_controls"
-            android:paddingTop="@dimen/activity_min_margin"
-            android:paddingBottom="@dimen/activity_min_margin"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="fill_parent" >
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/rewind_song"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/play_song"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginBottom="@dimen/button_icon_padding"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/ic_av_rewind_active" />-->
-            <ImageButton
-                android:id="@+id/rewind_song"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_above="@+id/play_song"
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:background="?attr/customSelectorRoundAccent"
-                android:src="@drawable/ic_av_rewind_active"
-                android:soundEffectsEnabled="true" />
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/play_song"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/fast_forward_song"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginBottom="@dimen/button_icon_padding"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/play_button_drawable" />-->
-            <ImageButton
-                android:id="@+id/play_song"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_above="@+id/fast_forward_song"
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:background="?attr/customSelectorRoundAccent"
-                android:src="@drawable/play_button_drawable"
-                android:soundEffectsEnabled="true" />
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/fast_forward_song"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/stop_song"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginBottom="@dimen/button_icon_padding"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/ic_av_fast_forward_active" />-->
-            <ImageButton
-                android:id="@+id/fast_forward_song"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_above="@+id/stop_song"
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:background="?attr/customSelectorRoundAccent"
-                android:src="@drawable/ic_av_fast_forward_active"
-                android:soundEffectsEnabled="true" />
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/stop_song"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/delete_file"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginBottom="@dimen/button_icon_padding"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/ic_av_stop_active" />-->
-            <ImageButton
-                android:id="@+id/stop_song"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_above="@+id/save_file"
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:background="?attr/customSelectorRoundAccent"
-                android:src="@drawable/ic_av_stop_active"
-                android:soundEffectsEnabled="true" />
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/delete_file"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_above="@+id/save_file"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/ic_delete_black_48dp" />-->
-
-            <!--<com.gc.materialdesign.views.ButtonIcon-->
-            <!--android:id="@+id/save_file"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:background="@color/ripple_color"-->
-            <!--risuscito:clickAfterRipple="false"-->
-            <!--risuscito:iconSize="28dip"-->
-            <!--risuscito:iconDrawable="@drawable/ic_av_download_active" />-->
-            <ImageButton
-                android:id="@+id/save_file"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:background="?attr/customSelectorRoundAccent"
-                android:src="@drawable/download_delete_button_drawable"
-                android:soundEffectsEnabled="true" />
-
-        </RelativeLayout>
+        android:layout_height="match_parent" >
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="top" >
 
-            <FrameLayout
-                android:layout_weight="1"
+            <RelativeLayout
+                android:id="@+id/music_controls"
+                android:paddingTop="@dimen/activity_min_margin"
+                android:paddingBottom="@dimen/activity_min_margin"
+                android:layout_width="@dimen/abc_action_bar_default_height_material"
+                android:layout_height="fill_parent" >
+
+                <ImageButton
+                    android:id="@+id/rewind_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_above="@+id/play_song"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_rewind_active"
+                    android:soundEffectsEnabled="true" />
+
+                <ImageButton
+                    android:id="@+id/play_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_above="@+id/fast_forward_song"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/play_button_drawable"
+                    android:soundEffectsEnabled="true" />
+
+                <ImageButton
+                    android:id="@+id/fast_forward_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_above="@+id/stop_song"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_fast_forward_active"
+                    android:soundEffectsEnabled="true" />
+
+                <ImageButton
+                    android:id="@+id/stop_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_above="@+id/save_file"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_stop_active"
+                    android:soundEffectsEnabled="true" />
+
+                <ImageButton
+                    android:id="@+id/save_file"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/download_delete_button_drawable"
+                    android:soundEffectsEnabled="true" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="0dip" >
+                android:layout_height="match_parent">
 
                 <WebView
                     android:id="@+id/cantoView"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"/>
-
-                <!--<com.melnykov.fab.FloatingActionButton-->
-                    <!--android:id="@+id/fab_fullscreen_on"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="top|end"-->
-                    <!--android:layout_margin="5dp"-->
-                    <!--android:src="@drawable/ic_fullscreen_white_24dp"-->
-                    <!--risuscito:fab_type="mini"-->
-                    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
-                    <!--risuscito:fab_colorPressed="@color/theme_primary"-->
-                    <!--risuscito:fab_colorRipple="@color/theme_primary_dark"/>-->
-                <com.getbase.floatingactionbutton.FloatingActionsMenu
-                    android:id="@+id/fab_main_expand"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|end"
-                    risuscito:fab_addButtonColorNormal="@color/favorite_accent_dark"
-                    risuscito:fab_addButtonColorPressed="@color/favorite_accent"
-                    risuscito:fab_addButtonSize="mini"
-                    risuscito:fab_addButtonPlusIconColor="@android:color/white"
-                    risuscito:fab_addButtonStrokeVisible="false"
-                    risuscito:fab_expandDirection="down"
-                    android:layout_margin="5dp">
-
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab_fullscreen_on"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        risuscito:fab_colorNormal="@color/theme_accent"
-                        risuscito:fab_colorPressed="@color/theme_primary"
-                        risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
-                        risuscito:fab_size="mini" />
-
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab_sound_off"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        risuscito:fab_colorNormal="@color/theme_accent"
-                        risuscito:fab_colorPressed="@color/theme_primary"
-                        risuscito:fab_icon="@drawable/hide_music_background"
-                        risuscito:fab_size="mini" />
-
-                </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_gravity="bottom"
-                android:background="@color/theme_primary"
-                android:divider="?attr/dividerVertical"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:orientation="horizontal">
-
-                <!--<com.gc.materialdesign.views.ButtonIcon-->
-                <!--android:id="@+id/favorite"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:background="@color/ripple_color"-->
-                <!--risuscito:clickAfterRipple="false"-->
-                <!--risuscito:iconSize="28dip"-->
-                <!--risuscito:iconDrawable="@drawable/ic_rating_favorite_normal_light" />-->
-                <ImageButton
-                    android:id="@+id/favorite"
-                    android:layout_width="@dimen/abc_action_bar_default_height_material"
-                    android:layout_height="@dimen/abc_action_bar_default_height_material"
-                    android:paddingLeft="@dimen/button_playbar_padding"
-                    android:paddingRight="@dimen/button_playbar_padding"
-                    android:layout_gravity="center_vertical"
-                    android:scaleType="fitCenter"
-                    android:theme="@style/ActionBarThemeOverlay"
-                    android:background="?attr/customSelectorRound"
-                    android:src="@drawable/ic_rating_favorite_normal_light"
-                    android:soundEffectsEnabled="true" />
-
-                <!--<com.gc.materialdesign.views.Slider-->
-                    <!--android:id="@+id/speed_seekbar"-->
-                    <!--android:layout_width="0dip"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:background="@color/theme_accent"-->
-                    <!--risuscito:max="50"-->
-                    <!--risuscito:min="0"-->
-                    <!--android:soundEffectsEnabled="true"-->
-                    <!--risuscito:showNumberIndicator="true"/>-->
-                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
-                    android:id="@+id/speed_seekbar"
-                    android:layout_width="0dip"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    risuscito:dsb_min="0"
-                    risuscito:dsb_max="50"
-                    risuscito:dsb_rippleColor="@color/ripple_color"
-                    risuscito:dsb_indicatorFormatter="%d%%"
-                    risuscito:dsb_indicatorElevation="6dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="0dip" />
 
-                <!--<com.gc.materialdesign.views.ButtonIcon-->
-                <!--android:id="@+id/play_scroll"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:background="@color/ripple_color"-->
-                <!--risuscito:clickAfterRipple="false"-->
-                <!--risuscito:iconSize="28dip"-->
-                <!--risuscito:iconDrawable="@drawable/ic_play_circle_outline_white_48dp" />-->
-                <ImageButton
-                    android:id="@+id/play_scroll"
-                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_gravity="bottom"
+                    android:background="@color/theme_primary"
+                    android:divider="?attr/dividerVertical"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
-                    android:paddingLeft="@dimen/button_playbar_padding"
-                    android:paddingRight="@dimen/button_playbar_padding"
-                    android:layout_gravity="center_vertical"
-                    android:scaleType="fitCenter"
-                    android:theme="@style/ActionBarThemeOverlay"
-                    android:background="?attr/customSelectorRound"
-                    android:src="@drawable/play_scroll_button_drawable"
-                    android:soundEffectsEnabled="true" />
+                    android:orientation="horizontal">
 
-                <!--<com.gc.materialdesign.views.ButtonIcon-->
-                <!--android:id="@+id/stop_scroll"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:background="@color/ripple_color"-->
-                <!--risuscito:clickAfterRipple="false"-->
-                <!--risuscito:iconSize="28dip"-->
-                <!--risuscito:iconDrawable="@drawable/ic_pause_circle_outline_white_48dp" />-->
-                <!--<ImageButton-->
-                    <!--android:id="@+id/stop_scroll"-->
-                    <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                    <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:theme="@style/ActionBarThemeOverlay"-->
-                    <!--android:background="?attr/customSelectorRound"-->
-                    <!--android:src="@drawable/ic_pause_circle_outline_white_48dp"-->
-                    <!--android:soundEffectsEnabled="true" />-->
+                    <ImageButton
+                        android:id="@+id/favorite"
+                        android:layout_width="@dimen/abc_action_bar_default_height_material"
+                        android:layout_height="@dimen/abc_action_bar_default_height_material"
+                        android:paddingLeft="@dimen/button_playbar_padding"
+                        android:paddingRight="@dimen/button_playbar_padding"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:theme="@style/ActionBarThemeOverlay"
+                        android:background="?attr/customSelectorRound"
+                        android:src="@drawable/ic_rating_favorite_normal_light"
+                        android:soundEffectsEnabled="true" />
+
+                    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                        android:id="@+id/speed_seekbar"
+                        android:layout_width="0dip"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        risuscito:dsb_min="0"
+                        risuscito:dsb_max="50"
+                        risuscito:dsb_rippleColor="@color/ripple_color"
+                        risuscito:dsb_indicatorFormatter="%d%%"
+                        risuscito:dsb_indicatorElevation="6dp" />
+
+                    <ImageButton
+                        android:id="@+id/play_scroll"
+                        android:layout_width="@dimen/abc_action_bar_default_height_material"
+                        android:layout_height="@dimen/abc_action_bar_default_height_material"
+                        android:paddingLeft="@dimen/button_playbar_padding"
+                        android:paddingRight="@dimen/button_playbar_padding"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:theme="@style/ActionBarThemeOverlay"
+                        android:background="?attr/customSelectorRound"
+                        android:src="@drawable/play_scroll_button_drawable"
+                        android:soundEffectsEnabled="true" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <View
+            android:id="@+id/outerFrame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:background="@android:color/transparent"
+            tools:ignore="RtlSymmetry" />
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/fab_main_expand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            risuscito:fab_addButtonColorNormal="@color/favorite_accent_dark"
+            risuscito:fab_addButtonColorPressed="@color/favorite_accent"
+            risuscito:fab_addButtonSize="mini"
+            risuscito:fab_labelStyle="@style/menu_labels_style"
+            risuscito:fab_addButtonPlusIconColor="@android:color/white"
+            risuscito:fab_addButtonStrokeVisible="false"
+            risuscito:fab_expandDirection="up"
+            android:layout_marginRight="@dimen/floating_margin_lateral_menu"
+            android:layout_marginEnd="@dimen/floating_margin_lateral_menu"
+            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_fullscreen_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                risuscito:fab_title="@string/fullscreen"
+                risuscito:fab_colorNormal="@color/theme_accent"
+                risuscito:fab_colorPressed="@color/theme_primary"
+                risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
+                risuscito:fab_size="mini" />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_sound_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                risuscito:fab_title="@string/audio_on_off"
+                risuscito:fab_colorNormal="@color/theme_accent"
+                risuscito:fab_colorPressed="@color/theme_primary"
+                risuscito:fab_icon="@drawable/hide_music_background"
+                risuscito:fab_size="mini" />
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="?toolbar_shadow" />
+
+    </FrameLayout>
 
 </LinearLayout>

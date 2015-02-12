@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,8 +38,6 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.material.ProgressBarCompat;
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.gc.materialdesign.widgets.Dialog;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -208,11 +207,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         });
 
-        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-        pulisci.setOnClickListener(new View.OnClickListener() {
+//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
+        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 //                lv.setVisibility(View.GONE);

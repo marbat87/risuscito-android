@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="paper_text_size">15sp</dimen>
+    <dimen name="paper_button_corner_radius">2dp</dimen>
+    <dimen name="paper_padding">7dp</dimen>
+    <dimen name="linear_progress_line_width">4dp</dimen>
+
+</resources>

@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -53,9 +54,7 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
-import com.gc.materialdesign.views.ProgressBarIndeterminateDeterminate;
-import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.ipaulpro.afilechooser.utils.FileUtils;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -65,6 +64,7 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -85,6 +85,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.utilities.material.LinearProgress;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
@@ -97,7 +98,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private static MediaPlayer mediaPlayer;
     private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
-    //    private ButtonIcon save_file;
+    public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
     private ProgressDialogPro mp3Dialog, exportDialog;
     private AlertDialogPro mProgressDialog;
@@ -214,9 +215,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         rewind_button = (ImageButton) findViewById(R.id.rewind_song);
         ff_button = (ImageButton) findViewById(R.id.fast_forward_song);
         save_file = (ImageButton) findViewById(R.id.save_file);
-//        delete_file = (ImageButton) findViewById(R.id.delete_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
-//        stop_scroll = (ImageButton) findViewById(R.id.stop_scroll);
         scroll_speed_bar = (DiscreteSeekBar) findViewById(R.id.speed_seekbar);
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -346,18 +345,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 save_file.setSelected(false);
             else
                 save_file.setSelected(true);
-//                    personalUrl.equalsIgnoreCase("")) {
-//                enableButtonIcon(save_file);
-//                save_file.setVisibility(View.VISIBLE);
-//                disableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.GONE);
-//            }
-//            else {
-//                disableButtonIcon(save_file);
-//                save_file.setVisibility(View.GONE);
-//                enableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.VISIBLE);
-//            }
 
             //mostra i pulsanti per il lettore musicale
             play_button.setVisibility(View.VISIBLE);
@@ -417,7 +404,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
                             && !localFile)  {
@@ -445,19 +431,11 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                     localFile = false;
                                     cmdSetDataSource(url);
                                     save_file.setSelected(false);
-//                                    enableButtonIcon(save_file);
-//                                    save_file.setVisibility(View.VISIBLE);
-//                                    disableButtonIcon(delete_file);
-//                                    delete_file.setVisibility(View.GONE);
                                 }
                                 else {
                                     localFile = true;
                                     cmdSetDataSource(personalUrl);
                                     save_file.setSelected(true);
-//                                    disableButtonIcon(save_file);
-//                                    save_file.setVisibility(View.GONE);
-//                                    enableButtonIcon(delete_file);
-//                                    delete_file.setVisibility(View.VISIBLE);
                                 }
 
                             }
@@ -465,10 +443,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                 localFile = true;
                                 cmdSetDataSource(localUrl);
                                 save_file.setSelected(true);
-//                                disableButtonIcon(save_file);
-//                                save_file.setVisibility(View.GONE);
-//                                enableButtonIcon(delete_file);
-//                                delete_file.setVisibility(View.VISIBLE);
                             }
 
                             if (mediaPlayerState == MP_State.Initialized)
@@ -532,7 +506,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         }
                     }
                     else {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
@@ -560,61 +533,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 }
             });
 
-//            delete_file.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                    if (personalUrl.equalsIgnoreCase("")) {
-//                        prevOrientation = getRequestedOrientation();
-//                        Utility.blockOrientation(PaginaRenderActivity.this);
-//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                        AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_mp3_title)
-//                                .setMessage(R.string.dialog_delete_mp3)
-//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_MP3_OK))
-//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                .show();
-//                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                            @Override
-//                            public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                 KeyEvent event) {
-//                                if (keyCode == KeyEvent.KEYCODE_BACK
-//                                        && event.getAction() == KeyEvent.ACTION_UP) {
-//                                    arg0.dismiss();
-//                                    setRequestedOrientation(prevOrientation);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        dialog.setCancelable(false);
-//                    }
-//                    else {
-//                        prevOrientation = getRequestedOrientation();
-//                        Utility.blockOrientation(PaginaRenderActivity.this);
-//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                        AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-//                                .setMessage(R.string.dialog_delete_link)
-//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_LINK_OK))
-//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                .show();
-//                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                            @Override
-//                            public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                 KeyEvent event) {
-//                                if (keyCode == KeyEvent.KEYCODE_BACK
-//                                        && event.getAction() == KeyEvent.ACTION_UP) {
-//                                    arg0.dismiss();
-//                                    setRequestedOrientation(prevOrientation);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        dialog.setCancelable(false);
-//                    }
-//                }
-//            });
-
         }
         else {
 
@@ -623,7 +541,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
                 @Override
                 public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     switch (mediaPlayerState) {
                         case Paused:
                             cmdStart();
@@ -640,10 +557,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                             localFile = true;
                             cmdSetDataSource(personalUrl);
                             save_file.setSelected(true);
-//                            disableButtonIcon(save_file);
-//                            save_file.setVisibility(View.GONE);
-//                            enableButtonIcon(delete_file);
-//                            delete_file.setVisibility(View.VISIBLE);
 
                             if (mediaPlayerState == MP_State.Initialized)
                                 cmdPrepare();
@@ -680,7 +593,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         dialog.setCancelable(false);
                     }
                     else {
-//                        v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
                         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
@@ -706,35 +618,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     }
                 }
             });
-
-//            delete_file.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                    prevOrientation = getRequestedOrientation();
-//                    Utility.blockOrientation(PaginaRenderActivity.this);
-//                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-//                            .setMessage(R.string.dialog_delete_link)
-//                            .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_ONLY_LINK_OK))
-//                            .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                            .show();
-//                    dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                        @Override
-//                        public boolean onKey(DialogInterface arg0, int keyCode,
-//                                             KeyEvent event) {
-//                            if (keyCode == KeyEvent.KEYCODE_BACK
-//                                    && event.getAction() == KeyEvent.ACTION_UP) {
-//                                arg0.dismiss();
-//                                setRequestedOrientation(prevOrientation);
-//                                return true;
-//                            }
-//                            return false;
-//                        }
-//                    });
-//                    dialog.setCancelable(false);
-//                }
-//            });
 
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
@@ -771,10 +654,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             if (!personalUrl.equalsIgnoreCase("")) {
                 save_file.setSelected(true);
-//                disableButtonIcon(save_file);
-//                save_file.setVisibility(View.GONE);
-//                enableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.VISIBLE);
 
                 //mostra i pulsanti per il lettore musicale
                 play_button.setVisibility(View.VISIBLE);
@@ -785,10 +664,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
             else {
                 // nasconde i pulsanti
                 save_file.setSelected(false);
-//                enableButtonIcon(save_file);
-//                save_file.setVisibility(View.VISIBLE);
-//                disableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.GONE);
                 play_button.setVisibility(View.GONE);
                 stop_button.setVisibility(View.GONE);
                 rewind_button.setVisibility(View.GONE);
@@ -821,14 +696,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
             }
         });
 
-//        scroll_speed_bar.setOnValueChangedListener(new OnValueChangedListener() {
-//
-//            @Override
-//            public void onValueChanged(int value) {
-//                speedValue = String.valueOf(value);
-//            }
-//        });
-
         play_scroll.setSelected(false);
 
         play_scroll.setOnClickListener(new OnClickListener() {
@@ -850,19 +717,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 }
             }
         });
-
-//        stop_scroll.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-////                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                play_scroll.setVisibility(View.VISIBLE);
-//                stop_scroll.setVisibility(View.GONE);
-//                scrollPlaying = false;
-//                mHandler.removeCallbacks(mScrollDown);
-//
-//            }
-//        });
 
         boolean showHelp1 = PreferenceManager
                 .getDefaultSharedPreferences(this)
@@ -942,6 +796,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         findViewById(R.id.fab_fullscreen_on).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                getFab().toggle();
                 mHandler.removeCallbacks(mScrollDown);
                 saveZoom();
                 Bundle bundle = new Bundle();
@@ -961,9 +816,22 @@ public class PaginaRenderActivity extends ActionBarActivity {
         findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                getFab().toggle();
                 findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.VISIBLE : View.GONE);
                 v.setSelected(!v.isSelected());
                 mostraAudio = !v.isSelected();
+            }
+        });
+
+        getFab().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
+                showOuterFrame();
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                hideOuterFrame();
             }
         });
 
@@ -1280,35 +1148,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
             webSettings.setDisplayZoomControls(false);
         }
 
-//        final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
-//
-//            @Override
-//            public boolean onDoubleTap(MotionEvent e) {
-//                int zoom = (int) (paginaView.getScale() * 100);
-//                Log.i(getClass().toString(), "ZOOM: " + zoom);
-//                if (zoom == 73 || zoom > 25) {
-//                    paginaView.zoomOut();
-//                }
-//                else {
-//                    paginaView.zoomIn();
-//                }
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onDown(MotionEvent e) {
-//                return false;
-//            }
-//        });
-//        gestureDetector.setIsLongpressEnabled(true);
-//
-//        paginaView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return gestureDetector.onTouchEvent(event);
-//            }
-//        });
-
         if (defaultZoomLevel > 0)
             paginaView.setInitialScale(defaultZoomLevel);
         paginaView.setWebViewClient(new MyWebViewClient());
@@ -1336,6 +1175,16 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         findViewById(R.id.music_controls).setVisibility(mostraAudio ? View.VISIBLE : View.GONE);
         findViewById(R.id.fab_sound_off).setSelected(!mostraAudio);
+        if (getFab().isExpanded()) {
+            View outerFrame = findViewById(R.id.outerFrame);
+            outerFrame.setVisibility(View.VISIBLE);
+            outerFrame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getFab().collapse();
+                }
+            });
+        }
 
     }
 
@@ -1347,6 +1196,75 @@ public class PaginaRenderActivity extends ActionBarActivity {
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+    }
+
+    public FloatingActionsMenu getFab() {
+        if (mFab == null)
+            mFab = (FloatingActionsMenu) findViewById(R.id.fab_main_expand);
+        return mFab;
+    }
+
+    private void showOuterFrame() {
+        View outerFrame = findViewById(R.id.outerFrame);
+        outerFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFab().collapse();
+            }
+        });
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            try {
+//                final View container = findViewById(R.id.container);
+//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
+//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
+//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
+//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
+//
+//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
+//                ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, 0, finalRadius).start();
+//            } catch (IllegalStateException e) {
+//                e.printStackTrace();
+//            }
+//            outerFrame.setVisibility(View.VISIBLE);
+//
+//        } else {
+        outerFrame.setVisibility(View.VISIBLE);
+//        }
+    }
+
+    private void hideOuterFrame() {
+        final View outerFrame = findViewById(R.id.outerFrame);
+        outerFrame.setOnClickListener(null);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            try {
+//                final View container = findViewById(R.id.container);
+//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
+//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
+//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
+//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
+//
+//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
+//                Animator anim = ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, finalRadius, 0);
+//                anim.addListener(new AnimatorListenerAdapter() {
+//                    @SuppressLint("NewApi")
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        super.onAnimationEnd(animation);
+//                        outerFrame.setVisibility(View.GONE);
+//                    }
+//                });
+//                anim.start();
+//            } catch (IllegalStateException e) {
+//                e.printStackTrace();
+//                outerFrame.setVisibility(View.GONE);
+//            }
+//        } else {
+        outerFrame.setVisibility(View.GONE);
+//        }
     }
 
     public void pulisciVars() {
@@ -1755,8 +1673,20 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     break;
                 case Utility.DOWNLOAD_LINK:
                     setRequestedOrientation(prevOrientation);
-                    startActivityForResult(new Intent(
-                            PaginaRenderActivity.this, FileChooserActivity.class), REQUEST_CODE);
+                    // This always works
+                    Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+                    //This works if you defined the intent filter
+//                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+
+                    // Set these depending on your use case. These are the defaults.
+                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                    i.putExtra(FilePickerActivity.BACKGROUND_COLOR, R.color.theme_primary);
+
+                    startActivityForResult(i, REQUEST_CODE);
+//                    startActivityForResult(new Intent(
+//                            PaginaRenderActivity.this, FileChooserActivity.class), REQUEST_CODE);
                     break;
                 case Utility.DELETE_MP3_OK:
                     File fileToDelete = new File(localUrl);
@@ -1904,16 +1834,20 @@ public class PaginaRenderActivity extends ActionBarActivity {
         switch (requestCode) {
             case REQUEST_CODE:
                 // If the file selection was successful
-                if (resultCode == RESULT_OK) {
+//                if (resultCode == RESULT_OK) {
+                if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
                         final Uri uri = data.getData();
 //                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
                         try {
                             // Get the file path from the URI
-                            String path = FileUtils.getPath(this, uri);
+//                            String path = FileUtils.getPath(this, uri);
+                            String path = uri.getPath();
                             Toast.makeText(PaginaRenderActivity.this,
-                                    "File Selected: " + path, Toast.LENGTH_LONG).show();
+                                    getResources().getString(R.string.file_selected)
+                                            + ": "
+                                            + path, Toast.LENGTH_LONG).show();
 
                             if (mediaPlayerState == MP_State.Started
                                     || mediaPlayerState == MP_State.Paused)
@@ -2359,7 +2293,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-            ((ProgressBarIndeterminateDeterminate) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+//            ((ProgressBarIndeterminateDeterminate) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+            ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
             if (progress[0] != 0)
                 ((TextView) mProgressDialog.findViewById(R.id.percent_text))
                         .setText(progress[0].toString() + " %");

@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1.0" >
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/no_favourites"
-        android:layout_marginLeft="@dimen/activity_min_margin"
-        android:layout_marginRight="@dimen/activity_min_margin"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/no_favourites" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1.0" >
 
-    <!--<ListView-->
-    <!--android:id="@+id/favouritesList"-->
-    <!--android:layout_weight="0.99"-->
-    <!--android:drawSelectorOnTop="false"-->
-    <!--android:listSelector="@android:color/transparent"-->
-    <!--android:divider="@null"-->
-    <!--android:dividerHeight="0px"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="0dp" />-->
-    <android.support.v7.widget.RecyclerView
-        android:layout_width= "match_parent"
-        android:layout_height = "0dp"
-        android:id="@+id/favouritesList"
-        android:layout_weight="0.99" />
+        <TextView
+            android:id="@+id/no_favourites"
+            android:layout_marginLeft="@dimen/activity_min_margin"
+            android:layout_marginRight="@dimen/activity_min_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_favourites" />
 
-    <TextView
-        android:id="@+id/hint_remove"
-        android:layout_marginLeft="@dimen/activity_min_margin"
-        android:layout_marginRight="@dimen/activity_min_margin"
+        <android.support.v7.widget.RecyclerView
+            android:layout_width= "match_parent"
+            android:layout_height = "0dp"
+            android:id="@+id/favouritesList"
+            android:layout_weight="0.99" />
+
+        <TextView
+            android:id="@+id/hint_remove"
+            android:layout_marginLeft="@dimen/activity_min_margin"
+            android:layout_marginRight="@dimen/activity_min_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_remove" />
+
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hint_remove" />
+        android:layout_height="5dp"
+        android:background="?toolbar_shadow" />
 
-</LinearLayout>
+</FrameLayout>

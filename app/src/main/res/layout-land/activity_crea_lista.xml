@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:focusable="true"
     android:fitsSystemWindows="true"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/risuscito_toolbar"
@@ -57,61 +57,78 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:paddingTop="@dimen/activity_min_margin"
-        android:paddingLeft="@dimen/activity_min_margin"
-        android:paddingStart="@dimen/activity_min_margin"
-        android:text="@string/list_elements" />
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_min_margin"
-        android:paddingRight="@dimen/activity_min_margin" >
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/noElementsAdded"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/no_elements_added" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <it.cammino.utilities.dslv.DragSortListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:divider="@android:color/transparent"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:dividerHeight="1dp"
-            risuscito:drag_enabled="true"
-            risuscito:collapsed_height="2dp"
-            risuscito:drag_scroll_start="0.33"
-            risuscito:max_drag_scroll_speed="0.5"
-            risuscito:float_alpha="0.6"
-            risuscito:slide_shuffle_speed="0.3"
-            risuscito:track_drag_sort="false"
-            risuscito:use_default_controller="true"
-            risuscito:drag_handle_id="@id/drag_handle"
-            risuscito:sort_enabled="true"
-            risuscito:remove_enabled="true"
-            risuscito:drag_start_mode="onMove"
-            risuscito:remove_mode="flingRemove"
-            android:drawSelectorOnTop="false"
-            risuscito:float_background_color="@color/ripple_color" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:paddingTop="@dimen/activity_min_margin"
+                android:layout_marginLeft="@dimen/activity_min_margin"
+                android:layout_marginStart="@dimen/activity_min_margin"
+                android:text="@string/list_elements" />
 
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/fab_crea_lista"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_add_white_24dp"
-            risuscito:fab_colorNormal="@color/theme_accent"
-            risuscito:fab_colorPressed="@color/theme_primary_dark"
-            risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_min_margin"
+                android:paddingRight="@dimen/activity_min_margin" >
+
+                <TextView
+                    android:id="@+id/noElementsAdded"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_elements_added" />
+
+                <it.cammino.utilities.dslv.DragSortListView
+                    android:id="@android:id/list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:divider="@android:color/transparent"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:dividerHeight="1dp"
+                    risuscito:drag_enabled="true"
+                    risuscito:collapsed_height="2dp"
+                    risuscito:drag_scroll_start="0.33"
+                    risuscito:max_drag_scroll_speed="0.5"
+                    risuscito:float_alpha="0.6"
+                    risuscito:slide_shuffle_speed="0.3"
+                    risuscito:track_drag_sort="false"
+                    risuscito:use_default_controller="true"
+                    risuscito:drag_handle_id="@id/drag_handle"
+                    risuscito:sort_enabled="true"
+                    risuscito:remove_enabled="true"
+                    risuscito:drag_start_mode="onMove"
+                    risuscito:remove_mode="flingRemove"
+                    android:drawSelectorOnTop="false"
+                    risuscito:float_background_color="@color/ripple_color" />
+
+                <com.melnykov.fab.FloatingActionButton
+                    android:id="@+id/fab_crea_lista"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/floating_margin_lateral"
+                    android:src="@drawable/ic_add_white_24dp"
+                    risuscito:fab_colorNormal="@color/theme_accent"
+                    risuscito:fab_colorPressed="@color/theme_primary_dark"
+                    risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="?toolbar_shadow" />
 
     </FrameLayout>
 

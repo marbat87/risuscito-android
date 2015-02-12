@@ -7,8 +7,8 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 62
-        versionName '3.2.0'
+        versionCode 67
+        versionName '3.2.1'
     }
     buildTypes {
         release {
@@ -28,13 +28,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
-    compile 'com.melnykov:floatingactionbutton:1.1.0'
     compile 'com.itextpdf:itextpdf:5.5.3'
     compile project(':utilities')
-    compile project(':aFileChooser')
-    compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
     compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.1'
-    compile 'com.nispok:snackbar:2.7.5'
     compile project(':discreteSeekBar')
     compile project(':android-floating-action-button')
+    compile project(':NonSenseFilePicker')
+    compile 'com.nispok:snackbar:2.8.0'
+    compile 'com.melnykov:floatingactionbutton:1.2.0'
 }

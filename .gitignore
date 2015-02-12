@@ -6,11 +6,10 @@
 /build
 
 materialDesign
-alertdialogpro-theme-material
-alertdialogpro-core
 app/app.iml
 app/build
 aFileChooser/build
 aFileChooser/aFileChooser.iml
 utilities/build
 utilities/utilities.iml
+NonSenseFilePicker/NonSenseFilePicker.iml
