@@ -64,6 +64,9 @@ public class Utility {
     public static final int DISMISS_EXIT = 31;
     public static final int DISMISS_RENAME = 32;
     public static final int DISMISS_ADD = 33;
+    public static final int CHANGE_COLOR = 34;
+    public static final int RESET_COLOR = 35;
+
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     public static final String URL_CANTO = "urlCanto";

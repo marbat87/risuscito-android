@@ -36,4 +36,7 @@
     <dimen name="floating_margin_lateral">16dp</dimen>
     <dimen name="floating_margin_lateral_menu">11dp</dimen>
 
+    <dimen name="circle_view_border">1dp</dimen>
+    <dimen name="circle_view_check">24dp</dimen>
+
 </resources>

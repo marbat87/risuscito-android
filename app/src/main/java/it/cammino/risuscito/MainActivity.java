@@ -22,7 +22,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity {
+import it.cammino.risuscito.utils.ColorChooserDialog;
+import it.cammino.risuscito.utils.ThemeUtils;
+
+public class MainActivity extends ActionBarActivity implements ColorChooserDialog.ColorCallback {
     
     private DrawerLayout mDrawerLayout;
     private Toolbar mActionBarToolbar;
@@ -36,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
+    protected ThemeUtils mThemeUtils;
     
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
@@ -83,7 +87,9 @@ public class MainActivity extends ActionBarActivity {
         
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         setSupportActionBar(mActionBarToolbar);
-        
+
+        mThemeUtils = new ThemeUtils(this);
+
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(MainActivity.this);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
@@ -428,6 +434,25 @@ public class MainActivity extends ActionBarActivity {
     	    result = getResources().getDimensionPixelSize(resourceId);
     	  }
     	  return result;
+    }
+
+    @Override
+    public void onColorSelection(int title, int color) {
+
+        if (title == R.string.primary_color)
+            mThemeUtils.primaryColor(color);
+        else if (title == R.string.accent_color)
+            mThemeUtils.accentColor(color);
+
+        if (android.os.Build.VERSION.SDK_INT >= 11)
+        {
+            recreate();
+        }
+        else
+        {
+            startActivity(getIntent());
+            finish();
+        }
     }
     
 }

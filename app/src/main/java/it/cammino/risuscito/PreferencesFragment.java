@@ -19,6 +19,9 @@ import android.widget.CompoundButton;
 
 import com.alertdialogpro.AlertDialogPro;
 
+import it.cammino.risuscito.utils.ColorChooserDialog;
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class PreferencesFragment extends Fragment {
 	
 	private int prevOrientation;
@@ -271,6 +274,17 @@ public class PreferencesFragment extends Fragment {
                 dialog.setCancelable(false);
 			}
 		});
+
+        rootView.findViewById(R.id.primary_color_selection).setOnClickListener(new OnClickListener() {
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                ThemeUtils themeUtils = ((MainActivity)getActivity()).mThemeUtils;
+                new ColorChooserDialog().show((MainActivity)getActivity(), R.string.primary_color,
+                        themeUtils.primaryColor());
+            }
+        });
 		
 		return rootView;
 	}
