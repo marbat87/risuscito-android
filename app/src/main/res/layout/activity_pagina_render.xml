@@ -184,13 +184,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            risuscito:fab_addButtonColorNormal="?colorAccent"
-            risuscito:fab_addButtonColorPressed="@color/theme_accent_dark"
-            risuscito:fab_addButtonSize="mini"
             risuscito:fab_labelStyle="@style/menu_labels_style"
-            risuscito:fab_addButtonPlusIconColor="@android:color/white"
-            risuscito:fab_addButtonStrokeVisible="false"
-            risuscito:fab_expandDirection="up"
+            risuscito:fab_icon="@drawable/ic_action_content_new"
             android:layout_marginRight="@dimen/floating_margin_lateral_menu"
             android:layout_marginEnd="@dimen/floating_margin_lateral_menu"
             android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">
@@ -200,8 +195,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/fullscreen"
-                risuscito:fab_colorNormal="@color/theme_accent"
-                risuscito:fab_colorPressed="@color/theme_accent_dark"
                 risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
                 risuscito:fab_size="mini" />
 
@@ -210,8 +203,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/audio_on_off"
-                risuscito:fab_colorNormal="@color/theme_accent"
-                risuscito:fab_colorPressed="@color/theme_accent_dark"
                 risuscito:fab_icon="@drawable/hide_music_background"
                 risuscito:fab_size="mini" />
 

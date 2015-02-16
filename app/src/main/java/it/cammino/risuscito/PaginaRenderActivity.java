@@ -182,6 +182,10 @@ public class PaginaRenderActivity extends ActionBarActivity {
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(PaginaRenderActivity.this, mThemeUtils.primaryColorDark(), true);
 
+        getFab().setColorNormal(mThemeUtils.accentColor());
+        getFab().setColorPressed(mThemeUtils.accentColorDark());
+        getFab().setIcon(R.drawable.ic_action_content_new);
+
         listaCanti = new DatabaseCanti(this);
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata

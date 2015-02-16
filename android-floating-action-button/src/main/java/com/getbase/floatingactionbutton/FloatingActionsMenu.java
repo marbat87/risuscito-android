@@ -1,18 +1,25 @@
 package com.getbase.floatingactionbutton;
 
+
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
@@ -23,20 +30,24 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
 public class FloatingActionsMenu extends ViewGroup {
+
     public static final int EXPAND_UP = 0;
     public static final int EXPAND_DOWN = 1;
     public static final int EXPAND_LEFT = 2;
     public static final int EXPAND_RIGHT = 3;
 
+    public static final int LABELS_ON_LEFT_SIDE = 0;
+    public static final int LABELS_ON_RIGHT_SIDE = 1;
+
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
     private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
+    private static final int TRANSLATE_DURATION_MILLIS = 200;
 
-    private int mAddButtonPlusColor;
-    private int mAddButtonColorNormal;
-    private int mAddButtonColorPressed;
-    private int mAddButtonSize;
-    private boolean mAddButtonStrokeVisible;
+    private int mButtonSize;
+    private int mButtonColorNormal;
+    private int mButtonColorPressed;
+
     private int mExpandDirection;
 
     private int mButtonSpacing;
@@ -44,20 +55,23 @@ public class FloatingActionsMenu extends ViewGroup {
     private int mLabelsVerticalOffset;
 
     private boolean mExpanded;
+    private boolean mVisible;
 
     private AnimatorSet mExpandAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
     private AnimatorSet mCollapseAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
-    private AddFloatingActionButton mAddButton;
+    private FloatingActionButton mAddButton;
     private RotatingDrawable mRotatingDrawable;
     private int mMaxButtonWidth;
     private int mMaxButtonHeight;
     private int mLabelsStyle;
+    private int mLabelsPosition;
     private int mButtonsCount;
 
     private OnFloatingActionsMenuUpdateListener mListener;
 
     public interface OnFloatingActionsMenuUpdateListener {
         void onMenuExpanded();
+
         void onMenuCollapsed();
     }
 
@@ -81,20 +95,100 @@ public class FloatingActionsMenu extends ViewGroup {
         mLabelsVerticalOffset = getResources().getDimensionPixelSize(R.dimen.fab_shadow_offset);
 
         TypedArray attr = context.obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsMenu, 0, 0);
-        mAddButtonPlusColor = attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor, getColor(android.R.color.white));
-        mAddButtonColorNormal = attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal, getColor(android.R.color.holo_blue_dark));
-        mAddButtonColorPressed = attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorPressed, getColor(android.R.color.holo_blue_light));
-        mAddButtonSize = attr.getInt(R.styleable.FloatingActionsMenu_fab_addButtonSize, FloatingActionButton.SIZE_NORMAL);
-        mAddButtonStrokeVisible = attr.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
+        mButtonColorNormal = attr.getColor(R.styleable.FloatingActionsMenu_fab_buttonColorNormal, getColor(android.R.color.holo_blue_dark));
+        mButtonColorPressed = attr.getColor(R.styleable.FloatingActionsMenu_fab_buttonColorPressed, getColor(android.R.color.holo_blue_light));
+        mButtonSize = attr.getInt(R.styleable.FloatingActionsMenu_fab_buttonSize, FloatingActionButton.SIZE_NORMAL);
         mExpandDirection = attr.getInt(R.styleable.FloatingActionsMenu_fab_expandDirection, EXPAND_UP);
         mLabelsStyle = attr.getResourceId(R.styleable.FloatingActionsMenu_fab_labelStyle, 0);
+        mLabelsPosition = attr.getInt(R.styleable.FloatingActionsMenu_fab_labelsPosition,
+                isRTL() ? LABELS_ON_RIGHT_SIDE : LABELS_ON_LEFT_SIDE);
         attr.recycle();
 
         if (mLabelsStyle != 0 && expandsHorizontally()) {
             throw new IllegalStateException("Action labels in horizontal expand orientation is not supported.");
         }
 
-        createAddButton(context);
+        createMainButton(context);
+    }
+
+    public void show() {
+        show(true);
+    }
+
+    public void show(boolean animate) {
+        toggleShown(true, animate, false);
+    }
+
+    public void hide() {
+        hide(true);
+    }
+
+    public void hide(boolean animate) {
+        if (isExpanded())
+            collapse();
+        toggleShown(false, animate, false);
+    }
+
+    private void toggleShown(final boolean visible, final boolean animate, boolean force) {
+        if (mVisible != visible || force) {
+            mVisible = visible;
+            int height = getHeight();
+            if (height == 0 && !force) {
+                ViewTreeObserver vto = getViewTreeObserver();
+                if (vto.isAlive()) {
+                    vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            ViewTreeObserver currentVto = getViewTreeObserver();
+                            if (currentVto.isAlive()) {
+                                currentVto.removeOnPreDrawListener(this);
+                            }
+                            toggleShown(visible, animate, true);
+                            return true;
+                        }
+                    });
+                    return;
+                }
+            }
+            int translationY = visible ? 0 : height + getMarginBottom();
+            if (animate) {
+                AnimatorSet set = new AnimatorSet().setDuration(TRANSLATE_DURATION_MILLIS);
+                ObjectAnimator animator = new ObjectAnimator();
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setPropertyName("translationY");
+                animator.setFloatValues(0, translationY);
+                animator.setTarget(this);
+                set.play(animator);
+//                animate().setInterpolator(new AccelerateDecelerateInterpolator())
+//                        .setDuration(TRANSLATE_DURATION_MILLIS)
+//                        .translationY(translationY);
+            } else {
+//                this.setTranslationY(translationY);
+                ViewHelper.setTranslationY(this, translationY);
+            }
+
+            // On pre-Honeycomb a translated view is still clickable, so we need to disable clicks manually
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
+                setClickable(visible);
+            }
+        }
+    }
+
+    private int getMarginBottom() {
+        int marginBottom = 0;
+        final ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams instanceof MarginLayoutParams) {
+            marginBottom = ((MarginLayoutParams) layoutParams).bottomMargin;
+        }
+        return marginBottom;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private boolean isRTL() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Configuration config = getContext().getResources().getConfiguration();
+            return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+        } else return false;
     }
 
     public void setOnFloatingActionsMenuUpdateListener(OnFloatingActionsMenuUpdateListener listener) {
@@ -107,7 +201,7 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private static class RotatingDrawable extends LayerDrawable {
         public RotatingDrawable(Drawable drawable) {
-            super(new Drawable[] { drawable });
+            super(new Drawable[]{drawable});
         }
 
         private float mRotation;
@@ -132,17 +226,40 @@ public class FloatingActionsMenu extends ViewGroup {
         }
     }
 
-    private void createAddButton(Context context) {
-        mAddButton = new AddFloatingActionButton(context) {
-            @Override
-            void updateBackground() {
-                mPlusColor = mAddButtonPlusColor;
-                mColorNormal = mAddButtonColorNormal;
-                mColorPressed = mAddButtonColorPressed;
-                mStrokeVisible = mAddButtonStrokeVisible;
-                super.updateBackground();
-            }
+    public void setColorNormalResId(@ColorRes int colorNormal) {
+        mAddButton.setColorNormalResId(colorNormal);
+    }
 
+    public void setColorNormal(int color) {
+        mAddButton.setColorNormal(color);
+    }
+
+    public void setColorPressedResId(@ColorRes int colorPressed) {
+        mAddButton.setColorPressedResId(colorPressed);
+    }
+
+    public void setColorPressed(int color) {
+        mAddButton.setColorPressed(color);
+    }
+
+    public void setColorDisabledResId(@ColorRes int colorDisabled) {
+        mAddButton.setColorDisabledResId(colorDisabled);
+    }
+
+    public void setColorDisabled(int color) {
+        mAddButton.setColorDisabled(color);
+    }
+
+    public void setIcon(@DrawableRes int icon) {
+        mAddButton.setIcon(icon);
+    }
+
+    public void setIconDrawable(@NonNull Drawable iconDrawable) {
+        mAddButton.setIconDrawable(iconDrawable);
+    }
+
+    private void createMainButton(Context context) {
+        mAddButton = new FloatingActionButton(context) {
             @Override
             Drawable getIconDrawable() {
                 final RotatingDrawable rotatingDrawable = new RotatingDrawable(super.getIconDrawable());
@@ -163,8 +280,10 @@ public class FloatingActionsMenu extends ViewGroup {
             }
         };
 
+        mAddButton.setColorNormal(mButtonColorNormal);
+        mAddButton.setColorPressed(mButtonColorPressed);
         mAddButton.setId(R.id.fab_expand_menu_button);
-        mAddButton.setSize(mAddButtonSize);
+        mAddButton.setSize(mButtonSize);
         mAddButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,22 +292,6 @@ public class FloatingActionsMenu extends ViewGroup {
         });
 
         addView(mAddButton, super.generateDefaultLayoutParams());
-    }
-
-    public void setColorNormalResId(@ColorRes int colorNormal) {
-        mAddButton.setColorNormalResId(colorNormal);
-    }
-
-    public void setColorNormal(int color) {
-        mAddButton.setColorNormal(color);
-    }
-
-    public void setColorPressedResId(@ColorRes int colorPressed) {
-        mAddButton.setColorPressedResId(colorPressed);
-    }
-
-    public void setColorPressed(int color) {
-        mAddButton.setColorPressed(color);
     }
 
     public FloatingActionButton getButton() {
@@ -288,10 +391,16 @@ public class FloatingActionsMenu extends ViewGroup {
 
                 int addButtonY = expandUp ? b - t - mAddButton.getMeasuredHeight() : 0;
                 // Ensure mAddButton is centered on the line where the buttons should be
-                int addButtonLeft = r - l - mMaxButtonWidth + (mMaxButtonWidth - mAddButton.getMeasuredWidth()) / 2;
+                int buttonsHorizontalCenter = mLabelsPosition == LABELS_ON_LEFT_SIDE
+                        ? r - l - mMaxButtonWidth / 2
+                        : mMaxButtonWidth / 2;
+                int addButtonLeft = buttonsHorizontalCenter - mAddButton.getMeasuredWidth() / 2;
                 mAddButton.layout(addButtonLeft, addButtonY, addButtonLeft + mAddButton.getMeasuredWidth(), addButtonY + mAddButton.getMeasuredHeight());
 
-                int labelsRight = r - l - mMaxButtonWidth - mLabelsMargin;
+                int labelsOffset = mMaxButtonWidth / 2 + mLabelsMargin;
+                int labelsXNearButton = mLabelsPosition == LABELS_ON_LEFT_SIDE
+                        ? buttonsHorizontalCenter - labelsOffset
+                        : buttonsHorizontalCenter + labelsOffset;
 
                 int nextY = expandUp ?
                         addButtonY - mButtonSpacing :
@@ -302,19 +411,18 @@ public class FloatingActionsMenu extends ViewGroup {
 
                     if (child == mAddButton || child.getVisibility() == GONE) continue;
 
-                    int childX = addButtonLeft + (mAddButton.getMeasuredWidth() - child.getMeasuredWidth()) / 2;
+                    int childX = buttonsHorizontalCenter - child.getMeasuredWidth() / 2;
                     int childY = expandUp ? nextY - child.getMeasuredHeight() : nextY;
                     child.layout(childX, childY, childX + child.getMeasuredWidth(), childY + child.getMeasuredHeight());
 
                     float collapsedTranslation = addButtonY - childY;
                     float expandedTranslation = 0f;
 
+//                    child.setTranslationY(mExpanded ? expandedTranslation : collapsedTranslation);
+//                    child.setAlpha(mExpanded ? 1f : 0f);
                     ViewHelper.setTranslationY(child,
                             mExpanded ? expandedTranslation : collapsedTranslation);
-                    //child.setTranslationY(mExpanded ? expandedTranslation : collapsedTranslation);
-
                     ViewHelper.setAlpha(child, mExpanded ? 1f : 0f);
-                    //child.setAlpha(mExpanded ? 1f : 0f);
 
                     LayoutParams params = (LayoutParams) child.getLayoutParams();
                     params.mCollapseDir.setFloatValues(expandedTranslation, collapsedTranslation);
@@ -323,15 +431,26 @@ public class FloatingActionsMenu extends ViewGroup {
 
                     View label = (View) child.getTag(R.id.fab_label);
                     if (label != null) {
-                        int labelLeft = labelsRight - label.getMeasuredWidth();
+                        int labelXAwayFromButton = mLabelsPosition == LABELS_ON_LEFT_SIDE
+                                ? labelsXNearButton - label.getMeasuredWidth()
+                                : labelsXNearButton + label.getMeasuredWidth();
+
+                        int labelLeft = mLabelsPosition == LABELS_ON_LEFT_SIDE
+                                ? labelXAwayFromButton
+                                : labelsXNearButton;
+
+                        int labelRight = mLabelsPosition == LABELS_ON_LEFT_SIDE
+                                ? labelsXNearButton
+                                : labelXAwayFromButton;
+
                         int labelTop = childY - mLabelsVerticalOffset + (child.getMeasuredHeight() - label.getMeasuredHeight()) / 2;
 
-                        label.layout(labelLeft, labelTop, labelsRight, labelTop + label.getMeasuredHeight());
+                        label.layout(labelLeft, labelTop, labelRight, labelTop + label.getMeasuredHeight());
 
+//                        label.setTranslationY(mExpanded ? expandedTranslation : collapsedTranslation);
+//                        label.setAlpha(mExpanded ? 1f : 0f);
                         ViewHelper.setTranslationY(label, mExpanded ? expandedTranslation : collapsedTranslation);
-                        //label.setTranslationY(mExpanded ? expandedTranslation : collapsedTranslation);
                         ViewHelper.setAlpha(label, mExpanded ? 1f : 0f);
-                        //label.setAlpha(mExpanded ? 1f : 0f);
 
                         LayoutParams labelParams = (LayoutParams) label.getLayoutParams();
                         labelParams.mCollapseDir.setFloatValues(expandedTranslation, collapsedTranslation);
@@ -370,11 +489,10 @@ public class FloatingActionsMenu extends ViewGroup {
                     float collapsedTranslation = addButtonX - childX;
                     float expandedTranslation = 0f;
 
+//                    child.setTranslationX(mExpanded ? expandedTranslation : collapsedTranslation);
+//                    child.setAlpha(mExpanded ? 1f : 0f);
                     ViewHelper.setTranslationX(child, mExpanded ? expandedTranslation : collapsedTranslation);
-                    //child.setTranslationX(mExpanded ? expandedTranslation : collapsedTranslation);
-
                     ViewHelper.setAlpha(child, mExpanded ? 1f : 0f);
-//child.setAlpha(mExpanded ? 1f : 0f);
 
                     LayoutParams params = (LayoutParams) child.getLayoutParams();
                     params.mCollapseDir.setFloatValues(expandedTranslation, collapsedTranslation);
@@ -430,28 +548,28 @@ public class FloatingActionsMenu extends ViewGroup {
             mCollapseDir.setInterpolator(sCollapseInterpolator);
             mCollapseAlpha.setInterpolator(sCollapseInterpolator);
 
+//            mCollapseAlpha.setProperty(View.ALPHA);
             mCollapseAlpha.setPropertyName("alpha");
-            //mCollapseAlpha.setProperty(View.ALPHA);
             mCollapseAlpha.setFloatValues(1f, 0f);
 
+//            mExpandAlpha.setProperty(View.ALPHA);
             mExpandAlpha.setPropertyName("alpha");
-            //mExpandAlpha.setProperty(View.ALPHA);
             mExpandAlpha.setFloatValues(0f, 1f);
 
             switch (mExpandDirection) {
                 case EXPAND_UP:
                 case EXPAND_DOWN:
+//                    mCollapseDir.setProperty(View.TRANSLATION_Y);
+//                    mExpandDir.setProperty(View.TRANSLATION_Y);
                     mCollapseDir.setPropertyName("translationY");
-                    //mCollapseDir.setProperty(View.TRANSLATION_Y);
                     mExpandDir.setPropertyName("translationY");
-                    //mExpandDir.setProperty(View.TRANSLATION_Y);
                     break;
                 case EXPAND_LEFT:
                 case EXPAND_RIGHT:
+//                    mCollapseDir.setProperty(View.TRANSLATION_X);
+//                    mExpandDir.setProperty(View.TRANSLATION_X);
                     mCollapseDir.setPropertyName("translationX");
-                    //mCollapseDir.setProperty(View.TRANSLATION_X);
                     mExpandDir.setPropertyName("translationX");
-                    //mExpandDir.setProperty(View.TRANSLATION_X);
                     break;
             }
         }
