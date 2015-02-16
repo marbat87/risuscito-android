@@ -11,10 +11,10 @@
 
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
-        <item name="colorAccent">@color/theme_accent</item>
-        <item name="colorControlHighlight">@color/theme_accent_semi_tr</item>
+        <item name="colorAccent">#000</item>
+        <!--<item name="colorControlHighlight">@color/theme_accent_semi_tr</item>-->
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
-        <item name="colorControlActivated">@color/theme_accent_semi_tr</item>
+        <!--<item name="colorControlActivated">#000</item>-->
 
         <!-- The rest of your attributes -->
         <item name="customHelp">@drawable/ic_action_help</item>

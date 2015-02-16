@@ -33,6 +33,8 @@ import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class CantiParolaFragment extends Fragment {
 
 	private int posizioneDaCanc;
@@ -56,6 +58,9 @@ public class CantiParolaFragment extends Fragment {
 		updateLista();
 		
 		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_parola);
+        fab.setColorNormal(getThemeUtils().accentColor());
+        fab.setColorPressed(getThemeUtils().accentColorDark());
+        fab.setColorRipple(getThemeUtils().accentColorDark());
 		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
@@ -729,8 +734,12 @@ public class CantiParolaFragment extends Fragment {
                                 mShareActionProvider.setShareIntent(getDefaultIntent());
                             }
                         })
-                        .actionColor(getResources().getColor(R.color.theme_accent))
+                        .actionColor(getThemeUtils().accentColor())
                 , getActivity());
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
     
 }

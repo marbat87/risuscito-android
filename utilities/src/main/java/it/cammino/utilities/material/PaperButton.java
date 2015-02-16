@@ -127,6 +127,7 @@ public class PaperButton extends View {
     public void setColor(int color) {
         mColor = color;
         backgroundPaint.setColor(mColor);
+        ripplePaint.setColor(darkenColor(mColor));
         invalidate();
     }
 

@@ -19,6 +19,7 @@
         android:elevation="@dimen/toolbar_elevation" />
 
     <LinearLayout
+        android:id="@+id/action_title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -112,8 +113,8 @@
                     android:layout_margin="@dimen/floating_margin_lateral"
                     android:src="@drawable/ic_add_white_24dp"
                     risuscito:fab_colorNormal="@color/theme_accent"
-                    risuscito:fab_colorPressed="@color/theme_primary"
-                    risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+                    risuscito:fab_colorPressed="@color/theme_accent_dark"
+                    risuscito:fab_colorRipple="@color/theme_accent_dark"/>
 
             </FrameLayout>
 

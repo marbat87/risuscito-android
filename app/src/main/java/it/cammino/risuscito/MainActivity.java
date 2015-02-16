@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -89,9 +90,10 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         setSupportActionBar(mActionBarToolbar);
 
         mThemeUtils = new ThemeUtils(this);
+        mActionBarToolbar.setBackgroundColor(mThemeUtils.primaryColor());
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(MainActivity.this);
+        Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
         		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
         	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
@@ -148,9 +150,7 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         if (mDrawerLayout == null) {
             return;
         }
-        mDrawerLayout.setStatusBarBackgroundColor(
-                getResources().getColor(R.color.theme_primary_dark));
-
+        mDrawerLayout.setStatusBarBackgroundColor(mThemeUtils.primaryColorDark());
 
         if (mActionBarToolbar != null) {
             mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
@@ -280,11 +280,17 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
                 R.drawable.selected_navdrawer_item_background :
                 R.drawable.navdrawer_item_background);
         view.setSoundEffectsEnabled(!selected);
+//        titleView.setTextColor(selected ?
+//                getResources().getColor(R.color.navdrawer_text_color_selected) :
+//                getResources().getColor(R.color.navdrawer_text_color));
+//        iconView.setColorFilter(selected ?
+//                getResources().getColor(R.color.navdrawer_icon_tint_selected) :
+//                getResources().getColor(R.color.navdrawer_icon_tint));
         titleView.setTextColor(selected ?
-                getResources().getColor(R.color.navdrawer_text_color_selected) :
+                mThemeUtils.primaryColor() :
                 getResources().getColor(R.color.navdrawer_text_color));
         iconView.setColorFilter(selected ?
-                getResources().getColor(R.color.navdrawer_icon_tint_selected) :
+                mThemeUtils.primaryColor() :
                 getResources().getColor(R.color.navdrawer_icon_tint));
     }
         
@@ -450,8 +456,10 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         }
         else
         {
-            startActivity(getIntent());
-            finish();
+            Intent i = getBaseContext().getPackageManager()
+                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
         }
     }
     

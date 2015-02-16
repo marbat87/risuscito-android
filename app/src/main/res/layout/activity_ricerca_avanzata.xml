@@ -23,25 +23,6 @@
         android:imeOptions="actionDone"
         android:hint="@string/search_hint" />
 
-    <!--<Lin    earLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="@dimen/min_button_margin"-->
-    <!--android:layout_marginTop="@dimen/min_button_margin"-->
-    <!--android:orientation="horizontal"-->
-    <!--android:gravity="end" >-->
-
-    <!--<com.gc.materialdesign.views.ButtonRectangle-->
-    <!--android:id="@+id/pulisci_ripple"-->
-    <!--android:layout_width="88dip"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:layout_marginRight="@dimen/min_button_margin"-->
-    <!--android:layout_marginEnd="@dimen/min_button_margin"-->
-    <!--android:background="@color/theme_primary"-->
-    <!--risuscito:clickAfterRipple="false"-->
-    <!--risuscito:rippleColor="@color/ripple_color"-->
-    <!--android:soundEffectsEnabled="true"-->
-    <!--android:text="@string/button_pulisci" />-->
     <it.cammino.utilities.material.PaperButton
         android:id="@+id/pulisci_ripple"
         risuscito:paper_text="@string/button_pulisci"
@@ -55,8 +36,6 @@
         android:paddingLeft="4dip"
         android:paddingRight="4dip"
         android:layout_height="48dip"/>
-
-    <!--</LinearLayout>-->
 
     <TextView
         android:id="@+id/search_no_results"
@@ -75,13 +54,6 @@
         android:visibility="gone"
         android:layout_gravity="center_horizontal"/>
 
-    <!--<ListView-->
-    <!--android:id="@+id/matchedList"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:drawSelectorOnTop="false"-->
-    <!--android:divider="@null"-->
-    <!--android:visibility="gone" />-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/matchedList"
         android:layout_width= "match_parent"

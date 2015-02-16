@@ -86,7 +86,7 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
     protected int mode = AbstractFilePickerFragment.MODE_FILE;
     protected boolean allowCreateDir = false;
     protected boolean allowMultiple = false;
-    protected int colorId = 0;
+    protected int color = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +104,7 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
                     allowCreateDir);
             allowMultiple =
                     intent.getBooleanExtra(EXTRA_ALLOW_MULTIPLE, allowMultiple);
-            colorId = intent.getIntExtra(BACKGROUND_COLOR, colorId);
+            color = intent.getIntExtra(BACKGROUND_COLOR, color);
 
         }
         setupActionBar();
@@ -115,7 +115,7 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
 
         if (fragment == null) {
             fragment =
-                    getFragment(startPath, mode, allowMultiple, allowCreateDir, colorId);
+                    getFragment(startPath, mode, allowMultiple, allowCreateDir, color);
         }
 
         if (fragment != null) {
@@ -154,13 +154,13 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getWindowTitle());
-        if (colorId != 0)
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(colorId)));
+        if (color != 0)
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
     }
 
     protected abstract AbstractFilePickerFragment<T> getFragment(
             final String startPath, final int mode, final boolean allowMultiple,
-            final boolean allowCreateDir, final int colorId);
+            final boolean allowCreateDir, final int color);
 
     /**
      * @return the title to apply to the window

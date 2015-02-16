@@ -222,8 +222,8 @@
     <string name="audio_on_off">Mostra/Nascondi audio</string>
     <string name="file_selected">File selezionato</string>
     <string name="primary_color">Colore principale</string>
-    <string name="primary_color_desc">Il colore principale da usare per il tema.</string>
+    <string name="primary_color_desc">Il colore principale da usare per il tema</string>
     <string name="accent_color">Colore di risalto</string>
-    <string name="defaultStr">PREDEFINITO</string>
+    <string name="accent_color_desc">Il colore di risalto da usare</string>
 
 </resources>

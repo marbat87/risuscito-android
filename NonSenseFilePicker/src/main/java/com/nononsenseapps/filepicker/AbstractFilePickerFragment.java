@@ -74,7 +74,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
     protected T currentPath = null;
     protected boolean allowCreateDir = false;
     protected boolean allowMultiple = false;
-    protected int colorId = 0;
+    protected int color = 0;
     protected Comparator<T> comparator = null;
     private OnFilePickedListener listener;
     private BindableArrayAdapter<T> adapter;
@@ -97,7 +97,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
      * @param allowDirCreate
      */
     public void setArgs(final String startPath, final int mode,
-            final boolean allowMultiple, final boolean allowDirCreate, int colorId) {
+            final boolean allowMultiple, final boolean allowDirCreate, int color) {
         Bundle b = new Bundle();
         if (startPath != null) {
             b.putString(KEY_START_PATH, startPath);
@@ -105,7 +105,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
         b.putBoolean(KEY_ALLOW_DIR_CREATE, allowDirCreate);
         b.putBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
         b.putInt(KEY_MODE, mode);
-        b.putInt(BACKGROUND_COLOR, colorId);
+        b.putInt(BACKGROUND_COLOR, color);
         setArguments(b);
     }
 
@@ -118,8 +118,8 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
 
         lv.setOnItemLongClickListener(this);
         
-        if (colorId != 0)
-        	view.findViewById(R.id.action_container).setBackgroundColor(getResources().getColor(colorId));
+        if (color != 0)
+        	view.findViewById(R.id.action_container).setBackgroundColor(color);
 
         view.findViewById(R.id.button_cancel)
                 .setOnClickListener(new View.OnClickListener() {
@@ -314,16 +314,16 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
                         .getBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
                 currentPath =
                         getPath(savedInstanceState.getString(KEY_CURRENT_PATH));
-                colorId = savedInstanceState
-                        .getInt(BACKGROUND_COLOR, colorId);
+                color = savedInstanceState
+                        .getInt(BACKGROUND_COLOR, color);
             } else if (getArguments() != null) {
                 mode = getArguments().getInt(KEY_MODE, mode);
                 allowCreateDir = getArguments()
                         .getBoolean(KEY_ALLOW_DIR_CREATE, allowCreateDir);
                 allowMultiple = getArguments()
                         .getBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
-                colorId = getArguments()
-                        .getInt(BACKGROUND_COLOR, colorId);
+                color = getArguments()
+                        .getInt(BACKGROUND_COLOR, color);
                 if (getArguments().containsKey(KEY_START_PATH)) {
                     currentPath =
                             getPath(getArguments().getString(KEY_START_PATH));

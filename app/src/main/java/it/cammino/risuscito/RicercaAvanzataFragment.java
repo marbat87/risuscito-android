@@ -51,15 +51,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import it.cammino.utilities.material.PaperButton;
+
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private DatabaseCanti listaCanti;
-    //    private String[] titoli;
     private List<CantoItem> titoli;
     private TintEditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-    //    ListView lv;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
     private ProgressBarCompat progress;
@@ -89,8 +89,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
-
-//        lv = (ListView) rootView.findViewById(R.id.matchedList);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
@@ -207,14 +205,13 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         });
 
-//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+        PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
+        paperPulisci.setColor(((MainActivity)getActivity()).mThemeUtils.primaryColor());
+        paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.GONE);
                 titoli.clear();
                 cantoAdapter.notifyDataSetChanged();
                 progress.setVisibility(View.GONE);
@@ -240,8 +237,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         lista.close();
         db.close();
 
-//        setHasOptionsMenu(true);
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
@@ -260,8 +255,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-//        titoloDaAgg = ((TextView) info.targetView.findViewById(R.id.text_title)).getText().toString();
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         menu.setHeaderTitle("Aggiungi canto a:");
 
@@ -580,46 +573,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-//    private class SongRowAdapter extends ArrayAdapter<String> {
-//
-//        SongRowAdapter() {
-//            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//
-//            View row=super.getView(position, convertView, parent);
-//
-//            TextView canto = (TextView) row.findViewById(R.id.text_title);
-//
-//            String totalString = canto.getText().toString();
-//
-//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            String colore = totalString.substring(3, 10);
-//
-//            ((TextView) row.findViewById(R.id.text_title))
-//                    .setText(totalString.substring(10));
-//
-//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-////            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            return(row);
-//        }
-//    }
-
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
         @SuppressLint("NewApi")
@@ -709,57 +662,13 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         protected void onPostExecute(String result) {
 
             cantoAdapter.notifyDataSetChanged();
-            // crea un list adapter per l'oggetto di tipo ListView
-//            lv.setAdapter(new SongRowAdapter());
-
-//            // setta l'azione al click su ogni voce dell'elenco
-//            lv.setOnItemClickListener(new OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                    // recupera il titolo della voce cliccata
-//                    String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
-//                            .getText().toString();
-//                    cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                    // crea un manipolatore per il DB in modalità READ
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                    // esegue la query per il recupero del nome del file della pagina da visualizzare
-//                    String query = "SELECT source, _id" +
-//                            "  FROM ELENCO" +
-//                            "  WHERE titolo =  '" + cantoCliccato + "'";
-//                    Cursor cursor = db.rawQuery(query, null);
-//
-//                    // recupera il nome del file
-//                    cursor.moveToFirst();
-//                    String pagina = cursor.getString(0);
-//                    int idCanto = cursor.getInt(1);
-//
-//                    // chiude il cursore
-//                    cursor.close();
-//
-//                    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("pagina", pagina);
-//                    bundle.putInt("idCanto", idCanto);
-//
-//                    // lancia l'activity che visualizza il canto passando il parametro creato
-//                    startSubActivity(bundle, view);
-//
-//                }
-//            });
-
             progress.setVisibility(View.GONE);
 
-//            if (titoli.length == 0) {
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-//                lv.setVisibility(View.GONE);
             }
             else {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.VISIBLE);
-//                registerForContextMenu(lv);
             }
         }
 

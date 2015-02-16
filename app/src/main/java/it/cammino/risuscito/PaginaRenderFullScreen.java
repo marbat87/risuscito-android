@@ -16,6 +16,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.melnykov.fab.FloatingActionButton;
+
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class PaginaRenderFullScreen extends ActionBarActivity {
     
 	private DatabaseCanti listaCanti;
@@ -46,6 +50,7 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 	};
 
     private LUtils mLUtils;
+    private ThemeUtils mThemeUtils;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,8 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
         setContentView(R.layout.activity_pagina_render_fullscreen);
         
         listaCanti = new DatabaseCanti(this);
+
+        mThemeUtils = new ThemeUtils(this);
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         Bundle bundle = this.getIntent().getExtras();
@@ -72,11 +79,14 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 		pageView = (WebView) findViewById(R.id.cantoView);
         ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
-        findViewById(R.id.fab_fullscreen_off).setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
+        fabFullscreen.setColorNormal(mThemeUtils.accentColor());
+        fabFullscreen.setColorPressed(mThemeUtils.accentColorDark());
+        fabFullscreen.setColorRipple(mThemeUtils.accentColorLight());
+        fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveZoom();
-//                finish();
                 mLUtils.closeActivityWithFadeOut();
             }
         });

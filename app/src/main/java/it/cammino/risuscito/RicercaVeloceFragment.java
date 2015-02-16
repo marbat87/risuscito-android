@@ -38,6 +38,8 @@ import com.alertdialogpro.AlertDialogPro;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.utilities.material.PaperButton;
+
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener{
 
     private DatabaseCanti listaCanti;
@@ -278,11 +280,11 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         });
 
-//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+        PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
+        paperPulisci.setColor(((MainActivity)getActivity()).mThemeUtils.primaryColor());
+        paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
                 rootView.findViewById(R.id.search_no_results).setVisibility(
                         View.GONE);

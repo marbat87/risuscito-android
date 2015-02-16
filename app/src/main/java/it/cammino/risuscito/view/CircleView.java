@@ -15,7 +15,7 @@ import it.cammino.risuscito.R;
 /**
  * Created by marcello.battain on 12/02/2015.
  */
-public class CircleView extends FrameLayout {
+public class CircleView extends CheckableFrameLayout {
 
     private final Bitmap mCheck;
     private final Paint paint;
@@ -100,7 +100,7 @@ public class CircleView extends FrameLayout {
         canvas.drawCircle(circleCenter + borderWidth, circleCenter + borderWidth, ((canvasSize - (borderWidth * 2)) / 2) + borderWidth - 4.0f, paintBorder);
         canvas.drawCircle(circleCenter + borderWidth, circleCenter + borderWidth, ((canvasSize - (borderWidth * 2)) / 2) - 4.0f, paint);
 
-        if (isSelected()) {
+        if (isChecked()) {
             final int offset = (canvasSize / 2) - (mCheck.getWidth() / 2);
             canvas.drawBitmap(mCheck, offset, offset, null);
         }

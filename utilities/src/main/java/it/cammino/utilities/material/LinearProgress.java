@@ -57,10 +57,12 @@ public class LinearProgress extends View {
         topBarPaint.setStrokeWidth(mLineWidth);
     }
 
-    private void setColor(int color) {
+    public void setColor(int color) {
         mColor = color;
         bottomBarPaint.setColor(mColor);
+        bottomBarPaint.setAlpha(60);
         bufferPaint.setColor(mColor);
+        bufferPaint.setAlpha(60);
         topBarPaint.setColor(mColor);
         invalidate();
     }

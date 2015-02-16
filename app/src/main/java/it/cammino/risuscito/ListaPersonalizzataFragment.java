@@ -33,6 +33,8 @@ import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class ListaPersonalizzataFragment extends Fragment {
 
 	private int posizioneDaCanc;
@@ -57,6 +59,9 @@ public class ListaPersonalizzataFragment extends Fragment {
 		listaCanti = new DatabaseCanti(getActivity());
 		
 		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_personalizzata);
+        fab.setColorNormal(getThemeUtils().accentColor());
+        fab.setColorPressed(getThemeUtils().accentColorDark());
+        fab.setColorRipple(getThemeUtils().accentColorDark());
 		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
@@ -149,7 +154,7 @@ public class ListaPersonalizzataFragment extends Fragment {
     
     private void openPagina(View v) {
     	// recupera il titolo della voce cliccata
-		String cantoCliccato = ((TextView) v).getText().toString();
+		String cantoCliccato = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
 		cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
         		
 		// crea un manipolatore per il DB in modalità READ
@@ -235,7 +240,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                 temp.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v.findViewById(R.id.text_title));
+                        openPagina(v);
                     }
                 });
                 // setta l'azione tenendo premuto sul canto
@@ -355,8 +360,12 @@ public class ListaPersonalizzataFragment extends Fragment {
                                 mShareActionProvider.setShareIntent(getDefaultIntent());
                             }
                         })
-                        .actionColor(getResources().getColor(R.color.theme_accent))
+                        .actionColor(getThemeUtils().accentColor())
                 , getActivity());
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
     
 }

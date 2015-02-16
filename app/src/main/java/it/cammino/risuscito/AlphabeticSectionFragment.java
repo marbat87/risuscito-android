@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.quickscroll.QuickScroll;
 import it.cammino.utilities.quickscroll.Scrollable;
 
@@ -101,13 +102,12 @@ public class AlphabeticSectionFragment extends Fragment {
 
             final QuickScroll quickscroll = (QuickScroll) rootView.findViewById(R.id.quickscroll);
             quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, lv, adapter, QuickScroll.STYLE_HOLO);
-            quickscroll.setHandlebarColor(getResources().getColor(R.color.theme_accent)
-                    ,
-                    getResources().getColor(R.color.theme_accent)
-                    , getResources().getColor(R.color.theme_accent_semi_tr));
+            quickscroll.setHandlebarColor(getThemeUtils().accentColor()
+                    , getThemeUtils().accentColor()
+                    , getThemeUtils().accentColorLight());
             quickscroll.setFixedSize(1);
-            quickscroll.setIndicatorColor(getResources().getColor(R.color.theme_accent_semi_tr)
-                    , getResources().getColor(R.color.theme_accent_semi_tr)
+            quickscroll.setIndicatorColor(getThemeUtils().accentColorLight()
+                    , getThemeUtils().accentColorLight()
                     , getResources().getColor(android.R.color.white));
             quickscroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
         }
@@ -642,6 +642,10 @@ public class AlphabeticSectionFragment extends Fragment {
                     break;
             }
         }
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
 
 }

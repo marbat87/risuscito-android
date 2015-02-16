@@ -240,13 +240,17 @@ public class Utility {
         return "";
     }
 
-    public static void setupTransparentTints(Activity context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT
-                || Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
-            return;
-        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.theme_primary_dark);
+    @SuppressLint("NewApi")
+    public static void setupTransparentTints(Activity context, int color, boolean alsoLollipop) {
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            SystemBarTintManager tintManager = new SystemBarTintManager(context);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setStatusBarTintColor(color);
+        }
+
+        if (alsoLollipop && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            context.getWindow().setStatusBarColor(color);
     }
 
     @SuppressWarnings("ResourceType")

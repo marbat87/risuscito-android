@@ -25,6 +25,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.utilities.material.PaperButton;
+
 public class InsertVeloceFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
@@ -318,11 +320,11 @@ public class InsertVeloceFragment extends Fragment {
 
         });
 
-//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+        PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
+        paperPulisci.setColor(((GeneralInsertSearch)getActivity()).mThemeUtils.primaryColor());
+        paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             }

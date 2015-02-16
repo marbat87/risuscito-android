@@ -115,6 +115,7 @@
                     android:layout_height="0dip" />
 
                 <LinearLayout
+                    android:id="@+id/bottom_bar"
                     android:layout_width="fill_parent"
                     android:layout_gravity="bottom"
                     android:background="@color/theme_primary"
@@ -143,7 +144,7 @@
                         android:layout_gravity="center_vertical"
                         risuscito:dsb_min="0"
                         risuscito:dsb_max="50"
-                        risuscito:dsb_rippleColor="@color/ripple_color"
+                        risuscito:dsb_rippleColor="@color/ripple_material_dark"
                         risuscito:dsb_indicatorFormatter="%d%%"
                         risuscito:dsb_indicatorElevation="6dp" />
 
@@ -179,8 +180,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            risuscito:fab_addButtonColorNormal="@color/favorite_accent_dark"
-            risuscito:fab_addButtonColorPressed="@color/favorite_accent"
+            risuscito:fab_addButtonColorNormal="@color/theme_accent"
+            risuscito:fab_addButtonColorPressed="@color/theme_accent_dark"
             risuscito:fab_addButtonSize="mini"
             risuscito:fab_labelStyle="@style/menu_labels_style"
             risuscito:fab_addButtonPlusIconColor="@android:color/white"
@@ -196,7 +197,7 @@
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/fullscreen"
                 risuscito:fab_colorNormal="@color/theme_accent"
-                risuscito:fab_colorPressed="@color/theme_primary"
+                risuscito:fab_colorPressed="@color/theme_accent_dark"
                 risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
                 risuscito:fab_size="mini" />
 
@@ -206,7 +207,7 @@
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/audio_on_off"
                 risuscito:fab_colorNormal="@color/theme_accent"
-                risuscito:fab_colorPressed="@color/theme_primary"
+                risuscito:fab_colorPressed="@color/theme_accent_dark"
                 risuscito:fab_icon="@drawable/hide_music_background"
                 risuscito:fab_size="mini" />
 

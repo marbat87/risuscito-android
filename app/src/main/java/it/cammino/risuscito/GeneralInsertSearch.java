@@ -17,11 +17,14 @@ import android.view.WindowManager;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class GeneralInsertSearch extends ActionBarActivity {
 
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
+    protected ThemeUtils mThemeUtils;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +35,12 @@ public class GeneralInsertSearch extends ActionBarActivity {
 		Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 		setSupportActionBar(toolbar);
-		
+
+        mThemeUtils = new ThemeUtils(this);
+        toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(GeneralInsertSearch.this);
+        Utility.setupTransparentTints(GeneralInsertSearch.this, mThemeUtils.primaryColorDark(), true);
 		
 		Bundle bundle = GeneralInsertSearch.this.getIntent().getExtras();
 		fromAdd = bundle.getInt("fromAdd");
@@ -45,10 +51,10 @@ public class GeneralInsertSearch extends ActionBarActivity {
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
         
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setBackgroundColor(mThemeUtils.primaryColor());
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
         Resources res = getResources();
-//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
@@ -150,5 +156,5 @@ public class GeneralInsertSearch extends ActionBarActivity {
 			return null;
 		}
 	}
-			
+
 }

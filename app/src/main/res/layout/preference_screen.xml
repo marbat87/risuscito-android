@@ -13,15 +13,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/preference_min_margin"
-            android:paddingRight="@dimen/preference_min_margin"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:id="@+id/screen_on_layout"
                 android:clickable="true"
                 android:background="?attr/customSelector">
@@ -69,7 +70,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:id="@+id/show_seconda_eucarestia_layout"
                 android:clickable="true"
                 android:background="?attr/customSelector">
@@ -117,7 +121,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:id="@+id/show_santo_layout"
                 android:clickable="true"
                 android:background="?attr/customSelector">
@@ -165,7 +172,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:id="@+id/show_pace_parola_layout"
                 android:clickable="true"
                 android:background="?attr/customSelector">
@@ -216,7 +226,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:clickable="true"
                 android:orientation="vertical"
                 android:background="?attr/customSelector">
@@ -245,7 +258,10 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="start"
-                android:padding="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:clickable="true"
                 android:orientation="vertical"
                 android:background="?attr/customSelector">
@@ -267,32 +283,104 @@
 
             <include layout="@layout/preferences_separator" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/primary_color_selection"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_gravity="start"
-                android:padding="10dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:clickable="true"
-                android:orientation="vertical"
                 android:background="?attr/customSelector">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/primary_color"
-                    android:textColor="@color/primary_text_default_material_light"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                <it.cammino.risuscito.view.CircleView
+                    android:id="@+id/primaryCircle"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/primary_color_desc"
-                    android:textColor="@color/secondary_text_default_material_light"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@id/primaryCircle"
+                    android:layout_toStartOf="@id/primaryCircle"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/primary_color"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/primary_color_desc"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+            <include layout="@layout/preferences_separator" />
+
+            <RelativeLayout
+                android:id="@+id/accent_color_selection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:clickable="true"
+                android:background="?attr/customSelector">
+
+                <it.cammino.risuscito.view.CircleView
+                    android:id="@+id/accentCircle"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@id/accentCircle"
+                    android:layout_toStartOf="@id/accentCircle"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/accent_color"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/accent_color_desc"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 

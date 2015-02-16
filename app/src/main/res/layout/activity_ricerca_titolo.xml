@@ -23,18 +23,6 @@
         android:imeOptions="actionDone"
         android:hint="@string/search_hint" />
 
-    <!--<com.gc.materialdesign.views.ButtonRectangle-->
-    <!--android:id="@+id/pulisci_ripple"-->
-    <!--android:layout_width="88dip"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:layout_marginRight="@dimen/min_button_margin"-->
-    <!--android:layout_marginEnd="@dimen/min_button_margin"-->
-    <!--android:layout_gravity="end"-->
-    <!--risuscito:clickAfterRipple="false"-->
-    <!--risuscito:rippleColor="@color/ripple_color"-->
-    <!--android:background="@color/theme_primary"-->
-    <!--android:soundEffectsEnabled="true"-->
-    <!--android:text="@string/button_pulisci" />-->
     <it.cammino.utilities.material.PaperButton
         android:id="@+id/pulisci_ripple"
         risuscito:paper_text="@string/button_pulisci"
@@ -58,12 +46,6 @@
         android:text="@string/search_no_results"
         android:visibility="gone" />
 
-    <!--<ListView-->
-    <!--android:id="@+id/matchedList"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:drawSelectorOnTop="false"-->
-    <!--android:divider="@null" />-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/matchedList"
         android:layout_width= "match_parent"

@@ -34,6 +34,8 @@ import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class CustomLists extends Fragment  {
 
 	private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -67,16 +69,14 @@ public class CustomLists extends Fragment  {
 	    mViewPager.setAdapter(mSectionsPagerAdapter);
 	    
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 	    
         Resources res = getResources();
-//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
         
-//	    setHasOptionsMenu(true);
-	    
         return rootView;
 	}
 
@@ -114,7 +114,7 @@ public class CustomLists extends Fragment  {
                 Utility.blockOrientation(getActivity());
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                 dialog = builder.setTitle(R.string.lista_add_desc)
-                        .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_customview, null))
+                        .setView(R.layout.dialog_customview)
                         .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
                         .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                         .show();
@@ -180,7 +180,7 @@ public class CustomLists extends Fragment  {
                                         mSlidingTabLayout.setViewPager(mViewPager);
                                     }
                                 })
-                                .actionColor(getResources().getColor(R.color.theme_accent))
+                                .actionColor(getThemeUtils().accentColor())
                         , getActivity());
                 return true;
         }
@@ -307,4 +307,7 @@ public class CustomLists extends Fragment  {
         }
     }
 
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
+    }
 }

@@ -40,6 +40,7 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.dslv.DragSortListView;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
@@ -67,6 +68,7 @@ public class CreaListaActivity extends ActionBarActivity {
 	private ArrayList<String> nomiCanti;
 	private int positionLI;
 	private Bundle tempArgs;
+    protected ThemeUtils mThemeUtils;
 
 	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 	
@@ -85,9 +87,13 @@ public class CreaListaActivity extends ActionBarActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
+
+        mThemeUtils = new ThemeUtils(this);
+        toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        findViewById(R.id.action_title_bar).setBackgroundColor(mThemeUtils.primaryColor());
 	
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(CreaListaActivity.this);
+        Utility.setupTransparentTints(CreaListaActivity.this, mThemeUtils.primaryColorDark(), true);
 		
 		listaCanti = new DatabaseCanti(this);
 		
@@ -169,7 +175,7 @@ public class CreaListaActivity extends ActionBarActivity {
 				positionToRename = position;
 		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialog = builder.setTitle(R.string.posizione_rename)
-	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
+	        			.setView(R.layout.dialog_customview)
 	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
 	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
 	                    .show();
@@ -224,6 +230,9 @@ public class CreaListaActivity extends ActionBarActivity {
         });
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
+        fab.setColorNormal(mThemeUtils.accentColor());
+        fab.setColorPressed(mThemeUtils.accentColorDark());
+        fab.setColorRipple(mThemeUtils.accentColorDark());
 		fab.attachToListView(lv);
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
@@ -232,7 +241,7 @@ public class CreaListaActivity extends ActionBarActivity {
                 Utility.blockOrientation(CreaListaActivity.this);
 				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
-	        			.setView(getLayoutInflater().inflate(R.layout.dialog_customview, null))
+	        			.setView(R.layout.dialog_customview)
 	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
 	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
 	                    .show();

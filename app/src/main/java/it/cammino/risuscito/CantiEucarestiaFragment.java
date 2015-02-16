@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class CantiEucarestiaFragment extends Fragment {
 
     private int posizioneDaCanc;
@@ -59,6 +61,9 @@ public class CantiEucarestiaFragment extends Fragment {
         listaCanti = new DatabaseCanti(getActivity());
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_eucarestia);
+        fab.setColorNormal(getThemeUtils().accentColor());
+        fab.setColorPressed(getThemeUtils().accentColorDark());
+        fab.setColorRipple(getThemeUtils().accentColorDark());
         fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.eucarestiaScrollView));
         fab.setOnClickListener(new OnClickListener() {
             @Override
@@ -87,10 +92,6 @@ public class CantiEucarestiaFragment extends Fragment {
                 dialog.setCancelable(false);
             }
         });
-
-//        updateLista();
-
-//        setHasOptionsMenu(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -442,7 +443,6 @@ public class CantiEucarestiaFragment extends Fragment {
             }
         };
 
-//        String[] titoliCanti = getTitoliFromPosition(3);
         List<CantoItem> dataItems = getTitoliListFromPosition(3);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiPaneList);
@@ -452,55 +452,6 @@ public class CantiEucarestiaFragment extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
-//        LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.cantiPaneList);
-//        lv.removeAllViews();
-
-//        LayoutInflater inflater = (LayoutInflater) getActivity()
-//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        for (CantoItem titoloTemp: titoliCanti) {
-//            View view = inflater.inflate(R.layout.row_item, lv, false);
-//
-//            String colore = titoloTemp.substring(3, 10);
-////            view.findViewById(R.id.canto_container).
-////                    setBackgroundColor(Color.parseColor(colore));
-//
-//            TextView temp = (TextView) view.findViewById(R.id.text_title);
-//            temp.setText(titoloTemp.substring(10));
-//            temp.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    openPagina(v, R.id.text_title);
-//                }
-//            });
-//            temp.setOnLongClickListener(new OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    posizioneDaCanc = 3;
-//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
-//                    snackBarRimuoviCanto();
-//                    return true;
-//                }
-//            });
-//
-//            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            TextView textPage = (TextView) view.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-//
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            lv.addView(view);
-//        }
 
         longClickListener = new OnLongClickListener() {
             @Override
@@ -521,59 +472,6 @@ public class CantiEucarestiaFragment extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-
-
-//        String[] titoliCanti = getTitoliFromPosition(4);
-//
-//        LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.cantiVinoList);
-//        lv.removeAllViews();
-//
-//        LayoutInflater inflater = (LayoutInflater) getActivity()
-//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//        for (String titoloTemp: titoliCanti) {
-//            View view = inflater.inflate(R.layout.row_item, lv, false);
-//
-//            String colore = titoloTemp.substring(3, 10);
-////            view.findViewById(R.id.canto_container).
-////                    setBackgroundColor(Color.parseColor(colore));
-//
-//            TextView temp = (TextView) view.findViewById(R.id.text_title);
-//            temp.setText(titoloTemp.substring(10));
-//            temp.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    openPagina(v, R.id.text_title);
-//                }
-//            });
-//            temp.setOnLongClickListener(new OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    posizioneDaCanc = 4;
-//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
-//                    snackBarRimuoviCanto();
-//                    return true;
-//                }
-//            });
-//
-//            int tempPagina = Integer.valueOf(titoloTemp.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            TextView textPage = (TextView) view.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-//
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            lv.addView(view);
-//        }
 
         titoloCanto = getTitoliFromPosition(5);
 
@@ -933,8 +831,12 @@ public class CantiEucarestiaFragment extends Fragment {
                                 mShareActionProvider.setShareIntent(getDefaultIntent());
                             }
                         })
-                        .actionColor(getResources().getColor(R.color.theme_accent))
+                        .actionColor(getThemeUtils().accentColor())
                 , getActivity());
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
 
 }

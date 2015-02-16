@@ -29,7 +29,7 @@
         android:layout_margin="@dimen/floating_margin_lateral"
         android:src="@drawable/ic_icon_broom"
         risuscito:fab_colorNormal="@color/theme_accent"
-        risuscito:fab_colorPressed="@color/theme_primary"
-        risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+        risuscito:fab_colorPressed="@color/theme_accent_dark"
+        risuscito:fab_colorRipple="@color/theme_accent_dark"/>
 
 </FrameLayout>

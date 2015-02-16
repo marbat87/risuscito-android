@@ -14,6 +14,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -54,6 +56,8 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
+import com.getbase.floatingactionbutton.AddFloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -85,6 +89,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.material.LinearProgress;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
@@ -114,6 +119,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private String barreSalvato;
     private static String barreCambio;
     private String personalUrl;
+    private ThemeUtils mThemeUtils;
 
     enum MP_State {
         Idle, Initialized, Prepared, Started, Paused,
@@ -173,8 +179,14 @@ public class PaginaRenderActivity extends ActionBarActivity {
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
 
+        mThemeUtils = new ThemeUtils(this);
+        toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        findViewById(R.id.bottom_bar).setBackgroundColor(mThemeUtils.primaryColor());
+        ((AddFloatingActionButton)findViewById(R.id.fab_expand_menu_button)).setColorNormal(mThemeUtils.accentColor());
+        ((AddFloatingActionButton)findViewById(R.id.fab_expand_menu_button)).setColorPressed(mThemeUtils.accentColorDark());
+
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(PaginaRenderActivity.this);
+        Utility.setupTransparentTints(PaginaRenderActivity.this, mThemeUtils.primaryColorDark(), true);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -217,6 +229,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
         save_file = (ImageButton) findViewById(R.id.save_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
         scroll_speed_bar = (DiscreteSeekBar) findViewById(R.id.speed_seekbar);
+        scroll_speed_bar.setScrubberColor(mThemeUtils.accentColor());
+        scroll_speed_bar.setThumbColor(mThemeUtils.accentColor(), mThemeUtils.accentColor());
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         afChangeListener = new OnAudioFocusChangeListener() {
@@ -702,9 +716,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                play_scroll.setVisibility(View.GONE);
-//                stop_scroll.setVisibility(View.VISIBLE);
                 if (v.isSelected()) {
                     play_scroll.setSelected(false);
                     scrollPlaying = false;
@@ -768,7 +779,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
         mProgressDialog = builder.setTitle(R.string.download_running)
-                .setView(getLayoutInflater().inflate(R.layout.dialog_load_determinate, null))
+                .setView(R.layout.dialog_load_determinate)
                 .setPositiveButton(R.string.cancel, new ButtonClickedListener(Utility.DOWNLOAD_CANCEL)).create();
         mProgressDialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -793,7 +804,10 @@ public class PaginaRenderActivity extends ActionBarActivity {
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
         ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
 
-        findViewById(R.id.fab_fullscreen_on).setOnClickListener(new OnClickListener() {
+        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
+        fabFullscreen.setColorNormal(mThemeUtils.accentColor());
+        fabFullscreen.setColorPressed(mThemeUtils.accentColorDark());
+        fabFullscreen.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().toggle();
@@ -813,7 +827,10 @@ public class PaginaRenderActivity extends ActionBarActivity {
             }
         });
 
-        findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
+        FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
+        fabSound.setColorNormal(mThemeUtils.accentColor());
+        fabSound.setColorPressed(mThemeUtils.accentColorDark());
+        fabSound.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().toggle();
@@ -1040,42 +1057,31 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         favouriteCheckBox = (ImageButton) findViewById(R.id.favorite);
 
-//        favoriteFlag = selectFavouriteFromSource(pagina);
         favoriteFlag = selectFavouriteFromSource();
 
         if (favoriteFlag == 1)
-            favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent_dark));
-//            favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
-//            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+            favouriteCheckBox.setColorFilter(mThemeUtils.accentColor());
         else
             favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
-//            favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//            favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         favouriteCheckBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 if (favoriteFlag == 0) {
                     favoriteFlag = 1;
-                    favouriteCheckBox.setColorFilter(getResources().getColor(R.color.favorite_accent_dark));
-//                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
-//                    favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(R.color.favorite_accent), PorterDuff.Mode.SRC_ATOP);
+                    favouriteCheckBox.setColorFilter(mThemeUtils.accentColor());
                     Toast.makeText(PaginaRenderActivity.this
                             , getString(R.string.favorite_added), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     favoriteFlag = 0;
-//                    favouriteCheckBox.getIconDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    favouriteCheckBox.getDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
                     Toast.makeText(PaginaRenderActivity.this
                             , getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show();
                 }
 
                 Bundle bundle = PaginaRenderActivity.this.getIntent().getExtras();
-//                String pagina = bundle.getString("pagina");
 
-//                updateFavouriteFlag(favoriteFlag, pagina);
                 updateFavouriteFlag(favoriteFlag);
             }
         });
@@ -1212,59 +1218,13 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 getFab().collapse();
             }
         });
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            try {
-//                final View container = findViewById(R.id.container);
-//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
-//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
-//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
-//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
-//
-//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
-//                ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, 0, finalRadius).start();
-//            } catch (IllegalStateException e) {
-//                e.printStackTrace();
-//            }
-//            outerFrame.setVisibility(View.VISIBLE);
-//
-//        } else {
         outerFrame.setVisibility(View.VISIBLE);
-//        }
     }
 
     private void hideOuterFrame() {
         final View outerFrame = findViewById(R.id.outerFrame);
         outerFrame.setOnClickListener(null);
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            try {
-//                final View container = findViewById(R.id.container);
-//                int halfButtonHeight = getFab().getButton().getMeasuredHeight() / 2;
-//                int fabMargin = (int) getResources().getDimension(R.dimen.floating_margin_lateral);
-//                int actionbarMargin = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-//                int cx = outerFrame.getMeasuredWidth() - fabMargin - halfButtonHeight;
-//                int cy = outerFrame.getMeasuredHeight() - actionbarMargin - halfButtonHeight;
-//
-//                int finalRadius = Math.max(container.getWidth(), container.getHeight());
-//                Animator anim = ViewAnimationUtils.createCircularReveal(outerFrame, cx, cy, finalRadius, 0);
-//                anim.addListener(new AnimatorListenerAdapter() {
-//                    @SuppressLint("NewApi")
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        outerFrame.setVisibility(View.GONE);
-//                    }
-//                });
-//                anim.start();
-//            } catch (IllegalStateException e) {
-//                e.printStackTrace();
-//                outerFrame.setVisibility(View.GONE);
-//            }
-//        } else {
         outerFrame.setVisibility(View.GONE);
-//        }
     }
 
     public void pulisciVars() {
@@ -1285,8 +1245,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         SaveSpeed();
         if (scrollPlaying) {
-//            play_scroll.setVisibility(View.VISIBLE);
-//            stop_scroll.setVisibility(View.GONE);
             play_scroll.setSelected(false);
             scrollPlaying = false;
             mHandler.removeCallbacks(mScrollDown);
@@ -1631,17 +1589,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
                     if (saveLocation == 1) {
                         if (Utility.isExternalStorageWritable()) {
-//                            File[] fileArray = ContextCompat.getExternalFilesDirs(PaginaRenderActivity.this, null);
-//                            String address = fileArray[0].getAbsolutePath();
-//                            int replaceIndex = address.indexOf("Android/data");
-//                        Log.i(getClass().toString(), "INDIRIZZO OLD: " + address);
-//                        Log.i(getClass().toString(), "INDICE ANDROID/DATA: " + replaceIndex);
-//                            if (replaceIndex > 0) {
-//                                address = address.replace(address.substring(replaceIndex), "risuscito");
-//                            }
-
-//                            Log.i(getClass().toString(), "INDIRIZZO: " + address);
-//                        String localFile = fileArray[0].getAbsolutePath()
                             boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
                                     Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
 //                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
@@ -1675,18 +1622,13 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     setRequestedOrientation(prevOrientation);
                     // This always works
                     Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
-                    //This works if you defined the intent filter
-//                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 
                     // Set these depending on your use case. These are the defaults.
                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
                     i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                    i.putExtra(FilePickerActivity.BACKGROUND_COLOR, R.color.theme_primary);
-
+                    i.putExtra(FilePickerActivity.BACKGROUND_COLOR, mThemeUtils.primaryColor());
                     startActivityForResult(i, REQUEST_CODE);
-//                    startActivityForResult(new Intent(
-//                            PaginaRenderActivity.this, FileChooserActivity.class), REQUEST_CODE);
                     break;
                 case Utility.DELETE_MP3_OK:
                     File fileToDelete = new File(localUrl);
@@ -1714,10 +1656,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     localFile = false;
                     cmdSetDataSource(url);
                     save_file.setSelected(false);
-//                    enableButtonIcon(save_file);
-//                    save_file.setVisibility(View.VISIBLE);
-//                    disableButtonIcon(delete_file);
-//                    delete_file.setVisibility(View.GONE);
                     setRequestedOrientation(prevOrientation);
                     break;
                 case Utility.DELETE_LINK_OK:
@@ -1743,10 +1681,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     db.close();
 
                     save_file.setSelected(false);
-//                    enableButtonIcon(save_file);
-//                    save_file.setVisibility(View.VISIBLE);
-//                    disableButtonIcon(delete_file);
-//                    delete_file.setVisibility(View.GONE);
 
                     setRequestedOrientation(prevOrientation);
                     break;
@@ -1773,10 +1707,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     db.close();
 
                     save_file.setSelected(false);
-//                    enableButtonIcon(save_file);
-//                    save_file.setVisibility(View.VISIBLE);
-//                    disableButtonIcon(delete_file);
-//                    delete_file.setVisibility(View.GONE);
 
                     play_button.setVisibility(View.GONE);
                     stop_button.setVisibility(View.GONE);
@@ -1794,7 +1724,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     db.execSQL(sql);
                     db.close();
                     pulisciVars();
-//                    finish();
                     mLUtils.closeActivityWithTransition();
                     break;
                 default:
@@ -1867,10 +1796,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                             personalUrl = path;
 
                             save_file.setSelected(true);
-//                            disableButtonIcon(save_file);
-//                            save_file.setVisibility(View.GONE);
-//                            enableButtonIcon(delete_file);
-//                            delete_file.setVisibility(View.VISIBLE);
 
                             //mostra i pulsanti per il lettore musicale
                             play_button.setVisibility(View.VISIBLE);
@@ -2288,12 +2213,12 @@ public class PaginaRenderActivity extends ActionBarActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog.show();
+            ((LinearProgress)mProgressDialog.findViewById(R.id.progressDeterminate)).setColor(mThemeUtils.accentColor());
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-//            ((ProgressBarIndeterminateDeterminate) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
             ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
             if (progress[0] != 0)
                 ((TextView) mProgressDialog.findViewById(R.id.percent_text))
@@ -2479,13 +2404,11 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private void enableButtonIcon(ImageButton bIcon) {
         bIcon.setEnabled(true);
         bIcon.setColorFilter(getResources().getColor(android.R.color.black));
-//        bIcon.getDrawable().setColorFilter(getResources().getColor(android.R.color.black), PorterDuff.Mode.SRC_ATOP);
     }
 
     private void disableButtonIcon(ImageButton bIcon) {
         bIcon.setEnabled(false);
         bIcon.setColorFilter(getResources().getColor(R.color.item_disabled));
-//        bIcon.getDrawable().setColorFilter(getResources().getColor(R.color.item_disabled), PorterDuff.Mode.SRC_ATOP);
     }
 
     private void initializeLoadingDialogs() {

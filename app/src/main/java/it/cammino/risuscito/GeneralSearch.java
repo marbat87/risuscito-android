@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.utils.ThemeUtils;
+
 public class GeneralSearch extends Fragment {
 
     SlidingTabLayout mSlidingTabLayout = null;
@@ -29,10 +31,10 @@ public class GeneralSearch extends Fragment {
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
         
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
         Resources res = getResources();
-//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(R.color.theme_accent));
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
@@ -82,5 +84,9 @@ public class GeneralSearch extends Fragment {
 			}
 		}
 	}
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
+    }
 			
 }

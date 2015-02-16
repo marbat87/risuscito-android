@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.quickscroll.QuickScroll;
 import it.cammino.utilities.quickscroll.Scrollable;
 
@@ -103,11 +104,11 @@ public class NumericSectionFragment extends Fragment {
 
             final QuickScroll quickscroll = (QuickScroll) rootView.findViewById(R.id.quickscroll);
             quickscroll.init(QuickScroll.TYPE_INDICATOR_WITH_HANDLE, lv, adapter, QuickScroll.STYLE_HOLO);
-            quickscroll.setHandlebarColor(getResources().getColor(R.color.theme_accent)
-                    , getResources().getColor(R.color.theme_accent)
-                    , getResources().getColor(R.color.theme_accent_semi_tr));
-            quickscroll.setIndicatorColor(getResources().getColor(R.color.theme_accent_semi_tr)
-                    , getResources().getColor(R.color.theme_accent_semi_tr)
+            quickscroll.setHandlebarColor(getThemeUtils().accentColor()
+                    , getThemeUtils().accentColor()
+                    , getThemeUtils().accentColorLight());
+            quickscroll.setIndicatorColor(getThemeUtils().accentColorLight()
+                    , getThemeUtils().accentColorLight()
                     , getResources().getColor(android.R.color.white));
             quickscroll.setFixedSize(2);
             quickscroll.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 35);
@@ -654,6 +655,10 @@ public class NumericSectionFragment extends Fragment {
         public int compare(String o1, String o2) {
             return Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
         }
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
 
 }

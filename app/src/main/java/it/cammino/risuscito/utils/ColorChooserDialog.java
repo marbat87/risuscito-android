@@ -38,6 +38,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     private int[] mColors;
     private GridView mGrid;
     private int prevOrientation;
+    private ActionBarActivity activity;
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,22 +65,25 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.i("SONO QUI", "2");
-        prevOrientation = getActivity().getRequestedOrientation();
-        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+        prevOrientation = activity.getRequestedOrientation();
+        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(activity);
         AlertDialogPro dialog = builder.setTitle(getString(getArguments().getInt("title", 0)))
                 .setView(R.layout.dialog_color_chooser)
-                .setPositiveButton(getResources().getString(R.string.single_choice_ok), new ButtonClickedListener(Utility.CHANGE_COLOR))
-                .setNeutralButton(getResources().getString(R.string.defaultStr), new ButtonClickedListener(Utility.RESET_COLOR))
-                .setNegativeButton(getResources().getString(R.string.cancel), new ButtonClickedListener(Utility.DISMISS))
-                .create();
+                .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.CHANGE_COLOR))
+//                .setNeutralButton(R.string.defaultStr, new ButtonClickedListener(Utility.RESET_COLOR))
+                .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+                .setCancelable(false)
+                .show();
         final boolean primary = getArguments().getInt("title", 0) == R.string.primary_color;
-        final TypedArray ta = getActivity().getResources().obtainTypedArray(
+        final TypedArray ta = activity.getResources().obtainTypedArray(
                 primary ? R.array.colors_primary : R.array.colors_accent);
         mColors = new int[ta.length()];
         for (int i = 0; i < ta.length(); i++)
             mColors[i] = ta.getColor(i, 0);
         ta.recycle();
         mGrid = (GridView) dialog.findViewById(R.id.gridview);
+        if (mGrid == null)
+            Log.i("SONO QUI", "NULL");
         invalidateGrid();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -88,13 +92,12 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                 if (keyCode == KeyEvent.KEYCODE_BACK
                         && event.getAction() == KeyEvent.ACTION_UP) {
                     arg0.dismiss();
-                    getActivity().setRequestedOrientation(prevOrientation);
+                    activity.setRequestedOrientation(prevOrientation);
                     return true;
                 }
                 return false;
             }
         });
-        dialog.setCancelable(false);
         return dialog;
     }
 
@@ -109,12 +112,13 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         public void onClick(DialogInterface dialog, int which) {
             switch (clickedCode) {
                 case Utility.DISMISS:
-                    getActivity().setRequestedOrientation(prevOrientation);
+                    activity.setRequestedOrientation(prevOrientation);
                     break;
                 case Utility.CHANGE_COLOR:
-                    getActivity().setRequestedOrientation(prevOrientation);
+                    activity.setRequestedOrientation(prevOrientation);
                     final int title = getArguments().getInt("title", 0);
                     final int preselect = getArguments().getInt("preselect", -1);
+                    dismiss();
                     mCallback.onColorSelection(title, preselect);
                     break;
                 case Utility.RESET_COLOR:
@@ -126,7 +130,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                     invalidateGrid();
                     break;
                 default:
-                    getActivity().setRequestedOrientation(prevOrientation);
+                    activity.setRequestedOrientation(prevOrientation);
                     break;
             }
         }
@@ -162,12 +166,13 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
-                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.griditem_color_chooser, null);
-            final boolean dark = ThemeUtils.isDarkMode(getActivity());
+                convertView = LayoutInflater.from(activity).inflate(R.layout.griditem_color_chooser, null);
+//            final boolean dark = ThemeUtils.isDarkMode(getActivity());
             CircleView child = (CircleView) convertView;
-            child.setSelected(getArguments().getInt("preselect") == mColors[position]);
+            child.setChecked(getArguments().getInt("preselect") == mColors[position]);
             child.setBackgroundColor(mColors[position]);
-            child.setBorderColor(dark ? Color.WHITE : Color.BLACK);
+//            child.setBorderColor(dark ? Color.WHITE : Color.BLACK);
+            child.setBorderColor(Color.BLACK);
             child.setTag(position);
             child.setOnClickListener(this);
 
@@ -228,11 +233,12 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
     public void show(ActionBarActivity context, int title, int preselect) {
         Log.i("SONO QUI", "1");
+        this.activity = context;
         Bundle args = new Bundle();
         args.putInt("preselect", preselect);
         args.putInt("title", title);
         setArguments(args);
-        show(context.getSupportFragmentManager(), "COLOR_SELECTOR");
+        show(activity.getSupportFragmentManager(), "COLOR_SELECTOR");
     }
 }
 

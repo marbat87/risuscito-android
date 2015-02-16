@@ -4,23 +4,28 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.GridView;
 
 import com.alertdialogpro.AlertDialogPro;
 
 import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.view.CircleView;
 
 public class PreferencesFragment extends Fragment {
 	
@@ -275,14 +280,29 @@ public class PreferencesFragment extends Fragment {
 			}
 		});
 
+        CircleView primaryColor = (CircleView) rootView.findViewById(R.id.primaryCircle);
+        primaryColor.setBackgroundColor(getThemeUtils().primaryColor());
+        primaryColor.setBorderColor(Color.BLACK);
         rootView.findViewById(R.id.primary_color_selection).setOnClickListener(new OnClickListener() {
 
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                ThemeUtils themeUtils = ((MainActivity)getActivity()).mThemeUtils;
-                new ColorChooserDialog().show((MainActivity)getActivity(), R.string.primary_color,
-                        themeUtils.primaryColor());
+                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.primary_color,
+                        getThemeUtils().primaryColor());
+            }
+        });
+
+        CircleView accentColor = (CircleView) rootView.findViewById(R.id.accentCircle);
+        accentColor.setBackgroundColor(getThemeUtils().accentColor());
+        accentColor.setBorderColor(Color.BLACK);
+        rootView.findViewById(R.id.accent_color_selection).setOnClickListener(new OnClickListener() {
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.accent_color,
+                        getThemeUtils().accentColor());
             }
         });
 		
@@ -338,6 +358,10 @@ public class PreferencesFragment extends Fragment {
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).mThemeUtils;
     }
 
 }
