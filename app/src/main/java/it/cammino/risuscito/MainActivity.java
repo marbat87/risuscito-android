@@ -84,13 +84,13 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mThemeUtils = new ThemeUtils(this);
+        setTheme(mThemeUtils.getCurrent(true));
         setContentView(R.layout.activity_main);
         
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        setSupportActionBar(mActionBarToolbar);
-
-        mThemeUtils = new ThemeUtils(this);
         mActionBarToolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        setSupportActionBar(mActionBarToolbar);
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);

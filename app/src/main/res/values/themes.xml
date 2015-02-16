@@ -6,12 +6,12 @@
         <!--     <item name="actionBarStyle">@style/MyActionBarStyle</item> -->
 
         <!-- Set AppCompat’s color theming attrs -->
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <!--<item name="colorPrimary">@color/theme_primary</item>-->
+        <!--<item name="colorPrimaryDark">@color/theme_primary_dark</item>-->
 
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
-        <item name="colorAccent">#000</item>
+        <item name="colorAccent">@color/theme_accent</item>
         <!--<item name="colorControlHighlight">@color/theme_accent_semi_tr</item>-->
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
         <!--<item name="colorControlActivated">#000</item>-->
@@ -36,5 +36,169 @@
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />
+
+    <style name="RisuscitoTheme.BlueDark" parent="RisuscitoTheme">
+        <item name="colorAccent">#3F51B5</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.BlueDark" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#3F51B5</item>
+    </style>
+
+    <style name="RisuscitoTheme.Grey" parent="RisuscitoTheme">
+        <item name="colorAccent">#9E9E9E</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Grey" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#9E9E9E</item>
+    </style>
+
+    <style name="RisuscitoTheme.BlueGrey" parent="RisuscitoTheme">
+        <item name="colorAccent">#607D8B</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.BlueGrey" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#607D8B</item>
+    </style>
+
+    <style name="RisuscitoTheme.Black" parent="RisuscitoTheme">
+        <item name="colorAccent">#37474F</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Black" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#37474F</item>
+    </style>
+
+    <style name="RisuscitoTheme.Brown" parent="RisuscitoTheme">
+        <item name="colorAccent">#795548</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Brown" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#795548</item>
+    </style>
+
+    <style name="RisuscitoTheme.Red" parent="RisuscitoTheme">
+        <item name="colorAccent">#D32F2F</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Red" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#D32F2F</item>
+    </style>
+
+    <style name="RisuscitoTheme.Pink" parent="RisuscitoTheme">
+        <item name="colorAccent">#E91E63</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Pink" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#E91E63</item>
+    </style>
+
+    <style name="RisuscitoTheme.Purple" parent="RisuscitoTheme">
+        <item name="colorAccent">#9C27B0</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Purple" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#9C27B0</item>
+    </style>
+
+    <style name="RisuscitoTheme.Violet" parent="RisuscitoTheme">
+        <item name="colorAccent">#5E35B1</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Violet" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#5E35B1</item>
+    </style>
+
+    <style name="RisuscitoTheme.Blue" parent="RisuscitoTheme">
+        <item name="colorAccent">#1976D2</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Blue" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#1976D2</item>
+    </style>
+
+    <style name="RisuscitoTheme.BlueLight" parent="RisuscitoTheme">
+        <item name="colorAccent">#03A9F4</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.BlueLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#03A9F4</item>
+    </style>
+
+    <style name="RisuscitoTheme.Torqouise" parent="RisuscitoTheme">
+        <item name="colorAccent">#00BCD4</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Torqouise" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#00BCD4</item>
+    </style>
+
+    <style name="RisuscitoTheme.GreenWater" parent="RisuscitoTheme">
+        <item name="colorAccent">#009688</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.GreenWater" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#009688</item>
+    </style>
+
+    <style name="RisuscitoTheme.Green" parent="RisuscitoTheme">
+        <item name="colorAccent">#4CAF50</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Green" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#4CAF50</item>
+    </style>
+
+
+    <style name="RisuscitoTheme.GreenLight" parent="RisuscitoTheme">
+        <item name="colorAccent">#8BC34A</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.GreenLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#8BC34A</item>
+    </style>
+
+
+    <style name="RisuscitoTheme.GreenBean" parent="RisuscitoTheme">
+        <item name="colorAccent">#CDDC39</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.GreenBean" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#CDDC39</item>
+    </style>
+
+
+    <style name="RisuscitoTheme.Yellow" parent="RisuscitoTheme">
+        <item name="colorAccent">#FDD835</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Yellow" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#FDD835</item>
+    </style>
+
+
+    <style name="RisuscitoTheme.OrangeLight" parent="RisuscitoTheme">
+        <item name="colorAccent">#FFB300</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.OrangeLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#FFB300</item>
+    </style>
+
+    <style name="RisuscitoTheme.Orange" parent="RisuscitoTheme">
+        <item name="colorAccent">#FB8C00</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.Orange" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#FB8C00</item>
+    </style>
+
+    <style name="RisuscitoTheme.RedLight" parent="RisuscitoTheme">
+        <item name="colorAccent">#F4511E</item>
+    </style>
+
+    <style name="RisuscitoTheme.WithNavDrawer.RedLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="colorAccent">#F4511E</item>
+    </style>
 
 </resources>

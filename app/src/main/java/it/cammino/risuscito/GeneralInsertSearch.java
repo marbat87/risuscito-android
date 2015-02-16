@@ -29,15 +29,14 @@ public class GeneralInsertSearch extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+        mThemeUtils = new ThemeUtils(this);
+        setTheme(mThemeUtils.getCurrent(false));
 		setContentView(R.layout.activity_insert_search);
 		
 		Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		setSupportActionBar(toolbar);
-
-        mThemeUtils = new ThemeUtils(this);
         toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+		setSupportActionBar(toolbar);
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(GeneralInsertSearch.this, mThemeUtils.primaryColorDark(), true);

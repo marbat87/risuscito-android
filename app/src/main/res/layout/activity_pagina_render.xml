@@ -184,7 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            risuscito:fab_addButtonColorNormal="@color/theme_accent"
+            risuscito:fab_addButtonColorNormal="?colorAccent"
             risuscito:fab_addButtonColorPressed="@color/theme_accent_dark"
             risuscito:fab_addButtonSize="mini"
             risuscito:fab_labelStyle="@style/menu_labels_style"

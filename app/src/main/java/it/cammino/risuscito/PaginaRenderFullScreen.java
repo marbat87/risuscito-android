@@ -57,6 +57,8 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
         mLUtils = LUtils.getInstance(PaginaRenderFullScreen.this);
         mLUtils.goFullscreen();
         super.onCreate(savedInstanceState);
+        mThemeUtils = new ThemeUtils(this);
+        setTheme(mThemeUtils.getCurrent(false));
         setContentView(R.layout.activity_pagina_render_fullscreen);
         
         listaCanti = new DatabaseCanti(this);

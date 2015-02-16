@@ -88,6 +88,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 R.layout.activity_ricerca_avanzata, container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);

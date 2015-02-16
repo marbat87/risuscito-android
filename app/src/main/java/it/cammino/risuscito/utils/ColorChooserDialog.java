@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +63,6 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Log.i("SONO QUI", "2");
         prevOrientation = activity.getRequestedOrientation();
         AlertDialogPro.Builder builder = new AlertDialogPro.Builder(activity);
         AlertDialogPro dialog = builder.setTitle(getString(getArguments().getInt("title", 0)))
@@ -82,8 +80,6 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
             mColors[i] = ta.getColor(i, 0);
         ta.recycle();
         mGrid = (GridView) dialog.findViewById(R.id.gridview);
-        if (mGrid == null)
-            Log.i("SONO QUI", "NULL");
         invalidateGrid();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -232,7 +228,6 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     }
 
     public void show(ActionBarActivity context, int title, int preselect) {
-        Log.i("SONO QUI", "1");
         this.activity = context;
         Bundle args = new Bundle();
         args.putInt("preselect", preselect);

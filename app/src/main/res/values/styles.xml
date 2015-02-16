@@ -18,9 +18,9 @@
     </style>
 
     <style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">
-        <item name="adpButtonBarNegativeButtonStyle">@style/AdpNormalButtonStyle</item>
-        <item name="adpButtonBarNeutralButtonStyle">@style/AdpNormalButtonStyle</item>
-        <item name="adpButtonBarPositiveButtonStyle">@style/AdpNormalButtonStyle</item>
+        <!--<item name="adpButtonBarNegativeButtonStyle">@style/AdpNormalButtonStyle</item>-->
+        <!--<item name="adpButtonBarNeutralButtonStyle">@style/AdpNormalButtonStyle</item>-->
+        <!--<item name="adpButtonBarPositiveButtonStyle">@style/AdpNormalButtonStyle</item>-->
         <item name="colorAccent">@color/theme_accent</item>
     </style>
 

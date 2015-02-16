@@ -67,7 +67,7 @@ public class InsertAvanzataFragment extends Fragment {
                 R.layout.activity_ricerca_avanzata, container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
-        searchPar.setHighlightColor(getThemeUtils().accentColor());
+        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);

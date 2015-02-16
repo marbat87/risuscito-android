@@ -13,9 +13,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -56,7 +53,6 @@ import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
 import com.alertdialogpro.ProgressDialogPro;
-import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.itextpdf.text.BaseColor;
@@ -173,17 +169,15 @@ public class PaginaRenderActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mThemeUtils = new ThemeUtils(this);
+        setTheme(mThemeUtils.getCurrent(false));
         setContentView(R.layout.activity_pagina_render);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        setSupportActionBar(toolbar);
-
-        mThemeUtils = new ThemeUtils(this);
         toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        setSupportActionBar(toolbar);
         findViewById(R.id.bottom_bar).setBackgroundColor(mThemeUtils.primaryColor());
-        ((AddFloatingActionButton)findViewById(R.id.fab_expand_menu_button)).setColorNormal(mThemeUtils.accentColor());
-        ((AddFloatingActionButton)findViewById(R.id.fab_expand_menu_button)).setColorPressed(mThemeUtils.accentColorDark());
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(PaginaRenderActivity.this, mThemeUtils.primaryColorDark(), true);

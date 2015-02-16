@@ -30,11 +30,9 @@ import it.cammino.utilities.material.PaperButton;
 public class InsertVeloceFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
-    //    private String[] titoli;
     private List<CantoItem> titoli;
     private TintEditText searchPar;
     private View rootView;
-    //    ListView lv;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
 
@@ -49,9 +47,9 @@ public class InsertVeloceFragment extends Fragment {
                 R.layout.activity_ricerca_titolo, container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
-//        lv = (ListView) rootView.findViewById(R.id.matchedList);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
@@ -160,7 +158,6 @@ public class InsertVeloceFragment extends Fragment {
                     // crea un manipolatore per il Database in modalità READ
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-
                     // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
                     String query = "SELECT titolo, color, pagina" +
                             "		FROM ELENCO" +
@@ -172,11 +169,9 @@ public class InsertVeloceFragment extends Fragment {
                     int total = lista.getCount();
 
                     // crea un array e ci memorizza i titoli estratti
-//                    titoli = new String[lista.getCount()];
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-//                        titoli[i] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
                         titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3)
                                 + lista.getString(1) + lista.getString(0)));
                         lista.moveToNext();
@@ -186,93 +181,12 @@ public class InsertVeloceFragment extends Fragment {
                     lista.close();
                     cantoAdapter.notifyDataSetChanged();
 
-                    // crea un list adapter per l'oggetto di tipo ListView
-//                    lv.setAdapter(new SongRowAdapter());
-
-
-//                    // setta l'azione al click su ogni voce dell'elenco
-//                    lv.setOnItemClickListener(new OnItemClickListener() {
-//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                            // recupera il titolo della voce cliccata
-//                            String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
-//                                    .getText().toString();
-//                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                            if (fromAdd == 1)  {
-//                                // chiamato da una lista predefinita
-//                                String query = "SELECT _id" +
-//                                        "  FROM ELENCO" +
-//                                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-//                                Cursor cursor = db.rawQuery(query, null);
-//
-//                                // recupera il nome del file
-//                                cursor.moveToFirst();
-//                                int idCanto = cursor.getInt(0);
-//
-//                                // chiude il cursore
-//                                cursor.close();
-//
-//                                String sql = "INSERT INTO CUST_LISTS ";
-//                                sql+= "VALUES (" + idLista + ", "
-//                                        + listPosition + ", "
-//                                        + idCanto
-//                                        + ", CURRENT_TIMESTAMP)";
-//
-//                                try {
-//                                    db.execSQL(sql);
-//                                } catch (SQLException e) {
-//                                    Toast toast = Toast.makeText(getActivity()
-//                                            , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                                    toast.show();
-//                                }
-//                            }
-//                            else {
-//                                //chiamato da una lista personalizzata
-//                                String query = "SELECT lista" +
-//                                        "  FROM LISTE_PERS" +
-//                                        "  WHERE _id =  " + idLista;
-//                                Cursor cursor = db.rawQuery(query, null);
-//
-//                                // recupera l'oggetto lista personalizzata
-//                                cursor.moveToFirst();
-//
-//                                ListaPersonalizzata listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
-//                                        deserializeObject(cursor.getBlob(0));
-//
-//                                // chiude il cursore
-//                                cursor.close();
-//
-//                                // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-//                                query = "SELECT color, pagina" +
-//                                        "		FROM ELENCO" +
-//                                        "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                                cursor = db.rawQuery(query, null);
-//
-//                                cursor.moveToFirst();
-//
-//                                listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
-//
-//                                ContentValues  values = new  ContentValues( );
-//                                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//                                db.update("LISTE_PERS", values, "_id = " + idLista, null );
-//                                db.close();
-//                            }
-//
-//                            getActivity().finish();
-//                            getActivity().overridePendingTransition(0, R.anim.slide_out_right);
-//
-//                        }
-//                    });
 
                     if (total == 0)
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
                 }
                 else {
                     if (s.length() == 0) {
-//                        lv.setAdapter(null);
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
@@ -330,8 +244,6 @@ public class InsertVeloceFragment extends Fragment {
             }
         });
 
-//        setHasOptionsMenu(true);
-
         return rootView;
     }
 
@@ -341,44 +253,5 @@ public class InsertVeloceFragment extends Fragment {
             listaCanti.close();
         super.onDestroy();
     }
-
-//    private class SongRowAdapter extends ArrayAdapter<String> {
-//
-//        SongRowAdapter() {
-//            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//
-//            View row=super.getView(position, convertView, parent);
-//            TextView canto = (TextView) row.findViewById(R.id.text_title);
-//
-//            String totalString = canto.getText().toString();
-//
-//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            String colore = totalString.substring(3, 10);
-//
-//            ((TextView) row.findViewById(R.id.text_title))
-//                    .setText(totalString.substring(10));
-//
-//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-////            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            return(row);
-//        }
-//    }
 
 }

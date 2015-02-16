@@ -72,6 +72,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
 //        lv = (ListView) rootView.findViewById(R.id.matchedList);
