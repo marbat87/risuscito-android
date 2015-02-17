@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="3.3.0" changeDate="XX Marzo 2015">
+        <changelogtext>Reinseriti i temi! Possibilità di svegliere tra vari colori per il tema principale e quello di risalto</changelogtext>
+        <changelogtext>Correzione per non cancellare le liste predefinite con gli aggiornamenti</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="3.2.1" changeDate="14 Febbraio 2015">
         <changelogtext>Aggiunte etichette nei pulsanti della pagina del canto</changelogtext>
         <changelogtext>Possibile fix per crash su Galaxy Tab 10.1 e Android 4.1</changelogtext>
