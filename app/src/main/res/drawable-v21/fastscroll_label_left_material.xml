@@ -16,9 +16,9 @@
     <corners
         android:topLeftRadius="44dp"
         android:topRightRadius="44dp"
-        android:bottomLeftRadius="44dp" />
+        android:bottomRightRadius="44dp" />
     <padding
         android:paddingLeft="22dp"
         android:paddingRight="22dp" />
-    <solid android:color="@color/ripple_material_light" />
+    <solid android:color="?colorAccent" />
 </shape>
