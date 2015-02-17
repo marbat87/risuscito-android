@@ -132,6 +132,8 @@ public class CustomLists extends Fragment  {
                     }
                 });
                 dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                        getResources().getColor(R.color.btn_disabled_text));
                 titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
                 titleInput.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -140,6 +142,9 @@ public class CustomLists extends Fragment  {
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
+                                        getResources().getColor(R.color.btn_disabled_text));
                     }
 
                     @Override
