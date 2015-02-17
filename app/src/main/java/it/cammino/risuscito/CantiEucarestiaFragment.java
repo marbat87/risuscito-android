@@ -836,7 +836,7 @@ public class CantiEucarestiaFragment extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).mThemeUtils;
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

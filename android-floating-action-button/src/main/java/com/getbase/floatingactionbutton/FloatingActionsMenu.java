@@ -41,7 +41,8 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
-    private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
+//    private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
+    private static final float EXPANDED_PLUS_ROTATION = 90f;
     private static final int TRANSLATE_DURATION_MILLIS = 200;
 
     private int mButtonSize;

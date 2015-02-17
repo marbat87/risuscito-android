@@ -60,6 +60,6 @@
 
     </FrameLayout>
 
-    <include layout="@layout/preferences_separator" />
+    <include layout="@layout/standard_separator" />
 
 </LinearLayout>

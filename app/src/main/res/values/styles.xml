@@ -18,9 +18,6 @@
     </style>
 
     <style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">
-        <!--<item name="adpButtonBarNegativeButtonStyle">@style/AdpNormalButtonStyle</item>-->
-        <!--<item name="adpButtonBarNeutralButtonStyle">@style/AdpNormalButtonStyle</item>-->
-        <!--<item name="adpButtonBarPositiveButtonStyle">@style/AdpNormalButtonStyle</item>-->
         <item name="colorAccent">@color/theme_accent</item>
     </style>
 
@@ -33,6 +30,86 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">left|start</item>
         <item name="android:layout_gravity">left|start</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.BlueDark" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#3F51B5</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Grey" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#9E9E9E</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.BlueGrey" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#607D8B</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Black" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#37474F</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Brown" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#795548</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Red" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#D32F2F</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Pink" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#E91E63</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Purple" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#9C27B0</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Violet" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#5E35B1</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Blue" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#1976D2</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.BlueLight" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#03A9F4</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Torqouise" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#00BCD4</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.GreenWater" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#009688</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Green" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#4CAF50</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.GreenLight" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#8BC34A</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.GreenBean" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#CDDC39</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Yellow" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#FDD835</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.OrangeLight" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#FFB300</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.Orange" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#FB8C00</item>
+    </style>
+
+    <style name="AppTheme.FlavoredMaterialLight.RedLight" parent="Theme.AlertDialogPro.Material.Light">
+        <item name="colorAccent">#F4511E</item>
     </style>
 
 </resources>

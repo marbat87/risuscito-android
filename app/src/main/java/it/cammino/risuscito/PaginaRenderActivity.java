@@ -184,7 +184,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
         getFab().setColorNormal(mThemeUtils.accentColor());
         getFab().setColorPressed(mThemeUtils.accentColorDark());
-        getFab().setIcon(R.drawable.ic_action_content_new);
+        getFab().setIcon(R.drawable.ic_more_vert_white_36dp);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -477,6 +477,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                     .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_MP3_OK))
                                     .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
                                     .show();
+                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
                                 public boolean onKey(DialogInterface arg0, int keyCode,
@@ -501,6 +503,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                     .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_LINK_OK))
                                     .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
                                     .show();
+                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
                                 public boolean onKey(DialogInterface arg0, int keyCode,
@@ -527,6 +531,9 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                 .setNegativeButton(R.string.downlink_choose, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
                                 .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                                 .show();
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
+                        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(mThemeUtils.accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -589,6 +596,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                 .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_ONLY_LINK_OK))
                                 .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
                                 .show();
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -613,6 +622,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                                 .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
                                 .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
                                 .show();
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -814,7 +825,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
                 bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
-//                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
                 bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
                 bundle.putInt(Utility.ID_CANTO, idCanto);
 
@@ -868,7 +878,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         || (notaCambio.equals(notaSalvata)
                         && barreCambio.equals(barreSalvato))) {
                     pulisciVars();
-//                    finish();
                     mLUtils.closeActivityWithTransition();
                     return true;
                 }
@@ -881,6 +890,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                             .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
                             .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
                             .show();
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override
                         public boolean onKey(DialogInterface arg0, int keyCode,
@@ -1016,7 +1027,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     || (notaCambio.equals(notaSalvata)
                     && barreCambio.equals(barreSalvato))) {
                 pulisciVars();
-//                finish();
                 mLUtils.closeActivityWithTransition();
                 return true;
             }
@@ -1029,6 +1039,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                         .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
                         .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
                         .show();
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
@@ -1160,19 +1172,14 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
             scroll_speed_bar.setProgress(savedSpeed);
             speedValue = String.valueOf(scroll_speed_bar.getProgress());
-//            scroll_speed_bar.setValue(savedSpeed);
-//            speedValue = String.valueOf(scroll_speed_bar.getValue())
         }
         else {
 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
             scroll_speed_bar.setProgress(Integer.valueOf(speedValue));
-//            scroll_speed_bar.setValue(Integer.valueOf(speedValue));
         }
 
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
         if (scrollPlaying) {
-//            play_scroll.setVisibility(View.GONE);
-//            stop_scroll.setVisibility(View.VISIBLE);
             play_scroll.setSelected(true);
             mScrollDown.run();
         }
@@ -1575,7 +1582,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     break;
                 case Utility.DISMISS_EXIT:
                     pulisciVars();
-//                    finish();
                     mLUtils.closeActivityWithTransition();
                     break;
                 case Utility.DOWNLOAD_CANCEL:
@@ -1761,7 +1767,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
         switch (requestCode) {
             case REQUEST_CODE:
                 // If the file selection was successful
-//                if (resultCode == RESULT_OK) {
                 if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
@@ -1769,7 +1774,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
 //                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
                         try {
                             // Get the file path from the URI
-//                            String path = FileUtils.getPath(this, uri);
                             String path = uri.getPath();
                             Toast.makeText(PaginaRenderActivity.this,
                                     getResources().getString(R.string.file_selected)
@@ -2211,6 +2215,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog.show();
+            mProgressDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
             ((LinearProgress)mProgressDialog.findViewById(R.id.progressDeterminate)).setColor(mThemeUtils.accentColor());
         }
 
@@ -2263,10 +2268,6 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 localFile = true;
                 cmdSetDataSource(localUrl);
                 save_file.setSelected(true);
-//                disableButtonIcon(save_file);
-//                save_file.setVisibility(View.GONE);
-//                enableButtonIcon(delete_file);
-//                delete_file.setVisibility(View.VISIBLE);
 //	    		}
             }
         }

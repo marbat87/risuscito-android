@@ -50,6 +50,7 @@
             android:layout_alignBaseline="@id/textTitleDescription"
             android:layout_toRightOf="@id/textTitleDescription"
             android:layout_toEndOf="@id/textTitleDescription"
+            android:textColorHighlight="@color/ripple_color"
             android:textSize="30sp"
             android:textColor="@android:color/white"
             android:textCursorDrawable="@null"

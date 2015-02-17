@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
-    protected ThemeUtils mThemeUtils;
+    private ThemeUtils mThemeUtils;
     
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
@@ -461,6 +461,10 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }
+    }
+
+    public ThemeUtils getThemeUtils() {
+        return mThemeUtils;
     }
     
 }

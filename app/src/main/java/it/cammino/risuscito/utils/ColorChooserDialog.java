@@ -24,6 +24,7 @@ import android.widget.GridView;
 
 import com.alertdialogpro.AlertDialogPro;
 
+import it.cammino.risuscito.MainActivity;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.view.CircleView;
@@ -72,6 +73,10 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
                 .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                 .setCancelable(false)
                 .show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                ((MainActivity)activity).getThemeUtils().accentColor());
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(
+                ((MainActivity)activity).getThemeUtils().accentColor());
         final boolean primary = getArguments().getInt("title", 0) == R.string.primary_color;
         final TypedArray ta = activity.getResources().obtainTypedArray(
                 primary ? R.array.colors_primary : R.array.colors_accent);

@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.material.PaperButton;
 
 public class InsertVeloceFragment extends Fragment {
@@ -47,7 +48,6 @@ public class InsertVeloceFragment extends Fragment {
                 R.layout.activity_ricerca_titolo, container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
-        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
@@ -235,7 +235,7 @@ public class InsertVeloceFragment extends Fragment {
         });
 
         PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
-        paperPulisci.setColor(((GeneralInsertSearch)getActivity()).mThemeUtils.primaryColor());
+        paperPulisci.setColor(getThemeUtils().primaryColor());
         paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,6 +252,10 @@ public class InsertVeloceFragment extends Fragment {
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
     }
 
 }

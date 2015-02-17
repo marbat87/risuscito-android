@@ -19,7 +19,7 @@
         <!-- The rest of your attributes -->
         <item name="customHelp">@drawable/ic_action_help</item>
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
+        <item name="alertDialogProTheme">@style/Theme.AlertDialogPro.Material.Light</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorTab">@drawable/custom_tab_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
@@ -38,166 +38,202 @@
     <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />
 
     <style name="RisuscitoTheme.BlueDark" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueDark</item>
         <item name="colorAccent">#3F51B5</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.BlueDark" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueDark</item>
         <item name="colorAccent">#3F51B5</item>
     </style>
 
     <style name="RisuscitoTheme.Grey" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Grey</item>
         <item name="colorAccent">#9E9E9E</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Grey" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Grey</item>
         <item name="colorAccent">#9E9E9E</item>
     </style>
 
     <style name="RisuscitoTheme.BlueGrey" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueGrey</item>
         <item name="colorAccent">#607D8B</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.BlueGrey" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueGrey</item>
         <item name="colorAccent">#607D8B</item>
     </style>
 
     <style name="RisuscitoTheme.Black" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Black</item>
         <item name="colorAccent">#37474F</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Black" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Black</item>
         <item name="colorAccent">#37474F</item>
     </style>
 
     <style name="RisuscitoTheme.Brown" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Brown</item>
         <item name="colorAccent">#795548</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Brown" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Brown</item>
         <item name="colorAccent">#795548</item>
     </style>
 
     <style name="RisuscitoTheme.Red" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Red</item>
         <item name="colorAccent">#D32F2F</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Red" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Red</item>
         <item name="colorAccent">#D32F2F</item>
     </style>
 
     <style name="RisuscitoTheme.Pink" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Pink</item>
         <item name="colorAccent">#E91E63</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Pink" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Pink</item>
         <item name="colorAccent">#E91E63</item>
     </style>
 
     <style name="RisuscitoTheme.Purple" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Purple</item>
         <item name="colorAccent">#9C27B0</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Purple" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Purple</item>
         <item name="colorAccent">#9C27B0</item>
     </style>
 
     <style name="RisuscitoTheme.Violet" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Violet</item>
         <item name="colorAccent">#5E35B1</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Violet" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Violet</item>
         <item name="colorAccent">#5E35B1</item>
     </style>
 
     <style name="RisuscitoTheme.Blue" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Blue</item>
         <item name="colorAccent">#1976D2</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Blue" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Blue</item>
         <item name="colorAccent">#1976D2</item>
     </style>
 
     <style name="RisuscitoTheme.BlueLight" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueLight</item>
         <item name="colorAccent">#03A9F4</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.BlueLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueLight</item>
         <item name="colorAccent">#03A9F4</item>
     </style>
 
     <style name="RisuscitoTheme.Torqouise" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Torqouise</item>
         <item name="colorAccent">#00BCD4</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Torqouise" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Torqouise</item>
         <item name="colorAccent">#00BCD4</item>
     </style>
 
     <style name="RisuscitoTheme.GreenWater" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenWater</item>
         <item name="colorAccent">#009688</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.GreenWater" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenWater</item>
         <item name="colorAccent">#009688</item>
     </style>
 
     <style name="RisuscitoTheme.Green" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Green</item>
         <item name="colorAccent">#4CAF50</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Green" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Green</item>
         <item name="colorAccent">#4CAF50</item>
     </style>
 
-
     <style name="RisuscitoTheme.GreenLight" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenLight</item>
         <item name="colorAccent">#8BC34A</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.GreenLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenLight</item>
         <item name="colorAccent">#8BC34A</item>
     </style>
 
-
     <style name="RisuscitoTheme.GreenBean" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenBean</item>
         <item name="colorAccent">#CDDC39</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.GreenBean" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenBean</item>
         <item name="colorAccent">#CDDC39</item>
     </style>
 
-
     <style name="RisuscitoTheme.Yellow" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Yellow</item>
         <item name="colorAccent">#FDD835</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Yellow" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Yellow</item>
         <item name="colorAccent">#FDD835</item>
     </style>
 
-
     <style name="RisuscitoTheme.OrangeLight" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.OrangeLight</item>
         <item name="colorAccent">#FFB300</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.OrangeLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.OrangeLight</item>
         <item name="colorAccent">#FFB300</item>
     </style>
 
     <style name="RisuscitoTheme.Orange" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Orange</item>
         <item name="colorAccent">#FB8C00</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.Orange" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Orange</item>
         <item name="colorAccent">#FB8C00</item>
     </style>
 
     <style name="RisuscitoTheme.RedLight" parent="RisuscitoTheme">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.RedLight</item>
         <item name="colorAccent">#F4511E</item>
     </style>
 
     <style name="RisuscitoTheme.WithNavDrawer.RedLight" parent="RisuscitoTheme.WithNavDrawer">
+        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.RedLight</item>
         <item name="colorAccent">#F4511E</item>
     </style>
 

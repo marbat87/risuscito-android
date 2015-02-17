@@ -24,7 +24,7 @@ public class GeneralInsertSearch extends ActionBarActivity {
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
-    protected ThemeUtils mThemeUtils;
+    private ThemeUtils mThemeUtils;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -155,5 +155,9 @@ public class GeneralInsertSearch extends ActionBarActivity {
 			return null;
 		}
 	}
+
+    public ThemeUtils getThemeUtils() {
+        return  mThemeUtils;
+    }
 
 }

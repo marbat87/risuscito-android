@@ -179,8 +179,6 @@ public class CreaListaActivity extends ActionBarActivity {
 	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
 	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
 	                    .show();
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
 	        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
 			        public boolean onKey(DialogInterface arg0, int keyCode,
@@ -250,8 +248,6 @@ public class CreaListaActivity extends ActionBarActivity {
 	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
 	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
 	                    .show();
-                dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(mThemeUtils.accentColor());
-                dialogAdd.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(mThemeUtils.accentColor());
 	        	dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
 			        public boolean onKey(DialogInterface arg0, int keyCode,
@@ -266,6 +262,8 @@ public class CreaListaActivity extends ActionBarActivity {
 			        }
 		        });
 	        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                        getResources().getColor(R.color.btn_disabled_text));
 	        	titleInputAdd = (TintEditText)dialogAdd.findViewById(R.id.list_title);
 	        	titleInputAdd.addTextChangedListener(new TextWatcher() {
 			        @Override
@@ -274,6 +272,9 @@ public class CreaListaActivity extends ActionBarActivity {
 			        @Override
 			        public void onTextChanged(CharSequence s, int start, int before, int count) {
 			        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+                        dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                                s.toString().trim().length() > 0 ? mThemeUtils.accentColor():
+                                        getResources().getColor(R.color.btn_disabled_text));
 			        }
 			
 			        @Override

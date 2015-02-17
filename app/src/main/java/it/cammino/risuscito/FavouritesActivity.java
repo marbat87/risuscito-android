@@ -192,7 +192,7 @@ public class FavouritesActivity extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).mThemeUtils;
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

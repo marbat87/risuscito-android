@@ -51,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.material.PaperButton;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
@@ -88,7 +89,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 R.layout.activity_ricerca_avanzata, container, false);
 
         searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
-        searchPar.setHighlightColor(getResources().getColor(R.color.ripple_color));
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
@@ -207,7 +207,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         });
 
         PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
-        paperPulisci.setColor(((MainActivity)getActivity()).mThemeUtils.primaryColor());
+        paperPulisci.setColor(getThemeUtils().primaryColor());
         paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -639,8 +639,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 }
             }
 
-//            titoli = new String[totalResults];
-//            System.arraycopy(aResults, 0, titoli, 0, totalResults);
             titoli.clear();
             for (int i = 0; i < aResults.length; i++) {
                 if (aResults[i] == null)
@@ -750,6 +748,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         return sb.toString();
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,14 +11,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.GridView;
 
 import com.alertdialogpro.AlertDialogPro;
 
@@ -361,7 +358,7 @@ public class PreferencesFragment extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).mThemeUtils;
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

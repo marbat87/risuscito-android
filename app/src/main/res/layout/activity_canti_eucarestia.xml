@@ -91,7 +91,7 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/preferences_separator" />
+            <include layout="@layout/standard_separator" />
 
             <LinearLayout
                 android:id="@+id/groupCantoSeconda"
@@ -173,7 +173,7 @@
 
                 </RelativeLayout>
 
-                <include layout="@layout/preferences_separator" />
+                <include layout="@layout/standard_separator" />
 
             </LinearLayout>
 
@@ -250,7 +250,7 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/preferences_separator" />
+            <include layout="@layout/standard_separator" />
 
             <LinearLayout
                 android:id="@+id/groupSanto"
@@ -332,7 +332,7 @@
 
                 </RelativeLayout>
 
-                <include layout="@layout/preferences_separator" />
+                <include layout="@layout/standard_separator" />
 
             </LinearLayout>
 
@@ -381,7 +381,7 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/preferences_separator" />
+            <include layout="@layout/standard_separator" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -428,7 +428,7 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/preferences_separator" />
+            <include layout="@layout/standard_separator" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -503,7 +503,7 @@
 
             </RelativeLayout>
 
-            <include layout="@layout/preferences_separator" />
+            <include layout="@layout/standard_separator" />
 
         </LinearLayout>
 
