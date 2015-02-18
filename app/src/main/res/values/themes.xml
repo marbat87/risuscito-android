@@ -17,7 +17,6 @@
         <!--<item name="colorControlActivated">#000</item>-->
 
         <!-- The rest of your attributes -->
-        <item name="customHelp">@drawable/ic_action_help</item>
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
         <item name="alertDialogProTheme">@style/Theme.AlertDialogPro.Material.Light</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
