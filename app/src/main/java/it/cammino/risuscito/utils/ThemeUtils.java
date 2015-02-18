@@ -200,51 +200,6 @@ public class ThemeUtils {
         }
     }
 
-    public int getDialogTheme() {
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_dark))
-                return R.style.AppTheme_FlavoredMaterialLight_BlueDark;
-            if (accentColor() == mContext.getResources().getColor(R.color.grey))
-                return R.style.AppTheme_FlavoredMaterialLight_Grey;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_grey))
-                return R.style.AppTheme_FlavoredMaterialLight_BlueGrey;
-            if (accentColor() == mContext.getResources().getColor(R.color.black))
-                return R.style.RisuscitoTheme_Black;
-            if (accentColor() == mContext.getResources().getColor(R.color.brown))
-                return R.style.RisuscitoTheme_Brown;
-            if (accentColor() == mContext.getResources().getColor(R.color.red))
-                return R.style.RisuscitoTheme_Red;
-            if (accentColor() == mContext.getResources().getColor(R.color.pink))
-                return R.style.RisuscitoTheme_Pink;
-            if (accentColor() == mContext.getResources().getColor(R.color.purple))
-                return R.style.RisuscitoTheme_Purple;
-            if (accentColor() == mContext.getResources().getColor(R.color.violet))
-                return R.style.RisuscitoTheme_Violet;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue))
-                return R.style.RisuscitoTheme_Blue;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_light))
-                return R.style.RisuscitoTheme_BlueLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.torqouise))
-                return R.style.RisuscitoTheme_Torqouise;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_water))
-                return R.style.RisuscitoTheme_GreenWater;
-            if (accentColor() == mContext.getResources().getColor(R.color.green))
-                return R.style.RisuscitoTheme_Green;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_light))
-                return R.style.RisuscitoTheme_GreenLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_bean))
-                return R.style.RisuscitoTheme_GreenBean;
-            if (accentColor() == mContext.getResources().getColor(R.color.yellow))
-                return R.style.RisuscitoTheme_Yellow;
-            if (accentColor() == mContext.getResources().getColor(R.color.orange_light))
-                return R.style.RisuscitoTheme_OrangeLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.orange))
-                return R.style.RisuscitoTheme_Orange;
-            if (accentColor() == mContext.getResources().getColor(R.color.red_light))
-                return R.style.RisuscitoTheme_RedLight;
-            else
-                return R.style.RisuscitoTheme_WithNavDrawer;
-    }
-
 //    public int getCurrent(boolean hasNavDrawer) {
 //        if (hasNavDrawer) {
 //            if (mTrueBlack) {

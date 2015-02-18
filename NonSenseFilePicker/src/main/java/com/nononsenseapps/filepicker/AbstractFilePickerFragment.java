@@ -17,15 +17,8 @@
 
 package com.nononsenseapps.filepicker;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-
 import android.app.Activity;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -38,6 +31,11 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -67,7 +65,8 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
     public static final String KEY_ALLOW_DIR_CREATE = "KEY_ALLOW_DIR_CREATE";
     // Allow multiple items to be selected.
     public static final String KEY_ALLOW_MULTIPLE = "KEY_ALLOW_MULTIPLE";
-    public static final String BACKGROUND_COLOR = "BACKGROUND_COLOR";
+    public static final String KEY_PRIMARY_COLOR = "PRIMARY_COLOR";
+    public static final String KEY_ACCENT_COLOR = "ACCENT_COLOR";
     // Used for saving state.
     protected static final String KEY_CURRENT_PATH = "KEY_CURRENT PATH";
     protected final DefaultHashMap<Integer, Boolean> checkedItems;
@@ -97,7 +96,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
      * @param allowDirCreate
      */
     public void setArgs(final String startPath, final int mode,
-            final boolean allowMultiple, final boolean allowDirCreate, int color) {
+            final boolean allowMultiple, final boolean allowDirCreate, int primaryColor) {
         Bundle b = new Bundle();
         if (startPath != null) {
             b.putString(KEY_START_PATH, startPath);
@@ -105,7 +104,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
         b.putBoolean(KEY_ALLOW_DIR_CREATE, allowDirCreate);
         b.putBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
         b.putInt(KEY_MODE, mode);
-        b.putInt(BACKGROUND_COLOR, color);
+        b.putInt(KEY_PRIMARY_COLOR, primaryColor);
         setArguments(b);
     }
 
@@ -315,7 +314,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
                 currentPath =
                         getPath(savedInstanceState.getString(KEY_CURRENT_PATH));
                 color = savedInstanceState
-                        .getInt(BACKGROUND_COLOR, color);
+                        .getInt(KEY_PRIMARY_COLOR, color);
             } else if (getArguments() != null) {
                 mode = getArguments().getInt(KEY_MODE, mode);
                 allowCreateDir = getArguments()
@@ -323,7 +322,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
                 allowMultiple = getArguments()
                         .getBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
                 color = getArguments()
-                        .getInt(BACKGROUND_COLOR, color);
+                        .getInt(KEY_PRIMARY_COLOR, color);
                 if (getArguments().containsKey(KEY_START_PATH)) {
                     currentPath =
                             getPath(getArguments().getString(KEY_START_PATH));

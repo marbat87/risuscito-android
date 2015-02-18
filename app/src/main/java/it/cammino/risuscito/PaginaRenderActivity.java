@@ -1631,7 +1631,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
                     i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                    i.putExtra(FilePickerActivity.BACKGROUND_COLOR, mThemeUtils.primaryColor());
+                    i.putExtra(FilePickerActivity.PRIMARY_COLOR, mThemeUtils.primaryColor());
+                    i.putExtra(FilePickerActivity.ACCENT_COLOR, mThemeUtils.accentColor());
                     startActivityForResult(i, REQUEST_CODE);
                     break;
                 case Utility.DELETE_MP3_OK:

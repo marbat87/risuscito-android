@@ -80,21 +80,21 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
     public static final int MODE_FILE_AND_DIR =
             AbstractFilePickerFragment.MODE_FILE_AND_DIR;
     public static final int MODE_DIR = AbstractFilePickerFragment.MODE_DIR;
-    public static final String BACKGROUND_COLOR = AbstractFilePickerFragment.BACKGROUND_COLOR;
+    public static final String PRIMARY_COLOR = AbstractFilePickerFragment.KEY_PRIMARY_COLOR;
+    public static final String ACCENT_COLOR = AbstractFilePickerFragment.KEY_ACCENT_COLOR;
     protected static final String TAG = "filepicker_fragment";
     protected String startPath = null;
     protected int mode = AbstractFilePickerFragment.MODE_FILE;
     protected boolean allowCreateDir = false;
     protected boolean allowMultiple = false;
-    protected int color = 0;
+    protected int primaryColor = 0;
+    protected int accentColor = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setupFauxDialog();
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_filepicker);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -104,9 +104,13 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
                     allowCreateDir);
             allowMultiple =
                     intent.getBooleanExtra(EXTRA_ALLOW_MULTIPLE, allowMultiple);
-            color = intent.getIntExtra(BACKGROUND_COLOR, color);
+            primaryColor = intent.getIntExtra(PRIMARY_COLOR, primaryColor);
+            accentColor = intent.getIntExtra(ACCENT_COLOR, accentColor);
 
         }
+        if (accentColor != 0)
+            setTheme(getCurrentTheme(accentColor));
+            setContentView(R.layout.activity_filepicker);
         setupActionBar();
 
         FragmentManager fm = getSupportFragmentManager();
@@ -115,7 +119,7 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
 
         if (fragment == null) {
             fragment =
-                    getFragment(startPath, mode, allowMultiple, allowCreateDir, color);
+                    getFragment(startPath, mode, allowMultiple, allowCreateDir, primaryColor);
         }
 
         if (fragment != null) {
@@ -154,8 +158,8 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getWindowTitle());
-        if (color != 0)
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+        if (primaryColor != 0)
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(primaryColor));
     }
 
     protected abstract AbstractFilePickerFragment<T> getFragment(
@@ -247,6 +251,51 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
             default:
                 return false;
         }
+    }
+
+    public int getCurrentTheme(int color) {
+        if (color == getResources().getColor(R.color.blue_dark))
+            return R.style.FilePicker_Theme_BlueDark;
+        if (color == getResources().getColor(R.color.grey))
+            return R.style.FilePicker_Theme_Grey;
+        if (color == getResources().getColor(R.color.blue_grey))
+            return R.style.FilePicker_Theme_BlueGrey;
+        if (color == getResources().getColor(R.color.black))
+            return R.style.FilePicker_Theme_Black;
+        if (color == getResources().getColor(R.color.brown))
+            return R.style.FilePicker_Theme_Brown;
+        if (color == getResources().getColor(R.color.red))
+            return R.style.FilePicker_Theme_Red;
+        if (color == getResources().getColor(R.color.pink))
+            return R.style.FilePicker_Theme_Pink;
+        if (color == getResources().getColor(R.color.purple))
+            return R.style.FilePicker_Theme_Purple;
+        if (color == getResources().getColor(R.color.violet))
+            return R.style.FilePicker_Theme_Violet;
+        if (color == getResources().getColor(R.color.blue))
+            return R.style.FilePicker_Theme_Blue;
+        if (color == getResources().getColor(R.color.blue_light))
+            return R.style.FilePicker_Theme_BlueLight;
+        if (color == getResources().getColor(R.color.torqouise))
+            return R.style.FilePicker_Theme_Torqouise;
+        if (color == getResources().getColor(R.color.green_water))
+            return R.style.FilePicker_Theme_GreenWater;
+        if (color == getResources().getColor(R.color.green))
+            return R.style.FilePicker_Theme_Green;
+        if (color == getResources().getColor(R.color.green_light))
+            return R.style.FilePicker_Theme_GreenLight;
+        if (color == getResources().getColor(R.color.green_bean))
+            return R.style.FilePicker_Theme_GreenBean;
+        if (color == getResources().getColor(R.color.yellow))
+            return R.style.FilePicker_Theme_Yellow;
+        if (color == getResources().getColor(R.color.orange_light))
+            return R.style.FilePicker_Theme_OrangeLight;
+        if (color == getResources().getColor(R.color.orange))
+            return R.style.FilePicker_Theme_Orange;
+        if (color == getResources().getColor(R.color.red_light))
+            return R.style.FilePicker_Theme_RedLight;
+        else
+            return R.style.FilePicker_Theme;
     }
 
 }
