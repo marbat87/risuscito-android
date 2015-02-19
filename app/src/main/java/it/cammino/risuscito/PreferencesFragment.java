@@ -3,7 +3,9 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import com.alertdialogpro.AlertDialogPro;
 import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.risuscito.view.CircleView;
+import it.cammino.utilities.colorpicker.ColorPickerDialog;
+import it.cammino.utilities.colorpicker.ColorPickerSwatch;
 
 public class PreferencesFragment extends Fragment {
 	
@@ -285,8 +289,47 @@ public class PreferencesFragment extends Fragment {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.primary_color,
-                        getThemeUtils().primaryColor());
+//                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.primary_color,
+//                        getThemeUtils().primaryColor());
+                final TypedArray ta = getActivity().getResources().obtainTypedArray(
+                        R.array.colors_primary);
+                int[] mColors = new int[ta.length()];
+                for (int i = 0; i < ta.length(); i++)
+                    mColors[i] = ta.getColor(i, 0);
+                ta.recycle();
+                ColorPickerDialog colorcalendar = ColorPickerDialog.newInstance(
+                        R.string.primary_color,
+                        mColors,
+                        getThemeUtils().primaryColor(),
+                        4,
+                        ColorPickerDialog.SIZE_SMALL);
+//                        Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+
+                //Implement listener to get selected color value
+                colorcalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+
+                    @Override
+                    public void onColorSelected(int color) {
+//                        mSelectedColorCal0=color;
+                        getThemeUtils().primaryColor(color);
+
+                        if (android.os.Build.VERSION.SDK_INT >= 11)
+                        {
+                            getActivity().recreate();
+                        }
+                        else
+                        {
+                            Intent i = getActivity().getBaseContext().getPackageManager()
+                                    .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(i);
+                        }
+                    }
+
+
+                });
+
+                colorcalendar.show(getFragmentManager(),"cal");
             }
         });
 
