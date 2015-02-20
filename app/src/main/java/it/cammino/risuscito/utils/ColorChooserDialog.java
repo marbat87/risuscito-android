@@ -1,22 +1,15 @@
 package it.cammino.risuscito.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import com.alertdialogpro.AlertDialogPro;
 
-import it.cammino.risuscito.MainActivity;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.utilities.colorpicker.ColorPickerDialog;
