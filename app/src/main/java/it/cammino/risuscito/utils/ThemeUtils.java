@@ -3,6 +3,7 @@ package it.cammino.risuscito.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import it.cammino.risuscito.R;
@@ -59,7 +60,7 @@ public class ThemeUtils {
     }
 
     public int primaryColorDark() {
-        return ColorChooserDialog.shiftColorDown(primaryColor());
+        return shiftColorDown(primaryColor());
     }
 
     public int accentColor() {
@@ -68,11 +69,11 @@ public class ThemeUtils {
     }
 
     public int accentColorLight() {
-        return ColorChooserDialog.shiftColorUp(accentColor());
+        return shiftColorUp(accentColor());
     }
 
     public int accentColorDark() {
-        return ColorChooserDialog.shiftColorDown(accentColor());
+        return shiftColorDown(accentColor());
     }
 
     public void accentColor(int newColor) {
@@ -199,6 +200,21 @@ public class ThemeUtils {
                 return R.style.RisuscitoTheme_WithNavDrawer;
         }
     }
+
+    public static int shiftColorDown(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.9f; // value component
+        return Color.HSVToColor(hsv);
+    }
+
+    public static int shiftColorUp(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 1.1f; // value component
+        return Color.HSVToColor(hsv);
+    }
+
 
 //    public int getCurrent(boolean hasNavDrawer) {
 //        if (hasNavDrawer) {

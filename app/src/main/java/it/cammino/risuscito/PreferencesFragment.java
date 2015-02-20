@@ -291,45 +291,14 @@ public class PreferencesFragment extends Fragment {
             public void onClick(View v) {
 //                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.primary_color,
 //                        getThemeUtils().primaryColor());
-                final TypedArray ta = getActivity().getResources().obtainTypedArray(
-                        R.array.colors_primary);
-                int[] mColors = new int[ta.length()];
-                for (int i = 0; i < ta.length(); i++)
-                    mColors[i] = ta.getColor(i, 0);
-                ta.recycle();
-                ColorPickerDialog colorcalendar = ColorPickerDialog.newInstance(
+                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
                         R.string.primary_color,
-                        mColors,
+                        getIntArray(R.array.colors_primary),
                         getThemeUtils().primaryColor(),
                         4,
                         ColorPickerDialog.SIZE_SMALL);
 //                        Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
-
-                //Implement listener to get selected color value
-                colorcalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
-
-                    @Override
-                    public void onColorSelected(int color) {
-//                        mSelectedColorCal0=color;
-                        getThemeUtils().primaryColor(color);
-
-                        if (android.os.Build.VERSION.SDK_INT >= 11)
-                        {
-                            getActivity().recreate();
-                        }
-                        else
-                        {
-                            Intent i = getActivity().getBaseContext().getPackageManager()
-                                    .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
-                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(i);
-                        }
-                    }
-
-
-                });
-
-                colorcalendar.show(getFragmentManager(),"cal");
+                colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });
 
@@ -341,8 +310,16 @@ public class PreferencesFragment extends Fragment {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.accent_color,
-                        getThemeUtils().accentColor());
+//                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.accent_color,
+//                        getThemeUtils().accentColor());
+                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
+                        R.string.accent_color,
+                        getIntArray(R.array.colors_accent),
+                        getThemeUtils().accentColor(),
+                        4,
+                        ColorPickerDialog.SIZE_SMALL);
+//                        Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+                colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });
 		
@@ -398,6 +375,15 @@ public class PreferencesFragment extends Fragment {
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
+    }
+
+    private int[] getIntArray(int arrayId) {
+        final TypedArray ta = getActivity().getResources().obtainTypedArray(arrayId);
+        int[] mColors = new int[ta.length()];
+        for (int i = 0; i < ta.length(); i++)
+            mColors[i] = ta.getColor(i, 0);
+        ta.recycle();
+        return mColors;
     }
 
     private ThemeUtils getThemeUtils() {

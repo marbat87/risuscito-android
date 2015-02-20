@@ -45,6 +45,23 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         setArguments(titleResId, columns, size);
         setColors(colors, selectedColor);
     }
+
+    public ColorPickerPalette getmPalette() {
+        return mPalette;
+    }
+
+    public void setmPalette(ColorPickerPalette mPalette) {
+        this.mPalette = mPalette;
+    }
+
+    public ProgressBar getmProgress() {
+        return mProgress;
+    }
+
+    public void setmProgress(ProgressBar mProgress) {
+        this.mProgress = mProgress;
+    }
+
     public void setArguments(int titleResId, int columns, int size) {
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TITLE_ID, titleResId);
