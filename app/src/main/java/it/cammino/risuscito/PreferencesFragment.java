@@ -3,30 +3,33 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alertdialogpro.AlertDialogPro;
 
 import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.risuscito.view.CircleView;
 import it.cammino.utilities.colorpicker.ColorPickerDialog;
-import it.cammino.utilities.colorpicker.ColorPickerSwatch;
 
 public class PreferencesFragment extends Fragment {
 	
@@ -281,9 +284,10 @@ public class PreferencesFragment extends Fragment {
 			}
 		});
 
-        CircleView primaryColor = (CircleView) rootView.findViewById(R.id.primaryCircle);
-        primaryColor.setBackgroundColor(getThemeUtils().primaryColor());
-        primaryColor.setBorderColor(Color.BLACK);
+//        CircleView primaryColor = (CircleView) rootView.findViewById(R.id.primaryCircle);
+//        primaryColor.setBackgroundColor(getThemeUtils().primaryColor());
+//        primaryColor.setBorderColor(Color.BLACK);
+        setColorViewValue(rootView.findViewById(R.id.primaryCircle), getThemeUtils().primaryColor());
         rootView.findViewById(R.id.primary_color_selection).setOnClickListener(new OnClickListener() {
 
             @SuppressLint("NewApi")
@@ -302,9 +306,10 @@ public class PreferencesFragment extends Fragment {
             }
         });
 
-        CircleView accentColor = (CircleView) rootView.findViewById(R.id.accentCircle);
-        accentColor.setBackgroundColor(getThemeUtils().accentColor());
-        accentColor.setBorderColor(Color.BLACK);
+//        CircleView accentColor = (CircleView) rootView.findViewById(R.id.accentCircle);
+//        accentColor.setBackgroundColor(getThemeUtils().accentColor());
+//        accentColor.setBorderColor(Color.BLACK);
+        setColorViewValue(rootView.findViewById(R.id.accentCircle), getThemeUtils().accentColor());
         rootView.findViewById(R.id.accent_color_selection).setOnClickListener(new OnClickListener() {
 
             @SuppressLint("NewApi")
@@ -384,6 +389,37 @@ public class PreferencesFragment extends Fragment {
             mColors[i] = ta.getColor(i, 0);
         ta.recycle();
         return mColors;
+    }
+
+    private static void setColorViewValue(View view, int color) {
+        if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            Resources res = imageView.getContext().getResources();
+
+            Drawable currentDrawable = imageView.getDrawable();
+            GradientDrawable colorChoiceDrawable;
+            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
+                // Reuse drawable
+                colorChoiceDrawable = (GradientDrawable) currentDrawable;
+            } else {
+                colorChoiceDrawable = new GradientDrawable();
+                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
+            }
+
+            // Set stroke to dark version of color
+            int darkenedColor = Color.rgb(
+                    Color.red(color) * 192 / 256,
+                    Color.green(color) * 192 / 256,
+                    Color.blue(color) * 192 / 256);
+
+            colorChoiceDrawable.setColor(color);
+            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
+            imageView.setImageDrawable(colorChoiceDrawable);
+
+        } else if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        }
     }
 
     private ThemeUtils getThemeUtils() {

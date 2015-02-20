@@ -295,15 +295,25 @@
                 android:clickable="true"
                 android:background="?attr/customSelector">
 
-                <it.cammino.risuscito.view.CircleView
+                <!--<it.cammino.risuscito.view.CircleView-->
+                    <!--android:id="@+id/primaryCircle"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_alignParentEnd="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="30dp"-->
+                    <!--android:layout_marginStart="30dp" />-->
+                <ImageView
                     android:id="@+id/primaryCircle"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp" />
+                    android:layout_marginStart="30dp"
+                    android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -346,15 +356,25 @@
                 android:clickable="true"
                 android:background="?attr/customSelector">
 
-                <it.cammino.risuscito.view.CircleView
+                <!--<it.cammino.risuscito.view.CircleView-->
+                    <!--android:id="@+id/accentCircle"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_alignParentEnd="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_marginLeft="30dp"-->
+                    <!--android:layout_marginStart="30dp" />-->
+                <ImageView
                     android:id="@+id/accentCircle"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp" />
+                    android:layout_marginStart="30dp"
+                    android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
