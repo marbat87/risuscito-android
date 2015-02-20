@@ -15,7 +15,24 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@android:id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="?colorAccent"
+                android:fontFamily="@string/font_fontFamily_medium"
+                android:textStyle="@integer/font_textStyle_medium"
+                android:textSize="14sp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/theme"
+                android:gravity="start|center_vertical"
+                android:layout_gravity="start|center_vertical"
+                android:textAlignment="viewStart" />
+
             <RelativeLayout
+                android:id="@+id/primary_color_selection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
@@ -23,41 +40,40 @@
                 android:paddingBottom="15dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:id="@+id/screen_on_layout"
                 android:clickable="true"
                 android:background="?attr/customSelector">
 
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/screen_on"
+                <ImageView
+                    android:id="@+id/primaryCircle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
                     android:layout_marginStart="30dp"
-                    android:background="@android:color/transparent" />
+                    android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@id/screen_on"
-                    android:layout_toStartOf="@id/screen_on"
+                    android:layout_toLeftOf="@id/primaryCircle"
+                    android:layout_toStartOf="@id/primaryCircle"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/always_on"
+                        android:text="@string/primary_color"
                         android:textColor="@color/primary_text_default_material_light"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/always_on_summary"
+                        android:text="@string/primary_color_desc"
                         android:textColor="@color/secondary_text_default_material_light"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
                 </LinearLayout>
@@ -65,6 +81,71 @@
             </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
+
+            <RelativeLayout
+                android:id="@+id/accent_color_selection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:clickable="true"
+                android:background="?attr/customSelector">
+
+                <ImageView
+                    android:id="@+id/accentCircle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@id/accentCircle"
+                    android:layout_toStartOf="@id/accentCircle"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/accent_color"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/accent_color_desc"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@android:id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="?colorAccent"
+                android:fontFamily="@string/font_fontFamily_medium"
+                android:textStyle="@integer/font_textStyle_medium"
+                android:textSize="14sp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/behavior"
+                android:gravity="start|center_vertical"
+                android:layout_gravity="start|center_vertical"
+                android:textAlignment="viewStart" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -249,6 +330,71 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
             </LinearLayout>
 
+            <TextView
+                android:id="@android:id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="?colorAccent"
+                android:fontFamily="@string/font_fontFamily_medium"
+                android:textStyle="@integer/font_textStyle_medium"
+                android:textSize="14sp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/system"
+                android:gravity="start|center_vertical"
+                android:layout_gravity="start|center_vertical"
+                android:textAlignment="viewStart" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:id="@+id/screen_on_layout"
+                android:clickable="true"
+                android:background="?attr/customSelector">
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/screen_on"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"
+                    android:background="@android:color/transparent" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@id/screen_on"
+                    android:layout_toStartOf="@id/screen_on"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/always_on"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/always_on_summary"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
             <include layout="@layout/preferences_separator" />
 
             <LinearLayout
@@ -280,127 +426,6 @@
                     android:textColor="@color/secondary_text_default_material_light"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
             </LinearLayout>
-
-            <include layout="@layout/preferences_separator" />
-
-            <RelativeLayout
-                android:id="@+id/primary_color_selection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:clickable="true"
-                android:background="?attr/customSelector">
-
-                <!--<it.cammino.risuscito.view.CircleView-->
-                    <!--android:id="@+id/primaryCircle"-->
-                    <!--android:layout_width="32dp"-->
-                    <!--android:layout_height="32dp"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="30dp"-->
-                    <!--android:layout_marginStart="30dp" />-->
-                <ImageView
-                    android:id="@+id/primaryCircle"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp"
-                    android:scaleType="fitXY" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@id/primaryCircle"
-                    android:layout_toStartOf="@id/primaryCircle"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/primary_color"
-                        android:textColor="@color/primary_text_default_material_light"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/primary_color_desc"
-                        android:textColor="@color/secondary_text_default_material_light"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                </LinearLayout>
-
-            </RelativeLayout>
-
-
-            <include layout="@layout/preferences_separator" />
-
-            <RelativeLayout
-                android:id="@+id/accent_color_selection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:clickable="true"
-                android:background="?attr/customSelector">
-
-                <!--<it.cammino.risuscito.view.CircleView-->
-                    <!--android:id="@+id/accentCircle"-->
-                    <!--android:layout_width="32dp"-->
-                    <!--android:layout_height="32dp"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="30dp"-->
-                    <!--android:layout_marginStart="30dp" />-->
-                <ImageView
-                    android:id="@+id/accentCircle"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginStart="30dp"
-                    android:scaleType="fitXY" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_toLeftOf="@id/accentCircle"
-                    android:layout_toStartOf="@id/accentCircle"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/accent_color"
-                        android:textColor="@color/primary_text_default_material_light"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/accent_color_desc"
-                        android:textColor="@color/secondary_text_default_material_light"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                </LinearLayout>
-
-            </RelativeLayout>
 
             <include layout="@layout/preferences_separator" />
 

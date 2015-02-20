@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -110,7 +111,9 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
         }
         if (accentColor != 0)
             setTheme(getCurrentTheme(accentColor));
-            setContentView(R.layout.activity_filepicker);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(shiftColorDown(primaryColor));
+        setContentView(R.layout.activity_filepicker);
         setupActionBar();
 
         FragmentManager fm = getSupportFragmentManager();
@@ -296,6 +299,13 @@ public abstract class AbstractFilePickerActivity<T> extends ActionBarActivity
             return R.style.FilePicker_Theme_RedLight;
         else
             return R.style.FilePicker_Theme;
+    }
+
+    public static int shiftColorDown(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.9f; // value component
+        return Color.HSVToColor(hsv);
     }
 
 }

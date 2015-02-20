@@ -2,7 +2,6 @@ package it.cammino.risuscito;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -94,11 +93,11 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
-        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
-        	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
-        }
+//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
+//        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
+//        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
+//        	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
+//        }
 
         setupNavDrawer();
         

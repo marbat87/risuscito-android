@@ -225,5 +225,8 @@
     <string name="primary_color_desc">Il colore usato maggiormente nell\'interfaccia</string>
     <string name="accent_color">Colore di risalto</string>
     <string name="accent_color_desc">Il colore usato per i widget e altri dettagli dell\'interfaccia</string>
+    <string name="theme">Tema</string>
+    <string name="behavior">Comportamento</string>
+    <string name="system">Sistema</string>
 
 </resources>

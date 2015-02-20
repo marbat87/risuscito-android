@@ -19,8 +19,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
-import it.cammino.utilities.systembartint.SystemBarTintManager;
-
 public class Utility {
 
     //Costanti per le impostazioni
@@ -243,11 +241,11 @@ public class Utility {
     @SuppressLint("NewApi")
     public static void setupTransparentTints(Activity context, int color, boolean alsoLollipop) {
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            SystemBarTintManager tintManager = new SystemBarTintManager(context);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintColor(color);
-        }
+//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+//            SystemBarTintManager tintManager = new SystemBarTintManager(context);
+//            tintManager.setStatusBarTintEnabled(true);
+//            tintManager.setStatusBarTintColor(color);
+//        }
 
         if (alsoLollipop && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             context.getWindow().setStatusBarColor(color);
