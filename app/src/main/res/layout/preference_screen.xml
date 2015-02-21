@@ -142,7 +142,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/behavior"
+                android:text="@string/lists_pref"
                 android:gravity="start|center_vertical"
                 android:layout_gravity="start|center_vertical"
                 android:textAlignment="viewStart" />

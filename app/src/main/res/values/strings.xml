@@ -226,7 +226,7 @@
     <string name="accent_color">Colore di risalto</string>
     <string name="accent_color_desc">Il colore usato per i widget e altri dettagli dell\'interfaccia</string>
     <string name="theme">Tema</string>
-    <string name="behavior">Comportamento</string>
+    <string name="lists_pref">Liste</string>
     <string name="system">Sistema</string>
 
 </resources>

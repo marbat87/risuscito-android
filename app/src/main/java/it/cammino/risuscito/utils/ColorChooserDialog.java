@@ -63,7 +63,7 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
                 if (keyCode == KeyEvent.KEYCODE_BACK
                         && event.getAction() == KeyEvent.ACTION_UP) {
                     arg0.dismiss();
-                    mActivity.setRequestedOrientation(prevOrientation);
+//                    mActivity.setRequestedOrientation(prevOrientation);
                     return true;
                 }
                 return false;
