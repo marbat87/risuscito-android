@@ -284,44 +284,34 @@ public class PreferencesFragment extends Fragment {
             }
         });
 
-//        CircleView primaryColor = (CircleView) rootView.findViewById(R.id.primaryCircle);
-//        primaryColor.setBackgroundColor(getThemeUtils().primaryColor());
-//        primaryColor.setBorderColor(Color.BLACK);
         setColorViewValue(rootView.findViewById(R.id.primaryCircle), getThemeUtils().primaryColor());
         rootView.findViewById(R.id.primary_color_selection).setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-//                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.primary_color,
-//                        getThemeUtils().primaryColor());
                 ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
                         R.string.primary_color,
                         getIntArray(R.array.colors_primary),
                         getThemeUtils().primaryColor(),
                         4,
                         ColorPickerDialog.SIZE_SMALL);
-//                        Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+                        //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
                 colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });
 
-//        CircleView accentColor = (CircleView) rootView.findViewById(R.id.accentCircle);
-//        accentColor.setBackgroundColor(getThemeUtils().accentColor());
-//        accentColor.setBorderColor(Color.BLACK);
         setColorViewValue(rootView.findViewById(R.id.accentCircle), getThemeUtils().accentColor());
         rootView.findViewById(R.id.accent_color_selection).setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-//                new ColorChooserDialog().show((MainActivity) getActivity(), R.string.accent_color,
-//                        getThemeUtils().accentColor());
                 ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
                         R.string.accent_color,
                         getIntArray(R.array.colors_accent),
                         getThemeUtils().accentColor(),
                         4,
                         ColorPickerDialog.SIZE_SMALL);
-//                        Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+                        //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
                 colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });

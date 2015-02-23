@@ -32,6 +32,10 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -134,11 +138,19 @@ public class FloatingActionButton extends ImageButton {
             }
             int translationY = visible ? 0 : height + getMarginBottom();
             if (animate) {
-                animate().setInterpolator(new AccelerateDecelerateInterpolator())
-                        .setDuration(TRANSLATE_DURATION_MILLIS)
-                        .translationY(translationY);
+                AnimatorSet set = new AnimatorSet().setDuration(TRANSLATE_DURATION_MILLIS);
+                ObjectAnimator animator = new ObjectAnimator();
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setPropertyName("translationY");
+                animator.setFloatValues(0, translationY);
+                animator.setTarget(this);
+                set.play(animator);
+//                animate().setInterpolator(new AccelerateDecelerateInterpolator())
+//                        .setDuration(TRANSLATE_DURATION_MILLIS)
+//                        .translationY(translationY);
             } else {
-                this.setTranslationY(translationY);
+//                this.setTranslationY(translationY);
+                ViewHelper.setTranslationY(this, translationY);
             }
 
             // On pre-Honeycomb a translated view is still clickable, so we need to disable clicks manually
