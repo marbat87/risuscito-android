@@ -28,6 +28,7 @@ public class Utility {
     public static final String SAVE_LOCATION = "memoria_salvataggio_scelta";
     public static final String DEFAULT_INDEX = "indice_predefinito";
     public static final String SHOW_SANTO = "mostra_santo";
+    public static final String SHOW_AUDIO = "mostra_audio";
 
     public static final int DISMISS = 1;
     public static final int RENAME_CONFERMA = 2;

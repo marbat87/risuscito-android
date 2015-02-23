@@ -4,6 +4,7 @@
     <changelogversion versionName="3.3.0" changeDate="XX Marzo 2015">
         <changelogtext>Reinseriti i temi! Possibilità di svegliere tra vari colori per il tema principale e quello di risalto</changelogtext>
         <changelogtext>Correzione per non cancellare le liste predefinite con gli aggiornamenti</changelogtext>
+        <changelogtext>Aggiunta opzione per mostrare/nascondere di default la barra di riproduzione audio</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.2.1" changeDate="14 Febbraio 2015">

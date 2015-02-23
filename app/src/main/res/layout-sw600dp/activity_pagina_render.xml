@@ -113,10 +113,10 @@
 
                 </RelativeLayout>
 
-                    <WebView
-                        android:id="@+id/cantoView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                <WebView
+                    android:id="@+id/cantoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
@@ -188,24 +188,21 @@
             risuscito:fab_icon="@drawable/ic_action_content_new"
             android:layout_marginRight="@dimen/floating_margin_lateral_menu"
             android:layout_marginEnd="@dimen/floating_margin_lateral_menu"
-            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"
-            risuscito:fab_buttonSize="mini">
+            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_fullscreen_on"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/fullscreen"
-                risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
-                risuscito:fab_size="mini" />
+                risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_sound_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 risuscito:fab_title="@string/audio_on_off"
-                risuscito:fab_icon="@drawable/hide_music_background"
-                risuscito:fab_size="mini" />
+                risuscito:fab_icon="@drawable/hide_music_background" />
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

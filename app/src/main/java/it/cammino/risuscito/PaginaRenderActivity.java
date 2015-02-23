@@ -163,7 +163,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
 
     private LUtils mLUtils;
 
-    public static boolean mostraAudio;
+    public static String mostraAudio;
+    public boolean mostraAudioBool;
 
     @SuppressLint("NewApi")
     @Override
@@ -844,7 +845,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 getFab().toggle();
                 findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.VISIBLE : View.GONE);
                 v.setSelected(!v.isSelected());
-                mostraAudio = !v.isSelected();
+                mostraAudioBool = !v.isSelected();
+                mostraAudio = String.valueOf(mostraAudioBool);
             }
         });
 
@@ -859,6 +861,12 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 hideOuterFrame();
             }
         });
+
+        if (mostraAudio == null) {
+            SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+            mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
+        }
+        mostraAudioBool = Boolean.parseBoolean(mostraAudio);
 
     }
 
@@ -1184,8 +1192,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
             mScrollDown.run();
         }
 
-        findViewById(R.id.music_controls).setVisibility(mostraAudio ? View.VISIBLE : View.GONE);
-        findViewById(R.id.fab_sound_off).setSelected(!mostraAudio);
+        findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
+        findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
         if (getFab().isExpanded()) {
             View outerFrame = findViewById(R.id.outerFrame);
             outerFrame.setVisibility(View.VISIBLE);
@@ -1255,7 +1263,7 @@ public class PaginaRenderActivity extends ActionBarActivity {
             mHandler.removeCallbacks(mScrollDown);
         }
         speedValue = null;
-        mostraAudio = false;
+        mostraAudio = null;
     }
 
     //controlla se l'app deve mantenere lo schermo acceso
