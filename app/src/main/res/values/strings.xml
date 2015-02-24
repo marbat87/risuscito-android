@@ -230,5 +230,6 @@
     <string name="system">Sistema</string>
     <string name="show_audio_title">Mostra riproduzione audio</string>
     <string name="show_audio_summary">Mostra di default la barra di riproduzione audio nella pagina dei canti</string>
+    <string name="indice_liturgico_index">Indice Liturgico</string>
 
 </resources>

@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 35;
+    private static final int DB_VERSION = 36;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -87,6 +87,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += "local_path TEXT NOT NULL";
         sql += ");";
         db.execSQL(sql);
+
+        //nuove tabelle indice liturgico
+        sql = "CREATE TABLE IF NOT EXISTS INDICE_LIT (";
+        sql += "_id INTEGER NOT NULL,";
+        sql += "id_canto TEXT NOT NULL,";
+        sql += "PRIMARY KEY (_id, id_canto)";
+        sql += ");";
+        db.execSQL(sql);
+
+        sql = "CREATE TABLE IF NOT EXISTS INDICE_LIT_NAMES (";
+        sql += "_id INTEGER PRIMARY KEY,";
+        sql += "nome TEXT NOT NULL";
+        sql += ");";
+        db.execSQL(sql);
+        //fine tabella indice liturgico
 
         // CANTI
         sql = "INSERT INTO ELENCO ";
@@ -3192,6 +3207,1062 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
         //FINE SALMI CANTATI
 
+        // TITOLI DELL'INDICE LITURGICO
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (1, '" + appContext.getResources().getString(R.string.tempo_avvento) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (2, '" + appContext.getResources().getString(R.string.tempo_natale) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (3, '" + appContext.getResources().getString(R.string.tempo_quaresima) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (4, '" + appContext.getResources().getString(R.string.tempo_pasqua) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (5, '" + appContext.getResources().getString(R.string.canti_pentecoste) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (6, '" + appContext.getResources().getString(R.string.canti_vergine) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (7, '" + appContext.getResources().getString(R.string.lodi_vespri) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (8, '" + appContext.getResources().getString(R.string.canti_ingresso) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (9, '" + appContext.getResources().getString(R.string.canti_pace) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (10, '" + appContext.getResources().getString(R.string.canti_pane) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (11, '" + appContext.getResources().getString(R.string.canti_vino) + "')";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT_NAMES ";
+        sql += "VALUES (12, '" + appContext.getResources().getString(R.string.canti_fine) + "')";
+        db.execSQL(sql);
+        // FINE TITOLI DELL'INDICE LITURGICO
+
+        // LEGAMI INDICE LITURGICO-CANTI
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 118)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 173)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 94)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 124)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 87)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 159)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 63)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 105)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 212)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 213)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 214)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 116)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (1, 66)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 204)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 66)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 144)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 89)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 107)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 147)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (2, 88)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 150)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 146)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 148)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 122)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 192)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 100)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 80)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 120)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 40)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 136)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 114)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 97)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 170)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 38)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 104)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 179)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 183)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 126)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 41)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 44)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 73)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 94)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 215)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 76)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 42)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 37)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 2)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 1)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 79)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 74)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 75)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 193)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 211)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 96)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 130)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 60)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 190)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 123)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 169)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 220)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 129)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 213)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 121)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (3, 95)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 192)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 21)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 85)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 125)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 68)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 101)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 199)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 84)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 179)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 86)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 152)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 52)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 219)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 102)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 216)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 35)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 202)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 70)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 62)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 174)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (4, 203)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 85)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 86)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 64)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 212)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 25)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 188)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 147)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 23)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 214)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (5, 116)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 204)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 77)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 78)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 173)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 132)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 58)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 135)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 145)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 156)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 128)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 79)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 133)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 157)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 166)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 129)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 214)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (6, 134)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 56)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 67)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 192)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 100)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 21)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 80)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 120)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 181)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 114)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 136)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 49)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 50)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 206)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 57)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 180)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 97)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 110)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 138)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 179)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 44)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 73)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 99)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 189)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 86)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 209)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 178)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 52)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 51)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 69)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 58)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 74)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 75)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 105)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 131)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 202)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 70)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 96)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 190)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 91)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 82)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (7, 121)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 67)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 71)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 80)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 20)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 85)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 90)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 132)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 196)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 180)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 118)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 104)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 44)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 99)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 189)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 177)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 124)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 152)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 69)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 135)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 159)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 131)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 60)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 115)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 91)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 171)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 141)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 174)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 36)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (8, 201)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 114)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 125)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 119)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 109)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 118)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 84)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 54)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 48)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 45)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 46)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 47)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (9, 93)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 192)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 206)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 215)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 176)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 175)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 76)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 205)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 211)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 216)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (10, 171)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 56)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 85)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 274)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 109)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 199)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 57)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 207)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 180)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 210)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 203)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 55)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 48)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 72)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 194)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 209)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 208)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 198)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 211)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 62)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 64)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 202)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 35)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 220)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 147)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 98)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 158)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 78)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 132)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 125)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 109)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 84)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 203)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 117)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 48)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 99)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 152)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 176)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 137)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 191)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 178)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 69)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 212)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 60)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 133)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 157)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 66)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (12, 187)";
+        db.execSQL(sql);
+        // FINE LEGAMI INDICE LITURGICO-CANTI
+
     }
 
     @Override
@@ -3375,6 +4446,10 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 //		sql = "DROP TABLE IF EXISTS LISTE_PERS";
 //		db.execSQL(sql);
+        sql = "DROP TABLE IF EXISTS INDICE_LIT";
+        db.execSQL(sql);
+        sql = "DROP TABLE IF EXISTS INDICE_LIT_NAMES";
+        db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS SALMI_MUSICA";
         db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS LOCAL_LINKS";

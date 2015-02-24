@@ -65,6 +65,8 @@ public class Utility {
     public static final int DISMISS_ADD = 33;
     public static final int CHANGE_COLOR = 34;
     public static final int RESET_COLOR = 35;
+    public static final int IND_LIT_LISTAPERS_OK = 8;
+    public static final int IND_LIT_LISTAPRED_OK = 9;
 
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen

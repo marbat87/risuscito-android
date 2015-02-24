@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_default_index_entries">
-        <item>Indice alfabetico</item>
-        <item>Indice per pagina</item>
-        <item>Indice per argomento</item>
-        <item>Indice salmi musicati</item>
+        <item>@string/letter_order_text</item>
+        <item>@string/page_order_text</item>
+        <item>@string/arg_search_text</item>
+        <item>@string/salmi_musica_index</item>
+        <item>@string/indice_liturgico_index</item>
     </string-array>
     <string-array name="save_location_sd_entries">
         <item>Memoria privata</item>
