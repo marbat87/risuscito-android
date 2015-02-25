@@ -718,6 +718,10 @@ public class PaginaRenderActivity extends ActionBarActivity {
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
                 speedValue = String.valueOf(value);
             }
+            @Override
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {}
         });
 
         play_scroll.setSelected(false);
