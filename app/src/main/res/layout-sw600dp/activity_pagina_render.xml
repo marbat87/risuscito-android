@@ -22,108 +22,96 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="top"
-                android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/music_controls"
+                android:layout_width="fill_parent"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="@dimen/activity_min_margin"
+                android:paddingRight="@dimen/activity_min_margin"
+                android:layout_height="@dimen/abc_action_bar_default_height_material"
+                android:orientation="horizontal" >
 
-                <RelativeLayout
-                    android:id="@+id/music_controls"
-                    android:layout_width="fill_parent"
-                    android:paddingLeft="@dimen/activity_min_margin"
-                    android:paddingRight="@dimen/activity_min_margin"
+                <ImageButton
+                    android:id="@+id/rewind_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
-                    android:orientation="horizontal" >
+                    android:layout_toLeftOf="@+id/play_song"
+                    android:layout_toStartOf="@+id/play_song"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_rewind_active"
+                    android:soundEffectsEnabled="true" />
 
-                    <ImageButton
-                        android:id="@+id/rewind_song"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_toLeftOf="@+id/play_song"
-                        android:layout_toStartOf="@+id/play_song"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/ic_av_rewind_active"
-                        android:soundEffectsEnabled="true" />
+                <ImageButton
+                    android:id="@+id/play_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_toLeftOf="@+id/fast_forward_song"
+                    android:layout_toStartOf="@+id/fast_forward_song"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/play_button_drawable"
+                    android:soundEffectsEnabled="true" />
 
-                    <ImageButton
-                        android:id="@+id/play_song"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_toLeftOf="@+id/fast_forward_song"
-                        android:layout_toStartOf="@+id/fast_forward_song"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/play_button_drawable"
-                        android:soundEffectsEnabled="true" />
+                <ImageButton
+                    android:id="@+id/fast_forward_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_toLeftOf="@+id/stop_song"
+                    android:layout_toStartOf="@+id/stop_song"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_fast_forward_active"
+                    android:soundEffectsEnabled="true" />
 
-                    <ImageButton
-                        android:id="@+id/fast_forward_song"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_toLeftOf="@+id/stop_song"
-                        android:layout_toStartOf="@+id/stop_song"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/ic_av_fast_forward_active"
-                        android:soundEffectsEnabled="true" />
+                <ImageButton
+                    android:id="@+id/stop_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_toLeftOf="@+id/save_file"
+                    android:layout_toStartOf="@+id/save_file"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/ic_av_stop_active"
+                    android:soundEffectsEnabled="true" />
 
-                    <ImageButton
-                        android:id="@+id/stop_song"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_toLeftOf="@+id/save_file"
-                        android:layout_toStartOf="@+id/save_file"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/ic_av_stop_active"
-                        android:soundEffectsEnabled="true" />
+                <ImageButton
+                    android:id="@+id/save_file"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:paddingLeft="@dimen/button_playbar_padding"
+                    android:paddingRight="@dimen/button_playbar_padding"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:src="@drawable/download_delete_button_drawable"
+                    android:soundEffectsEnabled="true" />
 
-                    <ImageButton
-                        android:id="@+id/save_file"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
-                        android:layout_centerVertical="true"
-                        android:scaleType="fitCenter"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/download_delete_button_drawable"
-                        android:soundEffectsEnabled="true" />
-
-                </RelativeLayout>
-
-                <WebView
-                    android:id="@+id/cantoView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
-                android:layout_gravity="bottom"
+                android:layout_alignParentBottom="true"
                 android:background="@color/theme_primary"
                 android:divider="?attr/dividerVertical"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
@@ -169,7 +157,14 @@
 
             </LinearLayout>
 
-        </FrameLayout>
+            <WebView
+                android:id="@+id/cantoView"
+                android:layout_below="@id/music_controls"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/bottom_bar"/>
+
+        </RelativeLayout>
 
         <View
             android:id="@+id/outerFrame"
@@ -188,7 +183,7 @@
             risuscito:fab_icon="@drawable/ic_action_content_new"
             android:layout_marginRight="@dimen/floating_margin_lateral_menu"
             android:layout_marginEnd="@dimen/floating_margin_lateral_menu"
-            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">
+            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material" >
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_fullscreen_on"

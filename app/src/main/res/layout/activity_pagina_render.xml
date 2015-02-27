@@ -22,20 +22,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="top"
-                android:orientation="vertical">
-
                 <RelativeLayout
                     android:id="@+id/music_controls"
                     android:layout_width="fill_parent"
+                    android:layout_alignParentTop="true"
                     android:paddingLeft="@dimen/activity_min_margin"
                     android:paddingRight="@dimen/activity_min_margin"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
@@ -113,17 +108,10 @@
 
                 </RelativeLayout>
 
-                    <WebView
-                        android:id="@+id/cantoView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-            </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
-                android:layout_gravity="bottom"
+                android:layout_alignParentBottom="true"
                 android:background="@color/theme_primary"
                 android:divider="?attr/dividerVertical"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
@@ -169,7 +157,14 @@
 
             </LinearLayout>
 
-        </FrameLayout>
+            <WebView
+                android:id="@+id/cantoView"
+                android:layout_below="@id/music_controls"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/bottom_bar"/>
+
+        </RelativeLayout>
 
         <View
             android:id="@+id/outerFrame"
