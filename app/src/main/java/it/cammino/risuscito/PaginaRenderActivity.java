@@ -1845,6 +1845,8 @@ public class PaginaRenderActivity extends ActionBarActivity {
     private String cambiaAccordi(HashMap<String, String> conversione, String barre) {
         String cantoTrasportato = this.getFilesDir() + "/temporaneo.htm";
 
+        boolean barre_scritto = false;
+
         try {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(
@@ -1872,9 +1874,12 @@ public class PaginaRenderActivity extends ActionBarActivity {
                 else {
                     if (line.contains("<H3>")) {
                         if (barre != null && !barre.equals("0")) {
-                            String oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Barrè al " + barre +  " tasto</I></FONT></H4>";
-                            out.write(oldLine);
-                            out.newLine();
+                            if (!barre_scritto) {
+                                String oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Barrè al " + barre + " tasto</I></FONT></H4>";
+                                out.write(oldLine);
+                                out.newLine();
+                                barre_scritto = true;
+                            }
                         }
                         out.write(line);
                         out.newLine();
