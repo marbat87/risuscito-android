@@ -14,34 +14,6 @@
     <string-array name="save_location_nosd_entries">
         <item>Memoria interna</item>
     </string-array>
-    <string-array name="pref_default_theme_entries">
-        <item>Indigo - Chiaro (Predefinito)</item>
-        <item>Indigo - Scuro</item>
-        <item>BlueGrey - Chiaro</item>
-        <item>BlueGrey - Scuro</item>
-        <item>Red - Chiaro</item>
-        <item>Red - Scuro</item>
-        <item>Deep Purple - Chiaro</item>
-        <item>Deep Purple - Scuro</item>
-        <item>Teal - Chiaro</item>
-        <item>Teal - Scuro</item>
-        <item>Brown - Chiaro</item>
-        <item>Brown - Scuro</item>
-    </string-array>
-    <string-array name="pref_default_theme_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-    </string-array>
 
     <string-array name="navigation_main_sections">
         <item>@string/activity_homepage</item>

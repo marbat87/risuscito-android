@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_default_index_entries">
+        <item>Змыст алфавітний</item>
+        <item>Зміст за сторінками</item>
+        <item>Зміст за темами</item>
+        <item>Зміст псалмів</item>
+    </string-array>
+    <string-array name="save_location_sd_entries">
+        <item>Приватна пам\'ять</item>
+        <item>Публічна пам\'ять</item>
+    </string-array>
+    <string-array name="save_location_nosd_entries">
+        <item>Внутрішня пам\'ять</item>
+    </string-array>
+
+</resources>

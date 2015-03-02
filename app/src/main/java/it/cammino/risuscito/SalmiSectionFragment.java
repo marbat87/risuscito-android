@@ -274,15 +274,26 @@ public class SalmiSectionFragment extends Fragment {
             for (int x = 0; x < size; x++) {
                 // get the first letter of the store
                 String ch = "";
-                try {
-                    ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 19)));
-                }
-                catch (NumberFormatException | IndexOutOfBoundsException e) {
+                if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk")) {
                     try {
-                        ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 18)));
+                        ch = String.valueOf(Integer.valueOf(titoli[x].substring(17, 20)));
+                    } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                        try {
+                            ch = String.valueOf(Integer.valueOf(titoli[x].substring(17, 19)));
+                        } catch (NumberFormatException | IndexOutOfBoundsException d) {
+                            ch = String.valueOf(Integer.valueOf(titoli[x].substring(17, 18)));
+                        }
                     }
-                    catch (NumberFormatException | IndexOutOfBoundsException d) {
-                        ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 17)));
+                }
+                else {
+                    try {
+                        ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 19)));
+                    } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                        try {
+                            ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 18)));
+                        } catch (NumberFormatException | IndexOutOfBoundsException d) {
+                            ch = String.valueOf(Integer.valueOf(titoli[x].substring(16, 17)));
+                        }
                     }
                 }
 //                int minusPosition = titoli[x].indexOf(" - ");
