@@ -1,13 +1,10 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -15,17 +12,16 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ColorChooserDialog;
-import it.cammino.risuscito.utils.ThemeUtils;
 
-public class MainActivity extends ActionBarActivity implements ColorChooserDialog.ColorCallback {
+public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
     
     private DrawerLayout mDrawerLayout;
     private Toolbar mActionBarToolbar;
@@ -39,7 +35,7 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
-    private ThemeUtils mThemeUtils;
+//    private ThemeUtils mThemeUtils;
     
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
@@ -82,17 +78,19 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.hasNavDrawer = true;
+        super.alsoLollipop = false;
         super.onCreate(savedInstanceState);
-        mThemeUtils = new ThemeUtils(this);
-        setTheme(mThemeUtils.getCurrent(true));
+//        mThemeUtils = new ThemeUtils(this);
+//        setTheme(getThemeUtils().getCurrent(true));
         setContentView(R.layout.activity_main);
-        
+
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        mActionBarToolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mActionBarToolbar);
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);
+//        Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);
 //        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
 //        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
 //        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
@@ -116,12 +114,12 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         }
 
     }
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	checkScreenAwake();
-    }
+
+//    @Override
+//    protected void onResume() {
+//    	super.onResume();
+//    	checkScreenAwake();
+//    }
     
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {		
@@ -149,7 +147,7 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         if (mDrawerLayout == null) {
             return;
         }
-        mDrawerLayout.setStatusBarBackgroundColor(mThemeUtils.primaryColorDark());
+        mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
 
         if (mActionBarToolbar != null) {
             mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
@@ -286,10 +284,10 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
 //                getResources().getColor(R.color.navdrawer_icon_tint_selected) :
 //                getResources().getColor(R.color.navdrawer_icon_tint));
         titleView.setTextColor(selected ?
-                mThemeUtils.primaryColor() :
+                getThemeUtils().primaryColor() :
                 getResources().getColor(R.color.navdrawer_text_color));
         iconView.setColorFilter(selected ?
-                mThemeUtils.primaryColor() :
+                getThemeUtils().primaryColor() :
                 getResources().getColor(R.color.navdrawer_icon_tint));
     }
         
@@ -423,31 +421,31 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
     }
     
     //controlla se l'app deve mantenere lo schermo acceso
-    public void checkScreenAwake() {
-    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
-		if (screenOn)
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		else
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
+//    public void checkScreenAwake() {
+//    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+//		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
+//		if (screenOn)
+//			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//		else
+//			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//    }
     
-    public int getStatusBarHeight() {
-    	  int result = 0;
-    	  int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-    	  if (resourceId > 0) {
-    	    result = getResources().getDimensionPixelSize(resourceId);
-    	  }
-    	  return result;
-    }
+//    public int getStatusBarHeight() {
+//    	  int result = 0;
+//    	  int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+//    	  if (resourceId > 0) {
+//    	    result = getResources().getDimensionPixelSize(resourceId);
+//    	  }
+//    	  return result;
+//    }
 
     @Override
     public void onColorSelection(int title, int color) {
 
         if (title == R.string.primary_color)
-            mThemeUtils.primaryColor(color);
+            getThemeUtils().primaryColor(color);
         else if (title == R.string.accent_color)
-            mThemeUtils.accentColor(color);
+            getThemeUtils().accentColor(color);
 
         if (android.os.Build.VERSION.SDK_INT >= 11)
         {
@@ -462,8 +460,8 @@ public class MainActivity extends ActionBarActivity implements ColorChooserDialo
         }
     }
 
-    public ThemeUtils getThemeUtils() {
-        return mThemeUtils;
-    }
+//    public ThemeUtils getThemeUtils() {
+//        return mThemeUtils;
+//    }
     
 }

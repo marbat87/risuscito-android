@@ -1,45 +1,43 @@
 package it.cammino.risuscito;
 
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import java.util.Locale;
 
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class GeneralInsertSearch extends ActionBarActivity {
+public class GeneralInsertSearch extends ThemeableActivity {
 
 	private int fromAdd;
 	private int idLista;
 	private int listPosition;
-    private ThemeUtils mThemeUtils;
+//    private ThemeUtils mThemeUtils;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
+        super.hasNavDrawer = false;
+        super.alsoLollipop = true;
 		super.onCreate(savedInstanceState);
-        mThemeUtils = new ThemeUtils(this);
-        setTheme(mThemeUtils.getCurrent(false));
+//        mThemeUtils = new ThemeUtils(this);
+//        setTheme(mThemeUtils.getCurrent(false));
 		setContentView(R.layout.activity_insert_search);
 		
 		Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
 		setSupportActionBar(toolbar);
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(GeneralInsertSearch.this, mThemeUtils.primaryColorDark(), true);
+//        Utility.setupTransparentTints(GeneralInsertSearch.this, getThemeUtils().primaryColorDark(), true);
 		
 		Bundle bundle = GeneralInsertSearch.this.getIntent().getExtras();
 		fromAdd = bundle.getInt("fromAdd");
@@ -50,7 +48,7 @@ public class GeneralInsertSearch extends ActionBarActivity {
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
         
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setBackgroundColor(mThemeUtils.primaryColor());
+        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
         Resources res = getResources();
@@ -60,11 +58,11 @@ public class GeneralInsertSearch extends ActionBarActivity {
 
 	}
 
-    @Override
-    public void onResume() {
-    	super.onResume();
-    	checkScreenAwake();
-    }
+//    @Override
+//    public void onResume() {
+//    	super.onResume();
+//    	checkScreenAwake();
+//    }
 	
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,14 +85,14 @@ public class GeneralInsertSearch extends ActionBarActivity {
     }
 
     //controlla se l'app deve mantenere lo schermo acceso
-    public void checkScreenAwake() {
-    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
-		if (screenOn)
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		else
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
+//    public void checkScreenAwake() {
+//    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+//		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
+//		if (screenOn)
+//			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//		else
+//			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//    }
     
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -156,8 +154,8 @@ public class GeneralInsertSearch extends ActionBarActivity {
 		}
 	}
 
-    public ThemeUtils getThemeUtils() {
-        return  mThemeUtils;
-    }
+//    public ThemeUtils getThemeUtils() {
+//        return  mThemeUtils;
+//    }
 
 }

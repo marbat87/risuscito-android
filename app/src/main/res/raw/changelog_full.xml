@@ -7,6 +7,7 @@
         <changelogtext>Aggiunta opzione per mostrare/nascondere di default la barra di riproduzione audio</changelogtext>
         <changelogtext>Aggiunto l'Indice Liturgico (grazie a Daniele Marco Di Molfetta)</changelogtext>
         <changelogtext>Corretti innumerevoli testi e accordi (grazie a Daniele Marco Di Molfetta)</changelogtext>
+        <changelogtext>Fix per arresti anomali su alcuni dispositivi LG con tasto menù fisico</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.2.1" changeDate="14 Febbraio 2015">

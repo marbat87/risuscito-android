@@ -35,5 +35,5 @@ dependencies {
     compile project(':android-floating-action-button')
     compile project(':NonSenseFilePicker')
     compile 'com.melnykov:floatingactionbutton:1.2.0'
-    compile 'com.nispok:snackbar:2.9.1'
+    compile 'com.nispok:snackbar:2.10.1'
 }

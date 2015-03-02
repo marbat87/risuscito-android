@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -40,13 +38,13 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.utilities.dslv.DragSortListView;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
-public class CreaListaActivity extends ActionBarActivity {
+public class CreaListaActivity extends ThemeableActivity {
 
 	private ListaPersonalizzata celebrazione;
 	private DatabaseCanti listaCanti;
@@ -68,7 +66,7 @@ public class CreaListaActivity extends ActionBarActivity {
 	private ArrayList<String> nomiCanti;
 	private int positionLI;
 	private Bundle tempArgs;
-    protected ThemeUtils mThemeUtils;
+//    protected ThemeUtils mThemeUtils;
 
 	private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 	
@@ -80,20 +78,22 @@ public class CreaListaActivity extends ActionBarActivity {
 
 	@SuppressWarnings("deprecation")
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
+        super.hasNavDrawer = false;
+        super.alsoLollipop = true;
 		super.onCreate(savedInstanceState);
-        mThemeUtils = new ThemeUtils(this);
-        setTheme(mThemeUtils.getCurrent(false));
+//        mThemeUtils = new ThemeUtils(this);
+//        setTheme(mThemeUtils.getCurrent(false));
 		setContentView(R.layout.activity_crea_lista);
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        toolbar.setBackgroundColor(mThemeUtils.primaryColor());
+        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
-        findViewById(R.id.action_title_bar).setBackgroundColor(mThemeUtils.primaryColor());
+        findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
 	
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(CreaListaActivity.this, mThemeUtils.primaryColorDark(), true);
+//        Utility.setupTransparentTints(CreaListaActivity.this, mThemeUtils.primaryColorDark(), true);
 		
 		listaCanti = new DatabaseCanti(this);
 		
@@ -203,7 +203,7 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void onTextChanged(CharSequence s, int start, int before, int count) {
 			        	dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                s.toString().trim().length() > 0 ? mThemeUtils.accentColor():
+                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
                                 getResources().getColor(R.color.btn_disabled_text));
 			        }
 			
@@ -233,9 +233,9 @@ public class CreaListaActivity extends ActionBarActivity {
         });
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-        fab.setColorNormal(mThemeUtils.accentColor());
-        fab.setColorPressed(mThemeUtils.accentColorDark());
-        fab.setColorRipple(mThemeUtils.accentColorDark());
+        fab.setColorNormal(getThemeUtils().accentColor());
+        fab.setColorPressed(getThemeUtils().accentColorDark());
+        fab.setColorRipple(getThemeUtils().accentColorDark());
 		fab.attachToListView(lv);
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
@@ -273,7 +273,7 @@ public class CreaListaActivity extends ActionBarActivity {
 			        public void onTextChanged(CharSequence s, int start, int before, int count) {
 			        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
                         dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                s.toString().trim().length() > 0 ? mThemeUtils.accentColor():
+                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
                                         getResources().getColor(R.color.btn_disabled_text));
 			        }
 			
@@ -501,11 +501,11 @@ public class CreaListaActivity extends ActionBarActivity {
     }
             
             
-    @Override
-    public void onResume() {
-    	super.onResume();
-    	checkScreenAwake();
-    }
+//    @Override
+//    public void onResume() {
+//    	super.onResume();
+//    	checkScreenAwake();
+//    }
     
 	@Override
 	public void onDestroy() {
@@ -537,14 +537,14 @@ public class CreaListaActivity extends ActionBarActivity {
 	}
 	
     //controlla se l'app deve mantenere lo schermo acceso
-    public void checkScreenAwake() {
-    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
-		if (screenOn)
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		else
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
+//    public void checkScreenAwake() {
+//    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+//		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
+//		if (screenOn)
+//			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//		else
+//			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//    }
     
     private class ButtonClickedListener implements DialogInterface.OnClickListener {
         private int clickedCode;

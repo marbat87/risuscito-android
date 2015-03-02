@@ -1,26 +1,22 @@
 package it.cammino.risuscito;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.melnykov.fab.FloatingActionButton;
 
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class PaginaRenderFullScreen extends ActionBarActivity {
+public class PaginaRenderFullScreen extends ThemeableActivity {
     
 	private DatabaseCanti listaCanti;
 	private static String urlCanto;
@@ -50,20 +46,22 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 	};
 
     private LUtils mLUtils;
-    private ThemeUtils mThemeUtils;
+//    private ThemeUtils mThemeUtils;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+        super.hasNavDrawer = false;
+        super.alsoLollipop = true;
         mLUtils = LUtils.getInstance(PaginaRenderFullScreen.this);
         mLUtils.goFullscreen();
         super.onCreate(savedInstanceState);
-        mThemeUtils = new ThemeUtils(this);
-        setTheme(mThemeUtils.getCurrent(false));
+//        mThemeUtils = new ThemeUtils(this);
+//        setTheme(mThemeUtils.getCurrent(false));
         setContentView(R.layout.activity_pagina_render_fullscreen);
         
         listaCanti = new DatabaseCanti(this);
 
-        mThemeUtils = new ThemeUtils(this);
+//        mThemeUtils = new ThemeUtils(this);
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         Bundle bundle = this.getIntent().getExtras();
@@ -82,9 +80,9 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
         ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
-        fabFullscreen.setColorNormal(mThemeUtils.accentColor());
-        fabFullscreen.setColorPressed(mThemeUtils.accentColorDark());
-        fabFullscreen.setColorRipple(mThemeUtils.accentColorLight());
+        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
+        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
+        fabFullscreen.setColorRipple(getThemeUtils().accentColorLight());
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +107,7 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
     public void onResume() {
     	super.onResume();
 
-        checkScreenAwake();
+//        checkScreenAwake();
 
         pageView.loadUrl(urlCanto);
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
@@ -198,13 +196,13 @@ public class PaginaRenderFullScreen extends ActionBarActivity {
 	}
 
     //controlla se l'app deve mantenere lo schermo acceso
-    public void checkScreenAwake() {
-        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-        boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
-        if (screenOn)
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        else
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
+//    public void checkScreenAwake() {
+//        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
+//        boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
+//        if (screenOn)
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        else
+//            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//    }
 
 }

@@ -5,12 +5,10 @@
 .DS_Store
 /build
 
-materialDesign
 app/app.iml
 app/build
-aFileChooser/build
-aFileChooser/aFileChooser.iml
 utilities/build
 utilities/utilities.iml
 NonSenseFilePicker/NonSenseFilePicker.iml
 android-floating-action-button/android-floating-action-button.iml
+discreteSeekBar/discreteSeekBar.iml
