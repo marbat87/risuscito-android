@@ -13,7 +13,6 @@
 <string name="preghiera_eucarestica_II_title">II Євхаристична молитва (1)</string>
 <string name="preghiera_eucaristica_II_parte2_title">II Євхаристична молитва (1) - частина II</string>
 <string name="benedizione_acqua_fonte_title">Благословення води Хрещення (1)</string>
-<string name="benedizione_acqua_fonte_2_title">Благословення води Хрещення (2)</string>
 <string name="preconio_pasquale_title">Великоднє послання</string>
 <string name="prefazio_eucarestia_veglia_pasquale_title">Євхаристійна префацчя Пасхальної вігілії</string>
 <string name="inno_lodi_avvento_fino16_title">Гімн утрені під час адвенту до 16 грудня</string>
@@ -176,6 +175,7 @@
 <string name="spirito_del_signore_sopra_di_me_title">Господній дух на мені (Лк. 4,18-19) (Іс. 61,1-3)</string>
 <string name="ecco_lo_specchio_nostro_title">Ось наше дзеркало (Оди XIII Саломона)</string>
 <string name="come_slancio_ira_title">Як порив гніву (Оди VII Саломона)</string>
+<string name="benedetto_sia_iddio_title">Благословен хай буде Бог</string>
 <string name="signore_tu_scruti_conosci_title">Господи, ти досліджуєш мене і знаєш - Псалом 138(139)</string>
 <string name="eli_eli_lamma_sabactani_title">Елі, Елі, ламма сабактані? - Псалом 21(22)</string>
 <string name="nessuno_puo_servire_due_padroni_title">Ніхто не може служити двом панам (Мт. 6,24-33)</string>
@@ -186,6 +186,7 @@
 <string name="rivestitevi_dell_armatura_title">Одягніться в броню Божу (Еф. 6,11 ss)</string>
 <string name="sue_fondamenta_title">Його основи - Псалом 86(87)</string>
 <string name="akeda_title">Акеда</string>
+<string name="non_ti_adirare_title">Не палай гнівом -  Псалом 37(36)</string>
 <string name="inno_alla_carita_title">Гімн про любов (1 Кор. 13,1-13)</string>
 <string name="stesso_iddio_title">Той самий Бог (2 Кор. 4,6-12)</string>
 <string name="come_condannati_a_morte_title">Немов засуджені на смерть (1 Кор. 4,9-13)</string>

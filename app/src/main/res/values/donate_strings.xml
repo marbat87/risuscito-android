@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="donate_long_text">
+    <string name="donate_long_text" translatable="false">
     	<![CDATA[
 <p>
 Ciao caro fratello utente,<br/>

@@ -218,5 +218,18 @@
     <string name="add_santo">Додати Свят</string>
     <string name="show_santo_title">Євхаристія - Свят</string>
     <string name="show_santo_summary">Додати Свят для Євхаристії</string>
+    <string name="fullscreen">Повний екран</string>
+    <string name="audio_on_off">Показувати/Сховати аудіо</string>
+    <string name="file_selected">Вибраний файл</string>
+    <string name="primary_color">Головний колір</string>
+    <string name="primary_color_desc">Більш використаний колір в інтерфейсі</string>
+    <string name="accent_color">Виділяємий колір</string>
+    <string name="accent_color_desc">Колір, використаний для віджетів та інших деталей інтерфейсу</string>
+    <string name="theme">Тема</string>
+    <string name="lists_pref">Списки</string>
+    <string name="system">Система</string>
+    <string name="show_audio_title">Показувати програвання аудіо</string>
+    <string name="show_audio_summary">Показувати за замовчуванням лінію програвання аудіо на сторінці пісень</string>
+    <string name="indice_liturgico_index">Літургічний зміст</string>
 
 </resources>

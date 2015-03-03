@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="pref_default_index_entries">
         <item>@string/letter_order_text</item>
         <item>@string/page_order_text</item>

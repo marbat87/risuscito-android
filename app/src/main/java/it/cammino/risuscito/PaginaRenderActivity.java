@@ -162,6 +162,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public static String mostraAudio;
     public boolean mostraAudioBool;
 
+    public final CambioAccordi cambioAccordi = new CambioAccordi(this);
+
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,7 +200,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         try {
             primaNota = CambioAccordi.recuperaPrimoAccordo(getAssets().open(pagina + ".htm"));
-            primoBarre = CambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"));
+            primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -943,7 +945,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 return true;
             case R.id.action_reset_tab:
                 notaCambio = primaNota;
-                HashMap<String, String> convMap = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+                HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 saveZoom();
                 if (convMap != null) {
                     String nuovoFile = cambiaAccordi(convMap, barreCambio);
@@ -976,7 +978,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 return true;
             case R.id.action_reset_barre:
                 barreCambio = primoBarre;
-                HashMap<String, String> convMap1 = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+                HashMap<String, String> convMap1 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 saveZoom();
                 if (convMap1 != null) {
                     String nuovoFile = cambiaAccordi(convMap1, barreCambio);
@@ -993,7 +995,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             default:
                 if (item.getGroupId() == R.id.menu_gruppo_note) {
                     notaCambio = String.valueOf(item.getTitleCondensed());
-                    HashMap<String, String> convMap2 = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+                    HashMap<String, String> convMap2 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     saveZoom();
                     if (convMap2 != null) {
                         String nuovoFile = cambiaAccordi(convMap2, barreCambio);
@@ -1010,7 +1012,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
                 if (item.getGroupId() == R.id.menu_gruppo_barre) {
                     barreCambio = String.valueOf(item.getTitleCondensed());
-                    HashMap<String, String> convMap3 = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+                    HashMap<String, String> convMap3 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     saveZoom();
                     if (convMap3 != null) {
                         String nuovoFile = cambiaAccordi(convMap3, barreCambio);
@@ -1153,7 +1155,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
             paginaView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-        HashMap<String, String> convMap = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+        HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
         if (convMap != null) {
             String nuovoFile = cambiaAccordi(convMap, barreCambio);
             if (nuovoFile != null)
@@ -1860,7 +1862,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     new OutputStreamWriter(
                             new FileOutputStream(cantoTrasportato), "UTF-8"));
 
+            String language = getResources().getConfiguration().locale.getLanguage();
+
             Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+            if (language.equalsIgnoreCase("uk"))
+                pattern = Pattern.compile("C|c|Cis|cis|D|d|Eb|eb|F|f|Fis|fis|Gis|gis|A|a|B|b|H|h");
             while (line != null) {
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
 //	        		Log.i("RIGA", line);
@@ -1878,6 +1884,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         if (barre != null && !barre.equals("0")) {
                             if (!barre_scritto) {
                                 String oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Barrè al " + barre + " tasto</I></FONT></H4>";
+                                if (language.equalsIgnoreCase("uk"))
+                                    oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Баре на " + barre + " лад</I></FONT></H4>";
                                 out.write(oldLine);
                                 out.newLine();
                                 barre_scritto = true;
@@ -1887,9 +1895,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         out.newLine();
                     }
                     else {
-                        if (!line.contains("Barrè") && !line.contains("Barr&#232;")) {
-                            out.write(line);
-                            out.newLine();
+                        if (language.equalsIgnoreCase("uk")) {
+                            if (!line.contains("Баре")) {
+                                out.write(line);
+                                out.newLine();
+                            }
+                        }
+                        else {
+                            if (!line.contains("Barrè") && !line.contains("Barr&#232;")) {
+                                out.write(line);
+                                out.newLine();
+                            }
                         }
                     }
                 }
@@ -2299,7 +2315,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         @Override
         protected String doInBackground(String... sUrl) {
-            HashMap<String, String> testConv = CambioAccordi.diffSemiToni(primaNota, notaCambio);
+            HashMap<String, String> testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio);
             String urlHtml = "";
             if (testConv != null) {
                 String nuovoFile = cambiaAccordi(testConv, barreCambio);
