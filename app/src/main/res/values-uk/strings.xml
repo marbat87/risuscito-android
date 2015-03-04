@@ -231,5 +231,17 @@
     <string name="show_audio_title">Показувати програвання аудіо</string>
     <string name="show_audio_summary">Показувати за замовчуванням лінію програвання аудіо на сторінці пісень</string>
     <string name="indice_liturgico_index">Літургічний зміст</string>
+    <string name="title_trasporta_do">C</string>
+    <string name="title_trasporta_dod">Cis</string>
+    <string name="title_trasporta_re">D</string>
+    <string name="title_trasporta_mib">Eb</string>
+    <string name="title_trasporta_mi">E</string>
+    <string name="title_trasporta_fa">F</string>
+    <string name="title_trasporta_fad">Fis</string>
+    <string name="title_trasporta_sol">G</string>
+    <string name="title_trasporta_sold">Gis</string>
+    <string name="title_trasporta_la">A</string>
+    <string name="title_trasporta_sib">B</string>
+    <string name="title_trasporta_si">H</string>
 
 </resources>

@@ -946,9 +946,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
             case R.id.action_reset_tab:
                 notaCambio = primaNota;
                 HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+                HashMap<String, String> convMin = null;
+                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap != null) {
-                    String nuovoFile = cambiaAccordi(convMap, barreCambio);
+                    String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin);
                     if (nuovoFile != null)
                         paginaView.loadUrl("file://" + nuovoFile);
                 }
@@ -979,9 +982,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
             case R.id.action_reset_barre:
                 barreCambio = primoBarre;
                 HashMap<String, String> convMap1 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+                HashMap<String, String> convMin1 = null;
+                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    convMin1 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap1 != null) {
-                    String nuovoFile = cambiaAccordi(convMap1, barreCambio);
+                    String nuovoFile = cambiaAccordi(convMap1, barreCambio, convMin1);
                     if (nuovoFile != null)
                         paginaView.loadUrl("file://" + nuovoFile);
                 }
@@ -996,9 +1002,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 if (item.getGroupId() == R.id.menu_gruppo_note) {
                     notaCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap2 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+                    HashMap<String, String> convMin2 = null;
+                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                        convMin2 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap2 != null) {
-                        String nuovoFile = cambiaAccordi(convMap2, barreCambio);
+                        String nuovoFile = cambiaAccordi(convMap2, barreCambio, convMin2);
                         if (nuovoFile != null)
                             paginaView.loadUrl("file://" + nuovoFile);
                     }
@@ -1013,9 +1022,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 if (item.getGroupId() == R.id.menu_gruppo_barre) {
                     barreCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap3 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+                    HashMap<String, String> convMin3 = null;
+                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                        convMin3 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap3 != null) {
-                        String nuovoFile = cambiaAccordi(convMap3, barreCambio);
+                        String nuovoFile = cambiaAccordi(convMap3, barreCambio, convMin3);
                         if (nuovoFile != null)
                             paginaView.loadUrl("file://" + nuovoFile);
                     }
@@ -1156,8 +1168,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
             paginaView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+        HashMap<String, String> convMin = null;
+        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+            convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         if (convMap != null) {
-            String nuovoFile = cambiaAccordi(convMap, barreCambio);
+            String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin);
             if (nuovoFile != null)
                 paginaView.loadUrl("file://" + nuovoFile);
         }
@@ -1779,44 +1794,44 @@ public class PaginaRenderActivity extends ThemeableActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        switch (requestCode) {
 //            case REQUEST_CODE:
-                // If the file selection was successful
-                if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                    if (data != null) {
-                        // Get the URI of the selected file
-                        final Uri uri = data.getData();
+        // If the file selection was successful
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                // Get the URI of the selected file
+                final Uri uri = data.getData();
 //                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
 //                        try {
-                            // Get the file path from the URI
-                            String path = uri.getPath();
-                            Toast.makeText(PaginaRenderActivity.this,
-                                    getResources().getString(R.string.file_selected)
-                                            + ": "
-                                            + path, Toast.LENGTH_LONG).show();
+                // Get the file path from the URI
+                String path = uri.getPath();
+                Toast.makeText(PaginaRenderActivity.this,
+                        getResources().getString(R.string.file_selected)
+                                + ": "
+                                + path, Toast.LENGTH_LONG).show();
 
-                            if (mediaPlayerState == MP_State.Started
-                                    || mediaPlayerState == MP_State.Paused)
-                                cmdStop();
-                            mediaPlayer = new MediaPlayer();
-                            mediaPlayerState = MP_State.Idle;
-                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+                if (mediaPlayerState == MP_State.Started
+                        || mediaPlayerState == MP_State.Paused)
+                    cmdStop();
+                mediaPlayer = new MediaPlayer();
+                mediaPlayerState = MP_State.Idle;
+                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
-                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-                            ContentValues values = new ContentValues();
-                            values.put("_id", idCanto);
-                            values.put("local_path", path);
-                            db.insert("LOCAL_LINKS", null, values);
-                            db.close();
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("_id", idCanto);
+                values.put("local_path", path);
+                db.insert("LOCAL_LINKS", null, values);
+                db.close();
 
-                            localFile = true;
-                            personalUrl = path;
+                localFile = true;
+                personalUrl = path;
 
-                            save_file.setSelected(true);
+                save_file.setSelected(true);
 
-                            //mostra i pulsanti per il lettore musicale
-                            play_button.setVisibility(View.VISIBLE);
-                            stop_button.setVisibility(View.VISIBLE);
-                            rewind_button.setVisibility(View.VISIBLE);
-                            ff_button.setVisibility(View.VISIBLE);
+                //mostra i pulsanti per il lettore musicale
+                play_button.setVisibility(View.VISIBLE);
+                stop_button.setVisibility(View.VISIBLE);
+                rewind_button.setVisibility(View.VISIBLE);
+                ff_button.setVisibility(View.VISIBLE);
 //                        } catch (Exception e) {
 //                            Log.e(getClass().toString(), "File select error", e);
 //                            Toast.makeText(PaginaRenderActivity.this,
@@ -1824,8 +1839,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                                            + ": "
 //                                            + path, Toast.LENGTH_LONG).show();
 //                        }
-                    }
-                }
+            }
+        }
 //                break;
 //        }
         super.onActivityResult(requestCode, resultCode, data);
@@ -1846,7 +1861,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
     }
 
-    private String cambiaAccordi(HashMap<String, String> conversione, String barre) {
+    private String cambiaAccordi(HashMap<String, String> conversione, String barre, HashMap<String, String> conversioneMin ) {
         String cantoTrasportato = this.getFilesDir() + "/temporaneo.htm";
 
         boolean barre_scritto = false;
@@ -1865,18 +1880,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
             String language = getResources().getConfiguration().locale.getLanguage();
 
             Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
-            if (language.equalsIgnoreCase("uk"))
-                pattern = Pattern.compile("C|c|Cis|cis|D|d|Eb|eb|F|f|Fis|fis|Gis|gis|A|a|B|b|H|h");
+            Pattern patternMinore = null;
+            if (language.equalsIgnoreCase("uk")) {
+                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
+                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a|b|h");
+            }
             while (line != null) {
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-//	        		Log.i("RIGA", line);
+                    if (language.equalsIgnoreCase("uk")) {
+                        line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
+                        line = line.replaceAll("</FONT><FONT COLOR=\"#000000\">", "<K2>");
+                    }
                     Matcher matcher = pattern.matcher(line);
                     StringBuffer sb = new StringBuffer();
-                    while(matcher.find()) {
+                    StringBuffer sb2 = new StringBuffer();
+                    while(matcher.find())
                         matcher.appendReplacement(sb, conversione.get(matcher.group(0)));
-                    }
                     matcher.appendTail(sb);
-                    out.write(sb.toString());
+                    if (language.equalsIgnoreCase("uk")) {
+                        Matcher matcherMin = patternMinore.matcher(sb.toString());
+                        while (matcherMin.find())
+                            matcherMin.appendReplacement(sb2, conversioneMin.get(matcherMin.group(0)));
+                        matcherMin.appendTail(sb2);
+                        line = sb2.toString().replaceAll("<K>","</FONT><FONT COLOR='#A13F3C'>");
+                        line = line.replaceAll("<K2>", "</FONT><FONT COLOR='#000000'>");
+                    }
+                    else
+                        line = sb.toString();
+                    out.write(line);
                     out.newLine();
                 }
                 else {
@@ -2316,9 +2347,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
         @Override
         protected String doInBackground(String... sUrl) {
             HashMap<String, String> testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+            HashMap<String, String> testConvMin = null;
+            if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
             String urlHtml = "";
             if (testConv != null) {
-                String nuovoFile = cambiaAccordi(testConv, barreCambio);
+                String nuovoFile = cambiaAccordi(testConv, barreCambio, testConvMin);
                 if (nuovoFile != null)
                     urlHtml = nuovoFile;
             }
@@ -2378,6 +2412,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             line = line.replaceAll("</H2>", "");
                             line = line.replaceAll("<I>", "");
                             line = line.replaceAll("</I>", "");
+                            line = line.replaceAll("<u>", "");
+                            line = line.replaceAll("</u>", "");
                             line = line.replaceAll("<B>", "");
                             line = line.replaceAll("</B>", "");
                             line = line.replaceAll("<br>", "");

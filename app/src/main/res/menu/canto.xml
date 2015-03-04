@@ -18,18 +18,18 @@
 
                 <menu>
                     <group android:id="@+id/menu_gruppo_note">
-                        <item android:id="@+id/notaDo" android:title="@string/action_trasporta_do" android:titleCondensed="Do" />
-                        <item android:id="@+id/notaDod" android:title="@string/action_trasporta_dod" android:titleCondensed="Do#" />
-                        <item android:id="@+id/notaRe" android:title="@string/action_trasporta_re" android:titleCondensed="Re" />
-                        <item android:id="@+id/notaMib" android:title="@string/action_trasporta_mib" android:titleCondensed="Mib" />
-                        <item android:id="@+id/notaMi" android:title="@string/action_trasporta_mi" android:titleCondensed="Mi" />
-                        <item android:id="@+id/notaFa" android:title="@string/action_trasporta_fa" android:titleCondensed="Fa" />
-                        <item android:id="@+id/notaFad" android:title="@string/action_trasporta_fad" android:titleCondensed="Fa#" />
-                        <item android:id="@+id/notaSol" android:title="@string/action_trasporta_sol" android:titleCondensed="Sol" />
-                        <item android:id="@+id/notaSold" android:title="@string/action_trasporta_sold" android:titleCondensed="Sol#" />
-                        <item android:id="@+id/notaLa" android:title="@string/action_trasporta_la" android:titleCondensed="La" />
-                        <item android:id="@+id/notaSib" android:title="@string/action_trasporta_sib" android:titleCondensed="Sib" />
-                        <item android:id="@+id/notaSi" android:title="@string/action_trasporta_si" android:titleCondensed="Si" />
+                        <item android:id="@+id/notaDo" android:title="@string/action_trasporta_do" android:titleCondensed="@string/title_trasporta_do" />
+                        <item android:id="@+id/notaDod" android:title="@string/action_trasporta_dod" android:titleCondensed="@string/title_trasporta_dod" />
+                        <item android:id="@+id/notaRe" android:title="@string/action_trasporta_re" android:titleCondensed="@string/title_trasporta_re" />
+                        <item android:id="@+id/notaMib" android:title="@string/action_trasporta_mib" android:titleCondensed="@string/title_trasporta_mib" />
+                        <item android:id="@+id/notaMi" android:title="@string/action_trasporta_mi" android:titleCondensed="@string/title_trasporta_mi" />
+                        <item android:id="@+id/notaFa" android:title="@string/action_trasporta_fa" android:titleCondensed="@string/title_trasporta_fa" />
+                        <item android:id="@+id/notaFad" android:title="@string/action_trasporta_fad" android:titleCondensed="@string/title_trasporta_fad" />
+                        <item android:id="@+id/notaSol" android:title="@string/action_trasporta_sol" android:titleCondensed="@string/title_trasporta_sol" />
+                        <item android:id="@+id/notaSold" android:title="@string/action_trasporta_sold" android:titleCondensed="@string/title_trasporta_sold" />
+                        <item android:id="@+id/notaLa" android:title="@string/action_trasporta_la" android:titleCondensed="@string/title_trasporta_la" />
+                        <item android:id="@+id/notaSib" android:title="@string/action_trasporta_sib" android:titleCondensed="@string/title_trasporta_sib" />
+                        <item android:id="@+id/notaSi" android:title="@string/action_trasporta_si" android:titleCondensed="@string/title_trasporta_si" />
                     </group>
                 </menu>
             </item>

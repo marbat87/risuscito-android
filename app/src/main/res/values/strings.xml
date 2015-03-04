@@ -231,5 +231,17 @@
     <string name="show_audio_title">Mostra riproduzione audio</string>
     <string name="show_audio_summary">Mostra di default la barra di riproduzione audio nella pagina dei canti</string>
     <string name="indice_liturgico_index">Indice Liturgico</string>
+    <string name="title_trasporta_do">Do</string>
+    <string name="title_trasporta_dod">Do#</string>
+    <string name="title_trasporta_re">Re</string>
+    <string name="title_trasporta_mib">Mib</string>
+    <string name="title_trasporta_mi">Mi</string>
+    <string name="title_trasporta_fa">Fa</string>
+    <string name="title_trasporta_fad">Fa#</string>
+    <string name="title_trasporta_sol">Sol</string>
+    <string name="title_trasporta_sold">Sol#</string>
+    <string name="title_trasporta_la">La</string>
+    <string name="title_trasporta_sib">Sib</string>
+    <string name="title_trasporta_si">Si</string>
 
 </resources>
