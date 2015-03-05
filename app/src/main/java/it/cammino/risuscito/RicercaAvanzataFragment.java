@@ -140,6 +140,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
+            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();
@@ -602,7 +604,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 for (int j = 0; j < words.length; j++) {
                     if (words[j].trim().length() > 1) {
                         text = words[j].trim();
-                        text = text.toLowerCase(Locale.getDefault());
+                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
 
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
                             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);

@@ -563,13 +563,13 @@ public class CantiParolaFragment extends Fragment {
     }
     
     private String getTitlesList() {
-    	
-    	Locale l = Locale.getDefault();
+
+        Locale l = getActivity().getResources().getConfiguration().locale;
     	String result = "";
     	String temp;
     	
     	//titolo
-    	result +=  "-- CELEBRAZIONE DELLA PAROLA --\n";
+        result +=  "-- " + getString(R.string.title_activity_canti_parola).toUpperCase(l) + " --\n";
     	
     	//canto iniziale
     	temp = getTitoloToSendFromPosition(1);
@@ -578,7 +578,7 @@ public class CantiParolaFragment extends Fragment {
     	result += "\n";
     	
     	if (temp.equalsIgnoreCase(""))
-    		result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
     	else
     		result += temp;
     	
@@ -591,7 +591,7 @@ public class CantiParolaFragment extends Fragment {
     	result += "\n";
     	
     	if (temp.equalsIgnoreCase(""))
-    		result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
     	else
     		result += temp;
     	
@@ -604,7 +604,7 @@ public class CantiParolaFragment extends Fragment {
     	result += "\n";
     	
     	if (temp.equalsIgnoreCase(""))
-    		result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
     	else
     		result += temp;
     	
@@ -617,7 +617,7 @@ public class CantiParolaFragment extends Fragment {
     	result += "\n";
     	
     	if (temp.equalsIgnoreCase(""))
-    		result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
     	else
     		result += temp;
     	
@@ -634,7 +634,7 @@ public class CantiParolaFragment extends Fragment {
             result += "\n";
 
             if (temp.equalsIgnoreCase(""))
-                result += ">> da scegliere <<";
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
             else
                 result += temp;
 
@@ -650,7 +650,7 @@ public class CantiParolaFragment extends Fragment {
     	result += "\n";
     	
     	if (temp.equalsIgnoreCase(""))
-    		result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
     	else
     		result += temp;	    	
     	    	

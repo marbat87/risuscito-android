@@ -38,5 +38,6 @@
 
     <dimen name="circle_view_border">1dp</dimen>
     <dimen name="circle_view_check">24dp</dimen>
+    <dimen name="paper_button_width">88dip</dimen>
 
 </resources>

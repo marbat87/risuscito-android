@@ -243,5 +243,6 @@
     <string name="title_trasporta_la">A</string>
     <string name="title_trasporta_sib">B</string>
     <string name="title_trasporta_si">H</string>
+    <string name="to_be_chosen">вибрати</string>
 
 </resources>

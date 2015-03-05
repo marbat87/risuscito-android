@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 36;
+    private static final int DB_VERSION = 37;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -105,91 +105,91 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         // CANTI
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (1, 1, '" + appContext.getResources().getString(R.string.litanie_penitenziali_brevi_title) + "', '"
+        sql += "VALUES (1, " + appContext.getResources().getString(R.string.litanie_penitenziali_brevi_page) + ", '" + appContext.getResources().getString(R.string.litanie_penitenziali_brevi_title) + "', '"
                 + appContext.getResources().getString(R.string.litanie_penitenziali_brevi_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.litanie_penitenziali_brevi_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (2, 2, '" + appContext.getResources().getString(R.string.preghiera_litanica_penitenziale_title) + "', '"
+        sql += "VALUES (2, " + appContext.getResources().getString(R.string.preghiera_litanica_penitenziale_page) + ", '" + appContext.getResources().getString(R.string.preghiera_litanica_penitenziale_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_litanica_penitenziale_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_litanica_penitenziale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (3, 3, '" + appContext.getResources().getString(R.string.celebrazione_penitenziale_title) + "', '"
+        sql += "VALUES (3, " + appContext.getResources().getString(R.string.celebrazione_penitenziale_page) + ", '" + appContext.getResources().getString(R.string.celebrazione_penitenziale_title) + "', '"
                 + appContext.getResources().getString(R.string.celebrazione_penitenziale_source)+ "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.celebrazione_penitenziale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (4, 4, '" + appContext.getResources().getString(R.string.gloria_a_dio_cieli_title) + "', '"
+        sql += "VALUES (4, " + appContext.getResources().getString(R.string.gloria_a_dio_cieli_page) + ", '" + appContext.getResources().getString(R.string.gloria_a_dio_cieli_title) + "', '"
                 + appContext.getResources().getString(R.string.gloria_a_dio_cieli_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.gloria_a_dio_cieli_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (5, 5, '" + appContext.getResources().getString(R.string.santo_e_santo_quaresima_title) + "', '"
+        sql += "VALUES (5, " + appContext.getResources().getString(R.string.santo_e_santo_quaresima_page) + ", '" + appContext.getResources().getString(R.string.santo_e_santo_quaresima_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_e_santo_quaresima_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.santo_e_santo_quaresima_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (6, 5, '" + appContext.getResources().getString(R.string.santo_ordinario_title) + "', '"
+        sql += "VALUES (6, " + appContext.getResources().getString(R.string.santo_ordinario_page) + ", '" + appContext.getResources().getString(R.string.santo_ordinario_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_ordinario_source) + "', 0, '" + GIALLO
                 + "', '" + appContext.getResources().getString(R.string.santo_ordinario_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (7, 6, '" + appContext.getResources().getString(R.string.santo_baracche_title) + "', '"
+        sql += "VALUES (7, " + appContext.getResources().getString(R.string.santo_baracche_page) + ", '" + appContext.getResources().getString(R.string.santo_baracche_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_baracche_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.santo_baracche_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (8, 6,  '" + appContext.getResources().getString(R.string.santo_palme_title) + "', '"
+        sql += "VALUES (8, " + appContext.getResources().getString(R.string.santo_palme_page) + ",  '" + appContext.getResources().getString(R.string.santo_palme_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_palme_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.santo_palme_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (9, 7, '" + appContext.getResources().getString(R.string.santo_1988_title) + "', '"
+        sql += "VALUES (9, " + appContext.getResources().getString(R.string.santo_1988_page) + ", '" + appContext.getResources().getString(R.string.santo_1988_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_1988_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.santo_1988_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (10, 7, '" + appContext.getResources().getString(R.string.santo_1983_title) + "', '"
+        sql += "VALUES (10, " + appContext.getResources().getString(R.string.santo_1983_page) + ", '" + appContext.getResources().getString(R.string.santo_1983_title) + "', '"
                 + appContext.getResources().getString(R.string.santo_1983_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.santo_1983_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (11, 8, '" + appContext.getResources().getString(R.string.preghiera_eucarestica_II_title) + "', '"
+        sql += "VALUES (11, " + appContext.getResources().getString(R.string.preghiera_eucarestica_II_page) + ", '" + appContext.getResources().getString(R.string.preghiera_eucarestica_II_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_eucarestica_II_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_eucarestica_II_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (12, 9, '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_parte2_title) + "', '"
+        sql += "VALUES (12, " + appContext.getResources().getString(R.string.preghiera_eucaristica_II_parte2_page) + ", '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_parte2_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_eucaristica_II_parte2_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_parte2_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (13, 10, '" + appContext.getResources().getString(R.string.benedizione_acqua_fonte_title) + "', '"
+        sql += "VALUES (13, " + appContext.getResources().getString(R.string.benedizione_acqua_fonte_page) + ", '" + appContext.getResources().getString(R.string.benedizione_acqua_fonte_title) + "', '"
                 + appContext.getResources().getString(R.string.benedizione_acqua_fonte_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.benedizione_acqua_fonte_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -202,35 +202,35 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (15, 12, '" + appContext.getResources().getString(R.string.preconio_pasquale_title) + "', '"
+        sql += "VALUES (15, " + appContext.getResources().getString(R.string.preconio_pasquale_page) + ", '" + appContext.getResources().getString(R.string.preconio_pasquale_title) + "', '"
                 + appContext.getResources().getString(R.string.preconio_pasquale_source) + "', 0, '" + GIALLO
                 + "', '" + appContext.getResources().getString(R.string.preconio_pasquale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (17, 14, '" + appContext.getResources().getString(R.string.prefazio_eucarestia_veglia_pasquale_title) + "', '"
+        sql += "VALUES (17, " + appContext.getResources().getString(R.string.prefazio_eucarestia_veglia_pasquale_page) + ", '" + appContext.getResources().getString(R.string.prefazio_eucarestia_veglia_pasquale_title) + "', '"
                 + appContext.getResources().getString(R.string.prefazio_eucarestia_veglia_pasquale_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.prefazio_eucarestia_veglia_pasquale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (18, 15, '" + appContext.getResources().getString(R.string.inno_lodi_avvento_fino16_title) + "', '"
+        sql += "VALUES (18, " + appContext.getResources().getString(R.string.inno_lodi_avvento_fino16_page) + ", '" + appContext.getResources().getString(R.string.inno_lodi_avvento_fino16_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_lodi_avvento_fino16_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_lodi_avvento_fino16_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (19, 15, '" + appContext.getResources().getString(R.string.inno_lodi_avvento_dopo16_title) + "', '"
+        sql += "VALUES (19, " + appContext.getResources().getString(R.string.inno_lodi_avvento_dopo16_page) + ", '" + appContext.getResources().getString(R.string.inno_lodi_avvento_dopo16_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_lodi_avvento_dopo16_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_lodi_avvento_dopo16_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (20, 16, '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_fino_ascensione_title) + "', '"
+        sql += "VALUES (20, " + appContext.getResources().getString(R.string.inno_lodi_pasqua_fino_ascensione_page) + ", '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_fino_ascensione_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_lodi_pasqua_fino_ascensione_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_fino_ascensione_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -243,147 +243,147 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (21, 16, '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_title) + "', '"
+        sql += "VALUES (21, " +  appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_page) + ", '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_source) + "', 0, '"
                 + GIALLO + "', ' + " + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (22, 17, '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_ascensione_pentecoste_title) + "'," +
+        sql += "VALUES (22, " + appContext.getResources().getString(R.string.inno_lodi_pasqua_ascensione_pentecoste_page) + ", '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_ascensione_pentecoste_title) + "'," +
                 " '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_ascensione_pentecoste_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_lodi_pasqua_ascensione_pentecoste_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (23, 18, '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_ascensione_pentecoste_title) + "', '"
+        sql += "VALUES (23, " + appContext.getResources().getString(R.string.inno_vespri_pasqua_ascensione_pentecoste_page) + ", '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_ascensione_pentecoste_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_vespri_pasqua_ascensione_pentecoste_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_ascensione_pentecoste_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (24, 19, '" + appContext.getResources().getString(R.string.inno_lodi_pentecoste_title) + "', '"
+        sql += "VALUES (24, " + appContext.getResources().getString(R.string.inno_lodi_pentecoste_page) + ", '" + appContext.getResources().getString(R.string.inno_lodi_pentecoste_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_lodi_pentecoste_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_lodi_pentecoste_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (25, 20, '" + appContext.getResources().getString(R.string.sequenza_di_pentecoste_title) + "', '"
+        sql += "VALUES (25, " + appContext.getResources().getString(R.string.sequenza_di_pentecoste_page) + ", '" + appContext.getResources().getString(R.string.sequenza_di_pentecoste_title) + "', '"
                 + appContext.getResources().getString(R.string.sequenza_di_pentecoste_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.sequenza_di_pentecoste_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (26, 21, '" + appContext.getResources().getString(R.string.preghiera_eucaristia_II_2_prefazio_title) + "', '"
+        sql += "VALUES (26, " + appContext.getResources().getString(R.string.preghiera_eucaristia_II_2_prefazio_page) + ", '" + appContext.getResources().getString(R.string.preghiera_eucaristia_II_2_prefazio_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_eucaristia_II_2_prefazio_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_eucaristia_II_2_prefazio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (27, 22, '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_consacrazione_title) + "', '"
+        sql += "VALUES (27, " + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_consacrazione_page) + ", '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_consacrazione_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_consacrazione_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_consacrazione_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (28, 23, '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_offerta_title) + "', '"
+        sql += "VALUES (28, " + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_offerta_page) + ", '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_offerta_title) + "', '"
                 + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_offerta_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.preghiera_eucaristica_II_2_offerta_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (29, 24, '" + appContext.getResources().getString(R.string.alleluja_pasquale_title) + "', '"
+        sql += "VALUES (29, " + appContext.getResources().getString(R.string.alleluja_pasquale_page)  + ", '" + appContext.getResources().getString(R.string.alleluja_pasquale_title) + "', '"
                 + appContext.getResources().getString(R.string.alleluja_pasquale_source) + "', 0, '" + GIALLO
                 + "', '" + appContext.getResources().getString(R.string.alleluja_pasquale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (30, 24, '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_title) + "', '"
+        sql += "VALUES (30, " + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_page) + ", '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_title) + "', '"
                 + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (31, 25, '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_quaresima_title) + "', '"
+        sql += "VALUES (31, " + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_quaresima_page) + ", '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_quaresima_title) + "', '"
                 + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_quaresima_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.acclamazioni_al_vangelo_quaresima_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (32, 26, '" + appContext.getResources().getString(R.string.te_deum_title) + "', '"
+        sql += "VALUES (32, " + appContext.getResources().getString(R.string.te_deum_page) + ", '" + appContext.getResources().getString(R.string.te_deum_title) + "', '"
                 + appContext.getResources().getString(R.string.te_deum_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.te_deum_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (140, 27, '" + appContext.getResources().getString(R.string.agnello_di_dio_title) + "', '"
+        sql += "VALUES (140, " + appContext.getResources().getString(R.string.agnello_di_dio_page) + ", '" + appContext.getResources().getString(R.string.agnello_di_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.agnello_di_dio_source) + "', 0, '" + GIALLO
                 + "', '" + appContext.getResources().getString(R.string.agnello_di_dio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (33, 27, '" + appContext.getResources().getString(R.string.padre_nostro_title) + "', '"
+        sql += "VALUES (33, " + appContext.getResources().getString(R.string.padre_nostro_page) + ", '" + appContext.getResources().getString(R.string.padre_nostro_title) + "', '"
                 + appContext.getResources().getString(R.string.padre_nostro_source) + "', 0, '"
                 + GIALLO + "', '" + appContext.getResources().getString(R.string.padre_nostro_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (34, 28, '" + appContext.getResources().getString(R.string.credo_apostolico_title) + "', '"
+        sql += "VALUES (34, " + appContext.getResources().getString(R.string.credo_apostolico_page) + ", '" + appContext.getResources().getString(R.string.credo_apostolico_title) + "', '"
                 + appContext.getResources().getString(R.string.credo_apostolico_source) + "', 0, '" + GIALLO
                 + "', '" + appContext.getResources().getString(R.string.credo_apostolico_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (35, 31, '" + appContext.getResources().getString(R.string.risuscito_title) + "', '"
+        sql += "VALUES (35, " + appContext.getResources().getString(R.string.risuscito_page) + ", '" + appContext.getResources().getString(R.string.risuscito_title) + "', '"
                 + appContext.getResources().getString(R.string.risuscito_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.risuscito_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (36, 32, '" + appContext.getResources().getString(R.string.verso_te_o_citta_santa_title) + "', '"
+        sql += "VALUES (36, " + appContext.getResources().getString(R.string.verso_te_o_citta_santa_page) + ", '" + appContext.getResources().getString(R.string.verso_te_o_citta_santa_title) + "', '"
                 + appContext.getResources().getString(R.string.verso_te_o_citta_santa_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.verso_te_o_citta_santa_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (37, 32, '" + appContext.getResources().getString(R.string.marcia_e_dura_title) + "', '"
+        sql += "VALUES (37, " + appContext.getResources().getString(R.string.marcia_e_dura_page) + ", '" + appContext.getResources().getString(R.string.marcia_e_dura_title) + "', '"
                 + appContext.getResources().getString(R.string.marcia_e_dura_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.marcia_e_dura_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (38, 33, '" + appContext.getResources().getString(R.string.dal_profondo_a_te_grido_title) + "', '"
+        sql += "VALUES (38, " + appContext.getResources().getString(R.string.dal_profondo_a_te_grido_page) + ", '" + appContext.getResources().getString(R.string.dal_profondo_a_te_grido_title) + "', '"
                 + appContext.getResources().getString(R.string.dal_profondo_a_te_grido_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.dal_profondo_a_te_grido_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (39, 34, '" + appContext.getResources().getString(R.string.canto_di_giosue_title) + "', '"
+        sql += "VALUES (39, " + appContext.getResources().getString(R.string.canto_di_giosue_page) + ", '" + appContext.getResources().getString(R.string.canto_di_giosue_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_di_giosue_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.canto_di_giosue_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (40, 34, '" + appContext.getResources().getString(R.string.benedici_anima_mia_jahve_title) + "', '"
+        sql += "VALUES (40, " + appContext.getResources().getString(R.string.benedici_anima_mia_jahve_page) + ", '" + appContext.getResources().getString(R.string.benedici_anima_mia_jahve_title) + "', '"
                 + appContext.getResources().getString(R.string.benedici_anima_mia_jahve_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.benedici_anima_mia_jahve_link) + "', "
@@ -391,14 +391,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (41, 35, '" + appContext.getResources().getString(R.string.fino_a_quando_title) + "', '"
+        sql += "VALUES (41, " + appContext.getResources().getString(R.string.fino_a_quando_page) + ", '" + appContext.getResources().getString(R.string.fino_a_quando_title) + "', '"
                 + appContext.getResources().getString(R.string.fino_a_quando_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.fino_a_quando_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (42, 35, '" + appContext.getResources().getString(R.string.jahve_tu_sei_mio_dio_title) + "', '"
+        sql += "VALUES (42, " + appContext.getResources().getString(R.string.jahve_tu_sei_mio_dio_page) + ", '" + appContext.getResources().getString(R.string.jahve_tu_sei_mio_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.jahve_tu_sei_mio_dio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.jahve_tu_sei_mio_dio_link) + "', "
@@ -406,7 +406,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (43, 36, '" + appContext.getResources().getString(R.string.cantiamo_cantiamo_title) + "', '"
+        sql += "VALUES (43, " + appContext.getResources().getString(R.string.cantiamo_cantiamo_page) + ", '" + appContext.getResources().getString(R.string.cantiamo_cantiamo_title) + "', '"
                 + appContext.getResources().getString(R.string.cantiamo_cantiamo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.cantiamo_cantiamo_link) + "', "
@@ -415,7 +415,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (44, 36, '" + appContext.getResources().getString(R.string.giunga_la_mia_preghiera_title) + "', '"
+        sql += "VALUES (44, " + appContext.getResources().getString(R.string.giunga_la_mia_preghiera_page) + ", '" + appContext.getResources().getString(R.string.giunga_la_mia_preghiera_title) + "', '"
                 + appContext.getResources().getString(R.string.giunga_la_mia_preghiera_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.giunga_la_mia_preghiera_link) + "', "
@@ -424,7 +424,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (45, 37, '" + appContext.getResources().getString(R.string.guardate_come_e_bello_title) + "', '"
+        sql += "VALUES (45, " + appContext.getResources().getString(R.string.guardate_come_e_bello_page) + ", '" + appContext.getResources().getString(R.string.guardate_come_e_bello_title) + "', '"
                 + appContext.getResources().getString(R.string.guardate_come_e_bello_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.guardate_come_e_bello_link) + "', "
@@ -433,7 +433,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (46, 37, '" + appContext.getResources().getString(R.string.come_bello_come_da_gioia_title) +  "', '"
+        sql += "VALUES (46, " + appContext.getResources().getString(R.string.come_bello_come_da_gioia_page) + ", '" + appContext.getResources().getString(R.string.come_bello_come_da_gioia_title) +  "', '"
                 + appContext.getResources().getString(R.string.come_bello_come_da_gioia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.come_bello_come_da_gioia_link) + "', "
@@ -442,7 +442,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (47, 38, '" + appContext.getResources().getString(R.string.guardate_come_e_bello_gustate_title) + "', '"
+        sql += "VALUES (47, " + appContext.getResources().getString(R.string.guardate_come_e_bello_gustate_page) + ", '" + appContext.getResources().getString(R.string.guardate_come_e_bello_gustate_title) + "', '"
                 + appContext.getResources().getString(R.string.guardate_come_e_bello_gustate_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.guardate_come_e_bello_gustate_link) + "', "
@@ -451,7 +451,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (48, 39, '" + appContext.getResources().getString(R.string.grazie_a_jahve_title) + "', '"
+        sql += "VALUES (48, " + appContext.getResources().getString(R.string.grazie_a_jahve_page) + ", '" + appContext.getResources().getString(R.string.grazie_a_jahve_title) + "', '"
                 + appContext.getResources().getString(R.string.grazie_a_jahve_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.grazie_a_jahve_link) + "', "
@@ -459,7 +459,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (49, 40, '" + appContext.getResources().getString(R.string.canto_giovani_fornace_I_title) + "', '"
+        sql += "VALUES (49, " + appContext.getResources().getString(R.string.canto_giovani_fornace_I_page) + ", '" + appContext.getResources().getString(R.string.canto_giovani_fornace_I_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_giovani_fornace_I_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.canto_giovani_fornace_I_link) +  "', "
@@ -467,7 +467,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (50, 41, '" + appContext.getResources().getString(R.string.canto_giovani_fornace_II_title) + "', '"
+        sql += "VALUES (50, " + appContext.getResources().getString(R.string.canto_giovani_fornace_II_page) + ", '" + appContext.getResources().getString(R.string.canto_giovani_fornace_II_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_giovani_fornace_II_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.canto_giovani_fornace_II_link) + "', "
@@ -475,7 +475,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (51, 42, '" + appContext.getResources().getString(R.string.lodate_il_signore_dai_cieli_title) + "', '"
+        sql += "VALUES (51, " + appContext.getResources().getString(R.string.lodate_il_signore_dai_cieli_page) + ", '" + appContext.getResources().getString(R.string.lodate_il_signore_dai_cieli_title) + "', '"
                 + appContext.getResources().getString(R.string.lodate_il_signore_dai_cieli_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.lodate_il_signore_dai_cieli_link) + "', "
@@ -483,7 +483,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (52, 43, '" + appContext.getResources().getString(R.string.lodate_iddio_title) + "', '"
+        sql += "VALUES (52, " + appContext.getResources().getString(R.string.lodate_iddio_page) + ", '" + appContext.getResources().getString(R.string.lodate_iddio_title) + "', '"
                 + appContext.getResources().getString(R.string.lodate_iddio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.lodate_iddio_link) + "', "
@@ -491,7 +491,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (53, 44, '" + appContext.getResources().getString(R.string.signore_e_mia_luce_title) + "', '"
+        sql += "VALUES (53, " + appContext.getResources().getString(R.string.signore_e_mia_luce_page) + ", '" + appContext.getResources().getString(R.string.signore_e_mia_luce_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_e_mia_luce_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.signore_e_mia_luce_link) + "', "
@@ -499,7 +499,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (54, 44, '" + appContext.getResources().getString(R.string.evenu_shalom_title) + "', '"
+        sql += "VALUES (54, " + appContext.getResources().getString(R.string.evenu_shalom_page) + ", '" + appContext.getResources().getString(R.string.evenu_shalom_title) + "', '"
                 + appContext.getResources().getString(R.string.evenu_shalom_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.evenu_shalom_link) + "', "
@@ -507,7 +507,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (55, 45, '" + appContext.getResources().getString(R.string.gia_viene_il_regno_title) + "', '"
+        sql += "VALUES (55, " + appContext.getResources().getString(R.string.gia_viene_il_regno_page) + ", '" + appContext.getResources().getString(R.string.gia_viene_il_regno_title) + "', '"
                 + appContext.getResources().getString(R.string.gia_viene_il_regno_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.gia_viene_il_regno_link) + "', "
@@ -515,28 +515,28 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (56, 45, '" + appContext.getResources().getString(R.string.abba_padre_title) + "', '"
+        sql += "VALUES (56, " + appContext.getResources().getString(R.string.abba_padre_page) + ", '" + appContext.getResources().getString(R.string.abba_padre_title) + "', '"
                 + appContext.getResources().getString(R.string.abba_padre_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.abba_padre_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (57, 46, '" + appContext.getResources().getString(R.string.chi_ci_separera_title) + "', '"
+        sql += "VALUES (57, " + appContext.getResources().getString(R.string.chi_ci_separera_page) + ", '" + appContext.getResources().getString(R.string.chi_ci_separera_title) + "', '"
                 + appContext.getResources().getString(R.string.chi_ci_separera_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.chi_ci_separera_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (58, 47, '" + appContext.getResources().getString(R.string.magnificat_title) + "', '"
+        sql += "VALUES (58, " + appContext.getResources().getString(R.string.magnificat_page) + ", '" + appContext.getResources().getString(R.string.magnificat_title) + "', '"
                 + appContext.getResources().getString(R.string.magnificat_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.magnificat_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (59, 48, '" + appContext.getResources().getString(R.string.innalzero_la_coppa_di_salvezza_title) + "', '"
+        sql += "VALUES (59, " + appContext.getResources().getString(R.string.innalzero_la_coppa_di_salvezza_page) + ", '" + appContext.getResources().getString(R.string.innalzero_la_coppa_di_salvezza_title) + "', '"
                 + appContext.getResources().getString(R.string.innalzero_la_coppa_di_salvezza_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.innalzero_la_coppa_di_salvezza_link) + "', "
@@ -544,7 +544,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (60, 49, '" + appContext.getResources().getString(R.string.quando_il_signore_title) + "', '"
+        sql += "VALUES (60, " + appContext.getResources().getString(R.string.quando_il_signore_page) + ", '" + appContext.getResources().getString(R.string.quando_il_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.quando_il_signore_source)  + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.quando_il_signore_link)  + "', "
@@ -552,7 +552,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (61, 50, '" + appContext.getResources().getString(R.string.cantico_di_zaccaria_title) + "', '"
+        sql += "VALUES (61, " + appContext.getResources().getString(R.string.cantico_di_zaccaria_page) + ", '" + appContext.getResources().getString(R.string.cantico_di_zaccaria_title) + "', '"
                 + appContext.getResources().getString(R.string.cantico_di_zaccaria_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.cantico_di_zaccaria_link) + "', "
@@ -560,7 +560,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (62, 51, '" + appContext.getResources().getString(R.string.o_morte_dove_la_tua_vittoria_title) + "', '"
+        sql += "VALUES (62, " + appContext.getResources().getString(R.string.o_morte_dove_la_tua_vittoria_page) + ", '" + appContext.getResources().getString(R.string.o_morte_dove_la_tua_vittoria_title) + "', '"
                 + appContext.getResources().getString(R.string.o_morte_dove_la_tua_vittoria_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.o_morte_dove_la_tua_vittoria_link) + "', "
@@ -568,21 +568,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (63, 52, '" + appContext.getResources().getString(R.string.o_cieli_piovete_dall_alto_title) + "', '"
+        sql += "VALUES (63, " + appContext.getResources().getString(R.string.o_cieli_piovete_dall_alto_page) + ", '" + appContext.getResources().getString(R.string.o_cieli_piovete_dall_alto_title) + "', '"
                 + appContext.getResources().getString(R.string.o_cieli_piovete_dall_alto_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.o_cieli_piovete_dall_alto_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (64, 53, '" + appContext.getResources().getString(R.string.pentecoste_title) + "', '"
+        sql += "VALUES (64, " + appContext.getResources().getString(R.string.pentecoste_page) + ", '" + appContext.getResources().getString(R.string.pentecoste_title) + "', '"
                 + appContext.getResources().getString(R.string.pentecoste_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.pentecoste_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (65, 54, '" + appContext.getResources().getString(R.string.ecco_qui_vengo_presto_title) + "', '"
+        sql += "VALUES (65, " + appContext.getResources().getString(R.string.ecco_qui_vengo_presto_page) + ", '" + appContext.getResources().getString(R.string.ecco_qui_vengo_presto_title) + "', '"
                 + appContext.getResources().getString(R.string.ecco_qui_vengo_presto_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ecco_qui_vengo_presto_link) + "', "
@@ -590,7 +590,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (66, 54, '" + appContext.getResources().getString(R.string.vieni_figlio_dell_uomo_title) + "', '"
+        sql += "VALUES (66, " + appContext.getResources().getString(R.string.vieni_figlio_dell_uomo_page) + ", '" + appContext.getResources().getString(R.string.vieni_figlio_dell_uomo_title) + "', '"
                 + appContext.getResources().getString(R.string.vieni_figlio_dell_uomo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.vieni_figlio_dell_uomo_link) + "', "
@@ -598,14 +598,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (67, 55, '" + appContext.getResources().getString(R.string.abramo_title) + "', '"
+        sql += "VALUES (67, " + appContext.getResources().getString(R.string.abramo_page) + ", '" + appContext.getResources().getString(R.string.abramo_title) + "', '"
                 + appContext.getResources().getString(R.string.abramo_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.abramo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (68, 56, '" + appContext.getResources().getString(R.string.cantico_di_mose_title) + "', '"
+        sql += "VALUES (68, " + appContext.getResources().getString(R.string.cantico_di_mose_page) + ", '" + appContext.getResources().getString(R.string.cantico_di_mose_title) + "', '"
                 + appContext.getResources().getString(R.string.cantico_di_mose_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.cantico_di_mose_link) + "', "
@@ -613,7 +613,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (69, 57, '" + appContext.getResources().getString(R.string.lodate_il_signore_title) + "', '"
+        sql += "VALUES (69, " + appContext.getResources().getString(R.string.lodate_il_signore_page) + ", '" + appContext.getResources().getString(R.string.lodate_il_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.lodate_il_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.lodate_il_signore_link) + "', "
@@ -621,7 +621,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (70, 58, '" + appContext.getResources().getString(R.string.quando_israele_usci_egitto_title) + "', '"
+        sql += "VALUES (70, " + appContext.getResources().getString(R.string.quando_israele_usci_egitto_page) + ", '" + appContext.getResources().getString(R.string.quando_israele_usci_egitto_title) + "', '"
                 + appContext.getResources().getString(R.string.quando_israele_usci_egitto_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.quando_israele_usci_egitto_link) + "', "
@@ -629,7 +629,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (71, 59, '" + appContext.getResources().getString(R.string.alzate_o_porte_title) + "', '"
+        sql += "VALUES (71, " + appContext.getResources().getString(R.string.alzate_o_porte_page) + ", '" + appContext.getResources().getString(R.string.alzate_o_porte_title) + "', '"
                 + appContext.getResources().getString(R.string.alzate_o_porte_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.alzate_o_porte_link) + "', "
@@ -637,7 +637,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (72, 60, '" + appContext.getResources().getString(R.string.signore_mio_pastore_title) + "', '"
+        sql += "VALUES (72, " + appContext.getResources().getString(R.string.signore_mio_pastore_page)  + ", '" + appContext.getResources().getString(R.string.signore_mio_pastore_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_mio_pastore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.signore_mio_pastore_link) + "', "
@@ -645,7 +645,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (73, 61, '" + appContext.getResources().getString(R.string.giunti_fiumi_babilonia_title) + "', '"
+        sql += "VALUES (73, " + appContext.getResources().getString(R.string.giunti_fiumi_babilonia_page) + ", '" + appContext.getResources().getString(R.string.giunti_fiumi_babilonia_title) + "', '"
                 + appContext.getResources().getString(R.string.giunti_fiumi_babilonia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.giunti_fiumi_babilonia_link) + "', "
@@ -653,7 +653,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (74, 62, '" + appContext.getResources().getString(R.string.pieta_di_me_o_dio_title) + "', '"
+        sql += "VALUES (74, " + appContext.getResources().getString(R.string.pieta_di_me_o_dio_page) + ", '" + appContext.getResources().getString(R.string.pieta_di_me_o_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.pieta_di_me_o_dio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.pieta_di_me_o_dio_link) + "', "
@@ -661,7 +661,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (75, 63, '" + appContext.getResources().getString(R.string.misericordia_dio_misericordia_title) + "', '"
+        sql += "VALUES (75, " + appContext.getResources().getString(R.string.misericordia_dio_misericordia_page) + ", '" + appContext.getResources().getString(R.string.misericordia_dio_misericordia_title) + "', '"
                 + appContext.getResources().getString(R.string.misericordia_dio_misericordia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.misericordia_dio_misericordia_link) + "', "
@@ -669,7 +669,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (76, 64, '" + appContext.getResources().getString(R.string.inno_della_kenosis_title) + "', '"
+        sql += "VALUES (76, " + appContext.getResources().getString(R.string.inno_della_kenosis_page) + ", '" + appContext.getResources().getString(R.string.inno_della_kenosis_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_della_kenosis_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.inno_della_kenosis_link) + "', "
@@ -677,21 +677,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (77, 65, '" + appContext.getResources().getString(R.string.ave_maria_title) + "', '"
+        sql += "VALUES (77, " + appContext.getResources().getString(R.string.ave_maria_page) + ", '" + appContext.getResources().getString(R.string.ave_maria_title) + "', '"
                 + appContext.getResources().getString(R.string.ave_maria_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ave_maria_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (78, 65, '" + appContext.getResources().getString(R.string.ave_maria_1984_title) +"', '"
+        sql += "VALUES (78, " + appContext.getResources().getString(R.string.ave_maria_1984_page) + ", '" + appContext.getResources().getString(R.string.ave_maria_1984_title) +"', '"
                 + appContext.getResources().getString(R.string.ave_maria_1984_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ave_maria_1984_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (79, 66, '" + appContext.getResources().getString(R.string.maria_piccola_maria_title) + "', '"
+        sql += "VALUES (79, " + appContext.getResources().getString(R.string.maria_piccola_maria_page) + ", '" + appContext.getResources().getString(R.string.maria_piccola_maria_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_piccola_maria_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.maria_piccola_maria_link) + "', "
@@ -699,7 +699,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (80, 67, '" + appContext.getResources().getString(R.string.alzo_gli_occhi_title) + "', '"
+        sql += "VALUES (80, " + appContext.getResources().getString(R.string.alzo_gli_occhi_page) + ", '" + appContext.getResources().getString(R.string.alzo_gli_occhi_title) + "', '"
                 + appContext.getResources().getString(R.string.alzo_gli_occhi_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.alzo_gli_occhi_link) + "', "
@@ -707,7 +707,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (81, 67, '" + appContext.getResources().getString(R.string.canto_liberati_title) + "', '"
+        sql += "VALUES (81, " + appContext.getResources().getString(R.string.canto_liberati_page) + ", '" + appContext.getResources().getString(R.string.canto_liberati_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_liberati_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.canto_liberati_link) + "', "
@@ -715,7 +715,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (82, 68, '" + appContext.getResources().getString(R.string.se_oggi_ascoltate_sua_voce_title) + "', '"
+        sql += "VALUES (82, " + appContext.getResources().getString(R.string.se_oggi_ascoltate_sua_voce_page) + ", '" + appContext.getResources().getString(R.string.se_oggi_ascoltate_sua_voce_title) + "', '"
                 + appContext.getResources().getString(R.string.se_oggi_ascoltate_sua_voce_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.se_oggi_ascoltate_sua_voce_link) + "', "
@@ -723,21 +723,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (83, 69, '" + appContext.getResources().getString(R.string.venite_applaudiamo_al_signore_title) + "', '"
+        sql += "VALUES (83, " + appContext.getResources().getString(R.string.venite_applaudiamo_al_signore_page) + ", '" + appContext.getResources().getString(R.string.venite_applaudiamo_al_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.venite_applaudiamo_al_signore_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.venite_applaudiamo_al_signore_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (84, 70, '" + appContext.getResources().getString(R.string.dajenu_title) + "', '"
+        sql += "VALUES (84, " + appContext.getResources().getString(R.string.dajenu_page) + ", '" + appContext.getResources().getString(R.string.dajenu_title) + "', '"
                 + appContext.getResources().getString(R.string.dajenu_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.dajenu_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (85, 71, '" + appContext.getResources().getString(R.string.alla_vittima_pasquale_title) + "', '"
+        sql += "VALUES (85, " + appContext.getResources().getString(R.string.alla_vittima_pasquale_page) + ", '" + appContext.getResources().getString(R.string.alla_vittima_pasquale_title) + "', '"
                 + appContext.getResources().getString(R.string.alla_vittima_pasquale_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.alla_vittima_pasquale_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -745,7 +745,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (86, 71, '" + appContext.getResources().getString(R.string.inno_di_pasqua_title) + "', '"
+        sql += "VALUES (86, " + appContext.getResources().getString(R.string.inno_di_pasqua_page) + ", '" + appContext.getResources().getString(R.string.inno_di_pasqua_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_di_pasqua_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.inno_di_pasqua_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -753,7 +753,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (87, 72, '" + appContext.getResources().getString(R.string.inno_avvento_title) + "', '"
+        sql += "VALUES (87, " + appContext.getResources().getString(R.string.inno_avvento_page) + ", '" + appContext.getResources().getString(R.string.inno_avvento_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_avvento_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.inno_avvento_link) + "', "
@@ -762,7 +762,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (88, 73, '" + appContext.getResources().getString(R.string.uri_uri_ura_title) + "', '"
+        sql += "VALUES (88, " + appContext.getResources().getString(R.string.uri_uri_ura_page) + ", '" + appContext.getResources().getString(R.string.uri_uri_ura_title) + "', '"
                 + appContext.getResources().getString(R.string.uri_uri_ura_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.uri_uri_ura_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -770,7 +770,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (89, 73, '" + appContext.getResources().getString(R.string.gia_viene_il_mio_dio_title) + "', '"
+        sql += "VALUES (89, " + appContext.getResources().getString(R.string.gia_viene_il_mio_dio_page) + ", '" + appContext.getResources().getString(R.string.gia_viene_il_mio_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.gia_viene_il_mio_dio_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.gia_viene_il_mio_dio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -778,14 +778,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "";
         sql += "INSERT INTO ELENCO ";
-        sql += "VALUES (90, 74, '" + appContext.getResources().getString(R.string.amen_amen_amen_title) + "', '"
+        sql += "VALUES (90, " + appContext.getResources().getString(R.string.amen_amen_amen_page) + ", '" + appContext.getResources().getString(R.string.amen_amen_amen_title) + "', '"
                 + appContext.getResources().getString(R.string.amen_amen_amen_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.amen_amen_amen_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (91, 75, '" + appContext.getResources().getString(R.string.se_signore_non_costruisce_title) + "', '"
+        sql += "VALUES (91, " + appContext.getResources().getString(R.string.se_signore_non_costruisce_page) + ", '" + appContext.getResources().getString(R.string.se_signore_non_costruisce_title) + "', '"
                 + appContext.getResources().getString(R.string.se_signore_non_costruisce_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.se_signore_non_costruisce_link) + "', "
@@ -793,14 +793,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (92, 75, '" + appContext.getResources().getString(R.string.gustate_e_vedete_title) + "', '"
+        sql += "VALUES (92, " + appContext.getResources().getString(R.string.gustate_e_vedete_page) + ", '" + appContext.getResources().getString(R.string.gustate_e_vedete_title) + "', '"
                 + appContext.getResources().getString(R.string.gustate_e_vedete_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.gustate_e_vedete_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (93, 76, '" + appContext.getResources().getString(R.string.per_amore_dei_miei_fratelli_title) + "', '"
+        sql += "VALUES (93, " + appContext.getResources().getString(R.string.per_amore_dei_miei_fratelli_page) + ", '" + appContext.getResources().getString(R.string.per_amore_dei_miei_fratelli_title) + "', '"
                 + appContext.getResources().getString(R.string.per_amore_dei_miei_fratelli_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.per_amore_dei_miei_fratelli_link) + "', "
@@ -808,7 +808,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (94, 77, '" + appContext.getResources().getString(R.string.ho_sperato_nel_signore_title) + "', '"
+        sql += "VALUES (94, " + appContext.getResources().getString(R.string.ho_sperato_nel_signore_page) + ", '" + appContext.getResources().getString(R.string.ho_sperato_nel_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.ho_sperato_nel_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ho_sperato_nel_signore_link) + "', "
@@ -816,7 +816,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (95, 78, '" + appContext.getResources().getString(R.string.voglio_cantare_title) + "', '"
+        sql += "VALUES (95, " + appContext.getResources().getString(R.string.voglio_cantare_page) + ", '" + appContext.getResources().getString(R.string.voglio_cantare_title) + "', '"
                 + appContext.getResources().getString(R.string.voglio_cantare_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.voglio_cantare_link) + "', "
@@ -824,7 +824,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (96, 79, '" + appContext.getResources().getString(R.string.perche_genti_congiurano_title) + "', '"
+        sql += "VALUES (96, " + appContext.getResources().getString(R.string.perche_genti_congiurano_page) + ", '" + appContext.getResources().getString(R.string.perche_genti_congiurano_title) + "', '"
                 + appContext.getResources().getString(R.string.perche_genti_congiurano_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.perche_genti_congiurano_link) + "', "
@@ -832,7 +832,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (97, 80, '" + appContext.getResources().getString(R.string.come_una_cerva_anela_title) + "', '"
+        sql += "VALUES (97, " + appContext.getResources().getString(R.string.come_una_cerva_anela_page) + ", '" + appContext.getResources().getString(R.string.come_una_cerva_anela_title) + "', '"
                 + appContext.getResources().getString(R.string.come_una_cerva_anela_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.come_una_cerva_anela_link) + "', "
@@ -840,7 +840,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (98, 81, '" + appContext.getResources().getString(R.string.acclamate_al_signore_title) + "', '"
+        sql += "VALUES (98, " + appContext.getResources().getString(R.string.acclamate_al_signore_page) + ", '" + appContext.getResources().getString(R.string.acclamate_al_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.acclamate_al_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.acclamate_al_signore_link) + "', "
@@ -848,7 +848,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (99, 81, '" + appContext.getResources().getString(R.string.gridate_con_gioia_title) + "', '"
+        sql += "VALUES (99, " + appContext.getResources().getString(R.string.gridate_con_gioia_page) + ", '" + appContext.getResources().getString(R.string.gridate_con_gioia_title) + "', '"
                 + appContext.getResources().getString(R.string.gridate_con_gioia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.gridate_con_gioia_link) + "', "
@@ -856,7 +856,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (100, 82, '" + appContext.getResources().getString(R.string.al_risveglio_mi_saziero_title) + "', '"
+        sql += "VALUES (100, " + appContext.getResources().getString(R.string.al_risveglio_mi_saziero_page) + ", '" + appContext.getResources().getString(R.string.al_risveglio_mi_saziero_title) + "', '"
                 + appContext.getResources().getString(R.string.al_risveglio_mi_saziero_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.al_risveglio_mi_saziero_link) + "', "
@@ -864,14 +864,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (101, 83, '" + appContext.getResources().getString(R.string.canto_bambini_veglia_title) + "', '"
+        sql += "VALUES (101, " + appContext.getResources().getString(R.string.canto_bambini_veglia_page) +  ", '" + appContext.getResources().getString(R.string.canto_bambini_veglia_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_bambini_veglia_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.canto_bambini_veglia_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (102, 84, '" + appContext.getResources().getString(R.string.non_moriro_title) + "', '"
+        sql += "VALUES (102, " + appContext.getResources().getString(R.string.non_moriro_page) + ", '" + appContext.getResources().getString(R.string.non_moriro_title) + "', '"
                 + appContext.getResources().getString(R.string.non_moriro_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.non_moriro_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -884,7 +884,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (104, 86, '" + appContext.getResources().getString(R.string.dite_agli_smarriti_title) + "', '"
+        sql += "VALUES (104, " + appContext.getResources().getString(R.string.dite_agli_smarriti_page) + ", '" + appContext.getResources().getString(R.string.dite_agli_smarriti_title) + "', '"
                 + appContext.getResources().getString(R.string.dite_agli_smarriti_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.dite_agli_smarriti_link) + "', "
@@ -892,7 +892,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (105, 87, '" + appContext.getResources().getString(R.string.o_dio_tu_sei_il_mio_dio_title) + "', '"
+        sql += "VALUES (105, " + appContext.getResources().getString(R.string.o_dio_tu_sei_il_mio_dio_page) + ", '" + appContext.getResources().getString(R.string.o_dio_tu_sei_il_mio_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.o_dio_tu_sei_il_mio_dio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.o_dio_tu_sei_il_mio_dio_link) + "', "
@@ -900,7 +900,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (106, 87, '" + appContext.getResources().getString(R.string.sale_dio_tra_acclamazioni_title) + "', '"
+        sql += "VALUES (106, " + appContext.getResources().getString(R.string.sale_dio_tra_acclamazioni_page) + ", '" + appContext.getResources().getString(R.string.sale_dio_tra_acclamazioni_title) + "', '"
                 + appContext.getResources().getString(R.string.sale_dio_tra_acclamazioni_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.sale_dio_tra_acclamazioni_link) + "', "
@@ -908,7 +908,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (107, 88, '" + appContext.getResources().getString(R.string.popolo_camminava_tenebre_title) + "', '"
+        sql += "VALUES (107, " + appContext.getResources().getString(R.string.popolo_camminava_tenebre_page)  + ", '" + appContext.getResources().getString(R.string.popolo_camminava_tenebre_title) + "', '"
                 + appContext.getResources().getString(R.string.popolo_camminava_tenebre_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.popolo_camminava_tenebre_link) + "', "
@@ -916,7 +916,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (108, 88, '" + appContext.getResources().getString(R.string.da_lode_al_signore_title) + "', '"
+        sql += "VALUES (108, " + appContext.getResources().getString(R.string.da_lode_al_signore_page) + ", '" + appContext.getResources().getString(R.string.da_lode_al_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.da_lode_al_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.da_lode_al_signore_link) + "', "
@@ -924,7 +924,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (109, 89, '" + appContext.getResources().getString(R.string.canto_di_balaam_title) + "', '"
+        sql += "VALUES (109, " + appContext.getResources().getString(R.string.canto_di_balaam_page) + ", '" + appContext.getResources().getString(R.string.canto_di_balaam_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_di_balaam_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.canto_di_balaam_link) + "', "
@@ -932,7 +932,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (110, 90, '" + appContext.getResources().getString(R.string.davanti_agli_angeli_title) + "', '"
+        sql += "VALUES (110, " + appContext.getResources().getString(R.string.davanti_agli_angeli_page) + ", '" + appContext.getResources().getString(R.string.davanti_agli_angeli_title) + "', '"
                 + appContext.getResources().getString(R.string.davanti_agli_angeli_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.davanti_agli_angeli_link) + "', "
@@ -940,21 +940,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (111, 91, '" + appContext.getResources().getString(R.string.quando_israele_era_un_bimbo_title) + "', '"
+        sql += "VALUES (111, " + appContext.getResources().getString(R.string.quando_israele_era_un_bimbo_page) + ", '" + appContext.getResources().getString(R.string.quando_israele_era_un_bimbo_title) + "', '"
                 + appContext.getResources().getString(R.string.quando_israele_era_un_bimbo_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.quando_israele_era_un_bimbo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (112, 91, '" + appContext.getResources().getString(R.string.e_la_pasqua_del_signore_title) + "', '"
+        sql += "VALUES (112, " + appContext.getResources().getString(R.string.e_la_pasqua_del_signore_page) + ", '" + appContext.getResources().getString(R.string.e_la_pasqua_del_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.e_la_pasqua_del_signore_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.e_la_pasqua_del_signore_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (113, 92, '" + appContext.getResources().getString(R.string.tempo_ogni_cosa_title) + "', '"
+        sql += "VALUES (113, " + appContext.getResources().getString(R.string.tempo_ogni_cosa_page) + ", '" + appContext.getResources().getString(R.string.tempo_ogni_cosa_title) + "', '"
                 + appContext.getResources().getString(R.string.tempo_ogni_cosa_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.tempo_ogni_cosa_link) + "', "
@@ -969,7 +969,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (114, 93, '" + appContext.getResources().getString(R.string.benedici_anima_mia_title)
+        sql += "VALUES (114, " + appContext.getResources().getString(R.string.benedici_anima_mia_page) + ", '" + appContext.getResources().getString(R.string.benedici_anima_mia_title)
                 + "', '" + appContext.getResources().getString(R.string.benedici_anima_mia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.benedici_anima_mia_link) + "', "
@@ -977,7 +977,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (115, 94, '" + appContext.getResources().getString(R.string.quanto_sono_amabili_dimore_title) + "', '"
+        sql += "VALUES (115, " + appContext.getResources().getString(R.string.quanto_sono_amabili_dimore_page) + ", '" + appContext.getResources().getString(R.string.quanto_sono_amabili_dimore_title) + "', '"
                 + appContext.getResources().getString(R.string.quanto_sono_amabili_dimore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.quanto_sono_amabili_dimore_link) + "', "
@@ -985,21 +985,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (116, 95, '" + appContext.getResources().getString(R.string.viene_il_signore_vestito_di_maesta_title) + "', '"
+        sql += "VALUES (116, " + appContext.getResources().getString(R.string.viene_il_signore_vestito_di_maesta_page)  + ", '" + appContext.getResources().getString(R.string.viene_il_signore_vestito_di_maesta_title) + "', '"
                 + appContext.getResources().getString(R.string.viene_il_signore_vestito_di_maesta_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.viene_il_signore_vestito_di_maesta_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (117, 95, '" + appContext.getResources().getString(R.string.giorno_di_riposo_title) + "', '"
+        sql += "VALUES (117, " + appContext.getResources().getString(R.string.giorno_di_riposo_page) + ", '" + appContext.getResources().getString(R.string.giorno_di_riposo_title) + "', '"
                 + appContext.getResources().getString(R.string.giorno_di_riposo_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.giorno_di_riposo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (118, 96, '" + appContext.getResources().getString(R.string.consolate_il_mio_popolo_title) + "', '"
+        sql += "VALUES (118, " + appContext.getResources().getString(R.string.consolate_il_mio_popolo_page) + ", '" + appContext.getResources().getString(R.string.consolate_il_mio_popolo_title) + "', '"
                 + appContext.getResources().getString(R.string.consolate_il_mio_popolo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.consolate_il_mio_popolo_link) + "', "
@@ -1007,14 +1007,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (119, 97, '" + appContext.getResources().getString(R.string.cerano_due_angeli_title) + "', '"
+        sql += "VALUES (119, " + appContext.getResources().getString(R.string.cerano_due_angeli_page) + ", '" + appContext.getResources().getString(R.string.cerano_due_angeli_title) + "', '"
                 + appContext.getResources().getString(R.string.cerano_due_angeli_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.cerano_due_angeli_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (120, 98, '" + appContext.getResources().getString(R.string.amo_il_signore_title) + "', '"
+        sql += "VALUES (120, " + appContext.getResources().getString(R.string.amo_il_signore_page) + ", '" + appContext.getResources().getString(R.string.amo_il_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.amo_il_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.amo_il_signore_link) + "', "
@@ -1022,7 +1022,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (121, 99, '" + appContext.getResources().getString(R.string.venite_a_me_voi_tutti_title) + "', '"
+        sql += "VALUES (121, " + appContext.getResources().getString(R.string.venite_a_me_voi_tutti_page) + ", '" + appContext.getResources().getString(R.string.venite_a_me_voi_tutti_title) + "', '"
                 + appContext.getResources().getString(R.string.venite_a_me_voi_tutti_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.venite_a_me_voi_tutti_link) + "', "
@@ -1030,7 +1030,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (122, 100, '" + appContext.getResources().getString(R.string.a_te_si_deve_lode_in_sion_title) + "', '"
+        sql += "VALUES (122, " + appContext.getResources().getString(R.string.a_te_si_deve_lode_in_sion_page) + ", '" + appContext.getResources().getString(R.string.a_te_si_deve_lode_in_sion_title) + "', '"
                 + appContext.getResources().getString(R.string.a_te_si_deve_lode_in_sion_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.a_te_si_deve_lode_in_sion_link) + "', "
@@ -1038,7 +1038,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (123, 101, '" + appContext.getResources().getString(R.string.se_signore_sono_rifugiato_title) + "', '"
+        sql += "VALUES (123, " + appContext.getResources().getString(R.string.se_signore_sono_rifugiato_page) + ", '" + appContext.getResources().getString(R.string.se_signore_sono_rifugiato_title) + "', '"
                 + appContext.getResources().getString(R.string.se_signore_sono_rifugiato_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.se_signore_sono_rifugiato_link) + "', "
@@ -1046,7 +1046,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (124, 102, '" + appContext.getResources().getString(R.string.signore_annuncia_una_notizia_title) + "', '"
+        sql += "VALUES (124, " + appContext.getResources().getString(R.string.signore_annuncia_una_notizia_page) + ", '" + appContext.getResources().getString(R.string.signore_annuncia_una_notizia_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_annuncia_una_notizia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.signore_annuncia_una_notizia_link) + "', "
@@ -1054,7 +1054,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (125, 103, '" + appContext.getResources().getString(R.string.benedite_il_signore_title) + "', '"
+        sql += "VALUES (125, " + appContext.getResources().getString(R.string.benedite_il_signore_page) + ", '" + appContext.getResources().getString(R.string.benedite_il_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.benedite_il_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.benedite_il_signore_link) + "', "
@@ -1062,7 +1062,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (126, 104, '" + appContext.getResources().getString(R.string.figlie_di_gerusalemme_title) + "', '"
+        sql += "VALUES (126, " + appContext.getResources().getString(R.string.figlie_di_gerusalemme_page) + ", '" + appContext.getResources().getString(R.string.figlie_di_gerusalemme_title) + "', '"
                 + appContext.getResources().getString(R.string.figlie_di_gerusalemme_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.figlie_di_gerusalemme_link) + "', "
@@ -1070,7 +1070,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (127, 105, '" + appContext.getResources().getString(R.string.ti_ho_manifestato_mio_peccato_title) + "', '"
+        sql += "VALUES (127, " + appContext.getResources().getString(R.string.ti_ho_manifestato_mio_peccato_page) + ", '" + appContext.getResources().getString(R.string.ti_ho_manifestato_mio_peccato_title) + "', '"
                 + appContext.getResources().getString(R.string.ti_ho_manifestato_mio_peccato_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ti_ho_manifestato_mio_peccato_link) + "', "
@@ -1078,7 +1078,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (128, 106, '" + appContext.getResources().getString(R.string.maria_madre_della_chiesa_title) + "', '"
+        sql += "VALUES (128, " + appContext.getResources().getString(R.string.maria_madre_della_chiesa_page) + ", '" + appContext.getResources().getString(R.string.maria_madre_della_chiesa_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_madre_della_chiesa_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.maria_madre_della_chiesa_link) + "', "
@@ -1086,21 +1086,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (129, 107, '" + appContext.getResources().getString(R.string.stabat_mater_title) + "', '"
+        sql += "VALUES (129, " + appContext.getResources().getString(R.string.stabat_mater_page) + ", '" + appContext.getResources().getString(R.string.stabat_mater_title) + "', '"
                 + appContext.getResources().getString(R.string.stabat_mater_source) + "', 0, '" + BIANCO
                 + "', 'h" + appContext.getResources().getString(R.string.stabat_mater_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (130, 108, '" + appContext.getResources().getString(R.string.lamenti_del_signore_title) + "', '"
+        sql += "VALUES (130, " + appContext.getResources().getString(R.string.lamenti_del_signore_page) + ", '" + appContext.getResources().getString(R.string.lamenti_del_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.lamenti_del_signore_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.lamenti_del_signore_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (131, 109, '" + appContext.getResources().getString(R.string.o_signore_nostro_dio_title) + "', '"
+        sql += "VALUES (131, " + appContext.getResources().getString(R.string.o_signore_nostro_dio_page) + ", '" + appContext.getResources().getString(R.string.o_signore_nostro_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.o_signore_nostro_dio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.o_signore_nostro_dio_link) + "', "
@@ -1108,7 +1108,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (132, 110, '" + appContext.getResources().getString(R.string.benedetta_sei_tu_maria_title) + "', '"
+        sql += "VALUES (132, " + appContext.getResources().getString(R.string.benedetta_sei_tu_maria_page) + ", '" + appContext.getResources().getString(R.string.benedetta_sei_tu_maria_title) + "', '"
                 + appContext.getResources().getString(R.string.benedetta_sei_tu_maria_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.benedetta_sei_tu_maria_link) + "', "
@@ -1116,7 +1116,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (133, 110, '" + appContext.getResources().getString(R.string.salve_regina_dei_cieli_title) + "', '"
+        sql += "VALUES (133, " + appContext.getResources().getString(R.string.salve_regina_dei_cieli_page) + ", '" + appContext.getResources().getString(R.string.salve_regina_dei_cieli_title) + "', '"
                 + appContext.getResources().getString(R.string.salve_regina_dei_cieli_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.salve_regina_dei_cieli_link) + "', "
@@ -1124,7 +1124,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (134, 111, '" + appContext.getResources().getString(R.string.vergine_della_meraviglia_title) + "', '"
+        sql += "VALUES (134, " + appContext.getResources().getString(R.string.vergine_della_meraviglia_page) + ", '" + appContext.getResources().getString(R.string.vergine_della_meraviglia_title) + "', '"
                 + appContext.getResources().getString(R.string.vergine_della_meraviglia_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.vergine_della_meraviglia_link) + "', "
@@ -1132,7 +1132,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (135, 112, '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_title) + "', '"
+        sql += "VALUES (135, " + appContext.getResources().getString(R.string.maria_casa_di_benedizione_page) + ", '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_casa_di_benedizione_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_source) + "', "
@@ -1140,7 +1140,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (136, 113, '" + appContext.getResources().getString(R.string.benediro_il_signore_in_ogni_tempo_title) + "', '"
+        sql += "VALUES (136, " + appContext.getResources().getString(R.string.benediro_il_signore_in_ogni_tempo_page) + ", '" + appContext.getResources().getString(R.string.benediro_il_signore_in_ogni_tempo_title) + "', '"
                 + appContext.getResources().getString(R.string.benediro_il_signore_in_ogni_tempo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.benediro_il_signore_in_ogni_tempo_link) + "', "
@@ -1148,7 +1148,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (137, 114, '" + appContext.getResources().getString(R.string.mietitura_delle_nazioni_title) + "', '"
+        sql += "VALUES (137, " + appContext.getResources().getString(R.string.mietitura_delle_nazioni_page) + ", '" + appContext.getResources().getString(R.string.mietitura_delle_nazioni_title) + "', '"
                 + appContext.getResources().getString(R.string.mietitura_delle_nazioni_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.mietitura_delle_nazioni_link) + "', "
@@ -1156,7 +1156,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (138, 115, '" + appContext.getResources().getString(R.string.dice_il_signore_al_mio_signore_title) + "', '"
+        sql += "VALUES (138, " + appContext.getResources().getString(R.string.dice_il_signore_al_mio_signore_page) + ", '" + appContext.getResources().getString(R.string.dice_il_signore_al_mio_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.dice_il_signore_al_mio_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.dice_il_signore_al_mio_signore_link) + "', "
@@ -1164,7 +1164,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (139, 116, '" + appContext.getResources().getString(R.string.felice_uomo_title) + "', '"
+        sql += "VALUES (139, " + appContext.getResources().getString(R.string.felice_uomo_page) + ", '" + appContext.getResources().getString(R.string.felice_uomo_title) + "', '"
                 + appContext.getResources().getString(R.string.felice_uomo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.felice_uomo_link) + "', "
@@ -1172,7 +1172,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (141, 117, '" + appContext.getResources().getString(R.string.tu_sei_il_piu_bello_title) + "', '"
+        sql += "VALUES (141, " + appContext.getResources().getString(R.string.tu_sei_il_piu_bello_page) + ", '" + appContext.getResources().getString(R.string.tu_sei_il_piu_bello_title) + "', '"
                 + appContext.getResources().getString(R.string.tu_sei_il_piu_bello_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.tu_sei_il_piu_bello_link) + "', "
@@ -1180,7 +1180,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (142, 118, '" + appContext.getResources().getString(R.string.felicita_per_l_uomo_title) + "', '"
+        sql += "VALUES (142, " + appContext.getResources().getString(R.string.felicita_per_l_uomo_page) + ", '" + appContext.getResources().getString(R.string.felicita_per_l_uomo_title) + "', '"
                 + appContext.getResources().getString(R.string.felicita_per_l_uomo_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.felicita_per_l_uomo_link) + "', "
@@ -1188,14 +1188,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (143, 119, '" + appContext.getResources().getString(R.string.sorga_dio_title) + "', '"
+        sql += "VALUES (143, " + appContext.getResources().getString(R.string.sorga_dio_page) + ", '" + appContext.getResources().getString(R.string.sorga_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.sorga_dio_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.sorga_dio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (144, 120, '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_title) + "', '"
+        sql += "VALUES (144, " + appContext.getResources().getString(R.string.andiamo_gia_pastori_page) + ", '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_title) + "', '"
                 + appContext.getResources().getString(R.string.andiamo_gia_pastori_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.andiamo_gia_pastori_link) + "', "
@@ -1203,7 +1203,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (145, 121, '" + appContext.getResources().getString(R.string.maria_di_jasna_gora_title) + "', '"
+        sql += "VALUES (145, " + appContext.getResources().getString(R.string.maria_di_jasna_gora_page) + ", '" + appContext.getResources().getString(R.string.maria_di_jasna_gora_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_di_jasna_gora_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.maria_di_jasna_gora_link) + "', "
@@ -1211,7 +1211,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (146, 122, '" + appContext.getResources().getString(R.string.a_te_signore_con_la_mia_voce_title) + "', '"
+        sql += "VALUES (146, " + appContext.getResources().getString(R.string.a_te_signore_con_la_mia_voce_page) + ", '" + appContext.getResources().getString(R.string.a_te_signore_con_la_mia_voce_title) + "', '"
                 + appContext.getResources().getString(R.string.a_te_signore_con_la_mia_voce_source) +  "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.a_te_signore_con_la_mia_voce_link) + "', "
@@ -1219,7 +1219,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (147, 123, '" + appContext.getResources().getString(R.string.un_germoglio_spunta_tronco_title) + "', '"
+        sql += "VALUES (147, " + appContext.getResources().getString(R.string.un_germoglio_spunta_tronco_page) + ", '" + appContext.getResources().getString(R.string.un_germoglio_spunta_tronco_title) + "', '"
                 + appContext.getResources().getString(R.string.un_germoglio_spunta_tronco_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.un_germoglio_spunta_tronco_link) + "', "
@@ -1227,7 +1227,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (148, 124, '" + appContext.getResources().getString(R.string.a_te_signore_innalzo_la_mia_anima_title) + "', '"
+        sql += "VALUES (148, " + appContext.getResources().getString(R.string.a_te_signore_innalzo_la_mia_anima_page) + ", '" + appContext.getResources().getString(R.string.a_te_signore_innalzo_la_mia_anima_title) + "', '"
                 + appContext.getResources().getString(R.string.a_te_signore_innalzo_la_mia_anima_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.a_te_signore_innalzo_la_mia_anima_link) + "', "
@@ -1235,7 +1235,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (149, 125, '" + appContext.getResources().getString(R.string.ti_sto_chiamando_title) + "', '"
+        sql += "VALUES (149, " + appContext.getResources().getString(R.string.ti_sto_chiamando_page) + ", '" + appContext.getResources().getString(R.string.ti_sto_chiamando_title) + "', '"
                 + appContext.getResources().getString(R.string.ti_sto_chiamando_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.ti_sto_chiamando_link) + "', "
@@ -1243,7 +1243,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (150, 126, '" + appContext.getResources().getString(R.string.a_te_levo_i_miei_occhi_title) + "', '"
+        sql += "VALUES (150, " + appContext.getResources().getString(R.string.a_te_levo_i_miei_occhi_page) + ", '" + appContext.getResources().getString(R.string.a_te_levo_i_miei_occhi_title) + "', '"
                 + appContext.getResources().getString(R.string.a_te_levo_i_miei_occhi_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.a_te_levo_i_miei_occhi_link) + "', "
@@ -1251,7 +1251,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (151, 127, '" + appContext.getResources().getString(R.string.signore_non_punirmi_nel_tuo_sdegno_title) + "', '"
+        sql += "VALUES (151, " + appContext.getResources().getString(R.string.signore_non_punirmi_nel_tuo_sdegno_page) + ", '" + appContext.getResources().getString(R.string.signore_non_punirmi_nel_tuo_sdegno_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_non_punirmi_nel_tuo_sdegno_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.signore_non_punirmi_nel_tuo_sdegno_link) + "', "
@@ -1259,7 +1259,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (152, 128, '" + appContext.getResources().getString(R.string.gloria_gloria_gloria_title) + "', '"
+        sql += "VALUES (152, " + appContext.getResources().getString(R.string.gloria_gloria_gloria_page) + ", '" + appContext.getResources().getString(R.string.gloria_gloria_gloria_title) + "', '"
                 + appContext.getResources().getString(R.string.gloria_gloria_gloria_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.gloria_gloria_gloria_link) + "', "
@@ -1267,7 +1267,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (153, 129, '" + appContext.getResources().getString(R.string.esultate_giusti_nel_signore_title) + "', '"
+        sql += "VALUES (153, " + appContext.getResources().getString(R.string.esultate_giusti_nel_signore_page) + ", '" + appContext.getResources().getString(R.string.esultate_giusti_nel_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.esultate_giusti_nel_signore_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.esultate_giusti_nel_signore_link) + "', "
@@ -1275,7 +1275,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (154, 130, '" + appContext.getResources().getString(R.string.molto_mi_hanno_perseguitato_title) + "', '"
+        sql += "VALUES (154, " + appContext.getResources().getString(R.string.molto_mi_hanno_perseguitato_page) + ", '" + appContext.getResources().getString(R.string.molto_mi_hanno_perseguitato_title) + "', '"
                 + appContext.getResources().getString(R.string.molto_mi_hanno_perseguitato_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.molto_mi_hanno_perseguitato_link) + "', "
@@ -1283,14 +1283,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (155, 131, '" + appContext.getResources().getString(R.string.ti_amo_signore_title) + "', '"
+        sql += "VALUES (155, " + appContext.getResources().getString(R.string.ti_amo_signore_page)  + ", '" + appContext.getResources().getString(R.string.ti_amo_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.ti_amo_signore_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.ti_amo_signore_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (156, 132, '" + appContext.getResources().getString(R.string.maria_madre_cammino_ardente_title) + "', '"
+        sql += "VALUES (156, " + appContext.getResources().getString(R.string.maria_madre_cammino_ardente_page) + ", '" + appContext.getResources().getString(R.string.maria_madre_cammino_ardente_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_madre_cammino_ardente_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.maria_madre_cammino_ardente_link) + "', "
@@ -1298,14 +1298,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (157, 133, '" + appContext.getResources().getString(R.string.shlom_lech_mariam_title) + "', '"
+        sql += "VALUES (157, " + appContext.getResources().getString(R.string.shlom_lech_mariam_page) + ", '" + appContext.getResources().getString(R.string.shlom_lech_mariam_title) + "', '"
                 + appContext.getResources().getString(R.string.shlom_lech_mariam_source) + "', 0, '" + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.shlom_lech_mariam_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (158, 134, '" + appContext.getResources().getString(R.string.andate_ed_annunziate_title) + "', '"
+        sql += "VALUES (158, " + appContext.getResources().getString(R.string.andate_ed_annunziate_page) + ", '" + appContext.getResources().getString(R.string.andate_ed_annunziate_title) + "', '"
                 + appContext.getResources().getString(R.string.andate_ed_annunziate_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.andate_ed_annunziate_link) + "', "
@@ -1313,7 +1313,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (159, 135, '" + appContext.getResources().getString(R.string.mi_indicherai_sentiero_vita_title) + "', '"
+        sql += "VALUES (159, " + appContext.getResources().getString(R.string.mi_indicherai_sentiero_vita_page) + ", '" + appContext.getResources().getString(R.string.mi_indicherai_sentiero_vita_title) + "', '"
                 + appContext.getResources().getString(R.string.mi_indicherai_sentiero_vita_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.mi_indicherai_sentiero_vita_link) + "', "
@@ -1321,7 +1321,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (160, 136, '" + appContext.getResources().getString(R.string.o_dio_per_il_tuo_nome_title) + "', '"
+        sql += "VALUES (160, " + appContext.getResources().getString(R.string.o_dio_per_il_tuo_nome_page) + ", '" + appContext.getResources().getString(R.string.o_dio_per_il_tuo_nome_title) + "', '"
                 + appContext.getResources().getString(R.string.o_dio_per_il_tuo_nome_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.o_dio_per_il_tuo_nome_link) + "', "
@@ -1329,7 +1329,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (161, 137, '" + appContext.getResources().getString(R.string.stolto_pensa_che_non_ce_dio_title) + "', '"
+        sql += "VALUES (161, " + appContext.getResources().getString(R.string.stolto_pensa_che_non_ce_dio_page) + ", '" + appContext.getResources().getString(R.string.stolto_pensa_che_non_ce_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.stolto_pensa_che_non_ce_dio_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.stolto_pensa_che_non_ce_dio_link) + "', "
@@ -1337,7 +1337,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (162, 138, '" + appContext.getResources().getString(R.string.signore_ascolta_mia_preghiera_title) + "', '"
+        sql += "VALUES (162, " + appContext.getResources().getString(R.string.signore_ascolta_mia_preghiera_page) + ", '" + appContext.getResources().getString(R.string.signore_ascolta_mia_preghiera_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_ascolta_mia_preghiera_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.signore_ascolta_mia_preghiera_link) + "', "
@@ -1345,7 +1345,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (163, 139, '" + appContext.getResources().getString(R.string.non_e_qui_e_risorto_title) + "', '"
+        sql += "VALUES (163, " + appContext.getResources().getString(R.string.non_e_qui_e_risorto_page) + ", '" + appContext.getResources().getString(R.string.non_e_qui_e_risorto_title) + "', '"
                 + appContext.getResources().getString(R.string.non_e_qui_e_risorto_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.non_e_qui_e_risorto_link) + "', "
@@ -1353,7 +1353,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (164, 140, '" + appContext.getResources().getString(R.string.vi_prendero_dalle_genti_title) + "', '"
+        sql += "VALUES (164, " + appContext.getResources().getString(R.string.vi_prendero_dalle_genti_page) + ", '" + appContext.getResources().getString(R.string.vi_prendero_dalle_genti_title) + "', '"
                 + appContext.getResources().getString(R.string.vi_prendero_dalle_genti_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.vi_prendero_dalle_genti_link) + "', "
@@ -1361,21 +1361,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (165, 141, '" + appContext.getResources().getString(R.string.voi_siete_la_luce_del_mondo_title) + "', '"
+        sql += "VALUES (165, " + appContext.getResources().getString(R.string.voi_siete_la_luce_del_mondo_page) + ", '" + appContext.getResources().getString(R.string.voi_siete_la_luce_del_mondo_title) + "', '"
                 + appContext.getResources().getString(R.string.voi_siete_la_luce_del_mondo_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.voi_siete_la_luce_del_mondo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (166, 142, '" + appContext.getResources().getString(R.string.sola_a_solo_title) + "', '"
+        sql += "VALUES (166, " + appContext.getResources().getString(R.string.sola_a_solo_page) + ", '" + appContext.getResources().getString(R.string.sola_a_solo_title) + "', '"
                 + appContext.getResources().getString(R.string.sola_a_solo_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.sola_a_solo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (167, 143, '" + appContext.getResources().getString(R.string.in_mezzo_grande_folla_title) + "', '"
+        sql += "VALUES (167, " + appContext.getResources().getString(R.string.in_mezzo_grande_folla_page) + ", '" + appContext.getResources().getString(R.string.in_mezzo_grande_folla_title) + "', '"
                 + appContext.getResources().getString(R.string.in_mezzo_grande_folla_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.in_mezzo_grande_folla_link) + "', "
@@ -1383,14 +1383,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (168, 144, '" + appContext.getResources().getString(R.string.zaccheo_title) + "', '"
+        sql += "VALUES (168, " + appContext.getResources().getString(R.string.zaccheo_page)  + ", '" + appContext.getResources().getString(R.string.zaccheo_title) + "', '"
                 + appContext.getResources().getString(R.string.zaccheo_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.zaccheo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (169, 201, '" + appContext.getResources().getString(R.string.siedi_solitario_silenzioso_title) + "', '"
+        sql += "VALUES (169, " + appContext.getResources().getString(R.string.siedi_solitario_silenzioso_page) + ", '" + appContext.getResources().getString(R.string.siedi_solitario_silenzioso_title) + "', '"
                 + appContext.getResources().getString(R.string.siedi_solitario_silenzioso_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.siedi_solitario_silenzioso_link) + "', "
@@ -1398,7 +1398,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (170, 202, '" + appContext.getResources().getString(R.string.cosi_parla_amen_title) + "', '"
+        sql += "VALUES (170, " + appContext.getResources().getString(R.string.cosi_parla_amen_page) + ", '" + appContext.getResources().getString(R.string.cosi_parla_amen_title) + "', '"
                 + appContext.getResources().getString(R.string.cosi_parla_amen_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.cosi_parla_amen_link) + "', "
@@ -1406,28 +1406,28 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (171, 203, '" + appContext.getResources().getString(R.string.ti_vedranno_i_re_title) + "', '"
+        sql += "VALUES (171, " + appContext.getResources().getString(R.string.ti_vedranno_i_re_page) + ", '" + appContext.getResources().getString(R.string.ti_vedranno_i_re_title) + "', '"
                 + appContext.getResources().getString(R.string.ti_vedranno_i_re_source) + "', 0, '"
                 + VERDE + "', '" + appContext.getResources().getString(R.string.ti_vedranno_i_re_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (172, 204, '" + appContext.getResources().getString(R.string.giacobbe_title) + "', '"
+        sql += "VALUES (172, " + appContext.getResources().getString(R.string.giacobbe_page) + ", '" + appContext.getResources().getString(R.string.giacobbe_title) + "', '"
                 + appContext.getResources().getString(R.string.giacobbe_source) + "', 0, '"
                 + VERDE + "', '" + appContext.getResources().getString(R.string.giacobbe_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (173, 205, '" + appContext.getResources().getString(R.string.debora_title) + "', '"
+        sql += "VALUES (173, " + appContext.getResources().getString(R.string.debora_page) + ", '" + appContext.getResources().getString(R.string.debora_title) + "', '"
                 + appContext.getResources().getString(R.string.debora_source) + "', 0, '" + VERDE
                 + "', '" + appContext.getResources().getString(R.string.debora_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (174, 206, '" + appContext.getResources().getString(R.string.vedo_cieli_aperti_title) + "', '"
+        sql += "VALUES (174, " + appContext.getResources().getString(R.string.vedo_cieli_aperti_page) + ", '" + appContext.getResources().getString(R.string.vedo_cieli_aperti_title) + "', '"
                 + appContext.getResources().getString(R.string.vedo_cieli_aperti_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.vedo_cieli_aperti_link) + "', "
@@ -1435,7 +1435,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (175, 207, '" + appContext.getResources().getString(R.string.il_signore_mi_ha_dato_title) + "', '"
+        sql += "VALUES (175, " + appContext.getResources().getString(R.string.il_signore_mi_ha_dato_page) + ", '" + appContext.getResources().getString(R.string.il_signore_mi_ha_dato_title) + "', '"
                 + appContext.getResources().getString(R.string.il_signore_mi_ha_dato_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.il_signore_mi_ha_dato_link) + "', "
@@ -1443,7 +1443,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (176, 208, '" + appContext.getResources().getString(R.string.pigiatore_title) + "', '"
+        sql += "VALUES (176, " + appContext.getResources().getString(R.string.pigiatore_page) + ", '" + appContext.getResources().getString(R.string.pigiatore_title) + "', '"
                 + appContext.getResources().getString(R.string.pigiatore_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.pigiatore_link) + "', "
@@ -1451,7 +1451,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (177, 209, '" + appContext.getResources().getString(R.string.seminatore_title) + "', '"
+        sql += "VALUES (177, " + appContext.getResources().getString(R.string.seminatore_page) + ", '" + appContext.getResources().getString(R.string.seminatore_title) + "', '"
                 + appContext.getResources().getString(R.string.seminatore_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.seminatore_link) + "', "
@@ -1459,7 +1459,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (178, 210, '" + appContext.getResources().getString(R.string.spirito_del_signore_sopra_di_me_title) + "', '"
+        sql += "VALUES (178, " + appContext.getResources().getString(R.string.spirito_del_signore_sopra_di_me_page) + ", '" + appContext.getResources().getString(R.string.spirito_del_signore_sopra_di_me_title) + "', '"
                 + appContext.getResources().getString(R.string.spirito_del_signore_sopra_di_me_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.spirito_del_signore_sopra_di_me_link) + "', "
@@ -1467,7 +1467,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (179, 210, '" + appContext.getResources().getString(R.string.ecco_lo_specchio_nostro_title) + "', '"
+        sql += "VALUES (179, " + appContext.getResources().getString(R.string.ecco_lo_specchio_nostro_page) + ", '" + appContext.getResources().getString(R.string.ecco_lo_specchio_nostro_title) + "', '"
                 + appContext.getResources().getString(R.string.ecco_lo_specchio_nostro_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.ecco_lo_specchio_nostro_link) + "', "
@@ -1475,7 +1475,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (180, 211, '" + appContext.getResources().getString(R.string.come_slancio_ira_title) + "', '"
+        sql += "VALUES (180, " + appContext.getResources().getString(R.string.come_slancio_ira_page) + ", '" + appContext.getResources().getString(R.string.come_slancio_ira_title) + "', '"
                 + appContext.getResources().getString(R.string.come_slancio_ira_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.come_slancio_ira_link) + "', "
@@ -1483,7 +1483,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (181, 212, '" + appContext.getResources().getString(R.string.benedetto_sia_iddio_title) + "', '"
+        sql += "VALUES (181, " + appContext.getResources().getString(R.string.benedetto_sia_iddio_page) + ", '" + appContext.getResources().getString(R.string.benedetto_sia_iddio_title) + "', '"
                 + appContext.getResources().getString(R.string.benedetto_sia_iddio_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.benedetto_sia_iddio_link) + "', "
@@ -1491,7 +1491,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (182, 213, '" + appContext.getResources().getString(R.string.signore_tu_scruti_conosci_title) + "', '"
+        sql += "VALUES (182, " + appContext.getResources().getString(R.string.signore_tu_scruti_conosci_page) + ", '" + appContext.getResources().getString(R.string.signore_tu_scruti_conosci_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_tu_scruti_conosci_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.signore_tu_scruti_conosci_link) + "', "
@@ -1499,7 +1499,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (183, 214, '" + appContext.getResources().getString(R.string.eli_eli_lamma_sabactani_title) + "', '"
+        sql += "VALUES (183, " + appContext.getResources().getString(R.string.eli_eli_lamma_sabactani_page) + ", '" + appContext.getResources().getString(R.string.eli_eli_lamma_sabactani_title) + "', '"
                 + appContext.getResources().getString(R.string.eli_eli_lamma_sabactani_source) + "', 0, '"
                 + VERDE + "', '" + appContext.getResources().getString(R.string.eli_eli_lamma_sabactani_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
@@ -1512,7 +1512,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 //		db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (185, 216, '" + appContext.getResources().getString(R.string.nessuno_puo_servire_due_padroni_title) + "', '"
+        sql += "VALUES (185, " + appContext.getResources().getString(R.string.nessuno_puo_servire_due_padroni_page) + ", '" + appContext.getResources().getString(R.string.nessuno_puo_servire_due_padroni_title) + "', '"
                 + appContext.getResources().getString(R.string.nessuno_puo_servire_due_padroni_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.nessuno_puo_servire_due_padroni_link) + "', "
@@ -1520,7 +1520,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (186, 217, '" + appContext.getResources().getString(R.string.signore_mio_cuore_pretese_title) + "', '"
+        sql += "VALUES (186, " + appContext.getResources().getString(R.string.signore_mio_cuore_pretese_page) + ", '" + appContext.getResources().getString(R.string.signore_mio_cuore_pretese_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_mio_cuore_pretese_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.signore_mio_cuore_pretese_link) + "', "
@@ -1528,7 +1528,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (187, 217, '" + appContext.getResources().getString(R.string.voglio_andare_a_gerusalemme_title) + "', '"
+        sql += "VALUES (187, " + appContext.getResources().getString(R.string.voglio_andare_a_gerusalemme_page) + ", '" + appContext.getResources().getString(R.string.voglio_andare_a_gerusalemme_title) + "', '"
                 + appContext.getResources().getString(R.string.voglio_andare_a_gerusalemme_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.voglio_andare_a_gerusalemme_link) + "', "
@@ -1536,14 +1536,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (188, 218, '" + appContext.getResources().getString(R.string.shema_israel_title) + "', '"
+        sql += "VALUES (188, " + appContext.getResources().getString(R.string.shema_israel_page) + ", '" + appContext.getResources().getString(R.string.shema_israel_title) + "', '"
                 + appContext.getResources().getString(R.string.shema_israel_source) + "', 0, '"
                 + VERDE + "', '" + appContext.getResources().getString(R.string.shema_israel_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (189, 219, '" + appContext.getResources().getString(R.string.inno_croce_gloriosa_title) + "', '"
+        sql += "VALUES (189, " + appContext.getResources().getString(R.string.inno_croce_gloriosa_page) + ", '" + appContext.getResources().getString(R.string.inno_croce_gloriosa_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_croce_gloriosa_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.inno_croce_gloriosa_link) + "', "
@@ -1551,7 +1551,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (190, 220, '" + appContext.getResources().getString(R.string.rivestitevi_dell_armatura_title) + "', '"
+        sql += "VALUES (190, " + appContext.getResources().getString(R.string.rivestitevi_dell_armatura_page) + ", '" + appContext.getResources().getString(R.string.rivestitevi_dell_armatura_title) + "', '"
                 + appContext.getResources().getString(R.string.rivestitevi_dell_armatura_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.rivestitevi_dell_armatura_link) + "', "
@@ -1559,7 +1559,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (191, 221, '" + appContext.getResources().getString(R.string.sue_fondamenta_title) + "', '"
+        sql += "VALUES (191, " + appContext.getResources().getString(R.string.sue_fondamenta_page) + ", '" + appContext.getResources().getString(R.string.sue_fondamenta_title) + "', '"
                 + appContext.getResources().getString(R.string.sue_fondamenta_source) + "', 0, '"
                 + VERDE
                 + "', '" + appContext.getResources().getString(R.string.sue_fondamenta_link) + "', "
@@ -1567,14 +1567,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (192, 222, '" + appContext.getResources().getString(R.string.akeda_title) + "', '"
+        sql += "VALUES (192, " + appContext.getResources().getString(R.string.akeda_page) + ", '" + appContext.getResources().getString(R.string.akeda_title) + "', '"
                 + appContext.getResources().getString(R.string.akeda_source) + "', 0, '" + VERDE
                 + "', '" + appContext.getResources().getString(R.string.akeda_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (193, 261, '" + appContext.getResources().getString(R.string.non_ti_adirare_title) + "', '"
+        sql += "VALUES (193, " + appContext.getResources().getString(R.string.non_ti_adirare_page) + ", '" + appContext.getResources().getString(R.string.non_ti_adirare_title) + "', '"
                 + appContext.getResources().getString(R.string.non_ti_adirare_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.non_ti_adirare_link) + "', "
@@ -1582,7 +1582,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (194, 262, '" + appContext.getResources().getString(R.string.inno_alla_carita_title) + "', '"
+        sql += "VALUES (194, " + appContext.getResources().getString(R.string.inno_alla_carita_page) + ", '" + appContext.getResources().getString(R.string.inno_alla_carita_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_alla_carita_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.inno_alla_carita_link) + "', "
@@ -1590,7 +1590,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (195, 263, '" + appContext.getResources().getString(R.string.stesso_iddio_title) + "', '"
+        sql += "VALUES (195, " + appContext.getResources().getString(R.string.stesso_iddio_page) + ", '" + appContext.getResources().getString(R.string.stesso_iddio_title) + "', '"
                 + appContext.getResources().getString(R.string.stesso_iddio_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.stesso_iddio_link) + "', "
@@ -1598,7 +1598,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (196, 264, '" + appContext.getResources().getString(R.string.come_condannati_a_morte_title) + "', '"
+        sql += "VALUES (196, " + appContext.getResources().getString(R.string.come_condannati_a_morte_page) + ", '" + appContext.getResources().getString(R.string.come_condannati_a_morte_title) + "', '"
                 + appContext.getResources().getString(R.string.come_condannati_a_morte_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.come_condannati_a_morte_link) + "', "
@@ -1606,7 +1606,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (197, 265, '" + appContext.getResources().getString(R.string.gesu_percorreva_title) + "', '"
+        sql += "VALUES (197, " + appContext.getResources().getString(R.string.gesu_percorreva_page) + ", '" + appContext.getResources().getString(R.string.gesu_percorreva_title) + "', '"
                 + appContext.getResources().getString(R.string.gesu_percorreva_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.gesu_percorreva_link) + "', "
@@ -1614,7 +1614,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (198, 266, '" + appContext.getResources().getString(R.string.non_resistete_al_male_title) + "', '"
+        sql += "VALUES (198, " + appContext.getResources().getString(R.string.non_resistete_al_male_page) + ", '" + appContext.getResources().getString(R.string.non_resistete_al_male_title) + "', '"
                 + appContext.getResources().getString(R.string.non_resistete_al_male_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.non_resistete_al_male_link) + "', "
@@ -1622,7 +1622,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (199, 267, '" + appContext.getResources().getString(R.string.che_mi_baci_title) + "', '"
+        sql += "VALUES (199, " + appContext.getResources().getString(R.string.che_mi_baci_page) + ", '" + appContext.getResources().getString(R.string.che_mi_baci_title) + "', '"
                 + appContext.getResources().getString(R.string.che_mi_baci_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.che_mi_baci_link) + "', "
@@ -1630,7 +1630,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (200, 268, '" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_title) + "', '"
+        sql += "VALUES (200, " + appContext.getResources().getString(R.string.mia_diletta_e_per_me_page) + ", '" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_title) + "', '"
                 + appContext.getResources().getString(R.string.mia_diletta_e_per_me_source) + "', 0, '"
                 + AZZURRO
                 + "', 'h" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_link) + "', "
@@ -1638,7 +1638,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (201, 269, '" + appContext.getResources().getString(R.string.vieni_dal_libano_title) + "', '"
+        sql += "VALUES (201, " + appContext.getResources().getString(R.string.vieni_dal_libano_page) + ", '" + appContext.getResources().getString(R.string.vieni_dal_libano_title) + "', '"
                 + appContext.getResources().getString(R.string.vieni_dal_libano_source)+ "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.vieni_dal_libano_link) + "', "
@@ -1646,7 +1646,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (202, 270, '" + appContext.getResources().getString(R.string.quando_dormivo_title) + "', '"
+        sql += "VALUES (202, " + appContext.getResources().getString(R.string.quando_dormivo_page) + ", '" + appContext.getResources().getString(R.string.quando_dormivo_title) + "', '"
                 + appContext.getResources().getString(R.string.quando_dormivo_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.quando_dormivo_link) + "', "
@@ -1654,7 +1654,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (203, 271, '" + appContext.getResources().getString(R.string.tu_che_abiti_nei_giardini_title) + "', '"
+        sql += "VALUES (203, " + appContext.getResources().getString(R.string.tu_che_abiti_nei_giardini_page) + ", '" + appContext.getResources().getString(R.string.tu_che_abiti_nei_giardini_title) + "', '"
                 + appContext.getResources().getString(R.string.tu_che_abiti_nei_giardini_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.tu_che_abiti_nei_giardini_link) + "', "
@@ -1662,14 +1662,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (204, 272, '" + appContext.getResources().getString(R.string.agnella_di_dio_title) + "', '"
+        sql += "VALUES (204, " + appContext.getResources().getString(R.string.agnella_di_dio_page) + ", '" + appContext.getResources().getString(R.string.agnella_di_dio_title) + "', '"
                 + appContext.getResources().getString(R.string.agnella_di_dio_source) + "', 0, '" + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.agnella_di_dio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (205, 273, '" + appContext.getResources().getString(R.string.non_ce_in_lui_bellezza_title) + "', '"
+        sql += "VALUES (205, " + appContext.getResources().getString(R.string.non_ce_in_lui_bellezza_page) + ", '" + appContext.getResources().getString(R.string.non_ce_in_lui_bellezza_title) + "', '"
                 + appContext.getResources().getString(R.string.non_ce_in_lui_bellezza_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.non_ce_in_lui_bellezza_link) + "', "
@@ -1677,7 +1677,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (206, 274, '" + appContext.getResources().getString(R.string.canto_dell_agnello_title) + "', '"
+        sql += "VALUES (206, " + appContext.getResources().getString(R.string.canto_dell_agnello_page) + ", '" + appContext.getResources().getString(R.string.canto_dell_agnello_title) + "', '"
                 + appContext.getResources().getString(R.string.canto_dell_agnello_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.canto_dell_agnello_link) + "', "
@@ -1685,14 +1685,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (207, 275, '" + appContext.getResources().getString(R.string.chi_e_colei_title) + "', '"
+        sql += "VALUES (207, " + appContext.getResources().getString(R.string.chi_e_colei_page) + ", '" + appContext.getResources().getString(R.string.chi_e_colei_title) + "', '"
                 + appContext.getResources().getString(R.string.chi_e_colei_source) + "', 0, '"
                 + AZZURRO + "', '" + appContext.getResources().getString(R.string.chi_e_colei_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (208, 276, '" + appContext.getResources().getString(R.string.voce_del_mio_amato_title) + "', '"
+        sql += "VALUES (208, " + appContext.getResources().getString(R.string.voce_del_mio_amato_page) + ", '" + appContext.getResources().getString(R.string.voce_del_mio_amato_title) + "', '"
                 + appContext.getResources().getString(R.string.voce_del_mio_amato_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.voce_del_mio_amato_link) + "', "
@@ -1700,7 +1700,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (209, 277, '" + appContext.getResources().getString(R.string.colomba_volo_title) + "', '"
+        sql += "VALUES (209, " + appContext.getResources().getString(R.string.colomba_volo_page) + ", '" + appContext.getResources().getString(R.string.colomba_volo_title) + "', '"
                 + appContext.getResources().getString(R.string.colomba_volo_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.colomba_volo_link) + "', "
@@ -1708,7 +1708,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (210, 278, '" + appContext.getResources().getString(R.string.come_stilla_il_miele_title) + "', '"
+        sql += "VALUES (210, " + appContext.getResources().getString(R.string.come_stilla_il_miele_page) + ", '" + appContext.getResources().getString(R.string.come_stilla_il_miele_title) + "', '"
                 + appContext.getResources().getString(R.string.come_stilla_il_miele_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.come_stilla_il_miele_link) + "', "
@@ -1716,21 +1716,21 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (211, 279, '" + appContext.getResources().getString(R.string.o_gesu_amore_mio_title) + "', '"
+        sql += "VALUES (211, " + appContext.getResources().getString(R.string.o_gesu_amore_mio_page) + ", '" + appContext.getResources().getString(R.string.o_gesu_amore_mio_title) + "', '"
                 + appContext.getResources().getString(R.string.o_gesu_amore_mio_source) + "', 0, '" + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.o_gesu_amore_mio_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (212, 280, '" + appContext.getResources().getString(R.string.portami_in_cielo_title) + "', '"
+        sql += "VALUES (212, " + appContext.getResources().getString(R.string.portami_in_cielo_page) + ", '" + appContext.getResources().getString(R.string.portami_in_cielo_title) + "', '"
                 + appContext.getResources().getString(R.string.portami_in_cielo_source) + "', 0, '" + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.portami_in_cielo_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (213, 281, '" + appContext.getResources().getString(R.string.tu_sei_mia_speranza_signore_title) + "', '"
+        sql += "VALUES (213, " + appContext.getResources().getString(R.string.tu_sei_mia_speranza_signore_page) + ", '" + appContext.getResources().getString(R.string.tu_sei_mia_speranza_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.tu_sei_mia_speranza_signore_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.tu_sei_mia_speranza_signore_link) + "', "
@@ -1738,7 +1738,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (214, 282, '" + appContext.getResources().getString(R.string.una_donna_vestita_di_sole_title) + "', '"
+        sql += "VALUES (214, " + appContext.getResources().getString(R.string.una_donna_vestita_di_sole_page) + ", '" + appContext.getResources().getString(R.string.una_donna_vestita_di_sole_title) + "', '"
                 + appContext.getResources().getString(R.string.una_donna_vestita_di_sole_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.una_donna_vestita_di_sole_link) + "', "
@@ -1746,7 +1746,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (215, 283, '" + appContext.getResources().getString(R.string.ho_steso_le_mani_title) + "', '"
+        sql += "VALUES (215, " + appContext.getResources().getString(R.string.ho_steso_le_mani_page) + ", '" + appContext.getResources().getString(R.string.ho_steso_le_mani_title) + "', '"
                 + appContext.getResources().getString(R.string.ho_steso_le_mani_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.ho_steso_le_mani_link) + "', "
@@ -1754,7 +1754,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (216, 284, '" + appContext.getResources().getString(R.string.omelia_pasquale_melitone_sardi_title) + "', '"
+        sql += "VALUES (216, " + appContext.getResources().getString(R.string.omelia_pasquale_melitone_sardi_page) + ", '" + appContext.getResources().getString(R.string.omelia_pasquale_melitone_sardi_title) + "', '"
                 + appContext.getResources().getString(R.string.omelia_pasquale_melitone_sardi_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.omelia_pasquale_melitone_sardi_link) + "', "
@@ -1762,14 +1762,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (217, 285, '" + appContext.getResources().getString(R.string.carmen_63_title) + "', '"
+        sql += "VALUES (217, " + appContext.getResources().getString(R.string.carmen_63_page) + ", '" + appContext.getResources().getString(R.string.carmen_63_title) + "', '"
                 + appContext.getResources().getString(R.string.carmen_63_source) + "', 0, '"
                 + AZZURRO + "', '" + appContext.getResources().getString(R.string.carmen_63_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (218, 286, '" + appContext.getResources().getString(R.string.caritas_christi_title) + "', '"
+        sql += "VALUES (218, " + appContext.getResources().getString(R.string.caritas_christi_page) + ", '" + appContext.getResources().getString(R.string.caritas_christi_title) + "', '"
                 + appContext.getResources().getString(R.string.caritas_christi_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.caritas_christi_link) + "', "
@@ -1777,7 +1777,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (219, 287, '" + appContext.getResources().getString(R.string.noli_me_tangere_title) + "', '"
+        sql += "VALUES (219, " + appContext.getResources().getString(R.string.noli_me_tangere_page) + ", '" + appContext.getResources().getString(R.string.noli_me_tangere_title) + "', '"
                 + appContext.getResources().getString(R.string.noli_me_tangere_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.noli_me_tangere_link) + "', "
@@ -1785,7 +1785,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (220, 288, '" + appContext.getResources().getString(R.string.signore_aiutami_signore_title) + "', '"
+        sql += "VALUES (220, " + appContext.getResources().getString(R.string.signore_aiutami_signore_page) + ", '" + appContext.getResources().getString(R.string.signore_aiutami_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.signore_aiutami_signore_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.signore_aiutami_signore_link) + "', "
@@ -1793,7 +1793,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (221, 289, '" + appContext.getResources().getString(R.string.mi_hai_sedotto_signore_title) + "', '"
+        sql += "VALUES (221, " + appContext.getResources().getString(R.string.mi_hai_sedotto_signore_page) + ", '" + appContext.getResources().getString(R.string.mi_hai_sedotto_signore_title) + "', '"
                 + appContext.getResources().getString(R.string.mi_hai_sedotto_signore_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.mi_hai_sedotto_signore_link) + "', "
@@ -1801,7 +1801,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (222, 291, '" + appContext.getResources().getString(R.string.amate_i_vostri_nemici_title) + "', '"
+        sql += "VALUES (222, " + appContext.getResources().getString(R.string.amate_i_vostri_nemici_page) + ", '" + appContext.getResources().getString(R.string.amate_i_vostri_nemici_title) + "', '"
                 + appContext.getResources().getString(R.string.amate_i_vostri_nemici_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.amate_i_vostri_nemici_link) + "', "
@@ -1809,7 +1809,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (223, 292, '" + appContext.getResources().getString(R.string.tu_sei_bella_amica_mia_title) + "', '"
+        sql += "VALUES (223, " + appContext.getResources().getString(R.string.tu_sei_bella_amica_mia_page) + ", '" + appContext.getResources().getString(R.string.tu_sei_bella_amica_mia_title) + "', '"
                 + appContext.getResources().getString(R.string.tu_sei_bella_amica_mia_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.tu_sei_bella_amica_mia_link) + "', "
@@ -1817,7 +1817,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (224, 293, '" + appContext.getResources().getString(R.string.fratelli_non_diamo_a_nessuno_title) + "', '"
+        sql += "VALUES (224, " + appContext.getResources().getString(R.string.fratelli_non_diamo_a_nessuno_page) + ", '" + appContext.getResources().getString(R.string.fratelli_non_diamo_a_nessuno_title) + "', '"
                 + appContext.getResources().getString(R.string.fratelli_non_diamo_a_nessuno_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.fratelli_non_diamo_a_nessuno_link) + "', "
@@ -1825,7 +1825,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (225, 294, '" + appContext.getResources().getString(R.string.questo_e_io_mio_comandamento_title) + "', '"
+        sql += "VALUES (225, " + appContext.getResources().getString(R.string.questo_e_io_mio_comandamento_page) + ", '" + appContext.getResources().getString(R.string.questo_e_io_mio_comandamento_title) + "', '"
                 + appContext.getResources().getString(R.string.questo_e_io_mio_comandamento_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.questo_e_io_mio_comandamento_link) + "', "
@@ -1833,7 +1833,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (226, 295, '" + appContext.getResources().getString(R.string.mi_rubasti_cuore_title) + "', '"
+        sql += "VALUES (226, " + appContext.getResources().getString(R.string.mi_rubasti_cuore_page) + ", '" + appContext.getResources().getString(R.string.mi_rubasti_cuore_title) + "', '"
                 + appContext.getResources().getString(R.string.mi_rubasti_cuore_source)+  "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.mi_rubasti_cuore_link) + "', "
@@ -1841,7 +1841,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (227, 290, '" + appContext.getResources().getString(R.string.in_una_notte_oscura_title) + "', '"
+        sql += "VALUES (227, " + appContext.getResources().getString(R.string.in_una_notte_oscura_page) + ", '" + appContext.getResources().getString(R.string.in_una_notte_oscura_title) + "', '"
                 + appContext.getResources().getString(R.string.in_una_notte_oscura_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.in_una_notte_oscura_link) + "', "
@@ -1849,7 +1849,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (228, 297, '" + appContext.getResources().getString(R.string.se_siete_risorti_title) + "', '"
+        sql += "VALUES (228, " + appContext.getResources().getString(R.string.se_siete_risorti_page) + ", '" + appContext.getResources().getString(R.string.se_siete_risorti_title) + "', '"
                 + appContext.getResources().getString(R.string.se_siete_risorti_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.se_siete_risorti_link) + "', "
@@ -1857,7 +1857,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (229, 296, '" + appContext.getResources().getString(R.string.una_gran_senal_title) + "', '"
+        sql += "VALUES (229, " + appContext.getResources().getString(R.string.una_gran_senal_page) + ", '" + appContext.getResources().getString(R.string.una_gran_senal_title) + "', '"
                 + appContext.getResources().getString(R.string.una_gran_senal_source) + "', 0, '"
                 + AZZURRO
                 + "', '" + appContext.getResources().getString(R.string.una_gran_senal_link) + "', "
@@ -1865,7 +1865,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (230, 146, '" + appContext.getResources().getString(R.string.resurrexit_title) + "', '"
+        sql += "VALUES (230, " + appContext.getResources().getString(R.string.resurrexit_page) + ", '" + appContext.getResources().getString(R.string.resurrexit_title) + "', '"
                 + appContext.getResources().getString(R.string.resurrexit_source) + "', 0, '"
                 + BIANCO
                 + "', '" + appContext.getResources().getString(R.string.resurrexit_link) + "', "
@@ -1873,7 +1873,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (231, 298, '" + appContext.getResources().getString(R.string.ecco_il_mio_servo_title) + "', '"
+        sql += "VALUES (231, " + appContext.getResources().getString(R.string.ecco_il_mio_servo_page) + ", '" + appContext.getResources().getString(R.string.ecco_il_mio_servo_title) + "', '"
                 + appContext.getResources().getString(R.string.ecco_il_mio_servo_source) + "', 0, '"
                 + GRIGIO
                 + "', '" + appContext.getResources().getString(R.string.ecco_il_mio_servo_link) + "', "
@@ -1881,14 +1881,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (232, 145, '" + appContext.getResources().getString(R.string.ave_maria_colomba_title) + "', '"
+        sql += "VALUES (232, " + appContext.getResources().getString(R.string.ave_maria_colomba_page) + ", '" + appContext.getResources().getString(R.string.ave_maria_colomba_title) + "', '"
                 + appContext.getResources().getString(R.string.ave_maria_colomba_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.ave_maria_colomba_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
         sql = "INSERT INTO ELENCO ";
-        sql += "VALUES (233, 147, '" + appContext.getResources().getString(R.string.messia_leone_vincere_title) + "', '"
+        sql += "VALUES (233, " + appContext.getResources().getString(R.string.messia_leone_vincere_page) + ", '" + appContext.getResources().getString(R.string.messia_leone_vincere_title) + "', '"
                 + appContext.getResources().getString(R.string.messia_leone_vincere_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.messia_leone_vincere_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";

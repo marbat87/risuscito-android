@@ -287,8 +287,8 @@ public class ListaPersonalizzataFragment extends Fragment {
 	}
     
     private String getTitlesList() {
-    	
-    	Locale l = Locale.getDefault();
+
+        Locale l = getActivity().getResources().getConfiguration().locale;
     	String result = "";
     	
     	//titolo
@@ -302,7 +302,7 @@ public class ListaPersonalizzataFragment extends Fragment {
     					+ " - PAG." + Integer.valueOf(listaPersonalizzata.
     								getCantoPosizione(i).substring(0,3));
     		else
-    			result += ">> da scegliere <<";
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
     		if (i < listaPersonalizzata.getNumPosizioni() - 1)
     			result += "\n";
     	}   	

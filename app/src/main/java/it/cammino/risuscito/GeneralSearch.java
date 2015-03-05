@@ -67,7 +67,7 @@ public class GeneralSearch extends Fragment {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
+            Locale l = getActivity().getResources().getConfiguration().locale;
 			switch (position) {
 			case 0:
 				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)

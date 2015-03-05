@@ -559,12 +559,12 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private String getTitlesList() {
 
-        Locale l = Locale.getDefault();
+        Locale l = getActivity().getResources().getConfiguration().locale;
         String result = "";
         String[] temp;
 
         //titolo
-        result +=  "-- CELEBRAZIONE DELL\'EUCARESTIA --\n";
+        result +=  "-- " + getString(R.string.title_activity_canti_eucarestia).toUpperCase(l) + " --\n";
 
         //canto iniziale
         temp = getTitoloToSendFromPosition(1);
@@ -573,7 +573,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result += "\n";
 
         if (temp[0] == null || temp[0].equalsIgnoreCase(""))
-            result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
         else
             result += temp[0];
 
@@ -591,7 +591,7 @@ public class CantiEucarestiaFragment extends Fragment {
             result += "\n";
 
             if (temp[0] == null || temp[0].equalsIgnoreCase(""))
-                result += ">> da scegliere <<";
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
             else
                 result += temp[0];
 
@@ -607,7 +607,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result += "\n";
 
         if (temp[0] == null || temp[0].equalsIgnoreCase(""))
-            result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
         else
             result += temp[0];
 
@@ -624,7 +624,7 @@ public class CantiEucarestiaFragment extends Fragment {
             result += "\n";
 
             if (temp[0] == null || temp[0].equalsIgnoreCase(""))
-                result += ">> da scegliere <<";
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
             else
                 result += temp[0];
 
@@ -640,7 +640,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result += "\n";
 
         if (temp[0] == null || temp[0].equalsIgnoreCase("")) {
-            result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
             result += "\n";
         }
         else {
@@ -661,7 +661,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result += "\n";
 
         if (temp[0] == null || temp[0].equalsIgnoreCase("")) {
-            result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
             result += "\n";
         }
         else {
@@ -682,7 +682,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result += "\n";
 
         if (temp[0] == null || temp[0].equalsIgnoreCase(""))
-            result += ">> da scegliere <<";
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
         else
             result += temp[0];
 

@@ -30,7 +30,7 @@
         risuscito:paper_color="@color/theme_primary"
         risuscito:paper_text_color="@android:color/white"
         risuscito:paper_font="fonts/Roboto-Medium.ttf"
-        android:layout_width="88dip"
+        android:layout_width="@dimen/paper_button_width"
         risuscito:paper_text_size="@dimen/text_size_paper_button"
         android:layout_margin="@dimen/min_button_margin"
         android:layout_gravity="end"

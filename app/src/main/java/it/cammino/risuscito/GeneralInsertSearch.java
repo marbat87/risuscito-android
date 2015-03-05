@@ -137,7 +137,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
+            Locale l = getResources().getConfiguration().locale;
 			switch (position) {
 			case 0:
 				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
