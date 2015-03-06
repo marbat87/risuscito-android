@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +23,7 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ColorChooserDialog;
 
 public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
-    
+
     private DrawerLayout mDrawerLayout;
     private Toolbar mActionBarToolbar;
 
@@ -31,12 +32,12 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
     // views that correspond to each navdrawer item, null if not yet created
     private View[] mNavDrawerItemViews = null;
-    
+
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
 //    private ThemeUtils mThemeUtils;
-    
+
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
     protected static final int NAVDRAWER_ITEM_INDEXES = 2;
@@ -47,7 +48,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final int NAVDRAWER_ITEM_DONATE = 7;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
-    
+
     // titles for navdrawer items (indices must correspond to the above)
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
             R.string.activity_homepage,
@@ -75,7 +76,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     private static final int TALBLET_DP = 600;
     private static final int WIDTH_320 = 320;
     private static final int WIDTH_400 = 400;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
@@ -84,6 +85,17 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //        mThemeUtils = new ThemeUtils(this);
 //        setTheme(getThemeUtils().getCurrent(true));
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getBooleanExtra(Utility.DB_RESET, false)) {
+            DatabaseCanti listaCanti = new DatabaseCanti(this);
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
+            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
+            String sql = "DROP TABLE IF EXISTS LISTE_PERS";
+            db.execSQL(sql);
+            listaCanti.reCreateDatabse(db);
+            listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+        }
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
@@ -98,17 +110,17 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //        }
 
         setupNavDrawer();
-        
+
         if (findViewById(R.id.content_frame) != null) {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
-            	setSelectedNavDrawerItem(savedInstanceState.getInt(SELECTED_ITEM));
+                setSelectedNavDrawerItem(savedInstanceState.getInt(SELECTED_ITEM));
                 return;
             }
-            
+
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(NAVDRAWER_ITEM_HOMEPAGE)).commit();
             setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
         }
@@ -120,13 +132,13 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //    	super.onResume();
 //    	checkScreenAwake();
 //    }
-    
-	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {		
-		savedInstanceState.putInt(SELECTED_ITEM, selectedItem);
-		super.onSaveInstanceState(savedInstanceState);
-	}
-    
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(SELECTED_ITEM, selectedItem);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     /**
      * Returns the navigation drawer item that corresponds to this Activity. Subclasses
      * of BaseActivity override this to indicate what nav drawer item corresponds to them
@@ -135,7 +147,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected int getSelfNavDrawerItem() {
         return NAVDRAWER_ITEM_INVALID;
     }
-    
+
     /**
      * Sets up the navigation drawer as appropriate. Note that the nav drawer will be
      * different depending on whether the attendee indicated that they are attending the
@@ -182,7 +194,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
 
     }
-    
+
     /** Populates the navigation drawer with the appropriate items. */
     private void populateNavDrawer() {
 //        boolean attendeeAtVenue = PrefUtils.isAttendeeAtVenue(this);
@@ -197,10 +209,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
         mNavDrawerItems.add(NAVDRAWER_ITEM_DONATE);
-        
+
         createNavDrawerItems();
     }
-    
+
     private void createNavDrawerItems() {
         ViewGroup mDrawerItemsListContainer = (ViewGroup) findViewById(R.id.navdrawer_items_list);
         if (mDrawerItemsListContainer == null) {
@@ -216,7 +228,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             ++i;
         }
     }
-    
+
     private View makeNavDrawerItem(final int itemId, ViewGroup container) {
         boolean selected = getSelfNavDrawerItem() == itemId;
         int layoutToInflate;
@@ -290,59 +302,59 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 getThemeUtils().primaryColor() :
                 getResources().getColor(R.color.navdrawer_icon_tint));
     }
-        
+
     private void onNavDrawerItemClicked(final int itemId) {
         if (itemId == getSelfNavDrawerItem()) {
             mDrawerLayout.closeDrawer(Gravity.START);
             return;
         }
-        	
+
         goToNavDrawerItem(itemId);
         setSelectedNavDrawerItem(itemId);
 
 //        mDrawerLayout.closeDrawer(Gravity.START);
     }
-    
+
     private void goToNavDrawerItem(int item) {
-    	
-    	Fragment fragment;
-        
+
+        Fragment fragment;
+
         switch (item) {
-		case NAVDRAWER_ITEM_HOMEPAGE:
-			fragment = new Risuscito();
-			break;
-		case NAVDRAWER_ITEM_SEARCH:
-			fragment = new GeneralSearch();
-			break;
-		case NAVDRAWER_ITEM_INDEXES:
-			fragment = new GeneralIndex();
-            break;
-		case NAVDRAWER_ITEM_LISTS:
-        	fragment = new CustomLists();
-        	break;
-		case NAVDRAWER_ITEM_FAVORITES:
-        	fragment = new FavouritesActivity();
-        	break;
-		case NAVDRAWER_ITEM_SETTINGS:
-        	fragment = new PreferencesFragment();
-        	break;
-		case NAVDRAWER_ITEM_ABOUT:
-        	fragment = new AboutActivity();
-        	break;
-		case NAVDRAWER_ITEM_DONATE:
-        	fragment = new DonateActivity();
-        	break;
-		default:
-        	fragment = new Risuscito();
-        	break;
-    	}
-        
+            case NAVDRAWER_ITEM_HOMEPAGE:
+                fragment = new Risuscito();
+                break;
+            case NAVDRAWER_ITEM_SEARCH:
+                fragment = new GeneralSearch();
+                break;
+            case NAVDRAWER_ITEM_INDEXES:
+                fragment = new GeneralIndex();
+                break;
+            case NAVDRAWER_ITEM_LISTS:
+                fragment = new CustomLists();
+                break;
+            case NAVDRAWER_ITEM_FAVORITES:
+                fragment = new FavouritesActivity();
+                break;
+            case NAVDRAWER_ITEM_SETTINGS:
+                fragment = new PreferencesFragment();
+                break;
+            case NAVDRAWER_ITEM_ABOUT:
+                fragment = new AboutActivity();
+                break;
+            case NAVDRAWER_ITEM_DONATE:
+                fragment = new DonateActivity();
+                break;
+            default:
+                fragment = new Risuscito();
+                break;
+        }
+
         //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-    	Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item));
-    	if (myFragment == null || !myFragment.isVisible()) {
-    		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    		transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-    		transaction.replace(R.id.content_frame, fragment, String.valueOf(item)).commit();
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item));
+        if (myFragment == null || !myFragment.isVisible()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+            transaction.replace(R.id.content_frame, fragment, String.valueOf(item)).commit();
 
             android.os.Handler mHandler = new android.os.Handler();
             mHandler.postDelayed(new Runnable() {
@@ -351,15 +363,15 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                     mDrawerLayout.closeDrawer(Gravity.START);
                 }
             }, 250);
-    	}
+        }
     }
-    
+
     /**
      * Sets up the given navdrawer item's appearance to the selected state. Note: this could
      * also be accomplished (perhaps more cleanly) with state-based layouts.
      */
     private void setSelectedNavDrawerItem(int itemId) {
-    	selectedItem = itemId;
+        selectedItem = itemId;
         if (mNavDrawerItemViews != null) {
             for (int i = 0; i < mNavDrawerItemViews.length; i++) {
                 if (i < mNavDrawerItems.size()) {
@@ -404,22 +416,22 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-        	Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(NAVDRAWER_ITEM_HOMEPAGE));
-        	if (myFragment != null && myFragment.isVisible()) {
-        		finish();
-        	}
-        	else {        		        		
+            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(NAVDRAWER_ITEM_HOMEPAGE));
+            if (myFragment != null && myFragment.isVisible()) {
+                finish();
+            }
+            else {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
                 transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(NAVDRAWER_ITEM_HOMEPAGE)).commit();
-                
+
                 setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
-        	}
-        	return true;
+            }
+            return true;
         }
         return super.onKeyUp(keyCode, event);
     }
-    
+
     //controlla se l'app deve mantenere lo schermo acceso
 //    public void checkScreenAwake() {
 //    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
@@ -429,7 +441,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //		else
 //			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //    }
-    
+
 //    public int getStatusBarHeight() {
 //    	  int result = 0;
 //    	  int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -447,12 +459,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         else if (title == R.string.accent_color)
             getThemeUtils().accentColor(color);
 
-        if (android.os.Build.VERSION.SDK_INT >= 11)
-        {
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
             recreate();
         }
-        else
-        {
+        else {
             Intent i = getBaseContext().getPackageManager()
                     .getLaunchIntentForPackage( getBaseContext().getPackageName() );
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -463,5 +473,5 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //    public ThemeUtils getThemeUtils() {
 //        return mThemeUtils;
 //    }
-    
+
 }

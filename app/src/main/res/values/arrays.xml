@@ -107,4 +107,9 @@
         <item>#F4511E</item>
     </array>
 
+    <string-array name="pref_languages">
+        <item>@string/lang_it</item>
+        <item>@string/lang_uk</item>
+    </string-array>
+
 </resources>

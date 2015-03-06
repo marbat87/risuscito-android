@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 37;
+    private static final int DB_VERSION = 38;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -4268,6 +4268,37 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        Backup[] backup = backupTables(oldVersion, newVersion, db);
+
+        BackupLocalLink[] backupLink = backupLocalLink(oldVersion, newVersion, db);
+
+        reCreateDatabse(db);
+
+        repopulateDB(oldVersion, newVersion, db, backup, backupLink);
+
+        //cancella dalle liste predefinite i canti inesistenti
+        String sql = "SELECT _id, position, id_canto FROM CUST_LISTS";
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            sql = "SELECT _id" +
+                    "  FROM ELENCO" +
+                    "  WHERE _id =  " + cursor.getInt(2);
+            Cursor cCheckExists = db.rawQuery(sql, null);
+//            Log.i("ESISTE?", cCheckExists.getCount() + "");
+            if (cCheckExists.getCount() == 0)
+                db.delete("CUST_LISTS", "_id = " + cursor.getInt(0) + " AND position = " + cursor.getInt(1), null);
+            cCheckExists.close();
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+    }
+
+    public Backup[] backupTables(int oldVersion, int newVersion, SQLiteDatabase db) {
+
         Backup[] backup = new Backup[300];
         if(oldVersion >= 21) {
             String sql = "SELECT _id, zoom, scroll_x, scroll_y, favourite, saved_tab, saved_barre, saved_speed FROM ELENCO";
@@ -4324,6 +4355,11 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             cursor.close();
         }
 
+        return backup;
+    }
+
+    public BackupLocalLink[] backupLocalLink(int oldVersion, int newVersion, SQLiteDatabase db) {
+
         //dalla versionee 25 è stata introdotta la tabella di link locali. Va fatto il backup
         BackupLocalLink[] backupLink = new BackupLocalLink[300];
         if(oldVersion >= 25) {
@@ -4340,8 +4376,10 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             cursor.close();
         }
 
-        reCreateDatabse(db);
+        return backupLink;
+    }
 
+    public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values = null;
 
         if (oldVersion >= 19) {
@@ -4414,28 +4452,9 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             }
         }
 
-        //cancella dalle liste predefinite i canti inesistenti
-        String sql = "SELECT _id, position, id_canto FROM CUST_LISTS";
-        Cursor cursor = db.rawQuery(sql, null);
-        cursor.moveToFirst();
-
-        for (int i = 0; i < cursor.getCount(); i++) {
-            sql = "SELECT _id" +
-                    "  FROM ELENCO" +
-                    "  WHERE _id =  " + cursor.getInt(2);
-            Cursor cCheckExists = db.rawQuery(sql, null);
-//            Log.i("ESISTE?", cCheckExists.getCount() + "");
-            if (cCheckExists.getCount() == 0)
-                db.delete("CUST_LISTS", "_id = " + cursor.getInt(0) + " AND position = " + cursor.getInt(1), null);
-            cCheckExists.close();
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-
     }
 
-    private void reCreateDatabse(SQLiteDatabase db) {
+    public void reCreateDatabse(SQLiteDatabase db) {
         String sql = "DROP TABLE IF EXISTS ELENCO";
         db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS ARGOMENTI";
@@ -4458,7 +4477,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    private class Backup {
+    public class Backup {
         private int id;
         private int zoom;
         private int scroll_x;
@@ -4544,7 +4563,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         }
     }
 
-    private class BackupLocalLink{
+    public class BackupLocalLink{
         private int idCanto;
         private String localPath;
 

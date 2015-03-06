@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -38,6 +40,20 @@ public abstract class ThemeableActivity extends ActionBarActivity {
 //        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
 //        	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
 //        }
+
+        //lingua
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        // get version numbers
+        String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
+        if (!language.equals("")) {
+            Locale locale = new Locale(language);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            getBaseContext().getResources().updateConfiguration(config,
+                    getBaseContext().getResources().getDisplayMetrics());
+        }
 
     }
 

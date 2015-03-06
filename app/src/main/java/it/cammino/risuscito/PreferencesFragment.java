@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -295,7 +296,7 @@ public class PreferencesFragment extends Fragment {
                         getThemeUtils().primaryColor(),
                         4,
                         ColorPickerDialog.SIZE_SMALL);
-                        //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
+                //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
                 colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });
@@ -311,7 +312,7 @@ public class PreferencesFragment extends Fragment {
                         getThemeUtils().accentColor(),
                         4,
                         ColorPickerDialog.SIZE_SMALL);
-                        //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
+                //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
                 colorChooser.show(getFragmentManager(),"primaryCC");
             }
         });
@@ -342,6 +343,49 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 audioSwitch.setChecked(!audioSwitch.isChecked());
+            }
+        });
+
+        rootView.findViewById(R.id.language_selection).setOnClickListener(new OnClickListener() {
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
+
+                if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    checkedItem = 1;
+                else
+                    checkedItem = 0;
+
+                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+                AlertDialogPro dialog = builder.setTitle(R.string.language_title)
+                        .setSingleChoiceItems(getResources().getStringArray(R.array.pref_languages),
+                                checkedItem,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        checkedItem = which;
+                                    }
+                                })
+                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_LANGUAGE_OK))
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
             }
         });
 
@@ -385,6 +429,30 @@ public class PreferencesFragment extends Fragment {
                         editor.apply();
                     }
                     getActivity().setRequestedOrientation(prevOrientation);
+                    break;
+                case Utility.PREFERENCE_LANGUAGE_OK:
+                    editor = PreferenceManager
+                            .getDefaultSharedPreferences(getActivity())
+                            .edit();
+                    switch (checkedItem) {
+                        case 0:
+                            editor.putString(Utility.SYSTEM_LANGUAGE, "it");
+                            break;
+                        case 1:
+                            editor.putString(Utility.SYSTEM_LANGUAGE, "uk");
+                            break;
+                    }
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                        editor.commit();
+                    } else {
+                        editor.apply();
+                    }
+                    getActivity().setRequestedOrientation(prevOrientation);
+                    Intent i = getActivity().getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.putExtra(Utility.DB_RESET, true);
+                    startActivity(i);
                     break;
                 default:
                     getActivity().setRequestedOrientation(prevOrientation);

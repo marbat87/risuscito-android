@@ -244,5 +244,9 @@
     <string name="title_trasporta_sib">B</string>
     <string name="title_trasporta_si">H</string>
     <string name="to_be_chosen">вибрати</string>
+    <string name="language_title">Мова</string>
+    <string name="language_summary">Imposta la lingua per il menù e i canti.</string>
+    <string name="lang_it">італійський</string>
+    <string name="lang_uk">Український</string>
 
 </resources>

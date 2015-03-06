@@ -29,6 +29,8 @@ public class Utility {
     public static final String DEFAULT_INDEX = "indice_predefinito";
     public static final String SHOW_SANTO = "mostra_santo";
     public static final String SHOW_AUDIO = "mostra_audio";
+    public static final String SYSTEM_LANGUAGE = "lingua_sistema";
+    public static final String DB_RESET = "db_reset";
 
     public static final int DISMISS = 1;
     public static final int RENAME_CONFERMA = 2;
@@ -65,8 +67,9 @@ public class Utility {
     public static final int DISMISS_ADD = 33;
     public static final int CHANGE_COLOR = 34;
     public static final int RESET_COLOR = 35;
-    public static final int IND_LIT_LISTAPERS_OK = 8;
-    public static final int IND_LIT_LISTAPRED_OK = 9;
+    public static final int IND_LIT_LISTAPERS_OK = 36;
+    public static final int IND_LIT_LISTAPRED_OK = 37;
+    public static final int PREFERENCE_LANGUAGE_OK = 38;
 
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
