@@ -40,4 +40,7 @@
     <dimen name="circle_view_check">24dp</dimen>
     <dimen name="paper_button_width">88dip</dimen>
 
+    <dimen name="tabs_height">48dip</dimen>
+    <dimen name="tabs_text_size">13sp</dimen>
+
 </resources>

@@ -53,7 +53,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
         
         Resources res = getResources();
         mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
 
 	}

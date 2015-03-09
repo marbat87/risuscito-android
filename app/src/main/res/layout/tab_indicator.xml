@@ -6,10 +6,10 @@
     android:layout_width="wrap_content"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:layout_height="48dp"
+    android:layout_height="@dimen/tabs_height"
     android:gravity="center"
     android:textColor="@color/tab_text_color"
-    android:textSize="@dimen/text_size_small"
+    android:textSize="@dimen/tabs_text_size"
     android:textStyle="@integer/font_textStyle_medium"
     android:fontFamily="@string/font_fontFamily_medium"
     android:textAllCaps="true" />
