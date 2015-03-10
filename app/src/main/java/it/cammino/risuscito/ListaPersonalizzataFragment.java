@@ -341,7 +341,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                 cursor.moveToFirst();
 
                 result += cursor.getString(0)
-                        + " - PAG." + cursor.getInt(1);
+                        + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
 
                 cursor.close();
                 db.close();

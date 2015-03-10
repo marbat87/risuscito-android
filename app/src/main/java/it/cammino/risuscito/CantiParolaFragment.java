@@ -676,7 +676,7 @@ public class CantiParolaFragment extends Fragment {
 	    
 	    if (total == 1) {
 	    	cursor.moveToFirst();
-	    	result =  cursor.getString(0) + " - PAG." + cursor.getInt(1);
+	    	result =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
 	    }
 	    
 	    cursor.close();

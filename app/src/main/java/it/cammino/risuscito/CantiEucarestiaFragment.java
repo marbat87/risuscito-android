@@ -772,7 +772,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         cursor.moveToFirst();
         for (int i = 0; i < total; i++) {
-            result[i] =  cursor.getString(0) + " - PAG." + cursor.getInt(1);
+            result[i] =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
             cursor.moveToNext();
         }
 
