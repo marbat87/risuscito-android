@@ -62,41 +62,35 @@ public class InsertVeloceFragment extends Fragment {
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
+                String query = "SELECT _id" +
+                        "  FROM ELENCO" +
+                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
+                Cursor cursor = db.rawQuery(query, null);
+                // recupera l'ID del canto
+                cursor.moveToFirst();
+                int idCanto = cursor.getInt(0);
+                // chiude il cursore
+                cursor.close();
+
                 if (fromAdd == 1)  {
                     // chiamato da una lista predefinita
-                    String query = "SELECT _id" +
-                            "  FROM ELENCO" +
-                            "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-                    Cursor cursor = db.rawQuery(query, null);
-
-                    // recupera il nome del file
-                    cursor.moveToFirst();
-                    int idCanto = cursor.getInt(0);
-
-                    // chiude il cursore
-                    cursor.close();
-
-                    String sql = "INSERT INTO CUST_LISTS ";
-                    sql+= "VALUES (" + idLista + ", "
+                    query = "INSERT INTO CUST_LISTS ";
+                    query+= "VALUES (" + idLista + ", "
                             + listPosition + ", "
                             + idCanto
                             + ", CURRENT_TIMESTAMP)";
-
                     try {
-                        db.execSQL(sql);
+                        db.execSQL(query);
                     } catch (SQLException e) {
-                        Toast toast = Toast.makeText(getActivity()
-                                , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                        toast.show();
+                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
                     //chiamato da una lista personalizzata
-                    String query = "SELECT lista" +
+                    query = "SELECT lista" +
                             "  FROM LISTE_PERS" +
                             "  WHERE _id =  " + idLista;
-                    Cursor cursor = db.rawQuery(query, null);
-
+                    cursor = db.rawQuery(query, null);
                     // recupera l'oggetto lista personalizzata
                     cursor.moveToFirst();
 
@@ -106,15 +100,14 @@ public class InsertVeloceFragment extends Fragment {
                     // chiude il cursore
                     cursor.close();
 
-                    // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-                    query = "SELECT color, pagina" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                    cursor = db.rawQuery(query, null);
-
-                    cursor.moveToFirst();
-
-                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
+//                    query = "SELECT color, pagina" +
+//                            "		FROM ELENCO" +
+//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                    cursor = db.rawQuery(query, null);
+//                    cursor.moveToFirst();
+//                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
+                    listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
+                    cursor.close();
 
                     ContentValues  values = new  ContentValues( );
                     values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));

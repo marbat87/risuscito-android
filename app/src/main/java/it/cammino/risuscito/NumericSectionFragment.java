@@ -50,6 +50,7 @@ public class NumericSectionFragment extends Fragment {
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
     private String titoloDaAgg;
+    private int idDaAgg;
     private int idListaDaAgg;
     private int posizioneDaAgg;
     private ListaPersonalizzata[] listePers;
@@ -404,44 +405,65 @@ public class NumericSectionFragment extends Fragment {
                     idPosizioneClick = item.getItemId();
                     if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
                         idListaClick -= 100;
+
+                        //recupero ID del canto cliccato
+                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                        String query = "SELECT _id" +
+                                "		FROM ELENCO" +
+                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+                        Cursor cursor = db.rawQuery(query, null);
+                        cursor.moveToFirst();
+                        idDaAgg = cursor.getInt(0);
+                        cursor.close();
+
                         if (listePers[idListaClick]
-                                .getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
-                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                .getCantoPosizione(idPosizioneClick).equals("")) {
+//                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                            String query = "SELECT color, pagina" +
+//                                    "		FROM ELENCO" +
+//                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                            Cursor cursor = db.rawQuery(query, null);
+//
+//                            cursor.moveToFirst();
+//
+//                            listePers[idListaClick].addCanto(Utility.intToString(
+//                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+//                            cursor.close();
 
-                            String query = "SELECT color, pagina" +
-                                    "		FROM ELENCO" +
-                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                            Cursor cursor = db.rawQuery(query, null);
-
-                            cursor.moveToFirst();
-
-                            listePers[idListaClick].addCanto(Utility.intToString(
-                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-
+                            listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                             db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
-                            db.close();
 
                             Toast.makeText(getActivity()
                                     , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-                                    .equalsIgnoreCase(titoloDaAgg)) {
-                                Toast toast = Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                                toast.show();
+//                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
+//                                    .equalsIgnoreCase(titoloDaAgg)) {
+                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
+                                Toast.makeText(getActivity()
+                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
                                 Utility.blockOrientation(getActivity());
+                                //recupero titolo del canto presente
+                                query = "SELECT titolo" +
+                                        "		FROM ELENCO" +
+                                        "		WHERE _id = "
+                                        + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
+                                cursor = db.rawQuery(query, null);
+                                cursor.moveToFirst();
                                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
                                 AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
                                         .setMessage(getString(R.string.dialog_present_yet) + " "
-                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-                                                .substring(10)
+//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+//                                                .substring(10)
+                                                + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
                                         .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.NUM_LISTAPERS_OK))
                                         .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
@@ -460,8 +482,10 @@ public class NumericSectionFragment extends Fragment {
                                     }
                                 });
                                 dialog.setCancelable(false);
+                                cursor.close();
                             }
                         }
+                        db.close();
                         return true;
                     }
                     else
@@ -612,16 +636,17 @@ public class NumericSectionFragment extends Fragment {
                     break;
                 case Utility.NUM_LISTAPERS_OK:
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
-                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                    String query = "SELECT color, pagina" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                    Cursor cursor = db.rawQuery(query, null);
-
-                    cursor.moveToFirst();
-
-                    listePers[idListaClick].addCanto(Utility.intToString(
-                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+//                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                    String query = "SELECT color, pagina" +
+//                            "		FROM ELENCO" +
+//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                    Cursor cursor = db.rawQuery(query, null);
+//
+//                    cursor.moveToFirst();
+//
+//                    listePers[idListaClick].addCanto(Utility.intToString(
+//                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+                    listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
 
                     ContentValues  values = new  ContentValues( );
                     values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
@@ -632,7 +657,7 @@ public class NumericSectionFragment extends Fragment {
                     break;
                 case Utility.NUM_LISTAPRED_OK:
                     db = listaCanti.getReadableDatabase();
-                    cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                     String sql = "UPDATE CUST_LISTS "
                             + "SET id_canto = (SELECT _id  FROM ELENCO"
                             + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"

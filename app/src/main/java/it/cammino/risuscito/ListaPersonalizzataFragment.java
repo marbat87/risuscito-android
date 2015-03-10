@@ -256,18 +256,49 @@ public class ListaPersonalizzataFragment extends Fragment {
                     }
                 });
 
+                db = listaCanti.getReadableDatabase();
+
+                String query = "SELECT titolo, pagina, color" +
+                        "  FROM ELENCO" +
+                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
+                Cursor cursor = db.rawQuery(query, null);
+                cursor.moveToFirst();
+
+                //setto il titolo del canto
+//                ((TextView) view.findViewById(R.id.text_title))
+//                    .setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
+//
+//                //setto la pagina
+//                int tempPagina = Integer.valueOf(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(0, 3));
+//                String pagina = String.valueOf(tempPagina);
+//                TextView textPage = (TextView) view.findViewById(R.id.text_page);
+//                textPage.setText(pagina);
+//
+//                //setto il colore
+//                String colore = listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10);
+//                if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//                if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//                if (colore.equalsIgnoreCase(Utility.VERDE))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//                if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//                if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
+
                 //setto il titolo del canto
                 ((TextView) view.findViewById(R.id.text_title))
-                    .setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
+                    .setText(cursor.getString(0));
 
                 //setto la pagina
-                int tempPagina = Integer.valueOf(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(0, 3));
+                int tempPagina = cursor.getInt(1);
                 String pagina = String.valueOf(tempPagina);
                 TextView textPage = (TextView) view.findViewById(R.id.text_page);
                 textPage.setText(pagina);
 
                 //setto il colore
-                String colore = listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10);
+                String colore = cursor.getString(2);
                 if (colore.equalsIgnoreCase(Utility.GIALLO))
                     textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
                 if (colore.equalsIgnoreCase(Utility.GRIGIO))
@@ -278,6 +309,9 @@ public class ListaPersonalizzataFragment extends Fragment {
                     textPage.setBackgroundResource(R.drawable.bkg_round_blue);
                 if (colore.equalsIgnoreCase(Utility.BIANCO))
                     textPage.setBackgroundResource(R.drawable.bkg_round_white);
+
+                cursor.close();
+                db.close();
 
 	   		}
 	   		
@@ -297,10 +331,21 @@ public class ListaPersonalizzataFragment extends Fragment {
     	//tutti i canti
     	for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++) {
     		result += listaPersonalizzata.getNomePosizione(i).toUpperCase(l) + "\n";		
-    		if (!listaPersonalizzata.getCantoPosizione(i).equalsIgnoreCase(""))
-    			result += listaPersonalizzata.getCantoPosizione(i).substring(10)
-    					+ " - PAG." + Integer.valueOf(listaPersonalizzata.
-    								getCantoPosizione(i).substring(0,3));
+    		if (!listaPersonalizzata.getCantoPosizione(i).equalsIgnoreCase("")) {
+                db = listaCanti.getReadableDatabase();
+
+                String query = "SELECT titolo, pagina" +
+                        "  FROM ELENCO" +
+                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(i);
+                Cursor cursor = db.rawQuery(query, null);
+                cursor.moveToFirst();
+
+                result += cursor.getString(0)
+                        + " - PAG." + cursor.getInt(1);
+
+                cursor.close();
+                db.close();
+            }
     		else
                 result += ">> " + getString(R.string.to_be_chosen) + " <<";
     		if (i < listaPersonalizzata.getNumPosizioni() - 1)

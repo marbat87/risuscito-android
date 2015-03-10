@@ -91,8 +91,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             SQLiteDatabase db = listaCanti.getReadableDatabase();
             DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
             DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
-            String sql = "DROP TABLE IF EXISTS LISTE_PERS";
-            db.execSQL(sql);
             listaCanti.reCreateDatabse(db);
             listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
         }
