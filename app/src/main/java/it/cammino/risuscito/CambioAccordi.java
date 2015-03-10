@@ -154,11 +154,12 @@ public class CambioAccordi {
 
 //		if (primaNota.equals(notaCambio))
 //			return null;
-        String language = context.getResources().getConfiguration().locale.getLanguage();
 
         if (primaNota == null || primaNota.equals("")
                 || notaCambio == null || primaNota.equals(""))
             return null;
+
+        String language = context.getResources().getConfiguration().locale.getLanguage();
 
         String primoAccordo = primaNota;
         String cambioAccordo = notaCambio;
