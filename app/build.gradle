@@ -26,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
     compile 'com.itextpdf:itextpdf:5.5.3'
     compile project(':utilities')
