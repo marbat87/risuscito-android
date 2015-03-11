@@ -37,6 +37,9 @@ public class PreferencesFragment extends Fragment {
     private int prevOrientation;
     private SwitchCompat screenSwitch, secondaSwitch, paceSwitch, santoSwitch, audioSwitch;
     private int saveEntries;
+    private AlertDialogPro languageDialog;
+    private AlertDialogPro defIndexDialog;
+    private AlertDialogPro defMemoryDialog;
 
     private int checkedItem;
 
@@ -208,19 +211,22 @@ public class PreferencesFragment extends Fragment {
                 checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
                         .getInt(Utility.DEFAULT_INDEX, 0);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.default_index_title)
+                defIndexDialog = builder.setTitle(R.string.default_index_title)
                         .setSingleChoiceItems(getResources().getStringArray(R.array.pref_default_index_entries),
                                 checkedItem,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         checkedItem = which;
+                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                                                getThemeUtils().accentColor());
                                     }
                                 })
                         .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                         .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_DEFINDEX_OK))
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                defIndexDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
                                          KeyEvent event) {
@@ -233,7 +239,10 @@ public class PreferencesFragment extends Fragment {
                         return false;
                     }
                 });
-                dialog.setCancelable(false);
+                defIndexDialog.setCancelable(false);
+                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
@@ -256,19 +265,22 @@ public class PreferencesFragment extends Fragment {
                 checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
                         .getInt(Utility.SAVE_LOCATION, 0);
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.save_location_title)
+                defMemoryDialog = builder.setTitle(R.string.save_location_title)
                         .setSingleChoiceItems(getResources().getStringArray(saveEntries),
                                 checkedItem,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         checkedItem = which;
+                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                                                getThemeUtils().accentColor());
                                     }
                                 })
                         .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                         .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_SAVELOC_OK))
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                defMemoryDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
                                          KeyEvent event) {
@@ -281,7 +293,10 @@ public class PreferencesFragment extends Fragment {
                         return false;
                     }
                 });
-                dialog.setCancelable(false);
+                defMemoryDialog.setCancelable(false);
+                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
@@ -360,19 +375,22 @@ public class PreferencesFragment extends Fragment {
                     checkedItem = 0;
 
                 AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.language_title)
+                languageDialog = builder.setTitle(R.string.language_title)
                         .setSingleChoiceItems(getResources().getStringArray(R.array.pref_languages),
                                 checkedItem,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         checkedItem = which;
+                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                                                getThemeUtils().accentColor());
                                     }
                                 })
                         .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
                         .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_LANGUAGE_OK))
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                languageDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
                                          KeyEvent event) {
@@ -385,7 +403,10 @@ public class PreferencesFragment extends Fragment {
                         return false;
                     }
                 });
-                dialog.setCancelable(false);
+                languageDialog.setCancelable(false);
+                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
@@ -452,7 +473,13 @@ public class PreferencesFragment extends Fragment {
                             .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.putExtra(Utility.DB_RESET, true);
-                    startActivity(i);
+                    String currentLang = "it";
+                    if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                        currentLang = "uk";
+                    i.putExtra(Utility.CHANGE_LANGUAGE,
+                            currentLang + "-" + PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                    .getString(Utility.SYSTEM_LANGUAGE, ""));
+                            startActivity(i);
                     break;
                 default:
                     getActivity().setRequestedOrientation(prevOrientation);

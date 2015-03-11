@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ColorChooserDialog;
@@ -36,7 +38,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
-//    private ThemeUtils mThemeUtils;
 
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
@@ -82,8 +83,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         super.hasNavDrawer = true;
         super.alsoLollipop = false;
         super.onCreate(savedInstanceState);
-//        mThemeUtils = new ThemeUtils(this);
-//        setTheme(getThemeUtils().getCurrent(true));
         setContentView(R.layout.activity_main);
 
         if (getIntent().getBooleanExtra(Utility.DB_RESET, false)) {
@@ -93,19 +92,14 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
             listaCanti.reCreateDatabse(db);
             listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+            convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+            db.close();
+            listaCanti.close();
         }
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mActionBarToolbar);
-
-        // setta il colore della barra di stato, solo su KITKAT
-//        Utility.setupTransparentTints(MainActivity.this, mThemeUtils.primaryColorDark(), false);
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-//        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
-//        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
-//        	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
-//        }
 
         setupNavDrawer();
 
@@ -124,12 +118,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
 
     }
-
-//    @Override
-//    protected void onResume() {
-//    	super.onResume();
-//    	checkScreenAwake();
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -287,12 +275,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 R.drawable.selected_navdrawer_item_background :
                 R.drawable.navdrawer_item_background);
         view.setSoundEffectsEnabled(!selected);
-//        titleView.setTextColor(selected ?
-//                getResources().getColor(R.color.navdrawer_text_color_selected) :
-//                getResources().getColor(R.color.navdrawer_text_color));
-//        iconView.setColorFilter(selected ?
-//                getResources().getColor(R.color.navdrawer_icon_tint_selected) :
-//                getResources().getColor(R.color.navdrawer_icon_tint));
         titleView.setTextColor(selected ?
                 getThemeUtils().primaryColor() :
                 getResources().getColor(R.color.navdrawer_text_color));
@@ -310,7 +292,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         goToNavDrawerItem(itemId);
         setSelectedNavDrawerItem(itemId);
 
-//        mDrawerLayout.closeDrawer(Gravity.START);
     }
 
     private void goToNavDrawerItem(int item) {
@@ -430,25 +411,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         return super.onKeyUp(keyCode, event);
     }
 
-    //controlla se l'app deve mantenere lo schermo acceso
-//    public void checkScreenAwake() {
-//    	SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(this);
-//		boolean screenOn = pref.getBoolean(Utility.SCREEN_ON, false);
-//		if (screenOn)
-//			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//		else
-//			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//    }
-
-//    public int getStatusBarHeight() {
-//    	  int result = 0;
-//    	  int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//    	  if (resourceId > 0) {
-//    	    result = getResources().getDimensionPixelSize(resourceId);
-//    	  }
-//    	  return result;
-//    }
-
     @Override
     public void onColorSelection(int title, int color) {
 
@@ -468,8 +430,34 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
     }
 
-//    public ThemeUtils getThemeUtils() {
-//        return mThemeUtils;
-//    }
+    //converte gli accordi salvati dalla lingua vecchia alla nuova
+    private void convertTabs(SQLiteDatabase db, String conversion) {
+//        Log.i(getClass().toString(), "CONVERSION: " + conversion);
+        HashMap<String, String> mappa = new HashMap<String, String>();
+        if (conversion.equalsIgnoreCase("it-uk")) {
+            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
+        }
+        if (conversion.equalsIgnoreCase("uk-it")) {
+            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
+        }
+
+        String query = "SELECT _id, saved_tab" +
+                "  FROM ELENCO";
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+//                Log.i(getClass().toString(),"ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)) );
+                query = "UPDATE ELENCO" +
+                        "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                        "  WHERE _id =  " + cursor.getInt(0);
+                db.execSQL(query);
+            }
+            cursor.moveToNext();
+        }
+    }
 
 }

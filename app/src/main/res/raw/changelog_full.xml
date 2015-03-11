@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="3.4.0" changeDate="31 Marzo 2015">
+        <changelogtext>Aggiunta la lingua Ucraina (grazie a Luca Convalle)</changelogtext>
+        <changelogtext>Corretti ulteriori innumerevoli testi e accordi (grazie a Daniele Marco Di Molfetta)</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="3.3.0" changeDate="07 Marzo 2015">
         <changelogtext>Reinseriti i temi! Possibilità di scegliere tra vari colori per il tema principale e quello di risalto</changelogtext>
         <changelogtext>Correzione per non cancellare le liste predefinite con gli aggiornamenti</changelogtext>
