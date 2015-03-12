@@ -2,8 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="customSelector">?android:attr/selectableItemBackground</item>
         <item name="customSelectorTab">?android:attr/selectableItemBackground</item>
         <item name="customSelectorRound">?android:attr/selectableItemBackgroundBorderless</item>
@@ -11,8 +10,8 @@
         <item name="toolbar_shadow">@null</item>
     </style>
 
-    <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
+    <!--<style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme">-->
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    <!--</style>-->
 
 </resources>

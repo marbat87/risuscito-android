@@ -81,7 +81,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
-        super.alsoLollipop = false;
+//        super.alsoLollipop = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

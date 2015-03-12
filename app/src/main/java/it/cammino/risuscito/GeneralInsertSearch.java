@@ -24,8 +24,8 @@ public class GeneralInsertSearch extends ThemeableActivity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-        super.hasNavDrawer = false;
-        super.alsoLollipop = true;
+//        super.hasNavDrawer = false;
+//        super.alsoLollipop = true;
 		super.onCreate(savedInstanceState);
 //        mThemeUtils = new ThemeUtils(this);
 //        setTheme(mThemeUtils.getCurrent(false));

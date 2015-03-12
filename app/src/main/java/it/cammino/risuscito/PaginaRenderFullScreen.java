@@ -50,8 +50,8 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
-        super.hasNavDrawer = false;
-        super.alsoLollipop = true;
+//        super.hasNavDrawer = false;
+//        super.alsoLollipop = true;
         mLUtils = LUtils.getInstance(PaginaRenderFullScreen.this);
         mLUtils.goFullscreen();
         super.onCreate(savedInstanceState);

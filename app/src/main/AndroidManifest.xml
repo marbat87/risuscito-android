@@ -22,7 +22,7 @@
         android:theme="@style/RisuscitoTheme" >
         <activity
             android:name="it.cammino.risuscito.MainActivity"
-            android:theme="@style/RisuscitoTheme.WithNavDrawer" >
+            android:theme="@style/RisuscitoTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

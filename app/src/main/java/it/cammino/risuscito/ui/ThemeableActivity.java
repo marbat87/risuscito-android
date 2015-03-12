@@ -20,7 +20,7 @@ import it.cammino.risuscito.utils.ThemeUtils;
 public abstract class ThemeableActivity extends ActionBarActivity {
 
     private ThemeUtils mThemeUtils;
-    protected boolean alsoLollipop = true;
+//    protected boolean alsoLollipop = true;
     protected boolean hasNavDrawer = false;
 
 
@@ -31,10 +31,10 @@ public abstract class ThemeableActivity extends ActionBarActivity {
         }
         super.onCreate(savedInstanceState);
         mThemeUtils = new ThemeUtils(this);
-        setTheme(mThemeUtils.getCurrent(hasNavDrawer));
+        setTheme(mThemeUtils.getCurrent());
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), alsoLollipop);
+        Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 //        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
 //        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
 //        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);

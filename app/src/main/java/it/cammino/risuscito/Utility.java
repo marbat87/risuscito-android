@@ -246,7 +246,7 @@ public class Utility {
     }
 
     @SuppressLint("NewApi")
-    public static void setupTransparentTints(Activity context, int color, boolean alsoLollipop) {
+    public static void setupTransparentTints(Activity context, int color, boolean hasNavDrawer) {
 
 //        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
 //            SystemBarTintManager tintManager = new SystemBarTintManager(context);
@@ -254,7 +254,7 @@ public class Utility {
 //            tintManager.setStatusBarTintColor(color);
 //        }
 
-        if (alsoLollipop && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (!hasNavDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             context.getWindow().setStatusBarColor(color);
     }
 
