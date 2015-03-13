@@ -2375,11 +2375,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     this.cancel(true);
                 }
                 localPDFPath += "/output.pdf";
-//				Log.i("localPath", localPDFPath);
+//				Log.i(getClass().toString(), "localPath:" + localPDFPath);
                 PdfWriter.getInstance(document, new FileOutputStream(localPDFPath));
                 // step 3
                 document.open();
                 Font myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
+//                Font myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.BLACK);
                 // step 4
                 try {
                     String line;
@@ -2389,20 +2390,25 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                     line = br.readLine();
                     while (line != null) {
+//                        Log.i(getClass().toString(), "line:" + line);
                         if ((line.contains("000000")
                                 || line.contains("A13F3C"))
                                 && !line.contains("BGCOLOR")) {
                             if (line.contains("000000")) {
                                 myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
+//                                myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.BLACK);
                             }
 
                             if (line.contains("A13F3C")) {
                                 myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.RED);
+//                                myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.RED);
                             }
                             line = line.replaceAll("<H4>", "");
                             line = line.replaceAll("</H4>", "");
                             line = line.replaceAll("<FONT COLOR=\"#000000\">", "");
                             line = line.replaceAll("<FONT COLOR=\"#A13F3C\">", "");
+                            line = line.replaceAll("<FONT COLOR='#000000'>", "");
+                            line = line.replaceAll("<FONT COLOR='#A13F3C'>", "");
                             line = line.replaceAll("</FONT>", "");
                             line = line.replaceAll("<H5>", "");
                             line = line.replaceAll("<H3>", "");
@@ -2412,13 +2418,15 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             line = line.replaceAll("</H2>", "");
                             line = line.replaceAll("<I>", "");
                             line = line.replaceAll("</I>", "");
+                            line = line.replaceAll("<i>", "");
+                            line = line.replaceAll("</i>", "");
                             line = line.replaceAll("<u>", "");
                             line = line.replaceAll("</u>", "");
                             line = line.replaceAll("<B>", "");
                             line = line.replaceAll("</B>", "");
                             line = line.replaceAll("<br>", "");
 
-//		            		Log.i("LINE", line);
+//                            Log.i(getClass().toString(), "line filtered:" + line);
                             Paragraph paragraph = new Paragraph(line, myFonColor);
                             document.add(paragraph);
                         }

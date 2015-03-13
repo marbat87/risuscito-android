@@ -240,7 +240,7 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 defIndexDialog.setCancelable(false);
-                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                 defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
                         getResources().getColor(R.color.btn_disabled_text));
             }
@@ -294,7 +294,7 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 defMemoryDialog.setCancelable(false);
-                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                 defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
                         getResources().getColor(R.color.btn_disabled_text));
             }
@@ -404,7 +404,7 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 languageDialog.setCancelable(false);
-                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                 languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
                         getResources().getColor(R.color.btn_disabled_text));
             }
