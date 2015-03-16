@@ -30,8 +30,6 @@ import com.alertdialogpro.AlertDialogPro;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
-import it.gmariotti.changelibs.library.internal.ChangeLogAdapter;
-import it.gmariotti.changelibs.library.view.ChangeLogListView;
 
 public class Risuscito extends Fragment {
 
@@ -97,12 +95,12 @@ public class Risuscito extends Fragment {
             prevOrientation = getActivity().getRequestedOrientation();
             Utility.blockOrientation(getActivity());
             AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-            ChangeLogListView chglv = new ChangeLogListView(getActivity());
-            ChangeLogAdapter adapter = (ChangeLogAdapter) chglv.getAdapter();
-            adapter.setmRowHeaderLayoutId(R.layout.changelogrowheader_material_layout);
-            adapter.setmRowLayoutId(R.layout.changelogrow_material_layout);
+//            ChangeLogListView chglv = new ChangeLogListView(getActivity());
+//            ChangeLogAdapter adapter = (ChangeLogAdapter) chglv.getAdapter();
+//            adapter.setmRowHeaderLayoutId(R.layout.changelogrowheader_material_layout);
+//            adapter.setmRowLayoutId(R.layout.changelogrow_material_layout);
             AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
-                    .setView(chglv)
+                    .setView(R.layout.dialog_changelogview)
                     .setPositiveButton(getResources().getString(R.string.dialog_chiudi), new ButtonClickedListener())
                     .show();
             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
