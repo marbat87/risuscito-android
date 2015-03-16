@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 72
-        versionName '3.4.0_BETA1'
+        targetSdkVersion 22
+        versionCode 71
+        versionName '3.3.0'
     }
     buildTypes {
         release {
