@@ -60,6 +60,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
@@ -2379,8 +2380,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 PdfWriter.getInstance(document, new FileOutputStream(localPDFPath));
                 // step 3
                 document.open();
-                Font myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
-//                Font myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.BLACK);
+                Font myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+                        BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.BLACK);
                 // step 4
                 try {
                     String line;
@@ -2395,13 +2396,15 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 || line.contains("A13F3C"))
                                 && !line.contains("BGCOLOR")) {
                             if (line.contains("000000")) {
-                                myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
-//                                myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.BLACK);
+//                                myFontColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
+                                myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+                                        BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.BLACK);
                             }
 
                             if (line.contains("A13F3C")) {
-                                myFonColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.RED);
-//                                myFonColor = FontFactory.getFont(FontFactory.COURIER, "UTF-8", 14, 0, BaseColor.RED);
+//                                myFontColor = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.RED);
+                                myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+                                        BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.RED);
                             }
                             line = line.replaceAll("<H4>", "");
                             line = line.replaceAll("</H4>", "");
@@ -2426,14 +2429,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             line = line.replaceAll("</B>", "");
                             line = line.replaceAll("<br>", "");
 
-//                            Log.i(getClass().toString(), "line filtered:" + line);
-                            Paragraph paragraph = new Paragraph(line, myFonColor);
-                            document.add(paragraph);
+                            if (line.equals(""))
+                                document.add(Chunk.NEWLINE);
+                            else {
+//                                Log.i(getClass().toString(), "line filtered:" + line);
+                                Paragraph paragraph = new Paragraph(line, myFontColor);
+                                document.add(paragraph);
+                            }
                         }
                         else {
-                            if (line.equals("")) {
+                            if (line.equals(""))
                                 document.add(Chunk.NEWLINE);
-                            }
                         }
 
                         line = br.readLine();
