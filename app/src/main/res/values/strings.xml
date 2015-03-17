@@ -246,9 +246,10 @@
     <string name="to_be_chosen">da scegliere</string>
     <string name="language_title">Lingua</string>
     <string name="language_summary">Imposta la lingua per il menù e i canti.</string>
-    <string name="lang_it">Italiano</string>
-    <string name="lang_uk">Ucraino</string>
     <string name="page_contracted">PAG.</string>
+    <string name="translation_running">Traduzione in corso&#8230;</string>
 
+    <string name="lang_it" translatable="false">Italiano</string>
+    <string name="lang_uk" translatable="false">Українська</string>
 
 </resources>

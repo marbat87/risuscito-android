@@ -1,8 +1,10 @@
 package it.cammino.risuscito;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -17,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.alertdialogpro.ProgressDialogPro;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +42,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
+    private ProgressDialogPro translationDialog;
+    private int prevOrientation;
 
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
     protected static final int NAVDRAWER_ITEM_SEARCH = 1;
@@ -86,15 +92,16 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         setContentView(R.layout.activity_main);
 
         if (getIntent().getBooleanExtra(Utility.DB_RESET, false)) {
-            DatabaseCanti listaCanti = new DatabaseCanti(this);
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
-            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
-            listaCanti.reCreateDatabse(db);
-            listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
-            convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-            db.close();
-            listaCanti.close();
+            (new TranslationTask()).execute();
+//            DatabaseCanti listaCanti = new DatabaseCanti(this);
+//            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
+//            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
+//            listaCanti.reCreateDatabse(db);
+//            listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+//            convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+//            db.close();
+//            listaCanti.close();
         }
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
@@ -457,6 +464,53 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 db.execSQL(query);
             }
             cursor.moveToNext();
+        }
+    }
+
+    private class TranslationTask extends AsyncTask<String, Integer, String> {
+
+        public TranslationTask() {}
+
+        @Override
+        protected String doInBackground(String... sUrl) {
+            getIntent().removeExtra(Utility.DB_RESET);
+            DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
+            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
+            listaCanti.reCreateDatabse(db);
+            listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+            convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+            db.close();
+            listaCanti.close();
+            return "";
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            prevOrientation = getRequestedOrientation();
+            Utility.blockOrientation(MainActivity.this);
+            translationDialog = new ProgressDialogPro(MainActivity.this);
+            translationDialog.setMessage(getResources().getString(R.string.translation_running));
+            translationDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    setRequestedOrientation(prevOrientation);
+                }
+            });
+            translationDialog.setCancelable(false);
+            translationDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
+            try {
+                if (translationDialog.isShowing())
+                    translationDialog.dismiss();
+            }
+            catch (IllegalArgumentException e) {}
         }
     }
 
