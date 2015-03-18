@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.SlidingTabLayout;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {

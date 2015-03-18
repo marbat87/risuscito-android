@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+
     <declare-styleable name="customAttrs">
         <attr name="customInsertItem" format="reference" />
         <attr name="customSelector" format="reference" />
@@ -9,7 +10,4 @@
         <attr name="toolbar_shadow" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="ScrimInsetsView">
-        <attr name="insetForeground" format="reference|color" />
-    </declare-styleable>
 </resources>

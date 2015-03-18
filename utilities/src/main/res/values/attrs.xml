@@ -67,4 +67,9 @@
         <attr name="linear_progress_duration" format="integer"/>
     </declare-styleable>
 
+    <!-- ScrimInsetsView Attributes -->
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="insetForeground" format="reference|color" />
+    </declare-styleable>
+
 </resources>

@@ -34,6 +34,7 @@ import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.SlidingTabLayout;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment  {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package it.cammino.risuscito;
+package it.cammino.risuscito.ui;
 
 import android.R;
 import android.content.Context;

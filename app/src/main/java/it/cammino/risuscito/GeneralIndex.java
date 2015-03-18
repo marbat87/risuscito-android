@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.SlidingTabLayout;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
