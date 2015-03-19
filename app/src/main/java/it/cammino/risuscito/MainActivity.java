@@ -440,30 +440,33 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     //converte gli accordi salvati dalla lingua vecchia alla nuova
     private void convertTabs(SQLiteDatabase db, String conversion) {
 //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
-        HashMap<String, String> mappa = new HashMap<String, String>();
+        HashMap<String, String> mappa = null;
         if (conversion.equalsIgnoreCase("it-uk")) {
+            mappa = new HashMap<String, String>();
             for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
                 mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
         }
         if (conversion.equalsIgnoreCase("uk-it")) {
+            mappa = new HashMap<String, String>();
             for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
                 mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
         }
+        if (mappa != null) {
+            String query = "SELECT _id, saved_tab" +
+                    "  FROM ELENCO";
+            Cursor cursor = db.rawQuery(query, null);
 
-        String query = "SELECT _id, saved_tab" +
-                "  FROM ELENCO";
-        Cursor cursor = db.rawQuery(query, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
 //                Log.i(getClass().toString(),"ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)) );
-                query = "UPDATE ELENCO" +
-                        "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
-                        "  WHERE _id =  " + cursor.getInt(0);
-                db.execSQL(query);
+                    query = "UPDATE ELENCO" +
+                            "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                            "  WHERE _id =  " + cursor.getInt(0);
+                    db.execSQL(query);
+                }
+                cursor.moveToNext();
             }
-            cursor.moveToNext();
         }
     }
 
