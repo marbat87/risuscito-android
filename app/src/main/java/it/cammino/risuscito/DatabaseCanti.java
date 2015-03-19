@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 40;
+    private static final int DB_VERSION = 41;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -1088,7 +1088,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql = "INSERT INTO ELENCO ";
         sql += "VALUES (129, " + appContext.getResources().getString(R.string.stabat_mater_page) + ", '" + appContext.getResources().getString(R.string.stabat_mater_title) + "', '"
                 + appContext.getResources().getString(R.string.stabat_mater_source) + "', 0, '" + BIANCO
-                + "', 'h" + appContext.getResources().getString(R.string.stabat_mater_link) + "', "
+                + "', '" + appContext.getResources().getString(R.string.stabat_mater_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
@@ -1135,7 +1135,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += "VALUES (135, " + appContext.getResources().getString(R.string.maria_casa_di_benedizione_page) + ", '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_title) + "', '"
                 + appContext.getResources().getString(R.string.maria_casa_di_benedizione_source) + "', 0, '"
                 + BIANCO
-                + "', '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_source) + "', "
+                + "', '" + appContext.getResources().getString(R.string.maria_casa_di_benedizione_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
@@ -1633,7 +1633,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += "VALUES (200, " + appContext.getResources().getString(R.string.mia_diletta_e_per_me_page) + ", '" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_title) + "', '"
                 + appContext.getResources().getString(R.string.mia_diletta_e_per_me_source) + "', 0, '"
                 + AZZURRO
-                + "', 'h" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_link) + "', "
+                + "', '" + appContext.getResources().getString(R.string.mia_diletta_e_per_me_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
@@ -4382,7 +4382,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values = null;
 
-        if (newVersion == 40 && oldVersion >= 19 && oldVersion <= 38) {
+        if (newVersion == 41 && oldVersion >= 19 && oldVersion <= 38) {
             //ricodifica i titoli dei canti con i loro ID
             String sql = "SELECT _id, lista FROM LISTE_PERS";
             Cursor cursor = db.rawQuery(sql, null);
