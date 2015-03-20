@@ -156,7 +156,7 @@ public class CambioAccordi {
 //			return null;
 
         if (primaNota == null || primaNota.equals("")
-                || notaCambio == null || primaNota.equals(""))
+                || notaCambio == null || notaCambio.equals(""))
             return null;
 
         String language = context.getResources().getConfiguration().locale.getLanguage();
