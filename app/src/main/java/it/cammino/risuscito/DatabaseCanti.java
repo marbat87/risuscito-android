@@ -4346,7 +4346,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 cantoBackup.setId(cursor.getInt(0));
                 cantoBackup.setZoom(cursor.getInt(1));
                 cantoBackup.setScroll_x(cursor.getInt(2));
-                cantoBackup.setScroll_y(kcursor.getInt(3));
+                cantoBackup.setScroll_y(cursor.getInt(3));
                 cantoBackup.setFavourite(cursor.getInt(4));
                 cantoBackup.setNota(cursor.getString(5));
                 backup[i] = cantoBackup;
