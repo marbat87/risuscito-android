@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 42;
+    private static final int DB_VERSION = 43;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -4382,7 +4382,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values = null;
 
-        if (newVersion == 42 && oldVersion >= 19 && oldVersion <= 38) {
+        if (newVersion == 43 && oldVersion >= 19 && oldVersion <= 38) {
             //ricodifica i titoli dei canti con i loro ID
             String sql = "SELECT _id, lista FROM LISTE_PERS";
             Cursor cursor = db.rawQuery(sql, null);
