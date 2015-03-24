@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 41;
+    private static final int DB_VERSION = 42;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -245,7 +245,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql = "INSERT INTO ELENCO ";
         sql += "VALUES (21, " +  appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_page) + ", '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_title) + "', '"
                 + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_source) + "', 0, '"
-                + GIALLO + "', ' + " + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_link) + "', "
+                + GIALLO + "', '" + appContext.getResources().getString(R.string.inno_vespri_pasqua_fino_ascensione_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
 
@@ -4346,7 +4346,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 cantoBackup.setId(cursor.getInt(0));
                 cantoBackup.setZoom(cursor.getInt(1));
                 cantoBackup.setScroll_x(cursor.getInt(2));
-                cantoBackup.setScroll_y(cursor.getInt(3));
+                cantoBackup.setScroll_y(kcursor.getInt(3));
                 cantoBackup.setFavourite(cursor.getInt(4));
                 cantoBackup.setNota(cursor.getString(5));
                 backup[i] = cantoBackup;
@@ -4382,7 +4382,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values = null;
 
-        if (newVersion == 41 && oldVersion >= 19 && oldVersion <= 38) {
+        if (newVersion == 42 && oldVersion >= 19 && oldVersion <= 38) {
             //ricodifica i titoli dei canti con i loro ID
             String sql = "SELECT _id, lista FROM LISTE_PERS";
             Cursor cursor = db.rawQuery(sql, null);

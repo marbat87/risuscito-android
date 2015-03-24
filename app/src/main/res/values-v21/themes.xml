@@ -10,8 +10,4 @@
         <item name="toolbar_shadow">@null</item>
     </style>
 
-    <!--<style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme">-->
-        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
-    <!--</style>-->
-
 </resources>

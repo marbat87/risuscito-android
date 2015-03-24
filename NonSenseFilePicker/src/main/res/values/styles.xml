@@ -61,83 +61,83 @@
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="FilePicker.Theme.BlueDark" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.BlueDark">
         <item name="colorAccent">#3F51B5</item>
     </style>
 
-    <style name="FilePicker.Theme.Grey" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Grey">
         <item name="colorAccent">#9E9E9E</item>
     </style>
 
-    <style name="FilePicker.Theme.BlueGrey" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.BlueGrey">
         <item name="colorAccent">#607D8B</item>
     </style>
 
-    <style name="FilePicker.Theme.Black" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Black">
         <item name="colorAccent">#37474F</item>
     </style>
 
-    <style name="FilePicker.Theme.Brown" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Brown">
         <item name="colorAccent">#795548</item>
     </style>
 
-    <style name="FilePicker.Theme.Red" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Red">
         <item name="colorAccent">#D32F2F</item>
     </style>
 
-    <style name="FilePicker.Theme.Pink" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Pink">
         <item name="colorAccent">#E91E63</item>
     </style>
 
-    <style name="FilePicker.Theme.Purple" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Purple">
         <item name="colorAccent">#9C27B0</item>
     </style>
 
-    <style name="FilePicker.Theme.Violet" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Violet">
         <item name="colorAccent">#5E35B1</item>
     </style>
 
-    <style name="FilePicker.Theme.Blue" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Blue">
         <item name="colorAccent">#1976D2</item>
     </style>
 
-    <style name="FilePicker.Theme.BlueLight" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.BlueLight">
         <item name="colorAccent">#03A9F4</item>
     </style>
 
-    <style name="FilePicker.Theme.Torqouise" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Torqouise">
         <item name="colorAccent">#00BCD4</item>
     </style>
 
-    <style name="FilePicker.Theme.GreenWater" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.GreenWater">
         <item name="colorAccent">#009688</item>
     </style>
 
-    <style name="FilePicker.Theme.Green" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Green">
         <item name="colorAccent">#4CAF50</item>
     </style>
 
-    <style name="FilePicker.Theme.GreenLight" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.GreenLight">
         <item name="colorAccent">#8BC34A</item>
     </style>
 
-    <style name="FilePicker.Theme.GreenBean" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.GreenBean">
         <item name="colorAccent">#CDDC39</item>
     </style>
 
-    <style name="FilePicker.Theme.Yellow" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Yellow">
         <item name="colorAccent">#FDD835</item>
     </style>
 
-    <style name="FilePicker.Theme.OrangeLight" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.OrangeLight">
         <item name="colorAccent">#FFB300</item>
     </style>
 
-    <style name="FilePicker.Theme.Orange" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.Orange">
         <item name="colorAccent">#FB8C00</item>
     </style>
 
-    <style name="FilePicker.Theme.RedLight" parent="FilePicker.Theme">
+    <style name="FilePicker.Theme.RedLight">
         <item name="colorAccent">#F4511E</item>
     </style>
 
