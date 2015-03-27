@@ -49,7 +49,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
-import com.alertdialogpro.ProgressDialogPro;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.itextpdf.text.BaseColor;
@@ -99,8 +98,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
-    private ProgressDialogPro mp3Dialog, exportDialog;
-    private AlertDialogPro mProgressDialog;
+//    private ProgressDialogPro mp3Dialog, exportDialog;
+    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
     private static OnAudioFocusChangeListener afChangeListener;
     private static AudioManager am;
@@ -1412,6 +1411,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         prevOrientation = getRequestedOrientation();
         Utility.blockOrientation(PaginaRenderActivity.this);
         mp3Dialog.show();
+        ((TextView)mp3Dialog.findViewById(R.id.loading_message))
+                .setText(R.string.wait);
         mediaPlayer.setOnPreparedListener(mediaPlayerOnPreparedListener);
         mediaPlayer.setOnCompletionListener(mediaPlayerOnCompletedListener);
 
@@ -2466,6 +2467,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
             prevOrientation = getRequestedOrientation();
             Utility.blockOrientation(PaginaRenderActivity.this);
             exportDialog.show();
+            ((TextView)exportDialog.findViewById(R.id.loading_message))
+                    .setText(R.string.export_running);
         }
 
         @Override
@@ -2497,8 +2500,18 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     private void initializeLoadingDialogs() {
-        mp3Dialog = new ProgressDialogPro(PaginaRenderActivity.this);
-        mp3Dialog.setMessage(getResources().getString(R.string.wait));
+//        mp3Dialog = new ProgressDialogPro(PaginaRenderActivity.this);
+//        mp3Dialog.setMessage(getResources().getString(R.string.wait));
+//        mp3Dialog.setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface arg0) {
+//                setRequestedOrientation(prevOrientation);
+//            }
+//        });
+
+        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+        mp3Dialog = builder.setView(R.layout.dialog_load_indeterminate)
+                .create();
         mp3Dialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
@@ -2506,8 +2519,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        exportDialog = new ProgressDialogPro(PaginaRenderActivity.this);
-        exportDialog.setMessage(getResources().getString(R.string.export_running));
+//        exportDialog = new ProgressDialogPro(PaginaRenderActivity.this);
+//        exportDialog.setMessage(getResources().getString(R.string.export_running));
+//        exportDialog.setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface arg0) {
+//                setRequestedOrientation(prevOrientation);
+//            }
+//        });
+
+        exportDialog = builder.setView(R.layout.dialog_load_indeterminate)
+                .create();
         exportDialog.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {

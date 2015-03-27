@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <it.gmariotti.changelibs.library.view.ChangeLogListView
+        android:baselineAligned="false"
+        android:paddingTop="@dimen/adp_mtrl_alert_dialog_padding_top"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         risuscito:changeLogFileResourceId="@raw/changelog"
@@ -13,4 +14,4 @@
         risuscito:rowLayoutId="@layout/changelogrow_material_layout"
         android:id="@+id/aboutText" />
 
-</LinearLayout>
+</FrameLayout>
