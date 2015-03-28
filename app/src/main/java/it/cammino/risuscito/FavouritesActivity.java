@@ -166,6 +166,17 @@ public class FavouritesActivity extends Fragment {
                                         // updateFavouritesList();
 										titoli.remove(posizDaCanc);
                                         cantoAdapter.notifyItemRemoved(posizDaCanc);
+                                        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
+                                        TextView noResults = (TextView) rootView.findViewById(R.id.no_favourites);
+                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
+                                        if (titoli.size() > 0) {
+                                            noResults.setVisibility(View.GONE);
+                                            hintRemove.setVisibility(View.VISIBLE);
+                                        }
+                                        else	{
+                                            noResults.setVisibility(View.VISIBLE);
+                                            hintRemove.setVisibility(View.GONE);
+                                        }
                                     }
                                 })
                                 .actionColor(getThemeUtils().accentColor())

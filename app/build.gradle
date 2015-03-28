@@ -8,7 +8,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 77
-        versionName '3.4.0_BETA6'
+        versionName '3.4.0'
     }
     buildTypes {
         release {

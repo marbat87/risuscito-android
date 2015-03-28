@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.4.0" changeDate="31 березня 2015">
+    <changelogversion versionName="3.4.0" changeDate="05 квітня 2015">
         <changelogtext>Додано українську мову (завдяки Luca Convalle)</changelogtext>
         <changelogtext>Виправлено багато текстів та аккордів (завдяки Daniele Marco Di Molfetta)</changelogtext>
     </changelogversion>
