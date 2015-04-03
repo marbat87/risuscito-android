@@ -62,6 +62,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nononsenseapps.filepicker.FilePickerActivity;
+import com.rey.material.widget.ProgressView;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -83,7 +84,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.utilities.material.LinearProgress;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
 import it.cammino.utilities.showcaseview.targets.ViewTarget;
@@ -98,7 +98,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
-//    private ProgressDialogPro mp3Dialog, exportDialog;
+    //    private ProgressDialogPro mp3Dialog, exportDialog;
     private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
     private static OnAudioFocusChangeListener afChangeListener;
@@ -2285,13 +2285,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
             super.onPreExecute();
             mProgressDialog.show();
             mProgressDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-            ((LinearProgress)mProgressDialog.findViewById(R.id.progressDeterminate)).setColor(getThemeUtils().accentColor());
+            ProgressView query_progress = (ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate);
+            query_progress.setProgress(0f);
+            query_progress.start();
+//            ((LinearProgress)mProgressDialog.findViewById(R.id.progressDeterminate)).setColor(getThemeUtils().accentColor());
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-            ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+//            ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
+            ((ProgressView) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress((float)progress[0]/100);
             if (progress[0] != 0)
                 ((TextView) mProgressDialog.findViewById(R.id.percent_text))
                         .setText(progress[0].toString() + " %");
@@ -2299,8 +2303,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (mProgressDialog.isShowing())
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                ((ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate)).stop();
                 mProgressDialog.dismiss();
+            }
             if (result != null)
                 Toast.makeText(context,"Errore nel download: " + result, Toast.LENGTH_LONG).show();
             else {

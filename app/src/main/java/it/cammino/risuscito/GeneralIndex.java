@@ -8,20 +8,21 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rey.material.widget.TabPageIndicator;
+
 import java.util.Locale;
 
-import it.cammino.risuscito.ui.SlidingTabLayout;
+import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
 
-    private ViewPager mViewPager;
-    SlidingTabLayout mSlidingTabLayout = null;
+    private CustomViewPager mViewPager;
+    private TabPageIndicator mSlidingTabLayout = null;
 
     private static final String PAGE_VIEWED = "pageViewed";
 
@@ -33,16 +34,16 @@ public class GeneralIndex extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
-        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+        mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+//        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
         Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-        mSlidingTabLayout.setDistributeEvenly(false);
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
+//        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
 
         if (savedInstanceState == null) {

@@ -34,12 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alertdialogpro.AlertDialogPro;
+import com.rey.material.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.material.PaperButton;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener{
 
@@ -225,8 +225,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         });
 
-        PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
-        paperPulisci.setColor(getThemeUtils().primaryColor());
+        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
+//        paperPulisci.setColor(getThemeUtils().primaryColor());
         paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

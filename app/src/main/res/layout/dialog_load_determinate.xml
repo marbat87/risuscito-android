@@ -13,11 +13,19 @@
         android:paddingRight="@dimen/adp_mtrl_alert_dialog_padding"
         android:orientation="vertical">
 
-        <it.cammino.utilities.material.LinearProgress
+        <!--<it.cammino.utilities.material.LinearProgress-->
+            <!--android:id="@+id/progressDeterminate"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--risuscito:linear_progress_color="@color/theme_accent" />-->
+        <com.rey.material.widget.ProgressView
             android:id="@+id/progressDeterminate"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            risuscito:linear_progress_color="@color/theme_accent" />
+            android:layout_height="4dp"
+            risuscito:pv_autostart = "false"
+            risuscito:pv_circular="false"
+            risuscito:pv_progressStyle="@style/Material.Drawable.LinearProgress.Query.Risuscito"
+            risuscito:pv_progressMode="query"/>
 
         <TextView
             android:id="@+id/percent_text"

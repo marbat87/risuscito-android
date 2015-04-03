@@ -25,7 +25,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alertdialogpro.material.ProgressBarCompat;
+import com.rey.material.widget.Button;
+import com.rey.material.widget.ProgressView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -39,7 +40,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.material.PaperButton;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -50,7 +50,7 @@ public class InsertAvanzataFragment extends Fragment {
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
-    private ProgressBarCompat progress;
+    private ProgressView progress;
     private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
@@ -149,7 +149,7 @@ public class InsertAvanzataFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
         searchPar.setText("");
 
         Bundle bundle = getArguments();
@@ -225,8 +225,8 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-        PaperButton paperPulisci = (PaperButton) rootView.findViewById(R.id.pulisci_ripple);
-        paperPulisci.setColor(getThemeUtils().primaryColor());
+        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
+//        paperPulisci.setColor(getThemeUtils().primaryColor());
         paperPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,7 +319,8 @@ public class InsertAvanzataFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-            progress.setVisibility(View.VISIBLE);
+//            progress.setVisibility(View.VISIBLE);
+            progress.start();
         }
 
         @Override
@@ -327,7 +328,8 @@ public class InsertAvanzataFragment extends Fragment {
 
             cantoAdapter.notifyDataSetChanged();
 
-            progress.setVisibility(View.GONE);
+//            progress.setVisibility(View.GONE);
+            progress.stop();
 
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);

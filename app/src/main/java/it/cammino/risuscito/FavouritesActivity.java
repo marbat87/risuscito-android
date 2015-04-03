@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,10 @@ public class FavouritesActivity extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
+        TextView noFavs = (TextView) rootView.findViewById(R.id.favorites_text);
+        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+        noFavs.setTypeface(face);
+
         return rootView;
     }
 
@@ -86,7 +91,7 @@ public class FavouritesActivity extends Fragment {
         int total = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        TextView noResults = (TextView) rootView.findViewById(R.id.no_favourites);
+        View noResults = rootView.findViewById(R.id.no_favourites);
         TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
         if (total > 0) {
             noResults.setVisibility(View.GONE);
@@ -167,7 +172,7 @@ public class FavouritesActivity extends Fragment {
 										titoli.remove(posizDaCanc);
                                         cantoAdapter.notifyItemRemoved(posizDaCanc);
                                         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-                                        TextView noResults = (TextView) rootView.findViewById(R.id.no_favourites);
+                                        View noResults = rootView.findViewById(R.id.no_favourites);
                                         TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
                                         if (titoli.size() > 0) {
                                             noResults.setVisibility(View.GONE);

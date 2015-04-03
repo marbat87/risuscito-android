@@ -250,5 +250,6 @@
     <!--<string name="lang_uk">Українська</string>-->
     <string name="page_contracted">СТОР.</string>
     <string name="translation_running">Переклад&#8230;</string>
+    <string name="no_favourites_short">Немає закладок.</string>
 
 </resources>
