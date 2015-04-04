@@ -22,7 +22,7 @@ import it.cammino.risuscito.utils.ThemeUtils;
 public class GeneralIndex extends Fragment {
 
     private CustomViewPager mViewPager;
-    private TabPageIndicator mSlidingTabLayout = null;
+//    private TabPageIndicator mSlidingTabLayout = null;
 
     private static final String PAGE_VIEWED = "pageViewed";
 
@@ -37,11 +37,11 @@ public class GeneralIndex extends Fragment {
         mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
+        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
-        Resources res = getResources();
+//        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
@@ -98,30 +98,30 @@ public class GeneralIndex extends Fragment {
             Locale l = getActivity().getResources().getConfiguration().locale;
             switch (position) {
                 case 0:
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                         return getString(R.string.letter_order_text).toUpperCase(l);
-                    else
-                        return getString(R.string.letter_order_text);
+//                    else
+//                        return getString(R.string.letter_order_text);
                 case 1:
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                         return getString(R.string.page_order_text).toUpperCase(l);
-                    else
-                        return getString(R.string.page_order_text);
+//                    else
+//                        return getString(R.string.page_order_text);
                 case 2:
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                         return getString(R.string.arg_search_text).toUpperCase(l);
-                    else
-                        return getString(R.string.arg_search_text);
+//                    else
+//                        return getString(R.string.arg_search_text);
                 case 3:
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                         return getString(R.string.salmi_musica_index).toUpperCase(l);
-                    else
-                        return getString(R.string.salmi_musica_index);
+//                    else
+//                        return getString(R.string.salmi_musica_index);
                 case 4:
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                         return getString(R.string.indice_liturgico_index).toUpperCase(l);
-                    else
-                        return getString(R.string.indice_liturgico_index);
+//                    else
+//                        return getString(R.string.indice_liturgico_index);
             }
             return null;
         }

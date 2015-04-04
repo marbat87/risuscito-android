@@ -15,7 +15,8 @@
         android:id="@+id/sliding_tabs"
         android:layout_height="48dp"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"/>
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation" />
 
     <FrameLayout
         android:layout_width="match_parent"

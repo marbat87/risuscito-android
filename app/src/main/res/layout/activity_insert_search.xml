@@ -16,11 +16,18 @@
         android:background="?attr/colorPrimary"
         android:elevation="@dimen/toolbar_elevation"/>
 
-    <it.cammino.risuscito.ui.SlidingTabLayout
-        android:background="?attr/colorPrimary"
+    <!--<it.cammino.risuscito.ui.SlidingTabLayout-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--android:id="@+id/sliding_tabs"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:elevation="@dimen/toolbar_elevation" />-->
+    <com.rey.material.widget.TabPageIndicator
+        style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"
         android:id="@+id/sliding_tabs"
+        android:layout_height="48dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
         android:elevation="@dimen/toolbar_elevation" />
 
     <FrameLayout
@@ -28,7 +35,11 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <android.support.v4.view.ViewPager
+        <!--<android.support.v4.view.ViewPager-->
+            <!--android:id="@+id/view_pager"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+        <it.cammino.risuscito.ui.CustomViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -127,11 +127,6 @@
         <!--<item name="lpd_strokeSecondaryColor">#FFB6CDF2</item>-->
     </style>
 
-    <style name="Material.Widget.Slider.Discrete.Risuscito">
-        <item name="sl_primaryColor">?attr/colorAccent</item>
-        <!--<item name="sl_secondaryColor">#FFB6CDF2</item>-->
-    </style>
-
     <style  name="Material.Widget.TabPageIndicator.Light.Risuscito">
         <item name="tpi_tabPadding">12dp</item>
         <item name="tpi_tabRipple">@style/Material.Drawable.Ripple.Wave.Risuscito</item>
@@ -149,12 +144,17 @@
         <item name="rd_padding">0dp</item>
     </style>
 
-    <!--<style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Subhead">-->
-        <!--<item name="android:textColor">@android:color/white</item>-->
-        <!--<item name="textAllCaps">true</item>-->
-    <!--</style>-->
-    <style name="TabTextAppearance" parent="@style/Base.Widget.AppCompat.ActionBar.TabText">
-        <item name="android:textColor">@android:color/white</item>
+    <style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/color_tpi</item>
+    </style>
+
+    <style name="Material.Widget.Slider.Discrete.Risuscito">
+        <item name="sl_travelAnimDuration">1</item>
+        <item name="sl_thumbFocusRadius">40dip</item>
+        <item name="sl_minValue">0</item>
+        <item name="sl_maxValue">100</item>
+        <item name="sl_textSize">@dimen/abc_text_size_title_material</item>
+        <item name="sl_primaryColor">?colorAccent</item>
     </style>
 
 </resources>

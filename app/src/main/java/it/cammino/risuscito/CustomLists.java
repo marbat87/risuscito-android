@@ -31,6 +31,7 @@ import com.alertdialogpro.AlertDialogPro;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
+import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
@@ -46,7 +47,7 @@ public class CustomLists extends Fragment  {
 	private int listaDaCanc;
 	private int prevOrientation;
 	private ViewPager mViewPager;
-	SlidingTabLayout mSlidingTabLayout = null;
+    TabPageIndicator mSlidingTabLayout = null;
 
 	private AlertDialogPro dialog;
     private TintEditText titleInput;
@@ -69,13 +70,13 @@ public class CustomLists extends Fragment  {
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 	    mViewPager.setAdapter(mSectionsPagerAdapter);
 	    
-        mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+//        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 	    
         Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-        mSlidingTabLayout.setDistributeEvenly(false);
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
+//        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
         
         return rootView;
@@ -256,20 +257,20 @@ public class CustomLists extends Fragment  {
             Locale l = getActivity().getResources().getConfiguration().locale;
 			switch (position) {
 			case 0:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.title_activity_canti_parola).toUpperCase(l);
-				else
-					return getString(R.string.title_activity_canti_parola);
+//				else
+//					return getString(R.string.title_activity_canti_parola);
 			case 1:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.title_activity_canti_eucarestia).toUpperCase(l);
-				else
-					return getString(R.string.title_activity_canti_eucarestia);
+//				else
+//					return getString(R.string.title_activity_canti_eucarestia);
 			default:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return titoliListe[position - 2].toUpperCase(l);
-				else
-					return titoliListe[position - 2];
+//				else
+//					return titoliListe[position - 2];
 			}
 		}
 		

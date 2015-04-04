@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rey.material.widget.TabPageIndicator;
+
 import java.util.Locale;
 
 import it.cammino.risuscito.ui.SlidingTabLayout;
@@ -18,7 +20,7 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
 
-    SlidingTabLayout mSlidingTabLayout = null;
+//    TabPageIndicator mSlidingTabLayout = null;
   	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,14 +32,14 @@ public class GeneralSearch extends Fragment {
 
         ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
-        
-        mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+
+        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        
-        Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-        mSlidingTabLayout.setDistributeEvenly(false);
+//        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+//
+//        Resources res = getResources();
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
+//        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
 	    
         return rootView;
@@ -71,15 +73,15 @@ public class GeneralSearch extends Fragment {
             Locale l = getActivity().getResources().getConfiguration().locale;
 			switch (position) {
 			case 0:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.fast_search_title).toUpperCase(l);
-				else
-					return getString(R.string.fast_search_title);
+//				else
+//					return getString(R.string.fast_search_title);
 			case 1:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.advanced_search_title).toUpperCase(l);
-				else
-					return getString(R.string.advanced_search_title);
+//				else
+//					return getString(R.string.advanced_search_title);
 			default:
 				return null;
 			}

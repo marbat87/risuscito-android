@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import com.rey.material.widget.TabPageIndicator;
+
 import java.util.Locale;
 
 import it.cammino.risuscito.ui.SlidingTabLayout;
@@ -47,14 +49,14 @@ public class GeneralInsertSearch extends ThemeableActivity {
 		
 		ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
-        
-        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
+        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+//        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
-        Resources res = getResources();
-        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-        mSlidingTabLayout.setDistributeEvenly(false);
+//        Resources res = getResources();
+//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
+//        mSlidingTabLayout.setDistributeEvenly(false);
         mSlidingTabLayout.setViewPager(mViewPager);
 
 	}
@@ -141,15 +143,15 @@ public class GeneralInsertSearch extends ThemeableActivity {
             Locale l = getResources().getConfiguration().locale;
 			switch (position) {
 			case 0:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.fast_search_title).toUpperCase(l);
-				else
-					return getString(R.string.fast_search_title);
+//				else
+//					return getString(R.string.fast_search_title);
 			case 1:
-				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					return getString(R.string.advanced_search_title).toUpperCase(l);
-				else
-					return getString(R.string.advanced_search_title);
+//				else
+//					return getString(R.string.advanced_search_title);
 			}
 			return null;
 		}
