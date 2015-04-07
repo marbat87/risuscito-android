@@ -46,4 +46,8 @@
 
     <dimen name="text_min_margin">20dip</dimen>
 
+    <dimen name="cardListPreferredItemMargin">10dip</dimen>
+    <dimen name="cardListPreferredTextMarginStart">60dip</dimen>
+    <dimen name="cardListElevation">3dip</dimen>
+
 </resources>

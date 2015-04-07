@@ -1,4 +1,4 @@
-package it.cammino.risuscito;
+package it.cammino.risuscito.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +8,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.cammino.risuscito.CantoItem;
+import it.cammino.risuscito.R;
+import it.cammino.risuscito.Utility;
+
 /**
  * Created by marcello.battain on 12/01/2015.
  */
-public class CantoRecyclerAdapter extends RecyclerView.Adapter {
+public class CantoCardRecyclerAdapter extends RecyclerView.Adapter {
 
     private List<CantoItem> dataItems;
     private View.OnClickListener clickListener;
@@ -19,7 +23,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
     private View.OnCreateContextMenuListener createContextMenuListener;
 
     // Adapter constructor 1
-    public CantoRecyclerAdapter(List<CantoItem> dataItems
+    public CantoCardRecyclerAdapter(List<CantoItem> dataItems
             , View.OnClickListener clickListener) {
 
         this.dataItems = dataItems;
@@ -29,7 +33,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     // Adapter constructor 2
-    public CantoRecyclerAdapter(List<CantoItem> dataItems
+    public CantoCardRecyclerAdapter(List<CantoItem> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
 
@@ -40,7 +44,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     // Adapter constructor 3
-    public CantoRecyclerAdapter(List<CantoItem> dataItems
+    public CantoCardRecyclerAdapter(List<CantoItem> dataItems
             , View.OnClickListener clickListener
             , View.OnCreateContextMenuListener createContextMenuListener) {
 
@@ -55,7 +59,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
 
         View layoutView = LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.row_item, null);
+                .inflate(R.layout.card_row_item, null);
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 

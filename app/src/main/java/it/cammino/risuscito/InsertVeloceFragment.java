@@ -27,6 +27,7 @@ import com.rey.material.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class InsertVeloceFragment extends Fragment {

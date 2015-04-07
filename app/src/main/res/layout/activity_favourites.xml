@@ -10,12 +10,12 @@
         android:weightSum="1.0" >
 
         <!--<TextView-->
-            <!--android:id="@+id/no_favourites"-->
-            <!--android:layout_marginLeft="@dimen/activity_min_margin"-->
-            <!--android:layout_marginRight="@dimen/activity_min_margin"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/no_favourites" />-->
+        <!--android:id="@+id/no_favourites"-->
+        <!--android:layout_marginLeft="@dimen/activity_min_margin"-->
+        <!--android:layout_marginRight="@dimen/activity_min_margin"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/no_favourites" />-->
 
         <android.support.v7.widget.RecyclerView
             android:layout_width= "match_parent"
@@ -25,6 +25,7 @@
 
         <TextView
             android:id="@+id/hint_remove"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle"
             android:layout_marginLeft="@dimen/activity_min_margin"
             android:layout_marginRight="@dimen/activity_min_margin"
             android:layout_width="match_parent"
@@ -34,13 +35,14 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:layout_gravity="center"
         android:id="@+id/no_favourites"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/favorites_image"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:layout_width="120dip"
             android:layout_height="120dip"
             android:src="@drawable/sad_heart"/>
@@ -57,7 +59,7 @@
             android:text="@string/no_favourites_short"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

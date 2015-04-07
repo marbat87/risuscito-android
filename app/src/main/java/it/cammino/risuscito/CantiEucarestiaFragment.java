@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import it.cammino.risuscito.adapters.CantoCardRecyclerAdapter;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -448,7 +449,7 @@ public class CantiEucarestiaFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiPaneList);
 
         // Creating new adapter object
-        recyclerView.setAdapter(new CantoRecyclerAdapter(dataItems, clickListener, longClickListener));
+        recyclerView.setAdapter(new CantoCardRecyclerAdapter(dataItems, clickListener, longClickListener));
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -468,7 +469,7 @@ public class CantiEucarestiaFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiVinoList);
 
         // Creating new adapter object
-        recyclerView.setAdapter(new CantoRecyclerAdapter(dataItems, clickListener, longClickListener));
+        recyclerView.setAdapter(new CantoCardRecyclerAdapter(dataItems, clickListener, longClickListener));
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));

@@ -110,12 +110,13 @@
         <item name="rd_rippleColor">#33000000</item>
     </style>
 
-    <style name="RaiseWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">
-        <item name="rd_background">@drawable/bg_bt_raise</item>
+    <style name="Material.Drawable.Ripple.Wave.Light.Risuscito">
+        <item name="rd_rippleColor">?colorAccent</item>
         <item name="rd_leftPadding">1dp</item>
         <item name="rd_topPadding">1dp</item>
         <item name="rd_rightPadding">1dp</item>
         <item name="rd_bottomPadding">2dp</item>
+        <item name="rd_delayClick">false</item>
     </style>
 
     <style name="Material.Drawable.CircularProgress.Risuscito">
@@ -136,7 +137,7 @@
     </style>
 
     <style name="Material.Drawable.Ripple.Wave.Risuscito">
-        <item name="rd_background">@null</item>
+        <item name="android:background">@null</item>
         <item name="rd_rippleColor">?colorAccent</item>
         <item name="rd_rippleAnimDuration">300</item>
         <item name="rd_maskType">rectangle</item>

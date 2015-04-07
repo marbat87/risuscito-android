@@ -21,6 +21,7 @@ import com.nispok.snackbar.listeners.ActionClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class FavouritesActivity extends Fragment {
@@ -49,9 +50,9 @@ public class FavouritesActivity extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        TextView noFavs = (TextView) rootView.findViewById(R.id.favorites_text);
         Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        noFavs.setTypeface(face);
+        ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
+        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
 
         return rootView;
     }

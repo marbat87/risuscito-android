@@ -39,8 +39,8 @@
     <!--android:layout_height="48dip"/>-->
     <com.rey.material.widget.Button
         android:id="@+id/pulisci_ripple"
-        risuscito:ripple="@style/RaiseWaveColorButtonRippleStyle"
-        risuscito:delayClick="false"
+        risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"
+        android:background="@drawable/bg_bt_raise"
         android:text="@string/button_pulisci"
         android:layout_width="@dimen/paper_button_width"
         android:layout_margin="@dimen/min_button_margin"

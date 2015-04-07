@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
