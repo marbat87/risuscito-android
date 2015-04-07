@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -30,7 +28,7 @@ public class GeneralIndex extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.activity_general_index, container, false);
+        View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 

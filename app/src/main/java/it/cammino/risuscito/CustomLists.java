@@ -4,10 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,7 +33,6 @@ import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
-import it.cammino.risuscito.ui.SlidingTabLayout;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment  {
@@ -56,7 +53,7 @@ public class CustomLists extends Fragment  {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		View rootView = inflater.inflate(R.layout.activity_custom_lists, container, false);
+		View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
@@ -74,10 +71,10 @@ public class CustomLists extends Fragment  {
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 	    
-        Resources res = getResources();
+//        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
-        mSlidingTabLayout.setViewPager(mViewPager);
+//        mSlidingTabLayout.setViewPager(mViewPager);
         
         return rootView;
 	}
