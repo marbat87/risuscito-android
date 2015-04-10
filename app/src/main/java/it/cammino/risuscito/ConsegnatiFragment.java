@@ -33,16 +33,13 @@ import it.cammino.risuscito.utils.ThemeUtils;
 public class ConsegnatiFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
-//    private List<CantoItem> titoli;
     private List<Canto> titoliChoose;
     private View rootView;
-//    private RecyclerView cantiRecycler;
     private CantoRecyclerAdapter cantoAdapter;
-//    private RecyclerView chooseRecycler;
     private CantoSelezionabileAdapter selectableAdapter;
 
     private static final String EDIT_MODE = "editMode";
-    private static final String TITOLI_CHOOSE = "titoliChoose";
+    public static final String TITOLI_CHOOSE = "titoliChoose";
 
     private boolean editMode;
 
@@ -67,12 +64,14 @@ public class ConsegnatiFragment extends Fragment {
 
         if (savedInstanceState == null)
             editMode = false;
-        else
+        else {
             editMode = savedInstanceState.getBoolean(EDIT_MODE, false);
-
-        RetainedFragment dataFragment = (RetainedFragment) getActivity().getSupportFragmentManager().findFragmentByTag(TITOLI_CHOOSE);
-        if (dataFragment != null)
-            titoliChoose = dataFragment.getData();
+            if (editMode) {
+                RetainedFragment dataFragment = (RetainedFragment) getActivity().getSupportFragmentManager().findFragmentByTag(TITOLI_CHOOSE);
+                if (dataFragment != null)
+                    titoliChoose = dataFragment.getData();
+            }
+        }
 
         if (editMode) {
             rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
@@ -137,12 +136,9 @@ public class ConsegnatiFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(EDIT_MODE, editMode);
-        RetainedFragment dataFragment = new RetainedFragment();
-        getActivity().getSupportFragmentManager().beginTransaction().add(dataFragment, TITOLI_CHOOSE).commit();
-        dataFragment.setData(titoliChoose);
-        super.onSaveInstanceState(outState);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(EDIT_MODE, editMode);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -336,4 +332,11 @@ public class ConsegnatiFragment extends Fragment {
         }
     }
 
+    public List<Canto> getTitoliChoose() {
+        return titoliChoose;
+    }
+
+    public void setTitoliChoose(List<Canto> titoliChoose) {
+        this.titoliChoose = titoliChoose;
+    }
 }
