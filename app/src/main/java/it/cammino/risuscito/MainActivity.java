@@ -80,7 +80,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             R.drawable.ic_action_settings_dark,
             R.drawable.ic_action_about_dark,
             R.drawable.ic_action_good_dark,
-            R.drawable.ic_action_add_to_queue_dark
+            R.drawable.ic_action_consegnati
     };
 
     private static final int TALBLET_DP = 600;

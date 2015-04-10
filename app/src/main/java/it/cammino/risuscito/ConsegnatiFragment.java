@@ -34,14 +34,17 @@ public class ConsegnatiFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
 //    private List<CantoItem> titoli;
-//    private List<Canto> titoliChoose;
+    private List<Canto> titoliChoose;
     private View rootView;
 //    private RecyclerView cantiRecycler;
     private CantoRecyclerAdapter cantoAdapter;
 //    private RecyclerView chooseRecycler;
     private CantoSelezionabileAdapter selectableAdapter;
 
-    private boolean editMode = false;
+    private static final String EDIT_MODE = "editMode";
+    private static final String TITOLI_CHOOSE = "titoliChoose";
+
+    private boolean editMode;
 
     private LUtils mLUtils;
 
@@ -62,10 +65,19 @@ public class ConsegnatiFragment extends Fragment {
         Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
 
+        if (savedInstanceState == null)
+            editMode = false;
+        else
+            editMode = savedInstanceState.getBoolean(EDIT_MODE, false);
+
+        RetainedFragment dataFragment = (RetainedFragment) getActivity().getSupportFragmentManager().findFragmentByTag(TITOLI_CHOOSE);
+        if (dataFragment != null)
+            titoliChoose = dataFragment.getData();
+
         if (editMode) {
             rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.consegnati_view).setVisibility(View.GONE);
-//            updateChooseList();
+            updateChooseList(false);
         }
         else {
             rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
@@ -125,6 +137,15 @@ public class ConsegnatiFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(EDIT_MODE, editMode);
+        RetainedFragment dataFragment = new RetainedFragment();
+        getActivity().getSupportFragmentManager().beginTransaction().add(dataFragment, TITOLI_CHOOSE).commit();
+        dataFragment.setData(titoliChoose);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
@@ -150,7 +171,7 @@ public class ConsegnatiFragment extends Fragment {
                 editMode = true;
                 rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.consegnati_view).setVisibility(View.GONE);
-                updateChooseList(null);
+                updateChooseList(true);
                 return true;
         }
         return false;
@@ -227,47 +248,6 @@ public class ConsegnatiFragment extends Fragment {
             }
         };
 
-//        View.OnLongClickListener longClickListener  = new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-//                cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
-//                posizDaCanc = recyclerView.getChildPosition(v);
-//                SnackbarManager.show(
-//                        Snackbar.with(getActivity())
-//                                .text(getString(R.string.favorite_remove))
-//                                .actionLabel(getString(R.string.snackbar_remove))
-//                                .actionListener(new ActionClickListener() {
-//                                    @Override
-//                                    public void onActionClicked(Snackbar snackbar) {
-//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                        String sql = "UPDATE ELENCO" +
-//                                                "  SET favourite = 0" +
-//                                                "  WHERE titolo =  '" + cantoDaCanc + "'";
-//                                        db.execSQL(sql);
-//                                        db.close();
-//                                        // updateFavouritesList();
-//                                        titoli.remove(posizDaCanc);
-//                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
-//                                        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-//                                        View noResults = rootView.findViewById(R.id.no_favourites);
-//                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
-//                                        if (titoli.size() > 0) {
-//                                            noResults.setVisibility(View.GONE);
-//                                            hintRemove.setVisibility(View.VISIBLE);
-//                                        }
-//                                        else	{
-//                                            noResults.setVisibility(View.VISIBLE);
-//                                            hintRemove.setVisibility(View.GONE);
-//                                        }
-//                                    }
-//                                })
-//                                .actionColor(getThemeUtils().accentColor())
-//                        , getActivity());
-//                return true;
-//            }
-//        };
-
         RecyclerView cantiRecycler = (RecyclerView) rootView.findViewById(R.id.cantiRecycler);
 
         // Creating new adapter object
@@ -281,11 +261,9 @@ public class ConsegnatiFragment extends Fragment {
 
     }
 
-    private void updateChooseList(List<Canto> titoliChoose) {
+    private void updateChooseList(boolean reload) {
 
-        List<Canto> titoli = titoliChoose;
-
-        if (titoli == null) {
+        if (reload) {
             // crea un manipolatore per il Database
             SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -297,13 +275,13 @@ public class ConsegnatiFragment extends Fragment {
             Cursor lista = db.rawQuery(query, null);
 
             // crea un array e ci memorizza i titoli estratti
-            titoli = new ArrayList<Canto>();
+            titoliChoose = new ArrayList<Canto>();
             lista.moveToFirst();
             for (int i = 0; i < lista.getCount(); i++) {
 //            Log.i(getClass().toString(), "CANTO: " + Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0));
 //            Log.i(getClass().toString(), "ID: " + lista.getInt(3));
 //            Log.i(getClass().toString(), "SELEZIONATO: " + lista.getInt(4));
-                titoli.add(new Canto(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
+                titoliChoose.add(new Canto(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
                         , lista.getInt(3)
                         , lista.getInt(4) > 0));
                 lista.moveToNext();
@@ -316,7 +294,7 @@ public class ConsegnatiFragment extends Fragment {
         RecyclerView chooseRecycler = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
 
         // Creating new adapter object
-        selectableAdapter = new CantoSelezionabileAdapter(titoli);
+        selectableAdapter = new CantoSelezionabileAdapter(titoliChoose);
         chooseRecycler.setAdapter(selectableAdapter);
 
         chooseRecycler.setHasFixedSize(true);
@@ -334,6 +312,28 @@ public class ConsegnatiFragment extends Fragment {
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
+    }
+
+    public static class RetainedFragment extends Fragment {
+
+        // data object we want to retain
+        private List<Canto> data;
+
+        // this method is only called once for this fragment
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            // retain this fragment
+            setRetainInstance(true);
+        }
+
+        public void setData(List<Canto> data) {
+            this.data = data;
+        }
+
+        public List<Canto> getData() {
+            return data;
+        }
     }
 
 }
