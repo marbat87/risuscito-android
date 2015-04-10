@@ -7,15 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_min_margin"
+        android:paddingRight="@dimen/activity_min_margin"
         android:weightSum="1.0" >
-
-        <!--<TextView-->
-        <!--android:id="@+id/no_favourites"-->
-        <!--android:layout_marginLeft="@dimen/activity_min_margin"-->
-        <!--android:layout_marginRight="@dimen/activity_min_margin"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/no_favourites" />-->
 
         <android.support.v7.widget.RecyclerView
             android:layout_width= "match_parent"
@@ -26,8 +20,6 @@
         <TextView
             android:id="@+id/hint_remove"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle"
-            android:layout_marginLeft="@dimen/activity_min_margin"
-            android:layout_marginRight="@dimen/activity_min_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/hint_remove" />

@@ -42,13 +42,14 @@
         risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"
         android:background="@drawable/bg_bt_raise"
         android:text="@string/button_pulisci"
-        android:layout_width="@dimen/paper_button_width"
+        android:minWidth="@dimen/paper_button_width"
+        android:layout_width="wrap_content"
         android:layout_margin="@dimen/min_button_margin"
         android:layout_gravity="end"
         android:textColor="#FF000000"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
-        android:paddingLeft="4dip"
-        android:paddingRight="4dip"
+        android:paddingLeft="@dimen/button_text_padding"
+        android:paddingRight="@dimen/button_text_padding"
         android:layout_height="36dp"/>
 
     <!--<com.alertdialogpro.material.ProgressBarCompat-->

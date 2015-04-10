@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/cantiList"
@@ -14,7 +14,9 @@
         android:dividerHeight="0px"
         android:layout_alignParentLeft="true"
         android:overScrollMode="never"
-        android:scrollbars="none" />
+        android:scrollbars="none"
+        android:paddingLeft="@dimen/activity_min_margin"
+        android:paddingRight="@dimen/activity_min_margin" />
 
     <it.cammino.utilities.quickscroll.QuickScroll
         android:id="@+id/quickscroll"

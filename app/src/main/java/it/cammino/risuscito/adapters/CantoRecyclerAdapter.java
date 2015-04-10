@@ -59,7 +59,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
 
         View layoutView = LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.row_item, null);
+                .inflate(R.layout.row_item, viewGroup, false);
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 

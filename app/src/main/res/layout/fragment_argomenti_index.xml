@@ -6,5 +6,7 @@
     android:drawSelectorOnTop="false"
     android:listSelector="@android:color/transparent"
     android:childDivider="@android:color/transparent"
-    android:layout_height="wrap_content"
-    android:groupIndicator="@drawable/expander_group_holo_light" />
+    android:layout_height="match_parent"
+    android:groupIndicator="@drawable/expander_group_holo_light"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin" />

@@ -6,8 +6,9 @@
     android:drawSelectorOnTop="false"
     android:divider="@null"
     android:dividerHeight="0px"
-    android:layout_alignParentLeft="true"
     android:overScrollMode="never"
     android:scrollbars="none"
     android:fastScrollEnabled="true"
-    android:fadeScrollbars="false" />
+    android:fadeScrollbars="false"
+    android:paddingLeft="@dimen/activity_min_margin"
+    android:paddingRight="@dimen/activity_min_margin"/>

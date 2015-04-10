@@ -249,6 +249,7 @@
     <string name="page_contracted">PAG.</string>
     <string name="translation_running">Traduzione in corso&#8230;</string>
     <string name="no_favourites_short">Non è presente nessun preferito.</string>
+    <string name="title_activity_consegnati">Canti consegnati</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>

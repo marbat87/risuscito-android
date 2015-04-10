@@ -166,6 +166,14 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     searchTask = new SearchTask();
                     searchTask.execute(searchPar.getText().toString());
                 }
+                else {
+                    if (s.length() == 0) {
+                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        titoli.clear();
+                        cantoAdapter.notifyDataSetChanged();
+                        progress.stop();
+                    }
+                }
             }
 
             @Override
@@ -215,11 +223,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             @Override
             public void onClick(View v) {
                 searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                titoli.clear();
-                cantoAdapter.notifyDataSetChanged();
-//                progress.setVisibility(View.GONE);
-                progress.stop();
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                titoli.clear();
+//                cantoAdapter.notifyDataSetChanged();
+//                progress.stop();
             }
         });
 

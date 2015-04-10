@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 43;
+    private static final int DB_VERSION = 44;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -102,6 +102,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += ");";
         db.execSQL(sql);
         //fine tabella indice liturgico
+
+        //nuova tabella canti consegnati
+        sql = "CREATE TABLE IF NOT EXISTS CANTI_CONSEGNATI (";
+        sql += "_id INTEGER NOT NULL,";
+        sql += "id_canto TEXT NOT NULL,";
+        sql += "PRIMARY KEY (_id, id_canto)";
+        sql += ");";
+        db.execSQL(sql);
 
         // CANTI
         sql = "INSERT INTO ELENCO ";
@@ -4517,6 +4525,25 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         cursor.close();
 
+        //cancella dai consegnati, i canti inesistenti
+        sql = "SELECT _id, id_canto FROM CANTI_CONSEGNATI";
+        cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            sql = "SELECT _id" +
+                    "  FROM ELENCO" +
+                    "  WHERE _id =  " + cursor.getInt(1);
+            Cursor cCheckExists = db.rawQuery(sql, null);
+//            Log.i("ESISTE?", cCheckExists.getCount() + "");
+            if (cCheckExists.getCount() == 0)
+                db.delete("CANTI_CONSEGNATI", "_id = " + cursor.getInt(0), null);
+            cCheckExists.close();
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
     }
 
     public void reCreateDatabse(SQLiteDatabase db) {
@@ -4538,6 +4565,8 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS LOCAL_LINKS";
         db.execSQL(sql);
+//        sql = "DROP TABLE IF EXISTS CANTI_CONSEGNATI";
+//        db.execSQL(sql);
 
         onCreate(db);
     }

@@ -59,7 +59,7 @@ public class CantoCardRecyclerAdapter extends RecyclerView.Adapter {
 
         View layoutView = LayoutInflater
                 .from(viewGroup.getContext())
-                .inflate(R.layout.card_row_item, null);
+                .inflate(R.layout.card_row_item, viewGroup, false);
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 

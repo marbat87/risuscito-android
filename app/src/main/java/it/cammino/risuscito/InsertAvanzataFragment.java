@@ -185,6 +185,14 @@ public class InsertAvanzataFragment extends Fragment {
                     searchTask = new SearchTask();
                     searchTask.execute(searchPar.getText().toString());
                 }
+                else {
+                    if (s.length() == 0) {
+                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        titoli.clear();
+                        cantoAdapter.notifyDataSetChanged();
+                        progress.stop();
+                    }
+                }
             }
 
             @Override
@@ -232,9 +240,9 @@ public class InsertAvanzataFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                titoli.clear();
-                cantoAdapter.notifyDataSetChanged();
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                titoli.clear();
+//                cantoAdapter.notifyDataSetChanged();
             }
         });
 

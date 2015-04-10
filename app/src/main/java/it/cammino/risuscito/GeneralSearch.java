@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +13,6 @@ import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
-import it.cammino.risuscito.ui.SlidingTabLayout;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {

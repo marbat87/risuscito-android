@@ -246,10 +246,9 @@
     <string name="to_be_chosen">вибрати</string>
     <string name="language_title">Мова</string>
     <string name="language_summary">Налаштуй мову меню та пісень.</string>
-    <!--<string name="lang_it">італійська</string>-->
-    <!--<string name="lang_uk">Українська</string>-->
     <string name="page_contracted">СТОР.</string>
     <string name="translation_running">Переклад&#8230;</string>
     <string name="no_favourites_short">Немає закладок.</string>
+    <string name="title_activity_consegnati">Canti consegnati</string>
 
 </resources>
