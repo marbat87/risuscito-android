@@ -29,6 +29,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.alertdialogpro.AlertDialogPro;
 
 import java.util.ArrayList;
@@ -417,15 +418,45 @@ public class ArgumentsSectionFragment extends Fragment {
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-                                        .setMessage(getString(R.string.dialog_present_yet) + " "
-//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//                                                .substring(10)
+//                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+//                                        .setMessage(getString(R.string.dialog_present_yet) + " "
+////                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+////                                                .substring(10)
+//                                                + cursor.getString(0)
+//                                                + getString(R.string.dialog_wonna_replace))
+//                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPERS_OK))
+//                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                        .show();
+                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                                        .title(R.string.dialog_replace_title)
+                                        .content(getString(R.string.dialog_present_yet) + " "
+                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPERS_OK))
-                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                                        .positiveText(R.string.confirm)
+                                        .negativeText(R.string.dismiss)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+
+                                                ContentValues  values = new  ContentValues( );
+                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+                                                db.close();
+                                                getActivity().setRequestedOrientation(prevOrientation);
+                                                Toast.makeText(getActivity()
+                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onNegative(MaterialDialog dialog) {
+                                                getActivity().setRequestedOrientation(prevOrientation);
+                                            }
+                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -538,12 +569,41 @@ public class ArgumentsSectionFragment extends Fragment {
                 posizioneDaAgg = listPosition;
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-                        .setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+//                        .setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                                + getString(R.string.dialog_wonna_replace))
+//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPRED_OK))
+//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                        .show();
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_replace_title)
+                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.ARG_LISTAPRED_OK))
-                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                                String sql = "UPDATE CUST_LISTS "
+                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
+                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+                                        + "WHERE _id = " + idListaDaAgg
+                                        + "  AND position = " + posizioneDaAgg;
+                                db.execSQL(sql);
+                                db.close();
+                                getActivity().setRequestedOrientation(prevOrientation);
+                                Toast.makeText(getActivity()
+                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -578,58 +638,58 @@ public class ArgumentsSectionFragment extends Fragment {
                 , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
     }
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.ARG_LISTAPERS_OK:
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.ARG_LISTAPERS_OK:
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+////                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+////                    String query = "SELECT color, pagina" +
+////                            "		FROM ELENCO" +
+////                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+////                    Cursor cursor = db.rawQuery(query, null);
+////
+////                    cursor.moveToFirst();
+////
+////                    listePers[idListaClick].addCanto(Utility.intToString(
+////                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+//                    listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                    ContentValues  values = new  ContentValues( );
+//                    values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                    db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Toast.makeText(getActivity()
+//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                    break;
+//                case Utility.ARG_LISTAPRED_OK:
+//                    db = listaCanti.getReadableDatabase();
 //                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                    String query = "SELECT color, pagina" +
-//                            "		FROM ELENCO" +
-//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                    Cursor cursor = db.rawQuery(query, null);
-//
-//                    cursor.moveToFirst();
-//
-//                    listePers[idListaClick].addCanto(Utility.intToString(
-//                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-                    listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-
-                    ContentValues  values = new  ContentValues( );
-                    values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                    db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Toast.makeText(getActivity()
-                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-                    break;
-                case Utility.ARG_LISTAPRED_OK:
-                    db = listaCanti.getReadableDatabase();
-                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                    String sql = "UPDATE CUST_LISTS "
-                            + "SET id_canto = (SELECT _id  FROM ELENCO"
-                            + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-                            + "WHERE _id = " + idListaDaAgg
-                            + "  AND position = " + posizioneDaAgg;
-                    db.execSQL(sql);
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Toast.makeText(getActivity()
-                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//                    String sql = "UPDATE CUST_LISTS "
+//                            + "SET id_canto = (SELECT _id  FROM ELENCO"
+//                            + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+//                            + "WHERE _id = " + idListaDaAgg
+//                            + "  AND position = " + posizioneDaAgg;
+//                    db.execSQL(sql);
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Toast.makeText(getActivity()
+//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                    break;
+//                default:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
 }

@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.alertdialogpro.AlertDialogPro;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
@@ -46,103 +47,129 @@ public class ListaPersonalizzataFragment extends Fragment {
 	private int idLista;
 	private ListaPersonalizzata listaPersonalizzata;
 	private int prevOrientation;
-	
+
 	private LUtils mLUtils;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		rootView = inflater.inflate(
-		R.layout.activity_lista_personalizzata, container, false);
-			
+				R.layout.activity_lista_personalizzata, container, false);
+
 		//crea un istanza dell'oggetto DatabaseCanti
 		listaCanti = new DatabaseCanti(getActivity());
-		
+
 		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_personalizzata);
-        fab.setColorNormal(getThemeUtils().accentColor());
-        fab.setColorPressed(getThemeUtils().accentColorDark());
-        fab.setColorRipple(getThemeUtils().accentColorDark());
+		fab.setColorNormal(getThemeUtils().accentColor());
+		fab.setColorPressed(getThemeUtils().accentColorDark());
+		fab.setColorRipple(getThemeUtils().accentColorDark());
 		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-	        			.setMessage(R.string.reset_list_question)
-	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PERS_RESET_OK))
-	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-	                    .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-			        @Override
-			        public boolean onKey(DialogInterface arg0, int keyCode,
-			        		KeyEvent event) {
-			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			        		arg0.dismiss();
-			        		getActivity().setRequestedOrientation(prevOrientation);
-			        		return true;
-			            }
-			            return false;
-			        }
-		        });
-                dialog.setCancelable(false);
+				prevOrientation = getActivity().getRequestedOrientation();
+				Utility.blockOrientation(getActivity());
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
+//	        			.setMessage(R.string.reset_list_question)
+//	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PERS_RESET_OK))
+//	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//	                    .show();
+				MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+						.title(R.string.dialog_reset_list_title)
+						.content(R.string.reset_list_question)
+						.positiveText(R.string.confirm)
+						.negativeText(R.string.dismiss)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(MaterialDialog dialog) {
+								db = listaCanti.getReadableDatabase();
+								ContentValues  values = new  ContentValues( );
+								for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+									listaPersonalizzata.removeCanto(i);
+								values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+								db.update("LISTE_PERS", values, "_id = " + idLista, null);
+								db.close();
+								updateLista();
+								mShareActionProvider.setShareIntent(getDefaultIntent());
+								getActivity().setRequestedOrientation(prevOrientation);
+							}
+
+							@Override
+							public void onNegative(MaterialDialog dialog) {
+								getActivity().setRequestedOrientation(prevOrientation);
+							}
+						})
+						.show();
+				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+					@Override
+					public boolean onKey(DialogInterface arg0, int keyCode,
+										 KeyEvent event) {
+						if (keyCode == KeyEvent.KEYCODE_BACK
+								&& event.getAction() == KeyEvent.ACTION_UP) {
+							arg0.dismiss();
+							getActivity().setRequestedOrientation(prevOrientation);
+							return true;
+						}
+						return false;
+					}
+				});
+				dialog.setCancelable(false);
 			}
 		});
-		
+
 //		setHasOptionsMenu(true);
-		
+
 		mLUtils = LUtils.getInstance(getActivity());
-		
+
 		return rootView;
 	}
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
-    @Override
-    public void onResume() {
-    	super.onResume();
+	@Override
+	public void onResume() {
+		super.onResume();
 		fragmentIndex = getArguments().getInt("position");
 		idLista = getArguments().getInt("idLista");
 //		Log.i("fragmentIndex", fragmentIndex+"");
 //		Log.i("idLista", idLista+"");
-		
+
 		db = listaCanti.getReadableDatabase();
-		
+
 		String query = "SELECT lista" +
 				"  FROM LISTE_PERS" +
-				"  WHERE _id =  " + idLista;   
+				"  WHERE _id =  " + idLista;
 		Cursor cursor = db.rawQuery(query, null);
-	      
+
 		// recupera l'oggetto lista personalizzata
 		cursor.moveToFirst();
-					    			
+
 		listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
-			deserializeObject(cursor.getBlob(0));
-		
+				deserializeObject(cursor.getBlob(0));
+
 		updateLista();
-    }
-    
+	}
+
 	@Override
 	public void onDestroy() {
 		if (listaCanti != null)
 			listaCanti.close();
 		super.onDestroy();
 	}
-	
+
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.list_with_delete, menu);
-	    MenuItem shareItem = menu.findItem(R.id.action_share);
-	    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-	    ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-	    if (listaPersonalizzata != null && mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
-	    	mShareActionProvider.setShareIntent(getDefaultIntent());
+		MenuItem shareItem = menu.findItem(R.id.action_share);
+		mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+		ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
+		if (listaPersonalizzata != null && mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
+			mShareActionProvider.setShareIntent(getDefaultIntent());
 	}
 
 	private Intent getDefaultIntent() {
@@ -151,120 +178,120 @@ public class ListaPersonalizzataFragment extends Fragment {
 		intent.setType("text/plain");
 		return intent;
 	}
-    
-    private void openPagina(View v) {
-    	// recupera il titolo della voce cliccata
+
+	private void openPagina(View v) {
+		// recupera il titolo della voce cliccata
 		String cantoCliccato = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
 		cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-        		
+
 		// crea un manipolatore per il DB in modalità READ
 		db = listaCanti.getReadableDatabase();
-	    
+
 		// esegue la query per il recupero del nome del file della pagina da visualizzare
-	    String query = "SELECT source, _id" +
-	      		"  FROM ELENCO" +
-	      		"  WHERE titolo =  '" + cantoCliccato + "'";   
-	    Cursor cursor = db.rawQuery(query, null);
-	      
-	    // recupera il nome del file
-	    cursor.moveToFirst();
-	    String pagina = cursor.getString(0);
-	    int idCanto = cursor.getInt(1);
-	    
-	    // chiude il cursore
-	    cursor.close();
-	    db.close();
-	    
-	    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare  
-	    Bundle bundle = new Bundle();
-	    bundle.putString("pagina", pagina);
-	    bundle.putInt("idCanto", idCanto);
-	    
-    	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-    	intent.putExtras(bundle);
-    	mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
-    }
-    
-    private void updateLista() {
-		
+		String query = "SELECT source, _id" +
+				"  FROM ELENCO" +
+				"  WHERE titolo =  '" + cantoCliccato + "'";
+		Cursor cursor = db.rawQuery(query, null);
+
+		// recupera il nome del file
+		cursor.moveToFirst();
+		String pagina = cursor.getString(0);
+		int idCanto = cursor.getInt(1);
+
+		// chiude il cursore
+		cursor.close();
+		db.close();
+
+		// crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+		Bundle bundle = new Bundle();
+		bundle.putString("pagina", pagina);
+		bundle.putInt("idCanto", idCanto);
+
+		Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+		intent.putExtras(bundle);
+		mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
+	}
+
+	private void updateLista() {
+
 //		Log.i("POSITION", fragmentIndex+" ");
 //		Log.i("IDLISTA", idLista+" ");
 //		Log.i("TITOLO", listaPersonalizzata.getName());
-		
+
 		LinearLayout linLayout = (LinearLayout) rootView.findViewById(R.id.listaScroll);
 		linLayout.removeAllViews();
 
 		for (int cantoIndex = 0; cantoIndex < listaPersonalizzata.getNumPosizioni(); cantoIndex++) {
 			View view = getActivity().getLayoutInflater().inflate(R.layout.oggetto_lista_generico, linLayout, false);
-			
-	   		((TextView) view.findViewById(R.id.titoloPosizioneGenerica))
-	   			.setText(listaPersonalizzata.getNomePosizione(cantoIndex));
-	   		
-	   		((TextView) view.findViewById(R.id.id_posizione))
-   			.setText(String.valueOf(cantoIndex));
-	   				  	   		
+
+			((TextView) view.findViewById(R.id.titoloPosizioneGenerica))
+					.setText(listaPersonalizzata.getNomePosizione(cantoIndex));
+
+			((TextView) view.findViewById(R.id.id_posizione))
+					.setText(String.valueOf(cantoIndex));
+
 //	   		Log.i("CANTO[" + cantoIndex + "]", listaPersonalizzata.getCantoPosizione(cantoIndex) + " ");
-	   		
-	   		if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() == 0) {
-	   		
+
+			if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() == 0) {
+
 				view.findViewById(R.id.addCantoGenerico).setVisibility(View.VISIBLE);
 				view.findViewById(R.id.cantoGenericoContainer).setVisibility(View.GONE);
-				
+
 				view.findViewById(R.id.addCantoGenerico).setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
-					    Bundle bundle = new Bundle();
-					    bundle.putInt("fromAdd", 0);
-					    bundle.putInt("idLista", idLista);
-					    bundle.putInt("position", (Integer.valueOf(
-					    		((TextView) v.findViewById(R.id.id_posizione))
-					    		.getText().toString())));
-				    	Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
-				    	intent.putExtras(bundle);
-				    	startActivity(intent);
-				    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+						Bundle bundle = new Bundle();
+						bundle.putInt("fromAdd", 0);
+						bundle.putInt("idLista", idLista);
+						bundle.putInt("position", (Integer.valueOf(
+								((TextView) v.findViewById(R.id.id_posizione))
+										.getText().toString())));
+						Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+						intent.putExtras(bundle);
+						startActivity(intent);
+						getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
 					}
-				}); 
-				
-	   		}
-	   		else {
+				});
 
-                //setto l'id del canto nell'apposito canto
-                ((TextView) view.findViewById(R.id.id_da_canc))
-                        .setText(String.valueOf(cantoIndex));
+			}
+			else {
+
+				//setto l'id del canto nell'apposito canto
+				((TextView) view.findViewById(R.id.id_da_canc))
+						.setText(String.valueOf(cantoIndex));
 
 				view.findViewById(R.id.addCantoGenerico).setVisibility(View.GONE);
-                View temp = view.findViewById(R.id.cantoGenericoContainer);
-                temp.setVisibility(View.VISIBLE);
-                temp.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openPagina(v);
-                    }
-                });
-                // setta l'azione tenendo premuto sul canto
-                temp.setOnLongClickListener(new OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        posizioneDaCanc = Integer.valueOf(
-                                ((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
-                                        .getText().toString());
+				View temp = view.findViewById(R.id.cantoGenericoContainer);
+				temp.setVisibility(View.VISIBLE);
+				temp.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						openPagina(v);
+					}
+				});
+				// setta l'azione tenendo premuto sul canto
+				temp.setOnLongClickListener(new OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View view) {
+						posizioneDaCanc = Integer.valueOf(
+								((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
+										.getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
-                        snackBarRimuoviCanto();
-                        return true;
-                    }
-                });
+						snackBarRimuoviCanto();
+						return true;
+					}
+				});
 
-                db = listaCanti.getReadableDatabase();
+				db = listaCanti.getReadableDatabase();
 
-                String query = "SELECT titolo, pagina, color" +
-                        "  FROM ELENCO" +
-                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
-                Cursor cursor = db.rawQuery(query, null);
-                cursor.moveToFirst();
+				String query = "SELECT titolo, pagina, color" +
+						"  FROM ELENCO" +
+						"  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
+				Cursor cursor = db.rawQuery(query, null);
+				cursor.moveToFirst();
 
-                //setto il titolo del canto
+				//setto il titolo del canto
 //                ((TextView) view.findViewById(R.id.text_title))
 //                    .setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
 //
@@ -287,130 +314,130 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                if (colore.equalsIgnoreCase(Utility.BIANCO))
 //                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
-                //setto il titolo del canto
-                ((TextView) view.findViewById(R.id.text_title))
-                    .setText(cursor.getString(0));
+				//setto il titolo del canto
+				((TextView) view.findViewById(R.id.text_title))
+						.setText(cursor.getString(0));
 
-                //setto la pagina
-                int tempPagina = cursor.getInt(1);
-                String pagina = String.valueOf(tempPagina);
-                TextView textPage = (TextView) view.findViewById(R.id.text_page);
-                textPage.setText(pagina);
+				//setto la pagina
+				int tempPagina = cursor.getInt(1);
+				String pagina = String.valueOf(tempPagina);
+				TextView textPage = (TextView) view.findViewById(R.id.text_page);
+				textPage.setText(pagina);
 
-                //setto il colore
-                String colore = cursor.getString(2);
-                if (colore.equalsIgnoreCase(Utility.GIALLO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-                if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-                if (colore.equalsIgnoreCase(Utility.VERDE))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
-                if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-                if (colore.equalsIgnoreCase(Utility.BIANCO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
+				//setto il colore
+				String colore = cursor.getString(2);
+				if (colore.equalsIgnoreCase(Utility.GIALLO))
+					textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+				if (colore.equalsIgnoreCase(Utility.GRIGIO))
+					textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+				if (colore.equalsIgnoreCase(Utility.VERDE))
+					textPage.setBackgroundResource(R.drawable.bkg_round_green);
+				if (colore.equalsIgnoreCase(Utility.AZZURRO))
+					textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+				if (colore.equalsIgnoreCase(Utility.BIANCO))
+					textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
-                cursor.close();
-                db.close();
+				cursor.close();
+				db.close();
 
-	   		}
-	   		
-	   		linLayout.addView(view);
-		}
-    
-	}
-    
-    private String getTitlesList() {
-
-        Locale l = getActivity().getResources().getConfiguration().locale;
-    	String result = "";
-    	
-    	//titolo
-    	result +=  "-- "  + listaPersonalizzata.getName().toUpperCase(l) + " --\n";
-    	
-    	//tutti i canti
-    	for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++) {
-    		result += listaPersonalizzata.getNomePosizione(i).toUpperCase(l) + "\n";		
-    		if (!listaPersonalizzata.getCantoPosizione(i).equalsIgnoreCase("")) {
-                db = listaCanti.getReadableDatabase();
-
-                String query = "SELECT titolo, pagina" +
-                        "  FROM ELENCO" +
-                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(i);
-                Cursor cursor = db.rawQuery(query, null);
-                cursor.moveToFirst();
-
-                result += cursor.getString(0)
-                        + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
-
-                cursor.close();
-                db.close();
-            }
-    		else
-                result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    		if (i < listaPersonalizzata.getNumPosizioni() - 1)
-    			result += "\n";
-    	}   	
-    	    	
-    	return result;
-    	
-    }
-    
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-        	clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-			case Utility.DISMISS:
-				getActivity().setRequestedOrientation(prevOrientation);
-				break;
-			case Utility.PERS_RESET_OK:
-				db = listaCanti.getReadableDatabase();
-            	ContentValues  values = new  ContentValues( );
-            	for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-            		listaPersonalizzata.removeCanto(i);
-            	values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-            	db.update("LISTE_PERS", values, "_id = " + idLista, null );
-        		db.close();
-        		updateLista();
-        		mShareActionProvider.setShareIntent(getDefaultIntent());
-        		getActivity().setRequestedOrientation(prevOrientation);
-			default:
-				getActivity().setRequestedOrientation(prevOrientation);
-				break;
 			}
-        }
-    }
 
-    public void snackBarRimuoviCanto() {
-        SnackbarManager.show(
-                Snackbar.with(getActivity())
-                        .text(getString(R.string.list_remove))
-                        .actionLabel(getString(R.string.snackbar_remove))
-                        .actionListener(new ActionClickListener() {
-                            @Override
-                            public void onActionClicked(Snackbar snackbar) {
-                                db = listaCanti.getReadableDatabase();
-                                ContentValues  values = new  ContentValues( );
-                                listaPersonalizzata.removeCanto(posizioneDaCanc);
-                                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-                                db.update("LISTE_PERS", values, "_id = " + idLista, null );
-                                db.close();
-                                updateLista();
-                                mShareActionProvider.setShareIntent(getDefaultIntent());
-                            }
-                        })
-                        .actionColor(getThemeUtils().accentColor())
-                , getActivity());
-    }
+			linLayout.addView(view);
+		}
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
-    
+	}
+
+	private String getTitlesList() {
+
+		Locale l = getActivity().getResources().getConfiguration().locale;
+		String result = "";
+
+		//titolo
+		result +=  "-- "  + listaPersonalizzata.getName().toUpperCase(l) + " --\n";
+
+		//tutti i canti
+		for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++) {
+			result += listaPersonalizzata.getNomePosizione(i).toUpperCase(l) + "\n";
+			if (!listaPersonalizzata.getCantoPosizione(i).equalsIgnoreCase("")) {
+				db = listaCanti.getReadableDatabase();
+
+				String query = "SELECT titolo, pagina" +
+						"  FROM ELENCO" +
+						"  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(i);
+				Cursor cursor = db.rawQuery(query, null);
+				cursor.moveToFirst();
+
+				result += cursor.getString(0)
+						+ " - " + getString(R.string.page_contracted) + cursor.getInt(1);
+
+				cursor.close();
+				db.close();
+			}
+			else
+				result += ">> " + getString(R.string.to_be_chosen) + " <<";
+			if (i < listaPersonalizzata.getNumPosizioni() - 1)
+				result += "\n";
+		}
+
+		return result;
+
+	}
+
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//        	clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//			case Utility.DISMISS:
+//				getActivity().setRequestedOrientation(prevOrientation);
+//				break;
+//			case Utility.PERS_RESET_OK:
+//				db = listaCanti.getReadableDatabase();
+//            	ContentValues  values = new  ContentValues( );
+//            	for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+//            		listaPersonalizzata.removeCanto(i);
+//            	values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+//            	db.update("LISTE_PERS", values, "_id = " + idLista, null );
+//        		db.close();
+//        		updateLista();
+//        		mShareActionProvider.setShareIntent(getDefaultIntent());
+//        		getActivity().setRequestedOrientation(prevOrientation);
+//			default:
+//				getActivity().setRequestedOrientation(prevOrientation);
+//				break;
+//			}
+//        }
+//    }
+
+	public void snackBarRimuoviCanto() {
+		SnackbarManager.show(
+				Snackbar.with(getActivity())
+						.text(getString(R.string.list_remove))
+						.actionLabel(getString(R.string.snackbar_remove))
+						.actionListener(new ActionClickListener() {
+							@Override
+							public void onActionClicked(Snackbar snackbar) {
+								db = listaCanti.getReadableDatabase();
+								ContentValues  values = new  ContentValues( );
+								listaPersonalizzata.removeCanto(posizioneDaCanc);
+								values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+								db.update("LISTE_PERS", values, "_id = " + idLista, null );
+								db.close();
+								updateLista();
+								mShareActionProvider.setShareIntent(getDefaultIntent());
+							}
+						})
+						.actionColor(getThemeUtils().accentColor())
+				, getActivity());
+	}
+
+	private ThemeUtils getThemeUtils() {
+		return ((MainActivity)getActivity()).getThemeUtils();
+	}
+
 }

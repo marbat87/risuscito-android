@@ -4390,7 +4390,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values = null;
 
-        if (newVersion == 43 && oldVersion >= 19 && oldVersion <= 38) {
+        if (newVersion >= 43 && oldVersion >= 19 && oldVersion <= 38) {
             //ricodifica i titoli dei canti con i loro ID
             String sql = "SELECT _id, lista FROM LISTE_PERS";
             Cursor cursor = db.rawQuery(sql, null);

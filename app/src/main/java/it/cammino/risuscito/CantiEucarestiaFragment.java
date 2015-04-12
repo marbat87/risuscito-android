@@ -26,6 +26,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.alertdialogpro.AlertDialogPro;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
@@ -71,11 +72,49 @@ public class CantiEucarestiaFragment extends Fragment {
             public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-                        .setMessage(R.string.reset_list_question)
-                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.EUCAR_RESET_OK))
-                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
+//                        .setMessage(R.string.reset_list_question)
+//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.EUCAR_RESET_OK))
+//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_reset_list_title)
+                        .content(R.string.reset_list_question)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                db = listaCanti.getReadableDatabase();
+                                String sql = "DELETE FROM CUST_LISTS" +
+                                        " WHERE _id =  2 ";
+                                db.execSQL(sql);
+                                db.close();
+                                updateLista();
+                                mShareActionProvider.setShareIntent(getDefaultIntent());
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -783,34 +822,34 @@ public class CantiEucarestiaFragment extends Fragment {
         return result;
     }
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.EUCAR_RESET_OK:
-                    db = listaCanti.getReadableDatabase();
-                    String sql = "DELETE FROM CUST_LISTS" +
-                            " WHERE _id =  2 ";
-                    db.execSQL(sql);
-                    db.close();
-                    updateLista();
-                    mShareActionProvider.setShareIntent(getDefaultIntent());
-                    getActivity().setRequestedOrientation(prevOrientation);
-                default:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.EUCAR_RESET_OK:
+//                    db = listaCanti.getReadableDatabase();
+//                    String sql = "DELETE FROM CUST_LISTS" +
+//                            " WHERE _id =  2 ";
+//                    db.execSQL(sql);
+//                    db.close();
+//                    updateLista();
+//                    mShareActionProvider.setShareIntent(getDefaultIntent());
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                default:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
     public void snackBarRimuoviCanto() {
         SnackbarManager.show(

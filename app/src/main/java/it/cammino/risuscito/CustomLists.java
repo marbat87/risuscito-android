@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.internal.widget.TintEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -25,7 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
@@ -46,8 +46,8 @@ public class CustomLists extends Fragment  {
 	private ViewPager mViewPager;
     TabPageIndicator mSlidingTabLayout = null;
 
-	private AlertDialogPro dialog;
-    private TintEditText titleInput;
+	private MaterialDialog dialog;
+//    private TintEditText titleInput;
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,11 +111,42 @@ public class CustomLists extends Fragment  {
             case R.id.action_add_list:
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                dialog = builder.setTitle(R.string.lista_add_desc)
-                        .setView(R.layout.dialog_customview)
-                        .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
-                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                dialog = builder.setTitle(R.string.lista_add_desc)
+//                        .setView(R.layout.dialog_customview)
+//                        .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
+//                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                        .show();
+                dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.lista_add_desc)
+                        .positiveText(R.string.dialog_chiudi)
+                        .negativeText(R.string.cancel)
+                        .input("", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {}
+                        })
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                //to hide soft keyboard
+                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+                                getActivity().setRequestedOrientation(prevOrientation);
+                                Bundle bundle = new Bundle();
+                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
+                                bundle.putBoolean("modifica", false);
+                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                //to hide soft keyboard
+                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -130,25 +161,38 @@ public class CustomLists extends Fragment  {
                         return false;
                     }
                 });
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                        getResources().getColor(R.color.btn_disabled_text));
-                titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
-                titleInput.addTextChangedListener(new TextWatcher() {
+                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
-                                        getResources().getColor(R.color.btn_disabled_text));
+                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
                     }
 
                     @Override
                     public void afterTextChanged(Editable s) {}
                 });
+//                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                        getResources().getColor(R.color.btn_disabled_text));
+//                titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
+//                titleInput.addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
+//                                        getResources().getColor(R.color.btn_disabled_text));
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {}
+//                });
                 dialog.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -277,39 +321,39 @@ public class CustomLists extends Fragment  {
 	    }
 	}
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    //to hide soft keyboard
-                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.ADD_LIST_OK:
-                    //to hide soft keyboard
-                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("titolo", titleInput.getText().toString());
-                    bundle.putBoolean("modifica", false);
-                    startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-                    getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-                    break;
-                default:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.ADD_LIST_OK:
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("titolo", titleInput.getText().toString());
+//                    bundle.putBoolean("modifica", false);
+//                    startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+//                    getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+//                    break;
+//                default:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();

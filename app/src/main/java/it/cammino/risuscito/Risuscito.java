@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
@@ -94,15 +94,41 @@ public class Risuscito extends Fragment {
         if (!thisVersion.equals(lastVersion)) {
             prevOrientation = getActivity().getRequestedOrientation();
             Utility.blockOrientation(getActivity());
-            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
 //            ChangeLogListView chglv = new ChangeLogListView(getActivity());
 //            ChangeLogAdapter adapter = (ChangeLogAdapter) chglv.getAdapter();
 //            adapter.setmRowHeaderLayoutId(R.layout.changelogrowheader_material_layout);
 //            adapter.setmRowLayoutId(R.layout.changelogrow_material_layout);
-            AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
-                    .setView(R.layout.dialog_changelogview)
-                    .setPositiveButton(getResources().getString(R.string.dialog_chiudi), new ButtonClickedListener())
+//            AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
+//                    .setView(R.layout.dialog_changelogview)
+//                    .setPositiveButton(getResources().getString(R.string.dialog_chiudi), new ButtonClickedListener())
+//                    .show();
+            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.dialog_change_title)
+                    .customView(R.layout.dialog_changelogview, false)
+                    .positiveText(R.string.dialog_chiudi)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            if(PreferenceManager
+                                    .getDefaultSharedPreferences(getActivity())
+                                    .getBoolean(FIRST_OPEN_MENU, true)) {
+                                SharedPreferences.Editor editor = PreferenceManager
+                                        .getDefaultSharedPreferences(getActivity())
+                                        .edit();
+                                editor.putBoolean(FIRST_OPEN_MENU, false);
+                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                                    editor.commit();
+                                } else {
+                                    editor.apply();
+                                }
+                                showHelp();
+                            }
+                        }
+                    })
                     .show();
+
             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                 @Override
                 public boolean onKey(DialogInterface arg0, int keyCode,
@@ -195,27 +221,27 @@ public class Risuscito extends Fragment {
         return false;
     }
 
-    @SuppressLint("NewApi")
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            getActivity().setRequestedOrientation(prevOrientation);
-            if(PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .getBoolean(FIRST_OPEN_MENU, true)) {
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(getActivity())
-                        .edit();
-                editor.putBoolean(FIRST_OPEN_MENU, false);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
-                showHelp();
-            }
-        }
-    }
+//    @SuppressLint("NewApi")
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            getActivity().setRequestedOrientation(prevOrientation);
+//            if(PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .getBoolean(FIRST_OPEN_MENU, true)) {
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .edit();
+//                editor.putBoolean(FIRST_OPEN_MENU, false);
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                    editor.commit();
+//                } else {
+//                    editor.apply();
+//                }
+//                showHelp();
+//            }
+//        }
+//    }
 
     private void showHelp() {
         prevOrientation = getActivity().getRequestedOrientation();
