@@ -8,11 +8,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.widget.ProgressBar;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
-import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.utilities.colorpicker.ColorPickerDialog;
 import it.cammino.utilities.colorpicker.ColorPickerPalette;
 import it.cammino.utilities.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
@@ -25,7 +24,8 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
     private ColorCallback mCallback;
     private int prevOrientation;
     private ActionBarActivity mActivity;
-    private AlertDialogPro dialog;
+//    private AlertDialogPro dialog;
+    private MaterialDialog dialog;
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,13 +49,27 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 //        prevOrientation = mActivity.getRequestedOrientation();
 //        Utility.blockOrientation(mActivity);
-        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(mActivity);
-        dialog = builder.setTitle(getString(mTitleResId))
-                .setView(R.layout.color_picker_dialog)
-                .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.CHANGE_COLOR))
-//                .setNeutralButton(R.string.defaultStr, new ButtonClickedListener(Utility.RESET_COLOR))
-                .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-                .setCancelable(false)
+//        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(mActivity);
+//        dialog = builder.setTitle(getString(mTitleResId))
+//                .setView(R.layout.color_picker_dialog)
+//                .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.CHANGE_COLOR))
+////                .setNeutralButton(R.string.defaultStr, new ButtonClickedListener(Utility.RESET_COLOR))
+//                .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                .setCancelable(false)
+//                .show();
+
+        dialog = new MaterialDialog.Builder(mActivity)
+                .title(mTitleResId)
+                .customView(R.layout.color_picker_dialog, true)
+//                .positiveText(R.string.single_choice_ok)
+                .negativeText(R.string.cancel)
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        dismiss();
+//                        mCallback.onColorSelection(mTitleResId, mSelectedColor);
+//                    }
+//                })
                 .show();
 
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
@@ -71,12 +85,12 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
                 return false;
             }
         });
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                getResources().getColor(R.color.btn_disabled_text));
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                getResources().getColor(R.color.btn_disabled_text));
 
-        setmProgress((ProgressBar) dialog.findViewById(android.R.id.progress));
-        setmPalette((ColorPickerPalette) dialog.findViewById(R.id.color_picker));
+        setmProgress((ProgressBar) dialog.getCustomView().findViewById(android.R.id.progress));
+        setmPalette((ColorPickerPalette) dialog.getCustomView().findViewById(R.id.color_picker));
         getmPalette().init(mSize, mColumns, this);
         if (mColors != null) {
             showPaletteView();
@@ -99,9 +113,11 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
             // Redraw palette to show checkmark on newly selected color before dismissing.
             getmPalette().drawPalette(mColors, mSelectedColor);
         }
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                ((ThemeableActivity) mActivity).getThemeUtils().accentColor());
+        dismiss();
+        mCallback.onColorSelection(mTitleResId, mSelectedColor);
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+//        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                ((ThemeableActivity) mActivity).getThemeUtils().accentColor());
     }
 
     private class ButtonClickedListener implements DialogInterface.OnClickListener {

@@ -89,6 +89,7 @@
                 android:layout_marginRight="@dimen/text_min_margin"
                 android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
                 android:textColor="?android:textColorSecondary"
                 android:layout_height="wrap_content"
                 android:text="@string/no_favourites_short"

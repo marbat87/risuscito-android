@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.alertdialogpro.AlertDialogPro;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -45,10 +44,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.itextpdf.text.BaseColor;
@@ -62,7 +60,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.rey.material.widget.ProgressView;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -99,7 +96,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
     //    private ProgressDialogPro mp3Dialog, exportDialog;
-    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
+//    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
+    private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
     private static OnAudioFocusChangeListener afChangeListener;
     private static AudioManager am;
@@ -472,14 +470,56 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         if (personalUrl.equalsIgnoreCase("")) {
                             prevOrientation = getRequestedOrientation();
                             Utility.blockOrientation(PaginaRenderActivity.this);
-                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_mp3_title)
-                                    .setMessage(R.string.dialog_delete_mp3)
-                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_MP3_OK))
-                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_mp3_title)
+//                                    .setMessage(R.string.dialog_delete_mp3)
+//                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_MP3_OK))
+//                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                    .show();
+//                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                                    .title(R.string.dialog_delete_mp3_title)
+                                    .content(R.string.dialog_delete_mp3)
+                                    .positiveText(R.string.confirm)
+                                    .negativeText(R.string.dismiss)
+                                    .callback(new MaterialDialog.ButtonCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog dialog) {
+                                            File fileToDelete = new File(localUrl);
+                                            fileToDelete.delete();
+                                            if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+                                                // initiate media scan and put the new things into the path array to
+                                                // make the scanner aware of the location and the files you want to see
+                                                MediaScannerConnection.scanFile(getApplicationContext()
+                                                        , new String[] {fileToDelete.getAbsolutePath()}
+                                                        , null
+                                                        , null);
+                                            }
+                                            Toast.makeText(PaginaRenderActivity.this
+                                                    , getString(R.string.file_delete)
+                                                    , Toast.LENGTH_SHORT).show();
+
+                                            if (mediaPlayerState == MP_State.Started
+                                                    || mediaPlayerState == MP_State.Paused)
+                                                cmdStop();
+
+                                            mediaPlayer = new MediaPlayer();
+                                            mediaPlayerState = MP_State.Idle;
+                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+
+                                            localFile = false;
+                                            cmdSetDataSource(url);
+                                            save_file.setSelected(false);
+                                            setRequestedOrientation(prevOrientation);
+                                        }
+
+                                        @Override
+                                        public void onNegative(MaterialDialog dialog) {
+                                            setRequestedOrientation(prevOrientation);
+                                        }
+                                    })
                                     .show();
-                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
                                 public boolean onKey(DialogInterface arg0, int keyCode,
@@ -498,14 +538,54 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         else {
                             prevOrientation = getRequestedOrientation();
                             Utility.blockOrientation(PaginaRenderActivity.this);
-                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-                                    .setMessage(R.string.dialog_delete_link)
-                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_LINK_OK))
-                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
+//                                    .setMessage(R.string.dialog_delete_link)
+//                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_LINK_OK))
+//                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                    .show();
+//                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                                    .title(R.string.dialog_delete_link_title)
+                                    .content(R.string.dialog_delete_link)
+                                    .positiveText(R.string.confirm)
+                                    .negativeText(R.string.dismiss)
+                                    .callback(new MaterialDialog.ButtonCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog dialog) {
+                                            Toast.makeText(PaginaRenderActivity.this
+                                                    , getString(R.string.delink_delete)
+                                                    , Toast.LENGTH_SHORT).show();
+
+                                            if (mediaPlayerState == MP_State.Started
+                                                    || mediaPlayerState == MP_State.Paused)
+                                                cmdStop();
+
+                                            mediaPlayer = new MediaPlayer();
+                                            mediaPlayerState = MP_State.Idle;
+                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+
+                                            localFile = false;
+                                            personalUrl = "";
+
+                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                            String sql = "DELETE FROM LOCAL_LINKS" +
+                                                    "  WHERE _id =  " + idCanto;
+                                            db.execSQL(sql);
+                                            db.close();
+
+                                            save_file.setSelected(false);
+
+                                            setRequestedOrientation(prevOrientation);
+                                        }
+
+                                        @Override
+                                        public void onNegative(MaterialDialog dialog) {
+                                            setRequestedOrientation(prevOrientation);
+                                        }
+                                    })
                                     .show();
-                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
                                 public boolean onKey(DialogInterface arg0, int keyCode,
@@ -525,16 +605,81 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     else {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                        AlertDialogPro dialog = builder.setTitle(R.string.download_link_title)
-                                .setMessage(R.string.downlink_message)
-                                .setPositiveButton(R.string.downlink_download, new ButtonClickedListener(Utility.DOWNLOAD_OK))
-                                .setNegativeButton(R.string.downlink_choose, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
-                                .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                        AlertDialogPro dialog = builder.setTitle(R.string.download_link_title)
+//                                .setMessage(R.string.downlink_message)
+//                                .setPositiveButton(R.string.downlink_download, new ButtonClickedListener(Utility.DOWNLOAD_OK))
+//                                .setNegativeButton(R.string.downlink_choose, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
+//                                .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                                .show();
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+//                        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(getThemeUtils().accentColor());
+                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                                .title(R.string.download_link_title)
+                                .content(R.string.downlink_message)
+                                .positiveText(R.string.downlink_download)
+                                .negativeText(R.string.downlink_choose)
+                                .neutralText(R.string.cancel)
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
+                                        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+                                        int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+                                        if (saveLocation == 1) {
+                                            if (Utility.isExternalStorageWritable()) {
+                                                boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
+                                                        Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
+//                                                      Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
+                                                String localFile = Environment.getExternalStoragePublicDirectory(
+                                                        Environment.DIRECTORY_MUSIC).getAbsolutePath()
+                                                        + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
+//                                                      Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
+                                                downloadTask.execute(url, localFile);
+                                            }
+                                            else
+                                                Toast.makeText(PaginaRenderActivity.this
+                                                        , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            String localFile = PaginaRenderActivity.this.getFilesDir()
+                                                    + "/"
+                                                    + Utility.filterMediaLink(url);
+                                            downloadTask.execute(url, localFile);
+                                        }
+
+                                        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                            @Override
+                                            public void onCancel(DialogInterface dialog) {
+                                                Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
+                                                downloadTask.cancel(true);
+                                                setRequestedOrientation(prevOrientation);
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onNegative(MaterialDialog dialog) {
+                                        setRequestedOrientation(prevOrientation);
+                                        // This always works
+                                        Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+
+                                        // Set these depending on your use case. These are the defaults.
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+                                        startActivityForResult(i, REQUEST_CODE);
+                                    }
+
+                                    @Override
+                                    public void onNeutral(MaterialDialog dialog) {
+                                        setRequestedOrientation(prevOrientation);
+                                    }
+                                })
                                 .show();
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
-                        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(getThemeUtils().accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -591,14 +736,59 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     if (v.isSelected()) {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                        AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-                                .setMessage(R.string.dialog_delete_link)
-                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_ONLY_LINK_OK))
-                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                        AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
+//                                .setMessage(R.string.dialog_delete_link)
+//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_ONLY_LINK_OK))
+//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                .show();
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                                .title(R.string.dialog_delete_link_title)
+                                .content(R.string.dialog_delete_link)
+                                .positiveText(R.string.confirm)
+                                .negativeText(R.string.dismiss)
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        Toast.makeText(PaginaRenderActivity.this
+                                                , getString(R.string.delink_delete)
+                                                , Toast.LENGTH_SHORT).show();
+
+                                        if (mediaPlayerState == MP_State.Started
+                                                || mediaPlayerState == MP_State.Paused)
+                                            cmdStop();
+
+                                        mediaPlayer = new MediaPlayer();
+                                        mediaPlayerState = MP_State.Idle;
+                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+
+                                        localFile = false;
+                                        personalUrl = "";
+
+                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                        String sql = "DELETE FROM LOCAL_LINKS" +
+                                                "  WHERE _id =  " + idCanto;
+                                        db.execSQL(sql);
+                                        db.close();
+
+                                        save_file.setSelected(false);
+
+                                        play_button.setVisibility(View.GONE);
+                                        stop_button.setVisibility(View.GONE);
+                                        rewind_button.setVisibility(View.GONE);
+                                        ff_button.setVisibility(View.GONE);
+
+                                        setRequestedOrientation(prevOrientation);
+                                    }
+
+                                    @Override
+                                    public void onNegative(MaterialDialog dialog) {
+                                        setRequestedOrientation(prevOrientation);
+                                    }
+                                })
                                 .show();
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -617,14 +807,41 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     else {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                        AlertDialogPro dialog = builder.setTitle(R.string.only_link_title)
-                                .setMessage(R.string.only_link)
-                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
-                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                        AlertDialogPro dialog = builder.setTitle(R.string.only_link_title)
+//                                .setMessage(R.string.only_link)
+//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
+//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                .show();
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                                .title(R.string.only_link_title)
+                                .content(R.string.only_link)
+                                .positiveText(R.string.confirm)
+                                .negativeText(R.string.dismiss)
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        setRequestedOrientation(prevOrientation);
+                                        // This always works
+                                        Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+
+                                        // Set these depending on your use case. These are the defaults.
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+                                        startActivityForResult(i, REQUEST_CODE);
+                                    }
+
+                                    @Override
+                                    public void onNegative(MaterialDialog dialog) {
+                                        setRequestedOrientation(prevOrientation);
+                                    }
+                                })
                                 .show();
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
                             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -791,29 +1008,40 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         initializeLoadingDialogs();
 
-        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-        mProgressDialog = builder.setTitle(R.string.download_running)
-                .setView(R.layout.dialog_load_determinate)
-                .setPositiveButton(R.string.cancel, new ButtonClickedListener(Utility.DOWNLOAD_CANCEL)).create();
-        mProgressDialog.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    arg0.cancel();
-                    return true;
-                }
-                return false;
-            }
-        });
-        mProgressDialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                setRequestedOrientation(prevOrientation);
-            }
-        });
-        mProgressDialog.setCancelable(false);
+//        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//        mProgressDialog = builder.setTitle(R.string.download_running)
+//                .setView(R.layout.dialog_load_determinate)
+//                .setPositiveButton(R.string.cancel, new ButtonClickedListener(Utility.DOWNLOAD_CANCEL)).create();
+//        mProgressDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface arg0, int keyCode,
+//                                 KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_BACK
+//                        && event.getAction() == KeyEvent.ACTION_UP) {
+//                    arg0.cancel();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//        mProgressDialog.setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface arg0) {
+//                setRequestedOrientation(prevOrientation);
+//            }
+//        });
+//        mProgressDialog.setCancelable(false);
+        mProgressDialog = new MaterialDialog.Builder(this)
+                .title(R.string.download_running)
+                .progress(false, 100, true)
+                .positiveText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        mProgressDialog.cancel();
+                    }
+                })
+                .build();
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
         ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
@@ -896,14 +1124,40 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 else {
                     prevOrientation = getRequestedOrientation();
                     Utility.blockOrientation(PaginaRenderActivity.this);
-                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-                            .setMessage(R.string.dialog_save_tab)
-                            .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-                            .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
+//                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
+//                            .setMessage(R.string.dialog_save_tab)
+//                            .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
+//                            .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
+//                            .show();
+//                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                    MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                            .title(R.string.dialog_save_tab_title)
+                            .content(R.string.dialog_save_tab)
+                            .positiveText(R.string.confirm)
+                            .negativeText(R.string.dismiss)
+                                    .callback(new MaterialDialog.ButtonCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog dialog) {
+                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                            String sql = "UPDATE ELENCO" +
+                                                    "  SET saved_tab = \'" + notaCambio + "\' " +
+                                                    "    , saved_barre = \'" + barreCambio + "\' " +
+                                                    "  WHERE _id =  " + idCanto;
+                                            db.execSQL(sql);
+                                            db.close();
+                                            pulisciVars();
+                                            mLUtils.closeActivityWithTransition();
+                                        }
+
+                                        @Override
+                                        public void onNegative(MaterialDialog dialog) {
+                                            pulisciVars();
+                                            mLUtils.closeActivityWithTransition();
+                                        }
+                                    })
                             .show();
-                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override
                         public boolean onKey(DialogInterface arg0, int keyCode,
@@ -1057,14 +1311,40 @@ public class PaginaRenderActivity extends ThemeableActivity {
             else {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(PaginaRenderActivity.this);
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-                AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-                        .setMessage(R.string.dialog_save_tab)
-                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
+//                        .setMessage(R.string.dialog_save_tab)
+//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
+//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
+//                        .show();
+//                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
+                MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                        .title(R.string.dialog_save_tab_title)
+                        .content(R.string.dialog_save_tab)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                String sql = "UPDATE ELENCO" +
+                                        "  SET saved_tab = \'" + notaCambio + "\' " +
+                                        "    , saved_barre = \'" + barreCambio + "\' " +
+                                        "  WHERE _id =  " + idCanto;
+                                db.execSQL(sql);
+                                db.close();
+                                pulisciVars();
+                                mLUtils.closeActivityWithTransition();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                pulisciVars();
+                                mLUtils.closeActivityWithTransition();
+                            }
+                        })
                         .show();
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
@@ -1411,8 +1691,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         prevOrientation = getRequestedOrientation();
         Utility.blockOrientation(PaginaRenderActivity.this);
         mp3Dialog.show();
-        ((TextView)mp3Dialog.findViewById(R.id.loading_message))
-                .setText(R.string.wait);
+//        ((TextView)mp3Dialog.findViewById(R.id.loading_message))
+//                .setText(R.string.wait);
         mediaPlayer.setOnPreparedListener(mediaPlayerOnPreparedListener);
         mediaPlayer.setOnCompletionListener(mediaPlayerOnCompletedListener);
 
@@ -1596,176 +1876,176 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
     };
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.DISMISS_EXIT:
-                    pulisciVars();
-                    mLUtils.closeActivityWithTransition();
-                    break;
-                case Utility.DOWNLOAD_CANCEL:
-                    mProgressDialog.cancel();
-                    break;
-                case Utility.DOWNLOAD_OK:
-                    final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
-                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-                    int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-                    if (saveLocation == 1) {
-                        if (Utility.isExternalStorageWritable()) {
-                            boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
-//                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
-                            String localFile = Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
-                                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
-//                            Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
-                            downloadTask.execute(url, localFile);
-                        }
-                        else
-                            Toast.makeText(PaginaRenderActivity.this
-                                    , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        String localFile = PaginaRenderActivity.this.getFilesDir()
-                                + "/"
-                                + Utility.filterMediaLink(url);
-                        downloadTask.execute(url, localFile);
-                    }
-
-                    mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
-                            downloadTask.cancel(true);
-                            setRequestedOrientation(prevOrientation);
-                        }
-                    });
-                    break;
-                case Utility.DOWNLOAD_LINK:
-                    setRequestedOrientation(prevOrientation);
-                    // This always works
-                    Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
-
-                    // Set these depending on your use case. These are the defaults.
-                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                    i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-                    i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
-                    startActivityForResult(i, REQUEST_CODE);
-                    break;
-                case Utility.DELETE_MP3_OK:
-                    File fileToDelete = new File(localUrl);
-                    fileToDelete.delete();
-                    if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
-                        // initiate media scan and put the new things into the path array to
-                        // make the scanner aware of the location and the files you want to see
-                        MediaScannerConnection.scanFile(getApplicationContext()
-                                , new String[] {fileToDelete.getAbsolutePath()}
-                                , null
-                                , null);
-                    }
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.file_delete)
-                            , Toast.LENGTH_SHORT).show();
-
-                    if (mediaPlayerState == MP_State.Started
-                            || mediaPlayerState == MP_State.Paused)
-                        cmdStop();
-
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayerState = MP_State.Idle;
-                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-
-                    localFile = false;
-                    cmdSetDataSource(url);
-                    save_file.setSelected(false);
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.DELETE_LINK_OK:
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.delink_delete)
-                            , Toast.LENGTH_SHORT).show();
-
-                    if (mediaPlayerState == MP_State.Started
-                            || mediaPlayerState == MP_State.Paused)
-                        cmdStop();
-
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayerState = MP_State.Idle;
-                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-
-                    localFile = false;
-                    personalUrl = "";
-
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-                    String sql = "DELETE FROM LOCAL_LINKS" +
-                            "  WHERE _id =  " + idCanto;
-                    db.execSQL(sql);
-                    db.close();
-
-                    save_file.setSelected(false);
-
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.DELETE_ONLY_LINK_OK:
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.delink_delete)
-                            , Toast.LENGTH_SHORT).show();
-
-                    if (mediaPlayerState == MP_State.Started
-                            || mediaPlayerState == MP_State.Paused)
-                        cmdStop();
-
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayerState = MP_State.Idle;
-                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-
-                    localFile = false;
-                    personalUrl = "";
-
-                    db = listaCanti.getReadableDatabase();
-                    sql = "DELETE FROM LOCAL_LINKS" +
-                            "  WHERE _id =  " + idCanto;
-                    db.execSQL(sql);
-                    db.close();
-
-                    save_file.setSelected(false);
-
-                    play_button.setVisibility(View.GONE);
-                    stop_button.setVisibility(View.GONE);
-                    rewind_button.setVisibility(View.GONE);
-                    ff_button.setVisibility(View.GONE);
-
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.SAVE_TAB_OK:
-                    db = listaCanti.getReadableDatabase();
-                    sql = "UPDATE ELENCO" +
-                            "  SET saved_tab = \'" + notaCambio + "\' " +
-                            "    , saved_barre = \'" + barreCambio + "\' " +
-                            "  WHERE _id =  " + idCanto;
-                    db.execSQL(sql);
-                    db.close();
-                    pulisciVars();
-                    mLUtils.closeActivityWithTransition();
-                    break;
-                default:
-                    setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.DISMISS_EXIT:
+//                    pulisciVars();
+//                    mLUtils.closeActivityWithTransition();
+//                    break;
+//                case Utility.DOWNLOAD_CANCEL:
+//                    mProgressDialog.cancel();
+//                    break;
+//                case Utility.DOWNLOAD_OK:
+//                    final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
+//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+//                    int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+//                    if (saveLocation == 1) {
+//                        if (Utility.isExternalStorageWritable()) {
+//                            boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
+//                                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
+////                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
+//                            String localFile = Environment.getExternalStoragePublicDirectory(
+//                                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
+//                                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
+////                            Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
+//                            downloadTask.execute(url, localFile);
+//                        }
+//                        else
+//                            Toast.makeText(PaginaRenderActivity.this
+//                                    , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+//                    }
+//                    else {
+//                        String localFile = PaginaRenderActivity.this.getFilesDir()
+//                                + "/"
+//                                + Utility.filterMediaLink(url);
+//                        downloadTask.execute(url, localFile);
+//                    }
+//
+//                    mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                        @Override
+//                        public void onCancel(DialogInterface dialog) {
+//                            Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
+//                            downloadTask.cancel(true);
+//                            setRequestedOrientation(prevOrientation);
+//                        }
+//                    });
+//                    break;
+//                case Utility.DOWNLOAD_LINK:
+//                    setRequestedOrientation(prevOrientation);
+//                    // This always works
+//                    Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+//
+//                    // Set these depending on your use case. These are the defaults.
+//                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+//                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+//                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+//                    i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+//                    i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+//                    startActivityForResult(i, REQUEST_CODE);
+//                    break;
+//                case Utility.DELETE_MP3_OK:
+//                    File fileToDelete = new File(localUrl);
+//                    fileToDelete.delete();
+//                    if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+//                        // initiate media scan and put the new things into the path array to
+//                        // make the scanner aware of the location and the files you want to see
+//                        MediaScannerConnection.scanFile(getApplicationContext()
+//                                , new String[] {fileToDelete.getAbsolutePath()}
+//                                , null
+//                                , null);
+//                    }
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.file_delete)
+//                            , Toast.LENGTH_SHORT).show();
+//
+//                    if (mediaPlayerState == MP_State.Started
+//                            || mediaPlayerState == MP_State.Paused)
+//                        cmdStop();
+//
+//                    mediaPlayer = new MediaPlayer();
+//                    mediaPlayerState = MP_State.Idle;
+//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                    localFile = false;
+//                    cmdSetDataSource(url);
+//                    save_file.setSelected(false);
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.DELETE_LINK_OK:
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.delink_delete)
+//                            , Toast.LENGTH_SHORT).show();
+//
+//                    if (mediaPlayerState == MP_State.Started
+//                            || mediaPlayerState == MP_State.Paused)
+//                        cmdStop();
+//
+//                    mediaPlayer = new MediaPlayer();
+//                    mediaPlayerState = MP_State.Idle;
+//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                    localFile = false;
+//                    personalUrl = "";
+//
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                    String sql = "DELETE FROM LOCAL_LINKS" +
+//                            "  WHERE _id =  " + idCanto;
+//                    db.execSQL(sql);
+//                    db.close();
+//
+//                    save_file.setSelected(false);
+//
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.DELETE_ONLY_LINK_OK:
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.delink_delete)
+//                            , Toast.LENGTH_SHORT).show();
+//
+//                    if (mediaPlayerState == MP_State.Started
+//                            || mediaPlayerState == MP_State.Paused)
+//                        cmdStop();
+//
+//                    mediaPlayer = new MediaPlayer();
+//                    mediaPlayerState = MP_State.Idle;
+//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                    localFile = false;
+//                    personalUrl = "";
+//
+//                    db = listaCanti.getReadableDatabase();
+//                    sql = "DELETE FROM LOCAL_LINKS" +
+//                            "  WHERE _id =  " + idCanto;
+//                    db.execSQL(sql);
+//                    db.close();
+//
+//                    save_file.setSelected(false);
+//
+//                    play_button.setVisibility(View.GONE);
+//                    stop_button.setVisibility(View.GONE);
+//                    rewind_button.setVisibility(View.GONE);
+//                    ff_button.setVisibility(View.GONE);
+//
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.SAVE_TAB_OK:
+//                    db = listaCanti.getReadableDatabase();
+//                    sql = "UPDATE ELENCO" +
+//                            "  SET saved_tab = \'" + notaCambio + "\' " +
+//                            "    , saved_barre = \'" + barreCambio + "\' " +
+//                            "  WHERE _id =  " + idCanto;
+//                    db.execSQL(sql);
+//                    db.close();
+//                    pulisciVars();
+//                    mLUtils.closeActivityWithTransition();
+//                    break;
+//                default:
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
     private void saveZoom(){
         defaultZoomLevel = (int) (paginaView.getScale() *100);
@@ -2284,10 +2564,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressDialog.show();
-            mProgressDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-            ProgressView query_progress = (ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate);
-            query_progress.setProgress(0f);
-            query_progress.start();
+//            mProgressDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
+//            ProgressView query_progress = (ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate);
+//            query_progress.setProgress(0f);
+//            query_progress.start();
 //            ((LinearProgress)mProgressDialog.findViewById(R.id.progressDeterminate)).setColor(getThemeUtils().accentColor());
         }
 
@@ -2295,16 +2575,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
 //            ((LinearProgress) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress(progress[0]);
-            ((ProgressView) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress((float)progress[0]/100);
-            if (progress[0] != 0)
-                ((TextView) mProgressDialog.findViewById(R.id.percent_text))
-                        .setText(progress[0].toString() + " %");
+//            ((ProgressView) mProgressDialog.findViewById(R.id.progressDeterminate)).setProgress((float)progress[0]/100);
+//            if (progress[0] != 0)
+//                ((TextView) mProgressDialog.findViewById(R.id.percent_text))
+//                        .setText(progress[0].toString() + " %");
+            mProgressDialog.setProgress(progress[0]);
         }
 
         @Override
         protected void onPostExecute(String result) {
             if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                ((ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate)).stop();
+//                ((ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate)).stop();
                 mProgressDialog.dismiss();
             }
             if (result != null)
@@ -2473,8 +2754,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
             prevOrientation = getRequestedOrientation();
             Utility.blockOrientation(PaginaRenderActivity.this);
             exportDialog.show();
-            ((TextView)exportDialog.findViewById(R.id.loading_message))
-                    .setText(R.string.export_running);
+//            ((TextView)exportDialog.findViewById(R.id.loading_message))
+//                    .setText(R.string.export_running);
         }
 
         @Override
@@ -2515,15 +2796,25 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //            }
 //        });
 
-        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-        mp3Dialog = builder.setView(R.layout.dialog_load_indeterminate)
-                .create();
-        mp3Dialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                setRequestedOrientation(prevOrientation);
-            }
-        });
+//        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
+//        mp3Dialog = builder.setView(R.layout.dialog_load_indeterminate)
+//                .create();
+//        mp3Dialog.setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface arg0) {
+//                setRequestedOrientation(prevOrientation);
+//            }
+//        });
+        mp3Dialog = new MaterialDialog.Builder(this)
+                .content(R.string.wait)
+                .progress(true, 0)
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        setRequestedOrientation(prevOrientation);
+                    }
+                })
+                .build();
 
 //        exportDialog = new ProgressDialogPro(PaginaRenderActivity.this);
 //        exportDialog.setMessage(getResources().getString(R.string.export_running));
@@ -2534,14 +2825,24 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //            }
 //        });
 
-        exportDialog = builder.setView(R.layout.dialog_load_indeterminate)
-                .create();
-        exportDialog.setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                setRequestedOrientation(prevOrientation);
-            }
-        });
+//        exportDialog = builder.setView(R.layout.dialog_load_indeterminate)
+//                .create();
+//        exportDialog.setOnDismissListener(new OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface arg0) {
+//                setRequestedOrientation(prevOrientation);
+//            }
+//        });
+        exportDialog = new MaterialDialog.Builder(this)
+                .content(R.string.export_running)
+                .progress(true, 0)
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        setRequestedOrientation(prevOrientation);
+                    }
+                })
+                .build();
 
     }
 

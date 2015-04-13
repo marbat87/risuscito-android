@@ -18,7 +18,6 @@
 
         <!-- The rest of your attributes -->
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorTab">@drawable/custom_tab_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
@@ -35,102 +34,82 @@
     </style>
 
     <style name="RisuscitoTheme.BlueDark">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueDark</item>
         <item name="colorAccent">#3F51B5</item>
     </style>
 
     <style name="RisuscitoTheme.Grey">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Grey</item>
         <item name="colorAccent">#9E9E9E</item>
     </style>
 
     <style name="RisuscitoTheme.BlueGrey">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueGrey</item>
         <item name="colorAccent">#607D8B</item>
     </style>
 
     <style name="RisuscitoTheme.Black">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Black</item>
         <item name="colorAccent">#37474F</item>
     </style>
 
     <style name="RisuscitoTheme.Brown">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Brown</item>
         <item name="colorAccent">#795548</item>
     </style>
 
     <style name="RisuscitoTheme.Red">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Red</item>
         <item name="colorAccent">#D32F2F</item>
     </style>
 
     <style name="RisuscitoTheme.Pink">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Pink</item>
         <item name="colorAccent">#E91E63</item>
     </style>
 
     <style name="RisuscitoTheme.Purple">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Purple</item>
         <item name="colorAccent">#9C27B0</item>
     </style>
 
     <style name="RisuscitoTheme.Violet">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Violet</item>
         <item name="colorAccent">#5E35B1</item>
     </style>
 
     <style name="RisuscitoTheme.Blue">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Blue</item>
         <item name="colorAccent">#1976D2</item>
     </style>
 
     <style name="RisuscitoTheme.BlueLight">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.BlueLight</item>
         <item name="colorAccent">#03A9F4</item>
     </style>
 
     <style name="RisuscitoTheme.Torqouise">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Torqouise</item>
         <item name="colorAccent">#00BCD4</item>
     </style>
 
     <style name="RisuscitoTheme.GreenWater">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenWater</item>
         <item name="colorAccent">#009688</item>
     </style>
 
     <style name="RisuscitoTheme.Green">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Green</item>
         <item name="colorAccent">#4CAF50</item>
     </style>
 
     <style name="RisuscitoTheme.GreenLight">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenLight</item>
         <item name="colorAccent">#8BC34A</item>
     </style>
 
     <style name="RisuscitoTheme.GreenBean">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.GreenBean</item>
         <item name="colorAccent">#CDDC39</item>
     </style>
 
     <style name="RisuscitoTheme.Yellow">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Yellow</item>
         <item name="colorAccent">#FDD835</item>
     </style>
 
     <style name="RisuscitoTheme.OrangeLight">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.OrangeLight</item>
         <item name="colorAccent">#FFB300</item>
     </style>
 
     <style name="RisuscitoTheme.Orange">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.Orange</item>
         <item name="colorAccent">#FB8C00</item>
     </style>
 
     <style name="RisuscitoTheme.RedLight">
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight.RedLight</item>
         <item name="colorAccent">#F4511E</item>
     </style>
 

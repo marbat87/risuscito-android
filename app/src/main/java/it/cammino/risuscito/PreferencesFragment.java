@@ -26,7 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -37,11 +37,11 @@ public class PreferencesFragment extends Fragment {
     private int prevOrientation;
     private SwitchCompat screenSwitch, secondaSwitch, paceSwitch, santoSwitch, audioSwitch;
     private int saveEntries;
-    private AlertDialogPro languageDialog;
-    private AlertDialogPro defIndexDialog;
-    private AlertDialogPro defMemoryDialog;
+//    private AlertDialogPro languageDialog;
+//    private AlertDialogPro defIndexDialog;
+//    private AlertDialogPro defMemoryDialog;
 
-    private int checkedItem;
+//    private int checkedItem;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -208,23 +208,50 @@ public class PreferencesFragment extends Fragment {
             public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                int checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
                         .getInt(Utility.DEFAULT_INDEX, 0);
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                defIndexDialog = builder.setTitle(R.string.default_index_title)
-                        .setSingleChoiceItems(getResources().getStringArray(R.array.pref_default_index_entries),
-                                checkedItem,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        checkedItem = which;
-                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                                getThemeUtils().accentColor());
-                                    }
-                                })
-                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_DEFINDEX_OK))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                defIndexDialog = builder.setTitle(R.string.default_index_title)
+//                        .setSingleChoiceItems(getResources().getStringArray(R.array.pref_default_index_entries),
+//                                checkedItem,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        checkedItem = which;
+//                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+//                                        defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                                getThemeUtils().accentColor());
+//                                    }
+//                                })
+//                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_DEFINDEX_OK))
+//                        .show();
+                MaterialDialog defIndexDialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.default_index_title)
+                        .items(R.array.pref_default_index_entries)
+                        .itemsCallbackSingleChoice(checkedItem, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                SharedPreferences.Editor editor = PreferenceManager
+                                        .getDefaultSharedPreferences(getActivity())
+                                        .edit();
+                                editor.putInt(Utility.DEFAULT_INDEX, which);
+                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                                    editor.commit();
+                                } else {
+                                    editor.apply();
+                                }
+                                getActivity().setRequestedOrientation(prevOrientation);
+                                return true;
+                            }
+                        })
+                        .negativeText(R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 defIndexDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -240,9 +267,9 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 defIndexDialog.setCancelable(false);
-                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                        getResources().getColor(R.color.btn_disabled_text));
+//                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                defIndexDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
@@ -262,23 +289,50 @@ public class PreferencesFragment extends Fragment {
             public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                int checkedItem = PreferenceManager.getDefaultSharedPreferences(getActivity())
                         .getInt(Utility.SAVE_LOCATION, 0);
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                defMemoryDialog = builder.setTitle(R.string.save_location_title)
-                        .setSingleChoiceItems(getResources().getStringArray(saveEntries),
-                                checkedItem,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        checkedItem = which;
-                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                                getThemeUtils().accentColor());
-                                    }
-                                })
-                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_SAVELOC_OK))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                defMemoryDialog = builder.setTitle(R.string.save_location_title)
+//                        .setSingleChoiceItems(getResources().getStringArray(saveEntries),
+//                                checkedItem,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        checkedItem = which;
+//                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+//                                        defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                                getThemeUtils().accentColor());
+//                                    }
+//                                })
+//                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_SAVELOC_OK))
+//                        .show();
+                MaterialDialog defMemoryDialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.save_location_title)
+                        .items(saveEntries)
+                        .itemsCallbackSingleChoice(checkedItem, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                SharedPreferences.Editor editor = PreferenceManager
+                                        .getDefaultSharedPreferences(getActivity())
+                                        .edit();
+                                editor.putInt(Utility.SAVE_LOCATION, which);
+                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                                    editor.commit();
+                                } else {
+                                    editor.apply();
+                                }
+                                getActivity().setRequestedOrientation(prevOrientation);
+                                return true;
+                            }
+                        })
+                        .negativeText(R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 defMemoryDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -294,9 +348,9 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 defMemoryDialog.setCancelable(false);
-                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                        getResources().getColor(R.color.btn_disabled_text));
+//                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                defMemoryDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
@@ -368,27 +422,70 @@ public class PreferencesFragment extends Fragment {
             public void onClick(View v) {
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-
+                int checkedItem = 0;
                 if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
                     checkedItem = 1;
-                else
-                    checkedItem = 0;
 
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                languageDialog = builder.setTitle(R.string.language_title)
-                        .setSingleChoiceItems(getResources().getStringArray(R.array.pref_languages),
-                                checkedItem,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        checkedItem = which;
-                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                                getThemeUtils().accentColor());
-                                    }
-                                })
-                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_LANGUAGE_OK))
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                languageDialog = builder.setTitle(R.string.language_title)
+//                        .setSingleChoiceItems(getResources().getStringArray(R.array.pref_languages),
+//                                checkedItem,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        checkedItem = which;
+//                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+//                                        languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                                getThemeUtils().accentColor());
+//                                    }
+//                                })
+//                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//                        .setPositiveButton(R.string.single_choice_ok, new ButtonClickedListener(Utility.PREFERENCE_LANGUAGE_OK))
+//                        .show();
+                MaterialDialog languageDialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.language_title)
+                        .items(R.array.pref_languages)
+                        .itemsCallbackSingleChoice(checkedItem, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                SharedPreferences.Editor editor = PreferenceManager
+                                        .getDefaultSharedPreferences(getActivity())
+                                        .edit();
+                                switch (which) {
+                                    case 0:
+                                        editor.putString(Utility.SYSTEM_LANGUAGE, "it");
+                                        break;
+                                    case 1:
+                                        editor.putString(Utility.SYSTEM_LANGUAGE, "uk");
+                                        break;
+                                }
+                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                                    editor.commit();
+                                } else {
+                                    editor.apply();
+                                }
+                                getActivity().setRequestedOrientation(prevOrientation);
+                                Intent i = getActivity().getBaseContext().getPackageManager()
+                                        .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                i.putExtra(Utility.DB_RESET, true);
+                                String currentLang = "it";
+                                if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                                    currentLang = "uk";
+                                i.putExtra(Utility.CHANGE_LANGUAGE,
+                                        currentLang + "-" + PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                                .getString(Utility.SYSTEM_LANGUAGE, ""));
+                                startActivity(i);
+                                return true;
+                            }
+                        })
+                        .negativeText(R.string.cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 languageDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -404,89 +501,89 @@ public class PreferencesFragment extends Fragment {
                     }
                 });
                 languageDialog.setCancelable(false);
-                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                        getResources().getColor(R.color.btn_disabled_text));
+//                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                languageDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                        getResources().getColor(R.color.btn_disabled_text));
             }
         });
 
         return rootView;
     }
 
-    @SuppressLint("NewApi")
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.PREFERENCE_DEFINDEX_OK:
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity())
-                            .edit();
-                    editor.putInt(Utility.DEFAULT_INDEX, checkedItem);
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                        editor.commit();
-                    } else {
-                        editor.apply();
-                    }
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.PREFERENCE_SAVELOC_OK:
-                    editor = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity())
-                            .edit();
-                    editor.putInt(Utility.SAVE_LOCATION, checkedItem);
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                        editor.commit();
-                    } else {
-                        editor.apply();
-                    }
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.PREFERENCE_LANGUAGE_OK:
-                    editor = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity())
-                            .edit();
-                    switch (checkedItem) {
-                        case 0:
-                            editor.putString(Utility.SYSTEM_LANGUAGE, "it");
-                            break;
-                        case 1:
-                            editor.putString(Utility.SYSTEM_LANGUAGE, "uk");
-                            break;
-                    }
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                        editor.commit();
-                    } else {
-                        editor.apply();
-                    }
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Intent i = getActivity().getBaseContext().getPackageManager()
-                            .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.putExtra(Utility.DB_RESET, true);
-                    String currentLang = "it";
-                    if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-                        currentLang = "uk";
-                    i.putExtra(Utility.CHANGE_LANGUAGE,
-                            currentLang + "-" + PreferenceManager.getDefaultSharedPreferences(getActivity())
-                                    .getString(Utility.SYSTEM_LANGUAGE, ""));
-                            startActivity(i);
-                    break;
-                default:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    @SuppressLint("NewApi")
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.PREFERENCE_DEFINDEX_OK:
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    editor.putInt(Utility.DEFAULT_INDEX, checkedItem);
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                        editor.commit();
+//                    } else {
+//                        editor.apply();
+//                    }
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.PREFERENCE_SAVELOC_OK:
+//                    editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    editor.putInt(Utility.SAVE_LOCATION, checkedItem);
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                        editor.commit();
+//                    } else {
+//                        editor.apply();
+//                    }
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.PREFERENCE_LANGUAGE_OK:
+//                    editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    switch (checkedItem) {
+//                        case 0:
+//                            editor.putString(Utility.SYSTEM_LANGUAGE, "it");
+//                            break;
+//                        case 1:
+//                            editor.putString(Utility.SYSTEM_LANGUAGE, "uk");
+//                            break;
+//                    }
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                        editor.commit();
+//                    } else {
+//                        editor.apply();
+//                    }
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Intent i = getActivity().getBaseContext().getPackageManager()
+//                            .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+//                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    i.putExtra(Utility.DB_RESET, true);
+//                    String currentLang = "it";
+//                    if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//                        currentLang = "uk";
+//                    i.putExtra(Utility.CHANGE_LANGUAGE,
+//                            currentLang + "-" + PreferenceManager.getDefaultSharedPreferences(getActivity())
+//                                    .getString(Utility.SYSTEM_LANGUAGE, ""));
+//                            startActivity(i);
+//                    break;
+//                default:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
     private int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();

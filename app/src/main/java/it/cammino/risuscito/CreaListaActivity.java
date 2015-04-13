@@ -33,7 +33,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alertdialogpro.AlertDialogPro;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class CreaListaActivity extends ThemeableActivity {
 	private RetainedFragment dataFragment;
 	private RetainedFragment dataFragment2;
 	private RetainedFragment dataFragment3;
-	private int positionToRename;
+//	private int positionToRename;
 	private RelativeLayout.LayoutParams lps;
 	private boolean fakeItemCreated;
 	private int screenWidth;
@@ -72,9 +73,9 @@ public class CreaListaActivity extends ThemeableActivity {
 	
 	private final String TEMP_TITLE = "temp_title";
 	
-	private AlertDialogPro dialog, dialogAdd;
-	
-    private TintEditText titleInputRename, titleInputAdd;
+//	private AlertDialogPro dialog, dialogAdd;
+
+//    private TintEditText titleInputRename, titleInputAdd;
 
 	@SuppressWarnings("deprecation")
     @Override
@@ -172,44 +173,86 @@ public class CreaListaActivity extends ThemeableActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
-				positionToRename = position;
-		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
-	        	dialog = builder.setTitle(R.string.posizione_rename)
-	        			.setView(R.layout.dialog_customview)
-	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
-	                    .show();
+				final int positionToRename = position;
+//		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
+//	        	dialog = builder.setTitle(R.string.posizione_rename)
+//	        			.setView(R.layout.dialog_customview)
+//	                    .setPositiveButton(R.string.aggiungi_rename, new ButtonClickedListener(Utility.RENAME_CONFERMA))
+//	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_RENAME))
+//	                    .show();
+				final MaterialDialog dialog = new MaterialDialog.Builder(CreaListaActivity.this)
+						.title(R.string.posizione_rename)
+						.positiveText(R.string.aggiungi_rename)
+						.negativeText(R.string.aggiungi_dismiss)
+						.input("", "", new MaterialDialog.InputCallback() {
+							@Override
+							public void onInput(MaterialDialog dialog, CharSequence input) {}
+						})
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(MaterialDialog dialog) {
+								nomiElementi.set(positionToRename, dialog.getInputEditText().getText().toString());
+								adapter.notifyDataSetChanged();
+								//to hide soft keyboard
+								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+								setRequestedOrientation(prevOrientation);
+							}
+
+							@Override
+							public void onNegative(MaterialDialog dialog) {
+								//to hide soft keyboard
+								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+								setRequestedOrientation(prevOrientation);
+							}
+						})
+						.show();
 	        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-			        @Override
-			        public boolean onKey(DialogInterface arg0, int keyCode,
-			        		KeyEvent event) {
-			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			        		arg0.dismiss();
-			        		setRequestedOrientation(prevOrientation);
-			        		return true;
-			            }
-			            return false;
-			        }
-		        });
-	        	titleInputRename = (TintEditText)dialog.findViewById(R.id.list_title);
-	        	titleInputRename.setText(nomiElementi.get(positionToRename));
-	        	titleInputRename.selectAll();
-	        	titleInputRename.addTextChangedListener(new TextWatcher() {
-			        @Override
-			        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-			
-			        @Override
-			        public void onTextChanged(CharSequence s, int start, int before, int count) {
-			        	dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
-                                getResources().getColor(R.color.btn_disabled_text));
-			        }
-			
-			        @Override
-			        public void afterTextChanged(Editable s) {}
-			    });
+					@Override
+					public boolean onKey(DialogInterface arg0, int keyCode,
+										 KeyEvent event) {
+						if (keyCode == KeyEvent.KEYCODE_BACK
+								&& event.getAction() == KeyEvent.ACTION_UP) {
+							arg0.dismiss();
+							setRequestedOrientation(prevOrientation);
+							return true;
+						}
+						return false;
+					}
+				});
+				dialog.getInputEditText().setText(nomiElementi.get(positionToRename));
+	        	dialog.getInputEditText().selectAll();
+				dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+					}
+
+					@Override
+					public void afterTextChanged(Editable s) {}
+				});
+//	        	titleInputRename = (TintEditText)dialog.findViewById(R.id.list_title);
+//	        	titleInputRename.setText(nomiElementi.get(positionToRename));
+//	        	titleInputRename.selectAll();
+//	        	titleInputRename.addTextChangedListener(new TextWatcher() {
+//			        @Override
+//			        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//			        @Override
+//			        public void onTextChanged(CharSequence s, int start, int before, int count) {
+//			        	dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
+//                                getResources().getColor(R.color.btn_disabled_text));
+//			        }
+//
+//			        @Override
+//			        public void afterTextChanged(Editable s) {}
+//			    });
 	        	dialog.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -242,44 +285,90 @@ public class CreaListaActivity extends ThemeableActivity {
 			public void onClick(View v) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
-				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
-	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
-	        			.setView(R.layout.dialog_customview)
-	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
-	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
-	                    .show();
-	        	dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
-			        @Override
-			        public boolean onKey(DialogInterface arg0, int keyCode,
-			        		KeyEvent event) {
-			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			        		arg0.dismiss();
-			        		setRequestedOrientation(prevOrientation);
-			        		return true;
-			            }
-			            return false;
-			        }
-		        });
-	        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                        getResources().getColor(R.color.btn_disabled_text));
-	        	titleInputAdd = (TintEditText)dialogAdd.findViewById(R.id.list_title);
-	        	titleInputAdd.addTextChangedListener(new TextWatcher() {
-			        @Override
-			        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-			
-			        @Override
-			        public void onTextChanged(CharSequence s, int start, int before, int count) {
-			        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
-                        dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
-                                        getResources().getColor(R.color.btn_disabled_text));
-			        }
-			
-			        @Override
-			        public void afterTextChanged(Editable s) {}
-			    });
+//				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
+//	        	dialogAdd = builder.setTitle(R.string.posizione_add_desc)
+//	        			.setView(R.layout.dialog_customview)
+//	                    .setPositiveButton(R.string.aggiungi_confirm, new ButtonClickedListener(Utility.AGGIUNGI_CONFERMA))
+//	                    .setNegativeButton(R.string.aggiungi_dismiss, new ButtonClickedListener(Utility.DISMISS_ADD))
+//	                    .show();
+				final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
+						.title(R.string.posizione_add_desc)
+						.positiveText(R.string.aggiungi_confirm)
+						.negativeText(R.string.aggiungi_dismiss)
+						.input("", "", new MaterialDialog.InputCallback() {
+							@Override
+							public void onInput(MaterialDialog dialog, CharSequence input) {}
+						})
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(MaterialDialog dialog) {
+								findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+								nomiElementi.add(dialog.getInputEditText().getText().toString());
+								if (modifica)
+									nomiCanti.add("");
+								adapter.notifyDataSetChanged();
+								//to hide soft keyboard
+								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+								setRequestedOrientation(prevOrientation);
+							}
+
+							@Override
+							public void onNegative(MaterialDialog dialog) {
+								//to hide soft keyboard
+								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+								setRequestedOrientation(prevOrientation);
+							}
+						})
+						.show();
+				dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
+					@Override
+					public boolean onKey(DialogInterface arg0, int keyCode,
+										 KeyEvent event) {
+						if (keyCode == KeyEvent.KEYCODE_BACK
+								&& event.getAction() == KeyEvent.ACTION_UP) {
+							arg0.dismiss();
+							setRequestedOrientation(prevOrientation);
+							return true;
+						}
+						return false;
+					}
+				});
+				dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+				dialogAdd.getInputEditText().addTextChangedListener(new TextWatcher() {
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+					}
+
+					@Override
+					public void afterTextChanged(Editable s) {
+					}
+				});
+//	        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                        getResources().getColor(R.color.btn_disabled_text));
+//	        	titleInputAdd = (TintEditText)dialogAdd.findViewById(R.id.list_title);
+//	        	titleInputAdd.addTextChangedListener(new TextWatcher() {
+//			        @Override
+//			        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//			        @Override
+//			        public void onTextChanged(CharSequence s, int start, int before, int count) {
+//			        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//                        dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
+//                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
+//                                        getResources().getColor(R.color.btn_disabled_text));
+//			        }
+//
+//			        @Override
+//			        public void afterTextChanged(Editable s) {}
+//			    });
 	        	dialogAdd.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -344,13 +433,42 @@ public class CreaListaActivity extends ThemeableActivity {
 			if (nomiElementi.size() > 0) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
-                AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
-	        			.setMessage(R.string.save_list_question)
-	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_LIST_OK))
-	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.SAVE_LIST_KO))
-	                    .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-	                    .show();
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
+//                AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
+//	        			.setMessage(R.string.save_list_question)
+//	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_LIST_OK))
+//	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.SAVE_LIST_KO))
+//	                    .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//	                    .show();
+				MaterialDialog dialog = new MaterialDialog.Builder(this)
+						.title(R.string.save_list_title)
+						.content(R.string.save_list_question)
+						.positiveText(R.string.confirm)
+						.negativeText(R.string.dismiss)
+						.neutralText(R.string.cancel)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+								if (saveList()) {
+									finish();
+									overridePendingTransition(0, R.anim.slide_out_bottom);
+								}
+							}
+
+							@Override
+							public void onNegative(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+								finish();
+								overridePendingTransition(0, R.anim.slide_out_bottom);
+							}
+
+							@Override
+							public void onNeutral(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+							}
+						})
+						.show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
 			        public boolean onKey(DialogInterface arg0, int keyCode,
@@ -382,13 +500,42 @@ public class CreaListaActivity extends ThemeableActivity {
 			if (nomiElementi.size() > 0) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
-				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
-                AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
-	        			.setMessage(R.string.save_list_question)
-	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_LIST_OK))
-	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.SAVE_LIST_KO))
-	                    .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-	                    .show();
+//				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
+//                AlertDialogPro dialog = builder.setTitle(R.string.save_list_title)
+//	        			.setMessage(R.string.save_list_question)
+//	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_LIST_OK))
+//	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.SAVE_LIST_KO))
+//	                    .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
+//	                    .show();
+				MaterialDialog dialog = new MaterialDialog.Builder(this)
+						.title(R.string.save_list_title)
+						.content(R.string.save_list_question)
+						.positiveText(R.string.confirm)
+						.negativeText(R.string.dismiss)
+						.neutralText(R.string.cancel)
+						.callback(new MaterialDialog.ButtonCallback() {
+							@Override
+							public void onPositive(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+								if (saveList()) {
+									finish();
+									overridePendingTransition(0, R.anim.slide_out_bottom);
+								}
+							}
+
+							@Override
+							public void onNegative(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+								finish();
+								overridePendingTransition(0, R.anim.slide_out_bottom);
+							}
+
+							@Override
+							public void onNeutral(MaterialDialog dialog) {
+								setRequestedOrientation(prevOrientation);
+							}
+						})
+						.show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 			        @Override
 			        public boolean onKey(DialogInterface arg0, int keyCode,
@@ -546,68 +693,68 @@ public class CreaListaActivity extends ThemeableActivity {
 //			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //    }
     
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-        	clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.DISMISS_RENAME:
-                    //to hide soft keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.DISMISS_ADD:
-                    //to hide soft keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.RENAME_CONFERMA:
-                    nomiElementi.set(positionToRename, titleInputRename.getText().toString());
-                    adapter.notifyDataSetChanged();
-                    //to hide soft keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.AGGIUNGI_CONFERMA:
-                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-                    nomiElementi.add(titleInputAdd.getText().toString());
-                    if (modifica)
-                        nomiCanti.add("");
-                    adapter.notifyDataSetChanged();
-                    //to hide soft keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
-                    setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.SAVE_LIST_OK:
-                    setRequestedOrientation(prevOrientation);
-                    if (saveList()) {
-                        finish();
-                        overridePendingTransition(0, R.anim.slide_out_bottom);
-                    }
-                    break;
-                case Utility.SAVE_LIST_KO:
-                    setRequestedOrientation(prevOrientation);
-                    finish();
-                    overridePendingTransition(0, R.anim.slide_out_bottom);
-                    break;
-                default:
-                    setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//        	clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.DISMISS_RENAME:
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.DISMISS_ADD:
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.RENAME_CONFERMA:
+//                    nomiElementi.set(positionToRename, titleInputRename.getText().toString());
+//                    adapter.notifyDataSetChanged();
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInputRename.getWindowToken(), 0);
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.AGGIUNGI_CONFERMA:
+//                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+//                    nomiElementi.add(titleInputAdd.getText().toString());
+//                    if (modifica)
+//                        nomiCanti.add("");
+//                    adapter.notifyDataSetChanged();
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(titleInputAdd.getWindowToken(), 0);
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.SAVE_LIST_OK:
+//                    setRequestedOrientation(prevOrientation);
+//                    if (saveList()) {
+//                        finish();
+//                        overridePendingTransition(0, R.anim.slide_out_bottom);
+//                    }
+//                    break;
+//                case Utility.SAVE_LIST_KO:
+//                    setRequestedOrientation(prevOrientation);
+//                    finish();
+//                    overridePendingTransition(0, R.anim.slide_out_bottom);
+//                    break;
+//                default:
+//                    setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
     
     private class PositionAdapter extends ArrayAdapter<String> {
         public PositionAdapter() {

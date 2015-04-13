@@ -15,9 +15,9 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">
-        <item name="colorAccent">@color/theme_accent</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">-->
+        <!--<item name="colorAccent">@color/theme_accent</item>-->
+    <!--</style>-->
 
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
@@ -26,85 +26,85 @@
         <item name="android:layout_gravity">left|start</item>
     </style>
 
-    <style name="AppTheme.FlavoredMaterialLight.BlueDark">
-        <item name="colorAccent">#3F51B5</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.BlueDark">-->
+        <!--<item name="colorAccent">#3F51B5</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Grey">
-        <item name="colorAccent">#9E9E9E</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Grey">-->
+        <!--<item name="colorAccent">#9E9E9E</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.BlueGrey">
-        <item name="colorAccent">#607D8B</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.BlueGrey">-->
+        <!--<item name="colorAccent">#607D8B</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Black">
-        <item name="colorAccent">#37474F</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Black">-->
+        <!--<item name="colorAccent">#37474F</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Brown">
-        <item name="colorAccent">#795548</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Brown">-->
+        <!--<item name="colorAccent">#795548</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Red">
-        <item name="colorAccent">#D32F2F</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Red">-->
+        <!--<item name="colorAccent">#D32F2F</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Pink">
-        <item name="colorAccent">#E91E63</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Pink">-->
+        <!--<item name="colorAccent">#E91E63</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Purple">
-        <item name="colorAccent">#9C27B0</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Purple">-->
+        <!--<item name="colorAccent">#9C27B0</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Violet">
-        <item name="colorAccent">#5E35B1</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Violet">-->
+        <!--<item name="colorAccent">#5E35B1</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Blue">
-        <item name="colorAccent">#1976D2</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Blue">-->
+        <!--<item name="colorAccent">#1976D2</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.BlueLight">
-        <item name="colorAccent">#03A9F4</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.BlueLight">-->
+        <!--<item name="colorAccent">#03A9F4</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Torqouise">
-        <item name="colorAccent">#00BCD4</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Torqouise">-->
+        <!--<item name="colorAccent">#00BCD4</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.GreenWater">
-        <item name="colorAccent">#009688</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.GreenWater">-->
+        <!--<item name="colorAccent">#009688</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Green">
-        <item name="colorAccent">#4CAF50</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Green">-->
+        <!--<item name="colorAccent">#4CAF50</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.GreenLight">
-        <item name="colorAccent">#8BC34A</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.GreenLight">-->
+        <!--<item name="colorAccent">#8BC34A</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.GreenBean">
-        <item name="colorAccent">#CDDC39</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.GreenBean">-->
+        <!--<item name="colorAccent">#CDDC39</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Yellow">
-        <item name="colorAccent">#FDD835</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Yellow">-->
+        <!--<item name="colorAccent">#FDD835</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.OrangeLight">
-        <item name="colorAccent">#FFB300</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.OrangeLight">-->
+        <!--<item name="colorAccent">#FFB300</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.Orange">
-        <item name="colorAccent">#FB8C00</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.Orange">-->
+        <!--<item name="colorAccent">#FB8C00</item>-->
+    <!--</style>-->
 
-    <style name="AppTheme.FlavoredMaterialLight.RedLight">
-        <item name="colorAccent">#F4511E</item>
-    </style>
+    <!--<style name="AppTheme.FlavoredMaterialLight.RedLight">-->
+        <!--<item name="colorAccent">#F4511E</item>-->
+    <!--</style>-->
 
     <style name="FloatingWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">
         <item name="rd_rippleColor">#33000000</item>

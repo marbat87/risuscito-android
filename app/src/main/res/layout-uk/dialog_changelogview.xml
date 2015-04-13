@@ -6,7 +6,7 @@
 
     <it.gmariotti.changelibs.library.view.ChangeLogListView
         android:baselineAligned="false"
-        android:paddingTop="@dimen/adp_mtrl_alert_dialog_padding_top"
+        android:paddingTop="18dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         risuscito:changeLogFileResourceId="@raw/changelog_uk"

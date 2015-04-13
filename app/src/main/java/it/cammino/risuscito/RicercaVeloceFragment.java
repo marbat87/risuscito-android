@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.alertdialogpro.AlertDialogPro;
 import com.rey.material.widget.Button;
 
 import java.util.ArrayList;

@@ -22,6 +22,7 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:text="@string/hint_remove" />
 
     </LinearLayout>
@@ -44,8 +45,9 @@
             android:layout_below="@id/favorites_image"
             android:layout_marginLeft="@dimen/text_min_margin"
             android:layout_marginRight="@dimen/text_min_margin"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
             android:textColor="?android:textColorSecondary"
             android:layout_height="wrap_content"
             android:text="@string/no_favourites_short"

@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -21,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alertdialogpro.ProgressDialogPro;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
-    private ProgressDialogPro translationDialog;
+//    private ProgressDialogPro translationDialog;
     private int prevOrientation;
 
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
@@ -489,6 +488,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
         public TranslationTask() {}
 
+        private MaterialDialog translationDialog;
+
         @Override
         protected String doInBackground(String... sUrl) {
             getIntent().removeExtra(Utility.DB_RESET);
@@ -509,16 +510,26 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             super.onPreExecute();
             prevOrientation = getRequestedOrientation();
             Utility.blockOrientation(MainActivity.this);
-            translationDialog = new ProgressDialogPro(MainActivity.this);
-            translationDialog.setMessage(getResources().getString(R.string.translation_running));
-            translationDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                    setRequestedOrientation(prevOrientation);
-                }
-            });
-            translationDialog.setCancelable(false);
-            translationDialog.show();
+//            translationDialog = new ProgressDialogPro(MainActivity.this);
+//            translationDialog.setMessage(getResources().getString(R.string.translation_running));
+//            translationDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                @Override
+//                public void onDismiss(DialogInterface arg0) {
+//                    setRequestedOrientation(prevOrientation);
+//                }
+//            });
+//            translationDialog.setCancelable(false);
+//            translationDialog.show();
+            translationDialog = new MaterialDialog.Builder(MainActivity.this)
+                    .content(R.string.translation_running)
+                    .progress(true, 0)
+                    .dismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            setRequestedOrientation(prevOrientation);
+                        }
+                    })
+                    .show();
         }
 
         @Override
