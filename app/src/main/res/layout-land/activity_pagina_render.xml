@@ -136,17 +136,49 @@
                         <!--android:src="@drawable/ic_rating_favorite_normal_light"-->
                         <!--android:soundEffectsEnabled="true" />-->
 
-                    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                    <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
+                        <!--android:id="@+id/speed_seekbar"-->
+                        <!--android:layout_width="0dip"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--risuscito:dsb_min="0"-->
+                        <!--risuscito:dsb_max="50"-->
+                        <!--risuscito:dsb_rippleColor="@color/ripple_material_dark"-->
+                        <!--risuscito:dsb_indicatorFormatter="%d%%"-->
+                        <!--risuscito:dsb_indicatorElevation="6dp" />-->
+
+                    <!--<ImageButton-->
+                        <!--android:id="@+id/play_scroll"-->
+                        <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                        <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                        <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                        <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--android:theme="@style/ActionBarThemeOverlay"-->
+                        <!--android:background="?attr/customSelectorRound"-->
+                        <!--android:src="@drawable/play_scroll_button_drawable"-->
+                        <!--android:soundEffectsEnabled="true" />-->
+
+                    <TextView
+                        android:id="@+id/slider_text"
+                        android:layout_width="50dip"
+                        android:paddingLeft="@dimen/activity_min_margin"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="right"
+                        android:layout_height="wrap_content"
+                        android:text="0 %"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse" />
+
+                    <com.rey.material.widget.Slider
+                        style="@style/Material.Widget.Slider"
                         android:id="@+id/speed_seekbar"
                         android:layout_width="0dip"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        risuscito:dsb_min="0"
-                        risuscito:dsb_max="50"
-                        risuscito:dsb_rippleColor="@color/ripple_material_dark"
-                        risuscito:dsb_indicatorFormatter="%d%%"
-                        risuscito:dsb_indicatorElevation="6dp" />
+                        android:padding="16dp" />
 
                     <ImageButton
                         android:id="@+id/play_scroll"

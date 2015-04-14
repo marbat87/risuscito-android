@@ -32,6 +32,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -60,8 +62,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nononsenseapps.filepicker.FilePickerActivity;
-
-import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import com.rey.material.widget.Slider;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -94,7 +95,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //    private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
-    DiscreteSeekBar scroll_speed_bar;
+    Slider scroll_speed_bar;
     //    private ProgressDialogPro mp3Dialog, exportDialog;
 //    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
@@ -225,9 +226,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
         ff_button = (ImageButton) findViewById(R.id.fast_forward_song);
         save_file = (ImageButton) findViewById(R.id.save_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
-        scroll_speed_bar = (DiscreteSeekBar) findViewById(R.id.speed_seekbar);
-        scroll_speed_bar.setScrubberColor(getThemeUtils().accentColor());
-        scroll_speed_bar.setThumbColor(getThemeUtils().accentColor(), getThemeUtils().accentColor());
+        scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
+//        scroll_speed_bar.setScrubberColor(getThemeUtils().accentColor());
+//        scroll_speed_bar.setThumbColor(getThemeUtils().accentColor(), getThemeUtils().accentColor());
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         afChangeListener = new OnAudioFocusChangeListener() {
@@ -924,22 +925,30 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
 
         //converte il valore da 0 a 50  in un apercentual
-        scroll_speed_bar.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
+//        scroll_speed_bar.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
+//            @Override
+//            public int transform(int value) {
+//                return value * 2;
+//            }
+//        });
+        scroll_speed_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
             @Override
-            public int transform(int value) {
-                return value * 2;
+            public void onPositionChanged(Slider slider, float v, float v1, int i, int i1) {
+                speedValue = String.valueOf(i1);
+                ((TextView)findViewById(R.id.slider_text)).setText(String.valueOf(i1) + " %");
+                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
             }
         });
-        scroll_speed_bar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
-            @Override
-            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
-                speedValue = String.valueOf(value);
-            }
-            @Override
-            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {}
-        });
+//        scroll_speed_bar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+//            @Override
+//            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+//                speedValue = String.valueOf(value);
+//            }
+//            @Override
+//            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {}
+//            @Override
+//            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {}
+//        });
 
         play_scroll.setSelected(false);
 
@@ -1057,7 +1066,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 saveZoom();
                 Bundle bundle = new Bundle();
                 bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
-                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
+                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
                 bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
                 bundle.putInt(Utility.ID_CANTO, idCanto);
 
@@ -1490,12 +1499,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         if (speedValue == null) {
 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-            scroll_speed_bar.setProgress(savedSpeed);
-            speedValue = String.valueOf(scroll_speed_bar.getProgress());
+            scroll_speed_bar.setValue(savedSpeed, false);
+//            speedValue = String.valueOf(scroll_speed_bar.getValue());
         }
         else {
 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
-            scroll_speed_bar.setProgress(Integer.valueOf(speedValue));
+            scroll_speed_bar.setValue(Float.valueOf(speedValue), false);
         }
 
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);

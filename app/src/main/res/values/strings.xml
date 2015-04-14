@@ -248,7 +248,8 @@
     <string name="language_summary">Imposta la lingua per il menù e i canti.</string>
     <string name="page_contracted">PAG.</string>
     <string name="translation_running">Traduzione in corso&#8230;</string>
-    <string name="no_favourites_short">Non è presente nessun preferito.</string>
+    <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
+    <string name="no_consegnati">Non hai segnato nessun canto come "consegnato".</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
     <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
 

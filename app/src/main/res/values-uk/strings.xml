@@ -248,7 +248,8 @@
     <string name="language_summary">Налаштуй мову меню та пісень.</string>
     <string name="page_contracted">СТОР.</string>
     <string name="translation_running">Переклад&#8230;</string>
-    <string name="no_favourites_short">Немає закладок.</string>
+    <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
+    <string name="no_consegnati">Non hai segnato nessun canto come "consegnato".</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
     <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
 
