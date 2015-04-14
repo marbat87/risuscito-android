@@ -16,47 +16,47 @@
         <item>Memoria interna</item>
     </string-array>
 
-    <string-array name="navigation_main_sections">
-        <item>@string/activity_homepage</item>
-        <item>@string/title_activity_search</item>
-        <item>@string/title_activity_general_index</item>
-        <item>@string/title_activity_custom_lists</item>
-        <item>@string/title_activity_favourites</item>
-    </string-array>
+    <!--<string-array name="navigation_main_sections">-->
+        <!--<item>@string/activity_homepage</item>-->
+        <!--<item>@string/title_activity_search</item>-->
+        <!--<item>@string/title_activity_general_index</item>-->
+        <!--<item>@string/title_activity_custom_lists</item>-->
+        <!--<item>@string/title_activity_favourites</item>-->
+    <!--</string-array>-->
 
-    <string-array name="navigation_secondary_sections">
-        <item>@string/title_activity_settings_capital</item>
-        <item>@string/title_activity_about_capital</item>
-        <item>@string/title_activity_donate_capital</item>
-    </string-array>
+    <!--<string-array name="navigation_secondary_sections">-->
+        <!--<item>@string/title_activity_settings_capital</item>-->
+        <!--<item>@string/title_activity_about_capital</item>-->
+        <!--<item>@string/title_activity_donate_capital</item>-->
+    <!--</string-array>-->
 
-    <array name="drawable_ids_main_light">
-        <item>@drawable/ic_action_home_dark</item>
-        <item>@drawable/ic_action_search_dark</item>
-        <item>@drawable/ic_action_view_as_list_dark</item>
-        <item>@drawable/ic_action_add_to_queue_dark</item>
-        <item>@drawable/ic_action_favorite_dark</item>
-    </array>
+    <!--<array name="drawable_ids_main_light">-->
+        <!--<item>@drawable/ic_action_home_dark</item>-->
+        <!--<item>@drawable/ic_action_search_dark</item>-->
+        <!--<item>@drawable/ic_action_view_as_list_dark</item>-->
+        <!--<item>@drawable/ic_action_add_to_queue_dark</item>-->
+        <!--<item>@drawable/ic_action_favorite_dark</item>-->
+    <!--</array>-->
 
-    <array name="drawable_ids_main_dark">
-        <item>@drawable/ic_action_home</item>
-        <item>@drawable/ic_action_search</item>
-        <item>@drawable/ic_action_view_as_list</item>
-        <item>@drawable/ic_action_add_to_queue</item>
-        <item>@drawable/ic_action_favorite</item>
-    </array>
+    <!--<array name="drawable_ids_main_dark">-->
+        <!--<item>@drawable/ic_action_home</item>-->
+        <!--<item>@drawable/ic_action_search</item>-->
+        <!--<item>@drawable/ic_action_view_as_list</item>-->
+        <!--<item>@drawable/ic_action_add_to_queue</item>-->
+        <!--<item>@drawable/ic_action_favorite</item>-->
+    <!--</array>-->
 
-    <array name="drawable_ids_secondary_light">
-        <item>@drawable/ic_action_settings_dark</item>
-        <item>@drawable/ic_action_about_dark</item>
-        <item>@drawable/ic_action_good_dark</item>
-    </array>
+    <!--<array name="drawable_ids_secondary_light">-->
+        <!--<item>@drawable/ic_action_settings_dark</item>-->
+        <!--<item>@drawable/ic_action_about_dark</item>-->
+        <!--<item>@drawable/ic_action_good_dark</item>-->
+    <!--</array>-->
 
-    <array name="drawable_ids_secondary_dark">
-        <item>@drawable/ic_action_settings</item>
-        <item>@drawable/ic_action_about</item>
-        <item>@drawable/ic_action_good</item>
-    </array>
+    <!--<array name="drawable_ids_secondary_dark">-->
+        <!--<item>@drawable/ic_action_settings</item>-->
+        <!--<item>@drawable/ic_action_about</item>-->
+        <!--<item>@drawable/ic_action_good</item>-->
+    <!--</array>-->
 
     <array name="colors_primary">
         <item>#3F51B5</item>
