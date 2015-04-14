@@ -41,8 +41,7 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
-//    private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
-    private static final float EXPANDED_PLUS_ROTATION = 90f;
+    private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
     private static final int TRANSLATE_DURATION_MILLIS = 200;
 
     private int mButtonSize;
@@ -54,6 +53,8 @@ public class FloatingActionsMenu extends ViewGroup {
     private int mButtonSpacing;
     private int mLabelsMargin;
     private int mLabelsVerticalOffset;
+
+    private float mButtonRotation;
 
     private boolean mExpanded;
     private boolean mVisible;
@@ -103,6 +104,7 @@ public class FloatingActionsMenu extends ViewGroup {
         mLabelsStyle = attr.getResourceId(R.styleable.FloatingActionsMenu_fab_labelStyle, 0);
         mLabelsPosition = attr.getInt(R.styleable.FloatingActionsMenu_fab_labelsPosition,
                 isRTL() ? LABELS_ON_RIGHT_SIDE : LABELS_ON_LEFT_SIDE);
+        mButtonRotation = attr.getFloat(R.styleable.FloatingActionsMenu_fab_rotation, EXPANDED_PLUS_ROTATION);
         attr.recycle();
 
         if (mLabelsStyle != 0 && expandsHorizontally()) {
@@ -268,8 +270,10 @@ public class FloatingActionsMenu extends ViewGroup {
 
                 final OvershootInterpolator interpolator = new OvershootInterpolator();
 
-                final ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", EXPANDED_PLUS_ROTATION, COLLAPSED_PLUS_ROTATION);
-                final ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", COLLAPSED_PLUS_ROTATION, EXPANDED_PLUS_ROTATION);
+//                final ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", EXPANDED_PLUS_ROTATION, COLLAPSED_PLUS_ROTATION);
+//                final ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", COLLAPSED_PLUS_ROTATION, EXPANDED_PLUS_ROTATION);
+                final ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", mButtonRotation, COLLAPSED_PLUS_ROTATION);
+                final ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(rotatingDrawable, "rotation", COLLAPSED_PLUS_ROTATION, mButtonRotation);
 
                 collapseAnimator.setInterpolator(interpolator);
                 expandAnimator.setInterpolator(interpolator);
@@ -674,7 +678,8 @@ public class FloatingActionsMenu extends ViewGroup {
             mExpanded = savedState.mExpanded;
 
             if (mRotatingDrawable != null) {
-                mRotatingDrawable.setRotation(mExpanded ? EXPANDED_PLUS_ROTATION : COLLAPSED_PLUS_ROTATION);
+//                mRotatingDrawable.setRotation(mExpanded ? EXPANDED_PLUS_ROTATION : COLLAPSED_PLUS_ROTATION);
+                mRotatingDrawable.setRotation(mExpanded ? mButtonRotation : COLLAPSED_PLUS_ROTATION);
             }
 
             super.onRestoreInstanceState(savedState.getSuperState());

@@ -31,5 +31,6 @@
             <enum name="left" value="2" />
             <enum name="right" value="3" />
         </attr>
+        <attr name="fab_rotation" format="float" />
     </declare-styleable>
 </resources>

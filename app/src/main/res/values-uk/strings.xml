@@ -250,5 +250,6 @@
     <string name="translation_running">Переклад&#8230;</string>
     <string name="no_favourites_short">Немає закладок.</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
+    <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
 
 </resources>

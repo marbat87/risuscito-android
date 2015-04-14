@@ -91,7 +91,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private String pagina;
     private int idCanto;
     private static MediaPlayer mediaPlayer;
-    private int favoriteFlag;
+//    private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     DiscreteSeekBar scroll_speed_bar;
@@ -183,7 +183,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         getFab().setColorNormal(getThemeUtils().accentColor());
         getFab().setColorPressed(getThemeUtils().accentColorDark());
-        getFab().setIcon(R.drawable.ic_more_vert_white_36dp);
+        getFab().setIcon(R.drawable.ic_add_white_24dp);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -1074,11 +1074,26 @@ public class PaginaRenderActivity extends ThemeableActivity {
         fabSound.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setSelected(!v.isSelected());
                 getFab().toggle();
                 findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.VISIBLE : View.GONE);
-                v.setSelected(!v.isSelected());
                 mostraAudioBool = !v.isSelected();
                 mostraAudio = String.valueOf(mostraAudioBool);
+            }
+        });
+
+        FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+        fabFavorite.setColorNormal(getThemeUtils().accentColor());
+        fabFavorite.setColorPressed(getThemeUtils().accentColorDark());
+        fabFavorite.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
+                updateFavouriteFlag(v.isSelected() ? 1 : 0);
+                getFab().toggle();
+                Toast.makeText(PaginaRenderActivity.this
+                            , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
+                        , Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -1369,36 +1384,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public void onResume() {
         super.onResume();
 
-        favouriteCheckBox = (ImageButton) findViewById(R.id.favorite);
+//        favouriteCheckBox = (ImageButton) findViewById(R.id.favorite);
+//
+//        favoriteFlag = selectFavouriteFromSource();
+//
+//        if (favoriteFlag == 1)
+//            favouriteCheckBox.setColorFilter(getThemeUtils().accentColor());
+//        else
+//            favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
 
-        favoriteFlag = selectFavouriteFromSource();
-
-        if (favoriteFlag == 1)
-            favouriteCheckBox.setColorFilter(getThemeUtils().accentColor());
-        else
-            favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
-
-        favouriteCheckBox.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (favoriteFlag == 0) {
-                    favoriteFlag = 1;
-                    favouriteCheckBox.setColorFilter(getThemeUtils().accentColor());
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.favorite_added), Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    favoriteFlag = 0;
-                    favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show();
-                }
-
-                Bundle bundle = PaginaRenderActivity.this.getIntent().getExtras();
-
-                updateFavouriteFlag(favoriteFlag);
-            }
-        });
+//        favouriteCheckBox.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (favoriteFlag == 0) {
+//                    favoriteFlag = 1;
+//                    favouriteCheckBox.setColorFilter(getThemeUtils().accentColor());
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.favorite_added), Toast.LENGTH_SHORT).show();
+//                }
+//                else {
+//                    favoriteFlag = 0;
+//                    favouriteCheckBox.setColorFilter(getResources().getColor(android.R.color.white));
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show();
+//                }
+//
+//                updateFavouriteFlag(favoriteFlag);
+//            }
+//        });
 
 //        checkScreenAwake();
 
@@ -1493,6 +1506,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
         findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
+        findViewById(R.id.fab_favorite).setSelected(selectFavouriteFromSource() == 1);
         if (getFab().isExpanded()) {
             View outerFrame = findViewById(R.id.outerFrame);
             outerFrame.setVisibility(View.VISIBLE);
