@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,7 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,9 +22,10 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ObservableScrollView;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
@@ -37,87 +36,131 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiParolaFragment extends Fragment {
 
-	private int posizioneDaCanc;
-	private String titoloDaCanc;
-	private View rootView;
-	private ShareActionProvider mShareActionProvider;
-	private DatabaseCanti listaCanti;
-	private SQLiteDatabase db;
-	private int prevOrientation;
-	
-	private LUtils mLUtils;
+    private int posizioneDaCanc;
+    private String titoloDaCanc;
+    private View rootView;
+    private ShareActionProvider mShareActionProvider;
+    private DatabaseCanti listaCanti;
+    private SQLiteDatabase db;
+//	private int prevOrientation;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		rootView = inflater.inflate(
-				R.layout.activity_canti_parola, container, false);
-		
-		//crea un istanza dell'oggetto DatabaseCanti
-		listaCanti = new DatabaseCanti(getActivity());
-		updateLista();
-		
-		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_parola);
-        fab.setColorNormal(getThemeUtils().accentColor());
-        fab.setColorPressed(getThemeUtils().accentColorDark());
-        fab.setColorRipple(getThemeUtils().accentColorDark());
-		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView));
-		fab.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                prevOrientation = getActivity().getRequestedOrientation();
-				Utility.blockOrientation(getActivity());
-//				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-//	        			.setMessage(R.string.reset_list_question)
-//	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PAROLA_RESET_OK))
-//	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//	                    .show();
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.dialog_reset_list_title)
-                        .content(R.string.reset_list_question)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                db = listaCanti.getReadableDatabase();
-                                String sql = "DELETE FROM CUST_LISTS" +
-                                        " WHERE _id =  1 ";
-                                db.execSQL(sql);
-                                db.close();
-                                updateLista();
-                                mShareActionProvider.setShareIntent(getDefaultIntent());
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
+    private LUtils mLUtils;
 
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-			        @Override
-			        public boolean onKey(DialogInterface arg0, int keyCode,
-			        		KeyEvent event) {
-			        	if (keyCode == KeyEvent.KEYCODE_BACK
-			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-			        		arg0.dismiss();
-			        		getActivity().setRequestedOrientation(prevOrientation);
-			        		return true;
-			            }
-			            return false;
-			        }
-		        });
-                dialog.setCancelable(false);
-			}
-		});
-		
-		mLUtils = LUtils.getInstance(getActivity());
-		
-		return rootView;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        rootView = inflater.inflate(
+                R.layout.activity_canti_parola, container, false);
+
+        //crea un istanza dell'oggetto DatabaseCanti
+        listaCanti = new DatabaseCanti(getActivity());
+//		updateLista();
+
+//		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_parola);
+//        fab.setColorNormal(getThemeUtils().accentColor());
+//        fab.setColorPressed(getThemeUtils().accentColorDark());
+//        fab.setColorRipple(getThemeUtils().accentColorDark());
+//		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView));
+//		fab.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//                prevOrientation = getActivity().getRequestedOrientation();
+//				Utility.blockOrientation(getActivity());
+////				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+////                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
+////	        			.setMessage(R.string.reset_list_question)
+////	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PAROLA_RESET_OK))
+////	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+////	                    .show();
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_reset_list_title)
+//                        .content(R.string.reset_list_question)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                db = listaCanti.getReadableDatabase();
+//                                String sql = "DELETE FROM CUST_LISTS" +
+//                                        " WHERE _id =  1 ";
+//                                db.execSQL(sql);
+//                                db.close();
+//                                updateLista();
+//                                mShareActionProvider.setShareIntent(getDefaultIntent());
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//			        @Override
+//			        public boolean onKey(DialogInterface arg0, int keyCode,
+//			        		KeyEvent event) {
+//			        	if (keyCode == KeyEvent.KEYCODE_BACK
+//			        			&& event.getAction() == KeyEvent.ACTION_UP) {
+//			        		arg0.dismiss();
+//			        		getActivity().setRequestedOrientation(prevOrientation);
+//			        		return true;
+//			            }
+//			            return false;
+//			        }
+//		        });
+//                dialog.setCancelable(false);
+//			}
+//		});
+
+        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(getClass().toString(), "cantiparola");
+                db = listaCanti.getReadableDatabase();
+                String sql = "DELETE FROM CUST_LISTS" +
+                        " WHERE _id =  1 ";
+                db.execSQL(sql);
+                db.close();
+                updateLista();
+                mShareActionProvider.setShareIntent(getDefaultIntent());
+            }
+        });
+
+        ((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {}
+
+            @Override
+            public void onDownMotionEvent() {}
+
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+//                Log.i(getClass().toString(), "scrollState: " + scrollState);
+                if (scrollState == ScrollState.UP) {
+                    if (!fab.isVisible()) {
+                        fab.show();
+                    }
+                } else if (scrollState == ScrollState.DOWN) {
+                    if (fab.isVisible()) {
+                        fab.hide();
+                    }
+                }
+            }
+        });
+
+        mLUtils = LUtils.getInstance(getActivity());
+
+        return rootView;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser)
+            ((FloatingActionButton) getActivity().findViewById(R.id.fab_pager)).show();
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -128,40 +171,40 @@ public class CantiParolaFragment extends Fragment {
     @Override
     public void onResume() {
 //    	Log.i("CANTI PAROLA", "ON RESUME");
-    	super.onResume();
-		updateLista();
+        super.onResume();
+        updateLista();
     }
-	
-    @Override
-	public void onDestroy() {
-		if (listaCanti != null)
-			listaCanti.close();
-		super.onDestroy();
-	}
-    
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-	    MenuItem shareItem = menu.findItem(R.id.action_share);
-	    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-	    ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-	    if (mShareActionProvider != null && tempPager.getCurrentItem() == 0)
-	    	mShareActionProvider.setShareIntent(getDefaultIntent());
-	}
 
-	private Intent getDefaultIntent() {
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_TEXT, getTitlesList());
-		intent.setType("text/plain");
-		return intent;
-   }
-	
+    @Override
+    public void onDestroy() {
+        if (listaCanti != null)
+            listaCanti.close();
+        super.onDestroy();
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
+        if (mShareActionProvider != null && tempPager.getCurrentItem() == 0)
+            mShareActionProvider.setShareIntent(getDefaultIntent());
+    }
+
+    private Intent getDefaultIntent() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, getTitlesList());
+        intent.setType("text/plain");
+        return intent;
+    }
+
     private void updateLista() {
-        
-		String titoloCanto = getTitoloFromPosition(1);
-		
-		if (titoloCanto.equalsIgnoreCase("")) {
-			rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.VISIBLE);
-			rootView.findViewById(R.id.cantoInizialeContainer).setVisibility(View.GONE);
+
+        String titoloCanto = getTitoloFromPosition(1);
+
+        if (titoloCanto.equalsIgnoreCase("")) {
+            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.cantoInizialeContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addCantoIniziale).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -173,9 +216,9 @@ public class CantiParolaFragment extends Fragment {
                     startSubActivity(bundle);
                 }
             });
-		}
-		else {
-			rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
             View view = rootView.findViewById(R.id.cantoInizialeContainer);
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
@@ -213,13 +256,13 @@ public class CantiParolaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_blue);
             if (colore.equalsIgnoreCase(Utility.BIANCO))
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
-		}
-		
-		titoloCanto = getTitoloFromPosition(2);
-		
-		if (titoloCanto.equalsIgnoreCase("")) {
-			rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.VISIBLE);
-			rootView.findViewById(R.id.primaLetturaContainer).setVisibility(View.GONE);
+        }
+
+        titoloCanto = getTitoloFromPosition(2);
+
+        if (titoloCanto.equalsIgnoreCase("")) {
+            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.primaLetturaContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addPrimaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -231,9 +274,9 @@ public class CantiParolaFragment extends Fragment {
                     startSubActivity(bundle);
                 }
             });
-		}
-		else {
-			rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
             View view = rootView.findViewById(R.id.primaLetturaContainer);
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
@@ -271,13 +314,13 @@ public class CantiParolaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_blue);
             if (colore.equalsIgnoreCase(Utility.BIANCO))
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
-		}
-		
-		titoloCanto = getTitoloFromPosition(3);
-		
-		if (titoloCanto.equalsIgnoreCase("")) {
-			rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.VISIBLE);
-			rootView.findViewById(R.id.secondaLetturaContainer).setVisibility(View.GONE);
+        }
+
+        titoloCanto = getTitoloFromPosition(3);
+
+        if (titoloCanto.equalsIgnoreCase("")) {
+            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.secondaLetturaContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addSecondaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -289,9 +332,9 @@ public class CantiParolaFragment extends Fragment {
                     startSubActivity(bundle);
                 }
             });
-		}
-		else {
-			rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
             View view = rootView.findViewById(R.id.secondaLetturaContainer);
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
@@ -329,13 +372,13 @@ public class CantiParolaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_blue);
             if (colore.equalsIgnoreCase(Utility.BIANCO))
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
-		}
-		
-		titoloCanto = getTitoloFromPosition(4);
-		
-		if (titoloCanto.equalsIgnoreCase("")) {
-			rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.VISIBLE);
-			rootView.findViewById(R.id.terzaLetturaContainer).setVisibility(View.GONE);
+        }
+
+        titoloCanto = getTitoloFromPosition(4);
+
+        if (titoloCanto.equalsIgnoreCase("")) {
+            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.terzaLetturaContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addTerzaLettura).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -347,9 +390,9 @@ public class CantiParolaFragment extends Fragment {
                     startSubActivity(bundle);
                 }
             });
-		}
-		else {
-			rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
             View view = rootView.findViewById(R.id.terzaLetturaContainer);
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
@@ -387,7 +430,7 @@ public class CantiParolaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_blue);
             if (colore.equalsIgnoreCase(Utility.BIANCO))
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
-		}
+        }
 
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -456,11 +499,11 @@ public class CantiParolaFragment extends Fragment {
         else
             rootView.findViewById(R.id.groupCantoPace).setVisibility(View.GONE);
 
-		titoloCanto = getTitoloFromPosition(5);
-		
-		if (titoloCanto.equalsIgnoreCase("")) {
-			rootView.findViewById(R.id.addCantoFinale).setVisibility(View.VISIBLE);
-			rootView.findViewById(R.id.cantoFinaleContainer).setVisibility(View.GONE);
+        titoloCanto = getTitoloFromPosition(5);
+
+        if (titoloCanto.equalsIgnoreCase("")) {
+            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.cantoFinaleContainer).setVisibility(View.GONE);
             rootView.findViewById(R.id.addCantoFinale).setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -472,9 +515,9 @@ public class CantiParolaFragment extends Fragment {
                     startSubActivity(bundle);
                 }
             });
-		}
-		else {
-			rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
+        }
+        else {
+            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
             View view = rootView.findViewById(R.id.cantoFinaleContainer);
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
@@ -512,138 +555,138 @@ public class CantiParolaFragment extends Fragment {
                 textPage.setBackgroundResource(R.drawable.bkg_round_blue);
             if (colore.equalsIgnoreCase(Utility.BIANCO))
                 textPage.setBackgroundResource(R.drawable.bkg_round_white);
-		}
-		
-	}
-		    
-    private void startSubActivity(Bundle bundle) {
-    	Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
-    	intent.putExtras(bundle);
-    	startActivity(intent);
-    	getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-   	}
-    
-    private void openPagina(View v, int id) {
-    	// recupera il titolo della voce cliccata
-        String cantoCliccato = ((TextView) v.findViewById(id)).getText().toString();
-		cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-        
-		// crea un manipolatore per il DB in modalit� READ
-		db = listaCanti.getReadableDatabase();
-	    
-		// esegue la query per il recupero del nome del file della pagina da visualizzare
-	    String query = "SELECT source, _id" +
-	      		"  FROM ELENCO" +
-	      		"  WHERE titolo =  '" + cantoCliccato + "'";   
-	    Cursor cursor = db.rawQuery(query, null);
-	      
-	    // recupera il nome del file
-	    cursor.moveToFirst();
-	    String pagina = cursor.getString(0);
-	    int idCanto = cursor.getInt(1);
-	    
-	    // chiude il cursore
-	    cursor.close();
-	    db.close();
-	    
-	    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare  
-	    Bundle bundle = new Bundle();
-	    bundle.putString("pagina", pagina);
-	    bundle.putInt("idCanto", idCanto);
-	    
-    	Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-    	intent.putExtras(bundle);
-    	mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
+        }
+
     }
-    
+
+    private void startSubActivity(Bundle bundle) {
+        Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+    }
+
+    private void openPagina(View v, int id) {
+        // recupera il titolo della voce cliccata
+        String cantoCliccato = ((TextView) v.findViewById(id)).getText().toString();
+        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+
+        // crea un manipolatore per il DB in modalit� READ
+        db = listaCanti.getReadableDatabase();
+
+        // esegue la query per il recupero del nome del file della pagina da visualizzare
+        String query = "SELECT source, _id" +
+                "  FROM ELENCO" +
+                "  WHERE titolo =  '" + cantoCliccato + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        // recupera il nome del file
+        cursor.moveToFirst();
+        String pagina = cursor.getString(0);
+        int idCanto = cursor.getInt(1);
+
+        // chiude il cursore
+        cursor.close();
+        db.close();
+
+        // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+        Bundle bundle = new Bundle();
+        bundle.putString("pagina", pagina);
+        bundle.putInt("idCanto", idCanto);
+
+        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+        intent.putExtras(bundle);
+        mLUtils.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER);
+    }
+
     //recupera il titolo del canto in posizione "position" nella lista
     private String getTitoloFromPosition(int position) {
-		
-    	db = listaCanti.getReadableDatabase();
-    	
-	    String query = "SELECT B.titolo, color, pagina" +
-	      		"  FROM CUST_LISTS A" +
-	      		"  	   , ELENCO B" +
-	      		"  WHERE A._id = 1" +
-	      		"  AND   A.position = " + position + 
-	      		"  AND   A.id_canto = B._id";
-	    Cursor cursor = db.rawQuery(query, null);
-	     
-	    int total = cursor.getCount();
-	    String result = "";
-	    
-	    if (total == 1) {
-	    	cursor.moveToFirst();
+
+        db = listaCanti.getReadableDatabase();
+
+        String query = "SELECT B.titolo, color, pagina" +
+                "  FROM CUST_LISTS A" +
+                "  	   , ELENCO B" +
+                "  WHERE A._id = 1" +
+                "  AND   A.position = " + position +
+                "  AND   A.id_canto = B._id";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int total = cursor.getCount();
+        String result = "";
+
+        if (total == 1) {
+            cursor.moveToFirst();
 //	    	result =  cursor.getString(1) + cursor.getString(0);
             result =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);
-	    }
-	    
-	    cursor.close();
-	    db.close();
-    
-	    return result;
+        }
+
+        cursor.close();
+        db.close();
+
+        return result;
     }
-    
+
     private String getTitlesList() {
 
         Locale l = getActivity().getResources().getConfiguration().locale;
-    	String result = "";
-    	String temp;
-    	
-    	//titolo
+        String result = "";
+        String temp;
+
+        //titolo
         result +=  "-- " + getString(R.string.title_activity_canti_parola).toUpperCase(l) + " --\n";
-    	
-    	//canto iniziale
-    	temp = getTitoloToSendFromPosition(1);
-    	
-    	result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
-    	result += "\n";
-    	
-    	if (temp.equalsIgnoreCase(""))
+
+        //canto iniziale
+        temp = getTitoloToSendFromPosition(1);
+
+        result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
             result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    	else
-    		result += temp;
-    	
-    	result += "\n";
-    	
-    	//prima lettura
-    	temp = getTitoloToSendFromPosition(2);
-    	
-    	result += getResources().getString(R.string.prima_lettura).toUpperCase(l);
-    	result += "\n";
-    	
-    	if (temp.equalsIgnoreCase(""))
+        else
+            result += temp;
+
+        result += "\n";
+
+        //prima lettura
+        temp = getTitoloToSendFromPosition(2);
+
+        result += getResources().getString(R.string.prima_lettura).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
             result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    	else
-    		result += temp;
-    	
-    	result += "\n";
-    	
-    	//seconda lettura
-    	temp = getTitoloToSendFromPosition(3);
-    	
-    	result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
-    	result += "\n";
-    	
-    	if (temp.equalsIgnoreCase(""))
+        else
+            result += temp;
+
+        result += "\n";
+
+        //seconda lettura
+        temp = getTitoloToSendFromPosition(3);
+
+        result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
             result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    	else
-    		result += temp;
-    	
-    	result += "\n";
-    	
-    	//terza lettura
-    	temp = getTitoloToSendFromPosition(4);
-    	
-    	result += getResources().getString(R.string.terza_lettura).toUpperCase(l);
-    	result += "\n";
-    	
-    	if (temp.equalsIgnoreCase(""))
+        else
+            result += temp;
+
+        result += "\n";
+
+        //terza lettura
+        temp = getTitoloToSendFromPosition(4);
+
+        result += getResources().getString(R.string.terza_lettura).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
             result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    	else
-    		result += temp;
-    	
-    	result += "\n";
+        else
+            result += temp;
+
+        result += "\n";
 
         //deve essere messo anche il canto alla pace? legge le impostazioni
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -665,48 +708,48 @@ public class CantiParolaFragment extends Fragment {
 //		else
 //			Log.i("CANTO ALLA PACE", "IGNORATO");
 
-    	//canto finale
-    	temp = getTitoloToSendFromPosition(5);
-    	
-    	result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-    	result += "\n";
-    	
-    	if (temp.equalsIgnoreCase(""))
+        //canto finale
+        temp = getTitoloToSendFromPosition(5);
+
+        result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
             result += ">> " + getString(R.string.to_be_chosen) + " <<";
-    	else
-    		result += temp;	    	
-    	    	
-    	return result;
-    	
+        else
+            result += temp;
+
+        return result;
+
     }
-    
+
     //recupera il titolo del canto in posizione "position" nella lista "list"
     private String getTitoloToSendFromPosition(int position) {
-		
-    	db = listaCanti.getReadableDatabase();
-    	
-	    String query = "SELECT B.titolo, B.pagina" +
-	      		"  FROM CUST_LISTS A" +
-	      		"  	   , ELENCO B" +
-	      		"  WHERE A._id = 1" +
-	      		"  AND   A.position = " + position + 
-	      		"  AND   A.id_canto = B._id";
-	    Cursor cursor = db.rawQuery(query, null);
-	     
-	    int total = cursor.getCount();
-	    String result = "";
-	    
-	    if (total == 1) {
-	    	cursor.moveToFirst();
-	    	result =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
-	    }
-	    
-	    cursor.close();
-	    db.close();
-    
-	    return result;
+
+        db = listaCanti.getReadableDatabase();
+
+        String query = "SELECT B.titolo, B.pagina" +
+                "  FROM CUST_LISTS A" +
+                "  	   , ELENCO B" +
+                "  WHERE A._id = 1" +
+                "  AND   A.position = " + position +
+                "  AND   A.id_canto = B._id";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int total = cursor.getCount();
+        String result = "";
+
+        if (total == 1) {
+            cursor.moveToFirst();
+            result =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
+        }
+
+        cursor.close();
+        db.close();
+
+        return result;
     }
-    
+
 //    private class ButtonClickedListener implements DialogInterface.OnClickListener {
 //        private int clickedCode;
 //
@@ -735,7 +778,7 @@ public class CantiParolaFragment extends Fragment {
 //			}
 //        }
 //    }
-    
+
     public void snackBarRimuoviCanto() {
         SnackbarManager.show(
                 Snackbar.with(getActivity())
@@ -763,5 +806,5 @@ public class CantiParolaFragment extends Fragment {
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
-    
+
 }

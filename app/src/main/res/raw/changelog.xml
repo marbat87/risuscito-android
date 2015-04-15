@@ -3,8 +3,10 @@
 
     <changelogversion versionName="3.4.1" changeDate="XX Aprile 2015">
         <changelogtext>Nuova sezione "Canti Consegnati" in cui è possibile segnarsi i canti che sono stati consegnati dai propri catechisti</changelogtext>
-        <changelogtext>Miglioramenti interfaccia stile Material</changelogtext>
-        <changelogtext>Miglioramenti nel dimensionamento dei popup su tablet</changelogtext>
+        <changelogtext>Miglioramenti delle dimensioni e degli stili dei popup su tablet</changelogtext>
+        <changelogtext>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nel Pulsante galleggiante</changelogtext>
+        <changelogtext>Pagina del canto: Aggiunta nuovamente la percentuale di velocità di scorrimento sempre visibile</changelogtext>
+        <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
     </changelogversion>
 
 </changelog>

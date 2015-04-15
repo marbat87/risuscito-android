@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!--<it.cammino.risuscito.ui.SlidingTabLayout-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--android:id="@+id/sliding_tabs"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:elevation="@dimen/toolbar_elevation" />-->
+    <com.rey.material.widget.TabPageIndicator
+        style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"
+        android:id="@+id/sliding_tabs"
+        android:layout_height="48dp"
+        android:layout_width="match_parent"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!--<android.support.v4.view.ViewPager-->
+        <!--android:id="@+id/view_pager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+        <it.cammino.risuscito.ui.CustomViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="?toolbar_shadow" />
+
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/fab_pager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/floating_margin_lateral"
+            android:src="@drawable/ic_icon_broom"
+            risuscito:fab_colorNormal="@color/theme_accent"
+            risuscito:fab_colorPressed="@color/theme_accent_dark"
+            risuscito:fab_colorRipple="@color/theme_accent_dark"/>
+
+    </FrameLayout>
+
+</LinearLayout>

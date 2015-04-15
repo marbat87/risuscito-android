@@ -1040,17 +1040,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //            }
 //        });
 //        mProgressDialog.setCancelable(false);
-        mProgressDialog = new MaterialDialog.Builder(this)
-                .title(R.string.download_running)
-                .progress(false, 100, true)
-                .positiveText(R.string.cancel)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        mProgressDialog.cancel();
-                    }
-                })
-                .build();
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
         ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
@@ -2828,7 +2817,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                setRequestedOrientation(prevOrientation);
 //            }
 //        });
-        mp3Dialog = new MaterialDialog.Builder(this)
+        mp3Dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                 .content(R.string.wait)
                 .progress(true, 0)
                 .dismissListener(new DialogInterface.OnDismissListener() {
@@ -2856,13 +2845,25 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                setRequestedOrientation(prevOrientation);
 //            }
 //        });
-        exportDialog = new MaterialDialog.Builder(this)
+        exportDialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                 .content(R.string.export_running)
                 .progress(true, 0)
                 .dismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         setRequestedOrientation(prevOrientation);
+                    }
+                })
+                .build();
+
+        mProgressDialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                .title(R.string.download_running)
+                .progress(false, 100, false)
+                .positiveText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        mProgressDialog.cancel();
                     }
                 })
                 .build();

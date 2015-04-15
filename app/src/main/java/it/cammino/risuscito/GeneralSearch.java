@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
@@ -27,7 +27,7 @@ public class GeneralSearch extends Fragment {
 		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_search);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
-        ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+		CustomViewPager mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
         TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);

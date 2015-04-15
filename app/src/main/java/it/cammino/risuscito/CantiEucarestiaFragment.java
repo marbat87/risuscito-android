@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -15,7 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,9 +24,10 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ObservableScrollView;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
@@ -48,7 +47,7 @@ public class CantiEucarestiaFragment extends Fragment {
     private ShareActionProvider mShareActionProvider;
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
-    private int prevOrientation;
+//    private int prevOrientation;
 
     private LUtils mLUtils;
 
@@ -61,21 +60,59 @@ public class CantiEucarestiaFragment extends Fragment {
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_eucarestia);
-        fab.setColorNormal(getThemeUtils().accentColor());
-        fab.setColorPressed(getThemeUtils().accentColorDark());
-        fab.setColorRipple(getThemeUtils().accentColorDark());
-        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.eucarestiaScrollView));
-        fab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-//                        .setMessage(R.string.reset_list_question)
-//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.EUCAR_RESET_OK))
-//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_eucarestia);
+//        fab.setColorNormal(getThemeUtils().accentColor());
+//        fab.setColorPressed(getThemeUtils().accentColorDark());
+//        fab.setColorRipple(getThemeUtils().accentColorDark());
+//        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.eucarestiaScrollView));
+//        fab.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+////                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+////                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
+////                        .setMessage(R.string.reset_list_question)
+////                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.EUCAR_RESET_OK))
+////                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+////                        .show();
+////                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                    @Override
+////                    public boolean onKey(DialogInterface arg0, int keyCode,
+////                                         KeyEvent event) {
+////                        if (keyCode == KeyEvent.KEYCODE_BACK
+////                                && event.getAction() == KeyEvent.ACTION_UP) {
+////                            arg0.dismiss();
+////                            getActivity().setRequestedOrientation(prevOrientation);
+////                            return true;
+////                        }
+////                        return false;
+////                    }
+////                });
+////                dialog.setCancelable(false);
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_reset_list_title)
+//                        .content(R.string.reset_list_question)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                db = listaCanti.getReadableDatabase();
+//                                String sql = "DELETE FROM CUST_LISTS" +
+//                                        " WHERE _id =  2 ";
+//                                db.execSQL(sql);
+//                                db.close();
+//                                updateLista();
+//                                mShareActionProvider.setShareIntent(getDefaultIntent());
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
 //                        .show();
 //                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 //                    @Override
@@ -91,50 +128,56 @@ public class CantiEucarestiaFragment extends Fragment {
 //                    }
 //                });
 //                dialog.setCancelable(false);
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.dialog_reset_list_title)
-                        .content(R.string.reset_list_question)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                db = listaCanti.getReadableDatabase();
-                                String sql = "DELETE FROM CUST_LISTS" +
-                                        " WHERE _id =  2 ";
-                                db.execSQL(sql);
-                                db.close();
-                                updateLista();
-                                mShareActionProvider.setShareIntent(getDefaultIntent());
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
+//            }
+//        });
 
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
+        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(getClass().toString(), "cantieucarestia");
+                db = listaCanti.getReadableDatabase();
+                String sql = "DELETE FROM CUST_LISTS" +
+                        " WHERE _id =  2 ";
+                db.execSQL(sql);
+                db.close();
+                updateLista();
+                mShareActionProvider.setShareIntent(getDefaultIntent());
+            }
+        });
+
+        ((ObservableScrollView) rootView.findViewById(R.id.eucarestiaScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int i, boolean b, boolean b1) {}
+
+            @Override
+            public void onDownMotionEvent() {}
+
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+//                Log.i(getClass().toString(), "scrollState: " + scrollState);
+                if (scrollState == ScrollState.UP) {
+                    if (!fab.isVisible()) {
+                        fab.show();
                     }
-                });
-                dialog.setCancelable(false);
+                } else if (scrollState == ScrollState.DOWN) {
+                    if (fab.isVisible()) {
+                        fab.hide();
+                    }
+                }
             }
         });
 
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser)
+            ((FloatingActionButton) getActivity().findViewById(R.id.fab_pager)).show();
     }
 
     @Override
@@ -145,6 +188,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
     @Override
     public void onResume() {
+//        Log.i("CANTI EUCARESTIA", "ON RESUME");
         super.onResume();
         updateLista();
     }

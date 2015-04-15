@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -13,6 +12,7 @@ import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {
@@ -43,8 +43,8 @@ public class GeneralInsertSearch extends ThemeableActivity {
 		fromAdd = bundle.getInt("fromAdd");
         idLista = bundle.getInt("idLista");
         listPosition = bundle.getInt("position");
-		
-		ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
+
+		CustomViewPager mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
         TabPageIndicator mSlidingTabLayout = (TabPageIndicator) findViewById(R.id.sliding_tabs);

@@ -12,9 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.melnykov.fab.FloatingActionButton;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
@@ -33,51 +34,98 @@ import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
+import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment  {
 
-	private SectionsPagerAdapter mSectionsPagerAdapter;
-	private String[] titoliListe;
-	private int[] idListe;
-	private DatabaseCanti listaCanti;
-	private int listaDaCanc;
-	private int prevOrientation;
-	private ViewPager mViewPager;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private String[] titoliListe;
+    private int[] idListe;
+    protected DatabaseCanti listaCanti;
+    private int listaDaCanc;
+    private int prevOrientation;
+    private CustomViewPager mViewPager;
     TabPageIndicator mSlidingTabLayout = null;
 
-	private MaterialDialog dialog;
+    private MaterialDialog dialog;
 //    private TintEditText titleInput;
-    
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
-		//crea un istanza dell'oggetto DatabaseCanti
-		listaCanti = new DatabaseCanti(getActivity());
-		
-		updateLista();
-		
-		// Create the adapter that will return a fragment for each of the three
-		mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-	    mViewPager.setAdapter(mSectionsPagerAdapter);
-	    
+        //crea un istanza dell'oggetto DatabaseCanti
+        listaCanti = new DatabaseCanti(getActivity());
+
+        updateLista();
+
+        // Create the adapter that will return a fragment for each of the three
+        mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
         mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-	    
+
 //        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
 //        mSlidingTabLayout.setViewPager(mViewPager);
-        
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_pager);
+        fab.setColorNormal(getThemeUtils().accentColor());
+        fab.setColorPressed(getThemeUtils().accentColorDark());
+        fab.setColorRipple(getThemeUtils().accentColorDark());
+//        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_reset_list_title)
+                        .content(R.string.reset_list_question)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+                                        .getView().findViewById(R.id.button_pulisci).performClick();
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+            }
+        });
+
         return rootView;
-	}
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -87,23 +135,23 @@ public class CustomLists extends Fragment  {
 
     @Override
     public void onResume() {
-    	super.onResume();
-    	updateLista();
-    	mSectionsPagerAdapter.notifyDataSetChanged();
-    	mSlidingTabLayout.setViewPager(mViewPager);
+        super.onResume();
+        updateLista();
+        mSectionsPagerAdapter.notifyDataSetChanged();
+        mSlidingTabLayout.setViewPager(mViewPager);
     }
-    
-	@Override
-	public void onDestroy() {
-		if (listaCanti != null)
-			listaCanti.close();
-		super.onDestroy();
-	}
-    
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+    @Override
+    public void onDestroy() {
+        if (listaCanti != null)
+            listaCanti.close();
+        super.onDestroy();
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-		getActivity().getMenuInflater().inflate(R.menu.custom_list, menu);
-	}
+        getActivity().getMenuInflater().inflate(R.menu.custom_list, menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -236,90 +284,108 @@ public class CustomLists extends Fragment  {
     }
 
     private void updateLista() {
-		
-    	SQLiteDatabase db = listaCanti.getReadableDatabase();
-    	
-	    String query = "SELECT titolo_lista, lista, _id"
-	      		+ "  FROM LISTE_PERS A"
-	      		+ "  ORDER BY _id ASC";
-	    Cursor cursor = db.rawQuery(query, null);
-	     
-	    int total = cursor.getCount();
+
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+        String query = "SELECT titolo_lista, lista, _id"
+                + "  FROM LISTE_PERS A"
+                + "  ORDER BY _id ASC";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int total = cursor.getCount();
 //	    Log.i("RISULTATI", total+"");
-	    
-	    titoliListe = new String[total];
-	    idListe = new int[total];
 
-	    cursor.moveToFirst();
-	    for (int i = 0; i < total; i++) {
+        titoliListe = new String[total];
+        idListe = new int[total];
+
+        cursor.moveToFirst();
+        for (int i = 0; i < total; i++) {
 //    		Log.i("LISTA IN POS[" + i + "]:", cursor.getString(0));
-	    	titoliListe[i] =  cursor.getString(0);
-    		idListe[i] = cursor.getInt(2);
-	    	cursor.moveToNext();
-	    }
-	    
-	    cursor.close();
-	    db.close();
-    
+            titoliListe[i] =  cursor.getString(0);
+            idListe[i] = cursor.getInt(2);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        db.close();
+
     }
-    
-	public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
-		@Override
-		public Fragment getItem(int position) {
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
             switch (position) {
-            case 0:
-                return new CantiParolaFragment();
-            case 1:
-                return new CantiEucarestiaFragment();
-            default:
-            	Bundle bundle=new Bundle();
+                case 0:
+                    return new CantiParolaFragment();
+                case 1:
+                    return new CantiEucarestiaFragment();
+                default:
+                    Bundle bundle=new Bundle();
 //            	Log.i("INVIO", "position = " + position);
 //            	Log.i("INVIO", "idLista = " + idListe[position - 2]);
-            	bundle.putInt("position", position);
-            	bundle.putInt("idLista", idListe[position - 2]);
-            	ListaPersonalizzataFragment listaPersFrag = new ListaPersonalizzataFragment();
-            	listaPersFrag.setArguments(bundle);
-            	return listaPersFrag;
+                    bundle.putInt("position", position);
+                    bundle.putInt("idLista", idListe[position - 2]);
+                    ListaPersonalizzataFragment listaPersFrag = new ListaPersonalizzataFragment();
+                    listaPersFrag.setArguments(bundle);
+                    return listaPersFrag;
             }
-		}
+        }
 
-		@Override
-		public int getCount() {
-			return 2 + titoliListe.length;
-		}
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
 
-		@Override
-		public CharSequence getPageTitle(int position) {
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
+        }
+
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return 2 + titoliListe.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
             Locale l = getActivity().getResources().getConfiguration().locale;
-			switch (position) {
-			case 0:
+            switch (position) {
+                case 0:
 //				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					return getString(R.string.title_activity_canti_parola).toUpperCase(l);
+                    return getString(R.string.title_activity_canti_parola).toUpperCase(l);
 //				else
 //					return getString(R.string.title_activity_canti_parola);
-			case 1:
+                case 1:
 //				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					return getString(R.string.title_activity_canti_eucarestia).toUpperCase(l);
+                    return getString(R.string.title_activity_canti_eucarestia).toUpperCase(l);
 //				else
 //					return getString(R.string.title_activity_canti_eucarestia);
-			default:
+                default:
 //				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					return titoliListe[position - 2].toUpperCase(l);
+                    return titoliListe[position - 2].toUpperCase(l);
 //				else
 //					return titoliListe[position - 2];
-			}
-		}
-		
-	    @Override
-	    public int getItemPosition(Object object){
-	        return PagerAdapter.POSITION_NONE;
-	    }
-	}
+            }
+        }
+
+        @Override
+        public int getItemPosition(Object object){
+            return PagerAdapter.POSITION_NONE;
+        }
+    }
 
 //    private class ButtonClickedListener implements DialogInterface.OnClickListener {
 //        private int clickedCode;
