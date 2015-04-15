@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -119,7 +118,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 		rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Log.i(getClass().toString(), "idLista: " + idLista);
+//				Log.i(getClass().toString(), "idLista: " + idLista);
 				db = listaCanti.getReadableDatabase();
 				ContentValues  values = new  ContentValues( );
 				for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)

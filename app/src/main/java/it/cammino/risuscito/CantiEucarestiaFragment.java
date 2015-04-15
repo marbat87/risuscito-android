@@ -13,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -134,7 +133,7 @@ public class CantiEucarestiaFragment extends Fragment {
         rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(getClass().toString(), "cantieucarestia");
+//                Log.i(getClass().toString(), "cantieucarestia");
                 db = listaCanti.getReadableDatabase();
                 String sql = "DELETE FROM CUST_LISTS" +
                         " WHERE _id =  2 ";

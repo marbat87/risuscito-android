@@ -32,7 +32,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -936,7 +935,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             public void onPositionChanged(Slider slider, float v, float v1, int i, int i1) {
                 speedValue = String.valueOf(i1);
                 ((TextView)findViewById(R.id.slider_text)).setText(String.valueOf(i1) + " %");
-                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
+//                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
             }
         });
 //        scroll_speed_bar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
