@@ -7,7 +7,7 @@
     <ListView
         android:id="@+id/cantiList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:drawSelectorOnTop="false"
         android:listSelector="@android:color/transparent"
         android:divider="@null"
