@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 public class FloatingActionsMenu extends ViewGroup {
 
@@ -71,6 +72,8 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private OnFloatingActionsMenuUpdateListener mListener;
 
+    private final Interpolator mInterpolator;
+
     public interface OnFloatingActionsMenuUpdateListener {
         void onMenuExpanded();
 
@@ -83,11 +86,13 @@ public class FloatingActionsMenu extends ViewGroup {
 
     public FloatingActionsMenu(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.mInterpolator = new AccelerateDecelerateInterpolator();
         init(context, attrs);
     }
 
     public FloatingActionsMenu(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.mInterpolator = new AccelerateDecelerateInterpolator();
         init(context, attrs);
     }
 
@@ -110,7 +115,7 @@ public class FloatingActionsMenu extends ViewGroup {
         if (mLabelsStyle != 0 && expandsHorizontally()) {
             throw new IllegalStateException("Action labels in horizontal expand orientation is not supported.");
         }
-
+        mVisible = true;
         createMainButton(context);
     }
 
@@ -118,8 +123,13 @@ public class FloatingActionsMenu extends ViewGroup {
         show(true);
     }
 
+    public boolean isVisible() {
+        return mVisible;
+    }
+
     public void show(boolean animate) {
-        toggleShown(true, animate, false);
+//        toggleShown(true, animate, false);
+        toggle(true, animate, false);
     }
 
     public void hide() {
@@ -129,7 +139,8 @@ public class FloatingActionsMenu extends ViewGroup {
     public void hide(boolean animate) {
         if (isExpanded())
             collapse();
-        toggleShown(false, animate, false);
+//        toggleShown(false, animate, false);
+        toggle(false, animate, false);
     }
 
     private void toggleShown(final boolean visible, final boolean animate, boolean force) {
@@ -175,6 +186,42 @@ public class FloatingActionsMenu extends ViewGroup {
                 setClickable(visible);
             }
         }
+    }
+
+    private void toggle(final boolean visible, final boolean animate, boolean force) {
+        if(this.mVisible != visible || force) {
+            this.mVisible = visible;
+            int height = this.getHeight();
+            if(height == 0 && !force) {
+                ViewTreeObserver translationY = this.getViewTreeObserver();
+                if(translationY.isAlive()) {
+                    translationY.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        public boolean onPreDraw() {
+                            ViewTreeObserver currentVto = FloatingActionsMenu.this.getViewTreeObserver();
+                            if(currentVto.isAlive()) {
+                                currentVto.removeOnPreDrawListener(this);
+                            }
+
+                            FloatingActionsMenu.this.toggle(visible, animate, true);
+                            return true;
+                        }
+                    });
+                    return;
+                }
+            }
+
+            int translationY1 = visible?0:height + this.getMarginBottom();
+            if(animate) {
+                ViewPropertyAnimator.animate(this).setInterpolator(this.mInterpolator).setDuration(200L).translationY((float)translationY1);
+            } else {
+                ViewHelper.setTranslationY(this, (float)translationY1);
+            }
+
+            if(!this.hasHoneycombApi()) {
+                this.setClickable(visible);
+            }
+        }
+
     }
 
     private int getMarginBottom() {
@@ -718,5 +765,9 @@ public class FloatingActionsMenu extends ViewGroup {
                 return new SavedState[size];
             }
         };
+    }
+
+    private boolean hasHoneycombApi() {
+        return Build.VERSION.SDK_INT >= 11;
     }
 }

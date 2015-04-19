@@ -1505,14 +1505,15 @@ public class PaginaRenderActivity extends ThemeableActivity {
         findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
         findViewById(R.id.fab_favorite).setSelected(selectFavouriteFromSource() == 1);
         if (getFab().isExpanded()) {
-            View outerFrame = findViewById(R.id.outerFrame);
-            outerFrame.setVisibility(View.VISIBLE);
-            outerFrame.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getFab().collapse();
-                }
-            });
+            showOuterFrame();
+//            View outerFrame = findViewById(R.id.outerFrame);
+//            outerFrame.setVisibility(View.VISIBLE);
+//            outerFrame.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    getFab().collapse();
+//                }
+//            });
         }
 
     }

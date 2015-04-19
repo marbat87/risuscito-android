@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -425,6 +426,7 @@ public class CreaListaActivity extends ThemeableActivity {
 	        return true;
 		case R.id.action_save_list:
 			if (saveList()) {
+				setResult(Activity.RESULT_OK);
 				finish();
 				overridePendingTransition(0, R.anim.slide_out_bottom);
 			}
@@ -451,6 +453,7 @@ public class CreaListaActivity extends ThemeableActivity {
 							public void onPositive(MaterialDialog dialog) {
 								setRequestedOrientation(prevOrientation);
 								if (saveList()) {
+									setResult(Activity.RESULT_OK);
 									finish();
 									overridePendingTransition(0, R.anim.slide_out_bottom);
 								}
@@ -459,6 +462,7 @@ public class CreaListaActivity extends ThemeableActivity {
 							@Override
 							public void onNegative(MaterialDialog dialog) {
 								setRequestedOrientation(prevOrientation);
+								setResult(Activity.RESULT_CANCELED);
 								finish();
 								overridePendingTransition(0, R.anim.slide_out_bottom);
 							}
@@ -486,6 +490,7 @@ public class CreaListaActivity extends ThemeableActivity {
 		        return true;
 			}
 			else {
+				setResult(Activity.RESULT_CANCELED);
 				finish();
 				overridePendingTransition(0, R.anim.slide_out_bottom);
 			}
@@ -518,6 +523,7 @@ public class CreaListaActivity extends ThemeableActivity {
 							public void onPositive(MaterialDialog dialog) {
 								setRequestedOrientation(prevOrientation);
 								if (saveList()) {
+									setResult(Activity.RESULT_OK);
 									finish();
 									overridePendingTransition(0, R.anim.slide_out_bottom);
 								}
@@ -526,6 +532,7 @@ public class CreaListaActivity extends ThemeableActivity {
 							@Override
 							public void onNegative(MaterialDialog dialog) {
 								setRequestedOrientation(prevOrientation);
+								setResult(Activity.RESULT_CANCELED);
 								finish();
 								overridePendingTransition(0, R.anim.slide_out_bottom);
 							}
@@ -553,6 +560,7 @@ public class CreaListaActivity extends ThemeableActivity {
 		        return true;
 			}
 			else {
+				setResult(Activity.RESULT_CANCELED);
 				finish();
 				overridePendingTransition(0, R.anim.slide_out_bottom);
 				return true;

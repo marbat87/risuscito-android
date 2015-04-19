@@ -21,10 +21,10 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
-import com.melnykov.fab.FloatingActionButton;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
@@ -135,15 +135,15 @@ public class CantiParolaFragment extends Fragment {
 
             @Override
             public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+                FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
 //                Log.i(getClass().toString(), "scrollState: " + scrollState);
                 if (scrollState == ScrollState.UP) {
-                    if (!fab.isVisible()) {
-                        fab.show();
+                    if (fab1.isVisible()) {
+                        fab1.hide();
                     }
                 } else if (scrollState == ScrollState.DOWN) {
-                    if (fab.isVisible()) {
-                        fab.hide();
+                    if (!fab1.isVisible()) {
+                        fab1.show();
                     }
                 }
             }
@@ -157,8 +157,16 @@ public class CantiParolaFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser)
-            ((FloatingActionButton) getActivity().findViewById(R.id.fab_pager)).show();
+        if (isVisibleToUser) {
+            FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
+            FloatingActionsMenu fab2 = ((CustomLists) getParentFragment()).getFab2();
+            if (fab2.isVisible()) {
+                fab2.hide(false);
+                fab1.show(false);
+            }
+            else
+                fab1.show();
+        }
     }
 
     @Override
