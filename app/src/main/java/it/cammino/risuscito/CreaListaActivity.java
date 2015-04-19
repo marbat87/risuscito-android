@@ -185,7 +185,7 @@ public class CreaListaActivity extends ThemeableActivity {
 						.title(R.string.posizione_rename)
 						.positiveText(R.string.aggiungi_rename)
 						.negativeText(R.string.aggiungi_dismiss)
-						.input("", "", new MaterialDialog.InputCallback() {
+						.input("", "", false, new MaterialDialog.InputCallback() {
 							@Override
 							public void onInput(MaterialDialog dialog, CharSequence input) {}
 						})
@@ -224,18 +224,18 @@ public class CreaListaActivity extends ThemeableActivity {
 				});
 				dialog.getInputEditText().setText(nomiElementi.get(positionToRename));
 	        	dialog.getInputEditText().selectAll();
-				dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-					@Override
-					public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-					@Override
-					public void onTextChanged(CharSequence s, int start, int before, int count) {
-						dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-					}
-
-					@Override
-					public void afterTextChanged(Editable s) {}
-				});
+//				dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
+//					@Override
+//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//					@Override
+//					public void onTextChanged(CharSequence s, int start, int before, int count) {
+//						dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//					}
+//
+//					@Override
+//					public void afterTextChanged(Editable s) {}
+//				});
 //	        	titleInputRename = (TintEditText)dialog.findViewById(R.id.list_title);
 //	        	titleInputRename.setText(nomiElementi.get(positionToRename));
 //	        	titleInputRename.selectAll();
@@ -296,7 +296,7 @@ public class CreaListaActivity extends ThemeableActivity {
 						.title(R.string.posizione_add_desc)
 						.positiveText(R.string.aggiungi_confirm)
 						.negativeText(R.string.aggiungi_dismiss)
-						.input("", "", new MaterialDialog.InputCallback() {
+						.input("", "", false, new MaterialDialog.InputCallback() {
 							@Override
 							public void onInput(MaterialDialog dialog, CharSequence input) {}
 						})
@@ -336,21 +336,21 @@ public class CreaListaActivity extends ThemeableActivity {
 						return false;
 					}
 				});
-				dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-				dialogAdd.getInputEditText().addTextChangedListener(new TextWatcher() {
-					@Override
-					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-					}
-
-					@Override
-					public void onTextChanged(CharSequence s, int start, int before, int count) {
-						dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-					}
-
-					@Override
-					public void afterTextChanged(Editable s) {
-					}
-				});
+//				dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+//				dialogAdd.getInputEditText().addTextChangedListener(new TextWatcher() {
+//					@Override
+//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//					}
+//
+//					@Override
+//					public void onTextChanged(CharSequence s, int start, int before, int count) {
+//						dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//					}
+//
+//					@Override
+//					public void afterTextChanged(Editable s) {
+//					}
+//				});
 //	        	dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
 //                dialogAdd.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
 //                        getResources().getColor(R.color.btn_disabled_text));

@@ -174,7 +174,7 @@ public class CustomLists extends Fragment  {
                         .title(R.string.lista_add_desc)
                         .positiveText(R.string.dialog_chiudi)
                         .negativeText(R.string.cancel)
-                        .input("", "", new MaterialDialog.InputCallback() {
+                        .input("", "", false, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                             }
@@ -216,21 +216,21 @@ public class CustomLists extends Fragment  {
                         return false;
                     }
                 });
-                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
+//                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+//                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//                    }
+//                });
                 dialog.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
