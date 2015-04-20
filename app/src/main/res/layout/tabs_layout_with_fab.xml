@@ -46,7 +46,8 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:background="@android:color/transparent"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:elevation="@dimen/toolbar_elevation" />
 
         <!--<com.melnykov.fab.FloatingActionButton-->
             <!--android:id="@+id/fab_pager"-->
@@ -65,7 +66,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             risuscito:fab_labelStyle="@style/menu_labels_style"
-            android:layout_margin="@dimen/floating_margin_lateral" >
+            android:layout_marginRight="@dimen/floating_margin_lateral"
+            android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"
+            android:elevation="8dp">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_lista"
@@ -91,7 +94,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             risuscito:fab_labelStyle="@style/menu_labels_style"
-            android:layout_margin="@dimen/floating_margin_lateral">
+            android:layout_marginRight="@dimen/floating_margin_lateral"
+            android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"
+            android:elevation="8dp">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_delete_lista"

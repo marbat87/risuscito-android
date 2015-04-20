@@ -12,4 +12,6 @@
     <dimen name="floating_margin_lateral">24dp</dimen>
     <dimen name="floating_margin_lateral_menu">20dp</dimen>
 
+    <dimen name="floating_margin_lateral_minus_shadow">12dp</dimen>
+
 </resources>

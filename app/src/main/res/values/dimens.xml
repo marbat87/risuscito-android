@@ -51,4 +51,6 @@
     <dimen name="cardListElevation">3dip</dimen>
     <dimen name="button_text_padding">4dp</dimen>
 
+    <dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>
+
 </resources>
