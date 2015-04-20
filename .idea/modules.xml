@@ -3,12 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" filepath="$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Risuscito.iml" filepath="$PROJECT_DIR$/Risuscito.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-floating-action-button/android-floating-action-button.iml" filepath="$PROJECT_DIR$/android-floating-action-button/android-floating-action-button.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" filepath="$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/utilities/utilities.iml" filepath="$PROJECT_DIR$/utilities/utilities.iml" />
     </modules>
   </component>
 </project>
-
