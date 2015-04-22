@@ -26,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
     compile 'com.itextpdf:itextpdf:5.5.3'
     compile project(':utilities')
@@ -34,7 +34,7 @@ dependencies {
     compile project(':NonSenseFilePicker')
     compile 'com.melnykov:floatingactionbutton:1.3.0'
     compile 'com.nispok:snackbar:2.10.7'
-    compile 'com.android.support:cardview-v7:22.0.0'
+    compile 'com.android.support:cardview-v7:22.1.0'
     compile 'com.github.rey5137:material:1.1.0'
     compile 'com.afollestad:material-dialogs:0.7.2.4'
     compile 'com.github.ksoichiro:android-observablescrollview:1.5.0'

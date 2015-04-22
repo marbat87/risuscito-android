@@ -14,10 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,11 +27,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -157,11 +154,11 @@ public class CreaListaActivity extends ThemeableActivity {
         dataFragment3 = (RetainedFragment) getSupportFragmentManager().findFragmentByTag(TEMP_TITLE);
         if (dataFragment3 != null) {
         	tempArgs = dataFragment3.getArguments();
-            ((TintEditText)findViewById(R.id.textfieldTitle))
+            ((EditText)findViewById(R.id.textfieldTitle))
             	.setText(tempArgs.getCharSequence(TEMP_TITLE));
         }
         else {
-        	((TintEditText)findViewById(R.id.textfieldTitle))
+        	((EditText)findViewById(R.id.textfieldTitle))
         	.setText(titoloLista);
         }
         
@@ -262,8 +259,8 @@ public class CreaListaActivity extends ThemeableActivity {
 			}
 		});
 
-        TintEditText titleText = (TintEditText) findViewById(R.id.textfieldTitle);
-        titleText.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+		EditText titleText = (EditText) findViewById(R.id.textfieldTitle);
+        titleText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -605,10 +602,10 @@ public class CreaListaActivity extends ThemeableActivity {
     private boolean saveList()  {
 		celebrazione = new ListaPersonalizzata();
 		
-		if (((TintEditText)findViewById(R.id.textfieldTitle)).getText() != null
-				&& !((TintEditText)findViewById(R.id.textfieldTitle)).getText()
+		if (((EditText)findViewById(R.id.textfieldTitle)).getText() != null
+				&& !((EditText)findViewById(R.id.textfieldTitle)).getText()
 					.toString().trim().equalsIgnoreCase("")) {
-    		titoloLista = ((TintEditText)findViewById(R.id.textfieldTitle)).getText().toString();
+    		titoloLista = ((EditText)findViewById(R.id.textfieldTitle)).getText().toString();
 		}
 		else {
     		Toast toast = Toast.makeText(CreaListaActivity.this
@@ -684,7 +681,7 @@ public class CreaListaActivity extends ThemeableActivity {
 	  
 		dataFragment3 = new RetainedFragment();
 		tempArgs = new Bundle();
-		tempArgs.putCharSequence(TEMP_TITLE, ((TintEditText)findViewById(R.id.textfieldTitle)).getText());
+		tempArgs.putCharSequence(TEMP_TITLE, ((EditText)findViewById(R.id.textfieldTitle)).getText());
 		dataFragment3.setArguments(tempArgs);
 		getSupportFragmentManager().beginTransaction().add(dataFragment3, TEMP_TITLE).commit();
 	  

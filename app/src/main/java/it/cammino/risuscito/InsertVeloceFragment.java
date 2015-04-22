@@ -7,7 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,7 +33,7 @@ public class InsertVeloceFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoItem> titoli;
-    private TintEditText searchPar;
+    private EditText searchPar;
     private View rootView;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
@@ -49,7 +48,7 @@ public class InsertVeloceFragment extends Fragment {
         rootView = inflater.inflate(
                 R.layout.activity_ricerca_titolo, container, false);
 
-        searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
@@ -198,7 +197,7 @@ public class InsertVeloceFragment extends Fragment {
 
         });
 
-        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {

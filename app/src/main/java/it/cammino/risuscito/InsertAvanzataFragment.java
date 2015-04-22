@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -46,7 +45,7 @@ public class InsertAvanzataFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoItem> titoli;
-    private TintEditText searchPar;
+    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
     RecyclerView recyclerView;
@@ -66,7 +65,7 @@ public class InsertAvanzataFragment extends Fragment {
         rootView = inflater.inflate(
                 R.layout.activity_ricerca_avanzata, container, false);
 
-        searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
@@ -203,7 +202,7 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {

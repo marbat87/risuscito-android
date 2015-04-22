@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.widget.ProgressBar;
 
@@ -23,7 +23,7 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
 
     private ColorCallback mCallback;
     private int prevOrientation;
-    private ActionBarActivity mActivity;
+    private AppCompatActivity mActivity;
 //    private AlertDialogPro dialog;
     private MaterialDialog dialog;
 
@@ -31,7 +31,7 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallback = (ColorCallback) activity;
-        mActivity = (ActionBarActivity) activity;
+        mActivity = (AppCompatActivity) activity;
     }
 
     public static interface ColorCallback {

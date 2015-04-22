@@ -34,7 +34,7 @@
             android:paddingLeft="@dimen/action_bar_text_field_margin"
             android:text="@string/list_title" />
 
-        <android.support.v7.internal.widget.TintEditText
+        <EditText
             android:id="@+id/textfieldTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -42,7 +42,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
     protected int selectedItem;
-//    private ProgressDialogPro translationDialog;
+    //    private ProgressDialogPro translationDialog;
     private int prevOrientation;
 
     protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
@@ -120,11 +120,11 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
                 setSelectedNavDrawerItem(savedInstanceState.getInt(SELECTED_ITEM));
-                return;
             }
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(NAVDRAWER_ITEM_HOMEPAGE)).commit();
-            setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
+            else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(NAVDRAWER_ITEM_HOMEPAGE)).commit();
+                setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
+            }
         }
 
     }

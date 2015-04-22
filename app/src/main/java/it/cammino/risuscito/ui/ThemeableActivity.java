@@ -5,7 +5,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
@@ -17,7 +17,7 @@ import java.util.Locale;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public abstract class ThemeableActivity extends ActionBarActivity {
+public abstract class ThemeableActivity extends AppCompatActivity {
 
     private ThemeUtils mThemeUtils;
 //    protected boolean alsoLollipop = true;
@@ -101,7 +101,9 @@ public abstract class ThemeableActivity extends ActionBarActivity {
                 menuKeyField.setAccessible(true);
                 menuKeyField.setBoolean(config, false);
             }
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+            Log.w(getClass().toString(), "Failed to force overflow menu.");
+        } catch (NoSuchFieldException e) {
             Log.w(getClass().toString(), "Failed to force overflow menu.");
         }
     }

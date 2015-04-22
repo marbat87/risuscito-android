@@ -14,7 +14,7 @@
         android:gravity="center"
         android:text="@string/fast_search_subtitle"/>
 
-    <android.support.v7.internal.widget.TintEditText
+    <EditText
         android:id="@+id/textfieldRicerca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
