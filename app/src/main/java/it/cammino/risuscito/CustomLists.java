@@ -469,7 +469,7 @@ public class CustomLists extends Fragment  {
 //        updateLista();
 //        mSectionsPagerAdapter.notifyDataSetChanged();
 //        mSlidingTabLayout.setViewPager(mViewPager);
-        if (getFab1().isExpanded()) {
+        if (getFab1().isExpanded() || getFab2().isExpanded()) {
             showOuterFrame();
         }
     }
