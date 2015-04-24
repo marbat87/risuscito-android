@@ -18,9 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.rey.material.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,7 @@ public class ConsegnatiFragment extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
+        rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
         Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
 
@@ -84,7 +84,27 @@ public class ConsegnatiFragment extends Fragment {
             updateConsegnatiList();
         }
 
-        ((Button)rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
+        ((ImageButton)rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (Canto canto: titoliChoose) {
+                    canto.setSelected(false);
+                    selectableAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        ((ImageButton)rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (Canto canto: titoliChoose) {
+                    canto.setSelected(true);
+                    selectableAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        ((ImageButton)rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
@@ -93,7 +113,7 @@ public class ConsegnatiFragment extends Fragment {
                 updateConsegnatiList();
             }
         });
-        ((Button)rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
+        ((ImageButton)rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
