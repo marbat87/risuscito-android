@@ -15,6 +15,8 @@
             android:id="@+id/chooseRecycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
             android:layout_weight="1"
             android:paddingLeft="@dimen/activity_min_margin"
             android:paddingRight="@dimen/activity_min_margin" />
@@ -130,6 +132,8 @@
             android:id="@+id/cantiRecycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
             android:paddingLeft="@dimen/activity_min_margin"
             android:paddingRight="@dimen/activity_min_margin" />
 

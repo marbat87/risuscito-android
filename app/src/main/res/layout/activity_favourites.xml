@@ -15,6 +15,8 @@
             android:layout_width= "match_parent"
             android:layout_height = "0dp"
             android:id="@+id/favouritesList"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
             android:layout_weight="0.99" />
 
         <TextView

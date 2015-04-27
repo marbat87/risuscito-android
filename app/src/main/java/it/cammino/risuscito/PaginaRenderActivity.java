@@ -1073,7 +1073,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
                 getFab().toggle();
-                findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.VISIBLE : View.GONE);
+                findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.GONE : View.VISIBLE);
                 mostraAudioBool = !v.isSelected();
                 mostraAudio = String.valueOf(mostraAudioBool);
             }
