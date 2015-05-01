@@ -16,7 +16,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/risuscito_toolbar"
             android:layout_height="?attr/actionBarSize"
-            risuscito:theme="@style/ActionBarThemeOverlay"
+            android:theme="@style/ActionBarThemeOverlay"
             risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
             risuscito:contentInsetStart="72dp"
             risuscito:titleTextAppearance="@style/ActionBar.TitleText"

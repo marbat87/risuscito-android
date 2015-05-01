@@ -254,6 +254,7 @@
     <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
     <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti. Quando hai finito, premi CONFERMA per salvere le modifiche o ANNULLA per cancellarle.</string>
+    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>

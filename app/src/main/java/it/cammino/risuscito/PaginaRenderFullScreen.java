@@ -12,7 +12,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.melnykov.fab.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -82,7 +82,7 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
         fabFullscreen.setColorNormal(getThemeUtils().accentColor());
         fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
-        fabFullscreen.setColorRipple(getThemeUtils().accentColorLight());
+//        fabFullscreen.setColorRipple(getThemeUtils().accentColorLight());
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

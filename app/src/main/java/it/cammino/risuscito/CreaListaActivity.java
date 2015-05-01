@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.melnykov.fab.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -169,8 +169,8 @@ public class CreaListaActivity extends ThemeableActivity {
         
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(CreaListaActivity.this);
+				prevOrientation = getRequestedOrientation();
+				Utility.blockOrientation(CreaListaActivity.this);
 				final int positionToRename = position;
 //		        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(CreaListaActivity.this);
 //	        	dialog = builder.setTitle(R.string.posizione_rename)
@@ -184,7 +184,8 @@ public class CreaListaActivity extends ThemeableActivity {
 						.negativeText(R.string.aggiungi_dismiss)
 						.input("", "", false, new MaterialDialog.InputCallback() {
 							@Override
-							public void onInput(MaterialDialog dialog, CharSequence input) {}
+							public void onInput(MaterialDialog dialog, CharSequence input) {
+							}
 						})
 						.callback(new MaterialDialog.ButtonCallback() {
 							@Override
@@ -206,7 +207,7 @@ public class CreaListaActivity extends ThemeableActivity {
 							}
 						})
 						.show();
-	        	dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
 					@Override
 					public boolean onKey(DialogInterface arg0, int keyCode,
 										 KeyEvent event) {
@@ -220,7 +221,7 @@ public class CreaListaActivity extends ThemeableActivity {
 					}
 				});
 				dialog.getInputEditText().setText(nomiElementi.get(positionToRename));
-	        	dialog.getInputEditText().selectAll();
+				dialog.getInputEditText().selectAll();
 //				dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
 //					@Override
 //					public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -251,11 +252,11 @@ public class CreaListaActivity extends ThemeableActivity {
 //			        @Override
 //			        public void afterTextChanged(Editable s) {}
 //			    });
-	        	dialog.setCancelable(false);
-                //to show soft keyboard
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-		        return true;
+				dialog.setCancelable(false);
+				//to show soft keyboard
+				((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+						.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+				return true;
 			}
 		});
 
@@ -276,8 +277,8 @@ public class CreaListaActivity extends ThemeableActivity {
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
         fab.setColorNormal(getThemeUtils().accentColor());
         fab.setColorPressed(getThemeUtils().accentColorDark());
-        fab.setColorRipple(getThemeUtils().accentColorDark());
-		fab.attachToListView(lv);
+//        fab.setColorRipple(getThemeUtils().accentColorDark());
+//		fab.attachToListView(lv);
 		fab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -27,6 +27,9 @@
         <item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>
         <item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>
         <item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>
+
+        <item name="md_medium_font">Roboto-Medium.ttf</item>
+        <item name="md_regular_font">Roboto-Regular.ttf</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >

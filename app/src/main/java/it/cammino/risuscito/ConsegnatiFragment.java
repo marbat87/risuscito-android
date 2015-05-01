@@ -1,10 +1,12 @@
 package it.cammino.risuscito;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,12 +20,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.objects.Canto;
@@ -40,7 +47,12 @@ public class ConsegnatiFragment extends Fragment {
     private static final String EDIT_MODE = "editMode";
     public static final String TITOLI_CHOOSE = "titoliChoose";
 
+    public static final int CIRCLE_DURATION = 500;
+
     private boolean editMode;
+    private int prevOrientation;
+    private MaterialDialog mProgressDialog;
+    private int totalConsegnati;
 
     private LUtils mLUtils;
 
@@ -81,7 +93,7 @@ public class ConsegnatiFragment extends Fragment {
         else {
             rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
             rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-            updateConsegnatiList();
+            updateConsegnatiList(true);
         }
 
         ((ImageButton)rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
@@ -108,44 +120,87 @@ public class ConsegnatiFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 editMode = false;
+                updateConsegnatiList(true);
                 rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
-                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-                updateConsegnatiList();
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+                View myView = rootView.findViewById(R.id.consegnati_view);
+                myView.setVisibility(View.VISIBLE);
+
+                // get the center for the clipping circle
+                int cx = myView.getRight();
+                int cy = myView.getBottom();
+
+                // get the final radius for the clipping circle
+                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+                SupportAnimator animator =
+                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setDuration(CIRCLE_DURATION);
+                animator.start();
             }
         });
         ((ImageButton)rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editMode = false;
-                rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
-                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-
-                //aggiorno la lista dei consegnati
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                db.delete("CANTI_CONSEGNATI", "", null);
-
-                List<Canto> choosedList = selectableAdapter.getCantiChoose();
-                for (int i = 0; i < choosedList.size(); i++) {
-                    Canto singoloCanto = choosedList.get(i);
-                    if (singoloCanto.isSelected()) {
-                        String sql = "INSERT INTO CANTI_CONSEGNATI" +
-                                "       (_id, id_canto)" +
-                                "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
-                                "             FROM CANTI_CONSEGNATI";
-
-                        try {
-                            db.execSQL(sql);
-                        } catch (SQLException e) {
-                            Log.e(getClass().toString(), "ERRORE INSERT:");
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                db.close();
-
-                updateConsegnatiList();
+                (new ConsegnatiSaveTask()).execute();
+//                rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.GONE: View.VISIBLE);
+//                editMode = false;
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
+////                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+//                View myView = rootView.findViewById(R.id.consegnati_view);
+//                myView.setVisibility(View.VISIBLE);
+//
+//                // get the center for the clipping circle
+//                int cx = myView.getRight();
+//                int cy = myView.getBottom();
+//
+//                // get the final radius for the clipping circle
+//                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//
+//                SupportAnimator animator =
+//                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+//                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//                animator.setDuration(CIRCLE_DURATION);
+//                animator.start();
+//
+//                //aggiorno la lista dei consegnati
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                db.delete("CANTI_CONSEGNATI", "", null);
+//
+//                List<Canto> choosedList = selectableAdapter.getCantiChoose();
+//                for (int i = 0; i < choosedList.size(); i++) {
+//                    Canto singoloCanto = choosedList.get(i);
+//                    if (singoloCanto.isSelected()) {
+//                        String sql = "INSERT INTO CANTI_CONSEGNATI" +
+//                                "       (_id, id_canto)" +
+//                                "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
+//                                "             FROM CANTI_CONSEGNATI";
+//
+//                        try {
+//                            db.execSQL(sql);
+//                        } catch (SQLException e) {
+//                            Log.e(getClass().toString(), "ERRORE INSERT:");
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//                db.close();
+//
+//                updateConsegnatiList();
             }
         });
+
+        mProgressDialog = new MaterialDialog.Builder(getActivity())
+                .content(R.string.save_consegnati_running)
+                .progress(true, 0)
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        getActivity().setRequestedOrientation(prevOrientation);
+                    }
+                })
+                .build();
 
         return rootView;
     }
@@ -185,9 +240,24 @@ public class ConsegnatiFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_edit_choose:
                 editMode = true;
-                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.consegnati_view).setVisibility(View.GONE);
                 updateChooseList(true);
+                rootView.findViewById(R.id.consegnati_view).setVisibility(View.GONE);
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+                View myView = rootView.findViewById(R.id.choose_view);
+                myView.setVisibility(View.VISIBLE);
+
+                // get the center for the clipping circle
+                int cx = myView.getRight();
+                int cy = myView.getTop();
+
+                // get the final radius for the clipping circle
+                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+                SupportAnimator animator =
+                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setDuration(CIRCLE_DURATION);
+                animator.start();
                 return true;
         }
         return false;
@@ -199,7 +269,7 @@ public class ConsegnatiFragment extends Fragment {
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private void updateConsegnatiList() {
+    private void updateConsegnatiList(boolean updateView) {
 
         // crea un manipolatore per il Database in modalità READ
         SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -212,15 +282,16 @@ public class ConsegnatiFragment extends Fragment {
         Cursor lista = db.rawQuery(query, null);
 
         //recupera il numero di record trovati
-        int total = lista.getCount();
+        totalConsegnati = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_consegnati).setVisibility(total > 0 ? View.GONE: View.VISIBLE);
+        if (updateView)
+        rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.GONE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
         List<CantoItem> titoli = new ArrayList<CantoItem>();
         lista.moveToFirst();
-        for (int i = 0; i < total; i++) {
+        for (int i = 0; i < totalConsegnati; i++) {
             titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
             lista.moveToNext();
         }
@@ -356,7 +427,72 @@ public class ConsegnatiFragment extends Fragment {
         return titoliChoose;
     }
 
-    public void setTitoliChoose(List<Canto> titoliChoose) {
-        this.titoliChoose = titoliChoose;
+//    public void setTitoliChoose(List<Canto> titoliChoose) {
+//        this.titoliChoose = titoliChoose;
+//    }
+
+    private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
+
+        public ConsegnatiSaveTask() {}
+
+        @Override
+        protected String doInBackground(String... sUrl) {
+            //aggiorno la lista dei consegnati
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            db.delete("CANTI_CONSEGNATI", "", null);
+
+            List<Canto> choosedList = selectableAdapter.getCantiChoose();
+            for (int i = 0; i < choosedList.size(); i++) {
+                Canto singoloCanto = choosedList.get(i);
+                if (singoloCanto.isSelected()) {
+                    String sql = "INSERT INTO CANTI_CONSEGNATI" +
+                            "       (_id, id_canto)" +
+                            "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
+                            "             FROM CANTI_CONSEGNATI";
+
+                    try {
+                        db.execSQL(sql);
+                    } catch (SQLException e) {
+                        Log.e(getClass().toString(), "ERRORE INSERT:");
+                        e.printStackTrace();
+                    }
+                }
+            }
+            db.close();
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            editMode = false;
+            prevOrientation = getActivity().getRequestedOrientation();
+            Utility.blockOrientation(getActivity());
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
+            updateConsegnatiList(true);
+            rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
+            View myView = rootView.findViewById(R.id.consegnati_view);
+            myView.setVisibility(View.VISIBLE);
+
+            // get the center for the clipping circle
+            int cx = myView.getRight();
+            int cy = myView.getBottom();
+
+            // get the final radius for the clipping circle
+            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+            SupportAnimator animator =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+            animator.setDuration(CIRCLE_DURATION);
+            animator.start();
+        }
     }
+
 }

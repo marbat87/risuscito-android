@@ -1044,8 +1044,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
-        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
-        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
+//        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
+//        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
         fabFullscreen.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1066,8 +1066,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         });
 
         FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
-        fabSound.setColorNormal(getThemeUtils().accentColor());
-        fabSound.setColorPressed(getThemeUtils().accentColorDark());
+//        fabSound.setColorNormal(getThemeUtils().accentColor());
+//        fabSound.setColorPressed(getThemeUtils().accentColorDark());
         fabSound.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1080,8 +1080,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         });
 
         FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
-        fabFavorite.setColorNormal(getThemeUtils().accentColor());
-        fabFavorite.setColorPressed(getThemeUtils().accentColorDark());
+//        fabFavorite.setColorNormal(getThemeUtils().accentColor());
+//        fabFavorite.setColorPressed(getThemeUtils().accentColorDark());
         fabFavorite.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

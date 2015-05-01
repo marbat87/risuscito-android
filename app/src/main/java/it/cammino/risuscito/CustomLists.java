@@ -13,8 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -48,7 +45,8 @@ public class CustomLists extends Fragment  {
     private int prevOrientation;
     private CustomViewPager mViewPager;
     TabPageIndicator mSlidingTabLayout = null;
-    private FloatingActionsMenu mFab1, mFab2; // the floating blue add/paste button
+    private FloatingActionsMenu mFab1;
+    public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
     private View rootView;
     private static final String PAGE_VIEWED = "pageViewed";
     public static final int TAG_CREA_LISTA = 111;
@@ -92,9 +90,10 @@ public class CustomLists extends Fragment  {
         getFab1().setColorNormal(getThemeUtils().accentColor());
         getFab1().setColorPressed(getThemeUtils().accentColorDark());
         getFab1().setIcon(R.drawable.ic_add_white_24dp);
-        getFab2().setColorNormal(getThemeUtils().accentColor());
-        getFab2().setColorPressed(getThemeUtils().accentColorDark());
-        getFab2().setIcon(R.drawable.ic_add_white_24dp);
+//        getFab2().setMenuButtonColorNormal(getThemeUtils().accentColor());
+//        getFab2().setMenuButtonColorPressed(getThemeUtils().accentColorDark());
+//        getFab2().setMenuButtonColorRipple(getThemeUtils().accentColorDark());
+//        getFab2().setIcon(R.drawable.ic_add_white_24dp);
 //        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
 //        getFab1().setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -149,22 +148,19 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        getFab2().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                showOuterFrame();
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                hideOuterFrame();
-            }
-        });
-
-        FloatingActionButton fabAddLista1 = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
-        fabAddLista1.setColorNormal(getThemeUtils().accentColor());
-        fabAddLista1.setColorPressed(getThemeUtils().accentColorDark());
-        fabAddLista1.setOnClickListener(new View.OnClickListener() {
+//        getFab2().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+//            @Override
+//            public void onMenuExpanded() {
+//                showOuterFrame();
+//            }
+//
+//            @Override
+//            public void onMenuCollapsed() {
+//                hideOuterFrame();
+//            }
+//        });
+        fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
+        fabAddLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab1().toggle();
@@ -238,10 +234,8 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        FloatingActionButton fabPulisci1 = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci);
-        fabPulisci1.setColorNormal(getThemeUtils().accentColor());
-        fabPulisci1.setColorPressed(getThemeUtils().accentColorDark());
-        fabPulisci1.setOnClickListener(new View.OnClickListener() {
+        fabPulisci = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci);
+        fabPulisci.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab1().toggle();
@@ -283,135 +277,137 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        FloatingActionButton fabAddLista2 = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista2);
-        fabAddLista2.setColorNormal(getThemeUtils().accentColor());
-        fabAddLista2.setColorPressed(getThemeUtils().accentColorDark());
-        fabAddLista2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFab2().toggle();
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.lista_add_desc)
-                        .positiveText(R.string.dialog_chiudi)
-                        .negativeText(R.string.cancel)
-                        .input("", "", new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                            }
-                        })
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                //to hide soft keyboard
-                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-                                getActivity().setRequestedOrientation(prevOrientation);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
-                                bundle.putBoolean("modifica", false);
-//                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-                                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
-                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-                            }
+//        FloatingActionButton fabAddLista2 = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista2);
+////        fabAddLista2.setColorNormal(getThemeUtils().accentColor());
+////        fabAddLista2.setColorPressed(getThemeUtils().accentColorDark());
+//        fabAddLista2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getFab2().toggle(true);
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+//                dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.lista_add_desc)
+//                        .positiveText(R.string.dialog_chiudi)
+//                        .negativeText(R.string.cancel)
+//                        .input("", "", new MaterialDialog.InputCallback() {
+//                            @Override
+//                            public void onInput(MaterialDialog dialog, CharSequence input) {
+//                            }
+//                        })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                //to hide soft keyboard
+//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                                Bundle bundle = new Bundle();
+//                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
+//                                bundle.putBoolean("modifica", false);
+////                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+//                                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
+//                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                //to hide soft keyboard
+//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+//                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//                    }
+//                });
+//                dialog.setCancelable(false);
+//                //to show soft keyboard
+//                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//            }
+//        });
+//
+//        FloatingActionButton fabPulisci2 = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci2);
+//        fabPulisci2 = new FloatingActionButton(getActivity());
+//        fabPulisci2.setColorNormal(getThemeUtils().accentColor());
+//        fabPulisci2.setColorPressed(getThemeUtils().accentColorDark());
+//        fabPulisci2.setSize(FloatingActionButton.SIZE_MINI);
+//        fabPulisci2.setTitle(getString(R.string.button_clean_list));
+//        fabPulisci2.setIcon(R.drawable.ic_icon_broom);
+//        fabPulisci2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getFab1().toggle();
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_reset_list_title)
+//                        .content(R.string.reset_list_question)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+//                                        .getView().findViewById(R.id.button_pulisci).performClick();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+//            }
+//        });
 
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                //to hide soft keyboard
-                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-                dialog.setCancelable(false);
-                //to show soft keyboard
-                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            }
-        });
-
-        FloatingActionButton fabPulisci2 = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci2);
-        fabPulisci2.setColorNormal(getThemeUtils().accentColor());
-        fabPulisci2.setColorPressed(getThemeUtils().accentColorDark());
-        fabPulisci2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFab2().toggle();
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.dialog_reset_list_title)
-                        .content(R.string.reset_list_question)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-                                        .getView().findViewById(R.id.button_pulisci).performClick();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
-            }
-        });
-
-        FloatingActionButton fabEdit = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
-        fabEdit.setColorNormal(getThemeUtils().accentColor());
-        fabEdit.setColorPressed(getThemeUtils().accentColorDark());
+        fabEdit = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab2().toggle();
+                getFab1().toggle();
                 Bundle bundle = new Bundle();
                 bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
                 bundle.putBoolean("modifica", true);
@@ -420,13 +416,11 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        FloatingActionButton fabDelete = (FloatingActionButton) rootView.findViewById(R.id.fab_delete_lista);
-        fabDelete.setColorNormal(getThemeUtils().accentColor());
-        fabDelete.setColorPressed(getThemeUtils().accentColorDark());
+        fabDelete = (FloatingActionButton) rootView.findViewById(R.id.fab_delete_lista);
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab2().toggle();
+                getFab1().toggle();
                 listaDaCanc = mViewPager.getCurrentItem() - 2;
                 SnackbarManager.show(
                         Snackbar.with(getActivity())
@@ -469,7 +463,7 @@ public class CustomLists extends Fragment  {
 //        updateLista();
 //        mSectionsPagerAdapter.notifyDataSetChanged();
 //        mSlidingTabLayout.setViewPager(mViewPager);
-        if (getFab1().isExpanded() || getFab2().isExpanded()) {
+        if (getFab1().isExpanded()) {
             showOuterFrame();
         }
     }
@@ -637,21 +631,28 @@ public class CustomLists extends Fragment  {
         return mFab1;
     }
 
-    public FloatingActionsMenu getFab2() {
-        if (mFab2 == null)
-            mFab2 = (FloatingActionsMenu) rootView.findViewById(R.id.fab_pager2);
-        return mFab2;
-    }
+//    public FloatingActionsMenu getFab2() {
+//        if (mFab2 == null)
+//            mFab2 = (FloatingActionsMenu) rootView.findViewById(R.id.fab_pager2);
+//        return mFab2;
+//    }
 
     private void showOuterFrame() {
         View outerFrame = rootView.findViewById(R.id.outerFrame);
         outerFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getFab1().isVisible())
-                    getFab1().collapse();
-                if (getFab2().isVisible())
-                    getFab2().collapse();
+                getFab1().collapse();
+//                if (LUtils.hasHoneycomb()) {
+//                    if (getFab1().isVisible())
+//                        getFab1().collapse();
+//                    if (getFab2().isVisible())
+//                        getFab2().collapse();
+//                }
+//                else {
+//                    if (getFab1().getVisibility() == View.VISIBLE)
+//                        getFab1().collapse();
+//                }
             }
         });
         outerFrame.setVisibility(View.VISIBLE);

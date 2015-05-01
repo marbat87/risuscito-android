@@ -101,4 +101,8 @@ public class LUtils {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    public static boolean hasHoneycomb() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
+
 }

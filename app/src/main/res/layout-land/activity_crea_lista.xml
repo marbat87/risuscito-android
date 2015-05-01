@@ -11,59 +11,67 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/risuscito_toolbar"
         android:layout_height="?attr/actionBarSize"
-        risuscito:theme="@style/ActionBarThemeOverlay"
+        android:theme="@style/ActionBarThemeOverlay"
         risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
         risuscito:titleTextAppearance="@style/ActionBar.TitleText"
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         android:elevation="@dimen/toolbar_elevation" />
 
-    <RelativeLayout
-        android:id="@+id/action_title_bar"
-        android:background="?attr/colorPrimary"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/toolbar_elevation">
-
-        <TextView
-            android:paddingTop="@dimen/action_bar_text_field_margin"
-            android:paddingLeft="@dimen/action_bar_text_field_margin"
-            android:id="@+id/textTitleDescription"
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/white"
-            android:text="@string/list_title" />
-
-        <EditText
-            android:id="@+id/textfieldTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:layout_marginLeft="@dimen/activity_min_margin"
-            android:layout_marginRight="@dimen/activity_min_margin"
-            android:layout_marginBottom="@dimen/activity_min_margin"
-            android:layout_alignBaseline="@id/textTitleDescription"
-            android:layout_toRightOf="@id/textTitleDescription"
-            android:layout_toEndOf="@id/textTitleDescription"
-            android:textColorHighlight="@color/ripple_color"
-            android:textSize="30sp"
-            android:textColor="@android:color/white"
-            android:textCursorDrawable="@null"
-            android:imeOptions="actionDone"
-            android:hint="@string/list_title_modif" />
-
-    </RelativeLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:elevation="@dimen/toolbar_elevation">
+
+        <RelativeLayout
+            android:id="@+id/action_title_bar"
+            android:background="?attr/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_expansion_height"
+            android:elevation="@dimen/toolbar_elevation">
+
+            <TextView
+                android:paddingTop="@dimen/action_bar_text_field_margin"
+                android:paddingLeft="@dimen/action_bar_text_field_margin"
+                android:id="@+id/textTitleDescription"
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:textColor="@android:color/white"
+                android:text="@string/list_title" />
+
+            <EditText
+                android:id="@+id/textfieldTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_marginLeft="@dimen/activity_min_margin"
+                android:layout_marginRight="@dimen/activity_min_margin"
+                android:layout_marginBottom="@dimen/activity_min_margin"
+                android:layout_alignBaseline="@id/textTitleDescription"
+                android:layout_toRightOf="@id/textTitleDescription"
+                android:layout_toEndOf="@id/textTitleDescription"
+                android:textColorHighlight="@color/ripple_color"
+                android:textSize="30sp"
+                android:textColor="@android:color/white"
+                android:textCursorDrawable="@null"
+                android:imeOptions="actionDone"
+                android:hint="@string/list_title_modif" />
+
+        </RelativeLayout>
+
+        <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
         <LinearLayout
+            android:layout_gravity="top"
+            android:layout_marginTop="@dimen/toolbar_expansion_height"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -84,7 +92,7 @@
 
                 <TextView
                     android:id="@+id/noElementsAdded"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/no_elements_added" />
 
@@ -112,25 +120,41 @@
                     android:drawSelectorOnTop="false"
                     risuscito:float_background_color="@color/ripple_color" />
 
-                <com.melnykov.fab.FloatingActionButton
-                    android:id="@+id/fab_crea_lista"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="@dimen/floating_margin_lateral"
-                    android:src="@drawable/ic_add_white_24dp"
-                    risuscito:fab_colorNormal="@color/theme_accent"
-                    risuscito:fab_colorPressed="@color/theme_accent_dark"
-                    risuscito:fab_colorRipple="@color/theme_accent_dark"/>
+                <!--<com.melnykov.fab.FloatingActionButton-->
+                <!--android:id="@+id/fab_crea_lista"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom|end"-->
+                <!--android:layout_margin="@dimen/floating_margin_lateral"-->
+                <!--android:src="@drawable/ic_add_white_24dp"-->
+                <!--risuscito:fab_colorNormal="@color/theme_accent"-->
+                <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
+                <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
 
             </FrameLayout>
 
         </LinearLayout>
 
         <View
+            android:layout_gravity="top"
+            android:layout_marginTop="@dimen/toolbar_expansion_height"
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:background="?toolbar_shadow" />
+
+        <!--</FrameLayout>-->
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_crea_lista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            risuscito:fab_colorNormal="@color/theme_accent"
+            risuscito:fab_colorPressed="@color/theme_accent_dark"
+            risuscito:fab_icon="@drawable/ic_add_white_24dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="@dimen/toolbar_fab_margintop"
+            android:layout_marginRight="@dimen/floating_margin_lateral"
+            android:elevation="@dimen/toolbar_elevation" />
 
     </FrameLayout>
 

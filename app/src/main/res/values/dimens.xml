@@ -52,5 +52,7 @@
     <dimen name="button_text_padding">4dp</dimen>
 
     <dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>
+    <dimen name="toolbar_expansion_height">85dip</dimen>
+    <dimen name="toolbar_fab_margintop">50dip</dimen>
 
 </resources>

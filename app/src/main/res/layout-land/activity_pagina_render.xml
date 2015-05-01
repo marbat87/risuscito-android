@@ -11,7 +11,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/risuscito_toolbar"
         android:layout_height="?attr/actionBarSize"
-        risuscito:theme="@style/ActionBarThemeOverlay"
+        android:theme="@style/ActionBarThemeOverlay"
         risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
         risuscito:titleTextAppearance="@style/ActionBar.TitleText"
         android:layout_width="match_parent"
@@ -221,15 +221,17 @@
                 android:id="@+id/fab_fullscreen_on"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                risuscito:fab_title="@string/fullscreen"
-                risuscito:fab_icon="@drawable/ic_fullscreen_white_24dp"
+                risuscito:fab_colorNormal="@android:color/white"
+                risuscito:fab_colorPressed="@color/ripple_color"
+                risuscito:fab_icon="@drawable/ic_fullscreen_grey600_24dp"
                 risuscito:fab_size="mini" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_sound_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                risuscito:fab_title="@string/audio_on_off"
+                risuscito:fab_colorNormal="@android:color/white"
+                risuscito:fab_colorPressed="@color/ripple_color"
                 risuscito:fab_icon="@drawable/hide_music_background"
                 risuscito:fab_size="mini" />
 
@@ -237,7 +239,8 @@
                 android:id="@+id/fab_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                risuscito:fab_title="@string/favorite_on_off"
+                risuscito:fab_colorNormal="@android:color/white"
+                risuscito:fab_colorPressed="@color/ripple_color"
                 risuscito:fab_icon="@drawable/fab_add_to_favorites"
                 risuscito:fab_size="mini" />
 

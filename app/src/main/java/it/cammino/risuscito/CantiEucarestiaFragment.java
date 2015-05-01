@@ -156,13 +156,11 @@ public class CantiEucarestiaFragment extends Fragment {
                 FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
 //                Log.i(getClass().toString(), "scrollState: " + scrollState);
                 if (scrollState == ScrollState.UP) {
-                    if (fab1.isVisible()) {
+                    if (fab1.isVisible())
                         fab1.hide();
-                    }
                 } else if (scrollState == ScrollState.DOWN) {
-                    if (!fab1.isVisible()) {
-                        fab1.show();
-                    }
+                    if (!fab1.isVisible())
+                    fab1.show();
                 }
             }
         });
@@ -176,14 +174,34 @@ public class CantiEucarestiaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
+            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
+            ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
+            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
             FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-            FloatingActionsMenu fab2 = ((CustomLists) getParentFragment()).getFab2();
-            if (fab2.isVisible()) {
-                fab2.hide(false);
-                fab1.show(false);
-            }
-            else
+            if (!fab1.isVisible())
                 fab1.show();
+//            FloatingActionMenu fab2 = ((CustomLists) getParentFragment()).getFab2();
+//            if (!fab2.isMenuButtonHidden()) {
+//                fab2.hideMenuButton(false);
+//                fab1.showMenuButton(false);
+//            }
+//            else
+//                fab1.showMenuButton(true);
+//            if (LUtils.hasHoneycomb()) {
+//                if (fab2.isVisible()) {
+//                    fab2.hide(false);
+////                    fab1.show(false);
+//                    fab1.showMenuButton(false);
+//                } else
+//                    fab1.showMenuButton(true);
+////                    fab1.show();
+//
+//            }
+//            else {
+//                fab2.setVisibility(View.GONE);
+//                fab1.setVisibility(View.VISIBLE);
+//            }
         }
     }
 

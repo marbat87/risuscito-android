@@ -4,6 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <io.codetail.widget.RevealFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:id="@+id/choose_view"
         android:layout_width="match_parent"
@@ -22,38 +26,38 @@
             android:paddingRight="@dimen/activity_min_margin" />
 
         <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center_vertical|end"-->
-            <!--android:orientation="horizontal">-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center_vertical|end"-->
+        <!--android:orientation="horizontal">-->
 
-            <!--<com.rey.material.widget.Button-->
-                <!--android:id="@+id/cancel_change"-->
-                <!--risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"-->
-                <!--android:background="@drawable/bg_bt_raise"-->
-                <!--android:text="@string/cancel"-->
-                <!--android:minWidth="@dimen/paper_button_width"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:paddingLeft="@dimen/button_text_padding"-->
-                <!--android:paddingRight="@dimen/button_text_padding"-->
-                <!--android:layout_margin="@dimen/min_button_margin"-->
-                <!--android:textColor="#FF000000"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
-                <!--android:layout_height="36dp"/>-->
+        <!--<com.rey.material.widget.Button-->
+        <!--android:id="@+id/cancel_change"-->
+        <!--risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"-->
+        <!--android:background="@drawable/bg_bt_raise"-->
+        <!--android:text="@string/cancel"-->
+        <!--android:minWidth="@dimen/paper_button_width"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:paddingLeft="@dimen/button_text_padding"-->
+        <!--android:paddingRight="@dimen/button_text_padding"-->
+        <!--android:layout_margin="@dimen/min_button_margin"-->
+        <!--android:textColor="#FF000000"-->
+        <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
+        <!--android:layout_height="36dp"/>-->
 
-            <!--<com.rey.material.widget.Button-->
-                <!--android:id="@+id/confirm_changes"-->
-                <!--risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"-->
-                <!--android:background="@drawable/bg_bt_raise"-->
-                <!--android:text="@string/single_choice_ok"-->
-                <!--android:minWidth="@dimen/paper_button_width"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:paddingLeft="@dimen/button_text_padding"-->
-                <!--android:paddingRight="@dimen/button_text_padding"-->
-                <!--android:layout_margin="@dimen/min_button_margin"-->
-                <!--android:textColor="#FF000000"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
-                <!--android:layout_height="36dp"/>-->
+        <!--<com.rey.material.widget.Button-->
+        <!--android:id="@+id/confirm_changes"-->
+        <!--risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"-->
+        <!--android:background="@drawable/bg_bt_raise"-->
+        <!--android:text="@string/single_choice_ok"-->
+        <!--android:minWidth="@dimen/paper_button_width"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:paddingLeft="@dimen/button_text_padding"-->
+        <!--android:paddingRight="@dimen/button_text_padding"-->
+        <!--android:layout_margin="@dimen/min_button_margin"-->
+        <!--android:textColor="#FF000000"-->
+        <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
+        <!--android:layout_height="36dp"/>-->
 
         <!--</LinearLayout>-->
 
@@ -123,49 +127,57 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/consegnati_view"
+    </io.codetail.widget.RevealFrameLayout>
+
+    <io.codetail.widget.RevealFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/cantiRecycler"
+        <FrameLayout
+            android:id="@+id/consegnati_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="true"
-            android:paddingLeft="@dimen/activity_min_margin"
-            android:paddingRight="@dimen/activity_min_margin" />
+            android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_gravity="center"
-            android:id="@+id/no_consegnati"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/cantiRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="true"
+                android:paddingLeft="@dimen/activity_min_margin"
+                android:paddingRight="@dimen/activity_min_margin" />
 
-            <ImageView
-                android:id="@+id/consegnati_image"
-                android:layout_centerHorizontal="true"
-                android:layout_width="120dip"
-                android:layout_height="120dip"
-                android:src="@drawable/sad_book"/>
-
-            <TextView
-                android:id="@+id/consegnati_text"
-                android:layout_below="@id/consegnati_image"
-                android:layout_marginLeft="@dimen/text_min_margin"
-                android:layout_marginRight="@dimen/text_min_margin"
+            <RelativeLayout
+                android:layout_gravity="center"
+                android:id="@+id/no_consegnati"
                 android:layout_width="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_horizontal"
-                android:textColor="?android:textColorSecondary"
-                android:layout_height="wrap_content"
-                android:text="@string/no_consegnati"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
+                android:layout_height="wrap_content">
 
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/consegnati_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="120dip"
+                    android:layout_height="120dip"
+                    android:src="@drawable/sad_book"/>
 
-    </FrameLayout>
+                <TextView
+                    android:id="@+id/consegnati_text"
+                    android:layout_below="@id/consegnati_image"
+                    android:layout_marginLeft="@dimen/text_min_margin"
+                    android:layout_marginRight="@dimen/text_min_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:textColor="?android:textColorSecondary"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_consegnati"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+    </io.codetail.widget.RevealFrameLayout>
 
     <View
         android:layout_width="match_parent"
