@@ -157,9 +157,11 @@ public class CantiParolaFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
-            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
             ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
-            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
+            if (LUtils.hasHoneycomb()) {
+                ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
+                ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
+            }
             FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
             if (!fab1.isVisible())
                 fab1.show();

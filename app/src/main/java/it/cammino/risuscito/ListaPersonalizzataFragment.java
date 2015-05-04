@@ -164,9 +164,11 @@ public class ListaPersonalizzataFragment extends Fragment {
 		super.setUserVisibleHint(isVisibleToUser);
 		if (isVisibleToUser) {
 			((CustomLists) getParentFragment()).fabDelete.setEnabled(true);
-			((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
 			((CustomLists) getParentFragment()).fabEdit.setEnabled(true);
-			((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
+			if (LUtils.hasHoneycomb()) {
+				((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
+				((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
+			}
 			FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
 			if (!fab1.isVisible())
 				fab1.show();
