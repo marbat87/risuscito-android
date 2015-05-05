@@ -3,9 +3,16 @@
 
     <item
         android:id="@+id/action_edit_choose"
-        android:orderInCategory="100"
+        android:orderInCategory="99"
         android:icon="@drawable/ic_action_content_edit"
         risuscito:showAsAction="always"
         android:title="@string/action_edit_list" />
+
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_help"
+        risuscito:showAsAction="ifRoom"
+        android:title="@string/action_help" />
 
 </menu>

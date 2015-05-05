@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -220,6 +221,7 @@ public class CreaListaActivity extends ThemeableActivity {
 						return false;
 					}
 				});
+				dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 				dialog.getInputEditText().setText(nomiElementi.get(positionToRename));
 				dialog.getInputEditText().selectAll();
 //				dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
@@ -334,6 +336,7 @@ public class CreaListaActivity extends ThemeableActivity {
 						return false;
 					}
 				});
+				dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 //				dialogAdd.getActionButton(DialogAction.POSITIVE).setEnabled(false);
 //				dialogAdd.getInputEditText().addTextChangedListener(new TextWatcher() {
 //					@Override

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.text.InputType;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -212,6 +213,7 @@ public class CustomLists extends Fragment  {
                         return false;
                     }
                 });
+                dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 //                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
 //                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
 //                    @Override
