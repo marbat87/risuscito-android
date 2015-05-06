@@ -54,6 +54,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     protected static final int NAVDRAWER_ITEM_ABOUT = 6;
     protected static final int NAVDRAWER_ITEM_DONATE = 7;
     protected static final int NAVDRAWER_ITEM_CONSEGNATI = 8;
+    protected static final int NAVDRAWER_ITEM_HISTORY = 9;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
 
@@ -67,7 +68,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             R.string.title_activity_settings,
             R.string.title_activity_about,
             R.string.title_activity_donate,
-            R.string.title_activity_consegnati
+            R.string.title_activity_consegnati,
+            R.string.title_activity_history
     };
 
     // icons for navdrawer items (indices must correspond to above array)
@@ -80,7 +82,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             R.drawable.ic_action_settings_dark,
             R.drawable.ic_action_about_dark,
             R.drawable.ic_action_good_dark,
-            R.drawable.ic_action_consegnati
+            R.drawable.ic_action_consegnati,
+            R.drawable.ic_history_black_24dp
     };
 
     private static final int TALBLET_DP = 600;
@@ -209,6 +212,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         mNavDrawerItems.add(NAVDRAWER_ITEM_LISTS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_CONSEGNATI);
         mNavDrawerItems.add(NAVDRAWER_ITEM_FAVORITES);
+        mNavDrawerItems.add(NAVDRAWER_ITEM_HISTORY);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
         mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
@@ -342,6 +346,9 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 fragment = new DonateActivity();
                 break;
             case NAVDRAWER_ITEM_CONSEGNATI:
+                fragment = new ConsegnatiFragment();
+                break;
+            case NAVDRAWER_ITEM_HISTORY:
                 fragment = new ConsegnatiFragment();
                 break;
             default:

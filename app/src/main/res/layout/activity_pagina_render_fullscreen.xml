@@ -32,8 +32,7 @@
         risuscito:fab_icon="@drawable/ic_fullscreen_exit_white_24dp"
         risuscito:fab_size="mini"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/floating_margin_lateral"
-        android:elevation="@dimen/toolbar_elevation" />
+        android:layout_margin="@dimen/floating_margin_lateral" />
 
 </FrameLayout>
 

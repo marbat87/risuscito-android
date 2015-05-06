@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 44;
+    private static final int DB_VERSION = 45;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -108,6 +108,14 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += "_id INTEGER NOT NULL,";
         sql += "id_canto TEXT NOT NULL,";
         sql += "PRIMARY KEY (_id, id_canto)";
+        sql += ");";
+        db.execSQL(sql);
+
+        //nuova tabella canti consegnati
+        sql = "CREATE TABLE IF NOT EXISTS CRONOLOGIA (";
+        sql += "id_canto INTEGER NOT NULL,";
+        sql += "ultima_visita TIMESTAMP DEFAULT CURRENT_TIMESTAMP,";
+        sql += "PRIMARY KEY (id_canto)";
         sql += ");";
         db.execSQL(sql);
 
@@ -4542,6 +4550,23 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
 
+        //cancella dalla cronologia, i canti inesistenti
+        sql = "SELECT id_canto FROM CRONOLOGIA";
+        cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            sql = "SELECT _id" +
+                    "  FROM ELENCO" +
+                    "  WHERE _id =  " + cursor.getInt(0);
+            Cursor cCheckExists = db.rawQuery(sql, null);
+//            Log.i("ESISTE?", cCheckExists.getCount() + "");
+            if (cCheckExists.getCount() == 0)
+                db.delete("CRONOLOGIA", "id_canto = " + cursor.getInt(0), null);
+            cCheckExists.close();
+            cursor.moveToNext();
+        }
+
         cursor.close();
 
     }
@@ -4566,6 +4591,8 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql = "DROP TABLE IF EXISTS LOCAL_LINKS";
         db.execSQL(sql);
 //        sql = "DROP TABLE IF EXISTS CANTI_CONSEGNATI";
+//        db.execSQL(sql);
+//        sql = "DROP TABLE IF EXISTS CRONOLOGIA";
 //        db.execSQL(sql);
 
         onCreate(db);

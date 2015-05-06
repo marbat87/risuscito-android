@@ -171,7 +171,7 @@
             risuscito:fab_colorNormal="@android:color/white"
             risuscito:fab_colorPressed="@color/ripple_color"
             risuscito:fab_colorDisabled="@color/item_disabled"
-            risuscito:fab_icon="@drawable/ic_icon_broom"
+            risuscito:fab_icon="@drawable/ic_eraser_grey600_24dp"
             risuscito:fab_size="mini" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
