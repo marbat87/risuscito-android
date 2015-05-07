@@ -19,7 +19,10 @@ package it.cammino.risuscito;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -55,7 +58,34 @@ public class LUtils {
             mActivity.startActivity(intent);
             mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
         }
-    }
+
+        //aggiorno la cronologia
+        DatabaseCanti listaCanti = new DatabaseCanti(mActivity);
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+        String select = "SELECT COUNT(*) FROM CRONOLOGIA" +
+                "        WHERE id_canto = " + intent.getExtras().getInt("idCanto");
+        Cursor lista = db.rawQuery(select, null);
+        lista.moveToFirst();
+
+        switch (lista.getInt(0)) {
+            case 1:
+                String update = "UPDATE CRONOLOGIA" +
+                        " SET ultima_visita = CURRENT_TIMESTAMP" +
+                        " WHERE id_canto = " + intent.getExtras().getInt("idCanto");
+                db.execSQL(update);
+                break;
+            case 0:
+                ContentValues values = new ContentValues();
+                values.put("id_canto", intent.getExtras().getInt("idCanto"));
+                db.insert("CRONOLOGIA", null, values);
+                break;
+        }
+
+        lista.close();
+        db.close();
+
+        }
 
     public void startActivityWithFadeIn(Intent intent, final View clickedView,
                                         final String transitionName) {

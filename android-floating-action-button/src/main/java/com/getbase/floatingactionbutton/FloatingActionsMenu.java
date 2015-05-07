@@ -43,7 +43,7 @@ public class FloatingActionsMenu extends ViewGroup {
     private static final int ANIMATION_DURATION = 300;
     private static final float COLLAPSED_PLUS_ROTATION = 0f;
     private static final float EXPANDED_PLUS_ROTATION = 90f + 45f;
-    private static final int TRANSLATE_DURATION_MILLIS = 200;
+    private static final int TRANSLATE_DURATION_MILLIS = 300;
 
     private int mButtonSize;
     private int mButtonColorNormal;
@@ -212,7 +212,7 @@ public class FloatingActionsMenu extends ViewGroup {
 
             int translationY1 = visible?0:height + this.getMarginBottom();
             if(animate) {
-                ViewPropertyAnimator.animate(this).setInterpolator(this.mInterpolator).setDuration(200L).translationY((float)translationY1);
+                ViewPropertyAnimator.animate(this).setInterpolator(this.mInterpolator).setDuration(TRANSLATE_DURATION_MILLIS).translationY((float)translationY1);
             } else {
                 ViewHelper.setTranslationY(this, (float)translationY1);
             }

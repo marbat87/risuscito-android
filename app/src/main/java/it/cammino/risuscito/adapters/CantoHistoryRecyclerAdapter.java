@@ -71,8 +71,8 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
         // Casting the viewHolder to MyViewHolder so I could interact with the views
         CantoViewHolder cantoHolder = (CantoViewHolder) viewHolder;
         cantoHolder.cantoTitle.setText(dataItem.getTitolo());
-        cantoHolder.cantoPage.setText(dataItem.getPagina());
-        cantoHolder.idCanto.setText(dataItem.getIdCanto());
+        cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
+        cantoHolder.idCanto.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.sourceCanto.setText(dataItem.getSource());
         cantoHolder.timestamp.setText(dataItem.getTimestamp());
 

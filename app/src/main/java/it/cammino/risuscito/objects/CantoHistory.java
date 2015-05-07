@@ -12,7 +12,7 @@ public class CantoHistory {
     private int idCanto;
     private String source;
 
-    public CantoHistory(String total, int idCanto, String timestamp, String source) {
+    public CantoHistory(String total, int idCanto, String source, String timestamp) {
         this.setTitolo(total.substring(10));
         this.setPagina(Integer.valueOf(total.substring(0,3)));
         this.setColore(total.substring(3, 10));

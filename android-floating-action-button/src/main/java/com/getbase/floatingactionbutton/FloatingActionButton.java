@@ -35,6 +35,7 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,7 +44,7 @@ public class FloatingActionButton extends ImageButton {
 
     public static final int SIZE_NORMAL = 0;
     public static final int SIZE_MINI = 1;
-    private static final int TRANSLATE_DURATION_MILLIS = 200;
+    private static final int TRANSLATE_DURATION_MILLIS = 300;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SIZE_NORMAL, SIZE_MINI})
@@ -97,6 +98,7 @@ public class FloatingActionButton extends ImageButton {
         updateDrawableSize();
 
         updateBackground();
+        mVisible = true;
     }
 
     public void show() {
@@ -104,7 +106,8 @@ public class FloatingActionButton extends ImageButton {
     }
 
     public void show(boolean animate) {
-        toggleShown(true, animate, false);
+//        toggleShown(true, animate, false);
+        toggle(true, animate, false);
     }
 
     public void hide() {
@@ -112,7 +115,8 @@ public class FloatingActionButton extends ImageButton {
     }
 
     public void hide(boolean animate) {
-        toggleShown(false, animate, false);
+//        toggleShown(false, animate, false);
+        toggle(false, animate, false);
     }
 
     private void toggleShown(final boolean visible, final boolean animate, boolean force) {
@@ -158,6 +162,42 @@ public class FloatingActionButton extends ImageButton {
                 setClickable(visible);
             }
         }
+    }
+
+    private void toggle(final boolean visible, final boolean animate, boolean force) {
+        if(this.mVisible != visible || force) {
+            this.mVisible = visible;
+            int height = this.getHeight();
+            if(height == 0 && !force) {
+                ViewTreeObserver translationY = this.getViewTreeObserver();
+                if(translationY.isAlive()) {
+                    translationY.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        public boolean onPreDraw() {
+                            ViewTreeObserver currentVto = getViewTreeObserver();
+                            if(currentVto.isAlive()) {
+                                currentVto.removeOnPreDrawListener(this);
+                            }
+
+                            toggle(visible, animate, true);
+                            return true;
+                        }
+                    });
+                    return;
+                }
+            }
+
+            int translationY1 = visible?0:height + this.getMarginBottom();
+            if(animate) {
+                ViewPropertyAnimator.animate(this).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(TRANSLATE_DURATION_MILLIS).translationY((float)translationY1);
+            } else {
+                ViewHelper.setTranslationY(this, (float)translationY1);
+            }
+
+            if(!this.hasHoneycombApi()) {
+                this.setClickable(visible);
+            }
+        }
+
     }
 
     private int getMarginBottom() {
@@ -504,5 +544,9 @@ public class FloatingActionButton extends ImageButton {
         }
 
         super.setVisibility(visibility);
+    }
+
+    private boolean hasHoneycombApi() {
+        return Build.VERSION.SDK_INT >= 11;
     }
 }

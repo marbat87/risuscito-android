@@ -256,7 +256,12 @@
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti. Quando hai finito, premi CONFERMA per salvere le modifiche o ANNULLA per cancellarle.</string>
     <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
     <string name="title_activity_history">Cronologia</string>
+    <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_remove">Rimuovere dalla cronologia?</string>
+    <string name="history_empty">La cronologia è vuota.</string>
+    <string name="last_open_date">ULTIMA APERTURA:</string>
+    <string name="dialog_reset_history_title">Cancella cronologia</string>
+    <string name="dialog_reset_history_desc">Vuoi cancellare la cronologia dei canti visualizzati?</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>

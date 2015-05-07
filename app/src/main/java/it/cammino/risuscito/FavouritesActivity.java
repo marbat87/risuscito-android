@@ -52,7 +52,7 @@ public class FavouritesActivity extends Fragment {
 
         Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
-        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
+//        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
 
         return rootView;
     }
@@ -92,16 +92,17 @@ public class FavouritesActivity extends Fragment {
         int total = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        View noResults = rootView.findViewById(R.id.no_favourites);
-        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
-        if (total > 0) {
-            noResults.setVisibility(View.GONE);
-            hintRemove.setVisibility(View.VISIBLE);
-        }
-        else	{
-            noResults.setVisibility(View.VISIBLE);
-            hintRemove.setVisibility(View.GONE);
-        }
+//        View noResults = rootView.findViewById(R.id.no_favourites);
+//        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
+        rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
+//        if (total > 0) {
+//            noResults.setVisibility(View.GONE);
+//            hintRemove.setVisibility(View.VISIBLE);
+//        }
+//        else	{
+//            noResults.setVisibility(View.VISIBLE);
+//            hintRemove.setVisibility(View.GONE);
+//        }
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<CantoItem>();
@@ -173,16 +174,17 @@ public class FavouritesActivity extends Fragment {
 										titoli.remove(posizDaCanc);
                                         cantoAdapter.notifyItemRemoved(posizDaCanc);
                                         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-                                        View noResults = rootView.findViewById(R.id.no_favourites);
-                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
-                                        if (titoli.size() > 0) {
-                                            noResults.setVisibility(View.GONE);
-                                            hintRemove.setVisibility(View.VISIBLE);
-                                        }
-                                        else	{
-                                            noResults.setVisibility(View.VISIBLE);
-                                            hintRemove.setVisibility(View.GONE);
-                                        }
+//                                        View noResults = rootView.findViewById(R.id.no_favourites);
+//                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
+//                                        if (titoli.size() > 0) {
+//                                            noResults.setVisibility(View.GONE);
+//                                            hintRemove.setVisibility(View.VISIBLE);
+//                                        }
+//                                        else	{
+//                                            noResults.setVisibility(View.VISIBLE);
+//                                            hintRemove.setVisibility(View.GONE);
+//                                        }
+                                        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                                     }
                                 })
                                 .actionColor(getThemeUtils().accentColor())

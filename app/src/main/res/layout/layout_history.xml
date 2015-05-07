@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/histroy_recycler"
-            android:layout_width= "match_parent"
-            android:layout_height = "match_parent"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="true"
-            android:layout_weight="0.99" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width= "match_parent"
+        android:layout_height = "match_parent"
+        android:id="@+id/history_recycler"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true" />
 
     <RelativeLayout
         android:layout_gravity="center"
@@ -23,7 +22,7 @@
             android:layout_centerHorizontal="true"
             android:layout_width="120dip"
             android:layout_height="120dip"
-            android:src="@drawable/sad_heart"/>
+            android:src="@drawable/sad_history"/>
 
         <TextView
             android:id="@+id/no_history_text"
@@ -35,7 +34,7 @@
             android:gravity="center_horizontal"
             android:textColor="?android:textColorSecondary"
             android:layout_height="wrap_content"
-            android:text="@string/no_favourites_short"
+            android:text="@string/history_empty"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
     </RelativeLayout>
@@ -48,7 +47,8 @@
         risuscito:fab_colorPressed="@color/theme_accent_dark"
         risuscito:fab_icon="@drawable/ic_eraser_white_24dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/floating_margin_lateral" />
+        android:layout_marginRight="@dimen/floating_margin_lateral"
+        android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow" />
 
     <View
         android:layout_width="match_parent"

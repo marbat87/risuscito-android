@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -89,6 +90,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
     private static final int TALBLET_DP = 600;
     private static final int WIDTH_320 = 320;
     private static final int WIDTH_400 = 400;
+
+    private boolean toast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -318,6 +321,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
     private void goToNavDrawerItem(int item) {
 
+        toast = false;
         Fragment fragment;
 
         switch (item) {
@@ -335,6 +339,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 break;
             case NAVDRAWER_ITEM_FAVORITES:
                 fragment = new FavouritesActivity();
+                toast = true;
                 break;
             case NAVDRAWER_ITEM_SETTINGS:
                 fragment = new PreferencesFragment();
@@ -349,7 +354,8 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 fragment = new ConsegnatiFragment();
                 break;
             case NAVDRAWER_ITEM_HISTORY:
-                fragment = new ConsegnatiFragment();
+                fragment = new HistoryFragment();
+                toast = true;
                 break;
             default:
                 fragment = new Risuscito();
@@ -368,6 +374,9 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 @Override
                 public void run() {
                     mDrawerLayout.closeDrawer(Gravity.START);
+                    if (toast)
+                    Toast.makeText(MainActivity.this
+                            , getString(R.string.new_hint_remove), Toast.LENGTH_SHORT).show();
                 }
             }, 250);
         }

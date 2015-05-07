@@ -1,5 +1,7 @@
 package it.cammino.risuscito;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,16 +11,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +37,10 @@ public class HistoryFragment extends Fragment {
     private String cantoDaCanc;
     private int posizDaCanc;
     private View rootView;
-	private RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
+    private int prevOrientation;
+    private FloatingActionButton fabClear;
 
     private LUtils mLUtils;
 
@@ -53,8 +59,55 @@ public class HistoryFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
 
         Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
-        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
+        ((TextView) rootView.findViewById(R.id.no_history_text)).setTypeface(face);
+
+        fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_history);
+        fabClear.setColorNormal(getThemeUtils().accentColor());
+        fabClear.setColorPressed(getThemeUtils().accentColorDark());
+        fabClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_reset_history_title)
+                        .content(R.string.dialog_reset_history_desc)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                db.delete("CRONOLOGIA", null, null);
+                                db.close();
+                                updateHistoryList();
+                                if (titoli.size() == 0)
+                                    fabClear.hide();
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+            }
+        });
 
         return rootView;
     }
@@ -95,24 +148,24 @@ public class HistoryFragment extends Fragment {
         int total = lista.getCount();
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
-        View noResults = rootView.findViewById(R.id.no_history);
-        noResults.setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
+        rootView.findViewById(R.id.no_history).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
+        if (total == 0) {
+            fabClear.hide();
+        }
+
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
 
-            Timestamp timestamp = Timestamp.valueOf(lista.getString(5));
-            String dateResult = getString(R.string.last_open_date) + " " + timestamp.getDate() + " " + getString(R.string.last_open_hour) + ".";
 
             titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
-                , lista.getInt(0)
-                , lista.getString(5)
-                , dateResult));
+                    , lista.getInt(0)
+                    , lista.getString(4)
+                    , getString(R.string.last_open_date) + " " + lista.getString(5)));
             lista.moveToNext();
         }
-
         // chiude il cursore
         lista.close();
 
@@ -135,7 +188,7 @@ public class HistoryFragment extends Fragment {
             }
         };
 
-        View.OnLongClickListener longClickListener  = new View.OnLongClickListener() {
+        View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
@@ -150,11 +203,12 @@ public class HistoryFragment extends Fragment {
                                         SQLiteDatabase db = listaCanti.getReadableDatabase();
                                         db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
                                         db.close();
-										titoli.remove(posizDaCanc);
+                                        titoli.remove(posizDaCanc);
                                         cantoAdapter.notifyItemRemoved(posizDaCanc);
                                         //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-                                        View noResults = rootView.findViewById(R.id.no_history);
-                                        noResults.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                                        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                                        if (titoli.size() == 0)
+                                            fabClear.hide();
                                     }
                                 })
                                 .actionColor(getThemeUtils().accentColor())
@@ -163,7 +217,7 @@ public class HistoryFragment extends Fragment {
             }
         };
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.history_recycler);
 
         // Creating new adapter object
         cantoAdapter = new CantoHistoryRecyclerAdapter(titoli, clickListener, longClickListener);
@@ -171,6 +225,23 @@ public class HistoryFragment extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //decide se mostrare o nascondere il floatin button in base allo scrolling
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                float y = recyclerView.getScrollY();
+                super.onScrolled(recyclerView, dx, dy);
+                if (y < dy) {
+                    if (titoli.size() > 0)
+                        fabClear.hide();
+                } else {
+                    if (titoli.size() > 0)
+                        fabClear.show();
+                }
+            }
+
+        });
 
     }
 
