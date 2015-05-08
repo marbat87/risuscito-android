@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -16,6 +17,7 @@ import java.util.Locale;
 
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public abstract class ThemeableActivity extends AppCompatActivity {
 
@@ -112,4 +114,11 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         return mThemeUtils;
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
 }
+
+

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/checkable_bck"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/customSelector"
@@ -32,7 +31,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:soundEffectsEnabled="true"
-        android:background="?attr/customSelectorRound" >
+        android:background="?attr/customSelectorRoundAccent" >
 
         <ImageView
             android:layout_width="match_parent"

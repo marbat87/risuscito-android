@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,8 +57,8 @@ public class HistoryFragment extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        ((TextView) rootView.findViewById(R.id.no_history_text)).setTypeface(face);
+//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+//        ((TextView) rootView.findViewById(R.id.no_history_text)).setTypeface(face);
 
         fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_history);
         fabClear.setColorNormal(getThemeUtils().accentColor());

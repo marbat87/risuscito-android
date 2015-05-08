@@ -3,7 +3,6 @@ package it.cammino.risuscito;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,8 +49,8 @@ public class FavouritesActivity extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
+//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+//        ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
 //        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
 
         return rootView;
