@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,18 +39,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoInsert;
 
 public class InsertAvanzataFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
-    private List<CantoItem> titoli;
+    private List<CantoInsert> titoli;
     private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
     RecyclerView recyclerView;
-    CantoRecyclerAdapter cantoAdapter;
+    CantoInsertRecyclerAdapter cantoAdapter;
     private ProgressView progress;
     private static Map<Character, Character> MAP_NORM;
 
@@ -58,6 +59,8 @@ public class InsertAvanzataFragment extends Fragment {
     private int listPosition;
 
     private SearchTask searchTask;
+
+    private LUtils mLUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,27 +77,30 @@ public class InsertAvanzataFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-                String query = "SELECT _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-                Cursor cursor = db.rawQuery(query, null);
+//                String query = "SELECT _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                int idCanto = cursor.getInt(0);
+//
+//                // chiude il cursore
+//                cursor.close();
 
-                // recupera il nome del file
-                cursor.moveToFirst();
-                int idCanto = cursor.getInt(0);
-
-                // chiude il cursore
-                cursor.close();
+                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+                        .getText().toString();
 
                 if (fromAdd == 1)  {
                     // chiamato da una lista predefinita
-                    query = "INSERT INTO CUST_LISTS ";
+                    String query = "INSERT INTO CUST_LISTS ";
                     query+= "VALUES (" + idLista + ", "
                             + listPosition + ", "
                             + idCanto
@@ -107,10 +113,10 @@ public class InsertAvanzataFragment extends Fragment {
                 }
                 else {
                     //chiamato da una lista personalizzata
-                    query = "SELECT lista" +
+                    String query = "SELECT lista" +
                             "  FROM LISTE_PERS" +
                             "  WHERE _id =  " + idLista;
-                    cursor = db.rawQuery(query, null);
+                    Cursor cursor = db.rawQuery(query, null);
                     // recupera l'oggetto lista personalizzata
                     cursor.moveToFirst();
 
@@ -141,9 +147,28 @@ public class InsertAvanzataFragment extends Fragment {
             }
         };
 
+        View.OnClickListener seeOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // recupera il titolo della voce cliccata
+                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+                        .getText().toString();
+                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+                        .getText().toString();
+
+                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", source);
+                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, v);
+            }
+        };
+
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener);
+        titoli = new ArrayList<>();
+        cantoAdapter = new CantoInsertRecyclerAdapter(titoli, clickListener, seeOnClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -245,6 +270,8 @@ public class InsertAvanzataFragment extends Fragment {
             }
         });
 
+        mLUtils = LUtils.getInstance(getActivity());
+
         return rootView;
     }
     @Override
@@ -268,8 +295,9 @@ public class InsertAvanzataFragment extends Fragment {
             String[] words = sSearchText[0].split("\\W");
 
             String text;
-            String[] aResults = new String[300];
-            int totalResults = 0;
+            titoli.clear();
+//            String[] aResults = new String[300];
+//            int totalResults = 0;
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -299,7 +327,7 @@ public class InsertAvanzataFragment extends Fragment {
                 if (found) {
 
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             +		"		FROM ELENCO"
                             +		"		WHERE source = '" + aTexts[k][0] + "'";
 
@@ -307,19 +335,22 @@ public class InsertAvanzataFragment extends Fragment {
 
                     if (lista.getCount() > 0) {
                         lista.moveToFirst();
-                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+                        titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
+                                                , lista.getInt(3)
+                                                , lista.getString(4)));
+//                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
                     }
                     // chiude il cursore
                     lista.close();
                 }
             }
 
-            titoli.clear();
-            for (int i = 0; i < aResults.length; i++) {
-                if (aResults[i] == null)
-                    break;
-                titoli.add(new CantoItem(aResults[i]));
-            }
+//            titoli.clear();
+//            for (int i = 0; i < aResults.length; i++) {
+//                if (aResults[i] == null)
+//                    break;
+//                titoli.add(new CantoItem(aResults[i]));
+//            }
 
             return null;
         }
@@ -425,8 +456,15 @@ public class InsertAvanzataFragment extends Fragment {
         return sb.toString();
     }
 
-    private ThemeUtils getThemeUtils() {
-        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
+//    private ThemeUtils getThemeUtils() {
+//        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
+//    }
+
+    private void startSubActivity(Bundle bundle, View view) {
+        Intent intent = new Intent(getActivity().getApplicationContext(),
+                PaginaRenderActivity.class);
+        intent.putExtras(bundle);
+        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
 }

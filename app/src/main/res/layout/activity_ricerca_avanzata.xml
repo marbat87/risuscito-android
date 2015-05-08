@@ -78,6 +78,8 @@
             android:paddingTop="10dip"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="15sp"
             android:gravity="center_horizontal|top"
             android:text="@string/search_no_results"
             android:visibility="gone" />
