@@ -3,18 +3,26 @@ package it.cammino.risuscito;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -40,6 +48,8 @@ public class HistoryFragment extends Fragment {
     private CantoHistoryRecyclerAdapter cantoAdapter;
     private int prevOrientation;
     private FloatingActionButton fabClear;
+
+    private String HISTORY_OPEN = "history_open";
 
     private LUtils mLUtils;
 
@@ -108,7 +118,50 @@ public class HistoryFragment extends Fragment {
             }
         });
 
+        if(!PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(HISTORY_OPEN, false)) {
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .edit();
+            editor.putBoolean(HISTORY_OPEN, true);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                editor.commit();
+            } else {
+                editor.apply();
+            }
+            android.os.Handler mHandler = new android.os.Handler();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), getString(R.string.new_hint_remove), Toast.LENGTH_SHORT).show();
+                }
+            }, 250);
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_help:
+                Toast.makeText(getActivity(), getString(R.string.new_hint_remove), Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return false;
     }
 
     @Override

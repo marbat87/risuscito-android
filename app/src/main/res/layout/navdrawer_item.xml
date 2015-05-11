@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:background="?attr/customSelector"
     android:gravity="start|center_vertical"
@@ -22,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
         android:gravity="start|center_vertical"
-        android:fontFamily="@string/font_fontFamily_medium"
-        android:textStyle="@integer/font_textStyle_medium"
         android:textSize="16sp"
-        android:text="" />
+        android:text=""
+        fontPath="fonts/Roboto-Medium.ttf"
+        tools:ignore="MissingPrefix" />
 
 </LinearLayout>
