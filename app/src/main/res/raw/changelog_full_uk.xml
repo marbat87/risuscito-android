@@ -9,7 +9,7 @@
         <changelogtext>Liste personalizzate: spostate le funzioni di modifica lista nel pulsante galleggiante</changelogtext>
         <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
         <changelogtext>Nuova sezione "Cronologia" con lo storico dei canti visualizzati</changelogtext>
-        <changelogtext>Aggiunta la funzione di visualizzazione del canto, quando si fa la ricerca per inserimento in una lista personalizzata</changelogtext>
+        <changelogtext>Aggiunta la funzione di anteprima del canto, quando si fa la ricerca per inserimento in una lista personalizzata</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.4.0" changeDate="05 квітня 2015">
