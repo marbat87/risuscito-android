@@ -22,8 +22,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.rey.material.widget.Button;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -255,9 +253,9 @@ public class InsertVeloceFragment extends Fragment {
 
         });
 
-        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
+//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
 //        paperPulisci.setColor(getThemeUtils().primaryColor());
-        paperPulisci.setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchPar.setText("");

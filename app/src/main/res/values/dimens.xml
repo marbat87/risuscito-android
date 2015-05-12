@@ -29,8 +29,8 @@
 
     <dimen name="button_icon_padding">-5dip</dimen>
 
-    <dimen name="toolbar_elevation">8dp</dimen>
-    <integer name="toolbar_elevation">8</integer>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <integer name="toolbar_elevation">4</integer>
 
     <dimen name="button_icon_radius">40dp</dimen>
     <dimen name="button_icon_drawable">26dp</dimen>
@@ -55,5 +55,7 @@
     <dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>
     <dimen name="toolbar_expansion_height">85dip</dimen>
     <dimen name="toolbar_fab_margintop">50dip</dimen>
+
+    <dimen name="raise_elevation">8dp</dimen>
 
 </resources>

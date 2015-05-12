@@ -128,7 +128,7 @@
         risuscito:fab_labelStyle="@style/menu_labels_style"
         android:layout_marginRight="@dimen/floating_margin_lateral"
         android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"
-        android:elevation="8dp">
+        android:elevation="@dimen/toolbar_elevation">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_delete_lista"
