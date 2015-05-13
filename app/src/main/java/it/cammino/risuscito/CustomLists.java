@@ -51,6 +51,7 @@ public class CustomLists extends Fragment  {
     private View rootView;
     private static final String PAGE_VIEWED = "pageViewed";
     public static final int TAG_CREA_LISTA = 111;
+    public static final int TAG_MODIFICA_LISTA = 222;
     private MaterialDialog dialog;
 //    private TintEditText titleInput;
 
@@ -413,7 +414,8 @@ public class CustomLists extends Fragment  {
                 Bundle bundle = new Bundle();
                 bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
                 bundle.putBoolean("modifica", true);
-                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+//                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_MODIFICA_LISTA);
                 getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
             }
         });
@@ -490,7 +492,7 @@ public class CustomLists extends Fragment  {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TAG_CREA_LISTA && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
         }
