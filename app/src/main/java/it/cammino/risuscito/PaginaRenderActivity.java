@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -1041,7 +1040,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //        mProgressDialog.setCancelable(false);
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
-        ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
+//        ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
 //        fabFullscreen.setColorNormal(getThemeUtils().accentColor());

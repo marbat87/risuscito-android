@@ -30,6 +30,9 @@ import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -211,11 +214,33 @@ public class HistoryFragment extends Fragment {
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
 
+            //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+            DateFormat df = DateFormat.getDateTimeInstance(
+                    DateFormat.SHORT
+                    , DateFormat.MEDIUM
+                    , getActivity().getResources().getConfiguration().locale);
+            String timestamp = "";
+
+            if (df instanceof SimpleDateFormat)
+            {
+//                Log.i(getClass().toString(), "is Simple");
+                SimpleDateFormat sdf = (SimpleDateFormat) df;
+                // To show Locale specific short date expression with full year
+                String pattern = sdf.toPattern().replaceAll("y+","yyyy");
+                sdf.applyPattern(pattern);
+                timestamp = sdf.format(Timestamp.valueOf(lista.getString(5)));
+            }
+            else {
+//                Log.i(getClass().toString(), "is NOT Simple");
+                timestamp = df.format(Timestamp.valueOf(lista.getString(5)));
+            }
+//            Log.i(getClass().toString(), "timestamp: " + timestamp);
 
             titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
                     , lista.getInt(0)
                     , lista.getString(4)
-                    , getString(R.string.last_open_date) + " " + lista.getString(5)));
+//                            , getString(R.string.last_open_date) + " " + lista.getString(5)));
+                    , getString(R.string.last_open_date) + " " + timestamp));
             lista.moveToNext();
         }
         // chiude il cursore

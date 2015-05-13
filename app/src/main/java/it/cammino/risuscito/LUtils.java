@@ -18,14 +18,11 @@ package it.cammino.risuscito;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -49,15 +46,15 @@ public class LUtils {
 
     public void startActivityWithTransition(Intent intent, final View clickedView,
                                             final String transitionName) {
-        ActivityOptions options = null;
-        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
-            options = ActivityOptions.makeSceneTransitionAnimation(
-                    mActivity, clickedView, transitionName);
-            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
-        } else {
+//        ActivityOptions options = null;
+//        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
+//            options = ActivityOptions.makeSceneTransitionAnimation(
+//                    mActivity, clickedView, transitionName);
+//            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
+//        } else {
             mActivity.startActivity(intent);
             mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-        }
+//        }
 
         //aggiorno la cronologia
         DatabaseCanti listaCanti = new DatabaseCanti(mActivity);
@@ -89,33 +86,33 @@ public class LUtils {
 
     public void startActivityWithFadeIn(Intent intent, final View clickedView,
                                         final String transitionName) {
-        ActivityOptions options = null;
-        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
-            options = ActivityOptions.makeSceneTransitionAnimation(
-                    mActivity, clickedView, transitionName);
-            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
-        } else {
+//        ActivityOptions options = null;
+//        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
+//            options = ActivityOptions.makeSceneTransitionAnimation(
+//                    mActivity, clickedView, transitionName);
+//            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
+//        } else {
             mActivity.startActivity(intent);
             mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
-        }
+//        }
     }
 
     public void closeActivityWithTransition() {
-        if (hasL())
-            mActivity.finishAfterTransition();
-        else {
+//        if (hasL())
+//            mActivity.finishAfterTransition();
+//        else {
             mActivity.finish();
             mActivity.overridePendingTransition(0, R.anim.slide_out_right);
-        }
+//        }
     }
 
     public void closeActivityWithFadeOut() {
-        if (hasL())
-            mActivity.finishAfterTransition();
-        else {
+//        if (hasL())
+//            mActivity.finishAfterTransition();
+//        else {
             mActivity.finish();
             mActivity.overridePendingTransition(0, R.anim.image_fade_out);
-        }
+//        }
     }
 
     public void goFullscreen() {
