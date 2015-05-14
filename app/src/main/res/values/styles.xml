@@ -117,11 +117,12 @@
         <item name="rd_topPadding">1dp</item>
         <item name="rd_rightPadding">1dp</item>
         <item name="rd_bottomPadding">2dp</item>
-        <item name="rd_delayClick">false</item>
+        <item name="rd_delayClick">none</item>
     </style>
 
     <style name="Material.Drawable.CircularProgress.Risuscito">
         <item name="cpd_strokeColor">?attr/colorAccent</item>
+        <item name="cpd_strokeSecondaryColor">@android:color/transparent</item>
     </style>
 
     <style name="Material.Drawable.LinearProgress.Query.Risuscito">

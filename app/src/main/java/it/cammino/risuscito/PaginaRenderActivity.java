@@ -931,9 +931,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //        });
         scroll_speed_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
             @Override
-            public void onPositionChanged(Slider slider, float v, float v1, int i, int i1) {
-                speedValue = String.valueOf(i1);
-                ((TextView)findViewById(R.id.slider_text)).setText(String.valueOf(i1) + " %");
+            public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
+                speedValue = String.valueOf(newValue);
+                ((TextView)findViewById(R.id.slider_text)).setText(String.valueOf(newValue) + " %");
 //                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
             }
         });
