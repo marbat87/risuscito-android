@@ -117,7 +117,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
+        titoli = new ArrayList<>();
         cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
