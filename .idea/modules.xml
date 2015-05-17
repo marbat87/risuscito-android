@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/circulareveal/circulareveal.iml" filepath="$PROJECT_DIR$/circulareveal/circulareveal.iml" />
       <module fileurl="file://$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" filepath="$PROJECT_DIR$/discreteSeekBar/discreteSeekBar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recyclerviewfastscroller/recyclerviewfastscroller.iml" filepath="$PROJECT_DIR$/recyclerviewfastscroller/recyclerviewfastscroller.iml" />
       <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/utilities/utilities.iml" filepath="$PROJECT_DIR$/utilities/utilities.iml" />
     </modules>

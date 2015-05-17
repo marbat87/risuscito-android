@@ -1,0 +1,20 @@
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <solid
+        android:color="@android:color/white"
+        />
+
+    <!--
+      Until API level 12, bottomLeftRadius and bottomRightRadius are flipped!!!
+      http://stackoverflow.com/questions/12505649/somethings-wrong-in-corner-radius-android
+      -->
+    <corners
+        android:bottomRightRadius="@dimen/rvfs_section_indicator_size"
+        android:topLeftRadius="@dimen/rvfs_section_indicator_size"
+        android:topRightRadius="@dimen/rvfs_section_indicator_size"
+        android:bottomLeftRadius="0dp"
+        />
+
+</shape>

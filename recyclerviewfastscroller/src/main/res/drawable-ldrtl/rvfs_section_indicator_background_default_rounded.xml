@@ -1,0 +1,16 @@
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <solid
+        android:color="@android:color/white"
+        />
+
+    <corners
+        android:bottomRightRadius="@dimen/rvfs_section_indicator_size"
+        android:topLeftRadius="@dimen/rvfs_section_indicator_size"
+        android:topRightRadius="@dimen/rvfs_section_indicator_size"
+        android:bottomLeftRadius="0dp"
+        />
+
+</shape>

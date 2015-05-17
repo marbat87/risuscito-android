@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/rvfs_scroll_bar_handle_container"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/rvfs_bar_handle_container_v_padding"
+    android:paddingLeft="@dimen/rvfs_bar_handle_container_h_padding"
+    android:paddingRight="@dimen/rvfs_bar_handle_container_h_padding"
+    android:paddingTop="@dimen/rvfs_bar_handle_container_v_padding"
+    >
+
+    <View
+        android:id="@id/rvfs_scroll_bar"
+        android:layout_width="@dimen/rvfs_bar_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/rvfs_half_handle_height"
+        android:layout_marginTop="@dimen/rvfs_half_handle_height"
+        android:background="@android:color/darker_gray"
+        />
+
+    <View
+        android:id="@id/rvfs_scroll_handle"
+        android:layout_width="@dimen/rvfs_handle_width"
+        android:layout_height="@dimen/rvfs_handle_height"
+        android:layout_gravity="center_horizontal"
+        android:background="@android:color/darker_gray"
+        />
+</FrameLayout>
