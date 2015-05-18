@@ -10,11 +10,12 @@ public class CantoRecycled {
     private String colore;
     private String source;
     private int idCanto;
+    private int numeroSalmo;
 
-    public CantoRecycled(String total, int idCanto, String source) {
-        this.setTitolo(total.substring(10));
-        this.setPagina(Integer.valueOf(total.substring(0,3)));
-        this.setColore(total.substring(3, 10));
+    public CantoRecycled(String titolo, int pagina, String colore, int idCanto, String source) {
+        this.setTitolo(titolo);
+        this.setPagina(pagina);
+        this.setColore(colore);
         this.setIdCanto(idCanto);
         this.setSource(source);
     }
@@ -57,5 +58,22 @@ public class CantoRecycled {
 
     public void setIdCanto(int idCanto) {
         this.idCanto = idCanto;
+    }
+
+    public int getNumeroSalmo() {
+        return numeroSalmo;
+    }
+
+    public void setNumeroSalmo(int numeroSalmo) {
+        this.numeroSalmo = numeroSalmo;
+    }
+
+    public CantoRecycled setNumeroSalmo(String numeroSalmo) {
+        int numeroTemp = 0;
+        try {
+            numeroTemp = Integer.valueOf(numeroSalmo.substring(0, 3));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {}
+        this.numeroSalmo = numeroTemp;
+        return this;
     }
 }
