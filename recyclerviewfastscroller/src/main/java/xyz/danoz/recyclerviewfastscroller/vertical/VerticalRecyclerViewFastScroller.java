@@ -2,14 +2,15 @@ package xyz.danoz.recyclerviewfastscroller.vertical;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import xyz.danoz.recyclerviewfastscroller.R;
 import xyz.danoz.recyclerviewfastscroller.AbsRecyclerViewFastScroller;
+import xyz.danoz.recyclerviewfastscroller.R;
 import xyz.danoz.recyclerviewfastscroller.RecyclerViewScroller;
 import xyz.danoz.recyclerviewfastscroller.calculation.VerticalScrollBoundsProvider;
 import xyz.danoz.recyclerviewfastscroller.calculation.count.NumberItemsPerPageCalculator;
@@ -26,9 +27,12 @@ import xyz.danoz.recyclerviewfastscroller.utils.ViewUtils;
  */
 public class VerticalRecyclerViewFastScroller extends AbsRecyclerViewFastScroller implements RecyclerViewScroller {
 
-    private VerticalScrollProgressCalculator mScrollProgressCalculator;
-    private VerticalScreenPositionCalculator mScreenPositionCalculator;
+    //    private VerticalScrollProgressCalculator mScrollProgressCalculator;
+//    private VerticalScreenPositionCalculator mScreenPositionCalculator;
+    @Nullable private VerticalScrollProgressCalculator mScrollProgressCalculator;
+    @Nullable private VerticalScreenPositionCalculator mScreenPositionCalculator;
     private NumberItemsPerPageCalculator mNumberItemsPerPageCalculator;
+
 
     public VerticalRecyclerViewFastScroller(Context context) {
         this(context, null);
@@ -48,12 +52,16 @@ public class VerticalRecyclerViewFastScroller extends AbsRecyclerViewFastScrolle
     }
 
     @Override
+    @Nullable
     protected TouchableScrollProgressCalculator getScrollProgressCalculator() {
         return mScrollProgressCalculator;
     }
 
     @Override
     public void moveHandleToPosition(float scrollProgress) {
+        if (mScreenPositionCalculator == null) {
+            return;
+        }
         final float yPos = mScreenPositionCalculator.getYPositionFromScrollProgress(scrollProgress);
         ViewUtils.setTranslationY(mHandle, yPos);
     }

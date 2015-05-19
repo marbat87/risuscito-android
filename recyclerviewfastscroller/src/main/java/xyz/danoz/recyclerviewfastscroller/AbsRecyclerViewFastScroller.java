@@ -679,7 +679,12 @@ public abstract class AbsRecyclerViewFastScroller extends RelativeLayout impleme
      * @return scroll progress, or fraction by which list is scrolled [0 to 1]
      */
     public float getScrollProgress(MotionEvent event) {
-        return getScrollProgressCalculator().calculateScrollProgress(event);
+//        return getScrollProgressCalculator().calculateScrollProgress(event);
+        ScrollProgressCalculator scrollProgressCalculator = getScrollProgressCalculator();
+        if (scrollProgressCalculator != null) {
+            return getScrollProgressCalculator().calculateScrollProgress(event);
+        }
+        return 0;
     }
 
     protected void onAdapterDataChanged() {
@@ -697,6 +702,7 @@ public abstract class AbsRecyclerViewFastScroller extends RelativeLayout impleme
      * Define a ScrollProgressCalculator for your implementation of AbsFastScroller
      * @return a chosen implementation of {@link ScrollProgressCalculator}
      */
+    @Nullable
     protected abstract TouchableScrollProgressCalculator getScrollProgressCalculator();
 
     /**
