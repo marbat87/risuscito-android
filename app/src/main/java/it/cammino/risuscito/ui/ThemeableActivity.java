@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -62,6 +63,22 @@ public abstract class ThemeableActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            float actualScale = getResources().getConfiguration().fontScale;
+//            Log.i(getClass().toString(), "actualScale: " + actualScale);
+            float systemScale = Settings.System.getFloat(getApplicationContext().getContentResolver(), Settings.System.FONT_SCALE);
+//            Log.i(getClass().toString(), "systemScale: " + systemScale);
+            if (actualScale != systemScale) {
+                Configuration config = new Configuration();
+                config.fontScale = systemScale;
+                getBaseContext().getResources().updateConfiguration(config,
+                        getBaseContext().getResources().getDisplayMetrics());
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
         checkScreenAwake();
     }
 

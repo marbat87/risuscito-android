@@ -6,7 +6,7 @@
         <item>Публічна пам\'ять</item>
     </string-array>
     <string-array name="save_location_nosd_entries">
-        <item>Внутрішня пам\'ять</item>
+        <item>Приватна пам\'ять</item>
     </string-array>
 
 </resources>
