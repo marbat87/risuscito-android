@@ -23,7 +23,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class ThemeableActivity extends AppCompatActivity {
 
     private ThemeUtils mThemeUtils;
-//    protected boolean alsoLollipop = true;
+    //    protected boolean alsoLollipop = true;
     protected boolean hasNavDrawer = false;
 
 
@@ -67,16 +67,24 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         try {
             float actualScale = getResources().getConfiguration().fontScale;
 //            Log.i(getClass().toString(), "actualScale: " + actualScale);
-            float systemScale = Settings.System.getFloat(getApplicationContext().getContentResolver(), Settings.System.FONT_SCALE);
+            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
 //            Log.i(getClass().toString(), "systemScale: " + systemScale);
             if (actualScale != systemScale) {
                 Configuration config = new Configuration();
                 config.fontScale = systemScale;
-                getBaseContext().getResources().updateConfiguration(config,
-                        getBaseContext().getResources().getDisplayMetrics());
+                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
             }
         } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            for (StackTraceElement ste: e.getStackTrace()) {
+                Log.e(getClass().toString(), ste.toString());
+            }
+        }
+        catch (NullPointerException e) {
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            for (StackTraceElement ste: e.getStackTrace()) {
+                Log.e(getClass().toString(), ste.toString());
+            }
         }
 
         checkScreenAwake();
