@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/myListPreferredItemHeightMedium"
+    android:layout_marginTop="8dp">
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:background="?attr/customSelector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/indicatorOld"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginRight="@dimen/myListPreferredExpTextMargin"
+            android:gravity="start|center_vertical" />
+
+        <ImageView
+            android:id="@+id/indicatorOld"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin" />
+
+        <TextView
+            android:id="@+id/text_id_gruppo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -186,7 +185,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");

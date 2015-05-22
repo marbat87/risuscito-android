@@ -1,6 +1,5 @@
 package it.cammino.risuscito.adapters;
 
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +27,12 @@ public class CantoSalmoAdapter extends RecyclerView.Adapter implements SectionIn
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
     private View.OnCreateContextMenuListener createContextMenuListener;
-    private AppCompatActivity appCompatActivity;
 
     private HashMap<String, Integer> alphaIndexer;
     private String[] sections;
 
     // Adapter constructor 1
-    public CantoSalmoAdapter(AppCompatActivity activity, List<CantoRecycled> dataItems
+    public CantoSalmoAdapter(List<CantoRecycled> dataItems
             , View.OnClickListener clickListener) {
 
         this.dataItems = dataItems;
@@ -45,7 +43,7 @@ public class CantoSalmoAdapter extends RecyclerView.Adapter implements SectionIn
     }
 
     // Adapter constructor 2
-    public CantoSalmoAdapter(AppCompatActivity activity, List<CantoRecycled> dataItems
+    public CantoSalmoAdapter(List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
 
@@ -57,7 +55,7 @@ public class CantoSalmoAdapter extends RecyclerView.Adapter implements SectionIn
     }
 
     // Adapter constructor 3
-    public CantoSalmoAdapter(AppCompatActivity activity, List<CantoRecycled> dataItems
+    public CantoSalmoAdapter(List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnCreateContextMenuListener createContextMenuListener) {
 

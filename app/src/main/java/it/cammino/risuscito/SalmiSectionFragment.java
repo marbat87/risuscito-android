@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -26,7 +25,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +117,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         VerticalRecyclerViewFastScroller fastScroller =
                 (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoSalmoAdapter adapter = new CantoSalmoAdapter((AppCompatActivity)getActivity(), titoli, clickListener, this);
+        CantoSalmoAdapter adapter = new CantoSalmoAdapter(titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
@@ -186,7 +184,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");

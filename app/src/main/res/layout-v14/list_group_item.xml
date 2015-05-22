@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/myListPreferredItemHeightMedium"
+    android:layout_marginTop="8dp">
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:background="?attr/customSelector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/indicator"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:gravity="start|center_vertical" />
+
+        <com.wnafee.vector.MorphButton
+            android:id="@+id/indicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin"
+            android:background="@null"
+            android:enabled="false"
+            risuscito:vc_foregroundTint="#666666"
+            risuscito:vc_startDrawable="@drawable/ic_expand_less_to_expand_more"
+            risuscito:vc_endDrawable="@drawable/ic_expand_more_to_expand_less" />
+
+        <TextView
+            android:id="@+id/text_id_gruppo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</FrameLayout>
