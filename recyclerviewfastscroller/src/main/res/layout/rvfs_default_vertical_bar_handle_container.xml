@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/rvfs_bar_handle_container_v_padding"
     android:paddingLeft="@dimen/rvfs_bar_handle_container_h_padding"
-    android:paddingRight="@dimen/rvfs_bar_handle_container_h_padding"
+    android:paddingRight="@dimen/rvfs_bar_handle_container_r_padding"
     android:paddingTop="@dimen/rvfs_bar_handle_container_v_padding"
     >
 

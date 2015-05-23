@@ -50,7 +50,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        risuscito:rvfs_barColor="#ffcecece"
+        risuscito:rvfs_barColor="@android:color/transparent"
         risuscito:rvfs_handleBackground="@drawable/fast_scroller_handle_rounded"
         risuscito:rvfs_fast_scroller_layout="@layout/vertical_recycler_fast_scroller_layout_with_color_group_section_indicator"
         />
