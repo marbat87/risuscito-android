@@ -32,57 +32,17 @@ public class CantoExpandableAdapter
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
     private View.OnCreateContextMenuListener createContextMenuListener;
-    private View.OnClickListener groupClickListener;
     private Activity activity;
 
     // Adapter constructor 1
-    public CantoExpandableAdapter(List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems
-            , View.OnClickListener clickListener) {
-        this.mData = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = null;
-        this.createContextMenuListener = null;
-        this.groupClickListener = null;
-        setHasStableIds(true);
-    }
-
-    // Adapter constructor 2
-    public CantoExpandableAdapter(List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems
-            , View.OnClickListener clickListener
-            , View.OnLongClickListener longClickListener) {
-        this.mData = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.createContextMenuListener = null;
-        this.groupClickListener = null;
-        setHasStableIds(true);
-    }
-
-    // Adapter constructor 3
-    public CantoExpandableAdapter(List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems
-            , View.OnClickListener clickListener
-            , View.OnCreateContextMenuListener createContextMenuListener) {
-
-        this.mData = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = null;
-        this.createContextMenuListener = createContextMenuListener;
-        this.groupClickListener = null;
-        setHasStableIds(true);
-    }
-
-    // Adapter constructor 4
     public CantoExpandableAdapter(Activity activity, List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems
             , View.OnClickListener clickListener
-            , View.OnCreateContextMenuListener createContextMenuListener
-            , View.OnClickListener groupClickListener) {
-
+            , View.OnCreateContextMenuListener createContextMenuListener) {
+        this.activity = activity;
         this.mData = dataItems;
         this.clickListener = clickListener;
         this.longClickListener = null;
         this.createContextMenuListener = createContextMenuListener;
-        this.groupClickListener = groupClickListener;
-        this.activity = activity;
         setHasStableIds(true);
     }
 
@@ -120,7 +80,7 @@ public class CantoExpandableAdapter
     public GroupViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View v = inflater.inflate(R.layout.list_group_item, parent, false);
-        return new GroupViewHolder(v, groupClickListener);
+        return new GroupViewHolder(v);
     }
 
     @Override
@@ -130,6 +90,7 @@ public class CantoExpandableAdapter
         return new CantoViewHolder(v, clickListener, longClickListener, createContextMenuListener);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindGroupViewHolder(GroupViewHolder holder, int groupPosition, int viewType) {
         // child item
@@ -226,16 +187,13 @@ public class CantoExpandableAdapter
         public ImageView mMorphButtonOld;
         public ViewGroup mContainer;
 
-        public GroupViewHolder(View itemView
-                , View.OnClickListener onClickListener) {
+        public GroupViewHolder(View itemView) {
             super(itemView);
             mMorphButton = new MorphButtonCompat(itemView.findViewById(R.id.indicator));
             mMorphButtonOld = (ImageView) itemView.findViewById(R.id.indicatorOld);
             groupTitle = (TextView) itemView.findViewById(android.R.id.text1);
             groupId = (TextView) itemView.findViewById(R.id.text_id_gruppo);
             mContainer = (ViewGroup) itemView.findViewById(R.id.container);
-            if (onClickListener != null)
-                mContainer.setOnClickListener(onClickListener);
         }
 
     }
@@ -249,9 +207,9 @@ public class CantoExpandableAdapter
 //        }
 
         // check is enabled
-//        if (!(holder.itemView.isEnabled() && holder.itemView.isClickable())) {
-//            return false;
-//        }
+        if (!(holder.itemView.isEnabled() && holder.itemView.isClickable())) {
+            return false;
+        }
 
 //        final View containerView = holder.itemView;
 ////        final View dragHandleView = holder.mDragHandle;
@@ -260,7 +218,7 @@ public class CantoExpandableAdapter
 //        final int offsetY = containerView.getTop() + (int) (ViewCompat.getTranslationY(containerView) + 0.5f);
 //
 ////        return !ViewUtils.hitTest(dragHandleView, x - offsetX, y - offsetY);
-        return false;
+        return true;
     }
 
 }

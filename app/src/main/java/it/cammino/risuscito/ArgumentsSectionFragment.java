@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,7 @@ import it.cammino.risuscito.adapters.CantoExpandableAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.objects.ExpandableGroup;
 
-public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener   {
+public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener  {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
@@ -72,7 +71,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     //    private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
-    private CantoExpandableAdapter myItemAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -147,16 +145,17 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
         }
 
+        arguments.close();
 //        expList.setAdapter(new SongRowAdapter());
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
-                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText().toString();
+                String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
+                        .getText());
+                String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
+                        .getText());
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
@@ -168,28 +167,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             }
         };
 
-        View.OnClickListener groupClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-                String idGruppo = ((TextView) v.findViewById(R.id.text_id_gruppo))
-                        .getText().toString();
-                int gruppi = myItemAdapter.getGroupCount();
-                for (int i = 0; i < gruppi; i++) {
-                    if (myItemAdapter.getGroupId(i) == Integer.valueOf(idGruppo)) {
-                        if (mRecyclerViewExpandableItemManager.isGroupExpanded(i))
-                            mRecyclerViewExpandableItemManager.collapseGroup(i);
-                        else
-                            mRecyclerViewExpandableItemManager.expandGroup(i);
-                    }
-                    else
-                        mRecyclerViewExpandableItemManager.collapseGroup(i);
-                }
-            }
-        };
-
-        arguments.close();
-
         //noinspection ConstantConditions
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -198,7 +175,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
         //adapter
-        myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, ArgumentsSectionFragment.this, groupClickListener);
+        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, ArgumentsSectionFragment.this);
 
 //        mAdapter = myItemAdapter;
 
@@ -425,8 +402,8 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        ExpandableListView.ExpandableListContextMenuInfo info =
-                (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+//        ExpandableListView.ExpandableListContextMenuInfo info =
+//                (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
 //        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 //        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD)  {
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
@@ -435,9 +412,8 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
-            for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
+            for (int k = 0; k < listePers[i].getNumPosizioni(); k++)
                 subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
-            }
         }
 
         MenuInflater inflater = getActivity().getMenuInflater();
@@ -526,8 +502,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                                     , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                         }
                         else {
-//                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-//                                    .equalsIgnoreCase(titoloDaAgg)) {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
                                 Toast.makeText(getActivity()
                                         , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
@@ -692,13 +666,13 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                                 String sql = "UPDATE CUST_LISTS "
 //                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
 //                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-                                        + " SET id_canto = " + idDaAgg
-                                        + "WHERE _id = " + idListaDaAgg
-                                        + "  AND position = " + posizioneDaAgg;
+                                        + "     SET id_canto = " + idDaAgg
+                                        + "     WHERE _id = " + idListaDaAgg
+                                        + "     AND position = " + posizioneDaAgg;
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);

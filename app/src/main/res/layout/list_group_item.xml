@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/myListPreferredItemHeightMedium"
-    android:layout_marginTop="8dp">
+    android:layout_height="@dimen/myListPreferredItemHeightMedium">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        risuscito:cardUseCompatPadding="true"
+        risuscito:cardCornerRadius="@dimen/cardListElevation"
+        risuscito:cardElevation="@dimen/cardListElevation">
 
     <RelativeLayout
         android:id="@+id/container"
@@ -18,10 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@+id/indicatorOld"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-            android:layout_marginRight="@dimen/myListPreferredExpTextMargin"
-            android:gravity="start|center_vertical" />
+            android:gravity="start|center_vertical"
+            style="@style/TitoloGroupStyle" />
 
         <ImageView
             android:id="@+id/indicatorOld"
@@ -39,5 +44,7 @@
             android:visibility="gone" />
 
     </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 
 </FrameLayout>
