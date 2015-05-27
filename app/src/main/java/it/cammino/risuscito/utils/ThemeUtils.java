@@ -211,7 +211,7 @@ public class ThemeUtils {
     public static int shiftColorUp(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        hsv[2] *= 1.1f; // value component
+        hsv[2] *= 1.2f; // value component
         return Color.HSVToColor(hsv);
     }
 
