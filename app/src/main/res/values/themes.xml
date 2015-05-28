@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Set AppCompat’s actionBarStyle -->
@@ -12,7 +12,7 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
         <item name="colorAccent">@color/theme_accent</item>
-        <!--<item name="colorControlHighlight">@color/theme_accent_semi_tr</item>-->
+        <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
         <!--<item name="colorControlActivated">#000</item>-->
 
@@ -22,11 +22,11 @@
         <item name="customSelectorTab">@drawable/custom_tab_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
-        <item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>
-        <item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>
-        <item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>
-        <item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>
-        <item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>
+        <!--<item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>-->
+        <!--<item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>-->
+        <!--<item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>-->
+        <!--<item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>-->
+        <!--<item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>-->
 
         <item name="md_medium_font">Roboto-Medium.ttf</item>
         <item name="md_regular_font">Roboto-Regular.ttf</item>

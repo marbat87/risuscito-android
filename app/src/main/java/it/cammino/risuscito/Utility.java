@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Utility {
 
@@ -280,6 +281,10 @@ public class Utility {
                 else
                     activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_PORTRAIT);
         }
+    }
+
+    public static int random(int start, int end) {
+        return ((new Random()).nextInt(end - start + 1) + start);
     }
 
 }

@@ -40,7 +40,7 @@ public class LUtils {
         return new LUtils(activity);
     }
 
-    private static boolean hasL() {
+    public static boolean hasL() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 

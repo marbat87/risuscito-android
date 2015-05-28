@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,7 +23,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class ThemeableActivity extends AppCompatActivity {
 
     private ThemeUtils mThemeUtils;
-//    protected boolean alsoLollipop = true;
+    //    protected boolean alsoLollipop = true;
     protected boolean hasNavDrawer = false;
 
 
@@ -62,6 +63,30 @@ public abstract class ThemeableActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            float actualScale = getResources().getConfiguration().fontScale;
+//            Log.i(getClass().toString(), "actualScale: " + actualScale);
+            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
+//            Log.i(getClass().toString(), "systemScale: " + systemScale);
+            if (actualScale != systemScale) {
+                Configuration config = new Configuration();
+                config.fontScale = systemScale;
+                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            for (StackTraceElement ste: e.getStackTrace()) {
+                Log.e(getClass().toString(), ste.toString());
+            }
+        }
+        catch (NullPointerException e) {
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            for (StackTraceElement ste: e.getStackTrace()) {
+                Log.e(getClass().toString(), ste.toString());
+            }
+        }
+
         checkScreenAwake();
     }
 

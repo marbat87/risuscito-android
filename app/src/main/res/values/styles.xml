@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="TabIndicator" />
 
@@ -17,7 +17,7 @@
     </style>
 
     <!--<style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">-->
-        <!--<item name="colorAccent">@color/theme_accent</item>-->
+    <!--<item name="colorAccent">@color/theme_accent</item>-->
     <!--</style>-->
 
     <style name="menu_labels_style">
@@ -28,83 +28,83 @@
     </style>
 
     <!--<style name="AppTheme.FlavoredMaterialLight.BlueDark">-->
-        <!--<item name="colorAccent">#3F51B5</item>-->
+    <!--<item name="colorAccent">#3F51B5</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Grey">-->
-        <!--<item name="colorAccent">#9E9E9E</item>-->
+    <!--<item name="colorAccent">#9E9E9E</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.BlueGrey">-->
-        <!--<item name="colorAccent">#607D8B</item>-->
+    <!--<item name="colorAccent">#607D8B</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Black">-->
-        <!--<item name="colorAccent">#37474F</item>-->
+    <!--<item name="colorAccent">#37474F</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Brown">-->
-        <!--<item name="colorAccent">#795548</item>-->
+    <!--<item name="colorAccent">#795548</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Red">-->
-        <!--<item name="colorAccent">#D32F2F</item>-->
+    <!--<item name="colorAccent">#D32F2F</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Pink">-->
-        <!--<item name="colorAccent">#E91E63</item>-->
+    <!--<item name="colorAccent">#E91E63</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Purple">-->
-        <!--<item name="colorAccent">#9C27B0</item>-->
+    <!--<item name="colorAccent">#9C27B0</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Violet">-->
-        <!--<item name="colorAccent">#5E35B1</item>-->
+    <!--<item name="colorAccent">#5E35B1</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Blue">-->
-        <!--<item name="colorAccent">#1976D2</item>-->
+    <!--<item name="colorAccent">#1976D2</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.BlueLight">-->
-        <!--<item name="colorAccent">#03A9F4</item>-->
+    <!--<item name="colorAccent">#03A9F4</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Torqouise">-->
-        <!--<item name="colorAccent">#00BCD4</item>-->
+    <!--<item name="colorAccent">#00BCD4</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.GreenWater">-->
-        <!--<item name="colorAccent">#009688</item>-->
+    <!--<item name="colorAccent">#009688</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Green">-->
-        <!--<item name="colorAccent">#4CAF50</item>-->
+    <!--<item name="colorAccent">#4CAF50</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.GreenLight">-->
-        <!--<item name="colorAccent">#8BC34A</item>-->
+    <!--<item name="colorAccent">#8BC34A</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.GreenBean">-->
-        <!--<item name="colorAccent">#CDDC39</item>-->
+    <!--<item name="colorAccent">#CDDC39</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Yellow">-->
-        <!--<item name="colorAccent">#FDD835</item>-->
+    <!--<item name="colorAccent">#FDD835</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.OrangeLight">-->
-        <!--<item name="colorAccent">#FFB300</item>-->
+    <!--<item name="colorAccent">#FFB300</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.Orange">-->
-        <!--<item name="colorAccent">#FB8C00</item>-->
+    <!--<item name="colorAccent">#FB8C00</item>-->
     <!--</style>-->
 
     <!--<style name="AppTheme.FlavoredMaterialLight.RedLight">-->
-        <!--<item name="colorAccent">#F4511E</item>-->
+    <!--<item name="colorAccent">#F4511E</item>-->
     <!--</style>-->
 
     <style name="FloatingWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">
@@ -158,6 +158,26 @@
         <item name="sl_maxValue">100</item>
         <item name="sl_textSize">@dimen/abc_text_size_title_material</item>
         <item name="sl_primaryColor">?colorAccent</item>
+    </style>
+
+    <style name="TitoloPosizioneText">
+        <item name="android:gravity">start</item>
+        <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+        <item name="android:textColor">?colorAccent</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+
+    <style name="TitoloGroupStyle">
+        <item name="android:gravity">start</item>
+        <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
     </style>
 
 </resources>

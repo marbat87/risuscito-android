@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="rvfs_margin_tiny">4dp</dimen>
+    <dimen name="rvfs_margin_small">8dp</dimen>
+    <dimen name="rvfs_margin_medium">16dp</dimen>
+    <dimen name="rvfs_margin_large">32dp</dimen>
+    <dimen name="rvfs_margin_huge">64dp</dimen>
+
+    <dimen name="rvfs_section_indicator_size">72dp</dimen>
+
+
+    <dimen name="rvfs_bar_width">1dp</dimen>
+    <dimen name="rvfs_handle_height">32dp</dimen>
+    <dimen name="rvfs_handle_width">4dp</dimen>
+    <dimen name="rvfs_half_handle_height">16dp</dimen>
+    <dimen name="rvfs_bar_handle_container_v_padding">8dp</dimen>
+    <dimen name="rvfs_bar_handle_container_h_padding">15dp</dimen>
+    <dimen name="rvfs_bar_handle_container_r_padding">8dp</dimen>
+
+</resources>

@@ -17,8 +17,7 @@
             android:id="@+id/titoloPosizioneGenerica"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            style="@style/TitoloPosizioneText" />
 
         <RelativeLayout
             android:id="@+id/addCantoGenerico"

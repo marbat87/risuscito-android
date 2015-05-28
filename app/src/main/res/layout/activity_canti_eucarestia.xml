@@ -32,9 +32,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/canto_iniziale"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText"/>
 
                     <RelativeLayout
                         android:id="@+id/addCantoIniziale1"
@@ -132,9 +131,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/seconda_lettura"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText" />
 
                     <RelativeLayout
                         android:id="@+id/addCantoSeconda"
@@ -230,9 +228,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/canto_pace"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText" />
 
                     <RelativeLayout
                         android:id="@+id/addCantoPace"
@@ -330,9 +327,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/santo"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText" />
 
                     <RelativeLayout
                         android:id="@+id/addSanto"
@@ -428,9 +424,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/canto_pane"
-                        android:textAppearance="?android:attr/textAppearanceLarge"/>
+                        style="@style/TitoloPosizioneText" />
 
                     <android.support.v7.widget.RecyclerView
                         android:layout_width= "match_parent"
@@ -493,9 +488,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/canto_vino"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText" />
 
                     <android.support.v7.widget.RecyclerView
                         android:layout_width= "match_parent"
@@ -558,9 +552,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/canto_fine"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        style="@style/TitoloPosizioneText" />
 
                     <RelativeLayout
                         android:id="@+id/addCantoFinale1"
