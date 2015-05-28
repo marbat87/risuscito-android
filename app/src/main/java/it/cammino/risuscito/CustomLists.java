@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -29,10 +30,10 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.listeners.ActionClickListener;
-import com.rey.material.widget.TabPageIndicator;
 
 import java.util.Locale;
 
+import io.karim.MaterialTabs;
 import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
@@ -45,7 +46,7 @@ public class CustomLists extends Fragment  {
     private int listaDaCanc;
     private int prevOrientation;
     private CustomViewPager mViewPager;
-    TabPageIndicator mSlidingTabLayout = null;
+//    TabPageIndicator mSlidingTabLayout = null;
     private FloatingActionsMenu mFab1;
     public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
     private View rootView;
@@ -60,7 +61,8 @@ public class CustomLists extends Fragment  {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_custom_lists);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -73,14 +75,14 @@ public class CustomLists extends Fragment  {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+//        mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
+//        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
 //        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
-        mSlidingTabLayout.setViewPager(mViewPager);
+//        mSlidingTabLayout.setViewPager(mViewPager);
 
 //        mSectionsPagerAdapter.notifyDataSetChanged();
 //        if (savedInstanceState != null)
@@ -88,6 +90,10 @@ public class CustomLists extends Fragment  {
 //        else {
 //            mSlidingTabLayout.setViewPager(mViewPager, 1);
 //        }
+
+        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        tabs.setViewPager(mViewPager);
 
         getFab1().setColorNormal(getThemeUtils().accentColor());
         getFab1().setColorPressed(getThemeUtils().accentColorDark());

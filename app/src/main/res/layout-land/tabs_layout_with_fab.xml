@@ -11,13 +11,27 @@
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:elevation="@dimen/toolbar_elevation" />-->
-    <com.rey.material.widget.TabPageIndicator
-        style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"
-        android:id="@+id/sliding_tabs"
-        android:layout_height="48dip"
+    <!--<com.rey.material.widget.TabPageIndicator-->
+    <!--style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"-->
+    <!--android:id="@+id/sliding_tabs"-->
+    <!--android:layout_height="48dip"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--android:elevation="@dimen/toolbar_elevation" />-->
+    <io.karim.MaterialTabs
+        android:id="@+id/material_tabs"
         android:layout_width="match_parent"
+        android:layout_height="48dp"
         android:background="?attr/colorPrimary"
-        android:elevation="@dimen/toolbar_elevation" />
+        risuscito:mtSameWeightTabs="false"
+        risuscito:mtTextColorSelected="@android:color/white"
+        android:textColor="#99FFFFFF"
+        risuscito:mtMrlRippleColor="?attr/colorAccent"
+        android:elevation="@dimen/toolbar_elevation"
+        risuscito:mtMrlRippleDuration="500"
+        risuscito:mtIndicatorColor="?attr/colorAccent"
+        risuscito:mtIndicatorHeight="2dp"
+        risuscito:mtPaddingMiddle="false" />
 
     <!--<FrameLayout-->
     <!--android:layout_width="match_parent"-->

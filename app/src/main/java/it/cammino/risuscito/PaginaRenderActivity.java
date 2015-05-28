@@ -172,6 +172,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         setContentView(R.layout.activity_pagina_render);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+        toolbar.setTitle("");
+        ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);

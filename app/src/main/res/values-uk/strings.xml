@@ -262,5 +262,6 @@
     <string name="last_open_date">ULTIMA APERTURA:</string>
     <string name="dialog_reset_history_title">Cancella cronologia</string>
     <string name="dialog_reset_history_desc">Vuoi cancellare la cronologia dei canti visualizzati?</string>
+    <string name="canto_title_activity">Пісня</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 public class AboutActivity extends Fragment {
@@ -15,7 +16,8 @@ public class AboutActivity extends Fragment {
 			Bundle savedInstanceState) {
 
 		View rootView = inflater.inflate(R.layout.activity_about, container, false);
-		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_about);
+//		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_about);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_about);
         ((MainActivity) getActivity()).getSupportActionBar()
                 .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 		

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="TabIndicator" />
-
     <style name="ActionBarThemeOverlay" parent="">
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">@color/tab_selected</item>
@@ -13,7 +11,6 @@
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#fff</item>
         <!--<item name="android:textSize">18sp</item>-->
-        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
     </style>
 
     <!--<style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">-->

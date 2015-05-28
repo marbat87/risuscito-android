@@ -9,11 +9,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.rey.material.widget.TabPageIndicator;
+import android.widget.TextView;
 
 import java.util.Locale;
 
+import io.karim.MaterialTabs;
 import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
@@ -29,20 +29,27 @@ public class GeneralIndex extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_general_index);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_general_index);
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
+
 
         mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+//        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
+//        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
 //        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
-        mSlidingTabLayout.setViewPager(mViewPager);
+//        mSlidingTabLayout.setViewPager(mViewPager);
+
+        // Bind the tabs to the ViewPager
+        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        tabs.setViewPager(mViewPager);
 
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());

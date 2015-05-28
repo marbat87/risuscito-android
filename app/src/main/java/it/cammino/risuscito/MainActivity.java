@@ -114,6 +114,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
         mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        mActionBarToolbar.setTitle("");
         setSupportActionBar(mActionBarToolbar);
 
         setupNavDrawer();

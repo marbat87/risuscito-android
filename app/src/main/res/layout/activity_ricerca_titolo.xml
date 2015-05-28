@@ -29,7 +29,6 @@
         android:id="@+id/pulisci_ripple"
         risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"
         android:background="@drawable/bg_bt_raise"
-        android:stateListAnimator="@anim/raise"
         android:text="@string/button_pulisci"
         android:minWidth="@dimen/paper_button_width"
         android:layout_width="wrap_content"

@@ -32,15 +32,15 @@
         </activity>
         <activity
             android:name="it.cammino.risuscito.PaginaRenderActivity"
-            android:label="Canto">
+            android:label="">
         </activity>
         <activity
             android:name="it.cammino.risuscito.PaginaRenderFullScreen"
-            android:label="Canto">
+            android:label="">
         </activity>
         <activity
             android:name="it.cammino.risuscito.GeneralInsertSearch"
-            android:label="@string/title_activity_inserisci_titolo" >
+            android:label="" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.cammino.risuscito.CustomLists" />
