@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -27,9 +28,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
@@ -46,7 +44,7 @@ public class CustomLists extends Fragment  {
     private int listaDaCanc;
     private int prevOrientation;
     private CustomViewPager mViewPager;
-//    TabPageIndicator mSlidingTabLayout = null;
+    //    TabPageIndicator mSlidingTabLayout = null;
     private FloatingActionsMenu mFab1;
     public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
     private View rootView;
@@ -432,29 +430,46 @@ public class CustomLists extends Fragment  {
             public void onClick(View v) {
                 getFab1().toggle();
                 listaDaCanc = mViewPager.getCurrentItem() - 2;
-                SnackbarManager.show(
-                        Snackbar.with(getActivity())
-                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
-                                .actionLabel(getString(R.string.snackbar_remove))
-                                .actionListener(new ActionClickListener() {
-                                    @Override
-                                    public void onActionClicked(Snackbar snackbar) {
-                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-
+//                SnackbarManager.show(
+//                        Snackbar.with(getActivity())
+//                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
+//                                .actionLabel(getString(R.string.snackbar_remove))
+//                                .actionListener(new ActionClickListener() {
+//                                    @Override
+//                                    public void onActionClicked(Snackbar snackbar) {
+//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
+//
+//                                        String sql = "DELETE FROM LISTE_PERS"
+//                                                + " WHERE _id = " + idListe[listaDaCanc];
+//                                        db.execSQL(sql);
+//                                        db.close();
+//
+//                                        updateLista();
+//                                        mSectionsPagerAdapter.notifyDataSetChanged();
+////                                        mSlidingTabLayout.setViewPager(mViewPager);
+//                                    }
+//                                })
+//                                .actionColor(getThemeUtils().accentColor())
+//                        , getActivity());
+                Snackbar.make(rootView, getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?", Snackbar.LENGTH_LONG)
+                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
 //					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
+                                String sql = "DELETE FROM LISTE_PERS"
+                                        + " WHERE _id = " + idListe[listaDaCanc];
+                                db.execSQL(sql);
+                                db.close();
 
-                                        String sql = "DELETE FROM LISTE_PERS"
-                                                + " WHERE _id = " + idListe[listaDaCanc];
-                                        db.execSQL(sql);
-                                        db.close();
-
-                                        updateLista();
-                                        mSectionsPagerAdapter.notifyDataSetChanged();
-//                                        mSlidingTabLayout.setViewPager(mViewPager);
-                                    }
-                                })
-                                .actionColor(getThemeUtils().accentColor())
-                        , getActivity());
+                                updateLista();
+                                mSectionsPagerAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setActionTextColor(getThemeUtils().accentColor())
+                        .show();
             }
         });
 

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -25,9 +26,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.Locale;
 
@@ -805,27 +803,45 @@ public class CantiParolaFragment extends Fragment {
 //    }
 
     public void snackBarRimuoviCanto() {
-        SnackbarManager.show(
-                Snackbar.with(getActivity())
-                        .text(getString(R.string.list_remove))
-                        .actionLabel(getString(R.string.snackbar_remove))
-                        .actionListener(new ActionClickListener() {
-                            @Override
-                            public void onActionClicked(Snackbar snackbar) {
-                                db = listaCanti.getReadableDatabase();
-                                String sql = "DELETE FROM CUST_LISTS" +
-                                        "  WHERE _id =  1 " +
-                                        "    AND position = " + posizioneDaCanc +
-                                        "	 AND id_canto = (SELECT _id FROM ELENCO" +
-                                        "					WHERE titolo = '" + titoloDaCanc + "')";
-                                db.execSQL(sql);
-                                db.close();
-                                updateLista();
-                                mShareActionProvider.setShareIntent(getDefaultIntent());
-                            }
-                        })
-                        .actionColor(getThemeUtils().accentColor())
-                , getActivity());
+//        SnackbarManager.show(
+//                Snackbar.with(getActivity())
+//                        .text(getString(R.string.list_remove))
+//                        .actionLabel(getString(R.string.snackbar_remove))
+//                        .actionListener(new ActionClickListener() {
+//                            @Override
+//                            public void onActionClicked(Snackbar snackbar) {
+//                                db = listaCanti.getReadableDatabase();
+//                                String sql = "DELETE FROM CUST_LISTS" +
+//                                        "  WHERE _id =  1 " +
+//                                        "    AND position = " + posizioneDaCanc +
+//                                        "	 AND id_canto = (SELECT _id FROM ELENCO" +
+//                                        "					WHERE titolo = '" + titoloDaCanc + "')";
+//                                db.execSQL(sql);
+//                                db.close();
+//                                updateLista();
+//                                mShareActionProvider.setShareIntent(getDefaultIntent());
+//                            }
+//                        })
+//                        .actionColor(getThemeUtils().accentColor())
+//                , getActivity());
+        Snackbar.make(rootView, R.string.list_remove, Snackbar.LENGTH_LONG)
+                .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        db = listaCanti.getReadableDatabase();
+                        String sql = "DELETE FROM CUST_LISTS" +
+                                "  WHERE _id =  1 " +
+                                "    AND position = " + posizioneDaCanc +
+                                "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                                "					WHERE titolo = '" + titoloDaCanc + "')";
+                        db.execSQL(sql);
+                        db.close();
+                        updateLista();
+                        mShareActionProvider.setShareIntent(getDefaultIntent());
+                    }
+                })
+                .setActionTextColor(getThemeUtils().accentColor())
+                .show();
     }
 
     private ThemeUtils getThemeUtils() {

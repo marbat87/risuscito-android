@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,38 +207,55 @@ public class FavouritesActivity extends Fragment {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
                 cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-                SnackbarManager.show(
-                        Snackbar.with(getActivity())
-                                .text(getString(R.string.favorite_remove))
-                                .actionLabel(getString(R.string.snackbar_remove))
-                                .actionListener(new ActionClickListener() {
-                                    @Override
-                                    public void onActionClicked(Snackbar snackbar) {
-                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                        String sql = "UPDATE ELENCO" +
-                                                "  SET favourite = 0" +
-                                                "  WHERE titolo =  '" + cantoDaCanc + "'";
-                                        db.execSQL(sql);
-                                        db.close();
-                                        // updateFavouritesList();
-                                        titoli.remove(posizDaCanc);
-                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
-                                        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-//                                        View noResults = rootView.findViewById(R.id.no_favourites);
-//                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
-//                                        if (titoli.size() > 0) {
-//                                            noResults.setVisibility(View.GONE);
-//                                            hintRemove.setVisibility(View.VISIBLE);
-//                                        }
-//                                        else	{
-//                                            noResults.setVisibility(View.VISIBLE);
-//                                            hintRemove.setVisibility(View.GONE);
-//                                        }
-                                        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                                    }
-                                })
-                                .actionColor(getThemeUtils().accentColor())
-                        , getActivity());
+//                SnackbarManager.show(
+//                        Snackbar.with(getActivity())
+//                                .text(getString(R.string.favorite_remove))
+//                                .actionLabel(getString(R.string.snackbar_remove))
+//                                .actionListener(new ActionClickListener() {
+//                                    @Override
+//                                    public void onActionClicked(Snackbar snackbar) {
+//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                        String sql = "UPDATE ELENCO" +
+//                                                "  SET favourite = 0" +
+//                                                "  WHERE titolo =  '" + cantoDaCanc + "'";
+//                                        db.execSQL(sql);
+//                                        db.close();
+//                                        // updateFavouritesList();
+//                                        titoli.remove(posizDaCanc);
+//                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                                        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
+////                                        View noResults = rootView.findViewById(R.id.no_favourites);
+////                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
+////                                        if (titoli.size() > 0) {
+////                                            noResults.setVisibility(View.GONE);
+////                                            hintRemove.setVisibility(View.VISIBLE);
+////                                        }
+////                                        else	{
+////                                            noResults.setVisibility(View.VISIBLE);
+////                                            hintRemove.setVisibility(View.GONE);
+////                                        }
+//                                        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                                    }
+//                                })
+//                                .actionColor(getThemeUtils().accentColor())
+//                        , getActivity());
+                Snackbar.make(rootView, R.string.favorite_remove, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                String sql = "UPDATE ELENCO" +
+                                        "  SET favourite = 0" +
+                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
+                                db.execSQL(sql);
+                                db.close();
+                                titoli.remove(posizDaCanc);
+                                cantoAdapter.notifyItemRemoved(posizDaCanc);
+                                rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                            }
+                        })
+                        .setActionTextColor(getThemeUtils().accentColor())
+                        .show();
                 return true;
             }
         };
