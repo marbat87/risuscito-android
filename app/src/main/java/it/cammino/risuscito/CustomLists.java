@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -31,8 +34,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.Locale;
 
-import io.karim.MaterialTabs;
-import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment  {
@@ -43,7 +44,7 @@ public class CustomLists extends Fragment  {
     protected DatabaseCanti listaCanti;
     private int listaDaCanc;
     private int prevOrientation;
-    private CustomViewPager mViewPager;
+    private ViewPager mViewPager;
     //    TabPageIndicator mSlidingTabLayout = null;
     private FloatingActionsMenu mFab1;
     public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
@@ -52,6 +53,8 @@ public class CustomLists extends Fragment  {
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private MaterialDialog dialog;
+    TabLayout tabs;
+    private int lastPosition;
 //    private TintEditText titleInput;
 
     @Override
@@ -69,7 +72,7 @@ public class CustomLists extends Fragment  {
         updateLista();
 
         // Create the adapter that will return a fragment for each of the three
-        mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
+        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -89,9 +92,18 @@ public class CustomLists extends Fragment  {
 //            mSlidingTabLayout.setViewPager(mViewPager, 1);
 //        }
 
-        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+//        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//        tabs.setViewPager(mViewPager);
+
+        if (savedInstanceState != null)
+            lastPosition = savedInstanceState.getInt(PAGE_VIEWED, 0);
+        else
+            lastPosition = 0;
+
+        tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setViewPager(mViewPager);
+        tabs.setupWithViewPager(mViewPager);
 
         getFab1().setColorNormal(getThemeUtils().accentColor());
         getFab1().setColorPressed(getThemeUtils().accentColorDark());
@@ -192,6 +204,7 @@ public class CustomLists extends Fragment  {
                                 bundle.putString("titolo", dialog.getInputEditText().getText().toString());
                                 bundle.putBoolean("modifica", false);
 //                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                                lastPosition = mViewPager.getCurrentItem();
                                 startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
                                 getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
                             }
@@ -419,6 +432,7 @@ public class CustomLists extends Fragment  {
                 bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
                 bundle.putBoolean("modifica", true);
 //                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
+                lastPosition = mViewPager.getCurrentItem();
                 startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_MODIFICA_LISTA);
                 getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
             }
@@ -430,6 +444,7 @@ public class CustomLists extends Fragment  {
             public void onClick(View v) {
                 getFab1().toggle();
                 listaDaCanc = mViewPager.getCurrentItem() - 2;
+                lastPosition = mViewPager.getCurrentItem();
 //                SnackbarManager.show(
 //                        Snackbar.with(getActivity())
 //                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
@@ -466,6 +481,15 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
+                                tabs.setupWithViewPager(mViewPager);
+                                final Runnable mMyRunnable = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tabs.getTabAt(0).select();
+                                    }
+                                };
+                                Handler myHandler = new Handler();
+                                myHandler.postDelayed(mMyRunnable, 200);
                             }
                         })
                         .setActionTextColor(getThemeUtils().accentColor())
@@ -503,7 +527,7 @@ public class CustomLists extends Fragment  {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
+        outState.putInt(PAGE_VIEWED, lastPosition);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -516,6 +540,15 @@ public class CustomLists extends Fragment  {
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
+            tabs.setupWithViewPager(mViewPager);
+            final Runnable mMyRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    mViewPager.setCurrentItem(lastPosition, false);
+                }
+            };
+            Handler myHandler = new Handler();
+            myHandler.postDelayed(mMyRunnable, 400);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

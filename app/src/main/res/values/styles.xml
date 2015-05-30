@@ -13,96 +13,12 @@
         <!--<item name="android:textSize">18sp</item>-->
     </style>
 
-    <!--<style name="AppTheme.FlavoredMaterialLight" parent="Theme.AlertDialogPro.Material.Light">-->
-    <!--<item name="colorAccent">@color/theme_accent</item>-->
-    <!--</style>-->
-
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">left|start</item>
         <item name="android:layout_gravity">left|start</item>
     </style>
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.BlueDark">-->
-    <!--<item name="colorAccent">#3F51B5</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Grey">-->
-    <!--<item name="colorAccent">#9E9E9E</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.BlueGrey">-->
-    <!--<item name="colorAccent">#607D8B</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Black">-->
-    <!--<item name="colorAccent">#37474F</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Brown">-->
-    <!--<item name="colorAccent">#795548</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Red">-->
-    <!--<item name="colorAccent">#D32F2F</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Pink">-->
-    <!--<item name="colorAccent">#E91E63</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Purple">-->
-    <!--<item name="colorAccent">#9C27B0</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Violet">-->
-    <!--<item name="colorAccent">#5E35B1</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Blue">-->
-    <!--<item name="colorAccent">#1976D2</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.BlueLight">-->
-    <!--<item name="colorAccent">#03A9F4</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Torqouise">-->
-    <!--<item name="colorAccent">#00BCD4</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.GreenWater">-->
-    <!--<item name="colorAccent">#009688</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Green">-->
-    <!--<item name="colorAccent">#4CAF50</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.GreenLight">-->
-    <!--<item name="colorAccent">#8BC34A</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.GreenBean">-->
-    <!--<item name="colorAccent">#CDDC39</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Yellow">-->
-    <!--<item name="colorAccent">#FDD835</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.OrangeLight">-->
-    <!--<item name="colorAccent">#FFB300</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.Orange">-->
-    <!--<item name="colorAccent">#FB8C00</item>-->
-    <!--</style>-->
-
-    <!--<style name="AppTheme.FlavoredMaterialLight.RedLight">-->
-    <!--<item name="colorAccent">#F4511E</item>-->
-    <!--</style>-->
 
     <style name="FloatingWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">
         <item name="rd_rippleColor">#33000000</item>
@@ -127,13 +43,13 @@
         <!--<item name="lpd_strokeSecondaryColor">#FFB6CDF2</item>-->
     </style>
 
-    <style  name="Material.Widget.TabPageIndicator.Light.Risuscito">
-        <item name="tpi_tabPadding">12dp</item>
-        <item name="tpi_tabRipple">@style/Material.Drawable.Ripple.Wave.Risuscito</item>
-        <item name="tpi_indicatorHeight">3dp</item>
-        <item name="android:textAppearance">@style/TabTextAppearance</item>
-        <item name="tpi_mode">scroll</item>
-    </style>
+    <!--<style  name="Material.Widget.TabPageIndicator.Light.Risuscito">-->
+        <!--<item name="tpi_tabPadding">12dp</item>-->
+        <!--<item name="tpi_tabRipple">@style/Material.Drawable.Ripple.Wave.Risuscito</item>-->
+        <!--<item name="tpi_indicatorHeight">3dp</item>-->
+        <!--<item name="android:textAppearance">@style/TabTextAppearance</item>-->
+        <!--<item name="tpi_mode">scroll</item>-->
+    <!--</style>-->
 
     <style name="Material.Drawable.Ripple.Wave.Risuscito">
         <item name="android:background">@null</item>
@@ -144,9 +60,9 @@
         <item name="rd_padding">0dp</item>
     </style>
 
-    <style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/color_tpi</item>
-    </style>
+    <!--<style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Small">-->
+        <!--<item name="android:textColor">@color/color_tpi</item>-->
+    <!--</style>-->
 
     <style name="Material.Widget.Slider.Discrete.Risuscito">
         <item name="sl_travelAnimDuration">1</item>
@@ -175,6 +91,20 @@
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
+    </style>
+
+    <style name="Widget.Design.TabLayout.Risuscito">
+        <item name="tabSelectedTextColor">@android:color/white</item>
+        <item name="tabGravity">center</item>
+        <item name="tabMode">scrollable</item>
+        <item name="tabTextColor">#99FFFFFF</item>
+        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
+        <item name="android:background">?colorPrimary</item>
+        <item name="tabBackground">?attr/customSelectorTab</item>
+    </style>
+
+    <style name="TextAppearance.Design.Tab.Risuscito">
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

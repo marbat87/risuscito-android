@@ -48,6 +48,5 @@ dependencies {
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.1'
     // NOTE: vector-compat is available on API level 14 or later
     compile 'com.wnafee:vector-compat:1.0.5'
-    compile 'io.karim:materialtabs:2.0.2'
     compile 'com.android.support:design:22.2.0'
 }

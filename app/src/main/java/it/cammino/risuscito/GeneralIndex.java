@@ -3,9 +3,11 @@ package it.cammino.risuscito;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +15,11 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-import io.karim.MaterialTabs;
-import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
 
-    private CustomViewPager mViewPager;
+    private ViewPager mViewPager;
 //    private TabPageIndicator mSlidingTabLayout = null;
 
     private static final String PAGE_VIEWED = "pageViewed";
@@ -34,7 +34,7 @@ public class GeneralIndex extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 
-        mViewPager = (CustomViewPager) rootView.findViewById(R.id.view_pager);
+        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
 //        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
@@ -47,9 +47,13 @@ public class GeneralIndex extends Fragment {
 //        mSlidingTabLayout.setViewPager(mViewPager);
 
         // Bind the tabs to the ViewPager
-        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+//        MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
+//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//        tabs.setViewPager(mViewPager);
+
+        TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setViewPager(mViewPager);
+        tabs.setupWithViewPager(mViewPager);
 
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
