@@ -58,7 +58,7 @@ public class CreaListaActivity extends ThemeableActivity {
 //	private ArrayList<String> nomiElementi;
 	private ArrayList<DraggableItem> elementi;
 	private String titoloLista;
-//	private DragSortListView lv;
+	//	private DragSortListView lv;
 	private int prevOrientation;
 	private boolean modifica;
 	private int idModifica;
@@ -272,7 +272,7 @@ public class CreaListaActivity extends ThemeableActivity {
 			}
 
 			@Override
-		public void onItemViewLongClicked(View v) {
+			public void onItemViewLongClicked(View v) {
 				prevOrientation = getRequestedOrientation();
 				Utility.blockOrientation(CreaListaActivity.this);
 				final int positionToRename = mRecyclerView.getChildAdapterPosition(v);
@@ -882,7 +882,7 @@ public class CreaListaActivity extends ThemeableActivity {
 //								adapter.getView(0, lv, lv).findViewById(R.id.drag_handle));
 						ViewTarget listItem = new ViewTarget(
 								((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mDragHandle);
-								showcaseView = ShowcaseView.insertShowcaseView(
+						showcaseView = ShowcaseView.insertShowcaseView(
 								listItem
 								, CreaListaActivity.this
 								, R.string.posizione_reorder
@@ -959,7 +959,7 @@ public class CreaListaActivity extends ThemeableActivity {
 										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mContainer.getLocationOnScreen(coords);
 										coords[0] = (coords[0]*2 +
 //												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getWidth())
-										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getWidth())
+												((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getWidth())
 												/ 2;
 										coords[1] = (coords[1]*2 +
 //												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getHeight())

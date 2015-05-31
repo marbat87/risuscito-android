@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -48,7 +49,8 @@ public class Risuscito extends Fragment {
 
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.activity_homepage);
         ((MainActivity) getActivity()).getSupportActionBar()
                 .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 

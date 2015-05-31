@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +27,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.listeners.ActionClickListener;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -61,7 +59,8 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_history, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_history);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_history);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_history);
         ((MainActivity) getActivity()).getSupportActionBar()
                 .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 
@@ -270,26 +269,43 @@ public class HistoryFragment extends Fragment {
             public boolean onLongClick(View v) {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-                SnackbarManager.show(
-                        Snackbar.with(getActivity())
-                                .text(getString(R.string.history_remove))
-                                .actionLabel(getString(R.string.snackbar_remove))
-                                .actionListener(new ActionClickListener() {
-                                    @Override
-                                    public void onActionClicked(Snackbar snackbar) {
-                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                        db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
-                                        db.close();
-                                        titoli.remove(posizDaCanc);
-                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
-                                        //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-                                        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                                        if (titoli.size() == 0)
-                                            fabClear.hide();
-                                    }
-                                })
-                                .actionColor(getThemeUtils().accentColor())
-                        , getActivity());
+//                SnackbarManager.show(
+//                        Snackbar.with(getActivity())
+//                                .text(getString(R.string.history_remove))
+//                                .actionLabel(getString(R.string.snackbar_remove))
+//                                .actionListener(new ActionClickListener() {
+//                                    @Override
+//                                    public void onActionClicked(Snackbar snackbar) {
+//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                        db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
+//                                        db.close();
+//                                        titoli.remove(posizDaCanc);
+//                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                                        //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
+//                                        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                                        if (titoli.size() == 0)
+//                                            fabClear.hide();
+//                                    }
+//                                })
+//                                .actionColor(getThemeUtils().accentColor())
+//                        , getActivity());
+                Snackbar.make(rootView, R.string.history_remove, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
+                                db.close();
+                                titoli.remove(posizDaCanc);
+                                cantoAdapter.notifyItemRemoved(posizDaCanc);
+                                //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
+                                rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                                if (titoli.size() == 0)
+                                    fabClear.hide();
+                            }
+                        })
+                        .setActionTextColor(getThemeUtils().accentColor())
+                        .show();
                 return true;
             }
         };

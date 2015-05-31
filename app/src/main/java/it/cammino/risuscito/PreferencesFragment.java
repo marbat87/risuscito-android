@@ -48,7 +48,8 @@ public class PreferencesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.preference_screen, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_settings);
         ((MainActivity) getActivity()).getSupportActionBar()
                 .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 

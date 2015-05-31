@@ -74,7 +74,8 @@ public class ConsegnatiFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_consegnati);
+//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_consegnati);
+        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
         ((MainActivity) getActivity()).getSupportActionBar()
                 .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
 

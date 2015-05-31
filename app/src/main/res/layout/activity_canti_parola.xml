@@ -620,9 +620,8 @@
         <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
         <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
 
-    <com.rey.material.widget.Button
+    <Button
         android:id="@+id/button_pulisci"
-        risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

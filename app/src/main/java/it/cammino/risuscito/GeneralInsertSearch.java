@@ -1,18 +1,18 @@
 package it.cammino.risuscito;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-
-import com.rey.material.widget.TabPageIndicator;
+import android.widget.TextView;
 
 import java.util.Locale;
 
-import it.cammino.risuscito.ui.CustomViewPager;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {
@@ -32,6 +32,8 @@ public class GeneralInsertSearch extends ThemeableActivity {
 		setContentView(R.layout.activity_insert_search);
 		
 		Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
+		toolbar.setTitle("");
+		((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_inserisci_titolo);
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
 		setSupportActionBar(toolbar);
@@ -44,17 +46,25 @@ public class GeneralInsertSearch extends ThemeableActivity {
         idLista = bundle.getInt("idLista");
         listPosition = bundle.getInt("position");
 
-		CustomViewPager mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
+		ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
-        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+//        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) findViewById(R.id.sliding_tabs);
+//        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
 //        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         
 //        Resources res = getResources();
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
-        mSlidingTabLayout.setViewPager(mViewPager);
+//        mSlidingTabLayout.setViewPager(mViewPager);
+		// Bind the tabs to the ViewPager
+//		MaterialTabs tabs = (MaterialTabs) findViewById(R.id.material_tabs);
+//		tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//		tabs.setViewPager(mViewPager);
+
+		TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
+		tabs.setBackgroundColor(getThemeUtils().primaryColor());
+		tabs.setupWithViewPager(mViewPager);
 
 	}
 
