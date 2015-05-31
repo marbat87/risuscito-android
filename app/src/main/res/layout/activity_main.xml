@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/my_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,7 +42,15 @@
     </LinearLayout>
 
     <!-- Drawer items -->
-    <include layout="@layout/navdrawer" />
+    <android.support.design.widget.NavigationView
+        android:theme="@style/Widget.Design.NavigationView.Risuscito"
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        risuscito:headerLayout="@layout/navdrawer_header"
+        fontPath="fonts/Roboto-Light.ttf"
+        risuscito:menu="@menu/drawer_menu"/>
 
 </android.support.v4.widget.DrawerLayout>
 

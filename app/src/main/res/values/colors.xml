@@ -36,9 +36,9 @@
     <color name="btn_disabled_text">#42000000</color>
 
     <color name="navdrawer_background">#ffffffff</color>
-    <color name="navdrawer_text_color">@color/body_text_1</color>
+    <color name="navdrawer_text_color">#DE000000</color>
     <!--<color name="navdrawer_text_color_selected">@color/theme_primary</color>-->
-    <color name="navdrawer_icon_tint">#888</color>
+    <color name="navdrawer_icon_tint">#8A000000</color>
     <!--<color name="navdrawer_icon_tint_selected">@color/theme_primary</color>-->
 
     <color name="body_text_1">#de000000</color>

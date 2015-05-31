@@ -4,7 +4,6 @@
     <style name="RisuscitoTheme" parent="Theme.MyTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="customSelector">?android:attr/selectableItemBackground</item>
-        <item name="customSelectorTab">?android:attr/selectableItemBackground</item>
         <item name="customSelectorRound">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="customSelectorRoundAccent">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="toolbar_shadow">@null</item>
