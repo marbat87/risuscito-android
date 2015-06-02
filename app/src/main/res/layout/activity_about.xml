@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/risuscito_toolbar" />
+
     <LinearLayout
+        android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_min_margin"
@@ -40,6 +43,8 @@
     </LinearLayout>
 
     <View
+        android:layout_marginTop="?actionBarSize"
+        android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />

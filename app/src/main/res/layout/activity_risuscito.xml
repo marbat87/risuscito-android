@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/risuscito_toolbar" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_marginTop="?attr/actionBarSize"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/copertina"
-        android:layout_margin="@dimen/activity_min_margin"
-        android:layout_gravity="center"
-        android:src="@drawable/copertina_border" />
+        android:layout_height="match_parent">
 
-    <View
-        android:layout_gravity="top"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="?toolbar_shadow" />
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/copertina"
+            android:layout_margin="@dimen/activity_min_margin"
+            android:layout_gravity="center"
+            android:src="@drawable/copertina_border" />
 
-</FrameLayout>
+        <View
+            android:layout_gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="?toolbar_shadow" />
+
+    </FrameLayout>
+
+</LinearLayout>

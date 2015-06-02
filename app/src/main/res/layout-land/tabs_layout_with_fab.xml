@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/risuscito_toolbar" />
-
-    <FrameLayout
-        android:layout_marginTop="?attr/actionBarSize"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
+
+        <include layout="@layout/risuscito_toolbar_noelevation" />
 
         <android.support.design.widget.TabLayout
             android:layout_height="48dp"
             android:layout_width="match_parent"
             android:id="@+id/material_tabs"
-            style="@style/Widget.Design.TabLayout.Risuscito"
-            android:elevation="@dimen/toolbar_elevation" />
+            style="@style/Widget.Design.TabLayout.Risuscito" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.v4.view.ViewPager
-            android:layout_gravity="top"
             android:id="@+id/view_pager"
-            android:layout_marginTop="48dip"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <View
-            android:layout_gravity="top"
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:layout_marginTop="48dip"
             android:background="?toolbar_shadow" />
 
     </FrameLayout>
@@ -96,4 +101,4 @@
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

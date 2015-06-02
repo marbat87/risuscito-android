@@ -798,34 +798,45 @@ public class FloatingActionsMenu extends ViewGroup {
         }
 
         public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-            Log.i(getClass().toString(), "ENTRO");
+//            Log.i(getClass().toString(), "ENTRO");
             if(dependency instanceof Snackbar.SnackbarLayout) {
                 this.updateFabTranslationForSnackbar(parent, child, dependency);
             } else if(dependency instanceof AppBarLayout) {
-                AppBarLayout appBarLayout = (AppBarLayout)dependency;
+//                AppBarLayout appBarLayout = (AppBarLayout)dependency;
                 if(this.mTmpRect == null) {
                     this.mTmpRect = new Rect();
                 }
-
-                Rect rect = this.mTmpRect;
-                ButtonGroupUtils.getDescendantRect(parent, dependency, rect);
+//                Rect rect = this.mTmpRect;
+                int rect_bottom = this.mTmpRect.bottom;
+//                Log.i(getClass().toString(), "this.mTmpRect prima: " + this.mTmpRect.bottom);
+//                Log.i(getClass().toString(), "rect.bottom prima: " + rect_bottom);
+                ButtonGroupUtils.getDescendantRect(parent, dependency, this.mTmpRect);
+//                Log.i(getClass().toString(), "this.mTmpRect dopo: " + this.mTmpRect.bottom);
+//                Log.i(getClass().toString(), "rect.bottom dopo: " + rect_bottom);
 //                int topInset = this.mLastInsets != null?this.mLastInsets.getSystemWindowInsetTop():0;
-                int topInset = 0;
-                int result;
-                int minHeight = ViewCompat.getMinimumHeight(appBarLayout);
-                if(minHeight != 0) {
-                    result = minHeight * 2 + topInset;
-                } else {
-                    int childCount = appBarLayout.getChildCount();
-                    result = childCount >= 1?ViewCompat.getMinimumHeight(appBarLayout.getChildAt(childCount - 1)) * 2 + topInset:0;
-                }
+//                int topInset = 0;
+//                int result;
+//                int minHeight = ViewCompat.getMinimumHeight(appBarLayout);
+//                Log.i(getClass().toString(), "minHeight: " + minHeight);
+//                if(minHeight != 0) {
+//                    result = minHeight * 2 + topInset;
+//                } else {
+//                    int childCount = appBarLayout.getChildCount();
+//                    result = childCount >= 1?ViewCompat.getMinimumHeight(appBarLayout.getChildAt(childCount - 1)) * 2 + topInset:0;
+//                }
 //                if(rect.bottom <= appBarLayout.getMinimumHeightForVisibleOverlappingContent()) {
-                if(rect.bottom <= result) {
-                    if(!this.mIsAnimatingOut && child.getVisibility() == VISIBLE) {
-                        this.animateOut(child);
+//                    if(!this.mIsAnimatingOut && child.getVisibility() == VISIBLE) {
+//                        this.animateOut(child);
+//                    }
+//                } else if(child.getVisibility() != VISIBLE) {
+//                    this.animateIn(child);
+//                }
+                if(rect_bottom > mTmpRect.bottom) {
+                    if(child.isVisible()) {
+                        child.hide();
                     }
-                } else if(child.getVisibility() != VISIBLE) {
-                    this.animateIn(child);
+                } else if(!child.isVisible()) {
+                    child.show();
                 }
             }
 

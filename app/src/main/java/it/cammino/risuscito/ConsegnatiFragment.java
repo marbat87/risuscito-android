@@ -75,9 +75,10 @@ public class ConsegnatiFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
 //        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_consegnati);
-        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
-        ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
+//        ((MainActivity) getActivity()).getSupportActionBar()
+//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -85,11 +86,8 @@ public class ConsegnatiFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
 
         rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
-        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
-
-
-
+//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+//        ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
 
         if (savedInstanceState == null)
             editMode = false;

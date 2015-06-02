@@ -6,19 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:id="@+id/toolbar_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:elevation="@dimen/toolbar_elevation"-->
-    <!--android:theme="@style/ActionBarThemeOverlay">-->
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
 
-    <include layout="@layout/risuscito_toolbar" />
+        <include layout="@layout/risuscito_toolbar_noelevation" />
 
-    <!--</android.support.design.widget.AppBarLayout>-->
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
-        android:layout_marginTop="?actionBarSize"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

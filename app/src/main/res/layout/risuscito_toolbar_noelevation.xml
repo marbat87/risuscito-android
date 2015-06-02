@@ -16,6 +16,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/main_toolbarTitle"
         android:textAppearance="@style/ActionBar.TitleText"
+        android:singleLine="true"
+        android:ellipsize="end"
         fontPath="fonts/Roboto-Medium.ttf"
         android:gravity="start"
         tools:ignore="MissingPrefix" />

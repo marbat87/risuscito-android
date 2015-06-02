@@ -49,9 +49,10 @@ public class PreferencesFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.preference_screen, container, false);
 //        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_settings);
-        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_settings);
-        ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_settings);
+//        ((MainActivity) getActivity()).getSupportActionBar()
+//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_settings);
 
         screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 

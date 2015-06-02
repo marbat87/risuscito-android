@@ -48,18 +48,15 @@ public class FavouritesActivity extends Fragment {
 
         rootView = inflater.inflate(R.layout.activity_favourites, container, false);
 //        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_favourites);
-        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_favourites);
-        ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_favourites);
+//        ((MainActivity) getActivity()).getSupportActionBar()
+//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
-
-//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-//        ((TextView) rootView.findViewById(R.id.favorites_text)).setTypeface(face);
-//        ((TextView) rootView.findViewById(R.id.hint_remove)).setTypeface(face);
 
         if(!PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
@@ -142,17 +139,7 @@ public class FavouritesActivity extends Fragment {
         int total = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-//        View noResults = rootView.findViewById(R.id.no_favourites);
-//        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
         rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
-//        if (total > 0) {
-//            noResults.setVisibility(View.GONE);
-//            hintRemove.setVisibility(View.VISIBLE);
-//        }
-//        else	{
-//            noResults.setVisibility(View.VISIBLE);
-//            hintRemove.setVisibility(View.GONE);
-//        }
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<CantoItem>();
@@ -207,38 +194,6 @@ public class FavouritesActivity extends Fragment {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
                 cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-//                SnackbarManager.show(
-//                        Snackbar.with(getActivity())
-//                                .text(getString(R.string.favorite_remove))
-//                                .actionLabel(getString(R.string.snackbar_remove))
-//                                .actionListener(new ActionClickListener() {
-//                                    @Override
-//                                    public void onActionClicked(Snackbar snackbar) {
-//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                        String sql = "UPDATE ELENCO" +
-//                                                "  SET favourite = 0" +
-//                                                "  WHERE titolo =  '" + cantoDaCanc + "'";
-//                                        db.execSQL(sql);
-//                                        db.close();
-//                                        // updateFavouritesList();
-//                                        titoli.remove(posizDaCanc);
-//                                        cantoAdapter.notifyItemRemoved(posizDaCanc);
-//                                        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-////                                        View noResults = rootView.findViewById(R.id.no_favourites);
-////                                        TextView hintRemove = (TextView) rootView.findViewById(R.id.hint_remove);
-////                                        if (titoli.size() > 0) {
-////                                            noResults.setVisibility(View.GONE);
-////                                            hintRemove.setVisibility(View.VISIBLE);
-////                                        }
-////                                        else	{
-////                                            noResults.setVisibility(View.VISIBLE);
-////                                            hintRemove.setVisibility(View.GONE);
-////                                        }
-//                                        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-//                                    }
-//                                })
-//                                .actionColor(getThemeUtils().accentColor())
-//                        , getActivity());
                 Snackbar.make(rootView, R.string.favorite_remove, Snackbar.LENGTH_LONG)
                         .setAction(R.string.snackbar_remove, new View.OnClickListener() {
                             @Override
@@ -269,12 +224,6 @@ public class FavouritesActivity extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-    }
-
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
     }
 
     private ThemeUtils getThemeUtils() {
