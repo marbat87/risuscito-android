@@ -14,12 +14,11 @@
         <item name="colorAccent">@color/theme_accent</item>
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
-        <!--<item name="colorControlActivated">#000</item>-->
+        <!--<item name="colorControlActivated">#12000000</item>-->
 
         <!-- The rest of your attributes -->
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
-        <item name="customSelectorTab">@drawable/custom_tab_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
         <!--<item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>-->
