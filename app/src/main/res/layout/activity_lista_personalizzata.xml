@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<!--<com.github.ksoichiro.android.observablescrollview.ObservableScrollView-->
+<!--android:id="@+id/personalizzataScrollView"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:overScrollMode="never"-->
+<!--android:orientation="vertical">-->
+
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/personalizzataScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
-        android:id="@+id/personalizzataScrollView"
+    <LinearLayout
+        android:id="@+id/listaScroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/listaScroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
-
-    <!--<com.melnykov.fab.FloatingActionButton-->
-        <!--android:id="@+id/fab_personalizzata"-->
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+    
+    <!--<Button-->
+        <!--android:id="@+id/button_pulisci"-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_margin="@dimen/floating_margin_lateral"-->
-        <!--android:src="@drawable/ic_icon_broom"-->
-        <!--risuscito:fab_colorNormal="@color/theme_accent"-->
-        <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
-        <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
+        <!--android:visibility="gone"-->
+        <!--android:soundEffectsEnabled="false" />-->
 
-    <Button
-        android:id="@+id/button_pulisci"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:soundEffectsEnabled="false" />
+</android.support.v4.widget.NestedScrollView>
 
+    <!--</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>-->
 
-</FrameLayout>
+    <!--<com.melnykov.fab.FloatingActionButton-->
+    <!--android:id="@+id/fab_personalizzata"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_margin="@dimen/floating_margin_lateral"-->
+    <!--android:src="@drawable/ic_icon_broom"-->
+    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
+    <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
+    <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
+
+    <!--</FrameLayout>-->

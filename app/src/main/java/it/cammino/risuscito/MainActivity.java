@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,14 +14,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,8 +32,8 @@ import it.cammino.risuscito.utils.ColorChooserDialog;
 
 public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
 
-    private DrawerLayout mDrawerLayout;
-    private Toolbar mActionBarToolbar;
+    public DrawerLayout mDrawerLayout;
+//    private Toolbar mActionBarToolbar;
 
     // list of navdrawer items that were actually added to the navdrawer, in order
     private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
@@ -111,10 +107,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             (new TranslationTask()).execute();
         }
 
-        mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        mActionBarToolbar.setTitle("");
-        setSupportActionBar(mActionBarToolbar);
+//        mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+//        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//        mActionBarToolbar.setTitle("");
+//        setSupportActionBar(mActionBarToolbar);
 
         setupNavDrawer();
 
@@ -176,15 +172,15 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
 //
-        if (mActionBarToolbar != null) {
-            mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            });
-        }
+//        if (mActionBarToolbar != null) {
+//            mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+//            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                }
+//            });
+//        }
 //
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 //
@@ -647,6 +643,23 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             }
             catch (IllegalArgumentException e) {}
         }
+    }
+
+    public void setupToolbar(View toolbar, int titleResId) {
+
+        Toolbar mActionToolbar = (Toolbar) toolbar;
+        setSupportActionBar(mActionToolbar);
+        mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        getSupportActionBar().setTitle("");
+        ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
     }
 
 }

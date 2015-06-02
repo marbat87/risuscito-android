@@ -5,64 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<it.cammino.risuscito.ui.SlidingTabLayout-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:id="@+id/sliding_tabs"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:elevation="@dimen/toolbar_elevation" />-->
-    <!--<com.rey.material.widget.TabPageIndicator-->
-    <!--style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"-->
-    <!--android:id="@+id/sliding_tabs"-->
-    <!--android:layout_height="48dip"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:elevation="@dimen/toolbar_elevation" />-->
-    <!--<io.karim.MaterialTabs-->
-    <!--android:id="@+id/material_tabs"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--risuscito:mtSameWeightTabs="false"-->
-    <!--risuscito:mtTextColorSelected="@android:color/white"-->
-    <!--android:textColor="#99FFFFFF"-->
-    <!--risuscito:mtMrlRippleColor="?attr/colorAccent"-->
-    <!--android:elevation="@dimen/toolbar_elevation"-->
-    <!--risuscito:mtMrlRippleDuration="500"-->
-    <!--risuscito:mtIndicatorColor="?attr/colorAccent"-->
-    <!--risuscito:mtIndicatorHeight="2dp"-->
-    <!--risuscito:mtPaddingMiddle="false" />-->
-    <android.support.design.widget.TabLayout
-        android:layout_height="48dp"
-        android:layout_width="match_parent"
-        android:id="@+id/material_tabs"
-        style="@style/Widget.Design.TabLayout.Risuscito"
-        android:elevation="@dimen/toolbar_elevation" />
+    <include layout="@layout/risuscito_toolbar" />
 
-    <!--<FrameLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_marginTop="48dip">-->
-
-    <android.support.v4.view.ViewPager
-        android:layout_gravity="top"
-        android:id="@+id/view_pager"
-        android:layout_marginTop="48dip"
+    <FrameLayout
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <!--<it.cammino.risuscito.ui.CustomViewPager-->
-    <!--android:layout_gravity="top"-->
-    <!--android:id="@+id/view_pager"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_marginTop="48dip" />-->
+        android:layout_height="match_parent">
 
-    <View
-        android:layout_gravity="top"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_marginTop="48dip"
-        android:background="?toolbar_shadow" />
+        <android.support.design.widget.TabLayout
+            android:layout_height="48dp"
+            android:layout_width="match_parent"
+            android:id="@+id/material_tabs"
+            style="@style/Widget.Design.TabLayout.Risuscito"
+            android:elevation="@dimen/toolbar_elevation" />
+
+        <android.support.v4.view.ViewPager
+            android:layout_gravity="top"
+            android:id="@+id/view_pager"
+            android:layout_marginTop="48dip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="48dip"
+            android:background="?toolbar_shadow" />
+
+    </FrameLayout>
 
     <View
         android:id="@+id/outerFrame"
@@ -72,75 +43,6 @@
         android:background="@android:color/transparent"
         tools:ignore="RtlSymmetry"
         android:elevation="@dimen/toolbar_elevation" />
-
-    <!--<com.melnykov.fab.FloatingActionButton-->
-    <!--android:id="@+id/fab_pager"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--android:layout_margin="@dimen/floating_margin_lateral"-->
-    <!--android:src="@drawable/ic_icon_broom"-->
-    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
-    <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
-    <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
-
-    <!--<com.getbase.floatingactionbutton.FloatingActionsMenu-->
-    <!--android:id="@+id/fab_pager"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--risuscito:fab_labelStyle="@style/menu_labels_style"-->
-    <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
-    <!--android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"-->
-    <!--android:elevation="8dp">-->
-
-    <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-    <!--android:id="@+id/fab_add_lista"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--risuscito:fab_title="@string/action_add_list"-->
-    <!--risuscito:fab_icon="@drawable/ic_add_white_24dp"-->
-    <!--risuscito:fab_size="mini" />-->
-
-    <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-    <!--android:id="@+id/fab_pulisci"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--risuscito:fab_title="@string/button_clean_list"-->
-    <!--risuscito:fab_icon="@drawable/ic_icon_broom"-->
-    <!--risuscito:fab_size="mini" />-->
-
-    <!--</com.getbase.floatingactionbutton.FloatingActionsMenu>-->
-
-    <!--<com.github.clans.fab.FloatingActionMenu-->
-    <!--android:id="@+id/fab_pager"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
-    <!--android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"-->
-    <!--android:elevation="@dimen/toolbar_elevation"-->
-    <!--risuscito:menu_colorNormal="@color/theme_accent"-->
-    <!--risuscito:menu_colorPressed="@color/theme_accent_dark"-->
-    <!--risuscito:menu_colorRipple="@color/theme_accent_dark">-->
-
-    <!--<com.github.clans.fab.FloatingActionButton-->
-    <!--android:id="@+id/fab_add_lista"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/ic_add_white_24dp"-->
-    <!--risuscito:fab_label="@string/action_add_list"-->
-    <!--style="@style/MenuButtonsSmall" />-->
-
-    <!--<com.github.clans.fab.FloatingActionButton-->
-    <!--android:id="@+id/fab_pulisci"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/ic_icon_broom"-->
-    <!--risuscito:fab_label="@string/button_clean_list"-->
-    <!--style="@style/MenuButtonsSmall" />-->
-
-    <!--</com.github.clans.fab.FloatingActionMenu>-->
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fab_pager"
@@ -197,7 +99,5 @@
             risuscito:fab_size="mini" />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-    <!--</FrameLayout>-->
 
 </FrameLayout>

@@ -26,7 +26,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -63,8 +62,9 @@ public class CustomLists extends Fragment  {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
 //        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_custom_lists);
-        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_custom_lists);
-        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
+//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_custom_lists);
+//        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -468,7 +468,7 @@ public class CustomLists extends Fragment  {
 //                                })
 //                                .actionColor(getThemeUtils().accentColor())
 //                        , getActivity());
-                Snackbar.make(rootView, getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?", Snackbar.LENGTH_LONG)
+                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?", Snackbar.LENGTH_LONG)
                         .setAction(R.string.snackbar_remove, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {

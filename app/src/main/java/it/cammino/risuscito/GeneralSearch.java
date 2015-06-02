@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -25,8 +24,9 @@ public class GeneralSearch extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
 //		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_search);
-		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_search);
-		((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
+//		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_search);
+//		((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
+		((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
 
 		ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
 		mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));

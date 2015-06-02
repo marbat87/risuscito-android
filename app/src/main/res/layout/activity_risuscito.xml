@@ -4,8 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/risuscito_toolbar" />
+
     <ImageView
         android:id="@+id/imageView1"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/copertina"
@@ -14,6 +17,8 @@
         android:src="@drawable/copertina_border" />
 
     <View
+        android:layout_gravity="top"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />

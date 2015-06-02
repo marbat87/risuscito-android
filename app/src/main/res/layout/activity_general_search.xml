@@ -5,33 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<it.cammino.risuscito.ui.SlidingTabLayout-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:id="@+id/sliding_tabs"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:elevation="@dimen/toolbar_elevation" />-->
-    <!--<com.rey.material.widget.TabPageIndicator-->
-    <!--style="@style/Material.Widget.TabPageIndicator.Light.Risuscito"-->
-    <!--android:id="@+id/sliding_tabs"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:elevation="@dimen/toolbar_elevation" />-->
-    <!--<io.karim.MaterialTabs-->
-    <!--android:id="@+id/material_tabs"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--risuscito:mtSameWeightTabs="false"-->
-    <!--risuscito:mtTextColorSelected="@android:color/white"-->
-    <!--android:textColor="#99FFFFFF"-->
-    <!--risuscito:mtMrlRippleColor="?attr/colorAccent"-->
-    <!--android:elevation="@dimen/toolbar_elevation"-->
-    <!--risuscito:mtMrlRippleDuration="500"-->
-    <!--risuscito:mtIndicatorColor="?attr/colorAccent"-->
-    <!--risuscito:mtIndicatorHeight="2dp"-->
-    <!--risuscito:mtPaddingMiddle="false" />-->
+    <include layout="@layout/risuscito_toolbar" />
+
     <android.support.design.widget.TabLayout
         android:layout_height="48dp"
         android:layout_width="match_parent"
@@ -48,10 +23,6 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <!--<it.cammino.risuscito.ui.CustomViewPager-->
-        <!--android:id="@+id/view_pager"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
 
         <View
             android:layout_width="match_parent"

@@ -9,6 +9,7 @@
     risuscito:contentInsetStart="72dp"
     android:layout_width="match_parent"
     android:background="?attr/colorPrimary"
+    risuscito:layout_scrollFlags="scroll|enterAlways"
     android:elevation="@dimen/toolbar_elevation">
 
     <TextView

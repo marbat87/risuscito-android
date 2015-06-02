@@ -23,9 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.Locale;
 
@@ -113,42 +110,42 @@ public class ListaPersonalizzataFragment extends Fragment {
 //			}
 //		});
 
-		rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-//				Log.i(getClass().toString(), "idLista: " + idLista);
-				db = listaCanti.getReadableDatabase();
-				ContentValues  values = new  ContentValues( );
-				for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-					listaPersonalizzata.removeCanto(i);
-				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-				db.update("LISTE_PERS", values, "_id = " + idLista, null);
-				db.close();
-				updateLista();
-				mShareActionProvider.setShareIntent(getDefaultIntent());
-			}
-		});
+//		rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View view) {
+////				Log.i(getClass().toString(), "idLista: " + idLista);
+//				db = listaCanti.getReadableDatabase();
+//				ContentValues  values = new  ContentValues( );
+//				for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+//					listaPersonalizzata.removeCanto(i);
+//				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+//				db.update("LISTE_PERS", values, "_id = " + idLista, null);
+//				db.close();
+//				updateLista();
+//				mShareActionProvider.setShareIntent(getDefaultIntent());
+//			}
+//		});
 
-		((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-			@Override
-			public void onScrollChanged(int i, boolean b, boolean b1) {}
-
-			@Override
-			public void onDownMotionEvent() {}
-
-			@Override
-			public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-				FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-//                Log.i(getClass().toString(), "scrollState: " + scrollState);
-				if (scrollState == ScrollState.UP) {
-					if (fab1.isVisible())
-						fab1.hide();
-				} else if (scrollState == ScrollState.DOWN) {
-					if (!fab1.isVisible())
-						fab1.show();
-				}
-			}
-		});
+//		((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+//			@Override
+//			public void onScrollChanged(int i, boolean b, boolean b1) {}
+//
+//			@Override
+//			public void onDownMotionEvent() {}
+//
+//			@Override
+//			public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+//				FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
+////                Log.i(getClass().toString(), "scrollState: " + scrollState);
+//				if (scrollState == ScrollState.UP) {
+//					if (fab1.isVisible())
+//						fab1.hide();
+//				} else if (scrollState == ScrollState.DOWN) {
+//					if (!fab1.isVisible())
+//						fab1.show();
+//				}
+//			}
+//		});
 
 //		setHasOptionsMenu(true);
 
@@ -412,6 +409,23 @@ public class ListaPersonalizzataFragment extends Fragment {
 			linLayout.addView(view);
 		}
 
+		View view = getActivity().getLayoutInflater().inflate(R.layout.lista_pers_button, linLayout, true);
+		rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+//				Log.i(getClass().toString(), "idLista: " + idLista);
+				db = listaCanti.getReadableDatabase();
+				ContentValues  values = new  ContentValues( );
+				for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+					listaPersonalizzata.removeCanto(i);
+				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+				db.update("LISTE_PERS", values, "_id = " + idLista, null);
+				db.close();
+				updateLista();
+				mShareActionProvider.setShareIntent(getDefaultIntent());
+			}
+		});
+
 	}
 
 	private String getTitlesList() {
@@ -501,7 +515,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 //						})
 //						.actionColor(getThemeUtils().accentColor())
 //				, getActivity());
-		Snackbar.make(rootView, R.string.list_remove, Snackbar.LENGTH_LONG)
+		Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)
 				.setAction(R.string.snackbar_remove, new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {

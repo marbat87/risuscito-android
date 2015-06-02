@@ -23,9 +23,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.Locale;
 
@@ -124,26 +121,26 @@ public class CantiParolaFragment extends Fragment {
             }
         });
 
-        ((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {}
-
-            @Override
-            public void onDownMotionEvent() {}
-
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-//                Log.i(getClass().toString(), "scrollState: " + scrollState);
-                if (scrollState == ScrollState.UP) {
-                    if (fab1.isVisible())
-                        fab1.hide();
-                } else if (scrollState == ScrollState.DOWN) {
-                    if (!fab1.isVisible())
-                        fab1.show();
-                }
-            }
-        });
+//        ((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+//            @Override
+//            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {}
+//
+//            @Override
+//            public void onDownMotionEvent() {}
+//
+//            @Override
+//            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+//                FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
+////                Log.i(getClass().toString(), "scrollState: " + scrollState);
+//                if (scrollState == ScrollState.UP) {
+//                    if (fab1.isVisible())
+//                        fab1.hide();
+//                } else if (scrollState == ScrollState.DOWN) {
+//                    if (!fab1.isVisible())
+//                        fab1.show();
+//                }
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -824,7 +821,7 @@ public class CantiParolaFragment extends Fragment {
 //                        })
 //                        .actionColor(getThemeUtils().accentColor())
 //                , getActivity());
-        Snackbar.make(rootView, R.string.list_remove, Snackbar.LENGTH_LONG)
+        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)
                 .setAction(R.string.snackbar_remove, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

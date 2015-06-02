@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
@@ -14,12 +15,20 @@ import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
@@ -30,6 +39,9 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
+import java.util.List;
+
+@CoordinatorLayout.DefaultBehavior(FloatingActionsMenu.Behavior.class)
 public class FloatingActionsMenu extends ViewGroup {
 
     public static final int EXPAND_UP = 0;
@@ -769,5 +781,151 @@ public class FloatingActionsMenu extends ViewGroup {
 
     private boolean hasHoneycombApi() {
         return Build.VERSION.SDK_INT >= 11;
+    }
+
+    public static class Behavior extends android.support.design.widget.CoordinatorLayout.Behavior<FloatingActionsMenu> {
+        private static final boolean SNACKBAR_BEHAVIOR_ENABLED;
+        private Rect mTmpRect;
+        private boolean mIsAnimatingOut;
+        private float mTranslationY;
+
+        public Behavior() {
+        }
+
+        public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
+            return (SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout)
+                    || dependency instanceof AppBarLayout;
+        }
+
+        public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
+            Log.i(getClass().toString(), "ENTRO");
+            if(dependency instanceof Snackbar.SnackbarLayout) {
+                this.updateFabTranslationForSnackbar(parent, child, dependency);
+            } else if(dependency instanceof AppBarLayout) {
+                AppBarLayout appBarLayout = (AppBarLayout)dependency;
+                if(this.mTmpRect == null) {
+                    this.mTmpRect = new Rect();
+                }
+
+                Rect rect = this.mTmpRect;
+                ButtonGroupUtils.getDescendantRect(parent, dependency, rect);
+//                int topInset = this.mLastInsets != null?this.mLastInsets.getSystemWindowInsetTop():0;
+                int topInset = 0;
+                int result;
+                int minHeight = ViewCompat.getMinimumHeight(appBarLayout);
+                if(minHeight != 0) {
+                    result = minHeight * 2 + topInset;
+                } else {
+                    int childCount = appBarLayout.getChildCount();
+                    result = childCount >= 1?ViewCompat.getMinimumHeight(appBarLayout.getChildAt(childCount - 1)) * 2 + topInset:0;
+                }
+//                if(rect.bottom <= appBarLayout.getMinimumHeightForVisibleOverlappingContent()) {
+                if(rect.bottom <= result) {
+                    if(!this.mIsAnimatingOut && child.getVisibility() == VISIBLE) {
+                        this.animateOut(child);
+                    }
+                } else if(child.getVisibility() != VISIBLE) {
+                    this.animateIn(child);
+                }
+            }
+
+            return false;
+        }
+
+        private void updateFabTranslationForSnackbar(CoordinatorLayout parent, FloatingActionsMenu fab, View snackbar) {
+            float translationY = this.getFabTranslationYForSnackbar(parent, fab);
+            if(translationY != this.mTranslationY) {
+                ViewCompat.animate(fab).cancel();
+                if(Math.abs(translationY - this.mTranslationY) == (float)snackbar.getHeight()) {
+                    ViewCompat.animate(fab).translationY(translationY).setInterpolator(new FastOutSlowInInterpolator()).setListener((ViewPropertyAnimatorListener)null);
+                } else {
+                    ViewCompat.setTranslationY(fab, translationY);
+                }
+
+                this.mTranslationY = translationY;
+            }
+
+        }
+
+        private float getFabTranslationYForSnackbar(CoordinatorLayout parent, FloatingActionsMenu fab) {
+            float minOffset = 0.0F;
+            List dependencies = parent.getDependencies(fab);
+            int i = 0;
+
+            for(int z = dependencies.size(); i < z; ++i) {
+                View view = (View)dependencies.get(i);
+                if(view instanceof Snackbar.SnackbarLayout && parent.doViewsOverlap(fab, view)) {
+                    minOffset = Math.min(minOffset, ViewCompat.getTranslationY(view) - (float)view.getHeight());
+                }
+            }
+
+            return minOffset;
+        }
+
+        private void animateIn(FloatingActionsMenu button) {
+            button.setVisibility(VISIBLE);
+            if(Build.VERSION.SDK_INT >= 14) {
+                ViewCompat.animate(button).scaleX(1.0F).scaleY(1.0F).alpha(1.0F).setInterpolator(new FastOutSlowInInterpolator()).withLayer().setListener((ViewPropertyAnimatorListener)null).start();
+            } else {
+                Animation anim = android.view.animation.AnimationUtils.loadAnimation(button.getContext(), R.anim.fab_in);
+                anim.setDuration(200L);
+                anim.setInterpolator(new FastOutSlowInInterpolator());
+                button.startAnimation(anim);
+            }
+
+        }
+
+        private void animateOut(final FloatingActionsMenu button) {
+            if(Build.VERSION.SDK_INT >= 14) {
+                ViewCompat.animate(button).scaleX(0.0F).scaleY(0.0F).alpha(0.0F).setInterpolator(new FastOutSlowInInterpolator()).withLayer().setListener(new ViewPropertyAnimatorListener() {
+                    public void onAnimationStart(View view) {
+                        Behavior.this.mIsAnimatingOut = true;
+                    }
+
+                    public void onAnimationCancel(View view) {
+                        Behavior.this.mIsAnimatingOut = false;
+                    }
+
+                    public void onAnimationEnd(View view) {
+                        Behavior.this.mIsAnimatingOut = false;
+                        view.setVisibility(GONE);
+                    }
+                }).start();
+            } else {
+                Animation anim = android.view.animation.AnimationUtils.loadAnimation(button.getContext(), R.anim.fab_out);
+                anim.setInterpolator(new FastOutSlowInInterpolator());
+                anim.setDuration(200L);
+                anim.setAnimationListener(new AnimationListenerAdapter() {
+                    public void onAnimationStart(Animation animation) {
+                        Behavior.this.mIsAnimatingOut = true;
+                    }
+
+                    public void onAnimationEnd(Animation animation) {
+                        Behavior.this.mIsAnimatingOut = false;
+                        button.setVisibility(GONE);
+                    }
+                });
+                button.startAnimation(anim);
+            }
+
+        }
+
+        static {
+            SNACKBAR_BEHAVIOR_ENABLED = Build.VERSION.SDK_INT >= 11;
+        }
+    }
+
+    static class AnimationListenerAdapter implements Animation.AnimationListener {
+        AnimationListenerAdapter() {
+        }
+
+        public void onAnimationStart(Animation animation) {
+        }
+
+        public void onAnimationEnd(Animation animation) {
+        }
+
+        public void onAnimationRepeat(Animation animation) {
+        }
     }
 }
