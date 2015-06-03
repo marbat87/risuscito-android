@@ -1,5 +1,8 @@
 package it.cammino.risuscito;
 
+import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,6 +16,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +45,8 @@ public class FavouritesActivity extends Fragment {
     private View rootView;
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
+    private int prevOrientation;
+    private FloatingActionButton fabClear;
 
     private String PREFERITI_OPEN = "preferiti_open";
 
@@ -57,6 +67,56 @@ public class FavouritesActivity extends Fragment {
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
+
+        fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
+        fabClear.setColorNormal(getThemeUtils().accentColor());
+        fabClear.setColorPressed(getThemeUtils().accentColorDark());
+        fabClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prevOrientation = getActivity().getRequestedOrientation();
+                Utility.blockOrientation(getActivity());
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_reset_favorites_title)
+                        .content(R.string.dialog_reset_favorites_desc)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                ContentValues  values = new  ContentValues();
+                                values.put("favourite" , 0);
+                                db.update("ELENCO", values,  null, null);
+                                db.close();
+                                updateFavouritesList();
+//                                if (titoli.size() == 0)
+//                                    fabClear.hide();
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            getActivity().setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+            }
+        });
 
         if(!PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
@@ -140,6 +200,12 @@ public class FavouritesActivity extends Fragment {
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
         rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
+        if (total == 0) {
+            fabClear.hide();
+            fabClear.setmIgnoreLayoutChanges(true);
+        }
+        else
+            fabClear.setmIgnoreLayoutChanges(false);
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<CantoItem>();
@@ -194,19 +260,26 @@ public class FavouritesActivity extends Fragment {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
                 cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-                Snackbar.make(rootView, R.string.favorite_remove, Snackbar.LENGTH_LONG)
+                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_remove, Snackbar.LENGTH_LONG)
                         .setAction(R.string.snackbar_remove, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                String sql = "UPDATE ELENCO" +
-                                        "  SET favourite = 0" +
-                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
-                                db.execSQL(sql);
+                                ContentValues values = new ContentValues();
+                                values.put("favourite", 0);
+                                db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+//                                String sql = "UPDATE ELENCO" +
+//                                        "  SET favourite = 0" +
+//                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
+//                                db.execSQL(sql);
                                 db.close();
                                 titoli.remove(posizDaCanc);
                                 cantoAdapter.notifyItemRemoved(posizDaCanc);
                                 rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                                if (titoli.size() == 0) {
+                                    fabClear.hide();
+                                    fabClear.setmIgnoreLayoutChanges(true);
+                                }
                             }
                         })
                         .setActionTextColor(getThemeUtils().accentColor())
@@ -223,6 +296,29 @@ public class FavouritesActivity extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        //decide se mostrare o nascondere il floatin button in base allo scrolling
+        /*
+            SERVE SOLO PRIMA DELLE API 21, PERCHE' NON C'E' IL TOOLBARLAYOUT
+        */
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    float y = recyclerView.getScrollY();
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (y < dy) {
+                        if (titoli.size() > 0)
+                            fabClear.hide();
+                    } else {
+                        if (titoli.size() > 0)
+                            fabClear.show();
+                    }
+                }
+
+            });
+        }
 
     }
 

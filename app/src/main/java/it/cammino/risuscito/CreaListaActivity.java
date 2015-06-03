@@ -724,7 +724,7 @@ public class CreaListaActivity extends ThemeableActivity {
 
 		SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-		ContentValues  values = new  ContentValues( );
+		ContentValues  values = new  ContentValues();
 		values.put("titolo_lista" , titoloLista);
 		values.put("lista" , ListaPersonalizzata.serializeObject(celebrazione));
 

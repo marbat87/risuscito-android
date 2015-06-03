@@ -59,12 +59,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
-
     </FrameLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
@@ -77,13 +71,5 @@
         android:layout_gravity="bottom|end"
         android:layout_marginRight="@dimen/floating_margin_lateral"
         android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow" />
-
-    <!--<View-->
-    <!--android:layout_gravity="top"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="5dp"-->
-    <!--android:background="?toolbar_shadow" />-->
-
-    <!--</FrameLayout>-->
 
 </android.support.design.widget.CoordinatorLayout>

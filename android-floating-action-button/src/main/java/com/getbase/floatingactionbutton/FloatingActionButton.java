@@ -77,6 +77,7 @@ public class FloatingActionButton extends ImageButton {
     private int mDrawableSize;
     boolean mStrokeVisible;
     private boolean mVisible;
+    private boolean mIgnoreLayoutChanges;
 
     public FloatingActionButton(Context context) {
         this(context, null);
@@ -110,6 +111,7 @@ public class FloatingActionButton extends ImageButton {
 
         updateBackground();
         mVisible = true;
+        mIgnoreLayoutChanges = false;
     }
 
     public void show() {
@@ -351,6 +353,14 @@ public class FloatingActionButton extends ImageButton {
         return mTitle;
     }
 
+    public boolean ismIgnoreLayoutChanges() {
+        return mIgnoreLayoutChanges;
+    }
+
+    public void setmIgnoreLayoutChanges(boolean mIgnoreLayoutChanges) {
+        this.mIgnoreLayoutChanges = mIgnoreLayoutChanges;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -568,7 +578,7 @@ public class FloatingActionButton extends ImageButton {
 
         public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
             return (SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout)
-                    || dependency instanceof AppBarLayout;
+                    || (dependency instanceof AppBarLayout && !child.mIgnoreLayoutChanges);
         }
 
         public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child, View dependency) {

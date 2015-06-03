@@ -93,8 +93,8 @@ public class HistoryFragment extends Fragment {
                                 db.delete("CRONOLOGIA", null, null);
                                 db.close();
                                 updateHistoryList();
-                                if (titoli.size() == 0)
-                                    fabClear.hide();
+//                                if (titoli.size() == 0)
+//                                    fabClear.hide();
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
 
@@ -206,8 +206,10 @@ public class HistoryFragment extends Fragment {
         rootView.findViewById(R.id.no_history).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
         if (total == 0) {
             fabClear.hide();
+            fabClear.setmIgnoreLayoutChanges(true);
         }
-
+        else
+            fabClear.setmIgnoreLayoutChanges(false);
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
@@ -281,8 +283,10 @@ public class HistoryFragment extends Fragment {
                                 cantoAdapter.notifyItemRemoved(posizDaCanc);
                                 //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
                                 rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                                if (titoli.size() == 0)
+                                if (titoli.size() == 0) {
                                     fabClear.hide();
+                                    fabClear.setmIgnoreLayoutChanges(true);
+                                }
                             }
                         })
                         .setActionTextColor(getThemeUtils().accentColor())
@@ -301,29 +305,34 @@ public class HistoryFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         //decide se mostrare o nascondere il floatin button in base allo scrolling
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                float y = recyclerView.getScrollY();
-                super.onScrolled(recyclerView, dx, dy);
-                if (y < dy) {
-                    if (titoli.size() > 0)
-                        fabClear.hide();
-                } else {
-                    if (titoli.size() > 0)
-                        fabClear.show();
+        /*
+            SERVE SOLO PRIMA DELLE API 21, PERCHE' NON C'E' IL TOOLBARLAYOUT
+        */
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    float y = recyclerView.getScrollY();
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (y < dy) {
+                        if (titoli.size() > 0)
+                            fabClear.hide();
+                    } else {
+                        if (titoli.size() > 0)
+                            fabClear.show();
+                    }
                 }
-            }
 
-        });
+            });
+        }
 
     }
 
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
+//    private int dpToPx(int dp) {
+//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//        return px;
+//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
