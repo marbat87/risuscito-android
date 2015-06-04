@@ -577,8 +577,8 @@ public class FloatingActionButton extends ImageButton {
         }
 
         public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-            return (SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout)
-                    || (dependency instanceof AppBarLayout && !child.mIgnoreLayoutChanges);
+            return !child.mIgnoreLayoutChanges && ((SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout)
+                    || dependency instanceof AppBarLayout);
         }
 
         public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child, View dependency) {

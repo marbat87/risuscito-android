@@ -1,11 +1,15 @@
 package it.cammino.risuscito.adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import it.cammino.risuscito.R;
@@ -21,19 +25,10 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
     private View.OnCreateContextMenuListener createContextMenuListener;
+    private Activity context;
 
     // Adapter constructor 1
-    public CantoHistoryRecyclerAdapter(List<CantoHistory> dataItems
-            , View.OnClickListener clickListener) {
-
-        this.dataItems = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = null;
-        createContextMenuListener = null;
-    }
-
-    // Adapter constructor 2
-    public CantoHistoryRecyclerAdapter(List<CantoHistory> dataItems
+    public CantoHistoryRecyclerAdapter(Activity activity, List<CantoHistory> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
 
@@ -41,17 +36,7 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
         this.createContextMenuListener = null;
-    }
-
-    // Adapter constructor 3
-    public CantoHistoryRecyclerAdapter(List<CantoHistory> dataItems
-            , View.OnClickListener clickListener
-            , View.OnCreateContextMenuListener createContextMenuListener) {
-
-        this.dataItems = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = null;
-        this.createContextMenuListener = createContextMenuListener;
+        this.context = activity;
     }
 
     @Override
@@ -73,8 +58,30 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoTitle.setText(dataItem.getTitolo());
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.idCanto.setText(String.valueOf(dataItem.getIdCanto()));
+
+        //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+        DateFormat df = DateFormat.getDateTimeInstance(
+                DateFormat.SHORT
+                , DateFormat.MEDIUM
+                , context.getResources().getConfiguration().locale);
+        String timestamp = "";
+
+        if (df instanceof SimpleDateFormat)
+        {
+//                Log.i(getClass().toString(), "is Simple");
+            SimpleDateFormat sdf = (SimpleDateFormat) df;
+            // To show Locale specific short date expression with full year
+            String pattern = sdf.toPattern().replaceAll("y+","yyyy");
+            sdf.applyPattern(pattern);
+            timestamp = sdf.format(Timestamp.valueOf(dataItem.getTimestamp()));
+        }
+        else {
+//                Log.i(getClass().toString(), "is NOT Simple");
+            timestamp = df.format(Timestamp.valueOf(dataItem.getTimestamp()));
+        }
+        cantoHolder.timestamp.setText(context.getString(R.string.last_open_date) + " " + timestamp);
+
         cantoHolder.sourceCanto.setText(dataItem.getSource());
-        cantoHolder.timestamp.setText(dataItem.getTimestamp());
 
         if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);

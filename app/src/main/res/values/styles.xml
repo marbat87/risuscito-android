@@ -4,6 +4,7 @@
     <style name="ActionBarThemeOverlay" parent="">
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#3fff</item>
+        <item name="android:textColorPrimary">@color/icon_ative_black</item>
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -111,12 +112,6 @@
     <style name="Widget.Design.NavigationView.Risuscito">
         <item name="android:background">@color/navdrawer_background</item>
         <item name="colorControlHighlight">#12000000</item>
-        <item name="android:textAppearance">@style/TextAppearanceNavigation</item>
-    </style>
-
-    <style name="TextAppearanceNavigation">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

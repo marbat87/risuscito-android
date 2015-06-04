@@ -7,16 +7,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,11 +44,13 @@ public class FavouritesActivity extends Fragment {
     private List<CantoItem> titoli;
     private String cantoDaCanc;
     private int posizDaCanc;
+    private CantoItem removedItem;
     private View rootView;
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
     private int prevOrientation;
     private FloatingActionButton fabClear;
+    private ActionMode mMode;
 
     private String PREFERITI_OPEN = "preferiti_open";
 
@@ -67,6 +71,7 @@ public class FavouritesActivity extends Fragment {
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
+        mMode = null;
 
         fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
         fabClear.setColorNormal(getThemeUtils().accentColor());
@@ -260,30 +265,36 @@ public class FavouritesActivity extends Fragment {
                 cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
                 cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_remove, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                ContentValues values = new ContentValues();
-                                values.put("favourite", 0);
-                                db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
-//                                String sql = "UPDATE ELENCO" +
-//                                        "  SET favourite = 0" +
-//                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
-//                                db.execSQL(sql);
-                                db.close();
-                                titoli.remove(posizDaCanc);
-                                cantoAdapter.notifyItemRemoved(posizDaCanc);
-                                rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                                if (titoli.size() == 0) {
-                                    fabClear.hide();
-                                    fabClear.setmIgnoreLayoutChanges(true);
-                                }
-                            }
-                        })
-                        .setActionTextColor(getThemeUtils().accentColor())
-                        .show();
+//                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_remove, Snackbar.LENGTH_LONG)
+//                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                ContentValues values = new ContentValues();
+//                                values.put("favourite", 0);
+//                                db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+////                                String sql = "UPDATE ELENCO" +
+////                                        "  SET favourite = 0" +
+////                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
+////                                db.execSQL(sql);
+//                                db.close();
+//                                titoli.remove(posizDaCanc);
+//                                cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                                rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                                if (titoli.size() == 0) {
+//                                    fabClear.hide();
+//                                    fabClear.setmIgnoreLayoutChanges(true);
+//                                }
+//                            }
+//                        })
+//                        .setActionTextColor(getThemeUtils().accentColor())
+//                        .show();
+                if (mMode == null)
+                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+                else {
+                    mMode.finish();
+                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+                }
                 return true;
             }
         };
@@ -325,5 +336,75 @@ public class FavouritesActivity extends Fragment {
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
+
+    private final class ModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Create the menu from the xml file
+//            MenuInflater inflater = getActivity().getMenuInflater();
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+            DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // Here, you can checked selected items to adapt available actions
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            if (mode == mMode) {
+                mMode = null;
+            }
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch(item.getItemId()) {
+                case R.id.action_remove_item:
+                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("favourite", 0);
+                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+                    db.close();
+                    removedItem = titoli.remove(posizDaCanc);
+                    cantoAdapter.notifyItemRemoved(posizDaCanc);
+                    rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                    if (titoli.size() == 0) {
+                        fabClear.hide();
+                        fabClear.setmIgnoreLayoutChanges(true);
+                    }
+            }
+            mode.finish();
+            Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_removed, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                            ContentValues values = new ContentValues();
+                            values.put("favourite", 1);
+                            db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+                            db.close();
+                            titoli.add(posizDaCanc, removedItem);
+                            cantoAdapter.notifyItemInserted(posizDaCanc);
+                            rootView.findViewById(R.id.no_favourites).setVisibility(View.INVISIBLE);
+                            fabClear.show();
+                            fabClear.setmIgnoreLayoutChanges(false);
+                        }
+                    })
+                    .setActionTextColor(getThemeUtils().accentColor())
+                    .show();
+            return true;
+        }
+    };
 
 }

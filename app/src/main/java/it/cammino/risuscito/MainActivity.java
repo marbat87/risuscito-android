@@ -36,10 +36,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //    private Toolbar mActionBarToolbar;
 
     // list of navdrawer items that were actually added to the navdrawer, in order
-    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
+//    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
 
     // views that correspond to each navdrawer item, null if not yet created
-    private View[] mNavDrawerItemViews = null;
+//    private View[] mNavDrawerItemViews = null;
 
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
@@ -269,7 +269,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         ColorStateList mIconStateList = new ColorStateList(
                 new int[][]{
                         new int[]{android.R.attr.state_checked}, //1
-                        new int[]{-android.R.attr.state_checked} //2
+                        new int[]{} //2
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
@@ -280,7 +280,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         ColorStateList mTextStateList = new ColorStateList(
                 new int[][]{
                         new int[]{android.R.attr.state_checked}, //1
-                        new int[]{-android.R.attr.state_checked} //2
+                        new int[]{} //2
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
@@ -290,8 +290,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
         mNavigationView.setItemIconTintList(mIconStateList);
         mNavigationView.setItemTextColor(mTextStateList);
-//        mNavigationView.setItemBackgroundResource(R.drawable.selected_navdrawer_item_background);
-//        Log.i(getClass().toString(), mNavigationView.getMenu().getItem(0).getActionView().getClass().toString());
 
     }
 

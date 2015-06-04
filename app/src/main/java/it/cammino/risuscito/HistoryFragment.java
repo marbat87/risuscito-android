@@ -1,17 +1,22 @@
 package it.cammino.risuscito;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -42,13 +47,15 @@ public class HistoryFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoHistory> titoli;
-    private String cantoDaCanc;
+//    private String cantoDaCanc;
     private int posizDaCanc;
+    private CantoHistory removedItem;
     private View rootView;
     private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
     private int prevOrientation;
     private FloatingActionButton fabClear;
+    private ActionMode mMode;
 
     private String HISTORY_OPEN = "history_open";
 
@@ -69,6 +76,7 @@ public class HistoryFragment extends Fragment {
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
+        mMode = null;
 
 //        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
 //        ((TextView) rootView.findViewById(R.id.no_history_text)).setTypeface(face);
@@ -217,32 +225,33 @@ public class HistoryFragment extends Fragment {
         for (int i = 0; i < total; i++) {
 
             //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
-            DateFormat df = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT
-                    , DateFormat.MEDIUM
-                    , getActivity().getResources().getConfiguration().locale);
-            String timestamp = "";
-
-            if (df instanceof SimpleDateFormat)
-            {
-//                Log.i(getClass().toString(), "is Simple");
-                SimpleDateFormat sdf = (SimpleDateFormat) df;
-                // To show Locale specific short date expression with full year
-                String pattern = sdf.toPattern().replaceAll("y+","yyyy");
-                sdf.applyPattern(pattern);
-                timestamp = sdf.format(Timestamp.valueOf(lista.getString(5)));
-            }
-            else {
-//                Log.i(getClass().toString(), "is NOT Simple");
-                timestamp = df.format(Timestamp.valueOf(lista.getString(5)));
-            }
+//            DateFormat df = DateFormat.getDateTimeInstance(
+//                    DateFormat.SHORT
+//                    , DateFormat.MEDIUM
+//                    , getActivity().getResources().getConfiguration().locale);
+//            String timestamp = "";
+//
+//            if (df instanceof SimpleDateFormat)
+//            {
+////                Log.i(getClass().toString(), "is Simple");
+//                SimpleDateFormat sdf = (SimpleDateFormat) df;
+//                // To show Locale specific short date expression with full year
+//                String pattern = sdf.toPattern().replaceAll("y+","yyyy");
+//                sdf.applyPattern(pattern);
+//                timestamp = sdf.format(Timestamp.valueOf(lista.getString(5)));
+//            }
+//            else {
+////                Log.i(getClass().toString(), "is NOT Simple");
+//                timestamp = df.format(Timestamp.valueOf(lista.getString(5)));
+//            }
 //            Log.i(getClass().toString(), "timestamp: " + timestamp);
 
             titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
                     , lista.getInt(0)
                     , lista.getString(4)
 //                            , getString(R.string.last_open_date) + " " + lista.getString(5)));
-                    , getString(R.string.last_open_date) + " " + timestamp));
+//                    , getString(R.string.last_open_date) + " " + timestamp));
+                    , lista.getString(5)));
             lista.moveToNext();
         }
         // chiude il cursore
@@ -270,35 +279,42 @@ public class HistoryFragment extends Fragment {
         View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
+//                cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
-                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_remove, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
-                                db.close();
-                                titoli.remove(posizDaCanc);
-                                cantoAdapter.notifyItemRemoved(posizDaCanc);
-                                //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-                                rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                                if (titoli.size() == 0) {
-                                    fabClear.hide();
-                                    fabClear.setmIgnoreLayoutChanges(true);
-                                }
-                            }
-                        })
-                        .setActionTextColor(getThemeUtils().accentColor())
-                        .show();
+//                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_remove, Snackbar.LENGTH_LONG)
+//                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
+//                                db.close();
+//                                titoli.remove(posizDaCanc);
+//                                cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                                //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
+//                                rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                                if (titoli.size() == 0) {
+//                                    fabClear.hide();
+//                                    fabClear.setmIgnoreLayoutChanges(true);
+//                                }
+//                            }
+//                        })
+//                        .setActionTextColor(getThemeUtils().accentColor())
+//                        .show();
+                if (mMode == null)
+                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+                else {
+                    mMode.finish();
+                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+                }
                 return true;
+
             }
         };
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.history_recycler);
 
         // Creating new adapter object
-        cantoAdapter = new CantoHistoryRecyclerAdapter(titoli, clickListener, longClickListener);
+        cantoAdapter = new CantoHistoryRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -337,5 +353,75 @@ public class HistoryFragment extends Fragment {
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
+
+    private final class ModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Create the menu from the xml file
+//            MenuInflater inflater = getActivity().getMenuInflater();
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+            DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // Here, you can checked selected items to adapt available actions
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            if (mode == mMode) {
+                mMode = null;
+            }
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch(item.getItemId()) {
+                case R.id.action_remove_item:
+                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                    removedItem = titoli.remove(posizDaCanc);
+                    db.delete("CRONOLOGIA", "id_canto = " + removedItem.getIdCanto(), null);
+                    db.close();
+                    cantoAdapter.notifyItemRemoved(posizDaCanc);
+                    rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                    if (titoli.size() == 0) {
+                        fabClear.hide();
+                        fabClear.setmIgnoreLayoutChanges(true);
+                    }
+            }
+            mode.finish();
+            Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_removed, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                            ContentValues values = new ContentValues();
+                            values.put("id_canto", removedItem.getIdCanto());
+                            values.put("ultima_visita", removedItem.getTimestamp());
+                            db.insert("CRONOLOGIA", null, values);
+                            db.close();
+                            titoli.add(posizDaCanc, removedItem);
+                            cantoAdapter.notifyItemInserted(posizDaCanc);
+                            //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
+                            rootView.findViewById(R.id.no_history).setVisibility(View.INVISIBLE);
+                            fabClear.show();
+                            fabClear.setmIgnoreLayoutChanges(false);
+                        }
+                    })
+                    .setActionTextColor(getThemeUtils().accentColor())
+                    .show();
+            return true;
+        }
+    };
 
 }
