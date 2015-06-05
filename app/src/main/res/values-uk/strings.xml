@@ -263,5 +263,11 @@
     <string name="dialog_reset_history_title">Cancella cronologia</string>
     <string name="dialog_reset_history_desc">Vuoi cancellare la cronologia dei canti visualizzati?</string>
     <string name="canto_title_activity">Пісня</string>
+    <string name="dialog_reset_favorites_title">Svuota preferiti</string>
+    <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
+    <string name="action_remove">Rimuovi</string>
+    <string name="history_removed">Rimosso dalla cronologia!</string>
+    <string name="action_switch_to">Scambia con...</string>
+    <string name="song_removed">Canto rimosso!</string>
 
 </resources>

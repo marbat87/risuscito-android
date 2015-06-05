@@ -90,7 +90,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private String pagina;
     private int idCanto;
     private static MediaPlayer mediaPlayer;
-//    private int favoriteFlag;
+    //    private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
     public FloatingActionsMenu mFab; // the floating blue add/paste button
     Slider scroll_speed_bar;
@@ -1090,7 +1090,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 updateFavouriteFlag(v.isSelected() ? 1 : 0);
                 getFab().toggle();
                 Toast.makeText(PaginaRenderActivity.this
-                            , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
+                        , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
                         , Toast.LENGTH_SHORT).show();
             }
         });
@@ -1150,26 +1150,26 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             .content(R.string.dialog_save_tab)
                             .positiveText(R.string.confirm)
                             .negativeText(R.string.dismiss)
-                                    .callback(new MaterialDialog.ButtonCallback() {
-                                        @Override
-                                        public void onPositive(MaterialDialog dialog) {
-                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                            String sql = "UPDATE ELENCO" +
-                                                    "  SET saved_tab = \'" + notaCambio + "\' " +
-                                                    "    , saved_barre = \'" + barreCambio + "\' " +
-                                                    "  WHERE _id =  " + idCanto;
-                                            db.execSQL(sql);
-                                            db.close();
-                                            pulisciVars();
-                                            mLUtils.closeActivityWithTransition();
-                                        }
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                    String sql = "UPDATE ELENCO" +
+                                            "  SET saved_tab = \'" + notaCambio + "\' " +
+                                            "    , saved_barre = \'" + barreCambio + "\' " +
+                                            "  WHERE _id =  " + idCanto;
+                                    db.execSQL(sql);
+                                    db.close();
+                                    pulisciVars();
+                                    mLUtils.closeActivityWithTransition();
+                                }
 
-                                        @Override
-                                        public void onNegative(MaterialDialog dialog) {
-                                            pulisciVars();
-                                            mLUtils.closeActivityWithTransition();
-                                        }
-                                    })
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    pulisciVars();
+                                    mLUtils.closeActivityWithTransition();
+                                }
+                            })
                             .show();
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override

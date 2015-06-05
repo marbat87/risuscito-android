@@ -342,9 +342,8 @@ public class FavouritesActivity extends Fragment {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Create the menu from the xml file
-//            MenuInflater inflater = getActivity().getMenuInflater();
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
             getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
@@ -360,11 +359,10 @@ public class FavouritesActivity extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-            if (mode == mMode) {
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            if (mode == mMode)
                 mMode = null;
-            }
         }
 
         @Override
