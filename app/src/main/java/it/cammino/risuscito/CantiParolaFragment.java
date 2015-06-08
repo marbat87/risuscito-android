@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -59,63 +57,6 @@ public class CantiParolaFragment extends Fragment {
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 //		updateLista();
-
-//		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_parola);
-//        fab.setColorNormal(getThemeUtils().accentColor());
-//        fab.setColorPressed(getThemeUtils().accentColorDark());
-//        fab.setColorRipple(getThemeUtils().accentColorDark());
-//		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.parolaScrollView));
-//		fab.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//                prevOrientation = getActivity().getRequestedOrientation();
-//				Utility.blockOrientation(getActivity());
-////				AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-////                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-////	        			.setMessage(R.string.reset_list_question)
-////	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PAROLA_RESET_OK))
-////	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-////	                    .show();
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_list_title)
-//                        .content(R.string.reset_list_question)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                db = listaCanti.getReadableDatabase();
-//                                String sql = "DELETE FROM CUST_LISTS" +
-//                                        " WHERE _id =  1 ";
-//                                db.execSQL(sql);
-//                                db.close();
-//                                updateLista();
-//                                mShareActionProvider.setShareIntent(getDefaultIntent());
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//			        @Override
-//			        public boolean onKey(DialogInterface arg0, int keyCode,
-//			        		KeyEvent event) {
-//			        	if (keyCode == KeyEvent.KEYCODE_BACK
-//			        			&& event.getAction() == KeyEvent.ACTION_UP) {
-//			        		arg0.dismiss();
-//			        		getActivity().setRequestedOrientation(prevOrientation);
-//			        		return true;
-//			            }
-//			            return false;
-//			        }
-//		        });
-//                dialog.setCancelable(false);
-//			}
-//		});
 
         rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
             @Override
@@ -171,25 +112,6 @@ public class CantiParolaFragment extends Fragment {
             FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
             if (!fab1.isVisible())
                 fab1.show();
-//            FloatingActionMenu fab2 = ((CustomLists) getParentFragment()).getFab2();
-//            if (!fab2.isMenuButtonHidden()) {
-//                fab2.hideMenuButton(false);
-//                fab1.showMenuButton(false);
-//            }
-//            else
-//                fab1.showMenuButton(true);
-//            if (LUtils.hasHoneycomb()) {
-//                if (fab2.isVisible()) {
-//                    fab2.hide(false);
-//                    fab1.show(false);
-//                } else
-//                    fab1.show();
-//
-//            }
-//            else {
-//                fab2.setVisibility(View.GONE);
-//                fab1.setVisibility(View.VISIBLE);
-//            }
         }
     }
 
@@ -780,35 +702,6 @@ public class CantiParolaFragment extends Fragment {
 
         return result;
     }
-
-//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-//        private int clickedCode;
-//
-//        public ButtonClickedListener(int code) {
-//        	clickedCode = code;
-//        }
-//
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            switch (clickedCode) {
-//			case Utility.DISMISS:
-//				getActivity().setRequestedOrientation(prevOrientation);
-//				break;
-//			case Utility.PAROLA_RESET_OK:
-//				db = listaCanti.getReadableDatabase();
-//        		String sql = "DELETE FROM CUST_LISTS" +
-//        				" WHERE _id =  1 ";
-//        		db.execSQL(sql);
-//        		db.close();
-//        		updateLista();
-//        		mShareActionProvider.setShareIntent(getDefaultIntent());
-//        		getActivity().setRequestedOrientation(prevOrientation);
-//			default:
-//				getActivity().setRequestedOrientation(prevOrientation);
-//				break;
-//			}
-//        }
-//    }
 
     public void snackBarRimuoviCanto() {
 //        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)

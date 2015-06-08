@@ -57,81 +57,6 @@ public class ListaPersonalizzataFragment extends Fragment {
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
-//		FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_personalizzata);
-//		fab.setColorNormal(getThemeUtils().accentColor());
-//		fab.setColorPressed(getThemeUtils().accentColorDark());
-//		fab.setColorRipple(getThemeUtils().accentColorDark());
-//		fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
-//		fab.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				prevOrientation = getActivity().getRequestedOrientation();
-//				Utility.blockOrientation(getActivity());
-////                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-////                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-////	        			.setMessage(R.string.reset_list_question)
-////	                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.PERS_RESET_OK))
-////	                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-////	                    .show();
-//				MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//						.title(R.string.dialog_reset_list_title)
-//						.content(R.string.reset_list_question)
-//						.positiveText(R.string.confirm)
-//						.negativeText(R.string.dismiss)
-//						.callback(new MaterialDialog.ButtonCallback() {
-//							@Override
-//							public void onPositive(MaterialDialog dialog) {
-//								db = listaCanti.getReadableDatabase();
-//								ContentValues  values = new  ContentValues( );
-//								for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-//									listaPersonalizzata.removeCanto(i);
-//								values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//								db.update("LISTE_PERS", values, "_id = " + idLista, null);
-//								db.close();
-//								updateLista();
-//								mShareActionProvider.setShareIntent(getDefaultIntent());
-//								getActivity().setRequestedOrientation(prevOrientation);
-//							}
-//
-//							@Override
-//							public void onNegative(MaterialDialog dialog) {
-//								getActivity().setRequestedOrientation(prevOrientation);
-//							}
-//						})
-//						.show();
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//					@Override
-//					public boolean onKey(DialogInterface arg0, int keyCode,
-//										 KeyEvent event) {
-//						if (keyCode == KeyEvent.KEYCODE_BACK
-//								&& event.getAction() == KeyEvent.ACTION_UP) {
-//							arg0.dismiss();
-//							getActivity().setRequestedOrientation(prevOrientation);
-//							return true;
-//						}
-//						return false;
-//					}
-//				});
-//				dialog.setCancelable(false);
-//			}
-//		});
-
-//		rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View view) {
-////				Log.i(getClass().toString(), "idLista: " + idLista);
-//				db = listaCanti.getReadableDatabase();
-//				ContentValues  values = new  ContentValues( );
-//				for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-//					listaPersonalizzata.removeCanto(i);
-//				values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//				db.update("LISTE_PERS", values, "_id = " + idLista, null);
-//				db.close();
-//				updateLista();
-//				mShareActionProvider.setShareIntent(getDefaultIntent());
-//			}
-//		});
-
 //		((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView)).setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
 //			@Override
 //			public void onScrollChanged(int i, boolean b, boolean b1) {}
@@ -153,8 +78,6 @@ public class ListaPersonalizzataFragment extends Fragment {
 //			}
 //		});
 
-//		setHasOptionsMenu(true);
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
@@ -173,24 +96,6 @@ public class ListaPersonalizzataFragment extends Fragment {
             FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
             if (!fab1.isVisible())
                 fab1.show();
-//			FloatingActionMenu fab2 = ((CustomLists) getParentFragment()).getFab2();
-//			if (!fab1.isMenuButtonHidden()) {
-//				fab1.hideMenuButton(false);
-//				fab2.showMenuButton(false);
-//			}
-//			else
-//				fab2.showMenuButton(true);
-//			if (LUtils.hasHoneycomb()) {
-//				if (fab1.isVisible()) {
-//					fab1.hide(false);
-//					fab2.show(false);
-//				} else
-//					fab2.show();
-//			}
-//			else {
-//				fab1.setVisibility(View.GONE);
-//				fab2.setVisibility(View.VISIBLE);
-//			}
         }
     }
 

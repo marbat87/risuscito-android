@@ -6,6 +6,7 @@
     <include layout="@layout/risuscito_toolbar" />
 
     <RelativeLayout
+        android:layout_gravity="top"
         android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

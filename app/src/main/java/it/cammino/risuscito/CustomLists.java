@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -52,8 +53,9 @@ public class CustomLists extends Fragment  {
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private MaterialDialog dialog;
-    TabLayout tabs;
+    private TabLayout tabs;
     private int lastPosition;
+    private LUtils mLUtils;
 //    private TintEditText titleInput;
 
     @Override
@@ -65,6 +67,8 @@ public class CustomLists extends Fragment  {
 //        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_custom_lists);
 //        ((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
+
+        mLUtils = LUtils.getInstance(getActivity());
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -104,56 +108,11 @@ public class CustomLists extends Fragment  {
         tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, tabs);
 
         getFab1().setColorNormal(getThemeUtils().accentColor());
         getFab1().setColorPressed(getThemeUtils().accentColorDark());
         getFab1().setIcon(R.drawable.ic_add_white_24dp);
-//        getFab2().setMenuButtonColorNormal(getThemeUtils().accentColor());
-//        getFab2().setMenuButtonColorPressed(getThemeUtils().accentColorDark());
-//        getFab2().setMenuButtonColorRipple(getThemeUtils().accentColorDark());
-//        getFab2().setIcon(R.drawable.ic_add_white_24dp);
-//        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.personalizzataScrollView));
-//        getFab1().setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_list_title)
-//                        .content(R.string.reset_list_question)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-//                                        .getView().findViewById(R.id.button_pulisci).performClick();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
-//            }
-//        });
-
         getFab1().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
@@ -166,17 +125,6 @@ public class CustomLists extends Fragment  {
             }
         });
 
-//        getFab2().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-//            @Override
-//            public void onMenuExpanded() {
-//                showOuterFrame();
-//            }
-//
-//            @Override
-//            public void onMenuCollapsed() {
-//                hideOuterFrame();
-//            }
-//        });
         fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
         fabAddLista.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,21 +180,6 @@ public class CustomLists extends Fragment  {
                     }
                 });
                 dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-//                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-//                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                    }
-//                });
                 dialog.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -297,131 +230,6 @@ public class CustomLists extends Fragment  {
             }
         });
 
-//        FloatingActionButton fabAddLista2 = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista2);
-////        fabAddLista2.setColorNormal(getThemeUtils().accentColor());
-////        fabAddLista2.setColorPressed(getThemeUtils().accentColorDark());
-//        fabAddLista2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab2().toggle(true);
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.lista_add_desc)
-//                        .positiveText(R.string.dialog_chiudi)
-//                        .negativeText(R.string.cancel)
-//                        .input("", "", new MaterialDialog.InputCallback() {
-//                            @Override
-//                            public void onInput(MaterialDialog dialog, CharSequence input) {
-//                            }
-//                        })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
-//                                bundle.putBoolean("modifica", false);
-////                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-//                                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
-//                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-//                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                    }
-//                });
-//                dialog.setCancelable(false);
-//                //to show soft keyboard
-//                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//            }
-//        });
-//
-//        FloatingActionButton fabPulisci2 = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci2);
-//        fabPulisci2 = new FloatingActionButton(getActivity());
-//        fabPulisci2.setColorNormal(getThemeUtils().accentColor());
-//        fabPulisci2.setColorPressed(getThemeUtils().accentColorDark());
-//        fabPulisci2.setSize(FloatingActionButton.SIZE_MINI);
-//        fabPulisci2.setTitle(getString(R.string.button_clean_list));
-//        fabPulisci2.setIcon(R.drawable.ic_icon_broom);
-//        fabPulisci2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab1().toggle();
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_list_title)
-//                        .content(R.string.reset_list_question)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-//                                        .getView().findViewById(R.id.button_pulisci).performClick();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
-//            }
-//        });
 
         fabEdit = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
         fabEdit.setOnClickListener(new View.OnClickListener() {
@@ -481,7 +289,8 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                tabs.setupWithViewPager(mViewPager);
+                                mLUtils.applyFontedTab(mViewPager, tabs);
+                                applyFontedTab(getActivity(), mViewPager, tabs);
                                 final Runnable mMyRunnable = new Runnable() {
                                     @Override
                                     public void run() {
@@ -541,6 +350,7 @@ public class CustomLists extends Fragment  {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
             tabs.setupWithViewPager(mViewPager);
+            mLUtils.applyFontedTab(mViewPager, tabs);
             final Runnable mMyRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -553,135 +363,14 @@ public class CustomLists extends Fragment  {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_add_list:
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-////                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-////                dialog = builder.setTitle(R.string.lista_add_desc)
-////                        .setView(R.layout.dialog_customview)
-////                        .setPositiveButton(R.string.dialog_chiudi, new ButtonClickedListener(Utility.ADD_LIST_OK))
-////                        .setNegativeButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-////                        .show();
-//                dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.lista_add_desc)
-//                        .positiveText(R.string.dialog_chiudi)
-//                        .negativeText(R.string.cancel)
-//                        .input("", "", new MaterialDialog.InputCallback() {
-//                            @Override
-//                            public void onInput(MaterialDialog dialog, CharSequence input) {}
-//                        })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
-//                                bundle.putBoolean("modifica", false);
-//                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-//                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
-//                dialog.getInputEditText().addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(s.toString().trim().length() > 0);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {}
-//                });
-////                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-////                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-////                        getResources().getColor(R.color.btn_disabled_text));
-////                titleInput = (TintEditText)dialog.findViewById(R.id.list_title);
-////                titleInput.addTextChangedListener(new TextWatcher() {
-////                    @Override
-////                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-////
-////                    @Override
-////                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-////                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.toString().trim().length() > 0);
-////                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(
-////                                s.toString().trim().length() > 0 ? getThemeUtils().accentColor():
-////                                        getResources().getColor(R.color.btn_disabled_text));
-////                    }
-////
-////                    @Override
-////                    public void afterTextChanged(Editable s) {}
-////                });
-//                dialog.setCancelable(false);
-//                //to show soft keyboard
-//                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//                return true;
-//            case R.id.action_edit_list:
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
-//                bundle.putBoolean("modifica", true);
-//                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-//                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//                return true;
-//            case R.id.action_remove_list:
-//                listaDaCanc = mViewPager.getCurrentItem() - 2;
-//                SnackbarManager.show(
-//                        Snackbar.with(getActivity())
-//                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
-//                                .actionLabel(getString(R.string.snackbar_remove))
-//                                .actionListener(new ActionClickListener() {
-//                                    @Override
-//                                    public void onActionClicked(Snackbar snackbar) {
-//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
-//
-//                                        String sql = "DELETE FROM LISTE_PERS"
-//                                                + " WHERE _id = " + idListe[listaDaCanc];
-//                                        db.execSQL(sql);
-//                                        db.close();
-//
-//                                        updateLista();
-//                                        mSectionsPagerAdapter.notifyDataSetChanged();
-//                                        mSlidingTabLayout.setViewPager(mViewPager);
-//                                    }
-//                                })
-//                                .actionColor(getThemeUtils().accentColor())
-//                        , getActivity());
-//                return true;
-//        }
-//        return false;
-//    }
+    public static void applyFontedTab(Activity activity, ViewPager viewPager, TabLayout tabLayout) {
+        for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
+            TextView tv = (TextView) activity.getLayoutInflater().inflate(R.layout.item_tab, null);
+            if (i == viewPager.getCurrentItem()) tv.setSelected(true);
+            tv.setText(viewPager.getAdapter().getPageTitle(i));
+            tabLayout.getTabAt(i).setCustomView(tv);
+        }
+    }
 
     public FloatingActionsMenu getFab1() {
         if (mFab1 == null)
@@ -689,28 +378,12 @@ public class CustomLists extends Fragment  {
         return mFab1;
     }
 
-//    public FloatingActionsMenu getFab2() {
-//        if (mFab2 == null)
-//            mFab2 = (FloatingActionsMenu) rootView.findViewById(R.id.fab_pager2);
-//        return mFab2;
-//    }
-
     private void showOuterFrame() {
         View outerFrame = rootView.findViewById(R.id.outerFrame);
         outerFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab1().collapse();
-//                if (LUtils.hasHoneycomb()) {
-//                    if (getFab1().isVisible())
-//                        getFab1().collapse();
-//                    if (getFab2().isVisible())
-//                        getFab2().collapse();
-//                }
-//                else {
-//                    if (getFab1().getVisibility() == View.VISIBLE)
-//                        getFab1().collapse();
-//                }
             }
         });
         outerFrame.setVisibility(View.VISIBLE);
@@ -825,40 +498,6 @@ public class CustomLists extends Fragment  {
             return PagerAdapter.POSITION_NONE;
         }
     }
-
-//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-//        private int clickedCode;
-//
-//        public ButtonClickedListener(int code) {
-//            clickedCode = code;
-//        }
-//
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            switch (clickedCode) {
-//                case Utility.DISMISS:
-//                    //to hide soft keyboard
-//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.ADD_LIST_OK:
-//                    //to hide soft keyboard
-//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                            .hideSoftInputFromWindow(titleInput.getWindowToken(), 0);
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("titolo", titleInput.getText().toString());
-//                    bundle.putBoolean("modifica", false);
-//                    startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-//                    getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//                    break;
-//                default:
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    break;
-//            }
-//        }
-//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();

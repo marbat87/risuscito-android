@@ -23,9 +23,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
@@ -130,6 +133,15 @@ public class LUtils {
 
     public static boolean hasHoneycomb() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
+
+    public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
+        for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
+            TextView tv = (TextView) mActivity.getLayoutInflater().inflate(R.layout.item_tab, null);
+            if (i == viewPager.getCurrentItem()) tv.setSelected(true);
+            tv.setText(viewPager.getAdapter().getPageTitle(i));
+            tabLayout.getTabAt(i).setCustomView(tv);
+        }
     }
 
 }

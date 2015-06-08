@@ -95,19 +95,19 @@
     </style>
 
     <style name="Widget.Design.TabLayout.Risuscito">
-        <item name="tabSelectedTextColor">@android:color/white</item>
+        <!--<item name="tabSelectedTextColor">@android:color/white</item>-->
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="tabTextColor">#99FFFFFF</item>
-        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
+        <!--<item name="tabTextColor">#99FFFFFF</item>-->
+        <!--<item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>-->
         <item name="android:background">?colorPrimary</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="android:theme">@style/ActionBarThemeOverlay</item>
     </style>
 
-    <style name="TextAppearance.Design.Tab.Risuscito">
-        <item name="android:textStyle">bold</item>
-    </style>
+    <!--<style name="TextAppearance.Design.Tab.Risuscito">-->
+        <!--<item name="android:textStyle">bold</item>-->
+    <!--</style>-->
 
     <style name="Widget.Design.NavigationView.Risuscito">
         <item name="android:background">@color/navdrawer_background</item>

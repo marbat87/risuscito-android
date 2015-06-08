@@ -16,20 +16,23 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
 
-//    TabPageIndicator mSlidingTabLayout = null;
+    //    TabPageIndicator mSlidingTabLayout = null;
+    private LUtils mLUtils;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
+        View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
 //		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_search);
 //		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_search);
 //		((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
-		((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
 
-		ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-		mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
+        mLUtils = LUtils.getInstance(getActivity());
+
+        ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+        mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
 //        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
 //        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
@@ -39,63 +42,64 @@ public class GeneralSearch extends Fragment {
 //        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
 //        mSlidingTabLayout.setDistributeEvenly(false);
 //        mSlidingTabLayout.setViewPager(mViewPager);
-		// Bind the tabs to the ViewPager
+        // Bind the tabs to the ViewPager
 //		MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
 //		tabs.setBackgroundColor(getThemeUtils().primaryColor());
 //		tabs.setViewPager(mViewPager);
 
-		TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
-		tabs.setBackgroundColor(getThemeUtils().primaryColor());
-		tabs.setupWithViewPager(mViewPager);
+        TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
+        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        tabs.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, tabs);
 
-		return rootView;
-	}
+        return rootView;
+    }
 
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-		@Override
-		public Fragment getItem(int position) {
-			switch (position) {
-				case 0:
-					return new RicercaVeloceFragment();
-				case 1:
-					return new RicercaAvanzataFragment();
-				default:
-					return new RicercaVeloceFragment();
-			}
-		}
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new RicercaVeloceFragment();
+                case 1:
+                    return new RicercaAvanzataFragment();
+                default:
+                    return new RicercaVeloceFragment();
+            }
+        }
 
-		@Override
-		public int getCount() {
-			return 2;
-		}
+        @Override
+        public int getCount() {
+            return 2;
+        }
 
-		@Override
-		public CharSequence getPageTitle(int position) {
-			Locale l = getActivity().getResources().getConfiguration().locale;
-			switch (position) {
-				case 0:
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Locale l = getActivity().getResources().getConfiguration().locale;
+            switch (position) {
+                case 0:
 //				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					return getString(R.string.fast_search_title).toUpperCase(l);
+                    return getString(R.string.fast_search_title).toUpperCase(l);
 //				else
 //					return getString(R.string.fast_search_title);
-				case 1:
+                case 1:
 //				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					return getString(R.string.advanced_search_title).toUpperCase(l);
+                    return getString(R.string.advanced_search_title).toUpperCase(l);
 //				else
 //					return getString(R.string.advanced_search_title);
-				default:
-					return null;
-			}
-		}
-	}
+                default:
+                    return null;
+            }
+        }
+    }
 
-	private ThemeUtils getThemeUtils() {
-		return ((MainActivity)getActivity()).getThemeUtils();
-	}
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
+    }
 
 }
