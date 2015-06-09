@@ -2,6 +2,7 @@ package it.cammino.risuscito;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,6 +44,8 @@ public class CustomLists extends Fragment  {
     private int[] idListe;
     protected DatabaseCanti listaCanti;
     private int listaDaCanc;
+    private ListaPersonalizzata celebrazioneDaCanc;
+    private String titoloDaCanc;
     private int prevOrientation;
     private ViewPager mViewPager;
     //    TabPageIndicator mSlidingTabLayout = null;
@@ -276,25 +279,54 @@ public class CustomLists extends Fragment  {
 //                                })
 //                                .actionColor(getThemeUtils().accentColor())
 //                        , getActivity());
-                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?", Snackbar.LENGTH_LONG)
-                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                String query = "SELECT titolo_lista, lista"
+                        + "  FROM LISTE_PERS"
+                        + "  WHERE _id = " + idListe[listaDaCanc];
+                Cursor cursor = db.rawQuery(query, null);
+
+                cursor.moveToFirst();
+                titoloDaCanc = cursor.getString(0);
+                celebrazioneDaCanc = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
+                cursor.close();
+
+                db.delete("LISTE_PERS", "_id = " + idListe[listaDaCanc], null);
+                db.close();
+
+                updateLista();
+                mSectionsPagerAdapter.notifyDataSetChanged();
+                tabs.setupWithViewPager(mViewPager);
+                mLUtils.applyFontedTab(mViewPager, tabs);
+                final Runnable mMyRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        tabs.getTabAt(0).select();
+                    }
+                };
+                Handler myHandler = new Handler();
+                myHandler.postDelayed(mMyRunnable, 200);
+                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.list_removed) + titoloDaCanc + "'!", Snackbar.LENGTH_LONG)
+                        .setAction(R.string.cancel, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
 //					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
-                                String sql = "DELETE FROM LISTE_PERS"
-                                        + " WHERE _id = " + idListe[listaDaCanc];
-                                db.execSQL(sql);
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                ContentValues values = new  ContentValues();
+                                values.put("titolo_lista" , titoloDaCanc);
+                                values.put("lista", ListaPersonalizzata.serializeObject(celebrazioneDaCanc));
+                                db.insert("LISTE_PERS", "", values);
                                 db.close();
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
+                                tabs.setupWithViewPager(mViewPager);
                                 mLUtils.applyFontedTab(mViewPager, tabs);
-                                applyFontedTab(getActivity(), mViewPager, tabs);
                                 final Runnable mMyRunnable = new Runnable() {
                                     @Override
                                     public void run() {
-                                        tabs.getTabAt(0).select();
+//                                        tabs.getTabAt(0).select();
+                                        mViewPager.setCurrentItem(lastPosition, false);
                                     }
                                 };
                                 Handler myHandler = new Handler();
@@ -303,6 +335,33 @@ public class CustomLists extends Fragment  {
                         })
                         .setActionTextColor(getThemeUtils().accentColor())
                         .show();
+
+//                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?", Snackbar.LENGTH_LONG)
+//                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
+//                                String sql = "DELETE FROM LISTE_PERS"
+//                                        + " WHERE _id = " + idListe[listaDaCanc];
+//                                db.execSQL(sql);
+//                                db.close();
+//
+//                                updateLista();
+//                                mSectionsPagerAdapter.notifyDataSetChanged();
+//                                mLUtils.applyFontedTab(mViewPager, tabs);
+//                                final Runnable mMyRunnable = new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        tabs.getTabAt(0).select();
+//                                    }
+//                                };
+//                                Handler myHandler = new Handler();
+//                                myHandler.postDelayed(mMyRunnable, 200);
+//                            }
+//                        })
+//                        .setActionTextColor(getThemeUtils().accentColor())
+//                        .show();
             }
         });
 

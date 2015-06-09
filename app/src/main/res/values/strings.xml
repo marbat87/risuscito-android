@@ -273,6 +273,7 @@
     <string name="switch_impossible">Non puoi scambiare una canto con se stesso!</string>
     <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
     <string name="switch_started">Scambio in corso&#8230;</string>
+    <string name="list_removed">Rimossa la lista \'</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
