@@ -269,10 +269,16 @@
     <string name="history_removed">Rimosso dalla cronologia!</string>
     <string name="action_switch_to">Scambia con...</string>
     <string name="song_removed">Canto rimosso!</string>
+    <string name="switch_done">Scambio effettuato!</string>
+    <string name="switch_impossible">Non puoi scambiare una canto con se stesso!</string>
+    <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
+    <string name="switch_started">Scambio in corso&#8230;</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
     <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
     <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
+
+
 
 </resources>

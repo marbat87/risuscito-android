@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -29,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -50,6 +50,7 @@ public class CantiEucarestiaFragment extends Fragment {
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
     private ActionMode mMode;
+    private boolean mSwhitchMode;
 //    private int prevOrientation;
 
     private LUtils mLUtils;
@@ -62,77 +63,6 @@ public class CantiEucarestiaFragment extends Fragment {
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
-
-//        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab_eucarestia);
-//        fab.setColorNormal(getThemeUtils().accentColor());
-//        fab.setColorPressed(getThemeUtils().accentColorDark());
-//        fab.setColorRipple(getThemeUtils().accentColorDark());
-//        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.eucarestiaScrollView));
-//        fab.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-////                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-////                AlertDialogPro dialog = builder.setTitle(R.string.dialog_reset_list_title)
-////                        .setMessage(R.string.reset_list_question)
-////                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.EUCAR_RESET_OK))
-////                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-////                        .show();
-////                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-////                    @Override
-////                    public boolean onKey(DialogInterface arg0, int keyCode,
-////                                         KeyEvent event) {
-////                        if (keyCode == KeyEvent.KEYCODE_BACK
-////                                && event.getAction() == KeyEvent.ACTION_UP) {
-////                            arg0.dismiss();
-////                            getActivity().setRequestedOrientation(prevOrientation);
-////                            return true;
-////                        }
-////                        return false;
-////                    }
-////                });
-////                dialog.setCancelable(false);
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_list_title)
-//                        .content(R.string.reset_list_question)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                db = listaCanti.getReadableDatabase();
-//                                String sql = "DELETE FROM CUST_LISTS" +
-//                                        " WHERE _id =  2 ";
-//                                db.execSQL(sql);
-//                                db.close();
-//                                updateLista();
-//                                mShareActionProvider.setShareIntent(getDefaultIntent());
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
-//            }
-//        });
 
         rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
             @Override
@@ -171,6 +101,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
+        mSwhitchMode = false;
 
         return rootView;
     }
@@ -278,11 +209,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 2);
-                    bundle.putInt("position", 1);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(1);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 1);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -293,7 +228,10 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.cantoIniziale1Text);
+                    if (mSwhitchMode)
+                        scambioCanto(v, R.id.cantoIniziale1Text, 1);
+                    else
+                        openPagina(v, R.id.cantoIniziale1Text);
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -343,11 +281,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 2);
-                        bundle.putInt("position", 6);
-                        startSubActivity(bundle);
+                        if (mSwhitchMode)
+                            scambioConVuoto(6);
+                        else {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 2);
+                            bundle.putInt("position", 6);
+                            startSubActivity(bundle);
+                        }
                     }
                 });
             }
@@ -358,7 +300,10 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v, R.id.cantoSecondaText);
+                        if (mSwhitchMode)
+                            scambioCanto(v, R.id.cantoSecondaText, 6);
+                        else
+                            openPagina(v, R.id.cantoSecondaText);
                     }
                 });
                 view.setOnLongClickListener(new OnLongClickListener() {
@@ -404,11 +349,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 2);
-                    bundle.putInt("position", 2);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(2);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 2);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -419,7 +368,10 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.cantoPaceText);
+                    if (mSwhitchMode)
+                        scambioCanto(v, R.id.cantoPaceText, 2);
+                    else
+                        openPagina(v, R.id.cantoPaceText);
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -468,11 +420,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 2);
-                        bundle.putInt("position", 7);
-                        startSubActivity(bundle);
+                        if (mSwhitchMode)
+                            scambioConVuoto(7);
+                        else {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 2);
+                            bundle.putInt("position", 7);
+                            startSubActivity(bundle);
+                        }
                     }
                 });
             }
@@ -483,7 +439,10 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v, R.id.santoText);
+                        if (mSwhitchMode)
+                            scambioCanto(v, R.id.santoText, 7);
+                        else
+                            openPagina(v, R.id.santoText);
                     }
                 });
                 view.setOnLongClickListener(new OnLongClickListener() {
@@ -523,7 +482,10 @@ public class CantiEucarestiaFragment extends Fragment {
         OnClickListener clickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                openPagina(v, R.id.text_title);
+                if (mSwhitchMode)
+                    scambioCanto(v, R.id.text_title, 3);
+                else
+                    openPagina(v, R.id.text_title);
             }
         };
 
@@ -546,6 +508,16 @@ public class CantiEucarestiaFragment extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
+        clickListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSwhitchMode)
+                    scambioCanto(v, R.id.text_title, 4);
+                else
+                    openPagina(v, R.id.text_title);
+            }
+        };
 
         longClickListener = new OnLongClickListener() {
             @Override
@@ -576,11 +548,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 2);
-                    bundle.putInt("position", 5);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(5);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 5);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -591,7 +567,10 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.cantoFinale1Text);
+                    if (mSwhitchMode)
+                        scambioCanto(v, R.id.cantoFinale1Text, 5);
+                    else
+                        openPagina(v, R.id.cantoFinale1Text);
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -629,11 +608,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("fromAdd", 1);
-                bundle.putInt("idLista", 2);
-                bundle.putInt("position", 3);
-                startSubActivity(bundle);
+                if (mSwhitchMode)
+                    scambioConVuotoMultiplo(3);
+                else {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("fromAdd", 1);
+                    bundle.putInt("idLista", 2);
+                    bundle.putInt("position", 3);
+                    startSubActivity(bundle);
+                }
             }
         });
 
@@ -641,11 +624,15 @@ public class CantiEucarestiaFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("fromAdd", 1);
-                bundle.putInt("idLista", 2);
-                bundle.putInt("position", 4);
-                startSubActivity(bundle);
+                if (mSwhitchMode)
+                    scambioConVuotoMultiplo(4);
+                else {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("fromAdd", 1);
+                    bundle.putInt("idLista", 2);
+                    bundle.putInt("position", 4);
+                    startSubActivity(bundle);
+                }
             }
         });
 
@@ -935,6 +922,7 @@ public class CantiEucarestiaFragment extends Fragment {
         public void onDestroyActionMode(ActionMode mode) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            mSwhitchMode = false;
             if (mode == mMode)
                 mMode = null;
         }
@@ -946,10 +934,10 @@ public class CantiEucarestiaFragment extends Fragment {
                     db = listaCanti.getReadableDatabase();
                     String sql = "SELECT id_canto, timestamp" +
                             "   FROM CUST_LISTS" +
-                                "  WHERE _id =  2 " +
-                                "    AND position = " + posizioneDaCanc +
-                                "	 AND id_canto = (SELECT _id FROM ELENCO" +
-                                "					WHERE titolo = '" + titoloDaCanc + "')";
+                            "  WHERE _id =  2 " +
+                            "    AND position = " + posizioneDaCanc +
+                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                            "					WHERE titolo = '" + titoloDaCanc + "')";
                     Cursor cursor = db.rawQuery(sql, null);
                     cursor.moveToFirst();
                     idDaCanc = cursor.getInt(0);
@@ -978,13 +966,133 @@ public class CantiEucarestiaFragment extends Fragment {
                             })
                             .setActionTextColor(getThemeUtils().accentColor())
                             .show();
+                    mSwhitchMode = false;
                     break;
                 case R.id.action_switch_item:
-                    mode.finish();
+                    mSwhitchMode = true;
+                    db = listaCanti.getReadableDatabase();
+                    sql = "SELECT id_canto, timestamp" +
+                            "   FROM CUST_LISTS" +
+                            "  WHERE _id =  2 " +
+                            "    AND position = " + posizioneDaCanc +
+                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                            "					WHERE titolo = '" + titoloDaCanc + "')";
+                    cursor = db.rawQuery(sql, null);
+                    cursor.moveToFirst();
+                    idDaCanc = cursor.getInt(0);
+                    timestampDaCanc = cursor.getString(1);
+                    cursor.close();
+                    mode.setTitle(R.string.switch_started);
+                    Toast.makeText(getActivity()
+                            , getResources().getString(R.string.switch_tooltip)
+                            , Toast.LENGTH_SHORT).show();
                     break;
             }
             return true;
         }
     };
+
+    private void scambioCanto(View v, int idText, int position) {
+        String cantoCliccato = ((TextView) v.findViewById(idText)).getText().toString();
+        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+        db = listaCanti.getReadableDatabase();
+        String sql = "SELECT id_canto, timestamp" +
+                "   FROM CUST_LISTS" +
+                "  WHERE _id =  2 " +
+                "    AND position = " + position +
+                "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                "					WHERE titolo = '" + cantoCliccato + "')";
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+        int idNew = cursor.getInt(0);
+        String timestampNew = cursor.getString(1);
+//        Log.i(getClass().toString(), "positionNew: " + position);
+//        Log.i(getClass().toString(), "idNew: " + idNew);
+//        Log.i(getClass().toString(), "timestampNew: " + timestampNew);
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
+//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
+        if (idNew != idDaCanc || posizioneDaCanc != position) {
+
+            db.delete("CUST_LISTS", "_id = 2 AND position = " + position + " AND id_canto = " + idNew, null);
+
+            ContentValues values = new ContentValues();
+            values.put("id_canto", idNew);
+//            values.put("timestamp", timestampNew);
+            db.update("CUST_LISTS", values, "_id = 2 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+
+            values = new ContentValues();
+            values.put("id_canto", idDaCanc);
+            values.put("timestamp", timestampNew);
+            values.put("_id", 2);
+            values.put("position", position);
+            db.insert("CUST_LISTS", null, values);
+            db.close();
+
+            mSwhitchMode = false;
+            mMode.finish();
+            updateLista();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_done)
+                    , Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_impossible)
+                    , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void scambioConVuoto(int position) {
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
+//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
+        db = listaCanti.getReadableDatabase();
+        db.delete("CUST_LISTS", "_id = 2 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+
+        ContentValues values = new ContentValues();
+        values.put("id_canto", idDaCanc);
+        values.put("timestamp", timestampDaCanc);
+        values.put("_id", 2);
+        values.put("position", position);
+        db.insert("CUST_LISTS", null, values);
+        db.close();
+
+        mSwhitchMode = false;
+        mMode.finish();
+        updateLista();
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+        Toast.makeText(getActivity()
+                , getResources().getString(R.string.switch_done)
+                , Toast.LENGTH_SHORT).show();
+    }
+
+    private void scambioConVuotoMultiplo(int position) {
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
+//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
+        db = listaCanti.getReadableDatabase();
+        db.delete("CUST_LISTS", "_id = 2 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+        db.execSQL("INSERT INTO CUST_LISTS " +
+                "( _id" +
+                ", position" +
+                ", id_canto" +
+                ", timestamp)" +
+                " VALUES " +
+                "( 2" +
+                ", " + position +
+                ", " + idDaCanc +
+                ", CURRENT_TIMESTAMP)");
+        db.close();
+
+        mSwhitchMode = false;
+        mMode.finish();
+        updateLista();
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+        Toast.makeText(getActivity()
+                , getResources().getString(R.string.switch_done)
+                , Toast.LENGTH_SHORT).show();
+    }
 
 }

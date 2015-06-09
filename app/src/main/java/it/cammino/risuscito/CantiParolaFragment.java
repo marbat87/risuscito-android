@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -44,6 +45,7 @@ public class CantiParolaFragment extends Fragment {
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
     private ActionMode mMode;
+    private boolean mSwhitchMode;
 //	private int prevOrientation;
 
     private LUtils mLUtils;
@@ -95,6 +97,7 @@ public class CantiParolaFragment extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
+        mSwhitchMode = false;
 
         return rootView;
     }
@@ -162,11 +165,15 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 1);
-                    bundle.putInt("position", 1);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(1);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 1);
+                        bundle.putInt("position", 1);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -177,7 +184,12 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.cantoInizialeText);
+//                    openPagina(v, R.id.cantoInizialeText);
+                    if (!mSwhitchMode)
+                        openPagina(v, R.id.cantoInizialeText);
+                    else {
+                        scambioCanto(v, R.id.cantoInizialeText, 1);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -220,11 +232,15 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 1);
-                    bundle.putInt("position", 2);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(2);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 1);
+                        bundle.putInt("position", 2);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -235,7 +251,12 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.primaLetturaText);
+//                    openPagina(v, R.id.primaLetturaText);
+                    if (!mSwhitchMode)
+                        openPagina(v, R.id.primaLetturaText);
+                    else {
+                        scambioCanto(v, R.id.primaLetturaText, 2);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -278,11 +299,15 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 1);
-                    bundle.putInt("position", 3);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(3);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 1);
+                        bundle.putInt("position", 3);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -293,7 +318,12 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.secondaLetturaText);
+//                    openPagina(v, R.id.secondaLetturaText);
+                    if (!mSwhitchMode)
+                        openPagina(v, R.id.secondaLetturaText);
+                    else {
+                        scambioCanto(v, R.id.secondaLetturaText, 3);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -336,11 +366,15 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 1);
-                    bundle.putInt("position", 4);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(4);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 1);
+                        bundle.putInt("position", 4);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -351,7 +385,12 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.terzaLetturaText);
+//                    openPagina(v, R.id.terzaLetturaText);
+                    if (!mSwhitchMode)
+                        openPagina(v, R.id.terzaLetturaText);
+                    else {
+                        scambioCanto(v, R.id.terzaLetturaText, 4);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -400,11 +439,15 @@ public class CantiParolaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 6);
-                        startSubActivity(bundle);
+                        if (mSwhitchMode)
+                            scambioConVuoto(6);
+                        else {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 6);
+                            startSubActivity(bundle);
+                        }
                     }
                 });
             }
@@ -415,7 +458,12 @@ public class CantiParolaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v, R.id.cantoPaceText);
+//                        openPagina(v, R.id.cantoPaceText);
+                        if (!mSwhitchMode)
+                            openPagina(v, R.id.cantoPaceText);
+                        else {
+                            scambioCanto(v, R.id.cantoPaceText, 6);
+                        }
                     }
                 });
                 view.setOnLongClickListener(new OnLongClickListener() {
@@ -461,11 +509,15 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 1);
-                    bundle.putInt("position", 5);
-                    startSubActivity(bundle);
+                    if (mSwhitchMode)
+                        scambioConVuoto(5);
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 1);
+                        bundle.putInt("position", 5);
+                        startSubActivity(bundle);
+                    }
                 }
             });
         }
@@ -476,7 +528,12 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPagina(v, R.id.cantoFinaleText);
+//                    openPagina(v, R.id.cantoFinaleText);
+                    if (!mSwhitchMode)
+                        openPagina(v, R.id.cantoFinaleText);
+                    else {
+                        scambioCanto(v, R.id.cantoFinaleText, 5);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -762,6 +819,7 @@ public class CantiParolaFragment extends Fragment {
         public void onDestroyActionMode(ActionMode mode) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            mSwhitchMode = false;
             if (mode == mMode)
                 mMode = null;
         }
@@ -805,14 +863,106 @@ public class CantiParolaFragment extends Fragment {
                             })
                             .setActionTextColor(getThemeUtils().accentColor())
                             .show();
+                    mSwhitchMode = false;
                     break;
                 case R.id.action_switch_item:
-
-                    mode.finish();
+                    mSwhitchMode = true;
+                    db = listaCanti.getReadableDatabase();
+                    sql = "SELECT id_canto, timestamp" +
+                            "   FROM CUST_LISTS" +
+                            "  WHERE _id =  1 " +
+                            "    AND position = " + posizioneDaCanc +
+                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                            "					WHERE titolo = '" + titoloDaCanc + "')";
+                    cursor = db.rawQuery(sql, null);
+                    cursor.moveToFirst();
+                    idDaCanc = cursor.getInt(0);
+                    timestampDaCanc = cursor.getString(1);
+                    cursor.close();
+                    mode.setTitle(R.string.switch_started);
+                    Toast.makeText(getActivity()
+                            , getResources().getString(R.string.switch_tooltip)
+                            , Toast.LENGTH_SHORT).show();
                     break;
             }
             return true;
         }
     };
+
+    private void scambioCanto(View v, int idText, int position) {
+        String cantoCliccato = ((TextView) v.findViewById(idText)).getText().toString();
+        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+        db = listaCanti.getReadableDatabase();
+        String sql = "SELECT id_canto, timestamp" +
+                "   FROM CUST_LISTS" +
+                "  WHERE _id =  1 " +
+                "    AND position = " + position +
+                "	 AND id_canto = (SELECT _id FROM ELENCO" +
+                "					WHERE titolo = '" + cantoCliccato + "')";
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+        int idNew = cursor.getInt(0);
+        String timestampNew = cursor.getString(1);
+//        Log.i(getClass().toString(), "positionNew: " + position);
+//        Log.i(getClass().toString(), "idNew: " + idNew);
+//        Log.i(getClass().toString(), "timestampNew: " + timestampNew);
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
+//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
+        if (idNew != idDaCanc || posizioneDaCanc != position) {
+
+            db.delete("CUST_LISTS", "_id = 1 AND position = " + position + " AND id_canto = " + idNew, null);
+
+            ContentValues values = new ContentValues();
+            values.put("id_canto", idNew);
+//            values.put("timestamp", timestampNew);
+            db.update("CUST_LISTS", values, "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+
+            values = new ContentValues();
+            values.put("id_canto", idDaCanc);
+            values.put("timestamp", timestampNew);
+            values.put("_id", 1);
+            values.put("position", position);
+            db.insert("CUST_LISTS", null, values);
+            db.close();
+
+            mSwhitchMode = false;
+            mMode.finish();
+            updateLista();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_done)
+                    , Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_impossible)
+                    , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void scambioConVuoto(int position) {
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
+//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
+        db = listaCanti.getReadableDatabase();
+        db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+
+        ContentValues values = new ContentValues();
+        values.put("id_canto", idDaCanc);
+        values.put("timestamp", timestampDaCanc);
+        values.put("_id", 1);
+        values.put("position", position);
+        db.insert("CUST_LISTS", null, values);
+        db.close();
+
+        mSwhitchMode = false;
+        mMode.finish();
+        updateLista();
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+        Toast.makeText(getActivity()
+                , getResources().getString(R.string.switch_done)
+                , Toast.LENGTH_SHORT).show();
+    }
 
 }

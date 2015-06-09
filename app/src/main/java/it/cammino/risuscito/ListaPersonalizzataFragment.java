@@ -25,6 +25,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -44,6 +45,7 @@ public class ListaPersonalizzataFragment extends Fragment {
     private int idLista;
     private ListaPersonalizzata listaPersonalizzata;
     private ActionMode mMode;
+    private boolean mSwhitchMode;
 //	private int prevOrientation;
 
     private LUtils mLUtils;
@@ -79,6 +81,8 @@ public class ListaPersonalizzataFragment extends Fragment {
 //		});
 
         mLUtils = LUtils.getInstance(getActivity());
+        mMode = null;
+        mSwhitchMode = false;
 
         return rootView;
     }
@@ -216,16 +220,20 @@ public class ListaPersonalizzataFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 0);
-                        bundle.putInt("idLista", idLista);
-                        bundle.putInt("position", (Integer.valueOf(
-                                ((TextView) v.findViewById(R.id.id_posizione))
-                                        .getText().toString())));
-                        Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+                        if (mSwhitchMode)
+                            scambioConVuoto(v);
+                        else {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 0);
+                            bundle.putInt("idLista", idLista);
+                            bundle.putInt("position", (Integer.valueOf(
+                                    ((TextView) v.findViewById(R.id.id_posizione))
+                                            .getText().toString())));
+                            Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+                        }
                     }
                 });
 
@@ -242,7 +250,10 @@ public class ListaPersonalizzataFragment extends Fragment {
                 temp.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openPagina(v);
+                        if (mSwhitchMode)
+                            scambioCanto(v);
+                        else
+                            openPagina(v);
                     }
                 });
                 // setta l'azione tenendo premuto sul canto
@@ -250,7 +261,8 @@ public class ListaPersonalizzataFragment extends Fragment {
                     @Override
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = Integer.valueOf(
-                                ((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
+//                                ((TextView) ((ViewGroup) view.getParent()).findViewById(R.id.id_da_canc))
+                                ((TextView) view.findViewById(R.id.id_da_canc))
                                         .getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
                         snackBarRimuoviCanto();
@@ -265,29 +277,6 @@ public class ListaPersonalizzataFragment extends Fragment {
                         "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
                 Cursor cursor = db.rawQuery(query, null);
                 cursor.moveToFirst();
-
-                //setto il titolo del canto
-//                ((TextView) view.findViewById(R.id.text_title))
-//                    .setText(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(10));
-//
-//                //setto la pagina
-//                int tempPagina = Integer.valueOf(listaPersonalizzata.getCantoPosizione(cantoIndex).substring(0, 3));
-//                String pagina = String.valueOf(tempPagina);
-//                TextView textPage = (TextView) view.findViewById(R.id.text_page);
-//                textPage.setText(pagina);
-//
-//                //setto il colore
-//                String colore = listaPersonalizzata.getCantoPosizione(cantoIndex).substring(3, 10);
-//                if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//                if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//                if (colore.equalsIgnoreCase(Utility.VERDE))
-//                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//                if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//                if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
                 //setto il titolo del canto
                 ((TextView) view.findViewById(R.id.text_title))
@@ -431,6 +420,7 @@ public class ListaPersonalizzataFragment extends Fragment {
         public void onDestroyActionMode(ActionMode mode) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+            mSwhitchMode = false;
             if (mode == mMode)
                 mMode = null;
         }
@@ -465,13 +455,73 @@ public class ListaPersonalizzataFragment extends Fragment {
                             })
                             .setActionTextColor(getThemeUtils().accentColor())
                             .show();
+                    mSwhitchMode = false;
                     break;
                 case R.id.action_switch_item:
-                    mode.finish();
+                    mSwhitchMode = true;
+                    db = listaCanti.getReadableDatabase();
+                    cantoDaCanc = listaPersonalizzata.getCantoPosizione(posizioneDaCanc);
+                    mode.setTitle(R.string.switch_started);
+                    Toast.makeText(getActivity()
+                            , getResources().getString(R.string.switch_tooltip)
+                            , Toast.LENGTH_SHORT).show();
                     break;
             }
             return true;
         }
     };
+
+    private void scambioCanto(View v) {
+        int posizioneNew = Integer.valueOf(
+                ((TextView) v.findViewById(R.id.id_da_canc)).getText().toString());
+//        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+        if (posizioneNew != posizioneDaCanc) {
+
+            String cantoTmp = listaPersonalizzata.getCantoPosizione(posizioneNew);
+            listaPersonalizzata.addCanto(listaPersonalizzata.getCantoPosizione(posizioneDaCanc), posizioneNew);
+            listaPersonalizzata.addCanto(cantoTmp, posizioneDaCanc);
+
+            db = listaCanti.getReadableDatabase();
+            ContentValues  values = new  ContentValues( );
+            values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
+            db.update("LISTE_PERS", values, "_id = " + idLista, null);
+            db.close();
+
+            updateLista();
+            mMode.finish();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_done)
+                    , Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getActivity()
+                    , getResources().getString(R.string.switch_impossible)
+                    , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void scambioConVuoto(View v) {
+        int posizioneNew = Integer.valueOf(
+                ((TextView) v.findViewById(R.id.id_posizione)).getText().toString());
+//        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
+//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
+        listaPersonalizzata.addCanto(listaPersonalizzata.getCantoPosizione(posizioneDaCanc), posizioneNew);
+        listaPersonalizzata.removeCanto(posizioneDaCanc);
+
+        db = listaCanti.getReadableDatabase();
+        ContentValues  values = new  ContentValues( );
+        values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
+        db.update("LISTE_PERS", values, "_id = " + idLista, null);
+        db.close();
+
+        updateLista();
+        mMode.finish();
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+        Toast.makeText(getActivity()
+                , getResources().getString(R.string.switch_done)
+                , Toast.LENGTH_SHORT).show();
+    }
 
 }
