@@ -7,7 +7,7 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 81
+        versionCode 82
         versionName '3.5.0'
     }
     buildTypes {

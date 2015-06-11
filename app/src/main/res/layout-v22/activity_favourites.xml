@@ -6,32 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/toolbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/toolbar_elevation"
-        android:theme="@style/ActionBarThemeOverlay">
-
-        <include layout="@layout/risuscito_toolbar_noelevation" />
-
-    </android.support.design.widget.AppBarLayout>
-
     <FrameLayout
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/no_favourites"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width= "match_parent"
-            android:layout_height = "match_parent"
-            android:id="@+id/favouritesList"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="true" />
-
         <RelativeLayout
             android:layout_gravity="center"
-            android:id="@+id/no_favourites"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -60,6 +41,25 @@
         </RelativeLayout>
 
     </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width= "match_parent"
+        android:layout_height = "match_parent"
+        android:id="@+id/favouritesList"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true" />
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
+
+        <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_clear_favorites"
