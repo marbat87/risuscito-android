@@ -87,7 +87,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                     , lista.getInt(3)
                     , lista.getString(2)
                     , lista.getInt(0)
-                    , lista.getString(5)).setNumeroSalmo(lista.getString(4)));
+                    , lista.getString(5)
+                    , lista.getString(4)));
             lista.moveToNext();
         }
 

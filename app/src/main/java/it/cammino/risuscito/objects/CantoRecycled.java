@@ -11,6 +11,7 @@ public class CantoRecycled {
     private String source;
     private int idCanto;
     private int numeroSalmo;
+    private boolean mSelected;
 
     public CantoRecycled(String titolo, int pagina, String colore, int idCanto, String source) {
         this.setTitolo(titolo);
@@ -18,6 +19,22 @@ public class CantoRecycled {
         this.setColore(colore);
         this.setIdCanto(idCanto);
         this.setSource(source);
+        this.setNumeroSalmo(0);
+        this.setmSelected(false);
+    }
+
+    public CantoRecycled(String titolo, int pagina, String colore, int idCanto, String source, String numeroSalmo) {
+        this.setTitolo(titolo);
+        this.setPagina(pagina);
+        this.setColore(colore);
+        this.setIdCanto(idCanto);
+        this.setSource(source);
+        int numeroTemp = 0;
+        try {
+            numeroTemp = Integer.valueOf(numeroSalmo.substring(0, 3));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {}
+        this.setNumeroSalmo(numeroTemp);
+        this.setmSelected(false);
     }
 
     public int getPagina() {
@@ -68,12 +85,11 @@ public class CantoRecycled {
         this.numeroSalmo = numeroSalmo;
     }
 
-    public CantoRecycled setNumeroSalmo(String numeroSalmo) {
-        int numeroTemp = 0;
-        try {
-            numeroTemp = Integer.valueOf(numeroSalmo.substring(0, 3));
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {}
-        this.numeroSalmo = numeroTemp;
-        return this;
+    public boolean ismSelected() {
+        return mSelected;
+    }
+
+    public void setmSelected(boolean mSelected) {
+        this.mSelected = mSelected;
     }
 }

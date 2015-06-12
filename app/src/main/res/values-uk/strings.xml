@@ -274,5 +274,6 @@
     <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
     <string name="switch_started">Scambio in corso&#8230;</string>
     <string name="list_removed">Rimossa la lista \'</string>
+    <string name="favorites_removed">% rimossi dai preferiti!</string>
 
 </resources>

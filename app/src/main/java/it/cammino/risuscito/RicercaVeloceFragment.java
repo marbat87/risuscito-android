@@ -38,12 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener{
 
     private DatabaseCanti listaCanti;
-    private List<CantoItem> titoli;
+    private List<CantoRecycled> titoli;
     private EditText searchPar;
     private View rootView;
     RecyclerView recyclerView;
@@ -79,36 +80,38 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility
-                        .duplicaApostrofi(cantoCliccato);
-
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti
-                        .getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file
-                // della pagina da visualizzare
-                String query = "SELECT source, _id"
-                        + "  FROM ELENCO" + "  WHERE titolo =  '"
-                        + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility
+//                        .duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti
+//                        .getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file
+//                // della pagina da visualizzare
+//                String query = "SELECT source, _id"
+//                        + "  FROM ELENCO" + "  WHERE titolo =  '"
+//                        + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
 
                 // crea un bundle e ci mette il parametro "pagina",
                 // contente il nome del file della pagina da
                 // visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto
                 // passando il parametro creato
@@ -146,7 +149,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
                     // lancia la ricerca di tutti i titoli presenti in DB e li
                     // dispone in ordine alfabetico
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             + "		FROM ELENCO" + "		WHERE titolo like '%"
                             + titolo + "%'" + "		ORDER BY titolo ASC";
                     Cursor lista = db.rawQuery(query, null);
@@ -158,8 +161,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-                        titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3)
-                                + lista.getString(1) + lista.getString(0)));
+//                        titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3)
+//                                + lista.getString(1) + lista.getString(0)));
+                        titoli.add(new CantoRecycled(lista.getString(0)
+                                , lista.getInt(2)
+                                , lista.getString(1)
+                                , lista.getInt(3)
+                                , lista.getString(4)));
                         lista.moveToNext();
                     }
 

@@ -19,7 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,9 +33,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +44,10 @@ public class HistoryFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoHistory> titoli;
-//    private String cantoDaCanc;
+    //    private String cantoDaCanc;
     private int posizDaCanc;
     private CantoHistory removedItem;
+    private List<CantoHistory> removedItems;
     private View rootView;
     private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
@@ -216,8 +214,10 @@ public class HistoryFragment extends Fragment {
             fabClear.hide();
             fabClear.setmIgnoreLayoutChanges(true);
         }
-        else
+        else {
+            fabClear.show();
             fabClear.setmIgnoreLayoutChanges(false);
+        }
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
@@ -261,18 +261,28 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
-                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText().toString();
+//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText().toString();
+//                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText().toString();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+                if (mMode == null) {
+                    Bundle bundle = new Bundle();
+//                bundle.putString("pagina", pagina);
+                    bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                    bundle.putInt("idCanto", Integer.parseInt(
+                            String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                    // lancia l'activity che visualizza il canto passando il parametro creato
+                    startSubActivity(bundle, v);
+                }
+                else {
+                    int tempPos = recyclerView.getChildAdapterPosition(v);
+                    titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
+                    cantoAdapter.notifyItemChanged(tempPos);
+                }
             }
         };
 
@@ -280,7 +290,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public boolean onLongClick(View v) {
 //                cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
-                posizDaCanc = recyclerView.getChildAdapterPosition(v);
+//                posizDaCanc = recyclerView.getChildAdapterPosition(v);
 //                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_remove, Snackbar.LENGTH_LONG)
 //                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
 //                            @Override
@@ -300,6 +310,7 @@ public class HistoryFragment extends Fragment {
 //                        })
 //                        .setActionTextColor(getThemeUtils().accentColor())
 //                        .show();
+                posizDaCanc = recyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
                 else {
@@ -363,6 +374,9 @@ public class HistoryFragment extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
             getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+            titoli.get(posizDaCanc).setmSelected(true);
+            cantoAdapter.notifyItemChanged(posizDaCanc);
+            removedItems = new ArrayList<>();
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
             menu.findItem(R.id.action_remove_item).setIcon(drawable);
@@ -381,6 +395,12 @@ public class HistoryFragment extends Fragment {
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
+            for (CantoHistory canto: titoli) {
+                canto.setmSelected(false);
+                cantoAdapter.notifyDataSetChanged();
+            }
+            for (CantoHistory canto: removedItems)
+                canto.setmSelected(false);
         }
 
         @Override
@@ -388,38 +408,60 @@ public class HistoryFragment extends Fragment {
             switch(item.getItemId()) {
                 case R.id.action_remove_item:
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
-                    removedItem = titoli.remove(posizDaCanc);
-                    db.delete("CRONOLOGIA", "id_canto = " + removedItem.getIdCanto(), null);
+//                    removedItem = titoli.remove(posizDaCanc);
+//                    db.delete("CRONOLOGIA", "id_canto = " + removedItem.getIdCanto(), null);
+                    for (int i = 0; i < titoli.size(); i++) {
+                        Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
+                        if (titoli.get(i).ismSelected()) {
+                            db.delete("CRONOLOGIA", "id_canto =  " + titoli.get(i).getIdCanto(), null);
+                            removedItems.add(titoli.remove(i));
+                            cantoAdapter.notifyItemRemoved(i);
+                            i--;
+                        }
+                    }
                     db.close();
-                    cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                    cantoAdapter.notifyItemRemoved(posizDaCanc);
                     rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                     if (titoli.size() == 0) {
                         fabClear.hide();
                         fabClear.setmIgnoreLayoutChanges(true);
                     }
+                    mode.finish();
+                    if (removedItems.size() > 0) {
+                        String message = removedItems.size() > 1 ?
+                                getString(R.string.histories_removed).replaceAll("%", String.valueOf(removedItems.size()))
+                                : getString(R.string.history_removed);
+                        Snackbar.make(rootView.findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+                                .setAction(R.string.cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                        ContentValues values = new ContentValues();
+                                        for (CantoHistory cantoRemoved: removedItems) {
+                                            values.put("id_canto", cantoRemoved.getIdCanto());
+                                            values.put("ultima_visita", cantoRemoved.getTimestamp());
+                                            db.insert("CRONOLOGIA", null, values);
+                                        }
+//                                        values.put("id_canto", removedItem.getIdCanto());
+//                                        values.put("ultima_visita", removedItem.getTimestamp());
+//                                        db.insert("CRONOLOGIA", null, values);
+                                        db.close();
+                                        updateHistoryList();
+//                                        titoli.add(posizDaCanc, removedItem);
+//                                        cantoAdapter.notifyItemInserted(posizDaCanc);
+                                        //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
+//                                        rootView.findViewById(R.id.no_history).setVisibility(View.INVISIBLE);
+//                                        fabClear.show();
+//                                        fabClear.setmIgnoreLayoutChanges(false);
+                                    }
+                                })
+                                .setActionTextColor(getThemeUtils().accentColor())
+                                .show();
+                    }
+                    return true;
+                default:
+                    return false;
             }
-            mode.finish();
-            Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_removed, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.cancel, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-                            ContentValues values = new ContentValues();
-                            values.put("id_canto", removedItem.getIdCanto());
-                            values.put("ultima_visita", removedItem.getTimestamp());
-                            db.insert("CRONOLOGIA", null, values);
-                            db.close();
-                            titoli.add(posizDaCanc, removedItem);
-                            cantoAdapter.notifyItemInserted(posizDaCanc);
-                            //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-                            rootView.findViewById(R.id.no_history).setVisibility(View.INVISIBLE);
-                            fabClear.show();
-                            fabClear.setmIgnoreLayoutChanges(false);
-                        }
-                    })
-                    .setActionTextColor(getThemeUtils().accentColor())
-                    .show();
-            return true;
         }
     };
 

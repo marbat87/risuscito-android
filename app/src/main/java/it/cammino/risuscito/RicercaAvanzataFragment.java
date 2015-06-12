@@ -50,12 +50,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private DatabaseCanti listaCanti;
-    private List<CantoItem> titoli;
+    private List<CantoRecycled> titoli;
     private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
@@ -95,31 +96,33 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);
@@ -127,7 +130,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
+        titoli = new ArrayList<>();
         cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
@@ -685,6 +688,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             String text = "";
             String[] aResults = new String[300];
             int totalResults = 0;
+            titoli.clear();
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -714,7 +718,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 if (found) {
 
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             +		"		FROM ELENCO"
                             +		"		WHERE source = '" + aTexts[k][0] + "'";
 
@@ -725,6 +729,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //		    			Log.i("TROVATO IN", aTexts[k][0]);
 //		    			Log.i("LUNGHEZZA", aResults.length+"");
                         aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+                        titoli.add(new CantoRecycled(lista.getString(0)
+                                , lista.getInt(2)
+                                , lista.getString(1)
+                                , lista.getInt(3)
+                                , lista.getString(4)));
                     }
                     // chiude il cursore
                     lista.close();
@@ -732,12 +741,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 }
             }
 
-            titoli.clear();
-            for (int i = 0; i < aResults.length; i++) {
-                if (aResults[i] == null)
-                    break;
-                titoli.add(new CantoItem(aResults[i]));
-            }
+//            titoli.clear();
+//            for (int i = 0; i < aResults.length; i++) {
+//                if (aResults[i] == null)
+//                    break;
+//                titoli.add(new CantoItem(aResults[i]));
+//            }
 
             return null;
         }

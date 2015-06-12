@@ -1,7 +1,9 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import java.util.List;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoHistory;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
 /**
  * Created by marcello.battain on 12/01/2015.
@@ -93,6 +96,18 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
         if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+
+        if (context != null) {
+            if (dataItem.ismSelected())
+                cantoHolder.itemView.setBackgroundColor(((ThemeableActivity) context).getThemeUtils().accentColorLight());
+            else {
+                TypedValue typedValue = new TypedValue();
+                Resources.Theme theme = context.getTheme();
+                theme.resolveAttribute(R.attr.customSelector, typedValue, true);
+                cantoHolder.itemView.setBackgroundResource(typedValue.resourceId);
+            }
+
+        }
     }
 
     @Override

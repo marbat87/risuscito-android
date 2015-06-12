@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,6 +38,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.objects.Canto;
+import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
 import it.cammino.utilities.showcaseview.ShowcaseView;
@@ -111,7 +110,7 @@ public class ConsegnatiFragment extends Fragment {
             updateConsegnatiList(true);
         }
 
-        ((ImageButton)rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -121,7 +120,7 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ((ImageButton)rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -131,7 +130,7 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ((ImageButton)rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
@@ -155,7 +154,7 @@ public class ConsegnatiFragment extends Fragment {
                 animator.start();
             }
         });
-        ((ImageButton)rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 (new ConsegnatiSaveTask()).execute();
@@ -310,7 +309,7 @@ public class ConsegnatiFragment extends Fragment {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca dei preferiti
-        String query = "SELECT A.titolo, A.color, A.pagina" +
+        String query = "SELECT A.titolo, A.color, A.pagina, A._id, A.source" +
                 "		FROM ELENCO A, CANTI_CONSEGNATI B" +
                 "		WHERE A._id = B.id_canto" +
                 "		ORDER BY TITOLO ASC";
@@ -324,10 +323,15 @@ public class ConsegnatiFragment extends Fragment {
             rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoItem> titoli = new ArrayList<CantoItem>();
+        List<CantoRecycled> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < totalConsegnati; i++) {
-            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+//            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+            titoli.add(new CantoRecycled(lista.getString(0)
+                    , lista.getInt(2)
+                    , lista.getString(1)
+                    , lista.getInt(3)
+                    , lista.getString(4)));
             lista.moveToNext();
         }
 
@@ -338,32 +342,35 @@ public class ConsegnatiFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
-                db.close();
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
+//                db.close();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+//                bundle.putString("pagina", pagina);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);

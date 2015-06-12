@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,15 +37,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class FavouritesActivity extends Fragment {
 
     private DatabaseCanti listaCanti;
-    private List<CantoItem> titoli;
-    private String cantoDaCanc;
+    private List<CantoRecycled> titoli;
+    //    private String cantoDaCanc;
+//    private int idDaCanc;
     private int posizDaCanc;
-    private CantoItem removedItem;
+    //    private CantoRecycled removedItem;
+    private List<CantoRecycled> removedItems;
     private View rootView;
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
@@ -194,7 +198,7 @@ public class FavouritesActivity extends Fragment {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca dei preferiti
-        String query = "SELECT titolo, color, pagina" +
+        String query = "SELECT titolo, color, pagina, _id, source" +
                 "		FROM ELENCO" +
                 "		WHERE favourite = 1" +
                 "		ORDER BY TITOLO ASC";
@@ -209,14 +213,21 @@ public class FavouritesActivity extends Fragment {
             fabClear.hide();
             fabClear.setmIgnoreLayoutChanges(true);
         }
-        else
+        else {
+            fabClear.show();
             fabClear.setmIgnoreLayoutChanges(false);
+        }
 
         // crea un array e ci memorizza i titoli estratti
-        titoli = new ArrayList<CantoItem>();
+        titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
-            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+//            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+            titoli.add(new CantoRecycled(lista.getString(0)
+                    , lista.getInt(2)
+                    , lista.getString(1)
+                    , lista.getInt(3)
+                    , lista.getString(4)));
             lista.moveToNext();
         }
 
@@ -227,44 +238,53 @@ public class FavouritesActivity extends Fragment {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
+//                db.close();
+                if (mMode == null) {
+                    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+                    Bundle bundle = new Bundle();
+//                bundle.putString("pagina", pagina);
+                    bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                    bundle.putInt("idCanto", Integer.parseInt(
+                            String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
-                db.close();
-
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                    // lancia l'activity che visualizza il canto passando il parametro creato
+                    startSubActivity(bundle, v);
+                }
+                else {
+                    int tempPos = recyclerView.getChildAdapterPosition(v);
+                    titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
+                    cantoAdapter.notifyItemChanged(tempPos);
+                }
             }
         };
 
         View.OnLongClickListener longClickListener  = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-                cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
-                posizDaCanc = recyclerView.getChildAdapterPosition(v);
+//                cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+//                cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
+//                posizDaCanc = recyclerView.getChildAdapterPosition(v);
 //                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_remove, Snackbar.LENGTH_LONG)
 //                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
 //                            @Override
@@ -289,6 +309,8 @@ public class FavouritesActivity extends Fragment {
 //                        })
 //                        .setActionTextColor(getThemeUtils().accentColor())
 //                        .show();
+//                idDaCanc = Integer.valueOf(String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText()));
+                posizDaCanc = recyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
                 else {
@@ -302,7 +324,7 @@ public class FavouritesActivity extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
 
         // Creating new adapter object
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, longClickListener);
+        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -345,6 +367,9 @@ public class FavouritesActivity extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
             getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+            titoli.get(posizDaCanc).setmSelected(true);
+            cantoAdapter.notifyItemChanged(posizDaCanc);
+            removedItems = new ArrayList<>();
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
             menu.findItem(R.id.action_remove_item).setIcon(drawable);
@@ -363,6 +388,12 @@ public class FavouritesActivity extends Fragment {
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
+            for (CantoRecycled canto: titoli) {
+                canto.setmSelected(false);
+                cantoAdapter.notifyDataSetChanged();
+            }
+            for (CantoRecycled canto: removedItems)
+                canto.setmSelected(false);
         }
 
         @Override
@@ -372,36 +403,56 @@ public class FavouritesActivity extends Fragment {
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
                     ContentValues values = new ContentValues();
                     values.put("favourite", 0);
-                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+//                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+                    for(int i = 0; i < titoli.size(); i++) {
+                        Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
+                        if (titoli.get(i).ismSelected()) {
+                            db.update("ELENCO", values, "_id =  " + titoli.get(i).getIdCanto(), null);
+                            removedItems.add(titoli.remove(i));
+                            cantoAdapter.notifyItemRemoved(i);
+                            i--;
+                        }
+                    }
                     db.close();
-                    removedItem = titoli.remove(posizDaCanc);
-                    cantoAdapter.notifyItemRemoved(posizDaCanc);
+//                    removedItem = titoli.remove(posizDaCanc);
+//                    cantoAdapter.notifyItemRemoved(posizDaCanc);
                     rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                     if (titoli.size() == 0) {
                         fabClear.hide();
                         fabClear.setmIgnoreLayoutChanges(true);
                     }
+                    mode.finish();
+                    if (removedItems.size() > 0) {
+                        String message = removedItems.size() > 1 ?
+                                getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
+                                : getString(R.string.favorite_removed);
+                        Snackbar.make(rootView.findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+                                .setAction(R.string.cancel, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                        ContentValues values = new ContentValues();
+                                        values.put("favourite", 1);
+//                                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
+                                        for (CantoRecycled cantoRemoved: removedItems) {
+                                            db.update("ELENCO", values, "_id =  " + cantoRemoved.getIdCanto(), null);
+                                        }
+                                        db.close();
+                                        updateFavouritesList();
+//                                    titoli.add(posizDaCanc, removedItem);
+//                                    cantoAdapter.notifyItemInserted(posizDaCanc);
+//                                        rootView.findViewById(R.id.no_favourites).setVisibility(View.INVISIBLE);
+//                                        fabClear.show();
+//                                        fabClear.setmIgnoreLayoutChanges(false);
+                                    }
+                                })
+                                .setActionTextColor(getThemeUtils().accentColor())
+                                .show();
+                    }
+                    return true;
+                default:
+                    return false;
             }
-            mode.finish();
-            Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_removed, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.cancel, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-                            ContentValues values = new ContentValues();
-                            values.put("favourite", 1);
-                            db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
-                            db.close();
-                            titoli.add(posizDaCanc, removedItem);
-                            cantoAdapter.notifyItemInserted(posizDaCanc);
-                            rootView.findViewById(R.id.no_favourites).setVisibility(View.INVISIBLE);
-                            fabClear.show();
-                            fabClear.setmIgnoreLayoutChanges(false);
-                        }
-                    })
-                    .setActionTextColor(getThemeUtils().accentColor())
-                    .show();
-            return true;
         }
     };
 
