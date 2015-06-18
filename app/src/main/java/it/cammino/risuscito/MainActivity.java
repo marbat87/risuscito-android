@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -141,7 +140,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
 //        savedInstanceState.putInt(SELECTED_ITEM, mNavigationView.);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
-        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_consegnati));
+        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
             ConsegnatiFragment.RetainedFragment dataFragment = new ConsegnatiFragment.RetainedFragment();
             getSupportFragmentManager().beginTransaction().add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE).commit();
@@ -223,7 +222,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                     case R.id.navitagion_lists:
                         fragment = new CustomLists();
                         break;
-                    case R.id.navitagion_favorites:
+                    case R.id.navigation_favorites:
                         fragment = new FavouritesActivity();
                         break;
                     case R.id.navigation_settings:
@@ -235,10 +234,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                     case R.id.navigation_donate:
                         fragment = new DonateActivity();
                         break;
-                    case R.id.navitagion_consegnati:
+                    case R.id.navigation_consegnati:
                         fragment = new ConsegnatiFragment();
                         break;
-                    case R.id.navitagion_history:
+                    case R.id.navigation_history:
                         fragment = new HistoryFragment();
                         break;
                     default:
@@ -529,14 +528,29 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
             if (myFragment != null && myFragment.isVisible()) {
                 finish();
+                return true;
             }
-            else {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-                transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-                mNavigationView.getMenu().getItem(0).setChecked(true);
+
+            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_favorites));
+            if (myFragment != null && myFragment.isVisible())
+                if (((FavouritesActivity) myFragment).onBackPressed())
+                    return true;
+
+            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_history));
+            if (myFragment != null && myFragment.isVisible())
+                if (((HistoryFragment) myFragment).onBackPressed())
+                    return true;
+
+            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_lists));
+            if (myFragment != null && myFragment.isVisible())
+                if (((CustomLists) myFragment).onBackPressed())
+                    return true;
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            mNavigationView.getMenu().getItem(0).setChecked(true);
 //                setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
-            }
             return true;
         }
         return super.onKeyUp(keyCode, event);

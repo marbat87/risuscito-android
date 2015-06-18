@@ -465,4 +465,12 @@ public class HistoryFragment extends Fragment {
         }
     };
 
+    public boolean onBackPressed() {
+        if (mMode != null) {
+            mMode.finish();
+            return true;
+        }
+        return false;
+    }
+
 }

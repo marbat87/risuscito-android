@@ -456,4 +456,12 @@ public class FavouritesActivity extends Fragment {
         }
     };
 
+    public boolean onBackPressed() {
+        if (mMode != null) {
+            mMode.finish();
+            return true;
+        }
+        return false;
+    }
+
 }

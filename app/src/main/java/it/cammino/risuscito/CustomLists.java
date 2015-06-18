@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -561,4 +562,38 @@ public class CustomLists extends Fragment  {
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
+
+    public boolean onBackPressed() {
+        boolean result = false;
+
+        CantiParolaFragment fragment = (CantiParolaFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
+        if (fragment != null && fragment.mMode != null) {
+            fragment.mMode.finish();
+            Log.i(getClass().getName(), "1");
+            result = true;
+        }
+
+        CantiEucarestiaFragment fragment2 = (CantiEucarestiaFragment) mSectionsPagerAdapter.getRegisteredFragment(1);
+        if (fragment2 != null && fragment2.mMode != null) {
+            fragment2.mMode.finish();
+            Log.i(getClass().getName(), "2");
+            result = true;
+        }
+
+        ListaPersonalizzataFragment fragmentPers;
+        Log.i(getClass().getName(), "mViewPager.getChildCount(): " + mViewPager.getChildCount());
+        Log.i(getClass().getName(), "mSectionsPagerAdapter.getCount(): " + mSectionsPagerAdapter.getCount());
+        for (int i = 2; i < mSectionsPagerAdapter.getCount(); i++) {
+            Log.i(getClass().getName(), "3, i: " + i);
+            fragmentPers = (ListaPersonalizzataFragment) mSectionsPagerAdapter.getRegisteredFragment(i);
+            if (fragmentPers != null && fragmentPers.mMode != null) {
+                fragmentPers.mMode.finish();
+                Log.i(getClass().getName(), "3 OK");
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
 }

@@ -44,7 +44,7 @@ public class CantiParolaFragment extends Fragment {
     private ShareActionProvider mShareActionProvider;
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
-    private ActionMode mMode;
+    public ActionMode mMode;
     private boolean mSwhitchMode;
 //	private int prevOrientation;
 
@@ -135,6 +135,8 @@ public class CantiParolaFragment extends Fragment {
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
+        if (mMode != null)
+            mMode.finish();
         super.onDestroy();
     }
 
