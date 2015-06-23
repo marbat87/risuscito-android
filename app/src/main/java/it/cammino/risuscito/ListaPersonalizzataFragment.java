@@ -1,7 +1,9 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -15,6 +17,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +50,10 @@ public class ListaPersonalizzataFragment extends Fragment {
     private ListaPersonalizzata listaPersonalizzata;
     public ActionMode mMode;
     private boolean mSwhitchMode;
+    private View mActionModeView;
 //	private int prevOrientation;
+
+    private static final int TAG_INSERT_PERS = 555;
 
     private LUtils mLUtils;
 
@@ -84,6 +91,21 @@ public class ListaPersonalizzataFragment extends Fragment {
         mMode = null;
         mSwhitchMode = false;
 
+        fragmentIndex = getArguments().getInt("position");
+        idLista = getArguments().getInt("idLista");
+
+        db = listaCanti.getReadableDatabase();
+        String query = "SELECT lista" +
+                "  FROM LISTE_PERS" +
+                "  WHERE _id =  " + idLista;
+        Cursor cursor = db.rawQuery(query, null);
+        // recupera l'oggetto lista personalizzata
+        cursor.moveToFirst();
+        listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
+                deserializeObject(cursor.getBlob(0));
+
+        updateLista();
+
         return rootView;
     }
 
@@ -109,29 +131,57 @@ public class ListaPersonalizzataFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+//    @Override
+//    public void onResume() {
+////		Log.i("LISTA PERS", "ON RESUME");
+//        super.onResume();
+//        fragmentIndex = getArguments().getInt("position");
+//        idLista = getArguments().getInt("idLista");
+////		Log.i("fragmentIndex", fragmentIndex+"");
+////		Log.i("idLista", idLista+"");
+//
+//        db = listaCanti.getReadableDatabase();
+//
+//        String query = "SELECT lista" +
+//                "  FROM LISTE_PERS" +
+//                "  WHERE _id =  " + idLista;
+//        Cursor cursor = db.rawQuery(query, null);
+//
+//        // recupera l'oggetto lista personalizzata
+//        cursor.moveToFirst();
+//
+//        listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
+//                deserializeObject(cursor.getBlob(0));
+//
+//        updateLista();
+//    }
+
     @Override
-    public void onResume() {
-//		Log.i("LISTA PERS", "ON RESUME");
-        super.onResume();
-        fragmentIndex = getArguments().getInt("position");
-        idLista = getArguments().getInt("idLista");
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.i(getClass().getName(), "requestCode: " + requestCode);
+        if (requestCode == TAG_INSERT_PERS + idLista && resultCode == Activity.RESULT_OK) {
+//            Log.i("LISTA PERS", "ON RESUME");
+            fragmentIndex = getArguments().getInt("position");
+            idLista = getArguments().getInt("idLista");
 //		Log.i("fragmentIndex", fragmentIndex+"");
 //		Log.i("idLista", idLista+"");
 
-        db = listaCanti.getReadableDatabase();
+            db = listaCanti.getReadableDatabase();
 
-        String query = "SELECT lista" +
-                "  FROM LISTE_PERS" +
-                "  WHERE _id =  " + idLista;
-        Cursor cursor = db.rawQuery(query, null);
+            String query = "SELECT lista" +
+                    "  FROM LISTE_PERS" +
+                    "  WHERE _id =  " + idLista;
+            Cursor cursor = db.rawQuery(query, null);
 
-        // recupera l'oggetto lista personalizzata
-        cursor.moveToFirst();
+            // recupera l'oggetto lista personalizzata
+            cursor.moveToFirst();
 
-        listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
-                deserializeObject(cursor.getBlob(0));
+            listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
+                    deserializeObject(cursor.getBlob(0));
 
-        updateLista();
+            updateLista();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -225,16 +275,18 @@ public class ListaPersonalizzataFragment extends Fragment {
                         if (mSwhitchMode)
                             scambioConVuoto(v);
                         else {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 0);
-                            bundle.putInt("idLista", idLista);
-                            bundle.putInt("position", (Integer.valueOf(
-                                    ((TextView) v.findViewById(R.id.id_posizione))
-                                            .getText().toString())));
-                            Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+                            if (mMode == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("fromAdd", 0);
+                                bundle.putInt("idLista", idLista);
+                                bundle.putInt("position", (Integer.valueOf(
+                                        ((TextView) v.findViewById(R.id.id_posizione))
+                                                .getText().toString())));
+                                Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+                                intent.putExtras(bundle);
+                                getParentFragment().startActivityForResult(intent, TAG_INSERT_PERS + idLista);
+                                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+                            }
                         }
                     }
                 });
@@ -251,11 +303,19 @@ public class ListaPersonalizzataFragment extends Fragment {
                 temp.setVisibility(View.VISIBLE);
                 temp.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
                         if (mSwhitchMode)
-                            scambioCanto(v);
-                        else
-                            openPagina(v);
+                            scambioCanto(view);
+                        else {
+                            if (mMode != null) {
+                                posizioneDaCanc = Integer.valueOf(
+                                        ((TextView) view.findViewById(R.id.id_da_canc))
+                                                .getText().toString());
+                                snackBarRimuoviCanto(view);
+                            }
+                            else
+                                openPagina(view);
+                        }
                     }
                 });
                 // setta l'azione tenendo premuto sul canto
@@ -267,7 +327,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                                 ((TextView) view.findViewById(R.id.id_da_canc))
                                         .getText().toString());
 //						Log.i("canto da rimuovere", posizioneDaCanc + " ");
-                        snackBarRimuoviCanto();
+                        snackBarRimuoviCanto(view);
                         return true;
                     }
                 });
@@ -366,7 +426,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 
     }
 
-    public void snackBarRimuoviCanto() {
+    public void snackBarRimuoviCanto(View view) {
 //        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)
 //                .setAction(R.string.snackbar_remove, new View.OnClickListener() {
 //                    @Override
@@ -383,12 +443,10 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                })
 //                .setActionTextColor(getThemeUtils().accentColor())
 //                .show();
-        if (mMode == null)
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        else {
+        if (mMode != null)
             mMode.finish();
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        }
+        mActionModeView = view;
+        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -402,6 +460,7 @@ public class ListaPersonalizzataFragment extends Fragment {
             // Create the menu from the xml file
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
@@ -423,6 +482,11 @@ public class ListaPersonalizzataFragment extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             mSwhitchMode = false;
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getActivity().getTheme();
+            theme.resolveAttribute(R.attr.customSelector, typedValue, true);
+            mActionModeView.setBackgroundResource(typedValue.resourceId);
+            mActionModeView = null;
             if (mode == mMode)
                 mMode = null;
         }

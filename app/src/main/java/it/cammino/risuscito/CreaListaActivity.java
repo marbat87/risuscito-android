@@ -147,7 +147,7 @@ public class CreaListaActivity extends ThemeableActivity {
 				nomiCanti = dataFragment2.getData();
 			}
 			else {
-				nomiCanti = new ArrayList<String>();
+				nomiCanti = new ArrayList<>();
 				if (modifica) {
 					for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
 //		        		Log.i("CANTO", celebrazione.getCantoPosizione(i));

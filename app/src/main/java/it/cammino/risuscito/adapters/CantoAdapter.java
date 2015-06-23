@@ -84,7 +84,7 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
 
         Set<String> sectionLetters = alphaIndexer.keySet();
         // create a list from the set to sort
-        ArrayList<String> sectionList = new ArrayList<String>(sectionLetters);
+        ArrayList<String> sectionList = new ArrayList<>(sectionLetters);
         Collections.sort(sectionList);
         sections = new String[sectionList.size()];
         sectionList.toArray(sections);

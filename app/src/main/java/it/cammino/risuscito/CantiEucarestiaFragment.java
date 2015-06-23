@@ -1,8 +1,10 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,8 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +55,10 @@ public class CantiEucarestiaFragment extends Fragment {
     private SQLiteDatabase db;
     public ActionMode mMode;
     private boolean mSwhitchMode;
+    private View mActionModeView;
 //    private int prevOrientation;
+
+    public static final int TAG_INSERT_EUCARESTIA = 444;
 
     private LUtils mLUtils;
 
@@ -103,6 +110,8 @@ public class CantiEucarestiaFragment extends Fragment {
         mMode = null;
         mSwhitchMode = false;
 
+        updateLista();
+
         return rootView;
     }
 
@@ -128,11 +137,21 @@ public class CantiEucarestiaFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+//    @Override
+//    public void onResume() {
+////        Log.i("CANTI EUCARESTIA", "ON RESUME");
+//        super.onResume();
+//        updateLista();
+//        if (mMode != null && mActionModeView != null)
+//            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
+//    }
+
     @Override
-    public void onResume() {
-//        Log.i("CANTI EUCARESTIA", "ON RESUME");
-        super.onResume();
-        updateLista();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.i(getClass().getName(), "requestCode: " + requestCode);
+        if (requestCode == TAG_INSERT_EUCARESTIA && resultCode == Activity.RESULT_OK)
+            updateLista();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -163,7 +182,7 @@ public class CantiEucarestiaFragment extends Fragment {
     private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
         intent.putExtras(bundle);
-        startActivity(intent);
+        getParentFragment().startActivityForResult(intent, TAG_INSERT_EUCARESTIA);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
     }
 
@@ -214,11 +233,13 @@ public class CantiEucarestiaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(1);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 2);
-                        bundle.putInt("position", 1);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 2);
+                            bundle.putInt("position", 1);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -229,11 +250,18 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     if (mSwhitchMode)
-                        scambioCanto(v, R.id.cantoIniziale1Text, 1);
-                    else
-                        openPagina(v, R.id.cantoIniziale1Text);
+                        scambioCanto(view, R.id.cantoIniziale1Text, 1);
+                    else {
+                        if (mMode != null) {
+                            posizioneDaCanc = 1;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoIniziale1Text)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.cantoIniziale1Text);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -241,7 +269,7 @@ public class CantiEucarestiaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 1;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoIniziale1Text)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -286,11 +314,13 @@ public class CantiEucarestiaFragment extends Fragment {
                         if (mSwhitchMode)
                             scambioConVuoto(6);
                         else {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 2);
-                            bundle.putInt("position", 6);
-                            startSubActivity(bundle);
+                            if (mMode == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("fromAdd", 1);
+                                bundle.putInt("idLista", 2);
+                                bundle.putInt("position", 6);
+                                startSubActivity(bundle);
+                            }
                         }
                     }
                 });
@@ -301,11 +331,18 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setVisibility(View.VISIBLE);
                 view.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
                         if (mSwhitchMode)
-                            scambioCanto(v, R.id.cantoSecondaText, 6);
-                        else
-                            openPagina(v, R.id.cantoSecondaText);
+                            scambioCanto(view, R.id.cantoSecondaText, 6);
+                        else {
+                            if (mMode != null) {
+                                posizioneDaCanc = 6;
+                                titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoSecondaText)).getText().toString());
+                                snackBarRimuoviCanto(view);
+                            }
+                            else
+                                openPagina(view, R.id.cantoSecondaText);
+                        }
                     }
                 });
                 view.setOnLongClickListener(new OnLongClickListener() {
@@ -313,7 +350,7 @@ public class CantiEucarestiaFragment extends Fragment {
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = 6;
                         titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoSecondaText)).getText().toString());
-                        snackBarRimuoviCanto();
+                        snackBarRimuoviCanto(view);
                         return true;
                     }
                 });
@@ -354,11 +391,13 @@ public class CantiEucarestiaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(2);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 2);
-                        bundle.putInt("position", 2);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 2);
+                            bundle.putInt("position", 2);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -369,11 +408,18 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     if (mSwhitchMode)
-                        scambioCanto(v, R.id.cantoPaceText, 2);
-                    else
-                        openPagina(v, R.id.cantoPaceText);
+                        scambioCanto(view, R.id.cantoPaceText, 2);
+                    else {
+                        if (mMode != null) {
+                            posizioneDaCanc = 2;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoPaceText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.cantoPaceText);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -381,7 +427,7 @@ public class CantiEucarestiaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 2;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -425,11 +471,13 @@ public class CantiEucarestiaFragment extends Fragment {
                         if (mSwhitchMode)
                             scambioConVuoto(7);
                         else {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 2);
-                            bundle.putInt("position", 7);
-                            startSubActivity(bundle);
+                            if (mMode == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("fromAdd", 1);
+                                bundle.putInt("idLista", 2);
+                                bundle.putInt("position", 7);
+                                startSubActivity(bundle);
+                            }
                         }
                     }
                 });
@@ -440,11 +488,18 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setVisibility(View.VISIBLE);
                 view.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
                         if (mSwhitchMode)
-                            scambioCanto(v, R.id.santoText, 7);
-                        else
-                            openPagina(v, R.id.santoText);
+                            scambioCanto(view, R.id.santoText, 7);
+                        else {
+                            if (mMode != null) {
+                                posizioneDaCanc = 7;
+                                titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.santoText)).getText().toString());
+                                snackBarRimuoviCanto(view);
+                            }
+                            else
+                                openPagina(view, R.id.santoText);
+                        }
                     }
                 });
                 view.setOnLongClickListener(new OnLongClickListener() {
@@ -452,7 +507,7 @@ public class CantiEucarestiaFragment extends Fragment {
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = 7;
                         titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.santoText)).getText().toString());
-                        snackBarRimuoviCanto();
+                        snackBarRimuoviCanto(view);
                         return true;
                     }
                 });
@@ -483,11 +538,18 @@ public class CantiEucarestiaFragment extends Fragment {
 
         OnClickListener clickListener = new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (mSwhitchMode)
-                    scambioCanto(v, R.id.text_title, 3);
-                else
-                    openPagina(v, R.id.text_title);
+                    scambioCanto(view, R.id.text_title, 3);
+                else {
+                    if (mMode != null) {
+                        posizioneDaCanc = 3;
+                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
+                        snackBarRimuoviCanto(view);
+                    }
+                    else
+                        openPagina(view, R.id.text_title);
+                }
             }
         };
 
@@ -496,7 +558,7 @@ public class CantiEucarestiaFragment extends Fragment {
             public boolean onLongClick(View v) {
                 posizioneDaCanc = 3;
                 titoloDaCanc = Utility.duplicaApostrofi(((TextView) v.findViewById(R.id.text_title)).getText().toString());
-                snackBarRimuoviCanto();
+                snackBarRimuoviCanto(v);
                 return true;
             }
         };
@@ -513,11 +575,18 @@ public class CantiEucarestiaFragment extends Fragment {
 
         clickListener = new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (mSwhitchMode)
-                    scambioCanto(v, R.id.text_title, 4);
-                else
-                    openPagina(v, R.id.text_title);
+                    scambioCanto(view, R.id.text_title, 4);
+                else {
+                    if (mMode != null) {
+                        posizioneDaCanc = 4;
+                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.text_title)).getText().toString());
+                        snackBarRimuoviCanto(view);
+                    }
+                    else
+                        openPagina(view, R.id.text_title);
+                }
             }
         };
 
@@ -526,7 +595,7 @@ public class CantiEucarestiaFragment extends Fragment {
             public boolean onLongClick(View v) {
                 posizioneDaCanc = 4;
                 titoloDaCanc = Utility.duplicaApostrofi(((TextView) v.findViewById(R.id.text_title)).getText().toString());
-                snackBarRimuoviCanto();
+                snackBarRimuoviCanto(v);
                 return true;
             }
         };
@@ -553,11 +622,13 @@ public class CantiEucarestiaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(5);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 2);
-                        bundle.putInt("position", 5);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 2);
+                            bundle.putInt("position", 5);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -568,11 +639,18 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     if (mSwhitchMode)
-                        scambioCanto(v, R.id.cantoFinale1Text, 5);
-                    else
-                        openPagina(v, R.id.cantoFinale1Text);
+                        scambioCanto(view, R.id.cantoFinale1Text, 5);
+                    else {
+                        if (mMode != null) {
+                            posizioneDaCanc = 5;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoFinale1Text)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.cantoFinale1Text);
+                    }
                 }
             });
             view.setOnLongClickListener(new OnLongClickListener() {
@@ -580,7 +658,7 @@ public class CantiEucarestiaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 5;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinale1Text)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -613,11 +691,13 @@ public class CantiEucarestiaFragment extends Fragment {
                 if (mSwhitchMode)
                     scambioConVuotoMultiplo(3);
                 else {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 2);
-                    bundle.putInt("position", 3);
-                    startSubActivity(bundle);
+                    if (mMode == null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 3);
+                        startSubActivity(bundle);
+                    }
                 }
             }
         });
@@ -629,11 +709,13 @@ public class CantiEucarestiaFragment extends Fragment {
                 if (mSwhitchMode)
                     scambioConVuotoMultiplo(4);
                 else {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("fromAdd", 1);
-                    bundle.putInt("idLista", 2);
-                    bundle.putInt("position", 4);
-                    startSubActivity(bundle);
+                    if (mMode == null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("fromAdd", 1);
+                        bundle.putInt("idLista", 2);
+                        bundle.putInt("position", 4);
+                        startSubActivity(bundle);
+                    }
                 }
             }
         });
@@ -805,7 +887,7 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private List<CantoItem> getTitoliListFromPosition(int position) {
 
-        List<CantoItem> result = new ArrayList<CantoItem>();
+        List<CantoItem> result = new ArrayList<>();
 
         db = listaCanti.getReadableDatabase();
 
@@ -865,7 +947,7 @@ public class CantiEucarestiaFragment extends Fragment {
         return result;
     }
 
-    public void snackBarRimuoviCanto() {
+    public void snackBarRimuoviCanto(View view) {
 //        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)
 //                .setAction(R.string.snackbar_remove, new View.OnClickListener() {
 //                    @Override
@@ -884,12 +966,10 @@ public class CantiEucarestiaFragment extends Fragment {
 //                })
 //                .setActionTextColor(getThemeUtils().accentColor())
 //                .show();
-        if (mMode == null)
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        else {
+        if (mMode != null)
             mMode.finish();
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        }
+        mActionModeView = view;
+        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -904,6 +984,7 @@ public class CantiEucarestiaFragment extends Fragment {
 //            MenuInflater inflater = getActivity().getMenuInflater();
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
@@ -925,6 +1006,11 @@ public class CantiEucarestiaFragment extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             mSwhitchMode = false;
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getActivity().getTheme();
+            theme.resolveAttribute(R.attr.customSelector, typedValue, true);
+            mActionModeView.setBackgroundResource(typedValue.resourceId);
+            mActionModeView = null;
             if (mode == mMode)
                 mMode = null;
         }

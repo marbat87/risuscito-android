@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -141,6 +142,7 @@ public class InsertAvanzataFragment extends Fragment {
                     db.close();
                 }
 
+                getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, R.anim.slide_out_right);
             }

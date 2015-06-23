@@ -34,6 +34,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
+import java.util.List;
 import java.util.Locale;
 
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -406,6 +407,7 @@ public class CustomLists extends Fragment  {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.i(getClass().getName(), "requestCode: " + requestCode);
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
@@ -419,6 +421,11 @@ public class CustomLists extends Fragment  {
             };
             Handler myHandler = new Handler();
             myHandler.postDelayed(mMyRunnable, 400);
+        }
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            Fragment fragment = mSectionsPagerAdapter.getRegisteredFragment(i);
+            if (fragment != null && fragment.isVisible())
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

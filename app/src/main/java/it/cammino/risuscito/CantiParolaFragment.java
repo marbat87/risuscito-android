@@ -1,8 +1,10 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +49,10 @@ public class CantiParolaFragment extends Fragment {
     private SQLiteDatabase db;
     public ActionMode mMode;
     private boolean mSwhitchMode;
+    private View mActionModeView;
 //	private int prevOrientation;
+
+    public static final int TAG_INSERT_PAROLA = 333;
 
     private LUtils mLUtils;
 
@@ -99,6 +105,8 @@ public class CantiParolaFragment extends Fragment {
         mMode = null;
         mSwhitchMode = false;
 
+        updateLista();
+
         return rootView;
     }
 
@@ -124,11 +132,21 @@ public class CantiParolaFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+//    @Override
+//    public void onResume() {
+////    	Log.i("CANTI PAROLA", "ON RESUME");
+//        super.onResume();
+//        updateLista();
+//        if (mMode != null && mActionModeView != null)
+//            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
+//    }
+
     @Override
-    public void onResume() {
-//    	Log.i("CANTI PAROLA", "ON RESUME");
-        super.onResume();
-        updateLista();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.i(getClass().getName(), "requestCode: " + requestCode);
+        if (requestCode == TAG_INSERT_PAROLA && resultCode == Activity.RESULT_OK)
+            updateLista();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -170,11 +188,13 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(1);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 1);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 1);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -185,12 +205,18 @@ public class CantiParolaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
 //                    openPagina(v, R.id.cantoInizialeText);
                     if (!mSwhitchMode)
-                        openPagina(v, R.id.cantoInizialeText);
+                        if (mMode != null) {
+                            posizioneDaCanc = 1;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoInizialeText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.cantoInizialeText);
                     else {
-                        scambioCanto(v, R.id.cantoInizialeText, 1);
+                        scambioCanto(view, R.id.cantoInizialeText, 1);
                     }
                 }
             });
@@ -199,7 +225,7 @@ public class CantiParolaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 1;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoInizialeText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -237,11 +263,13 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(2);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 2);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 2);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -252,12 +280,19 @@ public class CantiParolaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
+
 //                    openPagina(v, R.id.primaLetturaText);
                     if (!mSwhitchMode)
-                        openPagina(v, R.id.primaLetturaText);
+                        if (mMode != null) {
+                            posizioneDaCanc = 2;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.primaLetturaText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.primaLetturaText);
                     else {
-                        scambioCanto(v, R.id.primaLetturaText, 2);
+                        scambioCanto(view, R.id.primaLetturaText, 2);
                     }
                 }
             });
@@ -266,7 +301,7 @@ public class CantiParolaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 2;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.primaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -304,11 +339,13 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(3);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 3);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 3);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -319,12 +356,18 @@ public class CantiParolaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
 //                    openPagina(v, R.id.secondaLetturaText);
                     if (!mSwhitchMode)
-                        openPagina(v, R.id.secondaLetturaText);
+                        if (mMode != null) {
+                            posizioneDaCanc = 3;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.secondaLetturaText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.secondaLetturaText);
                     else {
-                        scambioCanto(v, R.id.secondaLetturaText, 3);
+                        scambioCanto(view, R.id.secondaLetturaText, 3);
                     }
                 }
             });
@@ -333,7 +376,7 @@ public class CantiParolaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 3;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.secondaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -371,11 +414,13 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(4);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 4);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 4);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -386,12 +431,18 @@ public class CantiParolaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
 //                    openPagina(v, R.id.terzaLetturaText);
                     if (!mSwhitchMode)
-                        openPagina(v, R.id.terzaLetturaText);
+                        if (mMode != null) {
+                            posizioneDaCanc = 4;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.terzaLetturaText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.terzaLetturaText);
                     else {
-                        scambioCanto(v, R.id.terzaLetturaText, 4);
+                        scambioCanto(view, R.id.terzaLetturaText, 4);
                     }
                 }
             });
@@ -400,7 +451,7 @@ public class CantiParolaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 4;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.terzaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -444,11 +495,13 @@ public class CantiParolaFragment extends Fragment {
                         if (mSwhitchMode)
                             scambioConVuoto(6);
                         else {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 6);
-                            startSubActivity(bundle);
+                            if (mMode == null) {
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("fromAdd", 1);
+                                bundle.putInt("idLista", 1);
+                                bundle.putInt("position", 6);
+                                startSubActivity(bundle);
+                            }
                         }
                     }
                 });
@@ -459,12 +512,18 @@ public class CantiParolaFragment extends Fragment {
                 view.setVisibility(View.VISIBLE);
                 view.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
 //                        openPagina(v, R.id.cantoPaceText);
                         if (!mSwhitchMode)
-                            openPagina(v, R.id.cantoPaceText);
+                            if (mMode != null) {
+                                posizioneDaCanc = 6;
+                                titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoPaceText)).getText().toString());
+                                snackBarRimuoviCanto(view);
+                            }
+                            else
+                                openPagina(view, R.id.cantoPaceText);
                         else {
-                            scambioCanto(v, R.id.cantoPaceText, 6);
+                            scambioCanto(view, R.id.cantoPaceText, 6);
                         }
                     }
                 });
@@ -473,7 +532,7 @@ public class CantiParolaFragment extends Fragment {
                     public boolean onLongClick(View view) {
                         posizioneDaCanc = 6;
                         titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
-                        snackBarRimuoviCanto();
+                        snackBarRimuoviCanto(view);
                         return true;
                     }
                 });
@@ -514,11 +573,13 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(5);
                     else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("fromAdd", 1);
-                        bundle.putInt("idLista", 1);
-                        bundle.putInt("position", 5);
-                        startSubActivity(bundle);
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 1);
+                            bundle.putInt("idLista", 1);
+                            bundle.putInt("position", 5);
+                            startSubActivity(bundle);
+                        }
                     }
                 }
             });
@@ -529,12 +590,18 @@ public class CantiParolaFragment extends Fragment {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
 //                    openPagina(v, R.id.cantoFinaleText);
                     if (!mSwhitchMode)
-                        openPagina(v, R.id.cantoFinaleText);
+                        if (mMode != null) {
+                            posizioneDaCanc = 5;
+                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoFinaleText)).getText().toString());
+                            snackBarRimuoviCanto(view);
+                        }
+                        else
+                            openPagina(view, R.id.cantoFinaleText);
                     else {
-                        scambioCanto(v, R.id.cantoFinaleText, 5);
+                        scambioCanto(view, R.id.cantoFinaleText, 5);
                     }
                 }
             });
@@ -543,7 +610,7 @@ public class CantiParolaFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     posizioneDaCanc = 5;
                     titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinaleText)).getText().toString());
-                    snackBarRimuoviCanto();
+                    snackBarRimuoviCanto(view);
                     return true;
                 }
             });
@@ -574,7 +641,7 @@ public class CantiParolaFragment extends Fragment {
     private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
         intent.putExtras(bundle);
-        startActivity(intent);
+        getParentFragment().startActivityForResult(intent, TAG_INSERT_PAROLA);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
     }
 
@@ -762,7 +829,7 @@ public class CantiParolaFragment extends Fragment {
         return result;
     }
 
-    public void snackBarRimuoviCanto() {
+    public void snackBarRimuoviCanto(View view) {
 //        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.list_remove, Snackbar.LENGTH_LONG)
 //                .setAction(R.string.snackbar_remove, new View.OnClickListener() {
 //                    @Override
@@ -781,12 +848,10 @@ public class CantiParolaFragment extends Fragment {
 //                })
 //                .setActionTextColor(getThemeUtils().accentColor())
 //                .show();
-        if (mMode == null)
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        else {
+        if (mMode != null)
             mMode.finish();
-            mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        }
+        mActionModeView = view;
+        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -801,6 +866,7 @@ public class CantiParolaFragment extends Fragment {
 //            MenuInflater inflater = getActivity().getMenuInflater();
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
@@ -822,6 +888,11 @@ public class CantiParolaFragment extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             mSwhitchMode = false;
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getActivity().getTheme();
+            theme.resolveAttribute(R.attr.customSelector, typedValue, true);
+            mActionModeView.setBackgroundResource(typedValue.resourceId);
+            mActionModeView = null;
             if (mode == mMode)
                 mMode = null;
         }

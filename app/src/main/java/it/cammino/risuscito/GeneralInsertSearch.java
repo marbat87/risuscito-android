@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -82,6 +83,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                setResult(Activity.RESULT_CANCELED);
                 finish();
                 overridePendingTransition(0, R.anim.slide_out_right);
                 return true;
@@ -92,6 +94,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            setResult(Activity.RESULT_CANCELED);
             finish();
             overridePendingTransition(0, R.anim.slide_out_right);
         }

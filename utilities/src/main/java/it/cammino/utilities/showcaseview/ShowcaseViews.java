@@ -11,8 +11,8 @@ import java.util.List;
 
 public class ShowcaseViews {
 
-    private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
-    private final List<float[]> animations = new ArrayList<float[]>();
+    private final List<ShowcaseView> views = new ArrayList<>();
+    private final List<float[]> animations = new ArrayList<>();
     private final Activity activity;
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
