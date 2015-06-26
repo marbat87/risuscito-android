@@ -435,10 +435,15 @@
                     android:text="@string/canto_pane"
                     style="@style/TitoloPosizioneText" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:layout_width= "match_parent"
-                    android:layout_height = "wrap_content"
-                    android:id="@+id/cantiPaneList" />
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--android:layout_width= "match_parent"-->
+                    <!--android:layout_height = "wrap_content"-->
+                    <!--android:id="@+id/cantiPaneList" />-->
+                <LinearLayout
+                    android:id="@+id/cantiPaneList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
 
                 <RelativeLayout
                     android:id="@+id/addCantoPane"
@@ -499,10 +504,15 @@
                     android:text="@string/canto_vino"
                     style="@style/TitoloPosizioneText" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:layout_width= "match_parent"
-                    android:layout_height = "wrap_content"
-                    android:id="@+id/cantiVinoList" />
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--android:layout_width= "match_parent"-->
+                    <!--android:layout_height = "wrap_content"-->
+                    <!--android:id="@+id/cantiVinoList" />-->
+                <LinearLayout
+                    android:id="@+id/cantiVinoList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
 
                 <RelativeLayout
                     android:id="@+id/addCantoVino"
