@@ -15,3 +15,5 @@ android-floating-action-button/android-floating-action-button.iml
 NonSenseFilePicker/build
 android-floating-action-button/build
 recyclerviewfastscroller/recyclerviewfastscroller.iml
+fab-toolbar/fab-toolbar.iml
+fab-toolbar/build

@@ -48,4 +48,5 @@ dependencies {
     // NOTE: vector-compat is available on API level 14 or later
     compile 'com.wnafee:vector-compat:1.0.5'
     compile 'com.android.support:design:22.2.0'
+    compile project(':fab-toolbar')
 }

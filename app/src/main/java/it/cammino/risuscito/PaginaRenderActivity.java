@@ -49,6 +49,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -92,7 +93,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private static MediaPlayer mediaPlayer;
     //    private int favoriteFlag;
     private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
-    public FloatingActionsMenu mFab; // the floating blue add/paste button
+//    public FloatingActionsMenu mFab; // the floating blue add/paste button
+    public FabToolbar mFab; // the floating blue add/paste button
     Slider scroll_speed_bar;
     //    private ProgressDialogPro mp3Dialog, exportDialog;
 //    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
@@ -182,9 +184,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
         // setta il colore della barra di stato, solo su KITKAT
 //        Utility.setupTransparentTints(PaginaRenderActivity.this, mThemeUtils.primaryColorDark(), true);
 
-        getFab().setColorNormal(getThemeUtils().accentColor());
-        getFab().setColorPressed(getThemeUtils().accentColorDark());
-        getFab().setIcon(R.drawable.ic_add_white_24dp);
+//        getFab().setColorNormal(getThemeUtils().accentColor());
+//        getFab().setColorPressed(getThemeUtils().accentColorDark());
+//        getFab().setIcon(R.drawable.ic_add_white_24dp);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -1044,13 +1046,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
 //        ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
 
-        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
+//        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
 //        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
 //        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
-        fabFullscreen.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_fullscreen_on).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 mHandler.removeCallbacks(mScrollDown);
                 saveZoom();
                 Bundle bundle = new Bundle();
@@ -1066,44 +1069,53 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
+//        FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
 //        fabSound.setColorNormal(getThemeUtils().accentColor());
 //        fabSound.setColorPressed(getThemeUtils().accentColorDark());
-        fabSound.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
-                getFab().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.GONE : View.VISIBLE);
                 mostraAudioBool = !v.isSelected();
                 mostraAudio = String.valueOf(mostraAudioBool);
             }
         });
 
-        FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+//        FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
 //        fabFavorite.setColorNormal(getThemeUtils().accentColor());
 //        fabFavorite.setColorPressed(getThemeUtils().accentColorDark());
-        fabFavorite.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_favorite).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
                 updateFavouriteFlag(v.isSelected() ? 1 : 0);
-                getFab().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 Toast.makeText(PaginaRenderActivity.this
                         , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
                         , Toast.LENGTH_SHORT).show();
             }
         });
 
-        getFab().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                showOuterFrame();
-            }
+//        getFab().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+//            @Override
+//            public void onMenuExpanded() {
+//                showOuterFrame();
+//            }
+//
+//            @Override
+//            public void onMenuCollapsed() {
+//                hideOuterFrame();
+//            }
+//        });
 
+        getFab().setButtonOnClickListener(new OnClickListener() {
             @Override
-            public void onMenuCollapsed() {
-                hideOuterFrame();
+            public void onClick(View view) {
+                showOuterFrame();
             }
         });
 
@@ -1137,14 +1149,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 else {
                     prevOrientation = getRequestedOrientation();
                     Utility.blockOrientation(PaginaRenderActivity.this);
-//                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-//                            .setMessage(R.string.dialog_save_tab)
-//                            .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-//                            .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
-//                            .show();
-//                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                     MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
@@ -1324,14 +1328,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
             else {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(PaginaRenderActivity.this);
-//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-//                        .setMessage(R.string.dialog_save_tab)
-//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
-//                        .show();
-//                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                 MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                         .title(R.string.dialog_save_tab_title)
                         .content(R.string.dialog_save_tab)
@@ -1505,7 +1501,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
         findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
         findViewById(R.id.fab_favorite).setSelected(selectFavouriteFromSource() == 1);
-        if (getFab().isExpanded()) {
+        if (getFab().isVisible()) {
             showOuterFrame();
 //            View outerFrame = findViewById(R.id.outerFrame);
 //            outerFrame.setVisibility(View.VISIBLE);
@@ -1529,9 +1525,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
         super.onDestroy();
     }
 
-    public FloatingActionsMenu getFab() {
-        if (mFab == null)
-            mFab = (FloatingActionsMenu) findViewById(R.id.fab_main_expand);
+    public FabToolbar getFab() {
+        if (mFab == null) {
+            mFab = (FabToolbar) findViewById(R.id.fab_toolbar);
+            mFab.setColor(getThemeUtils().accentColor());
+        }
         return mFab;
     }
 
@@ -1540,7 +1538,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         outerFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab().collapse();
+                getFab().hide();
+                hideOuterFrame();
             }
         });
         outerFrame.setVisibility(View.VISIBLE);

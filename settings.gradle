@@ -1,1 +1,1 @@
-include ':app', ':utilities', ':', ':android-floating-action-button', ':recyclerviewfastscroller', ':NonSenseFilePicker'
+include ':app', ':utilities', ':', ':android-floating-action-button', ':recyclerviewfastscroller', ':NonSenseFilePicker', ':fab-toolbar'
