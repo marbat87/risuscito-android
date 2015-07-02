@@ -18,10 +18,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,19 +29,15 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-
-import org.w3c.dom.Text;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import it.cammino.risuscito.adapters.CantoCardRecyclerAdapter;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -123,15 +116,15 @@ public class CantiEucarestiaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
-            ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
-            if (LUtils.hasHoneycomb()) {
+//            ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
+//            ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
+//            if (LUtils.hasHoneycomb()) {
                 ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
                 ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-            }
-            FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-            if (!fab1.isVisible())
-                fab1.show();
+//            }
+            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+            if (!fab1.isShowing())
+                fab1.scrollUp();
         }
     }
 

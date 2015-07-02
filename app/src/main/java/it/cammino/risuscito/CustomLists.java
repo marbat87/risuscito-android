@@ -31,10 +31,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
-import java.util.List;
 import java.util.Locale;
 
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -51,8 +49,9 @@ public class CustomLists extends Fragment  {
     private int prevOrientation;
     private ViewPager mViewPager;
     //    TabPageIndicator mSlidingTabLayout = null;
-    private FloatingActionsMenu mFab1;
-    public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
+    private FabToolbar mFab;
+//    public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
+    public View fabEdit, fabDelete;
     private View rootView;
     private static final String PAGE_VIEWED = "pageViewed";
     public static final int TAG_CREA_LISTA = 111;
@@ -115,26 +114,27 @@ public class CustomLists extends Fragment  {
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
 
-        getFab1().setColorNormal(getThemeUtils().accentColor());
-        getFab1().setColorPressed(getThemeUtils().accentColorDark());
-        getFab1().setIcon(R.drawable.ic_add_white_24dp);
-        getFab1().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                showOuterFrame();
-            }
+//        getFab1().setColorNormal(getThemeUtils().accentColor());
+//        getFab1().setColorPressed(getThemeUtils().accentColorDark());
+//        getFab1().setIcon(R.drawable.ic_add_white_24dp);
+//        getFab1().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+//            @Override
+//            public void onMenuExpanded() {
+//                showOuterFrame();
+//            }
+//
+//            @Override
+//            public void onMenuCollapsed() {
+//                hideOuterFrame();
+//            }
+//        });
 
-            @Override
-            public void onMenuCollapsed() {
-                hideOuterFrame();
-            }
-        });
-
-        fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
-        fabAddLista.setOnClickListener(new View.OnClickListener() {
+//        fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
+        rootView.findViewById(R.id.fab_add_lista).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab1().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
                 dialog = new MaterialDialog.Builder(getActivity())
@@ -184,7 +184,7 @@ public class CustomLists extends Fragment  {
                         return false;
                     }
                 });
-                dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 dialog.setCancelable(false);
                 //to show soft keyboard
                 ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -192,11 +192,12 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        fabPulisci = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci);
-        fabPulisci.setOnClickListener(new View.OnClickListener() {
+//        fabPulisci = (FloatingActionButton) rootView.findViewById(R.id.fab_pulisci);
+        rootView.findViewById(R.id.fab_pulisci).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab1().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
@@ -236,11 +237,12 @@ public class CustomLists extends Fragment  {
         });
 
 
-        fabEdit = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
+        fabEdit = rootView.findViewById(R.id.fab_edit_lista);
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab1().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 Bundle bundle = new Bundle();
                 bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
                 bundle.putBoolean("modifica", true);
@@ -251,36 +253,14 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        fabDelete = (FloatingActionButton) rootView.findViewById(R.id.fab_delete_lista);
+        fabDelete = rootView.findViewById(R.id.fab_delete_lista);
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab1().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 listaDaCanc = mViewPager.getCurrentItem() - 2;
                 lastPosition = mViewPager.getCurrentItem();
-//                SnackbarManager.show(
-//                        Snackbar.with(getActivity())
-//                                .text(getString(R.string.snackbar_list_delete) + titoliListe[listaDaCanc] + "'?")
-//                                .actionLabel(getString(R.string.snackbar_remove))
-//                                .actionListener(new ActionClickListener() {
-//                                    @Override
-//                                    public void onActionClicked(Snackbar snackbar) {
-//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
-//
-//                                        String sql = "DELETE FROM LISTE_PERS"
-//                                                + " WHERE _id = " + idListe[listaDaCanc];
-//                                        db.execSQL(sql);
-//                                        db.close();
-//
-//                                        updateLista();
-//                                        mSectionsPagerAdapter.notifyDataSetChanged();
-////                                        mSlidingTabLayout.setViewPager(mViewPager);
-//                                    }
-//                                })
-//                                .actionColor(getThemeUtils().accentColor())
-//                        , getActivity());
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
                 String query = "SELECT titolo_lista, lista"
@@ -314,8 +294,8 @@ public class CustomLists extends Fragment  {
                             public void onClick(View view) {
 //					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                ContentValues values = new  ContentValues();
-                                values.put("titolo_lista" , titoloDaCanc);
+                                ContentValues values = new ContentValues();
+                                values.put("titolo_lista", titoloDaCanc);
                                 values.put("lista", ListaPersonalizzata.serializeObject(celebrazioneDaCanc));
                                 db.insert("LISTE_PERS", "", values);
                                 db.close();
@@ -367,6 +347,13 @@ public class CustomLists extends Fragment  {
             }
         });
 
+        getFab().setButtonOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showOuterFrame();
+            }
+        });
+
         return rootView;
     }
 
@@ -376,16 +363,16 @@ public class CustomLists extends Fragment  {
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        updateLista();
-//        mSectionsPagerAdapter.notifyDataSetChanged();
-//        mSlidingTabLayout.setViewPager(mViewPager);
-        if (getFab1().isExpanded()) {
-            showOuterFrame();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+////        updateLista();
+////        mSectionsPagerAdapter.notifyDataSetChanged();
+////        mSlidingTabLayout.setViewPager(mViewPager);
+////        if (getFab1().isExpanded()) {
+////            showOuterFrame();
+////        }
+//    }
 
     @Override
     public void onDestroy() {
@@ -439,10 +426,12 @@ public class CustomLists extends Fragment  {
         }
     }
 
-    public FloatingActionsMenu getFab1() {
-        if (mFab1 == null)
-            mFab1 = (FloatingActionsMenu) rootView.findViewById(R.id.fab_pager);
-        return mFab1;
+    public FabToolbar getFab() {
+        if (mFab == null) {
+            mFab = (FabToolbar) rootView.findViewById(R.id.fab_pager);
+            mFab.setColor(getThemeUtils().accentColor());
+        }
+        return mFab;
     }
 
     private void showOuterFrame() {
@@ -450,7 +439,8 @@ public class CustomLists extends Fragment  {
         outerFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab1().collapse();
+                getFab().hide();
+                hideOuterFrame();
             }
         });
         outerFrame.setVisibility(View.VISIBLE);

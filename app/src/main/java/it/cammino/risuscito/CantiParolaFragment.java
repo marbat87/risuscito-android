@@ -31,7 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
 import java.util.Locale;
 
@@ -114,15 +114,15 @@ public class CantiParolaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
-            ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
-            if (LUtils.hasHoneycomb()) {
+//            ((CustomLists) getParentFragment()).fabDelete.setEnabled(false);
+//            ((CustomLists) getParentFragment()).fabEdit.setEnabled(false);
+//            if (LUtils.hasHoneycomb()) {
                 ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
                 ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-            }
-            FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-            if (!fab1.isVisible())
-                fab1.show();
+//            }
+            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+            if (!fab1.isShowing())
+                fab1.scrollUp();
         }
     }
 

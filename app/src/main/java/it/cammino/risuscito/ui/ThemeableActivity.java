@@ -66,9 +66,9 @@ public abstract class ThemeableActivity extends AppCompatActivity {
 
         try {
             float actualScale = getResources().getConfiguration().fontScale;
-//            Log.i(getClass().toString(), "actualScale: " + actualScale);
+            Log.d(getClass().toString(), "actualScale: " + actualScale);
             float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
-//            Log.i(getClass().toString(), "systemScale: " + systemScale);
+            Log.d(getClass().toString(), "systemScale: " + systemScale);
             if (actualScale != systemScale) {
                 Configuration config = new Configuration();
                 config.fontScale = systemScale;
@@ -76,12 +76,14 @@ public abstract class ThemeableActivity extends AppCompatActivity {
             }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
             for (StackTraceElement ste: e.getStackTrace()) {
                 Log.e(getClass().toString(), ste.toString());
             }
         }
         catch (NullPointerException e) {
             Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
             for (StackTraceElement ste: e.getStackTrace()) {
                 Log.e(getClass().toString(), ste.toString());
             }

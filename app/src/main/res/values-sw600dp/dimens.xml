@@ -9,7 +9,7 @@
     <dimen name="min_button_margin">15dip</dimen>
 
     <dimen name="button_playbar_padding">18dp</dimen>
-    <dimen name="floating_margin_lateral">24dp</dimen>
+    <dimen name="floating_margin_lateral">16dp</dimen>
     <dimen name="floating_margin_lateral_menu">20dp</dimen>
 
     <dimen name="floating_margin_lateral_minus_shadow">12dp</dimen>

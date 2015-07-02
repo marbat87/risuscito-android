@@ -17,7 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
 import java.util.Locale;
 
@@ -113,15 +112,15 @@ public class ListaPersonalizzataFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setEnabled(true);
-            ((CustomLists) getParentFragment()).fabEdit.setEnabled(true);
-            if (LUtils.hasHoneycomb()) {
+//            ((CustomLists) getParentFragment()).fabDelete.setEnabled(true);
+//            ((CustomLists) getParentFragment()).fabEdit.setEnabled(true);
+//            if (LUtils.hasHoneycomb()) {
                 ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
                 ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
-            }
-            FloatingActionsMenu fab1 = ((CustomLists) getParentFragment()).getFab1();
-            if (!fab1.isVisible())
-                fab1.show();
+//            }
+            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+            if (!fab1.isShowing())
+                fab1.scrollUp();
         }
     }
 
