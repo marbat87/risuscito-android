@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -58,6 +59,8 @@ public class CantiEucarestiaFragment extends Fragment {
     public static final int TAG_INSERT_EUCARESTIA = 444;
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -227,6 +230,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(1);
                     else {
@@ -248,6 +254,9 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioCanto(view, R.id.cantoIniziale1Text, 1);
                     else {
@@ -308,6 +317,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioConVuoto(6);
                         else {
@@ -329,6 +341,9 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioCanto(view, R.id.cantoSecondaText, 6);
                         else {
@@ -385,6 +400,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(2);
                     else {
@@ -406,6 +424,9 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioCanto(view, R.id.cantoPaceText, 2);
                     else {
@@ -465,6 +486,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioConVuoto(7);
                         else {
@@ -486,6 +510,9 @@ public class CantiEucarestiaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioCanto(view, R.id.santoText, 7);
                         else {
@@ -536,6 +563,9 @@ public class CantiEucarestiaFragment extends Fragment {
         OnClickListener clickListener = new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if (mSwhitchMode)
                     scambioCanto(view, R.id.text_title, 3);
                 else {
@@ -598,6 +628,9 @@ public class CantiEucarestiaFragment extends Fragment {
         clickListener = new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if (mSwhitchMode)
                     scambioCanto(view, R.id.text_title, 4);
                 else {
@@ -664,6 +697,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(5);
                     else {
@@ -685,6 +721,9 @@ public class CantiEucarestiaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioCanto(view, R.id.cantoFinale1Text, 5);
                     else {
@@ -733,6 +772,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if (mSwhitchMode)
                     scambioConVuotoMultiplo(3);
                 else {
@@ -751,6 +793,9 @@ public class CantiEucarestiaFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if (mSwhitchMode)
                     scambioConVuotoMultiplo(4);
                 else {

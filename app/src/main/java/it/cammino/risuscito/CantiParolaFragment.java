@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -51,6 +52,8 @@ public class CantiParolaFragment extends Fragment {
     private boolean mSwhitchMode;
     private View mActionModeView;
 //	private int prevOrientation;
+
+    private long mLastClickTime = 0;
 
     public static final int TAG_INSERT_PAROLA = 333;
 
@@ -185,6 +188,9 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(1);
                     else {
@@ -206,6 +212,9 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
 //                    openPagina(v, R.id.cantoInizialeText);
                     if (!mSwhitchMode)
                         if (mMode != null) {
@@ -260,6 +269,9 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(2);
                     else {
@@ -283,6 +295,9 @@ public class CantiParolaFragment extends Fragment {
                 public void onClick(View view) {
 
 //                    openPagina(v, R.id.primaLetturaText);
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (!mSwhitchMode)
                         if (mMode != null) {
                             posizioneDaCanc = 2;
@@ -336,6 +351,9 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(3);
                     else {
@@ -357,6 +375,9 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
 //                    openPagina(v, R.id.secondaLetturaText);
                     if (!mSwhitchMode)
                         if (mMode != null) {
@@ -411,6 +432,9 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(4);
                     else {
@@ -432,6 +456,9 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
 //                    openPagina(v, R.id.terzaLetturaText);
                     if (!mSwhitchMode)
                         if (mMode != null) {
@@ -492,6 +519,9 @@ public class CantiParolaFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioConVuoto(6);
                         else {
@@ -513,6 +543,9 @@ public class CantiParolaFragment extends Fragment {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
 //                        openPagina(v, R.id.cantoPaceText);
                         if (!mSwhitchMode)
                             if (mMode != null) {
@@ -570,6 +603,9 @@ public class CantiParolaFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     if (mSwhitchMode)
                         scambioConVuoto(5);
                     else {
@@ -591,6 +627,9 @@ public class CantiParolaFragment extends Fragment {
             view.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
 //                    openPagina(v, R.id.cantoFinaleText);
                     if (!mSwhitchMode)
                         if (mMode != null) {

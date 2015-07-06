@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -67,6 +68,8 @@ public class ConsegnatiFragment extends Fragment {
     private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -363,6 +366,10 @@ public class ConsegnatiFragment extends Fragment {
 //                // chiude il cursore
 //                cursor.close();
 //                db.close();
+
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();

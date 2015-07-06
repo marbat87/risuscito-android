@@ -430,7 +430,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-        // cerca se la posizione nella lista � gi� occupata
+        // cerca se la posizione nella lista è già occupata
         String query = "SELECT B.titolo" +
                 "		FROM CUST_LISTS A" +
                 "		   , ELENCO B" +

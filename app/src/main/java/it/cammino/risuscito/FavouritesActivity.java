@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -59,6 +60,8 @@ public class FavouritesActivity extends Fragment {
     private String PREFERITI_OPEN = "preferiti_open";
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -259,7 +262,11 @@ public class FavouritesActivity extends Fragment {
 //                // chiude il cursore
 //                cursor.close();
 //                db.close();
+
                 if (mMode == null) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                        return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
                     // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                     Bundle bundle = new Bundle();
 //                bundle.putString("pagina", pagina);

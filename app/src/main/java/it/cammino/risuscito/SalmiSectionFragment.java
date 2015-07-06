@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -51,6 +52,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     private int idListaClick;
     private int idPosizioneClick;
     private int prevOrientation;
+
+    private long mLastClickTime = 0;
 
     private final int ID_FITTIZIO = 99999999;
     private final int ID_BASE = 100;
@@ -98,6 +101,9 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,8 @@ public class InsertVeloceFragment extends Fragment {
 
     private LUtils mLUtils;
 
+    private long mLastClickTime = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,6 +65,10 @@ public class InsertVeloceFragment extends Fragment {
 //                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
 //                        .getText().toString();
 //                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
+
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -130,6 +137,9 @@ public class InsertVeloceFragment extends Fragment {
         View.OnClickListener seeOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();

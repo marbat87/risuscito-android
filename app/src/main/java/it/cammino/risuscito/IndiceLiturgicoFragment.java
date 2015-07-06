@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -65,6 +66,8 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     private final int ID_BASE = 100;
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -151,6 +154,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
                 String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
                         .getText());

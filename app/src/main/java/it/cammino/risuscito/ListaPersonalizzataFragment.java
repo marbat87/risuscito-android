@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -55,6 +56,8 @@ public class ListaPersonalizzataFragment extends Fragment {
     private static final int TAG_INSERT_PERS = 555;
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -271,6 +274,9 @@ public class ListaPersonalizzataFragment extends Fragment {
 
                     @Override
                     public void onClick(View v) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioConVuoto(v);
                         else {
@@ -303,6 +309,9 @@ public class ListaPersonalizzataFragment extends Fragment {
                 temp.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return;
+                        mLastClickTime = SystemClock.elapsedRealtime();
                         if (mSwhitchMode)
                             scambioCanto(view);
                         else {
