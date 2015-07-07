@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -28,6 +29,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -236,6 +238,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         //recupera i pulsanti
         play_button = (ImageButton) findViewById(R.id.play_song);
+        Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+        play_button.setImageDrawable(drawable);
         time_text = (TextView) findViewById(R.id.time_text);
         no_records_text = (TextView) findViewById(R.id.no_record);
         music_buttons = findViewById(R.id.music_buttons);
@@ -755,6 +760,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    getFab().hide();
+                    hideOuterFrame();
                     if (v.isSelected()) {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
