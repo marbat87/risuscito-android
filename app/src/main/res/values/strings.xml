@@ -276,6 +276,17 @@
     <string name="list_removed">Rimossa la lista \'</string>
     <string name="favorites_removed">% rimossi dai preferiti!</string>
     <string name="histories_removed">% rimossi dalla cronologia!</string>
+    <string name="sc_pagina_render_title">Pagina del canto</string>
+    <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
+    <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
+         salvataggio della tonalit&#224; impostata e reset di quella predefinita.</string>
+    <string name="sc_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le stesse tre funzioni della tonalit&#224;.</string>
+    <string name="sc_audio_title">Riproduzione audio</string>
+    <string name="sc_audio_desc">Usando questi controlli puoi riprodurre la registrazione del canto con le funzioni di: play, pausa,
+         posizionamento nel brano tramite barra, visualizzazione del tempo trascorso.</string>
+    <string name="sc_scroll_title">Scroll automatico del testo</string>
+    <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
+        \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>

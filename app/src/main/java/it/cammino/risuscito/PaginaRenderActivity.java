@@ -40,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -130,8 +131,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private int defaultScrollX = 0;
     private int defaultScrollY = 0;
 
-    private static final String PREF_FIRST_OPEN = "prima_apertura_new";
-    private static final String PREF_FIRST_OPEN_SCROLL = "prima_apertura_scroll";
+    //    private static final String PREF_FIRST_OPEN = "prima_apertura_new";
+    private static final String PREF_FIRST_OPEN_NEW = "prima_apertura_audio";
+//    private static final String PREF_FIRST_OPEN_SCROLL = "prima_apertura_scroll";
+
 
     private Handler mHandler = new Handler();
     final Runnable mScrollDown = new Runnable() {
@@ -993,51 +996,51 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        boolean showHelp1 = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN, true);
+//        boolean showHelp1 = PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getBoolean(PREF_FIRST_OPEN, true)
 
-        boolean showHelp2 = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN_SCROLL, true);
+//        boolean showHelp2 = PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getBoolean(PREF_FIRST_OPEN_SCROLL, true);
 
-        if(showHelp1) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
-
-            final Runnable mMyRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    showHelp();
-                }
-            };
-            Handler myHandler = new Handler();
-            myHandler.postDelayed(mMyRunnable, 2000);
-        }
-        else {
-            if (showHelp2){
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                        .edit();
-                editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(PaginaRenderActivity.this);
-                showScrollHelp();
-            }
-        }
+//        if(showHelp1) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                editor.commit();
+//            } else {
+//                editor.apply();
+//            }
+//
+//            final Runnable mMyRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    showHelp();
+//                }
+//            };
+//            Handler myHandler = new Handler();
+//            myHandler.postDelayed(mMyRunnable, 2000);
+//        }
+//        else {
+//            if (showHelp2){
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                        .edit();
+//                editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                    editor.commit();
+//                } else {
+//                    editor.apply();
+//                }
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(PaginaRenderActivity.this);
+//                showScrollHelp();
+//            }
+//        }
 
         initializeLoadingDialogs();
 
@@ -1146,6 +1149,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
             mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
+
+        findViewById(R.id.pagina_render_view).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                else
+                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                boolean showHelp = PreferenceManager
+                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                        .getBoolean(PREF_FIRST_OPEN_NEW, true);
+
+                if(showHelp) {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                        editor.commit();
+                    } else {
+                        editor.apply();
+                    }
+                    showHelp();
+                }
+
+            }
+        });
 
     }
 
@@ -2122,13 +2153,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private void showHelp() {
         prevOrientation = getRequestedOrientation();
         Utility.blockOrientation(PaginaRenderActivity.this);
+
         ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
+                new ViewTarget(R.id.cantoView, PaginaRenderActivity.this)
                 , PaginaRenderActivity.this
-                , R.string.action_tonalita
-                , R.string.showcase_tonalita_desc);
+                , R.string.sc_pagina_render_title
+                , R.string.sc_pagina_render_desc);
         showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setScaleMultiplier(0.3f);
+        showCase.setShowcase(ShowcaseView.NONE);
         showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 
             @Override
@@ -2139,8 +2171,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 ShowcaseView showCase = ShowcaseView.insertShowcaseView(
                         new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
                         , PaginaRenderActivity.this
-                        , "1) " + getString(R.string.action_trasporta)
-                        , getString(R.string.showcase_chtab_desc));
+                        , R.string.action_tonalita
+                        , R.string.sc_tonalita_desc);
                 showCase.setButtonText(getString(R.string.showcase_button_next));
                 showCase.setScaleMultiplier(0.3f);
                 showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
@@ -2151,10 +2183,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     @Override
                     public void onShowcaseViewHide(ShowcaseView showcaseView) {
                         ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
+                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
                                 , PaginaRenderActivity.this
-                                , "2) " + getString(R.string.action_salva_tonalita)
-                                , getString(R.string.showcase_savetab_desc));
+                                , R.string.action_barre
+                                , R.string.sc_barre_desc);
                         showCase.setButtonText(getString(R.string.showcase_button_next));
                         showCase.setScaleMultiplier(0.3f);
                         showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
@@ -2165,12 +2197,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             @Override
                             public void onShowcaseViewHide(ShowcaseView showcaseView) {
                                 ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
+                                        new ViewTarget(R.id.music_controls, PaginaRenderActivity.this)
                                         , PaginaRenderActivity.this
-                                        , "3) " + getString(R.string.action_reset_tonalita)
-                                        , getString(R.string.showcase_restab_desc));
+                                        , R.string.sc_audio_title
+                                        , R.string.sc_audio_desc);
                                 showCase.setButtonText(getString(R.string.showcase_button_next));
-                                showCase.setScaleMultiplier(0.3f);
+                                showCase.setScaleMultiplier(1.0f);
                                 showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 
                                     @Override
@@ -2178,13 +2210,30 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                                     @Override
                                     public void onShowcaseViewHide(ShowcaseView showcaseView) {
+                                        lps = new RelativeLayout.LayoutParams(
+                                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                ViewGroup.LayoutParams.WRAP_CONTENT);
+                                        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                                        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                                        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
+                                        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                                                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
+                                        }
+                                        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
+
+                                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+                                        co.buttonLayoutParams = lps;
+
                                         ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
+                                                new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
                                                 , PaginaRenderActivity.this
-                                                , R.string.action_barre
-                                                , R.string.showcase_barre_desc);
+                                                , R.string.sc_scroll_title
+                                                , R.string.sc_scroll_desc
+                                                , co);
                                         showCase.setButtonText(getString(R.string.showcase_button_next));
-                                        showCase.setScaleMultiplier(0.3f);
+                                        showCase.setScaleMultiplier(1.0f);
                                         showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 
                                             @Override
@@ -2193,12 +2242,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             @Override
                                             public void onShowcaseViewHide(ShowcaseView showcaseView) {
                                                 ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                        new ViewTarget(R.id.barre, PaginaRenderActivity.this)
+                                                        new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
                                                         , PaginaRenderActivity.this
-                                                        , "1) " + getString(R.string.action_trasporta)
-                                                        , getString(R.string.showcase_chbarre_desc));
-                                                showCase.setButtonText(getString(R.string.showcase_button_next));
-                                                showCase.setScaleMultiplier(0.3f);
+                                                        , R.string.showcase_end_title
+                                                        , R.string.showcase_help_general);
+                                                showCase.setShowcase(ShowcaseView.NONE);
                                                 showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
 
                                                     @Override
@@ -2206,44 +2254,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                                                     @Override
                                                     public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                                , PaginaRenderActivity.this
-                                                                , "2) " + getString(R.string.action_salva_tonalita)
-                                                                , getString(R.string.showcase_savebarre_desc));
-                                                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                                                        showCase.setScaleMultiplier(0.3f);
-                                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                            @Override
-                                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                            @Override
-                                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                                        new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                                        , PaginaRenderActivity.this
-                                                                        , "3) " + getString(R.string.action_reset_barre)
-                                                                        , getString(R.string.showcase_resbarre_desc));
-                                                                showCase.setScaleMultiplier(0.3f);
-                                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                                    @Override
-                                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                                    @Override
-                                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                                        showScrollHelp();
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                                });
-                                                            }
-
-                                                            @Override
-                                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                        });
+                                                        setRequestedOrientation(prevOrientation);
                                                     }
 
                                                     @Override

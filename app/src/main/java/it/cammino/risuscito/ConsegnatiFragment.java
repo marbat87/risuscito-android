@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -25,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -219,27 +219,52 @@ public class ConsegnatiFragment extends Fragment {
                 })
                 .build();
 
-        if(PreferenceManager
-                .getDefaultSharedPreferences(getActivity())
-                .getBoolean(PREF_FIRST_OPEN, true)) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
-            final Runnable mMyRunnable = new Runnable() {
-                @Override
-                public void run() {
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                else
+                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                if(PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .getBoolean(PREF_FIRST_OPEN, true)) {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(getActivity())
+                            .edit();
+                    editor.putBoolean(PREF_FIRST_OPEN, false);
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                        editor.commit();
+                    } else {
+                        editor.apply();
+                    }
                     showHelp();
                 }
-            };
-            Handler myHandler = new Handler();
-            myHandler.postDelayed(mMyRunnable, 1000);
-        }
+            }
+        });
+
+//        if(PreferenceManager
+//                .getDefaultSharedPreferences(getActivity())
+//                .getBoolean(PREF_FIRST_OPEN, true)) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                editor.commit();
+//            } else {
+//                editor.apply();
+//            }
+//            final Runnable mMyRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    showHelp();
+//                }
+//            };
+//            Handler myHandler = new Handler();
+//            myHandler.postDelayed(mMyRunnable, 1000);
+//        }
 
         return rootView;
     }
