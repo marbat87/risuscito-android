@@ -3,9 +3,9 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,10 +25,7 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
-import it.cammino.utilities.showcaseview.ShowcaseView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
+import it.cammino.risuscito.slides.IntroMain;
 
 public class Risuscito extends Fragment {
 
@@ -38,8 +33,8 @@ public class Risuscito extends Fragment {
     private static final String NO_VERSION = "";
     private static final String FIRST_OPEN_MENU = "FIRST_OPEN_MENU4";
     private int prevOrientation;
-    private int screenWidth;
-    private int screenHeight;
+//    private int screenWidth;
+//    private int screenHeight;
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -64,17 +59,17 @@ public class Risuscito extends Fragment {
                     }
                 });
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
-            screenWidth = display.getWidth();
-            screenHeight = display.getHeight();
-        }
-        else {
-            Point size = new Point();
-            display.getSize(size);
-            screenWidth = size.x;
-            screenHeight = size.y;
-        }
+//        Display display = getActivity().getWindowManager().getDefaultDisplay();
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
+//            screenWidth = display.getWidth();
+//            screenHeight = display.getHeight();
+//        }
+//        else {
+//            Point size = new Point();
+//            display.getSize(size);
+//            screenWidth = size.x;
+//            screenHeight = size.y;
+//        }
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
@@ -247,38 +242,40 @@ public class Risuscito extends Fragment {
 //    }
 
     private void showHelp() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        Utility.blockOrientation(getActivity());
-
-        //nuovo menu
-        ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.imageView1, getActivity())
-                , getActivity()
-                , R.string.help_new_menu_title
-                , R.string.help_new_menu_desc);
-        showcaseView.setShowcase(ShowcaseView.NONE);
-        showcaseView.animateGesture(0, screenHeight/2, screenWidth/3, screenHeight/2, true);
-        showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                getActivity().setRequestedOrientation(prevOrientation);
-            }
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-        });
+        Intent intent = new Intent(getActivity(), IntroMain.class);
+        startActivity(intent);
+//        prevOrientation = getActivity().getRequestedOrientation();
+//        Utility.blockOrientation(getActivity());
+//
+//        //nuovo menu
+//        ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.imageView1, getActivity())
+//                , getActivity()
+//                , R.string.help_new_menu_title
+//                , R.string.help_new_menu_desc);
+//        showcaseView.setShowcase(ShowcaseView.NONE);
+//        showcaseView.animateGesture(0, screenHeight/2, screenWidth/3, screenHeight/2, true);
+//        showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                getActivity().setRequestedOrientation(prevOrientation);
+//            }
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//        });
     }
 
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
+//    private int dpToPx(int dp) {
+//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//        return px;
+//    }
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
+//    private ThemeUtils getThemeUtils() {
+//        return ((MainActivity)getActivity()).getThemeUtils();
+//    }
 
 }

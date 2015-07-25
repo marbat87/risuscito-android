@@ -50,7 +50,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
         idLista = bundle.getInt("idLista");
         listPosition = bundle.getInt("position");
 
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        final ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
 //        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) findViewById(R.id.sliding_tabs);
@@ -66,10 +66,28 @@ public class GeneralInsertSearch extends ThemeableActivity {
 //		tabs.setBackgroundColor(getThemeUtils().primaryColor());
 //		tabs.setViewPager(mViewPager);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
+        final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        tabs.setupWithViewPager(mViewPager);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
+        tabs.post(new Runnable() {
+            @Override
+            public void run() {
+                tabs.setupWithViewPager(mViewPager);
+                mLUtils.applyFontedTab(mViewPager, tabs);
+            }
+        });
+
+
+//        final Runnable mMyRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                tabs.setupWithViewPager(mViewPager);
+//                mLUtils.applyFontedTab(mViewPager, tabs);
+//            }
+//        };
+//        Handler myHandler = new Handler();
+//        myHandler.postDelayed(mMyRunnable, 200);
 
     }
 

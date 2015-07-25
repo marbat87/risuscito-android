@@ -124,7 +124,7 @@ public class CantiParolaFragment extends Fragment {
                 ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
 //            }
             FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
+//            if (!fab1.isShowing())
                 fab1.scrollUp();
         }
     }

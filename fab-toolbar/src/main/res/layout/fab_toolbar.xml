@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<com.melnykov.fab.FloatingActionButton
-			android:id="@+id/button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginBottom="@dimen/tb_button_margin"
-			android:layout_marginEnd="@dimen/tb_button_margin_right"
-			android:layout_marginRight="@dimen/tb_button_margin_right"
-			android:layout_marginTop="@dimen/tb_button_margin_top"
-			android:src="@drawable/ic_add_white_24dp"
-			android:layout_gravity="end"
-			/>
+    <!--<com.melnykov.fab.FloatingActionButton-->
+    <!--android:id="@+id/button"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/tb_button_margin"-->
+    <!--android:layout_marginEnd="@dimen/tb_button_margin_right"-->
+    <!--android:layout_marginRight="@dimen/tb_button_margin_right"-->
+    <!--android:layout_marginTop="@dimen/tb_button_margin_top"-->
+    <!--android:src="@drawable/ic_add_white_24dp"-->
+    <!--android:layout_gravity="end"-->
+    <!--/>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button"
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_gravity="end"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/tb_button_margin_top"
+        android:layout_marginRight="@dimen/tb_button_margin_right"
+        android:layout_marginBottom="@dimen/tb_button_margin_bottom"
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_translation_z_pressed"
+        android:translationZ="@dimen/fab_translation_z_pressed" />
 
-	<LinearLayout
-			android:id="@+id/container"
-			android:layout_width="match_parent"
-			android:layout_height="@dimen/toolbar_height"
-			android:orientation="horizontal"
-			android:gravity="center"
-	        android:visibility="invisible"
-			android:elevation="@dimen/elevation"
-			/>
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:elevation="@dimen/elevation" />
 
 </merge>

@@ -7,4 +7,6 @@
     <dimen name="toolbar_fab_margintop">30dip</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
 
+    <dimen name="product_logo_bottom">48dp</dimen>
+
 </resources>

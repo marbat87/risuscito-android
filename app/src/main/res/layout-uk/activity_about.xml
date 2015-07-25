@@ -31,14 +31,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <view
-            class="it.gmariotti.changelibs.library.view.ChangeLogListView"
+        <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:changeLogFileResourceId="@raw/changelog_full_uk"
             risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
             risuscito:rowLayoutId="@layout/changelogrow_material_layout"
-            android:id="@+id/aboutText"/>
+            android:id="@+id/aboutText" />
 
     </LinearLayout>
 

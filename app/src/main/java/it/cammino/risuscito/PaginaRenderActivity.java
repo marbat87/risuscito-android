@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -39,7 +38,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -81,10 +79,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
-import it.cammino.utilities.showcaseview.ShowcaseView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
 public class PaginaRenderActivity extends ThemeableActivity {
 
@@ -2151,220 +2147,222 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     private void showHelp() {
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.cantoView, PaginaRenderActivity.this)
-                , PaginaRenderActivity.this
-                , R.string.sc_pagina_render_title
-                , R.string.sc_pagina_render_desc);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setShowcase(ShowcaseView.NONE);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
-                        , PaginaRenderActivity.this
-                        , R.string.action_tonalita
-                        , R.string.sc_tonalita_desc);
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setScaleMultiplier(0.3f);
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                , PaginaRenderActivity.this
-                                , R.string.action_barre
-                                , R.string.sc_barre_desc);
-                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                        showCase.setScaleMultiplier(0.3f);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                        new ViewTarget(R.id.music_controls, PaginaRenderActivity.this)
-                                        , PaginaRenderActivity.this
-                                        , R.string.sc_audio_title
-                                        , R.string.sc_audio_desc);
-                                showCase.setButtonText(getString(R.string.showcase_button_next));
-                                showCase.setScaleMultiplier(1.0f);
-                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                    @Override
-                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                    @Override
-                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                        lps = new RelativeLayout.LayoutParams(
-                                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                ViewGroup.LayoutParams.WRAP_CONTENT);
-                                        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                                        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                                        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
-                                        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                                                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
-                                        }
-                                        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
-
-                                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                                        co.buttonLayoutParams = lps;
-
-                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
-                                                , PaginaRenderActivity.this
-                                                , R.string.sc_scroll_title
-                                                , R.string.sc_scroll_desc
-                                                , co);
-                                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                                        showCase.setScaleMultiplier(1.0f);
-                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                            @Override
-                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                            @Override
-                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                        new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
-                                                        , PaginaRenderActivity.this
-                                                        , R.string.showcase_end_title
-                                                        , R.string.showcase_help_general);
-                                                showCase.setShowcase(ShowcaseView.NONE);
-                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                    @Override
-                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                    @Override
-                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                        setRequestedOrientation(prevOrientation);
-                                                    }
-
-                                                    @Override
-                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                });
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                        });
-                    }
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                });
-
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-        });
-    }
-
-    public void showScrollHelp() {
-        lps = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
-        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
-        }
-        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
-
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.buttonLayoutParams = lps;
-
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.play_scroll, PaginaRenderActivity.this)
-                , PaginaRenderActivity.this
-                , R.string.play_scroll
-                , R.string.showcase_scroll_desc
-                , co);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setScaleMultiplier(0.3f);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                co.buttonLayoutParams = lps;
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
-                        , PaginaRenderActivity.this
-                        , R.string.scroll_seekbar
-                        , R.string.showcase_seekbar_desc
-                        , co);
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
-                                , PaginaRenderActivity.this
-                                , R.string.showcase_end_title
-                                , R.string.showcase_help_general);
-                        showCase.setShowcase(ShowcaseView.NONE);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                        });
-                    }
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                });
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-        });
+        Intent intent = new Intent(PaginaRenderActivity.this, IntroPaginaRender.class);
+        startActivity(intent);
+//        prevOrientation = getRequestedOrientation();
+//        Utility.blockOrientation(PaginaRenderActivity.this);
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.cantoView, PaginaRenderActivity.this)
+//                , PaginaRenderActivity.this
+//                , R.string.sc_pagina_render_title
+//                , R.string.sc_pagina_render_desc);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setShowcase(ShowcaseView.NONE);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
+//                        , PaginaRenderActivity.this
+//                        , R.string.action_tonalita
+//                        , R.string.sc_tonalita_desc);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setScaleMultiplier(0.3f);
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
+//                                , PaginaRenderActivity.this
+//                                , R.string.action_barre
+//                                , R.string.sc_barre_desc);
+//                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                        showCase.setScaleMultiplier(0.3f);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                        new ViewTarget(R.id.music_controls, PaginaRenderActivity.this)
+//                                        , PaginaRenderActivity.this
+//                                        , R.string.sc_audio_title
+//                                        , R.string.sc_audio_desc);
+//                                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                                showCase.setScaleMultiplier(1.0f);
+//                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                    @Override
+//                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                    @Override
+//                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                        lps = new RelativeLayout.LayoutParams(
+//                                                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                                                ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//                                        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//                                        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
+//                                        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+//                                                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                                            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
+//                                        }
+//                                        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
+//
+//                                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                                        co.buttonLayoutParams = lps;
+//
+//                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                                new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
+//                                                , PaginaRenderActivity.this
+//                                                , R.string.sc_scroll_title
+//                                                , R.string.sc_scroll_desc
+//                                                , co);
+//                                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                                        showCase.setScaleMultiplier(1.0f);
+//                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                            @Override
+//                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                            @Override
+//                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                                        new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
+//                                                        , PaginaRenderActivity.this
+//                                                        , R.string.showcase_end_title
+//                                                        , R.string.showcase_help_general);
+//                                                showCase.setShowcase(ShowcaseView.NONE);
+//                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                                        setRequestedOrientation(prevOrientation);
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                                });
+//                                            }
+//
+//                                            @Override
+//                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                        });
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//        });
+//    }
+//
+//    public void showScrollHelp() {
+//        lps = new RelativeLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
+//        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+//                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
+//        }
+//        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
+//
+//        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//        co.buttonLayoutParams = lps;
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.play_scroll, PaginaRenderActivity.this)
+//                , PaginaRenderActivity.this
+//                , R.string.play_scroll
+//                , R.string.showcase_scroll_desc
+//                , co);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setScaleMultiplier(0.3f);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                co.buttonLayoutParams = lps;
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
+//                        , PaginaRenderActivity.this
+//                        , R.string.scroll_seekbar
+//                        , R.string.showcase_seekbar_desc
+//                        , co);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
+//                                , PaginaRenderActivity.this
+//                                , R.string.showcase_end_title
+//                                , R.string.showcase_help_general);
+//                        showCase.setShowcase(ShowcaseView.NONE);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                });
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//        });
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {

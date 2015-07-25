@@ -6,32 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:id="@+id/toolbar_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:elevation="@dimen/toolbar_elevation"-->
-    <!--android:theme="@style/ActionBarThemeOverlay">-->
-
-    <include layout="@layout/risuscito_toolbar" />
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
     <FrameLayout
-        android:layout_marginTop="?actionBarSize"
+        android:id="@+id/no_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width= "match_parent"
-            android:layout_height = "match_parent"
-            android:id="@+id/history_recycler"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="true" />
-
         <RelativeLayout
             android:layout_gravity="center"
-            android:id="@+id/no_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -67,23 +48,47 @@
 
     </FrameLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_clear_history"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.RecyclerView
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width= "match_parent"
+        android:layout_height = "match_parent"
+        android:id="@+id/history_recycler"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true" />
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        risuscito:fab_colorNormal="@color/theme_accent"
-        risuscito:fab_colorPressed="@color/theme_accent_dark"
-        risuscito:fab_icon="@drawable/ic_eraser_white_24dp"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
+
+        <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+    <!--android:id="@+id/fab_clear_history"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
+    <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
+    <!--risuscito:fab_icon="@drawable/ic_eraser_white_24dp"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
+    <!--android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow" />-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_clear_history"
+        android:src="@drawable/ic_eraser_white_24dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/floating_margin_lateral"
-        android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow" />
-
-    <!--<View-->
-    <!--android:layout_gravity="top"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="5dp"-->
-    <!--android:background="?toolbar_shadow" />-->
-
-    <!--</FrameLayout>-->
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_end"
+        android:layout_marginRight="@dimen/fab_margin_end"
+        risuscito:elevation="@dimen/toolbar_elevation"
+        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed"
+        android:translationZ="@dimen/fab_translation_z_pressed"
+        risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

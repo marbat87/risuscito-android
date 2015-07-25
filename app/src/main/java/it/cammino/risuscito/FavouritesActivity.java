@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -32,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class FavouritesActivity extends Fragment {
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
     private int prevOrientation;
-    private FloatingActionButton fabClear;
+    private android.support.design.widget.FloatingActionButton fabClear;
     private ActionMode mMode;
 
     private String PREFERITI_OPEN = "preferiti_open";
@@ -81,8 +81,8 @@ public class FavouritesActivity extends Fragment {
         mMode = null;
 
         fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
-        fabClear.setColorNormal(getThemeUtils().accentColor());
-        fabClear.setColorPressed(getThemeUtils().accentColorDark());
+//        fabClear.setColorNormal(getThemeUtils().accentColor());
+//        fabClear.setColorPressed(getThemeUtils().accentColorDark());
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,17 +210,6 @@ public class FavouritesActivity extends Fragment {
         //recupera il numero di record trovati
         int total = lista.getCount();
 
-        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (total == 0) {
-            fabClear.hide();
-            fabClear.setmIgnoreLayoutChanges(true);
-        }
-        else {
-            fabClear.show();
-            fabClear.setmIgnoreLayoutChanges(false);
-        }
-
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
@@ -337,28 +326,39 @@ public class FavouritesActivity extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+//nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
+        rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
+        if (total == 0) {
+            fabClear.hide();
+//            fabClear.setmIgnoreLayoutChanges(true);
+        }
+        else {
+            Log.d(getClass().getName(), "FAB SHOW");
+            fabClear.show();
+//            fabClear.setmIgnoreLayoutChanges(false);
+        }
 
         //decide se mostrare o nascondere il floatin button in base allo scrolling
         /*
             SERVE SOLO PRIMA DELLE API 21, PERCHE' NON C'E' IL TOOLBARLAYOUT
         */
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    float y = recyclerView.getScrollY();
-                    super.onScrolled(recyclerView, dx, dy);
-                    if (y < dy) {
-                        if (titoli.size() > 0)
-                            fabClear.hide();
-                    } else {
-                        if (titoli.size() > 0)
-                            fabClear.show();
-                    }
-                }
-
-            });
-        }
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+//            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//                @Override
+//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                    float y = recyclerView.getScrollY();
+//                    super.onScrolled(recyclerView, dx, dy);
+//                    if (y < dy) {
+//                        if (titoli.size() > 0)
+//                            fabClear.hide();
+//                    } else {
+//                        if (titoli.size() > 0)
+//                            fabClear.show();
+//                    }
+//                }
+//
+//            });
+//        }
 
     }
 
@@ -426,7 +426,7 @@ public class FavouritesActivity extends Fragment {
                     rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                     if (titoli.size() == 0) {
                         fabClear.hide();
-                        fabClear.setmIgnoreLayoutChanges(true);
+//                        fabClear.setmIgnoreLayoutChanges(true);
                     }
                     mode.finish();
                     if (removedItems.size() > 0) {

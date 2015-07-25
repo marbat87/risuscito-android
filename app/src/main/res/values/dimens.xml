@@ -30,12 +30,15 @@
     <dimen name="button_icon_padding">-5dip</dimen>
 
     <dimen name="toolbar_elevation">4dp</dimen>
-    <integer name="toolbar_elevation">4</integer>
+    <!--<integer name="toolbar_elevation">4</integer>-->
 
     <dimen name="button_icon_radius">40dp</dimen>
     <dimen name="button_icon_drawable">26dp</dimen>
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="floating_margin_lateral">8dp</dimen>
+    <dimen name="fab_margin_end">4dp</dimen>
+    <dimen name="fab_margin_bottom">0dp</dimen>
+    <dimen name="fab_translation_z">10dp</dimen>
     <dimen name="floating_margin_lateral_menu">11dp</dimen>
 
     <dimen name="circle_view_border">1dp</dimen>
@@ -57,5 +60,7 @@
     <dimen name="toolbar_fab_margintop">50dip</dimen>
 
     <dimen name="raise_elevation">8dp</dimen>
+
+    <dimen name="product_logo_bottom">16dp</dimen>
 
 </resources>

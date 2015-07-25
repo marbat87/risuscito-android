@@ -116,17 +116,29 @@
             android:layout_height="5dp"
             android:background="?toolbar_shadow" />
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+            <!--android:id="@+id/fab_crea_lista"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--risuscito:fab_colorNormal="@color/theme_accent"-->
+            <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
+            <!--risuscito:fab_icon="@drawable/ic_add_white_24dp"-->
+            <!--android:layout_gravity="top|end"-->
+            <!--android:layout_marginTop="@dimen/toolbar_fab_margintop"-->
+            <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
+            <!--android:elevation="@dimen/toolbar_elevation" />-->
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_crea_lista"
-            android:layout_width="wrap_content"
+            android:src="@drawable/ic_add_white_24dp"
+            android:layout_gravity="bottom|end"
             android:layout_height="wrap_content"
-            risuscito:fab_colorNormal="@color/theme_accent"
-            risuscito:fab_colorPressed="@color/theme_accent_dark"
-            risuscito:fab_icon="@drawable/ic_add_white_24dp"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="@dimen/toolbar_fab_margintop"
-            android:layout_marginRight="@dimen/floating_margin_lateral"
-            android:elevation="@dimen/toolbar_elevation" />
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="@dimen/fab_margin_bottom"
+            android:layout_marginEnd="@dimen/fab_margin_end"
+            android:layout_marginRight="@dimen/fab_margin_end"
+            risuscito:elevation="@dimen/toolbar_elevation"
+            risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed"
+            android:translationZ="@dimen/fab_translation_z" />
 
     </FrameLayout>
 

@@ -3,7 +3,6 @@ package it.cammino.risuscito;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,9 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,10 +37,8 @@ import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.slides.IntroConsegnati;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
-import it.cammino.utilities.showcaseview.ShowcaseView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
 public class ConsegnatiFragment extends Fragment {
 
@@ -62,8 +57,8 @@ public class ConsegnatiFragment extends Fragment {
     private int prevOrientation;
     private MaterialDialog mProgressDialog;
     private int totalConsegnati;
-    private RelativeLayout.LayoutParams lps;
-    private boolean byGuide;
+//    private RelativeLayout.LayoutParams lps;
+//    private boolean byGuide;
 
     private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
 
@@ -219,43 +214,44 @@ public class ConsegnatiFragment extends Fragment {
                 })
                 .build();
 
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                else
-                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                if(PreferenceManager
-                        .getDefaultSharedPreferences(getActivity())
-                        .getBoolean(PREF_FIRST_OPEN, true)) {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity())
-                            .edit();
-                    editor.putBoolean(PREF_FIRST_OPEN, false);
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                        editor.commit();
-                    } else {
-                        editor.apply();
-                    }
-                    showHelp();
-                }
-            }
-        });
-
-//        if(PreferenceManager
-//                .getDefaultSharedPreferences(getActivity())
-//                .getBoolean(PREF_FIRST_OPEN, true)) {
-//            SharedPreferences.Editor editor = PreferenceManager
-//                    .getDefaultSharedPreferences(getActivity())
-//                    .edit();
-//            editor.putBoolean(PREF_FIRST_OPEN, false);
-//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-//                editor.commit();
-//            } else {
-//                editor.apply();
+//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+//                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                else
+//                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//
+//                if(PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .getBoolean(PREF_FIRST_OPEN, true)) {
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    editor.putBoolean(PREF_FIRST_OPEN, false);
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                        editor.commit();
+//                    } else {
+//                        editor.apply();
+//                    }
+//                    showHelp();
+//                }
 //            }
+//        });
+
+        if(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(PREF_FIRST_OPEN, true)) {
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .edit();
+            editor.putBoolean(PREF_FIRST_OPEN, false);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                editor.commit();
+            } else {
+                editor.apply();
+            }
+            showHelp();
 //            final Runnable mMyRunnable = new Runnable() {
 //                @Override
 //                public void run() {
@@ -264,7 +260,7 @@ public class ConsegnatiFragment extends Fragment {
 //            };
 //            Handler myHandler = new Handler();
 //            myHandler.postDelayed(mMyRunnable, 1000);
-//        }
+        }
 
         return rootView;
     }
@@ -571,130 +567,132 @@ public class ConsegnatiFragment extends Fragment {
     }
 
     private void showHelp() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        Utility.blockOrientation(getActivity());
-
-        lps = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        int margin = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        int marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        int marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-                marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-                        .density * 62)).intValue();
-            else
-                marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-                        .density * 62)).intValue();
-        }
-        lps.setMargins(marginLeft, margin, margin, marginBottom);
-
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.action_edit_choose, getActivity())
-                , getActivity()
-                , R.string.title_activity_consegnati
-                , R.string.showcase_consegnati_desc);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setShowcase(ShowcaseView.NONE);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-            }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.action_edit_choose, getActivity())
-                        , getActivity()
-                        , R.string.title_activity_consegnati
-                        , R.string.showcase_consegnati_howto);
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setScaleMultiplier(0.3f);
-                if (rootView.findViewById(R.id.choose_view).getVisibility() != View.VISIBLE) {
-                    byGuide = true;
-                    updateChooseList(true);
-                    rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
-                    rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-                } else {
-                    byGuide = false;
-                }
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                    }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                        co.buttonLayoutParams = lps;
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.confirm_changes, getActivity())
-                                , getActivity()
-                                , R.string.title_activity_consegnati
-                                , R.string.single_choice_ok
-                                , co);
-                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                        showCase.setScaleMultiplier(0.3f);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                            }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                                co.buttonLayoutParams = lps;
-                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                        new ViewTarget(R.id.cancel_change, getActivity())
-                                        , getActivity()
-                                        , R.string.title_activity_consegnati
-                                        , R.string.cancel
-                                        , co);
-                                showCase.setScaleMultiplier(0.3f);
-                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                    @Override
-                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                        if (byGuide) {
-                                            if (rootView.findViewById(R.id.choose_view).getVisibility() == View.VISIBLE)
-                                                rootView.findViewById(R.id.cancel_change).performClick();
-                                        }
-                                        getActivity().setRequestedOrientation(prevOrientation);
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                            }
-                        });
-                    }
-
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                    }
-                });
-
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
-        });
+        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
+        startActivity(intent);
+//        prevOrientation = getActivity().getRequestedOrientation();
+//        Utility.blockOrientation(getActivity());
+//
+//        lps = new RelativeLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//        int margin = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        int marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        int marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+//                marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
+//                        .density * 62)).intValue();
+//            else
+//                marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
+//                        .density * 62)).intValue();
+//        }
+//        lps.setMargins(marginLeft, margin, margin, marginBottom);
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.action_edit_choose, getActivity())
+//                , getActivity()
+//                , R.string.title_activity_consegnati
+//                , R.string.showcase_consegnati_desc);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setShowcase(ShowcaseView.NONE);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//            }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.action_edit_choose, getActivity())
+//                        , getActivity()
+//                        , R.string.title_activity_consegnati
+//                        , R.string.showcase_consegnati_howto);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setScaleMultiplier(0.3f);
+//                if (rootView.findViewById(R.id.choose_view).getVisibility() != View.VISIBLE) {
+//                    byGuide = true;
+//                    updateChooseList(true);
+//                    rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+//                    rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+//                } else {
+//                    byGuide = false;
+//                }
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                        co.buttonLayoutParams = lps;
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.confirm_changes, getActivity())
+//                                , getActivity()
+//                                , R.string.title_activity_consegnati
+//                                , R.string.single_choice_ok
+//                                , co);
+//                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                        showCase.setScaleMultiplier(0.3f);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                                co.buttonLayoutParams = lps;
+//                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                        new ViewTarget(R.id.cancel_change, getActivity())
+//                                        , getActivity()
+//                                        , R.string.title_activity_consegnati
+//                                        , R.string.cancel
+//                                        , co);
+//                                showCase.setScaleMultiplier(0.3f);
+//                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                    @Override
+//                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                        if (byGuide) {
+//                                            if (rootView.findViewById(R.id.choose_view).getVisibility() == View.VISIBLE)
+//                                                rootView.findViewById(R.id.cancel_change).performClick();
+//                                        }
+//                                        getActivity().setRequestedOrientation(prevOrientation);
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                                    }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                            }
+//                        });
+//                    }
+//
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
+//        });
     }
 
 }

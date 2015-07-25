@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <it.gmariotti.changelibs.library.view.ChangeLogListView
+    <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
         android:baselineAligned="false"
         android:paddingTop="18dp"
         android:layout_width="match_parent"

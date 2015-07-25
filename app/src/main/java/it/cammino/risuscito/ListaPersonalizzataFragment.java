@@ -122,7 +122,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                 ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
 //            }
             FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
+//            if (!fab1.isShowing())
                 fab1.scrollUp();
         }
     }

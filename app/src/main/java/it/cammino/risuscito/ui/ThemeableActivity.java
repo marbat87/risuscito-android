@@ -32,10 +32,8 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         if (isMenuWorkaroundRequired()) {
             forceOverflowMenu();
         }
-        super.onCreate(savedInstanceState);
         mThemeUtils = new ThemeUtils(this);
         setTheme(mThemeUtils.getCurrent());
-
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 //        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
@@ -57,13 +55,12 @@ public abstract class ThemeableActivity extends AppCompatActivity {
             getBaseContext().getResources().updateConfiguration(config,
                     getBaseContext().getResources().getDisplayMetrics());
         }
+        super.onCreate(savedInstanceState);
 
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-
         try {
             float actualScale = getResources().getConfiguration().fontScale;
             Log.d(getClass().toString(), "actualScale: " + actualScale);
@@ -88,6 +85,7 @@ public abstract class ThemeableActivity extends AppCompatActivity {
                 Log.e(getClass().toString(), ste.toString());
             }
         }
+        super.onResume();
 
         checkScreenAwake();
     }

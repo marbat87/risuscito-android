@@ -31,7 +31,7 @@ public class GeneralSearch extends Fragment {
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
 //        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
@@ -47,10 +47,27 @@ public class GeneralSearch extends Fragment {
 //		tabs.setBackgroundColor(getThemeUtils().primaryColor());
 //		tabs.setViewPager(mViewPager);
 
-        TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
+        final TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        tabs.setupWithViewPager(mViewPager);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
+        tabs.post(new Runnable() {
+            @Override
+            public void run() {
+                tabs.setupWithViewPager(mViewPager);
+                mLUtils.applyFontedTab(mViewPager, tabs);
+            }
+        });
+
+//        final Runnable mMyRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                tabs.setupWithViewPager(mViewPager);
+//                mLUtils.applyFontedTab(mViewPager, tabs);
+//            }
+//        };
+//        Handler myHandler = new Handler();
+//        myHandler.postDelayed(mMyRunnable, 200);
 
         return rootView;
     }

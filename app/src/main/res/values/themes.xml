@@ -118,4 +118,8 @@
         <item name="colorAccent">#F4511E</item>
     </style>
 
+    <style name="RisuscitoTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
 </resources>

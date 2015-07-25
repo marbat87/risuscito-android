@@ -5,14 +5,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -80,8 +79,8 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
         ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
-        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
-        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
+//        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
+//        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

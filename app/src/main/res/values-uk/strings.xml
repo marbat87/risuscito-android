@@ -253,16 +253,18 @@
     <string name="title_activity_consegnati">Canti consegnati</string>
     <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
     <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
-    <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti. Quando hai finito, premi CONFERMA per salvere le modifiche o ANNULLA per cancellarle.</string>
-    <string name="save_consegnati_running">Порятунок&#8230;</string>
+    <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
+    <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
+    <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
+    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
     <string name="title_activity_history">Cronologia</string>
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_remove">Rimuovere dalla cronologia?</string>
     <string name="history_empty">La cronologia è vuota.</string>
     <string name="last_open_date">ULTIMA APERTURA:</string>
-    <string name="dialog_reset_history_title">Cancella cronologia</string>
-    <string name="dialog_reset_history_desc">Vuoi cancellare la cronologia dei canti visualizzati?</string>
-    <string name="canto_title_activity">Пісня</string>
+    <string name="dialog_reset_history_title">Svuota cronologia</string>
+    <string name="dialog_reset_history_desc">Vuoi svuotare la cronologia dei canti visualizzati?</string>
+    <string name="canto_title_activity">Canto</string>
     <string name="dialog_reset_favorites_title">Svuota preferiti</string>
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
@@ -287,4 +289,5 @@
     <string name="sc_scroll_title">Scroll automatico del testo</string>
     <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
         \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
+
 </resources>
