@@ -6,6 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--<FrameLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
     <FrameLayout
         android:id="@+id/no_favourites"
         android:layout_width="match_parent"
@@ -40,18 +44,19 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
-
     </FrameLayout>
+
+    <View
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?toolbar_shadow" />
 
     <android.support.v7.widget.RecyclerView
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width= "match_parent"
-        android:layout_height = "match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/favouritesList"
         android:scrollbars="vertical"
         android:fadeScrollbars="true" />
@@ -77,6 +82,16 @@
     <!--android:layout_gravity="bottom|end"-->
     <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
     <!--android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow" />-->
+
+    <!--<View-->
+    <!--android:layout_marginTop="?actionBarSize"-->
+    <!--android:layout_gravity="top"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="5dp"-->
+    <!--android:background="?toolbar_shadow" />-->
+
+    <!--</FrameLayout>-->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_clear_favorites"
         android:src="@drawable/ic_eraser_white_24dp"

@@ -36,8 +36,8 @@
     <dimen name="button_icon_drawable">26dp</dimen>
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="floating_margin_lateral">8dp</dimen>
-    <dimen name="fab_margin_end">4dp</dimen>
-    <dimen name="fab_margin_bottom">0dp</dimen>
+    <dimen name="fab_margin_end">16dp</dimen>
+    <dimen name="fab_margin_bottom">16dp</dimen>
     <dimen name="fab_translation_z">10dp</dimen>
     <dimen name="floating_margin_lateral_menu">11dp</dimen>
 
@@ -57,7 +57,7 @@
 
     <dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>
     <dimen name="toolbar_expansion_height">85dip</dimen>
-    <dimen name="toolbar_fab_margintop">50dip</dimen>
+    <dimen name="toolbar_fab_margintop">45dip</dimen>
 
     <dimen name="raise_elevation">8dp</dimen>
 

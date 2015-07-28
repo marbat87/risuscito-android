@@ -54,7 +54,7 @@ public class FavouritesActivity extends Fragment {
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
     private int prevOrientation;
-    private android.support.design.widget.FloatingActionButton fabClear;
+    private FloatingActionButton fabClear;
     private ActionMode mMode;
 
     private String PREFERITI_OPEN = "preferiti_open";
@@ -208,12 +208,12 @@ public class FavouritesActivity extends Fragment {
         Cursor lista = db.rawQuery(query, null);
 
         //recupera il numero di record trovati
-        int total = lista.getCount();
+//        int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
-        for (int i = 0; i < total; i++) {
+        for (int i = 0; i < lista.getCount(); i++) {
 //            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
             titoli.add(new CantoRecycled(lista.getString(0)
                     , lista.getInt(2)
@@ -327,13 +327,12 @@ public class FavouritesActivity extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_favourites).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (total == 0) {
+        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+        if (titoli.size() == 0) {
             fabClear.hide();
 //            fabClear.setmIgnoreLayoutChanges(true);
         }
         else {
-            Log.d(getClass().getName(), "FAB SHOW");
             fabClear.show();
 //            fabClear.setmIgnoreLayoutChanges(false);
         }
@@ -461,7 +460,7 @@ public class FavouritesActivity extends Fragment {
                     return false;
             }
         }
-    };
+    }
 
     public boolean onBackPressed() {
         if (mMode != null) {

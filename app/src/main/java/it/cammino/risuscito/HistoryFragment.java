@@ -209,23 +209,12 @@ public class HistoryFragment extends Fragment {
         Cursor lista = db.rawQuery(query, null);
 
         //recupera il numero di record trovati
-        int total = lista.getCount();
-
-        //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_history).setVisibility(total > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (total == 0) {
-            fabClear.hide();
-//            fabClear.setmIgnoreLayoutChanges(true);
-        }
-        else {
-            fabClear.show();
-//            fabClear.setmIgnoreLayoutChanges(false);
-        }
+//        int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
-        for (int i = 0; i < total; i++) {
+        for (int i = 0; i < lista.getCount(); i++) {
 
             //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
 //            DateFormat df = DateFormat.getDateTimeInstance(
@@ -336,6 +325,17 @@ public class HistoryFragment extends Fragment {
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
+        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+        if (titoli.size() == 0) {
+            fabClear.hide();
+//            fabClear.setmIgnoreLayoutChanges(true);
+        }
+        else {
+            fabClear.show();
+//            fabClear.setmIgnoreLayoutChanges(false);
+        }
 
         //decide se mostrare o nascondere il floatin button in base allo scrolling
         /*
@@ -469,7 +469,7 @@ public class HistoryFragment extends Fragment {
                     return false;
             }
         }
-    };
+    }
 
     public boolean onBackPressed() {
         if (mMode != null) {

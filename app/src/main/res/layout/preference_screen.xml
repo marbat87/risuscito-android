@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/toolbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/toolbar_elevation"
-        android:theme="@style/ActionBarThemeOverlay">
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:id="@+id/toolbar_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:elevation="@dimen/toolbar_elevation"-->
+    <!--android:theme="@style/ActionBarThemeOverlay">-->
 
-        <include layout="@layout/risuscito_toolbar_noelevation" />
+    <include layout="@layout/risuscito_toolbar" />
 
-    </android.support.design.widget.AppBarLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
 
-    <android.support.v4.widget.NestedScrollView
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+    <!--<it.cammino.risuscito.ui.NestedScrollView-->
+    <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!--android:overScrollMode="never"-->
+    <!--android:weightSum="1.0"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+    <ScrollView
+        android:layout_marginTop="?actionBarSize"
         android:overScrollMode="never"
-        android:weightSum="1.0"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -575,12 +586,15 @@
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </ScrollView>
 
     <View
+        android:layout_marginTop="?actionBarSize"
         android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <!--</it.cammino.risuscito.ui.NestedScrollView>-->
+
+</FrameLayout>

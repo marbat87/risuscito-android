@@ -61,10 +61,6 @@
         <item name="rd_padding">0dp</item>
     </style>
 
-    <!--<style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Small">-->
-        <!--<item name="android:textColor">@color/color_tpi</item>-->
-    <!--</style>-->
-
     <style name="Material.Widget.Slider.Discrete.Risuscito">
         <item name="sl_travelAnimDuration">1</item>
         <item name="sl_thumbFocusRadius">40dip</item>
