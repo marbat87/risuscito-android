@@ -19,7 +19,10 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,14 +37,18 @@ import android.widget.Toast;
 
 import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
+import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiParolaFragment extends Fragment {
 
     private int posizioneDaCanc;
-    private String titoloDaCanc;
+//    private String titoloDaCanc;
     private int idDaCanc;
     private String timestampDaCanc;
     private View rootView;
@@ -50,7 +57,11 @@ public class CantiParolaFragment extends Fragment {
     private SQLiteDatabase db;
     public ActionMode mMode;
     private boolean mSwhitchMode;
-    private View mActionModeView;
+//    private View mActionModeView;
+    private List<PosizioneItem> posizioniList;
+    private int longclickedPos;
+    private RecyclerView recyclerView;
+    private PosizioneRecyclerAdapter cantoAdapter;
 //	private int prevOrientation;
 
     private long mLastClickTime = 0;
@@ -177,503 +188,580 @@ public class CantiParolaFragment extends Fragment {
         return intent;
     }
 
+//    private void updateLista() {
+//
+//        String titoloCanto = getTitoloFromPosition(1);
+//
+//        if (titoloCanto.equalsIgnoreCase("")) {
+//            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.cantoInizialeContainer).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.addCantoIniziale).setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(1);
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 1);
+//                            bundle.putInt("idLista", 1);
+//                            bundle.putInt("position", 1);
+//                            startSubActivity(bundle);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else {
+//            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
+//            View view = rootView.findViewById(R.id.cantoInizialeContainer);
+//            view.setVisibility(View.VISIBLE);
+//            view.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+////                    openPagina(v, R.id.cantoInizialeText);
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = 1;
+//                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoInizialeText)).getText().toString());
+//                            snackBarRimuoviCanto(view);
+//                        }
+//                        else
+//                            openPagina(view, R.id.cantoInizialeText);
+//                    else {
+//                        scambioCanto(view, R.id.cantoInizialeText, 1);
+//                    }
+//                }
+//            });
+//            view.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 1;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoInizialeText)).getText().toString());
+//                    snackBarRimuoviCanto(view);
+//                    return true;
+//                }
+//            });
+//
+//            TextView temp = (TextView) view.findViewById(R.id.cantoInizialeText);
+//            temp.setText(titoloCanto.substring(10));
+//
+//            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.cantoInizialePage);
+//            textPage.setText(pagina);
+//
+//            String colore = titoloCanto.substring(3, 10);
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        }
+//
+//        titoloCanto = getTitoloFromPosition(2);
+//
+//        if (titoloCanto.equalsIgnoreCase("")) {
+//            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.primaLetturaContainer).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.addPrimaLettura).setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(2);
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 1);
+//                            bundle.putInt("idLista", 1);
+//                            bundle.putInt("position", 2);
+//                            startSubActivity(bundle);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else {
+//            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
+//            View view = rootView.findViewById(R.id.primaLetturaContainer);
+//            view.setVisibility(View.VISIBLE);
+//            view.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+////                    openPagina(v, R.id.primaLetturaText);
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = 2;
+//                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.primaLetturaText)).getText().toString());
+//                            snackBarRimuoviCanto(view);
+//                        }
+//                        else
+//                            openPagina(view, R.id.primaLetturaText);
+//                    else {
+//                        scambioCanto(view, R.id.primaLetturaText, 2);
+//                    }
+//                }
+//            });
+//            view.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 2;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.primaLetturaText)).getText().toString());
+//                    snackBarRimuoviCanto(view);
+//                    return true;
+//                }
+//            });
+//
+//            TextView temp = (TextView) view.findViewById(R.id.primaLetturaText);
+//            temp.setText(titoloCanto.substring(10));
+//
+//            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.primaLetturaPage);
+//            textPage.setText(pagina);
+//
+//            String colore = titoloCanto.substring(3, 10);
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        }
+//
+//        titoloCanto = getTitoloFromPosition(3);
+//
+//        if (titoloCanto.equalsIgnoreCase("")) {
+//            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.secondaLetturaContainer).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.addSecondaLettura).setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(3);
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 1);
+//                            bundle.putInt("idLista", 1);
+//                            bundle.putInt("position", 3);
+//                            startSubActivity(bundle);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else {
+//            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
+//            View view = rootView.findViewById(R.id.secondaLetturaContainer);
+//            view.setVisibility(View.VISIBLE);
+//            view.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+////                    openPagina(v, R.id.secondaLetturaText);
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = 3;
+//                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.secondaLetturaText)).getText().toString());
+//                            snackBarRimuoviCanto(view);
+//                        }
+//                        else
+//                            openPagina(view, R.id.secondaLetturaText);
+//                    else {
+//                        scambioCanto(view, R.id.secondaLetturaText, 3);
+//                    }
+//                }
+//            });
+//            view.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 3;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.secondaLetturaText)).getText().toString());
+//                    snackBarRimuoviCanto(view);
+//                    return true;
+//                }
+//            });
+//
+//            TextView temp = (TextView) view.findViewById(R.id.secondaLetturaText);
+//            temp.setText(titoloCanto.substring(10));
+//
+//            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.secondaLetturaPage);
+//            textPage.setText(pagina);
+//
+//            String colore = titoloCanto.substring(3, 10);
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        }
+//
+//        titoloCanto = getTitoloFromPosition(4);
+//
+//        if (titoloCanto.equalsIgnoreCase("")) {
+//            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.terzaLetturaContainer).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.addTerzaLettura).setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(4);
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 1);
+//                            bundle.putInt("idLista", 1);
+//                            bundle.putInt("position", 4);
+//                            startSubActivity(bundle);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else {
+//            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
+//            View view = rootView.findViewById(R.id.terzaLetturaContainer);
+//            view.setVisibility(View.VISIBLE);
+//            view.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+////                    openPagina(v, R.id.terzaLetturaText);
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = 4;
+//                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.terzaLetturaText)).getText().toString());
+//                            snackBarRimuoviCanto(view);
+//                        }
+//                        else
+//                            openPagina(view, R.id.terzaLetturaText);
+//                    else {
+//                        scambioCanto(view, R.id.terzaLetturaText, 4);
+//                    }
+//                }
+//            });
+//            view.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 4;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.terzaLetturaText)).getText().toString());
+//                    snackBarRimuoviCanto(view);
+//                    return true;
+//                }
+//            });
+//
+//            TextView temp = (TextView) view.findViewById(R.id.terzaLetturaText);
+//            temp.setText(titoloCanto.substring(10));
+//
+//            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.terzaLetturaPage);
+//            textPage.setText(pagina);
+//
+//            String colore = titoloCanto.substring(3, 10);
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        }
+//
+//        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+//
+//        if (pref.getBoolean(Utility.SHOW_PACE, false)) {
+//
+//            rootView.findViewById(R.id.groupCantoPace).setVisibility(View.VISIBLE);
+//
+//            titoloCanto = getTitoloFromPosition(6);
+//
+//            if (titoloCanto.equalsIgnoreCase("")) {
+//                rootView.findViewById(R.id.addCantoPace).setVisibility(View.VISIBLE);
+//                rootView.findViewById(R.id.cantoPaceContainer).setVisibility(View.GONE);
+//                rootView.findViewById(R.id.addCantoPace).setOnClickListener(new OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                            return;
+//                        mLastClickTime = SystemClock.elapsedRealtime();
+//                        if (mSwhitchMode)
+//                            scambioConVuoto(6);
+//                        else {
+//                            if (mMode == null) {
+//                                Bundle bundle = new Bundle();
+//                                bundle.putInt("fromAdd", 1);
+//                                bundle.putInt("idLista", 1);
+//                                bundle.putInt("position", 6);
+//                                startSubActivity(bundle);
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//            else {
+//                rootView.findViewById(R.id.addCantoPace).setVisibility(View.GONE);
+//                View view = rootView.findViewById(R.id.cantoPaceContainer);
+//                view.setVisibility(View.VISIBLE);
+//                view.setOnClickListener(new OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                            return;
+//                        mLastClickTime = SystemClock.elapsedRealtime();
+////                        openPagina(v, R.id.cantoPaceText);
+//                        if (!mSwhitchMode)
+//                            if (mMode != null) {
+//                                posizioneDaCanc = 6;
+//                                titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoPaceText)).getText().toString());
+//                                snackBarRimuoviCanto(view);
+//                            }
+//                            else
+//                                openPagina(view, R.id.cantoPaceText);
+//                        else {
+//                            scambioCanto(view, R.id.cantoPaceText, 6);
+//                        }
+//                    }
+//                });
+//                view.setOnLongClickListener(new OnLongClickListener() {
+//                    @Override
+//                    public boolean onLongClick(View view) {
+//                        posizioneDaCanc = 6;
+//                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
+//                        snackBarRimuoviCanto(view);
+//                        return true;
+//                    }
+//                });
+//
+//                TextView temp = (TextView) view.findViewById(R.id.cantoPaceText);
+//                temp.setText(titoloCanto.substring(10));
+//
+//                int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//                String pagina = String.valueOf(tempPagina);
+//                TextView textPage = (TextView) view.findViewById(R.id.cantoPacePage);
+//                textPage.setText(pagina);
+//
+//                String colore = titoloCanto.substring(3, 10);
+//                if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//                if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//                if (colore.equalsIgnoreCase(Utility.VERDE))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//                if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//                if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//            }
+//        }
+//        else
+//            rootView.findViewById(R.id.groupCantoPace).setVisibility(View.GONE);
+//
+//        titoloCanto = getTitoloFromPosition(5);
+//
+//        if (titoloCanto.equalsIgnoreCase("")) {
+//            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.cantoFinaleContainer).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.addCantoFinale).setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(5);
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 1);
+//                            bundle.putInt("idLista", 1);
+//                            bundle.putInt("position", 5);
+//                            startSubActivity(bundle);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else {
+//            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
+//            View view = rootView.findViewById(R.id.cantoFinaleContainer);
+//            view.setVisibility(View.VISIBLE);
+//            view.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+////                    openPagina(v, R.id.cantoFinaleText);
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = 5;
+//                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoFinaleText)).getText().toString());
+//                            snackBarRimuoviCanto(view);
+//                        }
+//                        else
+//                            openPagina(view, R.id.cantoFinaleText);
+//                    else {
+//                        scambioCanto(view, R.id.cantoFinaleText, 5);
+//                    }
+//                }
+//            });
+//            view.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    posizioneDaCanc = 5;
+//                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinaleText)).getText().toString());
+//                    snackBarRimuoviCanto(view);
+//                    return true;
+//                }
+//            });
+//
+//            TextView temp = (TextView) view.findViewById(R.id.cantoFinaleText);
+//            temp.setText(titoloCanto.substring(10));
+//
+//            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
+//            String pagina = String.valueOf(tempPagina);
+//            TextView textPage = (TextView) view.findViewById(R.id.cantoFinalePage);
+//            textPage.setText(pagina);
+//
+//            String colore = titoloCanto.substring(3, 10);
+//            if (colore.equalsIgnoreCase(Utility.GIALLO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//            if (colore.equalsIgnoreCase(Utility.VERDE))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
+//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//            if (colore.equalsIgnoreCase(Utility.BIANCO))
+//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        }
+//
+//    }
+
     private void updateLista() {
 
-        String titoloCanto = getTitoloFromPosition(1);
+        posizioniList = new ArrayList<>();
 
-        if (titoloCanto.equalsIgnoreCase("")) {
-            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.cantoInizialeContainer).setVisibility(View.GONE);
-            rootView.findViewById(R.id.addCantoIniziale).setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
+        OnClickListener click = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                View parent = (View) v.getParent();
+                if (parent.findViewById(R.id.cantoGenericoContainer).getVisibility() == View.GONE) {
                     if (mSwhitchMode)
-                        scambioConVuoto(1);
+                        scambioConVuoto(Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                     else {
                         if (mMode == null) {
                             Bundle bundle = new Bundle();
                             bundle.putInt("fromAdd", 1);
                             bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 1);
+                            bundle.putInt("position", Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                             startSubActivity(bundle);
                         }
                     }
                 }
-            });
-        }
-        else {
-            rootView.findViewById(R.id.addCantoIniziale).setVisibility(View.GONE);
-            View view = rootView.findViewById(R.id.cantoInizialeContainer);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-//                    openPagina(v, R.id.cantoInizialeText);
+                else {
                     if (!mSwhitchMode)
                         if (mMode != null) {
-                            posizioneDaCanc = 1;
-                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoInizialeText)).getText().toString());
-                            snackBarRimuoviCanto(view);
+                            posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+                            idDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_canto)).getText().toString());
+                            timestampDaCanc = ((TextView) parent.findViewById(R.id.text_timestamp)).getText().toString();
+                            snackBarRimuoviCanto(parent);
                         }
                         else
-                            openPagina(view, R.id.cantoInizialeText);
+                            openPagina(parent);
                     else {
-                        scambioCanto(view, R.id.cantoInizialeText, 1);
+                        scambioCanto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                     }
                 }
-            });
-            view.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 1;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoInizialeText)).getText().toString());
-                    snackBarRimuoviCanto(view);
-                    return true;
-                }
-            });
+            }
+        };
 
-            TextView temp = (TextView) view.findViewById(R.id.cantoInizialeText);
-            temp.setText(titoloCanto.substring(10));
+        OnLongClickListener longClick = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                View parent = (View) v.getParent();
+                posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+                idDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_canto)).getText().toString());
+                timestampDaCanc = ((TextView) parent.findViewById(R.id.text_timestamp)).getText().toString();
+                snackBarRimuoviCanto(parent);
+                return true;
+            }
+        };
 
-            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.cantoInizialePage);
-            textPage.setText(pagina);
-
-            String colore = titoloCanto.substring(3, 10);
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-        }
-
-        titoloCanto = getTitoloFromPosition(2);
-
-        if (titoloCanto.equalsIgnoreCase("")) {
-            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.primaLetturaContainer).setVisibility(View.GONE);
-            rootView.findViewById(R.id.addPrimaLettura).setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (mSwhitchMode)
-                        scambioConVuoto(2);
-                    else {
-                        if (mMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 2);
-                            startSubActivity(bundle);
-                        }
-                    }
-                }
-            });
-        }
-        else {
-            rootView.findViewById(R.id.addPrimaLettura).setVisibility(View.GONE);
-            View view = rootView.findViewById(R.id.primaLetturaContainer);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-//                    openPagina(v, R.id.primaLetturaText);
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (!mSwhitchMode)
-                        if (mMode != null) {
-                            posizioneDaCanc = 2;
-                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.primaLetturaText)).getText().toString());
-                            snackBarRimuoviCanto(view);
-                        }
-                        else
-                            openPagina(view, R.id.primaLetturaText);
-                    else {
-                        scambioCanto(view, R.id.primaLetturaText, 2);
-                    }
-                }
-            });
-            view.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 2;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.primaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto(view);
-                    return true;
-                }
-            });
-
-            TextView temp = (TextView) view.findViewById(R.id.primaLetturaText);
-            temp.setText(titoloCanto.substring(10));
-
-            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.primaLetturaPage);
-            textPage.setText(pagina);
-
-            String colore = titoloCanto.substring(3, 10);
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-        }
-
-        titoloCanto = getTitoloFromPosition(3);
-
-        if (titoloCanto.equalsIgnoreCase("")) {
-            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.secondaLetturaContainer).setVisibility(View.GONE);
-            rootView.findViewById(R.id.addSecondaLettura).setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (mSwhitchMode)
-                        scambioConVuoto(3);
-                    else {
-                        if (mMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 3);
-                            startSubActivity(bundle);
-                        }
-                    }
-                }
-            });
-        }
-        else {
-            rootView.findViewById(R.id.addSecondaLettura).setVisibility(View.GONE);
-            View view = rootView.findViewById(R.id.secondaLetturaContainer);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-//                    openPagina(v, R.id.secondaLetturaText);
-                    if (!mSwhitchMode)
-                        if (mMode != null) {
-                            posizioneDaCanc = 3;
-                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.secondaLetturaText)).getText().toString());
-                            snackBarRimuoviCanto(view);
-                        }
-                        else
-                            openPagina(view, R.id.secondaLetturaText);
-                    else {
-                        scambioCanto(view, R.id.secondaLetturaText, 3);
-                    }
-                }
-            });
-            view.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 3;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.secondaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto(view);
-                    return true;
-                }
-            });
-
-            TextView temp = (TextView) view.findViewById(R.id.secondaLetturaText);
-            temp.setText(titoloCanto.substring(10));
-
-            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.secondaLetturaPage);
-            textPage.setText(pagina);
-
-            String colore = titoloCanto.substring(3, 10);
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-        }
-
-        titoloCanto = getTitoloFromPosition(4);
-
-        if (titoloCanto.equalsIgnoreCase("")) {
-            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.terzaLetturaContainer).setVisibility(View.GONE);
-            rootView.findViewById(R.id.addTerzaLettura).setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (mSwhitchMode)
-                        scambioConVuoto(4);
-                    else {
-                        if (mMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 4);
-                            startSubActivity(bundle);
-                        }
-                    }
-                }
-            });
-        }
-        else {
-            rootView.findViewById(R.id.addTerzaLettura).setVisibility(View.GONE);
-            View view = rootView.findViewById(R.id.terzaLetturaContainer);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-//                    openPagina(v, R.id.terzaLetturaText);
-                    if (!mSwhitchMode)
-                        if (mMode != null) {
-                            posizioneDaCanc = 4;
-                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.terzaLetturaText)).getText().toString());
-                            snackBarRimuoviCanto(view);
-                        }
-                        else
-                            openPagina(view, R.id.terzaLetturaText);
-                    else {
-                        scambioCanto(view, R.id.terzaLetturaText, 4);
-                    }
-                }
-            });
-            view.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 4;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.terzaLetturaText)).getText().toString());
-                    snackBarRimuoviCanto(view);
-                    return true;
-                }
-            });
-
-            TextView temp = (TextView) view.findViewById(R.id.terzaLetturaText);
-            temp.setText(titoloCanto.substring(10));
-
-            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.terzaLetturaPage);
-            textPage.setText(pagina);
-
-            String colore = titoloCanto.substring(3, 10);
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-        }
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, 0));
+        posizioniList.add(getCantofromPosition(getString(R.string.prima_lettura), 2, 1));
+        posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 3, 2));
+        posizioniList.add(getCantofromPosition(getString(R.string.terza_lettura), 4, 3));
 
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-
         if (pref.getBoolean(Utility.SHOW_PACE, false)) {
-
-            rootView.findViewById(R.id.groupCantoPace).setVisibility(View.VISIBLE);
-
-            titoloCanto = getTitoloFromPosition(6);
-
-            if (titoloCanto.equalsIgnoreCase("")) {
-                rootView.findViewById(R.id.addCantoPace).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.cantoPaceContainer).setVisibility(View.GONE);
-                rootView.findViewById(R.id.addCantoPace).setOnClickListener(new OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                            return;
-                        mLastClickTime = SystemClock.elapsedRealtime();
-                        if (mSwhitchMode)
-                            scambioConVuoto(6);
-                        else {
-                            if (mMode == null) {
-                                Bundle bundle = new Bundle();
-                                bundle.putInt("fromAdd", 1);
-                                bundle.putInt("idLista", 1);
-                                bundle.putInt("position", 6);
-                                startSubActivity(bundle);
-                            }
-                        }
-                    }
-                });
-            }
-            else {
-                rootView.findViewById(R.id.addCantoPace).setVisibility(View.GONE);
-                View view = rootView.findViewById(R.id.cantoPaceContainer);
-                view.setVisibility(View.VISIBLE);
-                view.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                            return;
-                        mLastClickTime = SystemClock.elapsedRealtime();
-//                        openPagina(v, R.id.cantoPaceText);
-                        if (!mSwhitchMode)
-                            if (mMode != null) {
-                                posizioneDaCanc = 6;
-                                titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoPaceText)).getText().toString());
-                                snackBarRimuoviCanto(view);
-                            }
-                            else
-                                openPagina(view, R.id.cantoPaceText);
-                        else {
-                            scambioCanto(view, R.id.cantoPaceText, 6);
-                        }
-                    }
-                });
-                view.setOnLongClickListener(new OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        posizioneDaCanc = 6;
-                        titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoPaceText)).getText().toString());
-                        snackBarRimuoviCanto(view);
-                        return true;
-                    }
-                });
-
-                TextView temp = (TextView) view.findViewById(R.id.cantoPaceText);
-                temp.setText(titoloCanto.substring(10));
-
-                int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-                String pagina = String.valueOf(tempPagina);
-                TextView textPage = (TextView) view.findViewById(R.id.cantoPacePage);
-                textPage.setText(pagina);
-
-                String colore = titoloCanto.substring(3, 10);
-                if (colore.equalsIgnoreCase(Utility.GIALLO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-                if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-                if (colore.equalsIgnoreCase(Utility.VERDE))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_green);
-                if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-                if (colore.equalsIgnoreCase(Utility.BIANCO))
-                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
-            }
+            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 6, 4));
+            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
         }
         else
-            rootView.findViewById(R.id.groupCantoPace).setVisibility(View.GONE);
+            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 4));
 
-        titoloCanto = getTitoloFromPosition(5);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.parolaList);
 
-        if (titoloCanto.equalsIgnoreCase("")) {
-            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.cantoFinaleContainer).setVisibility(View.GONE);
-            rootView.findViewById(R.id.addCantoFinale).setOnClickListener(new OnClickListener() {
+        // Creating new adapter object
+        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        recyclerView.setAdapter(cantoAdapter);
 
-                @Override
-                public void onClick(View v) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    if (mSwhitchMode)
-                        scambioConVuoto(5);
-                    else {
-                        if (mMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 1);
-                            bundle.putInt("idLista", 1);
-                            bundle.putInt("position", 5);
-                            startSubActivity(bundle);
-                        }
-                    }
-                }
-            });
-        }
-        else {
-            rootView.findViewById(R.id.addCantoFinale).setVisibility(View.GONE);
-            View view = rootView.findViewById(R.id.cantoFinaleContainer);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-//                    openPagina(v, R.id.cantoFinaleText);
-                    if (!mSwhitchMode)
-                        if (mMode != null) {
-                            posizioneDaCanc = 5;
-                            titoloDaCanc = Utility.duplicaApostrofi(((TextView) view.findViewById(R.id.cantoFinaleText)).getText().toString());
-                            snackBarRimuoviCanto(view);
-                        }
-                        else
-                            openPagina(view, R.id.cantoFinaleText);
-                    else {
-                        scambioCanto(view, R.id.cantoFinaleText, 5);
-                    }
-                }
-            });
-            view.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    posizioneDaCanc = 5;
-                    titoloDaCanc = Utility.duplicaApostrofi(((TextView) rootView.findViewById(R.id.cantoFinaleText)).getText().toString());
-                    snackBarRimuoviCanto(view);
-                    return true;
-                }
-            });
-
-            TextView temp = (TextView) view.findViewById(R.id.cantoFinaleText);
-            temp.setText(titoloCanto.substring(10));
-
-            int tempPagina = Integer.valueOf(titoloCanto.substring(0,3));
-            String pagina = String.valueOf(tempPagina);
-            TextView textPage = (TextView) view.findViewById(R.id.cantoFinalePage);
-            textPage.setText(pagina);
-
-            String colore = titoloCanto.substring(3, 10);
-            if (colore.equalsIgnoreCase(Utility.GIALLO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-            if (colore.equalsIgnoreCase(Utility.VERDE))
-                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-            if (colore.equalsIgnoreCase(Utility.BIANCO))
-                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-        }
+        // Setting the layoutManager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
     }
 
@@ -684,33 +772,33 @@ public class CantiParolaFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
     }
 
-    private void openPagina(View v, int id) {
+    private void openPagina(View v) {
         // recupera il titolo della voce cliccata
-        String cantoCliccato = ((TextView) v.findViewById(id)).getText().toString();
-        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-
-        // crea un manipolatore per il DB in modalit� READ
-        db = listaCanti.getReadableDatabase();
-
-        // esegue la query per il recupero del nome del file della pagina da visualizzare
-        String query = "SELECT source, _id" +
-                "  FROM ELENCO" +
-                "  WHERE titolo =  '" + cantoCliccato + "'";
-        Cursor cursor = db.rawQuery(query, null);
-
-        // recupera il nome del file
-        cursor.moveToFirst();
-        String pagina = cursor.getString(0);
-        int idCanto = cursor.getInt(1);
-
-        // chiude il cursore
-        cursor.close();
-        db.close();
+//        String cantoCliccato = ((TextView) v.findViewById(id)).getText().toString();
+//        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//        // crea un manipolatore per il DB in modalit� READ
+//        db = listaCanti.getReadableDatabase();
+//
+//        // esegue la query per il recupero del nome del file della pagina da visualizzare
+//        String query = "SELECT source, _id" +
+//                "  FROM ELENCO" +
+//                "  WHERE titolo =  '" + cantoCliccato + "'";
+//        Cursor cursor = db.rawQuery(query, null);
+//
+//        // recupera il nome del file
+//        cursor.moveToFirst();
+//        String pagina = cursor.getString(0);
+//        int idCanto = cursor.getInt(1);
+//
+//        // chiude il cursore
+//        cursor.close();
+//        db.close();
 
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
         Bundle bundle = new Bundle();
-        bundle.putString("pagina", pagina);
-        bundle.putInt("idCanto", idCanto);
+        bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
@@ -718,11 +806,39 @@ public class CantiParolaFragment extends Fragment {
     }
 
     //recupera il titolo del canto in posizione "position" nella lista
-    private String getTitoloFromPosition(int position) {
+//    private String getTitoloFromPosition(int position) {
+//
+//        db = listaCanti.getReadableDatabase();
+//
+//        String query = "SELECT B.titolo, color, pagina" +
+//                "  FROM CUST_LISTS A" +
+//                "  	   , ELENCO B" +
+//                "  WHERE A._id = 1" +
+//                "  AND   A.position = " + position +
+//                "  AND   A.id_canto = B._id";
+//        Cursor cursor = db.rawQuery(query, null);
+//
+//        int total = cursor.getCount();
+//        String result = "";
+//
+//        if (total == 1) {
+//            cursor.moveToFirst();
+////	    	result =  cursor.getString(1) + cursor.getString(0);
+//            result =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);
+//        }
+//
+//        cursor.close();
+//        db.close();
+//
+//        return result;
+//    }
+
+    //recupera il titolo del canto in posizione "position" nella lista
+    private PosizioneItem getCantofromPosition(String titoloPosizione, int position, int tag) {
 
         db = listaCanti.getReadableDatabase();
 
-        String query = "SELECT B.titolo, color, pagina" +
+        String query = "SELECT B.titolo, B.color, B.pagina, B.source, B._id, A.timestamp" +
                 "  FROM CUST_LISTS A" +
                 "  	   , ELENCO B" +
                 "  WHERE A._id = 1" +
@@ -731,18 +847,34 @@ public class CantiParolaFragment extends Fragment {
         Cursor cursor = db.rawQuery(query, null);
 
         int total = cursor.getCount();
-        String result = "";
+
+        PosizioneItem result;
 
         if (total == 1) {
             cursor.moveToFirst();
-//	    	result =  cursor.getString(1) + cursor.getString(0);
-            result =  Utility.intToString(cursor.getInt(2), 3) + cursor.getString(1) + cursor.getString(0);
+            result = new PosizioneItem(titoloPosizione
+                    , 1
+                    , position
+                    , cursor.getInt(2)
+                    , cursor.getString(0)
+                    , cursor.getString(1)
+                    , cursor.getInt(4)
+                    , cursor.getString(3)
+                    , cursor.getString(5)
+                    , tag);
+        }
+        else {
+            result = new PosizioneItem(titoloPosizione
+                    , 1
+                    , position
+                    , tag);
         }
 
         cursor.close();
         db.close();
 
         return result;
+
     }
 
     private String getTitlesList() {
@@ -755,7 +887,7 @@ public class CantiParolaFragment extends Fragment {
         result +=  "-- " + getString(R.string.title_activity_canti_parola).toUpperCase(l) + " --\n";
 
         //canto iniziale
-        temp = getTitoloToSendFromPosition(1);
+        temp = getTitoloToSendFromPosition(0);
 
         result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
         result += "\n";
@@ -768,7 +900,7 @@ public class CantiParolaFragment extends Fragment {
         result += "\n";
 
         //prima lettura
-        temp = getTitoloToSendFromPosition(2);
+        temp = getTitoloToSendFromPosition(1);
 
         result += getResources().getString(R.string.prima_lettura).toUpperCase(l);
         result += "\n";
@@ -781,7 +913,7 @@ public class CantiParolaFragment extends Fragment {
         result += "\n";
 
         //seconda lettura
-        temp = getTitoloToSendFromPosition(3);
+        temp = getTitoloToSendFromPosition(2);
 
         result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
         result += "\n";
@@ -794,7 +926,7 @@ public class CantiParolaFragment extends Fragment {
         result += "\n";
 
         //terza lettura
-        temp = getTitoloToSendFromPosition(4);
+        temp = getTitoloToSendFromPosition(3);
 
         result += getResources().getString(R.string.terza_lettura).toUpperCase(l);
         result += "\n";
@@ -811,7 +943,7 @@ public class CantiParolaFragment extends Fragment {
 
         if (pref.getBoolean(Utility.SHOW_PACE, false)) {
             //canto alla pace
-            temp = getTitoloToSendFromPosition(6);
+            temp = getTitoloToSendFromPosition(4);
 
             result += getResources().getString(R.string.canto_pace).toUpperCase(l);
             result += "\n";
@@ -822,20 +954,43 @@ public class CantiParolaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
+
+            //canto finale
+            temp = getTitoloToSendFromPosition(5);
+
+            result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+            result += "\n";
+
+            if (temp.equalsIgnoreCase(""))
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
+            else
+                result += temp;
+        }
+        else {
+            //canto finale
+            temp = getTitoloToSendFromPosition(4);
+
+            result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+            result += "\n";
+
+            if (temp.equalsIgnoreCase(""))
+                result += ">> " + getString(R.string.to_be_chosen) + " <<";
+            else
+                result += temp;
         }
 //		else
 //			Log.i("CANTO ALLA PACE", "IGNORATO");
 
         //canto finale
-        temp = getTitoloToSendFromPosition(5);
-
-        result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-        result += "\n";
-
-        if (temp.equalsIgnoreCase(""))
-            result += ">> " + getString(R.string.to_be_chosen) + " <<";
-        else
-            result += temp;
+//        temp = getTitoloToSendFromPosition(5);
+//
+//        result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+//        result += "\n";
+//
+//        if (temp.equalsIgnoreCase(""))
+//            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+//        else
+//            result += temp;
 
         return result;
 
@@ -844,26 +999,30 @@ public class CantiParolaFragment extends Fragment {
     //recupera il titolo del canto in posizione "position" nella lista "list"
     private String getTitoloToSendFromPosition(int position) {
 
-        db = listaCanti.getReadableDatabase();
-
-        String query = "SELECT B.titolo, B.pagina" +
-                "  FROM CUST_LISTS A" +
-                "  	   , ELENCO B" +
-                "  WHERE A._id = 1" +
-                "  AND   A.position = " + position +
-                "  AND   A.id_canto = B._id";
-        Cursor cursor = db.rawQuery(query, null);
-
-        int total = cursor.getCount();
+//        db = listaCanti.getReadableDatabase();
+//
+//        String query = "SELECT B.titolo, B.pagina" +
+//                "  FROM CUST_LISTS A" +
+//                "  	   , ELENCO B" +
+//                "  WHERE A._id = 1" +
+//                "  AND   A.position = " + position +
+//                "  AND   A.id_canto = B._id";
+//        Cursor cursor = db.rawQuery(query, null);
+//
+//        int total = cursor.getCount();
         String result = "";
 
-        if (total == 1) {
-            cursor.moveToFirst();
-            result =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
+        PosizioneItem item = posizioniList.get(position);
+
+//        Log.i(getClass().getName(), "item[" + position + "]-->ismChoosen(): " + item.ismChoosen());
+        if (item.ismChoosen()) {
+//            cursor.moveToFirst();
+//            result =  cursor.getString(0) + " - " + getString(R.string.page_contracted) + cursor.getInt(1);
+            result =  item.getTitolo() + " - " + getString(R.string.page_contracted) + item.getPagina();
         }
 
-        cursor.close();
-        db.close();
+//        cursor.close();
+//        db.close();
 
         return result;
     }
@@ -874,7 +1033,7 @@ public class CantiParolaFragment extends Fragment {
 //                    @Override
 //                    public void onClick(View view) {
 //                        db = listaCanti.getReadableDatabase();
-//                        String sql = "DELETE FROM CUST_LISTS" +
+//                       snackBarRimuoviCanto String sql = "DELETE FROM CUST_LISTS" +
 //                                "  WHERE _id =  1 " +
 //                                "    AND position = " + posizioneDaCanc +
 //                                "	 AND id_canto = (SELECT _id FROM ELENCO" +
@@ -889,8 +1048,9 @@ public class CantiParolaFragment extends Fragment {
 //                .show();
         if (mMode != null)
             mMode.finish();
-        mActionModeView = view;
-        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+//        mActionModeView = view;
+        longclickedPos = Integer.valueOf(((TextView)view.findViewById(R.id.tag)).getText().toString());
+                mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -905,7 +1065,9 @@ public class CantiParolaFragment extends Fragment {
 //            MenuInflater inflater = getActivity().getMenuInflater();
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
+//            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
+            posizioniList.get(longclickedPos).setmSelected(true);
+            cantoAdapter.notifyItemChanged(longclickedPos);
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
@@ -930,8 +1092,10 @@ public class CantiParolaFragment extends Fragment {
             TypedValue typedValue = new TypedValue();
             Resources.Theme theme = getActivity().getTheme();
             theme.resolveAttribute(R.attr.customSelector, typedValue, true);
-            mActionModeView.setBackgroundResource(typedValue.resourceId);
-            mActionModeView = null;
+//            mActionModeView.setBackgroundResource(typedValue.resourceId);
+            posizioniList.get(longclickedPos).setmSelected(false);
+            cantoAdapter.notifyItemChanged(longclickedPos);
+//            mActionModeView = null;
             if (mode == mMode)
                 mMode = null;
         }
@@ -941,17 +1105,17 @@ public class CantiParolaFragment extends Fragment {
             switch(item.getItemId()) {
                 case R.id.action_remove_item:
                     db = listaCanti.getReadableDatabase();
-                    String sql = "SELECT id_canto, timestamp" +
-                            "   FROM CUST_LISTS" +
-                            "  WHERE _id =  1 " +
-                            "    AND position = " + posizioneDaCanc +
-                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
-                            "					WHERE titolo = '" + titoloDaCanc + "')";
-                    Cursor cursor = db.rawQuery(sql, null);
-                    cursor.moveToFirst();
-                    idDaCanc = cursor.getInt(0);
-                    timestampDaCanc = cursor.getString(1);
-                    cursor.close();
+//                    String sql = "SELECT id_canto, timestamp" +
+//                            "   FROM CUST_LISTS" +
+//                            "  WHERE _id =  1 " +
+//                            "    AND position = " + posizioneDaCanc +
+////                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
+////                            "					WHERE titolo = '" + titoloDaCanc + "')";
+//                    Cursor cursor = db.rawQuery(sql, null);
+//                    cursor.moveToFirst();
+//                    idDaCanc = cursor.getInt(0);
+//                    timestampDaCanc = cursor.getString(1);
+//                    cursor.close();
                     db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
                     db.close();
                     updateLista();
@@ -979,18 +1143,18 @@ public class CantiParolaFragment extends Fragment {
                     break;
                 case R.id.action_switch_item:
                     mSwhitchMode = true;
-                    db = listaCanti.getReadableDatabase();
-                    sql = "SELECT id_canto, timestamp" +
-                            "   FROM CUST_LISTS" +
-                            "  WHERE _id =  1 " +
-                            "    AND position = " + posizioneDaCanc +
-                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
-                            "					WHERE titolo = '" + titoloDaCanc + "')";
-                    cursor = db.rawQuery(sql, null);
-                    cursor.moveToFirst();
-                    idDaCanc = cursor.getInt(0);
-                    timestampDaCanc = cursor.getString(1);
-                    cursor.close();
+//                    db = listaCanti.getReadableDatabase();
+//                    sql = "SELECT id_canto, timestamp" +
+//                            "   FROM CUST_LISTS" +
+//                            "  WHERE _id =  1 " +
+//                            "    AND position = " + posizioneDaCanc +
+//                            "	 AND id_canto = (SELECT _id FROM ELENCO" +
+//                            "					WHERE titolo = '" + titoloDaCanc + "')";
+//                    cursor = db.rawQuery(sql, null);
+//                    cursor.moveToFirst();
+//                    idDaCanc = cursor.getInt(0);
+//                    timestampDaCanc = cursor.getString(1);
+//                    cursor.close();
                     mode.setTitle(R.string.switch_started);
                     Toast.makeText(getActivity()
                             , getResources().getString(R.string.switch_tooltip)
@@ -999,22 +1163,22 @@ public class CantiParolaFragment extends Fragment {
             }
             return true;
         }
-    };
+    }
 
-    private void scambioCanto(View v, int idText, int position) {
-        String cantoCliccato = ((TextView) v.findViewById(idText)).getText().toString();
-        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+    private void scambioCanto(View v, int position) {
+//        String cantoCliccato = ((TextView) v.findViewById(idText)).getText().toString();
+//        cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
         db = listaCanti.getReadableDatabase();
-        String sql = "SELECT id_canto, timestamp" +
-                "   FROM CUST_LISTS" +
-                "  WHERE _id =  1 " +
-                "    AND position = " + position +
-                "	 AND id_canto = (SELECT _id FROM ELENCO" +
-                "					WHERE titolo = '" + cantoCliccato + "')";
-        Cursor cursor = db.rawQuery(sql, null);
-        cursor.moveToFirst();
-        int idNew = cursor.getInt(0);
-        String timestampNew = cursor.getString(1);
+//        String sql = "SELECT id_canto, timestamp" +
+//                "   FROM CUST_LISTS" +
+//                "  WHERE _id =  1 " +
+//                "    AND position = " + position +
+//                "	 AND id_canto = (SELECT _id FROM ELENCO" +
+//                "					WHERE titolo = '" + cantoCliccato + "')";
+//        Cursor cursor = db.rawQuery(sql, null);
+//        cursor.moveToFirst();
+        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
 //        Log.i(getClass().toString(), "positionNew: " + position);
 //        Log.i(getClass().toString(), "idNew: " + idNew);
 //        Log.i(getClass().toString(), "timestampNew: " + timestampNew);
