@@ -32,21 +32,21 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile supportDependencies.appCompat
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
     compile 'com.itextpdf:itextpdf:5.5.6'
     compile project(':utilities')
     compile project(':NonSenseFilePicker')
-    compile 'com.android.support:cardview-v7:22.2.1'
+    compile supportDependencies.cardView
     compile 'com.github.rey5137:material:1.2.1'
     compile 'com.afollestad:material-dialogs:0.7.8.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile project(':recyclerviewfastscroller')
-    compile 'com.github.ozodrukh:CircularReveal:1.1.1@aar'
+    compile  genericDependencies.CircularReveal
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
     // NOTE: vector-compat is available on API level 14 or later
     compile 'com.wnafee:vector-compat:1.0.5'
-    compile 'com.android.support:design:22.2.1'
+    compile supportDependencies.design
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
 }

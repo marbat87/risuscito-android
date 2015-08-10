@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.github.ozodrukh:CircularReveal:1.1.1'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile 'com.android.support:design:22.2.1'
+    compile supportDependencies.appCompat
+    compile genericDependencies.CircularReveal
+    compile supportDependencies.recyclerView
+    compile supportDependencies.design
 }

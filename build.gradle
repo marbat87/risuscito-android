@@ -17,3 +17,6 @@ allprojects {
         jcenter()
     }
 }
+
+// Load dependencies
+apply from: 'dependencies.gradle'

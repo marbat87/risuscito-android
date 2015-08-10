@@ -19,14 +19,10 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
-import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.List;
 
@@ -191,49 +187,49 @@ public class FabToolbar extends RevealFrameLayout {
         button.hide();
     }
 
-    public void scrollUp(boolean animate) {
-        this.toggle(true, animate, false);
-    }
-
-    public void scrollDown(boolean animate) {
-        this.toggle(false, animate, false);
-    }
-
-    private void toggle(final boolean visible, final boolean animate, boolean force) {
-        if(this.mVisible != visible || force) {
-            this.mVisible = visible;
-            int height = this.getHeight();
-            if(height == 0 && !force) {
-                ViewTreeObserver translationY = this.getViewTreeObserver();
-                if(translationY.isAlive()) {
-                    translationY.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                        public boolean onPreDraw() {
-                            ViewTreeObserver currentVto = FabToolbar.this.getViewTreeObserver();
-                            if(currentVto.isAlive()) {
-                                currentVto.removeOnPreDrawListener(this);
-                            }
-
-                            FabToolbar.this.toggle(visible, animate, true);
-                            return true;
-                        }
-                    });
-                    return;
-                }
-            }
-
-            int translationY1 = visible?0:height + this.getMarginBottom();
-            if(animate) {
-                ViewPropertyAnimator.animate(this).setInterpolator(this.mInterpolator).setDuration(200L).translationY((float)translationY1);
-            } else {
-                ViewHelper.setTranslationY(this, (float) translationY1);
-            }
-
-//			if(!this.hasHoneycombApi()) {
-//				this.setClickable(visible);
-//			}
-        }
-
-    }
+//    public void scrollUp(boolean animate) {
+//        this.toggle(true, animate, false);
+//    }
+//
+//    public void scrollDown(boolean animate) {
+//        this.toggle(false, animate, false);
+//    }
+//
+//    private void toggle(final boolean visible, final boolean animate, boolean force) {
+//        if(this.mVisible != visible || force) {
+//            this.mVisible = visible;
+//            int height = this.getHeight();
+//            if(height == 0 && !force) {
+//                ViewTreeObserver translationY = this.getViewTreeObserver();
+//                if(translationY.isAlive()) {
+//                    translationY.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//                        public boolean onPreDraw() {
+//                            ViewTreeObserver currentVto = FabToolbar.this.getViewTreeObserver();
+//                            if(currentVto.isAlive()) {
+//                                currentVto.removeOnPreDrawListener(this);
+//                            }
+//
+//                            FabToolbar.this.toggle(visible, animate, true);
+//                            return true;
+//                        }
+//                    });
+//                    return;
+//                }
+//            }
+//
+//            int translationY1 = visible?0:height + this.getMarginBottom();
+//            if(animate) {
+//                ViewPropertyAnimator.animate(this).setInterpolator(this.mInterpolator).setDuration(200L).translationY((float)translationY1);
+//            } else {
+//                ViewHelper.setTranslationY(this, (float) translationY1);
+//            }
+//
+////			if(!this.hasHoneycombApi()) {
+////				this.setClickable(visible);
+////			}
+//        }
+//
+//    }
 
 //	private boolean hasHoneycombApi() {
 //		return Build.VERSION.SDK_INT >= 11;
