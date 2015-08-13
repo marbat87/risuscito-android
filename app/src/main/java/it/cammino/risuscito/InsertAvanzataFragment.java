@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +26,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rey.material.widget.ProgressView;
 
@@ -114,7 +114,9 @@ public class InsertAvanzataFragment extends Fragment {
                     try {
                         db.execSQL(query);
                     } catch (SQLException e) {
-                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                 }
                 else {

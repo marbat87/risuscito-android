@@ -25,6 +25,12 @@
             android:layout_height="wrap_content"
             style="@style/TitoloPosizioneText" />
 
+        <LinearLayout
+            android:id="@+id/list"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <RelativeLayout
             android:id="@+id/addCantoGenerico"
             android:layout_width="fill_parent"
@@ -69,32 +75,11 @@
 
         </RelativeLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/cantoGenericoContainer">
-
-            <TextView
-                android:id="@+id/text_id_canto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/text_source_canto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/text_timestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <include layout="@layout/card_row_item" />
-
-        </FrameLayout>
+        <!--<LinearLayout-->
+            <!--android:id="@+id/list"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
 
     </LinearLayout>
 

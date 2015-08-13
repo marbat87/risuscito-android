@@ -3,18 +3,17 @@ package it.cammino.risuscito;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +30,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +41,7 @@ import java.util.Locale;
 
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
+import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ListaPersonalizzataFragment extends Fragment {
@@ -59,10 +58,12 @@ public class ListaPersonalizzataFragment extends Fragment {
     public ActionMode mMode;
     private boolean mSwhitchMode;
     //    private View mActionModeView;
-    private List<PosizioneItem> posizioniList;
-    private int longclickedPos;
+//    private List<PosizioneItem> posizioniList;
+    private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> posizioniList;
+    private int longclickedPos, longClickedChild;
     private RecyclerView recyclerView;
     private PosizioneRecyclerAdapter cantoAdapter;
+    private boolean actionModeOk;
 //	private int prevOrientation;
 
     private static final int TAG_INSERT_PERS = 555;
@@ -119,6 +120,81 @@ public class ListaPersonalizzataFragment extends Fragment {
                 deserializeObject(cursor.getBlob(0));
 
         updateLista();
+
+        OnClickListener click = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                View parent = (View) v.getParent().getParent();
+                if (parent.findViewById(R.id.addCantoGenerico).getVisibility() == View.VISIBLE) {
+                    if (mSwhitchMode)
+                        scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                    else {
+                        if (mMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("fromAdd", 0);
+                            bundle.putInt("idLista", idLista);
+                            bundle.putInt("position", Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                            Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+                            intent.putExtras(bundle);
+                            getParentFragment().startActivityForResult(intent, TAG_INSERT_PERS + idLista);
+                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+                        }
+                    }
+                }
+                else {
+                    if (!mSwhitchMode)
+                        if (mMode != null) {
+                            posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+                            snackBarRimuoviCanto(v);
+                        }
+                        else
+                            openPagina(v);
+                    else {
+                        scambioCanto(v, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                    }
+                }
+            }
+        };
+
+        OnLongClickListener longClick = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                View parent = (View) v.getParent().getParent();
+                posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+                snackBarRimuoviCanto(v);
+                return true;
+            }
+        };
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
+
+        // Creating new adapter object
+        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        recyclerView.setAdapter(cantoAdapter);
+
+        // Setting the layoutManager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+//        View view = getActivity().getLayoutInflater().inflate(R.layout.lista_pers_button, linLayout, true);
+        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//				Log.i(getClass().toString(), "idLista: " + idLista);
+                db = listaCanti.getReadableDatabase();
+                ContentValues  values = new  ContentValues( );
+                for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+                    listaPersonalizzata.removeCanto(i);
+                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+                db.update("LISTE_PERS", values, "_id = " + idLista, null);
+                db.close();
+                updateLista();
+                cantoAdapter.notifyDataSetChanged();
+                mShareActionProvider.setShareIntent(getDefaultIntent());
+            }
+        });
 
         return rootView;
     }
@@ -194,6 +270,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                     deserializeObject(cursor.getBlob(0));
 
             updateLista();
+            cantoAdapter.notifyDataSetChanged();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -268,55 +345,58 @@ public class ListaPersonalizzataFragment extends Fragment {
 //        LinearLayout linLayout = (LinearLayout) rootView.findViewById(R.id.listaScroll);
 //        linLayout.removeAllViews();
 
-        posizioniList = new ArrayList<>();
+        if (posizioniList == null)
+            posizioniList = new ArrayList<>();
+        else
+            posizioniList.clear();
 
-        OnClickListener click = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
-                mLastClickTime = SystemClock.elapsedRealtime();
-                View parent = (View) v.getParent();
-                if (parent.findViewById(R.id.cantoGenericoContainer).getVisibility() == View.GONE) {
-                    if (mSwhitchMode)
-                        scambioConVuoto(Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
-                    else {
-                        if (mMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("fromAdd", 0);
-                            bundle.putInt("idLista", idLista);
-                            bundle.putInt("position", Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
-                            Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
-                            intent.putExtras(bundle);
-                            getParentFragment().startActivityForResult(intent, TAG_INSERT_PERS + idLista);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-                        }
-                    }
-                }
-                else {
-                    if (!mSwhitchMode)
-                        if (mMode != null) {
-                            posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                            snackBarRimuoviCanto(parent);
-                        }
-                        else
-                            openPagina(parent);
-                    else {
-                        scambioCanto(Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
-                    }
-                }
-            }
-        };
-
-        OnLongClickListener longClick = new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                View parent = (View) v.getParent();
-                posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                snackBarRimuoviCanto(parent);
-                return true;
-            }
-        };
+//        OnClickListener click = new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                View parent = (View) v.getParent().getParent();
+//                if (parent.findViewById(R.id.addCantoGenerico).getVisibility() == View.VISIBLE) {
+//                    if (mSwhitchMode)
+//                        scambioConVuoto(Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+//                    else {
+//                        if (mMode == null) {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("fromAdd", 0);
+//                            bundle.putInt("idLista", idLista);
+//                            bundle.putInt("position", Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+//                            Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
+//                            intent.putExtras(bundle);
+//                            getParentFragment().startActivityForResult(intent, TAG_INSERT_PERS + idLista);
+//                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+//                        }
+//                    }
+//                }
+//                else {
+//                    if (!mSwhitchMode)
+//                        if (mMode != null) {
+//                            posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+//                            snackBarRimuoviCanto(v);
+//                        }
+//                        else
+//                            openPagina(v);
+//                    else {
+//                        scambioCanto(Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+//                    }
+//                }
+//            }
+//        };
+//
+//        OnLongClickListener longClick = new OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                View parent = (View) v.getParent().getParent();
+//                posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
+//                snackBarRimuoviCanto(v);
+//                return true;
+//            }
+//        };
 
         for (int cantoIndex = 0; cantoIndex < listaPersonalizzata.getNumPosizioni(); cantoIndex++) {
 //            View view = getActivity().getLayoutInflater().inflate(R.layout.oggetto_lista_generico, linLayout, false);
@@ -329,9 +409,38 @@ public class ListaPersonalizzataFragment extends Fragment {
 
 //	   		Log.i("CANTO[" + cantoIndex + "]", listaPersonalizzata.getCantoPosizione(cantoIndex) + " ");
 
-            PosizioneItem result;
+//            PosizioneItem result;
 
-            if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() == 0) {
+            List<PosizioneItem> list = new ArrayList<>();
+            if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() > 0) {
+                db = listaCanti.getReadableDatabase();
+
+                String query = "SELECT _id, titolo, pagina, color, source" +
+                        "  FROM ELENCO" +
+                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
+                Cursor cursor = db.rawQuery(query, null);
+                cursor.moveToFirst();
+
+                list.add(new PosizioneItem(
+                        cursor.getInt(2)
+                        , cursor.getString(1)
+                        , cursor.getString(3)
+                        , cursor.getInt(0)
+                        , cursor.getString(4)
+                        , ""));
+
+                cursor.close();
+                db.close();
+
+            }
+
+            Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(listaPersonalizzata.getNomePosizione(cantoIndex)
+                    , idLista
+                    , cantoIndex
+                    , cantoIndex
+                    , false), list);
+
+//            if (listaPersonalizzata.getCantoPosizione(cantoIndex).length() == 0) {
 
 //                view.findViewById(R.id.addCantoGenerico).setVisibility(View.VISIBLE);
 //                view.findViewById(R.id.cantoGenericoContainer).setVisibility(View.GONE);
@@ -362,12 +471,12 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                    }
 //                });
 //
-                result = new PosizioneItem(listaPersonalizzata.getNomePosizione(cantoIndex)
-                        , idLista
-                        , cantoIndex
-                        , cantoIndex);
-            }
-            else {
+//                result = new PosizioneItem(listaPersonalizzata.getNomePosizione(cantoIndex)
+//                        , idLista
+//                        , cantoIndex
+//                        , cantoIndex);
+//            }
+//            else {
 
 //                //setto l'id del canto nell'apposito canto
 //                ((TextView) view.findViewById(R.id.id_da_canc))
@@ -410,15 +519,15 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                    }
 //                });
 
-                db = listaCanti.getReadableDatabase();
+//                db = listaCanti.getReadableDatabase();
+//
+//                String query = "SELECT _id, titolo, pagina, color, source" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
+//                Cursor cursor = db.rawQuery(query, null);
+//                cursor.moveToFirst();
 
-                String query = "SELECT _id, titolo, pagina, color, source" +
-                        "  FROM ELENCO" +
-                        "  WHERE _id =  " + listaPersonalizzata.getCantoPosizione(cantoIndex);
-                Cursor cursor = db.rawQuery(query, null);
-                cursor.moveToFirst();
-
-                //setto il titolo del canto
+            //setto il titolo del canto
 //                ((TextView) view.findViewById(R.id.text_title))
 //                        .setText(cursor.getString(0));
 //
@@ -441,51 +550,51 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                if (colore.equalsIgnoreCase(Utility.BIANCO))
 //                    textPage.setBackgroundResource(R.drawable.bkg_round_white);
 
-                result = new PosizioneItem(listaPersonalizzata.getNomePosizione(cantoIndex)
-                        , 1
-                        , cantoIndex
-                        , cursor.getInt(2)
-                        , cursor.getString(1)
-                        , cursor.getString(3)
-                        , cursor.getInt(0)
-                        , cursor.getString(4)
-                        , ""
-                        , cantoIndex);
-
-                cursor.close();
-                db.close();
-
-            }
+//                result = new PosizioneItem(listaPersonalizzata.getNomePosizione(cantoIndex)
+//                        , 1
+//                        , cantoIndex
+//                        , cursor.getInt(2)
+//                        , cursor.getString(1)
+//                        , cursor.getString(3)
+//                        , cursor.getInt(0)
+//                        , cursor.getString(4)
+//                        , ""
+//                        , cantoIndex);
+//
+//                cursor.close();
+//                db.close();
+//
+//            }
 
 //            linLayout.addView(view);
             posizioniList.add(result);
         }
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.parolaList);
-
-        // Creating new adapter object
-        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
-        recyclerView.setAdapter(cantoAdapter);
-
-        // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-//        View view = getActivity().getLayoutInflater().inflate(R.layout.lista_pers_button, linLayout, true);
-        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//				Log.i(getClass().toString(), "idLista: " + idLista);
-                db = listaCanti.getReadableDatabase();
-                ContentValues  values = new  ContentValues( );
-                for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
-                    listaPersonalizzata.removeCanto(i);
-                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-                db.update("LISTE_PERS", values, "_id = " + idLista, null);
-                db.close();
-                updateLista();
-                mShareActionProvider.setShareIntent(getDefaultIntent());
-            }
-        });
+//        recyclerView = (RecyclerView) rootView.findViewById(R.id.parolaList);
+//
+//        // Creating new adapter object
+//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+//        recyclerView.setAdapter(cantoAdapter);
+//
+//        // Setting the layoutManager
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//
+////        View view = getActivity().getLayoutInflater().inflate(R.layout.lista_pers_button, linLayout, true);
+//        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////				Log.i(getClass().toString(), "idLista: " + idLista);
+//                db = listaCanti.getReadableDatabase();
+//                ContentValues  values = new  ContentValues( );
+//                for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++)
+//                    listaPersonalizzata.removeCanto(i);
+//                values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
+//                db.update("LISTE_PERS", values, "_id = " + idLista, null);
+//                db.close();
+//                updateLista();
+//                mShareActionProvider.setShareIntent(getDefaultIntent());
+//            }
+//        });
 
     }
 
@@ -514,8 +623,13 @@ public class ListaPersonalizzataFragment extends Fragment {
 //
 //                cursor.close();
 //                db.close();
-                result += posizioniList.get(i).getTitolo()
-                        + " - " + getString(R.string.page_contracted) + posizioniList.get(i).getPagina();
+                for (PosizioneItem tempItem: posizioniList.get(i).second) {
+                    result += tempItem.getTitolo() + " - " + getString(R.string.page_contracted) + tempItem.getPagina();
+                    result += "\n";
+                }
+
+//                result += posizioniList.get(i).getTitolo()
+//                        + " - " + getString(R.string.page_contracted) + posizioniList.get(i).getPagina();
             }
             else
                 result += ">> " + getString(R.string.to_be_chosen) + " <<";
@@ -547,7 +661,9 @@ public class ListaPersonalizzataFragment extends Fragment {
         if (mMode != null)
             mMode.finish();
 //        mActionModeView = view;
-        longclickedPos = Integer.valueOf(((TextView)view.findViewById(R.id.tag)).getText().toString());
+        View parent = (View) view.getParent().getParent();
+        longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
+        longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
         mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
     }
 
@@ -563,7 +679,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 //            mActionModeView.setBackgroundColor(getThemeUtils().accentColorLight());
-            posizioniList.get(longclickedPos).setmSelected(true);
+            posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
             cantoAdapter.notifyItemChanged(longclickedPos);
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
@@ -572,6 +688,7 @@ public class ListaPersonalizzataFragment extends Fragment {
             drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
             menu.findItem(R.id.action_switch_item).setIcon(drawable);
+            actionModeOk = false;
             return true;
         }
 
@@ -591,8 +708,11 @@ public class ListaPersonalizzataFragment extends Fragment {
             theme.resolveAttribute(R.attr.customSelector, typedValue, true);
 //            mActionModeView.setBackgroundResource(typedValue.resourceId);
 //            mActionModeView = null;
-            posizioniList.get(longclickedPos).setmSelected(false);
-            cantoAdapter.notifyItemChanged(longclickedPos);
+            if (!actionModeOk) {
+//            if (posizioniList.get(longclickedPos).second.size() > 0)
+                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
+                cantoAdapter.notifyItemChanged(longclickedPos);
+            }
             if (mode == mMode)
                 mMode = null;
         }
@@ -609,7 +729,9 @@ public class ListaPersonalizzataFragment extends Fragment {
                     db.update("LISTE_PERS", values, "_id = " + idLista, null);
                     db.close();
                     updateLista();
+                    cantoAdapter.notifyItemChanged(longclickedPos);
                     mShareActionProvider.setShareIntent(getDefaultIntent());
+                    actionModeOk = true;
                     mode.finish();
                     Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
                             .setAction(R.string.cancel, new View.OnClickListener() {
@@ -622,6 +744,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                                     db.update("LISTE_PERS", values, "_id = " + idLista, null);
                                     db.close();
                                     updateLista();
+                                    cantoAdapter.notifyItemChanged(longclickedPos);
                                     mShareActionProvider.setShareIntent(getDefaultIntent());
                                 }
                             })
@@ -643,7 +766,7 @@ public class ListaPersonalizzataFragment extends Fragment {
         }
     }
 
-    private void scambioCanto(int posizioneNew) {
+    private void scambioCanto(View v, int posizioneNew) {
 //        int posizioneNew = Integer.valueOf(
 //                ((TextView) v.findViewById(R.id.id_da_canc)).getText().toString());
 //        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
@@ -661,20 +784,29 @@ public class ListaPersonalizzataFragment extends Fragment {
             db.close();
 
             updateLista();
+            View parent = (View) v.getParent().getParent();
+            cantoAdapter.notifyItemChanged(longclickedPos);
+            cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString()));
+            actionModeOk = true;
             mMode.finish();
             mShareActionProvider.setShareIntent(getDefaultIntent());
-            Toast.makeText(getActivity()
-                    , getResources().getString(R.string.switch_done)
-                    , Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getResources().getString(R.string.switch_done)
+//                    , Toast.LENGTH_SHORT).show();
+            Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
+                    .show();
+
         }
         else {
-            Toast.makeText(getActivity()
-                    , getResources().getString(R.string.switch_impossible)
-                    , Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getResources().getString(R.string.switch_impossible)
+//                    , Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.switch_impossible, Snackbar.LENGTH_SHORT)
+                    .show();
         }
     }
 
-    private void scambioConVuoto(int posizioneNew) {
+    private void scambioConVuoto(View parent, int posizioneNew) {
 //        int posizioneNew = Integer.valueOf(
 //                ((TextView) v.findViewById(R.id.id_posizione)).getText().toString());
 //        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
@@ -689,11 +821,17 @@ public class ListaPersonalizzataFragment extends Fragment {
         db.close();
 
         updateLista();
+        cantoAdapter.notifyItemChanged(longclickedPos);
+        cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
+        mShareActionProvider.setShareIntent(getDefaultIntent());
+        actionModeOk = true;
         mMode.finish();
         mShareActionProvider.setShareIntent(getDefaultIntent());
-        Toast.makeText(getActivity()
-                , getResources().getString(R.string.switch_done)
-                , Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity()
+//                , getResources().getString(R.string.switch_done)
+//                , Toast.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
 }

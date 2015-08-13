@@ -54,6 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/fab_toolbar_bottom_no_tb"
         risuscito:tb_anim_duration="500"
         risuscito:tb_button_gravity="end"
         risuscito:tb_container_gravity="center"

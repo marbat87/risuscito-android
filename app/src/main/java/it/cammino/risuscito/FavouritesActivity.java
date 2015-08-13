@@ -56,6 +56,7 @@ public class FavouritesActivity extends Fragment {
     private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
+    private boolean actionModeOk;
 
     private String PREFERITI_OPEN = "preferiti_open";
 
@@ -379,6 +380,7 @@ public class FavouritesActivity extends Fragment {
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
             menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            actionModeOk = false;
             return true;
         }
 
@@ -394,18 +396,22 @@ public class FavouritesActivity extends Fragment {
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
-            for (CantoRecycled canto: titoli) {
-                canto.setmSelected(false);
-                cantoAdapter.notifyDataSetChanged();
+            Log.i(getClass().getName(), "actionModeOk: " + actionModeOk);
+            if (!actionModeOk) {
+                for (CantoRecycled canto : titoli) {
+                    canto.setmSelected(false);
+                    cantoAdapter.notifyDataSetChanged();
+                }
             }
-            for (CantoRecycled canto: removedItems)
-                canto.setmSelected(false);
+//            for (CantoRecycled canto: removedItems)
+//                canto.setmSelected(false);
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch(item.getItemId()) {
                 case R.id.action_remove_item:
+                    Log.i(getClass().getName(), "CLICKED");
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
                     ContentValues values = new ContentValues();
                     values.put("favourite", 0);
@@ -414,6 +420,7 @@ public class FavouritesActivity extends Fragment {
                         Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
                         if (titoli.get(i).ismSelected()) {
                             db.update("ELENCO", values, "_id =  " + titoli.get(i).getIdCanto(), null);
+                            titoli.get(i).setmSelected(false);
                             removedItems.add(titoli.remove(i));
                             cantoAdapter.notifyItemRemoved(i);
                             i--;
@@ -427,6 +434,7 @@ public class FavouritesActivity extends Fragment {
                         fabClear.hide();
 //                        fabClear.setmIgnoreLayoutChanges(true);
                     }
+                    actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {
                         String message = removedItems.size() > 1 ?
@@ -462,12 +470,18 @@ public class FavouritesActivity extends Fragment {
         }
     }
 
-    public boolean onBackPressed() {
-        if (mMode != null) {
-            mMode.finish();
-            return true;
-        }
-        return false;
-    }
+//    public boolean onBackPressed() {
+//        Log.i(getClass().getName(), "ENTRO1");
+//        if (mMode != null) {
+//            for (CantoRecycled canto: titoli) {
+//                Log.i(getClass().getName(), "ENTRO2");
+//                canto.setmSelected(false);
+//                cantoAdapter.notifyDataSetChanged();
+//            }
+//            mMode.finish();
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

@@ -11,30 +11,9 @@ public class PosizioneItem {
     private int idCanto;
     private String timestamp;
     private String source;
-    private String titoloPosizione;
-    private int idLista;
-    private int idPosizione;
-    private boolean mChoosen;
     private boolean mSelected;
-    private int tag;
 
-    public PosizioneItem(String titoloPosizione, int idLista, int idPosizione, int tag) {
-        this.setTitolo("");
-        this.setPagina(0);
-        this.setColore("");
-        this.setIdCanto(0);
-        this.setSource("");
-        this.setTimestamp("");
-        this.setmSelected(false);
-        this.setmChoosen(false);
-        this.setTitoloPosizione(titoloPosizione);
-        this.setIdLista(idLista);
-        this.setIdPosizione(idPosizione);
-        this.setTag(tag);
-    }
-
-    public PosizioneItem(String titoloPosizione, int idLista, int idPosizione
-                         , int pagina, String titolo, String colore, int idCanto, String source, String timestamp, int tag) {
+    public PosizioneItem(int pagina, String titolo, String colore, int idCanto, String source, String timestamp) {
         this.setTitolo(titolo);
         this.setPagina(pagina);
         this.setColore(colore);
@@ -42,11 +21,6 @@ public class PosizioneItem {
         this.setSource(source);
         this.setTimestamp(timestamp);
         this.setmSelected(false);
-        this.setmChoosen(true);
-        this.setTitoloPosizione(titoloPosizione);
-        this.setIdLista(idLista);
-        this.setIdPosizione(idPosizione);
-        this.setTag(tag);
     }
 
     public int getPagina() {
@@ -89,44 +63,12 @@ public class PosizioneItem {
         this.source = source;
     }
 
-    public String getTitoloPosizione() {
-        return titoloPosizione;
-    }
-
-    public void setTitoloPosizione(String titoloPosizione) {
-        this.titoloPosizione = titoloPosizione;
-    }
-
-    public int getIdLista() {
-        return idLista;
-    }
-
-    public void setIdLista(int idLista) {
-        this.idLista = idLista;
-    }
-
-    public boolean ismChoosen() {
-        return mChoosen;
-    }
-
-    public void setmChoosen(boolean mChoosen) {
-        this.mChoosen = mChoosen;
-    }
-
     public boolean ismSelected() {
         return mSelected;
     }
 
     public void setmSelected(boolean mSelected) {
         this.mSelected = mSelected;
-    }
-
-    public int getIdPosizione() {
-        return idPosizione;
-    }
-
-    public void setIdPosizione(int idPosizione) {
-        this.idPosizione = idPosizione;
     }
 
     public String getTimestamp() {
@@ -137,11 +79,4 @@ public class PosizioneItem {
         this.timestamp = timestamp;
     }
 
-    public int getTag() {
-        return tag;
-    }
-
-    public void setTag(int tag) {
-        this.tag = tag;
-    }
 }

@@ -59,8 +59,8 @@
     <string name="stop_song">зупинити</string>
     <string name="pause_song">пауза</string>
     <string name="wait">Почекайте, завантажується&#8230;</string>
-    <string name="no_connection">Немає активного з\'єднання до інтернету!</string>
-    <string name="no_record">Недійсна реєсстрація!</string>
+    <string name="no_connection">Немає активного з\'єднання до інтернету</string>
+    <string name="no_record">Недійсна реєсстрація</string>
     <string name="about_subtitle">Версія для смартфонів/планшетів Android</string>
     <string name="search_text_also">шукати також в тексті</string>
     <string name="dialog_download_mp3">Хочеш зберегти пісню в пристрої? Потім зможеш її прослуховувати без з\'єднання до інтернету!</string>
@@ -70,13 +70,13 @@
     <string name="cancel">ВІДМІНИТИ</string>
     <string name="save_location_title">Стандартна пам\'ять</string>
     <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач).</string>
-    <string name="favorite_added">Додано до закладок!</string>
-    <string name="favorite_removed">Видалено з закладок!</string>
-    <string name="file_delete">Файл був видалений!</string>
-    <string name="download_completed">Файл був збережений!</string>
+    <string name="favorite_added">Додано до закладок</string>
+    <string name="favorite_removed">Видалено з закладок</string>
+    <string name="file_delete">Файл був видалений</string>
+    <string name="download_completed">Файл був збережений</string>
     <string name="download_running">Завантажується&#8230;</string>
-    <string name="download_cancelled">Завантаження відмінено!</string>
-    <string name="present_yet">Пісня вже є!</string>
+    <string name="download_cancelled">Завантаження відмінено</string>
+    <string name="present_yet">Пісня вже є</string>
     <string name="dialog_present_yet">&#200; вже є пісня: </string>
     <string name="dialog_wonna_replace">. Хочеш замінити?</string>
     <string name="fast_search_title">Швидкий пошук</string>
@@ -97,10 +97,10 @@
     <string name="content_drag">перенести елемент</string>
     <string name="aggiungi_confirm">ДОДАТИ</string>
     <string name="aggiungi_dismiss">СКАСУВАТИ</string>
-    <string name="titolo_pos_vuoto">Не введено жодної назви!</string>
+    <string name="titolo_pos_vuoto">Не введено жодної назви</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
-    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 20!</string>
-    <string name="lista_pers_vuota">Список порожній!</string>
+    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 20</string>
+    <string name="lista_pers_vuota">Список порожній</string>
     <string name="aggiungi_lista_crea">СТВОРИТИ</string>
     <string name="lista_add_desc">Назва нового списку:</string>
     <string name="save_list_question">Ти виходиш з створення особистого списку. Хочеш зберегти зміни?</string>
@@ -130,12 +130,12 @@
     <string name="showcase_restab_desc">Повернути тональність пісні на початкову.</string>
     <string name="showcase_button_next">ВПЕРЕД</string>
     <string name="showcase_help_general">Ти зможеш знову побачити підказки, натиснувши на кнопку меню \"Допомога\".</string>
-    <string name="tab_saved">Танвльність збережено!</string>
-    <string name="barre_saved">Баре збережено!</string>
-    <string name="tab_not_saved">Тональність не змінено!</string>
-    <string name="barre_not_saved">Баре не змінено!</string>
+    <string name="tab_saved">Танвльність збережено</string>
+    <string name="barre_saved">Баре збережено</string>
+    <string name="tab_not_saved">Тональність не змінено</string>
+    <string name="barre_not_saved">Баре не змінено</string>
     <string name="showcase_end_title">Завершити</string>
-    <string name="list_added">Додано до списку!</string>
+    <string name="list_added">Додано до списку</string>
     <string name="posizione_rename">Перейменувати</string>
     <string name="showcase_welcome_crea">Ласкаво просимо. Звідси ти можеш створити/змінити свої особисті списки для будь-якої літургії.</string>
     <string name="showcase_add_pos_desc">Цією кнопкою можна додати будь-який новий елемент (прикл. \"Пісня на вхід\", \"перше читання\", ітд.).
@@ -173,15 +173,15 @@
     <string name="applicatgion_theme_summary">Змінює тему додатку. Увага: Додаток перезавантажиться.</string>
     <string name="favorite_remove">Видалити з закладок?</string>
     <string name="action_exp_pdf">Експорт PDF файлу</string>
-    <string name="no_pdf_reader">Не знайдено ніякого PDF Reader!</string>
+    <string name="no_pdf_reader">Не знайдено ніякого PDF Reader</string>
     <string name="export_running">Іде експорт&#8230;</string>
     <string name="open_pdf">Відкрити PDF</string>
     <string name="content_donate">Пожертвувати</string>
     <string name="title_activity_donate">Подякувати</string>
     <string name="activity_homepage">Домашня сторінка</string>
     <string name="button_note_cantore">Нотатки для кантора</string>
-    <string name="no_memory_writable">Пам\'ять не доступна або в режимі тільки читання!</string>
-    <string name="help_new_menu_title">Нове меню!</string>
+    <string name="no_memory_writable">Пам\'ять не доступна або в режимі тільки читання</string>
+    <string name="help_new_menu_title">Нове меню</string>
     <string name="help_new_menu_desc">Введено нове меню, його можа відкрити натиснувши на знак в верхньому лівому куту, або
         провівши пальцем зліва право. Спробуй!</string>
     <string name="salmi_musica_index">Зміст псалмів з мелодіями</string>
@@ -190,11 +190,11 @@
     <string name="downlink_choose">АСОЦІЮВАТИ</string>
     <string name="only_link">Хочеш асоціювати існуючий файл mp3 з пам\'яті пристрою?</string>
     <string name="dialog_delete_link">Ти впевнений, що хочеш від\'єднати від існуючого файлу в пам\'яті? (Файл не буде видалено)</string>
-    <string name="delink_delete">Файл від\'єднано!</string>
+    <string name="delink_delete">Файл від\'єднано</string>
     <string name="list_title">Заголовок списку</string>
     <string name="list_title_modif">Змінити заголовок&#8230;</string>
     <string name="list_elements">ЕЛЕМЕНТИ СПИСКУ:</string>
-    <string name="no_title_edited">Не можна замінити на пустий заголовок!</string>
+    <string name="no_title_edited">Не можна замінити на пустий заголовок</string>
     <string name="title_activity_settings_capital">НАЛАШТУВАННЯ</string>
     <string name="title_activity_about_capital">ЩО НОВОГО</string>
     <string name="title_activity_donate_capital">ПОДЯКУВАТИ</string>
@@ -268,16 +268,16 @@
     <string name="dialog_reset_favorites_title">Svuota preferiti</string>
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
-    <string name="history_removed">Rimosso dalla cronologia!</string>
+    <string name="history_removed">Rimosso dalla cronologia</string>
     <string name="action_switch_to">Scambia con...</string>
-    <string name="song_removed">Canto rimosso!</string>
-    <string name="switch_done">Scambio effettuato!</string>
-    <string name="switch_impossible">Non puoi scambiare una canto con se stesso!</string>
+    <string name="song_removed">Canto rimosso</string>
+    <string name="switch_done">Scambio effettuato</string>
+    <string name="switch_impossible">Non puoi scambiare una canto con se stesso</string>
     <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
     <string name="switch_started">Scambio in corso&#8230;</string>
     <string name="list_removed">Rimossa la lista \'</string>
-    <string name="favorites_removed">% rimossi dai preferiti!</string>
-    <string name="histories_removed">% rimossi dalla cronologia!</string>
+    <string name="favorites_removed">% rimossi dai preferiti</string>
+    <string name="histories_removed">% rimossi dalla cronologia</string>
     <string name="sc_pagina_render_title">Pagina del canto</string>
     <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
     <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
@@ -289,5 +289,8 @@
     <string name="sc_scroll_title">Scroll automatico del testo</string>
     <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
         \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
+    <string name="player_state">Stato del lettore:</string>
+    <string name="focus_not_allowed">AudioFocus non consentito</string>
+    <string name="download_error">Errore nel download:</string>
 
 </resources>

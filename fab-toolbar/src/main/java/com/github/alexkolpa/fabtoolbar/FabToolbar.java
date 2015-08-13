@@ -95,7 +95,7 @@ public class FabToolbar extends RevealFrameLayout {
         container.setGravity(getGravity(containerGravity));
 
         FrameLayout.LayoutParams buttonParams = (LayoutParams) button.getLayoutParams();
-        buttonParams.gravity = getGravity(buttonGravity);
+        buttonParams.gravity = getGravity(buttonGravity) | Gravity.TOP;
     }
 
     private int getGravity(int gravityEnum) {

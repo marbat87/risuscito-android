@@ -531,20 +531,22 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 return true;
             }
 
-            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_favorites));
-            if (myFragment != null && myFragment.isVisible())
-                if (((FavouritesActivity) myFragment).onBackPressed())
-                    return true;
-
-            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_history));
-            if (myFragment != null && myFragment.isVisible())
-                if (((HistoryFragment) myFragment).onBackPressed())
-                    return true;
-
-            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_lists));
-            if (myFragment != null && myFragment.isVisible())
-                if (((CustomLists) myFragment).onBackPressed())
-                    return true;
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_favorites));
+//            if (myFragment != null && myFragment.isVisible()) {
+//                Log.i(getClass().getName(), "ENTROALPHA");
+//                if (((FavouritesActivity) myFragment).onBackPressed())
+//                    return true;
+//            }
+//
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_history));
+//            if (myFragment != null && myFragment.isVisible())
+//                if (((HistoryFragment) myFragment).onBackPressed())
+//                    return true;
+//
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_lists));
+//            if (myFragment != null && myFragment.isVisible())
+//                if (((CustomLists) myFragment).onBackPressed())
+//                    return true;
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);

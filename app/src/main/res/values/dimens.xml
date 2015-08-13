@@ -54,13 +54,17 @@
     <dimen name="cardListPreferredTextMarginStart">60dip</dimen>
     <dimen name="cardListElevation">3dip</dimen>
     <dimen name="button_text_padding">4dp</dimen>
+    <dimen name="fab_toolbar_bottom_tb">31dp</dimen>
+    <dimen name="fab_toolbar_bottom_no_tb">-25dp</dimen>
+    <dimen name="bottom_toolbar_height">56dp</dimen>
 
-    <dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>
+    <!--<dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>-->
     <dimen name="toolbar_expansion_height">85dip</dimen>
     <dimen name="toolbar_fab_margintop">45dip</dimen>
 
     <dimen name="raise_elevation">8dp</dimen>
 
     <dimen name="product_logo_bottom">16dp</dimen>
+
 
 </resources>

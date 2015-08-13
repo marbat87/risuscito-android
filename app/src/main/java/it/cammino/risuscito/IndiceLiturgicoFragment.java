@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,7 +28,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -61,6 +61,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     private int idListaClick;
     private int idPosizioneClick;
     private int prevOrientation;
+    private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
     private final int ID_BASE = 100;
@@ -77,7 +78,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(
+        rootView = inflater.inflate(
                 R.layout.layout_recycler, container, false);
 
 //        expList = (ExpandableListView) rootView.findViewById(R.id.argomentiList);
@@ -497,15 +498,19 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
 
-                            Toast.makeText(getActivity()
-                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity()
+//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                    .show();
                         }
                         else {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
@@ -537,8 +542,10 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-                                                Toast.makeText(getActivity()
-                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(getActivity()
+//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                                        .show();
                                             }
 
                                             @Override
@@ -589,9 +596,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast toast = Toast.makeText(getActivity()
-                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getActivity()
+//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
+//        toast.show();
+        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -612,12 +621,17 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
         try {
             db.execSQL(sql);
-            Toast.makeText(getActivity()
-                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                    .show();
         } catch (SQLException e) {
-            Toast toast = Toast.makeText(getActivity()
-                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity()
+//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//            toast.show();
+            Snackbar.make(rootView
+                    , R.string.present_yet, Snackbar.LENGTH_SHORT)
+                    .show();
         }
 
         db.close();
@@ -648,9 +662,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             db.close();
 
             if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-                Toast toast = Toast.makeText(getActivity()
-                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getActivity()
+//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//                toast.show();
+                Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+                        .show();
             }
             else {
                 idListaDaAgg = idLista;
@@ -677,8 +693,10 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
 
                             @Override
@@ -717,8 +735,10 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast.makeText(getActivity()
-                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity()
+//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
 }

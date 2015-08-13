@@ -55,6 +55,7 @@ public class HistoryFragment extends Fragment {
     private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
+    private boolean actionModeOk;
 
     private String HISTORY_OPEN = "history_open";
 
@@ -386,6 +387,7 @@ public class HistoryFragment extends Fragment {
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
             DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
             menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            actionModeOk = false;
             return true;
         }
 
@@ -401,12 +403,14 @@ public class HistoryFragment extends Fragment {
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
-            for (CantoHistory canto: titoli) {
-                canto.setmSelected(false);
-                cantoAdapter.notifyDataSetChanged();
+            if (!actionModeOk) {
+                for (CantoHistory canto : titoli) {
+                    canto.setmSelected(false);
+                    cantoAdapter.notifyDataSetChanged();
+                }
             }
-            for (CantoHistory canto: removedItems)
-                canto.setmSelected(false);
+//            for (CantoHistory canto: removedItems)
+//                canto.setmSelected(false);
         }
 
         @Override
@@ -420,6 +424,7 @@ public class HistoryFragment extends Fragment {
                         Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
                         if (titoli.get(i).ismSelected()) {
                             db.delete("CRONOLOGIA", "id_canto =  " + titoli.get(i).getIdCanto(), null);
+                            titoli.get(i).setmSelected(false);
                             removedItems.add(titoli.remove(i));
                             cantoAdapter.notifyItemRemoved(i);
                             i--;
@@ -432,6 +437,7 @@ public class HistoryFragment extends Fragment {
                         fabClear.hide();
 //                        fabClear.setmIgnoreLayoutChanges(true);
                     }
+                    actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {
                         String message = removedItems.size() > 1 ?
@@ -471,12 +477,12 @@ public class HistoryFragment extends Fragment {
         }
     }
 
-    public boolean onBackPressed() {
-        if (mMode != null) {
-            mMode.finish();
-            return true;
-        }
-        return false;
-    }
+//    public boolean onBackPressed() {
+//        if (mMode != null) {
+//            mMode.finish();
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

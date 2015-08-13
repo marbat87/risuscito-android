@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +32,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -389,18 +389,24 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                             db.close();
 
-                            Toast.makeText(getActivity()
-                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity()
+//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                    .show();
                         }
                         else {
 //                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
 //                                    .equalsIgnoreCase(titoloDaAgg)) {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView
+                                        , R.string.present_yet
+                                        , Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
@@ -442,8 +448,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-                                                Toast.makeText(getActivity()
-                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(getActivity()
+//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                                        .show();
                                             }
 
                                             @Override
@@ -491,9 +499,11 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         db.execSQL(sql);
         db.close();
 
-        Toast toast = Toast.makeText(getActivity(),
-                getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getActivity(),
+//                getString(R.string.favorite_added), Toast.LENGTH_SHORT);
+//        toast.show();
+        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -512,12 +522,18 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         try {
             db.execSQL(sql);
-            Toast.makeText(getActivity(), getString(R.string.list_added),
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), getString(R.string.list_added),
+//                    Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                    .show();
         } catch (SQLException e) {
-            Toast toast = Toast.makeText(getActivity(),
-                    getString(R.string.present_yet), Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity(),
+//                    getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//            toast.show();
+            Snackbar.make(rootView
+                    , R.string.present_yet
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
         }
 
         db.close();
@@ -547,9 +563,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             db.close();
 
             if (titolo.equalsIgnoreCase(titoloPresente)) {
-                Toast toast = Toast.makeText(getActivity(),
-                        getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getActivity(),
+//                        getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//                toast.show();
+                Snackbar.make(rootView
+                        , R.string.present_yet
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             } else {
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
@@ -582,8 +602,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
 
                             @Override
@@ -619,8 +641,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         db.execSQL(sql);
         db.close();
 
-        Toast.makeText(getActivity(), getString(R.string.list_added),
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), getString(R.string.list_added),
+//                Toast.LENGTH_SHORT).show();
+        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
 //    private class ButtonClickedListener implements DialogInterface.OnClickListener {

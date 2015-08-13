@@ -612,20 +612,11 @@ public class CustomLists extends Fragment  {
             Locale l = getActivity().getResources().getConfiguration().locale;
             switch (position) {
                 case 0:
-//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     return getString(R.string.title_activity_canti_parola).toUpperCase(l);
-//				else
-//					return getString(R.string.title_activity_canti_parola);
                 case 1:
-//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     return getString(R.string.title_activity_canti_eucarestia).toUpperCase(l);
-//				else
-//					return getString(R.string.title_activity_canti_eucarestia);
                 default:
-//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     return titoliListe[position - 2].toUpperCase(l);
-//				else
-//					return titoliListe[position - 2];
             }
         }
 
@@ -639,37 +630,37 @@ public class CustomLists extends Fragment  {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
 
-    public boolean onBackPressed() {
-        boolean result = false;
-
-        CantiParolaFragment fragment = (CantiParolaFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
-        if (fragment != null && fragment.mMode != null) {
-            fragment.mMode.finish();
-//            Log.i(getClass().getName(), "1");
-            result = true;
-        }
-
-        CantiEucarestiaFragment fragment2 = (CantiEucarestiaFragment) mSectionsPagerAdapter.getRegisteredFragment(1);
-        if (fragment2 != null && fragment2.mMode != null) {
-            fragment2.mMode.finish();
-//            Log.i(getClass().getName(), "2");
-            result = true;
-        }
-
-        ListaPersonalizzataFragment fragmentPers;
-//        Log.i(getClass().getName(), "mViewPager.getChildCount(): " + mViewPager.getChildCount());
-//        Log.i(getClass().getName(), "mSectionsPagerAdapter.getCount(): " + mSectionsPagerAdapter.getCount());
-        for (int i = 2; i < mSectionsPagerAdapter.getCount(); i++) {
-//            Log.i(getClass().getName(), "3, i: " + i);
-            fragmentPers = (ListaPersonalizzataFragment) mSectionsPagerAdapter.getRegisteredFragment(i);
-            if (fragmentPers != null && fragmentPers.mMode != null) {
-                fragmentPers.mMode.finish();
-//                Log.i(getClass().getName(), "3 OK");
-                result = true;
-            }
-        }
-
-        return result;
-    }
+//    public boolean onBackPressed() {
+//        boolean result = false;
+//
+//        CantiParolaFragment fragment = (CantiParolaFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
+//        if (fragment != null && fragment.mMode != null) {
+//            fragment.mMode.finish();
+////            Log.i(getClass().getName(), "1");
+//            result = true;
+//        }
+//
+//        CantiEucarestiaFragment fragment2 = (CantiEucarestiaFragment) mSectionsPagerAdapter.getRegisteredFragment(1);
+//        if (fragment2 != null && fragment2.mMode != null) {
+//            fragment2.mMode.finish();
+////            Log.i(getClass().getName(), "2");
+//            result = true;
+//        }
+//
+//        ListaPersonalizzataFragment fragmentPers;
+////        Log.i(getClass().getName(), "mViewPager.getChildCount(): " + mViewPager.getChildCount());
+////        Log.i(getClass().getName(), "mSectionsPagerAdapter.getCount(): " + mSectionsPagerAdapter.getCount());
+//        for (int i = 2; i < mSectionsPagerAdapter.getCount(); i++) {
+////            Log.i(getClass().getName(), "3, i: " + i);
+//            fragmentPers = (ListaPersonalizzataFragment) mSectionsPagerAdapter.getRegisteredFragment(i);
+//            if (fragmentPers != null && fragmentPers.mMode != null) {
+//                fragmentPers.mMode.finish();
+////                Log.i(getClass().getName(), "3 OK");
+//                result = true;
+//            }
+//        }
+//
+//        return result;
+//    }
 
 }

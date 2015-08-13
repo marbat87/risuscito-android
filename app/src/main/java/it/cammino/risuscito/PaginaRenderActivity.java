@@ -27,6 +27,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
@@ -456,8 +457,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
                             && !localFile) {
-                        Toast.makeText(PaginaRenderActivity.this
-                                , getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(PaginaRenderActivity.this
+//                                , getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(android.R.id.content)
+                                , R.string.no_connection
+                                , Snackbar.LENGTH_SHORT)
+                                .show();
                         return;
                     }
 
@@ -540,9 +545,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                                         , null
                                                         , null);
                                             }
-                                            Toast.makeText(PaginaRenderActivity.this
-                                                    , getString(R.string.file_delete)
-                                                    , Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(PaginaRenderActivity.this
+//                                                    , getString(R.string.file_delete)
+//                                                    , Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                                    .show();
 
                                             if (mediaPlayerState == MP_State.Started
                                                     || mediaPlayerState == MP_State.Paused)
@@ -590,9 +597,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     .callback(new MaterialDialog.ButtonCallback() {
                                         @Override
                                         public void onPositive(MaterialDialog dialog) {
-                                            Toast.makeText(PaginaRenderActivity.this
-                                                    , getString(R.string.delink_delete)
-                                                    , Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(PaginaRenderActivity.this
+//                                                    , getString(R.string.delink_delete)
+//                                                    , Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                                    .show();
 
                                             if (mediaPlayerState == MP_State.Started
                                                     || mediaPlayerState == MP_State.Paused)
@@ -665,8 +674,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                                 downloadTask.execute(url, localFile);
                                             }
                                             else
-                                                Toast.makeText(PaginaRenderActivity.this
-                                                        , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(PaginaRenderActivity.this
+//                                                        , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content)
+                                                    , R.string.no_memory_writable
+                                                    , Snackbar.LENGTH_SHORT)
+                                                    .show();
                                         }
                                         else {
                                             String localFile = PaginaRenderActivity.this.getFilesDir()
@@ -678,8 +691,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                         mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                             @Override
                                             public void onCancel(DialogInterface dialog) {
-                                                Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
                                                 downloadTask.cancel(true);
+                                                Snackbar.make(findViewById(android.R.id.content)
+                                                        , R.string.download_cancelled
+                                                        , Snackbar.LENGTH_SHORT)
+                                                        .show();
                                                 setRequestedOrientation(prevOrientation);
                                             }
                                         });
@@ -772,9 +789,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
-                                        Toast.makeText(PaginaRenderActivity.this
-                                                , getString(R.string.delink_delete)
-                                                , Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(PaginaRenderActivity.this
+//                                                , getString(R.string.delink_delete)
+//                                                , Toast.LENGTH_SHORT).show();
+                                        Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                                .show();
 
                                         if (mediaPlayerState == MP_State.Started
                                                 || mediaPlayerState == MP_State.Paused)
@@ -1115,9 +1134,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 updateFavouriteFlag(v.isSelected() ? 1 : 0);
                 getFab().hide();
                 hideOuterFrame();
-                Toast.makeText(PaginaRenderActivity.this
-                        , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
-                        , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PaginaRenderActivity.this
+//                        , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
+//                        , Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , v.isSelected() ? R.string.favorite_added : R.string.favorite_removed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
         });
 
@@ -1255,12 +1278,20 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             "  WHERE _id =  " + idCanto;
                     db.execSQL(sql);
                     db.close();
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.tab_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.tab_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.tab_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.tab_not_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.tab_not_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.tab_not_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 return true;
             case R.id.action_reset_tab:
@@ -1291,12 +1322,21 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             "  WHERE _id =  " + idCanto;
                     db.execSQL(sql);
                     db.close();
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.barre_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.barre_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.barre_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.barre_not_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.barre_not_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.barre_not_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+
                 }
                 return true;
             case R.id.action_reset_barre:
@@ -1809,9 +1849,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
             }
             else {
-                Toast.makeText(PaginaRenderActivity.this,
-                        "AudioFocus non consentito",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        getString(R.string.focus_not_allowed),
+//                        Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.focus_not_allowed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
 
         }else{
@@ -1905,7 +1949,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
 
         Toast.makeText(PaginaRenderActivity.this
-                , "Stato del lettore: " + state, Toast.LENGTH_SHORT).show();
+                , getString(R.string.player_state) + " " + state, Toast.LENGTH_SHORT).show();
     }
 
     OnErrorListener mediaPlayerOnErrorListener
@@ -1992,10 +2036,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                        try {
                 // Get the file path from the URI
                 String path = uri.getPath();
-                Toast.makeText(PaginaRenderActivity.this,
-                        getResources().getString(R.string.file_selected)
-                                + ": "
-                                + path, Toast.LENGTH_LONG).show();
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        getResources().getString(R.string.file_selected)
+//                                + ": "
+//                                + path, Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        getString(R.string.file_selected) + ": " + path
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
 
                 if (mediaPlayerState == MP_State.Started
                         || mediaPlayerState == MP_State.Paused)
@@ -2481,8 +2529,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                ((ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate)).stop();
                 mProgressDialog.dismiss();
             }
-            if (result != null)
-                Toast.makeText(context,"Errore nel download: " + result, Toast.LENGTH_LONG).show();
+            if (result != null) {
+//                Toast.makeText(context, "Errore nel download: " + result, Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , getString(R.string.download_error) + " " + result
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
+            }
             else {
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                 int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
@@ -2504,7 +2557,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             , null
                             , null);
                 }
-                Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        R.string.download_completed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
 
                 if (mediaPlayerState == MP_State.Started
                         || mediaPlayerState == MP_State.Paused)
@@ -2552,8 +2609,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     localPDFPath = fileArray[0].getAbsolutePath();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.no_memory_writable
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                     this.cancel(true);
                 }
                 localPDFPath += "/output.pdf";
@@ -2663,8 +2724,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
             try {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(PaginaRenderActivity.this
-                        , getString(R.string.no_pdf_reader), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PaginaRenderActivity.this
+//                        , getString(R.string.no_pdf_reader), Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.no_pdf_reader
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
         }
     }
