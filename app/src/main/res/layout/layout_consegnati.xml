@@ -141,7 +141,7 @@
                     android:text="@string/no_consegnati"
                     fontPath="fonts/Roboto-Light.ttf"
                     tools:ignore="MissingPrefix"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             </RelativeLayout>
 

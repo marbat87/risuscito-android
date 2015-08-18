@@ -38,7 +38,7 @@
                 android:textColor="?android:textColorSecondary"
                 android:layout_height="wrap_content"
                 android:text="@string/no_favourites_short"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 fontPath="fonts/Roboto-Light.ttf"
                 tools:ignore="MissingPrefix" />
 

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.5.0" changeDate="XX Aprile 2015">
-        <changelogtext>Nuova sezione "Canti Consegnati" in cui è possibile segnarsi i canti che sono stati consegnati dai propri catechisti</changelogtext>
+    <changelogversion versionName="3.5.0" changeDate="XX Agosto 2015">
         <changelogtext>Miglioramenti delle dimensioni e degli stili dei popup su tablet</changelogtext>
-        <changelogtext>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nel pulsante galleggiante</changelogtext>
-        <changelogtext>Pagina del canto: Aggiunta nuovamente la percentuale di velocità di scorrimento sempre visibile</changelogtext>
-        <changelogtext>Liste personalizzate: spostate le funzioni di modifica lista nel pulsante galleggiante</changelogtext>
         <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
+        <changelogtext>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nella nuova "FloatingToolbar"</changelogtext>
+        <changelogtext>Pagina del canto: Aggiunta nuovamente la percentuale di velocità di scorrimento sempre visibile</changelogtext>
+        <changelogtext>Pagina del canto: Aggiunto tempo di esecuzione della registrazione e barra per scorrerla velocemente</changelogtext>
+        <changelogtext>Liste personalizzate: spostate le funzioni di modifica lista nella nuova "FloatingToolbar"</changelogtext>
+        <changelogtext>Liste personalizzate: Ora si possono scambiare i canti tra le varie posizioni (tieni premuto per aprire il menù apposito)</changelogtext>
+        <changelogtext>Liste personalizzate: Quando si sta cercando un canto da inserire, ora si può visualizzarlo prima di inserirlo</changelogtext>
+        <changelogtext>Preferiti: Ora è possibile rimuovere più preferiti in una volta</changelogtext>
         <changelogtext>Nuova sezione "Cronologia" con lo storico dei canti visualizzati</changelogtext>
-        <changelogtext>Aggiunta la funzione di anteprima del canto, quando si fa la ricerca per inserimento in una lista personalizzata</changelogtext>
-        <changelogtext>Adesso si possono scambiare i canti nelle liste personalizzate con una pressione prolungata</changelogtext>
+        <changelogtext>Nuova sezione "Canti Consegnati" in cui è possibile segnarsi i canti che sono stati consegnati dai propri catechisti</changelogtext>
+        <changelogtext>Nuove stile per le guide di spiegazione delle funzioni</changelogtext>
     </changelogversion>
 
 </changelog>

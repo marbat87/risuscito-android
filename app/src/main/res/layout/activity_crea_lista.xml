@@ -138,7 +138,7 @@
             android:layout_marginRight="@dimen/floating_margin_lateral"
             risuscito:elevation="@dimen/toolbar_elevation"
             risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed"
-            android:translationZ="@dimen/fab_translation_z" />
+            android:translationZ="@dimen/fab_translation_z_pressed" />
     </FrameLayout>
 
 </LinearLayout>

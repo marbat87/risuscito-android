@@ -11,7 +11,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/NonSenseFilePicker" />
-            <option value="$PROJECT_DIR$/android-floating-action-button" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/fab-toolbar" />
             <option value="$PROJECT_DIR$/recyclerviewfastscroller" />

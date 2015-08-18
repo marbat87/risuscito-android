@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.0'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
-        targetSdkVersion 22
-        versionCode 84
+        targetSdkVersion 23
+        versionCode 85
         versionName '3.5.0'
     }
     buildTypes {
@@ -42,7 +42,7 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.7.8.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile project(':recyclerviewfastscroller')
-    compile  genericDependencies.CircularReveal
+    compile genericDependencies.CircularReveal
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
     // NOTE: vector-compat is available on API level 14 or later
     compile 'com.wnafee:vector-compat:1.0.5'
