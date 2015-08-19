@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="toolbar_fab_margintop">-30dp</dimen>
+    <!--<dimen name="toolbar_fab_margintop">-30dp</dimen>-->
     <dimen name="toolbar_fab_margin_lateral">@dimen/fab_margin_end</dimen>
     <!--<dimen name="floating_margin_lateral">16dp</dimen>-->
 </resources>

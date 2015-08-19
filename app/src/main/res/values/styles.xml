@@ -110,4 +110,12 @@
         <item name="colorControlHighlight">#12000000</item>
     </style>
 
+    <style name="ActionBar.TitleText.Collapsed">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="ActionBar.TitleText.Expanded">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+
 </resources>

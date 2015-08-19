@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -13,13 +14,15 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,13 +79,16 @@ public class CreaListaActivity extends ThemeableActivity {
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
-    private FloatingActionButton mFab;
+    //    private FloatingActionButton mFab;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private EditText textfieldTitle;
 
     private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 
     private final String TEMP_TITLE = "temp_title";
 
     @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +101,24 @@ public class CreaListaActivity extends ThemeableActivity {
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+        textfieldTitle = (EditText)findViewById(R.id.textfieldTitle);
+
+        textfieldTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                collapsingToolbarLayout.setTitle(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
         Bundle bundle = this.getIntent().getExtras();
         modifica = bundle.getBoolean("modifica");
@@ -157,13 +181,14 @@ public class CreaListaActivity extends ThemeableActivity {
         dataFragment3 = (RetainedFragment) getSupportFragmentManager().findFragmentByTag(TEMP_TITLE);
         if (dataFragment3 != null) {
             tempArgs = dataFragment3.getArguments();
-            ((EditText)findViewById(R.id.textfieldTitle))
-                    .setText(tempArgs.getCharSequence(TEMP_TITLE));
+            textfieldTitle.setText(tempArgs.getCharSequence(TEMP_TITLE));
+            collapsingToolbarLayout.setTitle(tempArgs.getCharSequence(TEMP_TITLE));
         }
         else {
-            ((EditText)findViewById(R.id.textfieldTitle))
-                    .setText(titoloLista);
+            textfieldTitle.setText(titoloLista);
+            collapsingToolbarLayout.setTitle(titoloLista);
         }
+
 
 //        positionLI = R.layout.position_list_item_light;
 //
@@ -239,8 +264,12 @@ public class CreaListaActivity extends ThemeableActivity {
 
         // drag & drop manager
         mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
-        mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
-                (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3));
+        if (LUtils.hasL())
+            mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
+                    (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3, getTheme()));
+        else
+            mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
+                    (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3));
 
         // swipe manager
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
@@ -349,7 +378,12 @@ public class CreaListaActivity extends ThemeableActivity {
 //		} else {
 //			mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1)));
 //		}
-        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
+        if (LUtils.hasL())
+            mRecyclerView.addItemDecoration(
+                    new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider, getTheme()), true));
+        else
+            mRecyclerView.addItemDecoration(
+                    new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.
@@ -359,20 +393,77 @@ public class CreaListaActivity extends ThemeableActivity {
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
-        getFab();
-
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//        getFab();
+        findViewById(R.id.fab_crea_lista).setOnClickListener(new OnClickListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                float y = recyclerView.getScrollY();
-                super.onScrolled(recyclerView, dx, dy);
-                if (y < dy)
-                    getFab().hide();
-                else
-                    getFab().show();
-            }
+            public void onClick(View v) {
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(CreaListaActivity.this);
+                final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
+                        .title(R.string.posizione_add_desc)
+                        .positiveText(R.string.aggiungi_confirm)
+                        .negativeText(R.string.aggiungi_dismiss)
+                        .input("", "", false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                            }
+                        })
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+                                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
+                                if (modifica)
+                                    nomiCanti.add("");
+                                mAdapter.notifyItemInserted(elementi.size() - 1);
+                                //to hide soft keyboard
+                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+                                setRequestedOrientation(prevOrientation);
+                            }
 
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                //to hide soft keyboard
+                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                dialogAdd.setCancelable(false);
+                //to show soft keyboard
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
         });
+
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                float y = recyclerView.getScrollY();
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (y < dy)
+//                    getFab().hide();
+//                else
+//                    getFab().show();
+//            }
+//
+//        });
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
 //        fab.setColorNormal(getThemeUtils().accentColor());
@@ -693,77 +784,77 @@ public class CreaListaActivity extends ThemeableActivity {
 //				}
 //			};
 
-    public FloatingActionButton getFab() {
-        if (mFab == null) {
-            mFab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-            mFab.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    prevOrientation = getRequestedOrientation();
-                    Utility.blockOrientation(CreaListaActivity.this);
-                    final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
-                            .title(R.string.posizione_add_desc)
-                            .positiveText(R.string.aggiungi_confirm)
-                            .negativeText(R.string.aggiungi_dismiss)
-                            .input("", "", false, new MaterialDialog.InputCallback() {
-                                @Override
-                                public void onInput(MaterialDialog dialog, CharSequence input) {
-                                }
-                            })
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-                                    elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
-                                    if (modifica)
-                                        nomiCanti.add("");
-                                    mAdapter.notifyItemInserted(elementi.size() - 1);
-                                    //to hide soft keyboard
-                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-                                    setRequestedOrientation(prevOrientation);
-                                }
-
-                                @Override
-                                public void onNegative(MaterialDialog dialog) {
-                                    //to hide soft keyboard
-                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-                                    setRequestedOrientation(prevOrientation);
-                                }
-                            })
-                            .show();
-                    dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface arg0, int keyCode,
-                                             KeyEvent event) {
-                            if (keyCode == KeyEvent.KEYCODE_BACK
-                                    && event.getAction() == KeyEvent.ACTION_UP) {
-                                arg0.dismiss();
-                                setRequestedOrientation(prevOrientation);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                    dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                    dialogAdd.setCancelable(false);
-                    //to show soft keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                }
-            });
-        }
-        return mFab;
-    }
+//    public FloatingActionButton getFab() {
+//        if (mFab == null) {
+//            mFab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
+//            mFab.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    prevOrientation = getRequestedOrientation();
+//                    Utility.blockOrientation(CreaListaActivity.this);
+//                    final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
+//                            .title(R.string.posizione_add_desc)
+//                            .positiveText(R.string.aggiungi_confirm)
+//                            .negativeText(R.string.aggiungi_dismiss)
+//                            .input("", "", false, new MaterialDialog.InputCallback() {
+//                                @Override
+//                                public void onInput(MaterialDialog dialog, CharSequence input) {
+//                                }
+//                            })
+//                            .callback(new MaterialDialog.ButtonCallback() {
+//                                @Override
+//                                public void onPositive(MaterialDialog dialog) {
+//                                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+//                                    elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
+//                                    if (modifica)
+//                                        nomiCanti.add("");
+//                                    mAdapter.notifyItemInserted(elementi.size() - 1);
+//                                    //to hide soft keyboard
+//                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                    setRequestedOrientation(prevOrientation);
+//                                }
+//
+//                                @Override
+//                                public void onNegative(MaterialDialog dialog) {
+//                                    //to hide soft keyboard
+//                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                    setRequestedOrientation(prevOrientation);
+//                                }
+//                            })
+//                            .show();
+//                    dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
+//                        @Override
+//                        public boolean onKey(DialogInterface arg0, int keyCode,
+//                                             KeyEvent event) {
+//                            if (keyCode == KeyEvent.KEYCODE_BACK
+//                                    && event.getAction() == KeyEvent.ACTION_UP) {
+//                                arg0.dismiss();
+//                                setRequestedOrientation(prevOrientation);
+//                                return true;
+//                            }
+//                            return false;
+//                        }
+//                    });
+//                    dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+//                    dialogAdd.setCancelable(false);
+//                    //to show soft keyboard
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                }
+//            });
+//        }
+//        return mFab;
+//    }
 
     private boolean saveList()  {
         celebrazione = new ListaPersonalizzata();
 
-        if (((EditText)findViewById(R.id.textfieldTitle)).getText() != null
-                && !((EditText)findViewById(R.id.textfieldTitle)).getText()
+        if (textfieldTitle.getText() != null
+                && !textfieldTitle.getText()
                 .toString().trim().equalsIgnoreCase("")) {
-            titoloLista = ((EditText)findViewById(R.id.textfieldTitle)).getText().toString();
+            titoloLista = textfieldTitle.getText().toString();
         }
         else {
             Toast toast = Toast.makeText(CreaListaActivity.this
@@ -842,7 +933,7 @@ public class CreaListaActivity extends ThemeableActivity {
 
         dataFragment3 = new RetainedFragment();
         tempArgs = new Bundle();
-        tempArgs.putCharSequence(TEMP_TITLE, ((EditText)findViewById(R.id.textfieldTitle)).getText());
+        tempArgs.putCharSequence(TEMP_TITLE, textfieldTitle.getText());
         dataFragment3.setArguments(tempArgs);
         getSupportFragmentManager().beginTransaction().add(dataFragment3, TEMP_TITLE).commit();
 
