@@ -44,8 +44,7 @@
         android:layout_marginEnd="@dimen/fab_margin_end"
         android:layout_marginRight="@dimen/fab_margin_end"
         risuscito:elevation="@dimen/toolbar_elevation"
-        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed"
-        android:translationZ="@dimen/fab_translation_z" />
+        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed" />
 
 </FrameLayout>
 

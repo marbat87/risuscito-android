@@ -21,9 +21,9 @@
 
         <TextView
             android:id="@+id/titoloPosizioneGenerica"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/TitoloPosizioneText" />
+            style="@style/TitoloSezione" />
 
         <LinearLayout
             android:id="@+id/list"
@@ -74,12 +74,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </RelativeLayout>
-
-        <!--<LinearLayout-->
-            <!--android:id="@+id/list"-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content" />-->
 
     </LinearLayout>
 

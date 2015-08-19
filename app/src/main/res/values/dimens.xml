@@ -18,7 +18,7 @@
     <dimen name="navdrawer_chosen_account_height">100dp</dimen>
     <dimen name="navdrawer_width">302dp</dimen>
 
-    <dimen name="action_bar_text_field_margin">15dip</dimen>
+    <!--<dimen name="action_bar_text_field_margin">15dip</dimen>-->
     <dimen name="min_button_margin">10dip</dimen>
 
     <dimen name="text_size_small">12sp</dimen>
@@ -60,11 +60,11 @@
 
     <!--<dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>-->
     <dimen name="toolbar_expansion_height">85dip</dimen>
-    <dimen name="toolbar_fab_margintop">45dip</dimen>
+    <dimen name="toolbar_fab_margintop">-45dp</dimen>
+    <dimen name="toolbar_fab_margin_lateral">8dp</dimen>
 
-    <dimen name="raise_elevation">8dp</dimen>
+    <!--<dimen name="raise_elevation">8dp</dimen>-->
 
     <dimen name="product_logo_bottom">16dp</dimen>
-
 
 </resources>
