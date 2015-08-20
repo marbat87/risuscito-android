@@ -9,9 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -27,17 +27,19 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -47,8 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.alexkolpa.fabtoolbar.FabToolbar;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -79,10 +80,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
-import it.cammino.utilities.showcaseview.ShowcaseView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
 public class PaginaRenderActivity extends ThemeableActivity {
 
@@ -90,10 +89,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private String pagina;
     private int idCanto;
     private static MediaPlayer mediaPlayer;
-//    private int favoriteFlag;
-    private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
-    public FloatingActionsMenu mFab; // the floating blue add/paste button
-    Slider scroll_speed_bar;
+    //    private int favoriteFlag;
+//    private ImageButton favouriteCheckBox, play_scroll, rewind_button, play_button, ff_button, stop_button, save_file;
+    private ImageButton favouriteCheckBox, play_scroll, play_button, save_file;
+    private TextView time_text, no_records_text;
+    private View music_buttons;
+    //    public FloatingActionsMenu mFab; // the floating blue add/paste button
+    public FabToolbar mFab; // the floating blue add/paste button
+    Slider scroll_speed_bar, scroll_song_bar;
     //    private ProgressDialogPro mp3Dialog, exportDialog;
 //    private AlertDialogPro mProgressDialog, mp3Dialog, exportDialog;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
@@ -125,30 +128,44 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private int defaultScrollX = 0;
     private int defaultScrollY = 0;
 
-    private static final String PREF_FIRST_OPEN = "prima_apertura_new";
-    private static final String PREF_FIRST_OPEN_SCROLL = "prima_apertura_scroll";
+    //    private static final String PREF_FIRST_OPEN = "prima_apertura_new";
+    private static final String PREF_FIRST_OPEN_NEW = "prima_apertura_audio";
+//    private static final String PREF_FIRST_OPEN_SCROLL = "prima_apertura_scroll";
+
 
     private Handler mHandler = new Handler();
-    final Runnable mScrollDown = new Runnable()
-    {
-        public void run()
-        {
-            try {
-                paginaView.scrollBy(0, Integer.valueOf(speedValue));
+    final Runnable mScrollDown = new Runnable() {
+        public void run() {
+            if (paginaView != null && speedValue != null) {
+                try {
+                    paginaView.scrollBy(0, Integer.valueOf(speedValue));
+                } catch (NumberFormatException e) {
+                    paginaView.scrollBy(0, 0);
+                }
+                mHandler.postDelayed(this, SCROLL_SLEEP);
             }
-            catch (NumberFormatException e) {
-                paginaView.scrollBy(0, 0);
-            }
-
-            mHandler.postDelayed(this, SCROLL_SLEEP);
+            else
+                Log.d(getClass().getName(), "attività chiusa o annullato lo scroll");
         }
     };
+    final Runnable mScrollBar = new Runnable() {
+        public void run() {
+            if (mediaPlayer != null && mediaPlayerState == MP_State.Started) {
+                scroll_song_bar.setValue(Float.valueOf(mediaPlayer.getCurrentPosition()), false);
+                mHandler.postDelayed(this, SONG_STEP);
+            }
+            else
+                Log.d(getClass().getName(), "mediaPlayer nullo o non avviato!");
+        }
+    };
+
     public static String speedValue;
     private int savedSpeed;
     public static boolean scrollPlaying;
     private RelativeLayout.LayoutParams lps;
 
     private final long SCROLL_SLEEP = 700;
+    private final long SONG_STEP = 1000;
 
     private String localPDFPath;
 
@@ -182,9 +199,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
         // setta il colore della barra di stato, solo su KITKAT
 //        Utility.setupTransparentTints(PaginaRenderActivity.this, mThemeUtils.primaryColorDark(), true);
 
-        getFab().setColorNormal(getThemeUtils().accentColor());
-        getFab().setColorPressed(getThemeUtils().accentColorDark());
-        getFab().setIcon(R.drawable.ic_add_white_24dp);
+//        getFab().setColorNormal(getThemeUtils().accentColor());
+//        getFab().setColorPressed(getThemeUtils().accentColorDark());
+//        getFab().setIcon(R.drawable.ic_add_white_24dp);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -221,12 +238,19 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         //recupera i pulsanti
         play_button = (ImageButton) findViewById(R.id.play_song);
-        stop_button = (ImageButton) findViewById(R.id.stop_song);
-        rewind_button = (ImageButton) findViewById(R.id.rewind_song);
-        ff_button = (ImageButton) findViewById(R.id.fast_forward_song);
+        Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+        play_button.setImageDrawable(drawable);
+        time_text = (TextView) findViewById(R.id.time_text);
+        no_records_text = (TextView) findViewById(R.id.no_record);
+        music_buttons = findViewById(R.id.music_buttons);
+//        stop_button = (ImageButton) findViewById(R.id.stop_song);
+//        rewind_button = (ImageButton) findViewById(R.id.rewind_song);
+//        ff_button = (ImageButton) findViewById(R.id.fast_forward_song);
         save_file = (ImageButton) findViewById(R.id.save_file);
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
         scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
+        scroll_song_bar = (Slider) findViewById(R.id.music_seekbar);
 //        scroll_speed_bar.setScrubberColor(getThemeUtils().accentColor());
 //        scroll_speed_bar.setThumbColor(getThemeUtils().accentColor(), getThemeUtils().accentColor());
 
@@ -247,86 +271,86 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         };
 
-        stop_button.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-                cmdStop();
-            }
-        });
+//        stop_button.setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+////                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                cmdStop();
+//            }
+//        });
 
         // tenendo premuto il pulsante fast forward, si va avanti veloce
-        ff_button.setOnLongClickListener(new OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-
-                final Runnable r = new Runnable() {
-
-                    public void run() {
-
-                        int currentPosition = mediaPlayer.getCurrentPosition();
-                        // check if seekForward time is lesser than song duration
-                        if (currentPosition + 5000 <= mediaPlayer.getDuration()) {
-                            // forward song
-                            mediaPlayer.seekTo(currentPosition + 5000);
-                        } else {
-                            // forward to end position
-                            mediaPlayer.seekTo(mediaPlayer.getDuration());
-                        }
-
-                        if(ff_button.isPressed()){
-                            ff_button.postDelayed(this, 1000); //delayed for 1 sec
-                        }else{
-
-                            ff_button.postInvalidate();
-                            ff_button.invalidate();
-                        }
-                    }
-                };
-
-                ff_button.post(r);
-
-                return true;
-            }
-        });
+//        ff_button.setOnLongClickListener(new OnLongClickListener() {
+//
+//            @Override
+//            public boolean onLongClick(View v) {
+//
+//                final Runnable r = new Runnable() {
+//
+//                    public void run() {
+//
+//                        int currentPosition = mediaPlayer.getCurrentPosition();
+//                        // check if seekForward time is lesser than song duration
+//                        if (currentPosition + 5000 <= mediaPlayer.getDuration()) {
+//                            // forward song
+//                            mediaPlayer.seekTo(currentPosition + 5000);
+//                        } else {
+//                            // forward to end position
+//                            mediaPlayer.seekTo(mediaPlayer.getDuration());
+//                        }
+//
+//                        if(ff_button.isPressed()){
+//                            ff_button.postDelayed(this, 1000); //delayed for 1 sec
+//                        }else{
+//
+//                            ff_button.postInvalidate();
+//                            ff_button.invalidate();
+//                        }
+//                    }
+//                };
+//
+//                ff_button.post(r);
+//
+//                return true;
+//            }
+//        });
 
         // tenendo premuto il pulsante rewind, si ravvolge
-        rewind_button.setOnLongClickListener(new OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-
-                final Runnable r = new Runnable() {
-
-                    public void run() {
-
-                        int currentPosition = mediaPlayer.getCurrentPosition();
-                        // check if seekBackward time is greater than 0 sec
-                        if (currentPosition - 5000 >= 0) {
-                            // forward song
-                            mediaPlayer.seekTo(currentPosition - 5000);
-                        } else {
-                            // backward to starting position
-                            mediaPlayer.seekTo(0);
-                        }
-
-                        if(rewind_button.isPressed()){
-                            rewind_button.postDelayed(this, 1000); //delayed for 1 sec
-                        }else{
-
-                            rewind_button.postInvalidate();
-                            rewind_button.invalidate();
-                        }
-                    }
-                };
-
-                rewind_button.post(r);
-
-                return true;
-            }
-        });
+//        rewind_button.setOnLongClickListener(new OnLongClickListener() {
+//
+//            @Override
+//            public boolean onLongClick(View v) {
+//
+//                final Runnable r = new Runnable() {
+//
+//                    public void run() {
+//
+//                        int currentPosition = mediaPlayer.getCurrentPosition();
+//                        // check if seekBackward time is greater than 0 sec
+//                        if (currentPosition - 5000 >= 0) {
+//                            // forward song
+//                            mediaPlayer.seekTo(currentPosition - 5000);
+//                        } else {
+//                            // backward to starting position
+//                            mediaPlayer.seekTo(0);
+//                        }
+//
+//                        if(rewind_button.isPressed()){
+//                            rewind_button.postDelayed(this, 1000); //delayed for 1 sec
+//                        }else{
+//
+//                            rewind_button.postInvalidate();
+//                            rewind_button.invalidate();
+//                        }
+//                    }
+//                };
+//
+//                rewind_button.post(r);
+//
+//                return true;
+//            }
+//        });
 
         phoneStateListener = new PhoneStateListener() {
             @Override
@@ -359,12 +383,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 save_file.setSelected(true);
 
             //mostra i pulsanti per il lettore musicale
-            play_button.setVisibility(View.VISIBLE);
-            stop_button.setVisibility(View.VISIBLE);
-            rewind_button.setVisibility(View.VISIBLE);
-            ff_button.setVisibility(View.VISIBLE);
+            music_buttons.setVisibility(View.VISIBLE);
+//            play_button.setVisibility(View.VISIBLE);
+//            time_text.setVisibility(View.VISIBLE);
+//            scroll_song_bar.setVisibility(View.VISIBLE);
+//            stop_button.setVisibility(View.VISIBLE);
+//            rewind_button.setVisibility(View.VISIBLE);
+//            ff_button.setVisibility(View.VISIBLE);
+            no_records_text.setVisibility(View.INVISIBLE);
 
             if (mediaPlayer == null) {
+                scroll_song_bar.setEnabled(false);
                 mediaPlayer = new MediaPlayer();
                 mediaPlayerState = MP_State.Idle;
                 mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
@@ -383,29 +412,38 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
 
                 //disabilita il pulsante non utilizzabili in modalità stop
-                disableButtonIcon(stop_button);
-                disableButtonIcon(rewind_button);
-                disableButtonIcon(ff_button);
+//                disableButtonIcon(stop_button);
+//                disableButtonIcon(rewind_button);
+//                disableButtonIcon(ff_button);
             }
             else {
                 switch (mediaPlayerState) {
                     case Started:
                         play_button.setSelected(true);
-                        enableButtonIcon(stop_button);
-                        enableButtonIcon(ff_button);
-                        enableButtonIcon(rewind_button);
+                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setEnabled(true);
+                        mScrollBar.run();
+//                        enableButtonIcon(stop_button);
+//                        enableButtonIcon(ff_button);
+//                        enableButtonIcon(rewind_button);
                         break;
                     case Paused:
+                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setEnabled(true);
                         play_button.setSelected(false);
-                        enableButtonIcon(stop_button);
-                        disableButtonIcon(ff_button);
-                        disableButtonIcon(rewind_button);
+//                        enableButtonIcon(stop_button);
+//                        disableButtonIcon(ff_button);
+//                        disableButtonIcon(rewind_button);
+                        break;
+                    case Prepared:
+                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setEnabled(true);
                         break;
                     default:
                         play_button.setSelected(false);
-                        disableButtonIcon(stop_button);
-                        disableButtonIcon(ff_button);
-                        disableButtonIcon(rewind_button);
+//                        disableButtonIcon(stop_button);
+//                        disableButtonIcon(ff_button);
+//                        disableButtonIcon(rewind_button);
                         break;
                 }
             }
@@ -418,9 +456,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 public void onClick(View v) {
                     //controlla la presenza di una connessione internet
                     if (!Utility.isOnline(PaginaRenderActivity.this)
-                            && !localFile)  {
-                        Toast.makeText(PaginaRenderActivity.this
-                                , getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+                            && !localFile) {
+//                        Toast.makeText(PaginaRenderActivity.this
+//                                , getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(android.R.id.content)
+                                , R.string.no_connection
+                                , Snackbar.LENGTH_SHORT)
+                                .show();
                         return;
                     }
 
@@ -443,15 +485,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     localFile = false;
                                     cmdSetDataSource(url);
                                     save_file.setSelected(false);
-                                }
-                                else {
+                                } else {
                                     localFile = true;
                                     cmdSetDataSource(personalUrl);
                                     save_file.setSelected(true);
                                 }
 
-                            }
-                            else {
+                            } else {
                                 localFile = true;
                                 cmdSetDataSource(localUrl);
                                 save_file.setSelected(true);
@@ -464,21 +504,29 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
             });
 
+            scroll_song_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+                @Override
+                public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
+//                    Log.i(getClass().getName(), "newValue: " + newValue);
+                    if (fromUser)
+                        mediaPlayer.seekTo(newValue);
+                    int seconds = (int) (newValue / 1000) % 60 ;
+//                    Log.i(getClass().getName(), "seconds: " + seconds);
+                    int minutes = (int) ((newValue / (1000*60)));
+//                    Log.i(getClass().getName(), "minutes: " + minutes);
+                    ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+                }
+            });
+
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    getFab().hide();
+                    hideOuterFrame();
                     if (v.isSelected()) {
                         if (personalUrl.equalsIgnoreCase("")) {
                             prevOrientation = getRequestedOrientation();
                             Utility.blockOrientation(PaginaRenderActivity.this);
-//                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_mp3_title)
-//                                    .setMessage(R.string.dialog_delete_mp3)
-//                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_MP3_OK))
-//                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                    .show();
-//                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                             MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                                     .title(R.string.dialog_delete_mp3_title)
                                     .content(R.string.dialog_delete_mp3)
@@ -497,9 +545,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                                         , null
                                                         , null);
                                             }
-                                            Toast.makeText(PaginaRenderActivity.this
-                                                    , getString(R.string.file_delete)
-                                                    , Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(PaginaRenderActivity.this
+//                                                    , getString(R.string.file_delete)
+//                                                    , Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                                    .show();
 
                                             if (mediaPlayerState == MP_State.Started
                                                     || mediaPlayerState == MP_State.Paused)
@@ -539,14 +589,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         else {
                             prevOrientation = getRequestedOrientation();
                             Utility.blockOrientation(PaginaRenderActivity.this);
-//                            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                            AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-//                                    .setMessage(R.string.dialog_delete_link)
-//                                    .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_LINK_OK))
-//                                    .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                    .show();
-//                            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                             MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                                     .title(R.string.dialog_delete_link_title)
                                     .content(R.string.dialog_delete_link)
@@ -555,9 +597,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     .callback(new MaterialDialog.ButtonCallback() {
                                         @Override
                                         public void onPositive(MaterialDialog dialog) {
-                                            Toast.makeText(PaginaRenderActivity.this
-                                                    , getString(R.string.delink_delete)
-                                                    , Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(PaginaRenderActivity.this
+//                                                    , getString(R.string.delink_delete)
+//                                                    , Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                                    .show();
 
                                             if (mediaPlayerState == MP_State.Started
                                                     || mediaPlayerState == MP_State.Paused)
@@ -606,16 +650,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     else {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                        AlertDialogPro dialog = builder.setTitle(R.string.download_link_title)
-//                                .setMessage(R.string.downlink_message)
-//                                .setPositiveButton(R.string.downlink_download, new ButtonClickedListener(Utility.DOWNLOAD_OK))
-//                                .setNegativeButton(R.string.downlink_choose, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
-//                                .setNeutralButton(R.string.cancel, new ButtonClickedListener(Utility.DISMISS))
-//                                .show();
-//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
-//                        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(getThemeUtils().accentColor());
                         MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                                 .title(R.string.download_link_title)
                                 .content(R.string.downlink_message)
@@ -640,8 +674,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                                 downloadTask.execute(url, localFile);
                                             }
                                             else
-                                                Toast.makeText(PaginaRenderActivity.this
-                                                        , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(PaginaRenderActivity.this
+//                                                        , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(findViewById(android.R.id.content)
+                                                    , R.string.no_memory_writable
+                                                    , Snackbar.LENGTH_SHORT)
+                                                    .show();
                                         }
                                         else {
                                             String localFile = PaginaRenderActivity.this.getFilesDir()
@@ -653,8 +691,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                         mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                             @Override
                                             public void onCancel(DialogInterface dialog) {
-                                                Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
                                                 downloadTask.cancel(true);
+                                                Snackbar.make(findViewById(android.R.id.content)
+                                                        , R.string.download_cancelled
+                                                        , Snackbar.LENGTH_SHORT)
+                                                        .show();
                                                 setRequestedOrientation(prevOrientation);
                                             }
                                         });
@@ -734,17 +776,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    getFab().hide();
+                    hideOuterFrame();
                     if (v.isSelected()) {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                        AlertDialogPro dialog = builder.setTitle(R.string.dialog_delete_link_title)
-//                                .setMessage(R.string.dialog_delete_link)
-//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DELETE_ONLY_LINK_OK))
-//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                .show();
-//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                         MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
@@ -753,9 +789,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .callback(new MaterialDialog.ButtonCallback() {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
-                                        Toast.makeText(PaginaRenderActivity.this
-                                                , getString(R.string.delink_delete)
-                                                , Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(PaginaRenderActivity.this
+//                                                , getString(R.string.delink_delete)
+//                                                , Toast.LENGTH_SHORT).show();
+                                        Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                                .show();
 
                                         if (mediaPlayerState == MP_State.Started
                                                 || mediaPlayerState == MP_State.Paused)
@@ -776,10 +814,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                                         save_file.setSelected(false);
 
-                                        play_button.setVisibility(View.GONE);
-                                        stop_button.setVisibility(View.GONE);
-                                        rewind_button.setVisibility(View.GONE);
-                                        ff_button.setVisibility(View.GONE);
+                                        music_buttons.setVisibility(View.INVISIBLE);
+//                                        play_button.setVisibility(View.INVISIBLE);
+//                                        time_text.setVisibility(View.INVISIBLE);
+//                                        scroll_song_bar.setVisibility(View.INVISIBLE);
+//                                        stop_button.setVisibility(View.GONE);
+//                                        rewind_button.setVisibility(View.GONE);
+//                                        ff_button.setVisibility(View.GONE);
+                                        no_records_text.setVisibility(View.VISIBLE);
 
                                         setRequestedOrientation(prevOrientation);
                                     }
@@ -808,14 +850,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     else {
                         prevOrientation = getRequestedOrientation();
                         Utility.blockOrientation(PaginaRenderActivity.this);
-//                        AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                        AlertDialogPro dialog = builder.setTitle(R.string.only_link_title)
-//                                .setMessage(R.string.only_link)
-//                                .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.DOWNLOAD_LINK))
-//                                .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                .show();
-//                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                         MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                                 .title(R.string.only_link_title)
                                 .content(R.string.only_link)
@@ -867,29 +901,29 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
                 //disabilita il pulsante non utilizzabili in modalità stop
-                disableButtonIcon(stop_button);
-                disableButtonIcon(rewind_button);
-                disableButtonIcon(ff_button);
+//                disableButtonIcon(stop_button);
+//                disableButtonIcon(rewind_button);
+//                disableButtonIcon(ff_button);
             }
             else {
                 switch (mediaPlayerState) {
                     case Started:
                         play_button.setSelected(true);
-                        enableButtonIcon(stop_button);
-                        enableButtonIcon(ff_button);
-                        enableButtonIcon(rewind_button);
+//                        enableButtonIcon(stop_button);
+//                        enableButtonIcon(ff_button);
+//                        enableButtonIcon(rewind_button);
                         break;
                     case Paused:
                         play_button.setSelected(false);
-                        enableButtonIcon(stop_button);
-                        disableButtonIcon(ff_button);
-                        disableButtonIcon(rewind_button);
+//                        enableButtonIcon(stop_button);
+//                        disableButtonIcon(ff_button);
+//                        disableButtonIcon(rewind_button);
                         break;
                     default:
                         play_button.setSelected(false);
-                        disableButtonIcon(stop_button);
-                        disableButtonIcon(ff_button);
-                        disableButtonIcon(rewind_button);
+//                        disableButtonIcon(stop_button);
+//                        disableButtonIcon(ff_button);
+//                        disableButtonIcon(rewind_button);
                         break;
                 }
             }
@@ -898,28 +932,36 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 save_file.setSelected(true);
 
                 //mostra i pulsanti per il lettore musicale
-                play_button.setVisibility(View.VISIBLE);
-                stop_button.setVisibility(View.VISIBLE);
-                rewind_button.setVisibility(View.VISIBLE);
-                ff_button.setVisibility(View.VISIBLE);
+                music_buttons.setVisibility(View.VISIBLE);
+//                play_button.setVisibility(View.VISIBLE);
+//                time_text.setVisibility(View.VISIBLE);
+//                scroll_song_bar.setVisibility(View.VISIBLE);
+//                stop_button.setVisibility(View.VISIBLE);
+//                rewind_button.setVisibility(View.VISIBLE);
+//                ff_button.setVisibility(View.VISIBLE);
+                no_records_text.setVisibility(View.INVISIBLE);
             }
             else {
                 // nasconde i pulsanti
                 save_file.setSelected(false);
-                play_button.setVisibility(View.GONE);
-                stop_button.setVisibility(View.GONE);
-                rewind_button.setVisibility(View.GONE);
-                ff_button.setVisibility(View.GONE);
+                music_buttons.setVisibility(View.INVISIBLE);
+//                play_button.setVisibility(View.INVISIBLE);
+//                time_text.setVisibility(View.INVISIBLE);
+//                scroll_song_bar.setVisibility(View.INVISIBLE);
+//                stop_button.setVisibility(View.GONE);
+//                rewind_button.setVisibility(View.GONE);
+//                ff_button.setVisibility(View.GONE);
+                no_records_text.setVisibility(View.VISIBLE);
 
-                final Runnable mMyRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(PaginaRenderActivity.this
-                                , getString(R.string.no_record), Toast.LENGTH_SHORT).show();
-                    }
-                };
-                Handler myHandler = new Handler();
-                myHandler.postDelayed(mMyRunnable, 1000);
+//                final Runnable mMyRunnable = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(PaginaRenderActivity.this
+//                                , getString(R.string.no_record), Toast.LENGTH_SHORT).show();
+//                    }
+//                };
+//                Handler myHandler = new Handler();
+//                myHandler.postDelayed(mMyRunnable, 1000);
             }
 
         }
@@ -969,51 +1011,51 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        boolean showHelp1 = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN, true);
+//        boolean showHelp1 = PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getBoolean(PREF_FIRST_OPEN, true)
 
-        boolean showHelp2 = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN_SCROLL, true);
+//        boolean showHelp2 = PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getBoolean(PREF_FIRST_OPEN_SCROLL, true);
 
-        if(showHelp1) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
-
-            final Runnable mMyRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    showHelp();
-                }
-            };
-            Handler myHandler = new Handler();
-            myHandler.postDelayed(mMyRunnable, 2000);
-        }
-        else {
-            if (showHelp2){
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                        .edit();
-                editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(PaginaRenderActivity.this);
-                showScrollHelp();
-            }
-        }
+//        if(showHelp1) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                editor.commit();
+//            } else {
+//                editor.apply();
+//            }
+//
+//            final Runnable mMyRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    showHelp();
+//                }
+//            };
+//            Handler myHandler = new Handler();
+//            myHandler.postDelayed(mMyRunnable, 2000);
+//        }
+//        else {
+//            if (showHelp2){
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                        .edit();
+//                editor.putBoolean(PREF_FIRST_OPEN_SCROLL, false);
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                    editor.commit();
+//                } else {
+//                    editor.apply();
+//                }
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(PaginaRenderActivity.this);
+//                showScrollHelp();
+//            }
+//        }
 
         initializeLoadingDialogs();
 
@@ -1044,13 +1086,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
 //        ViewCompat.setTransitionName(findViewById(R.id.pagina_render_view), Utility.TRANS_PAGINA_RENDER);
 
-        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
+//        FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_on);
 //        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
 //        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
-        fabFullscreen.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_fullscreen_on).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 mHandler.removeCallbacks(mScrollDown);
                 saveZoom();
                 Bundle bundle = new Bundle();
@@ -1066,44 +1109,57 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
+//        FloatingActionButton fabSound = (FloatingActionButton) findViewById(R.id.fab_sound_off);
 //        fabSound.setColorNormal(getThemeUtils().accentColor());
 //        fabSound.setColorPressed(getThemeUtils().accentColorDark());
-        fabSound.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
-                getFab().toggle();
+                getFab().hide();
+                hideOuterFrame();
                 findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.GONE : View.VISIBLE);
                 mostraAudioBool = !v.isSelected();
                 mostraAudio = String.valueOf(mostraAudioBool);
             }
         });
 
-        FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+//        FloatingActionButton fabFavorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
 //        fabFavorite.setColorNormal(getThemeUtils().accentColor());
 //        fabFavorite.setColorPressed(getThemeUtils().accentColorDark());
-        fabFavorite.setOnClickListener(new OnClickListener() {
+        findViewById(R.id.fab_favorite).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
                 updateFavouriteFlag(v.isSelected() ? 1 : 0);
-                getFab().toggle();
-                Toast.makeText(PaginaRenderActivity.this
-                            , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
-                        , Toast.LENGTH_SHORT).show();
+                getFab().hide();
+                hideOuterFrame();
+//                Toast.makeText(PaginaRenderActivity.this
+//                        , getString(v.isSelected() ? R.string.favorite_added : R.string.favorite_removed)
+//                        , Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , v.isSelected() ? R.string.favorite_added : R.string.favorite_removed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
         });
 
-        getFab().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                showOuterFrame();
-            }
+//        getFab().setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+//            @Override
+//            public void onMenuExpanded() {
+//                showOuterFrame();
+//            }
+//
+//            @Override
+//            public void onMenuCollapsed() {
+//                hideOuterFrame();
+//            }
+//        });
 
+        getFab().setButtonOnClickListener(new OnClickListener() {
             @Override
-            public void onMenuCollapsed() {
-                hideOuterFrame();
+            public void onClick(View view) {
+                showOuterFrame();
             }
         });
 
@@ -1112,6 +1168,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
             mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
+
+        findViewById(R.id.pagina_render_view).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                else
+                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                boolean showHelp = PreferenceManager
+                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                        .getBoolean(PREF_FIRST_OPEN_NEW, true);
+
+                if(showHelp) {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                        editor.commit();
+                    } else {
+                        editor.apply();
+                    }
+                    showHelp();
+                }
+
+            }
+        });
 
     }
 
@@ -1137,39 +1221,31 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 else {
                     prevOrientation = getRequestedOrientation();
                     Utility.blockOrientation(PaginaRenderActivity.this);
-//                    AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                    AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-//                            .setMessage(R.string.dialog_save_tab)
-//                            .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-//                            .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
-//                            .show();
-//                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                     MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveText(R.string.confirm)
                             .negativeText(R.string.dismiss)
-                                    .callback(new MaterialDialog.ButtonCallback() {
-                                        @Override
-                                        public void onPositive(MaterialDialog dialog) {
-                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                            String sql = "UPDATE ELENCO" +
-                                                    "  SET saved_tab = \'" + notaCambio + "\' " +
-                                                    "    , saved_barre = \'" + barreCambio + "\' " +
-                                                    "  WHERE _id =  " + idCanto;
-                                            db.execSQL(sql);
-                                            db.close();
-                                            pulisciVars();
-                                            mLUtils.closeActivityWithTransition();
-                                        }
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                    String sql = "UPDATE ELENCO" +
+                                            "  SET saved_tab = \'" + notaCambio + "\' " +
+                                            "    , saved_barre = \'" + barreCambio + "\' " +
+                                            "  WHERE _id =  " + idCanto;
+                                    db.execSQL(sql);
+                                    db.close();
+                                    pulisciVars();
+                                    mLUtils.closeActivityWithTransition();
+                                }
 
-                                        @Override
-                                        public void onNegative(MaterialDialog dialog) {
-                                            pulisciVars();
-                                            mLUtils.closeActivityWithTransition();
-                                        }
-                                    })
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    pulisciVars();
+                                    mLUtils.closeActivityWithTransition();
+                                }
+                            })
                             .show();
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override
@@ -1202,12 +1278,20 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             "  WHERE _id =  " + idCanto;
                     db.execSQL(sql);
                     db.close();
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.tab_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.tab_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.tab_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.tab_not_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.tab_not_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.tab_not_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 return true;
             case R.id.action_reset_tab:
@@ -1238,12 +1322,21 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             "  WHERE _id =  " + idCanto;
                     db.execSQL(sql);
                     db.close();
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.barre_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.barre_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.barre_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.barre_not_saved), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.barre_not_saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.barre_not_saved
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+
                 }
                 return true;
             case R.id.action_reset_barre:
@@ -1324,14 +1417,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
             else {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(PaginaRenderActivity.this);
-//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(PaginaRenderActivity.this);
-//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_save_tab_title)
-//                        .setMessage(R.string.dialog_save_tab)
-//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.SAVE_TAB_OK))
-//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS_EXIT))
-//                        .show();
-//                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getThemeUtils().accentColor());
-//                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getThemeUtils().accentColor());
                 MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                         .title(R.string.dialog_save_tab_title)
                         .content(R.string.dialog_save_tab)
@@ -1505,7 +1590,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
         findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
         findViewById(R.id.fab_favorite).setSelected(selectFavouriteFromSource() == 1);
-        if (getFab().isExpanded()) {
+        if (getFab().isVisible()) {
             showOuterFrame();
 //            View outerFrame = findViewById(R.id.outerFrame);
 //            outerFrame.setVisibility(View.VISIBLE);
@@ -1529,9 +1614,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
         super.onDestroy();
     }
 
-    public FloatingActionsMenu getFab() {
-        if (mFab == null)
-            mFab = (FloatingActionsMenu) findViewById(R.id.fab_main_expand);
+    public FabToolbar getFab() {
+        if (mFab == null) {
+            mFab = (FabToolbar) findViewById(R.id.fab_toolbar);
+            mFab.setColor(getThemeUtils().accentColor());
+        }
         return mFab;
     }
 
@@ -1540,7 +1627,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         outerFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab().collapse();
+                getFab().hide();
+                hideOuterFrame();
             }
         });
         outerFrame.setVisibility(View.VISIBLE);
@@ -1555,7 +1643,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public void pulisciVars() {
         saveZoom();
 
+        Log.i(getClass().getName(), "pulisciVar()");
+        Log.i(getClass().getName(), "mediaPlayerState: " + mediaPlayerState);
+
         if (mediaPlayer != null) {
+//            if (mediaPlayerState == MP_State.Started) {
+////                mHandler.removeCallbacksAndMessages(mScrollBar);
+//                Log.i(getClass().getName(), "CALLBACK MUSICALE RIMOSSA!");
+//            }
             mediaPlayer.release();
             mediaPlayer = null;
             mediaPlayerState = MP_State.Idle;
@@ -1563,7 +1658,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
         TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         if(mgr != null)
             mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
-
 
         notaCambio = null;
         barreCambio = null;
@@ -1746,15 +1840,22 @@ public class PaginaRenderActivity extends ThemeableActivity {
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 mediaPlayer.start();
                 play_button.setSelected(true);
-                enableButtonIcon(stop_button);
-                enableButtonIcon(ff_button);
-                enableButtonIcon(rewind_button);
+//                enableButtonIcon(stop_button);
+//                enableButtonIcon(ff_button);
+//                enableButtonIcon(rewind_button);
                 mediaPlayerState = MP_State.Started;
+
+                mScrollBar.run();
+
             }
             else {
-                Toast.makeText(PaginaRenderActivity.this,
-                        "AudioFocus non consentito",
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        getString(R.string.focus_not_allowed),
+//                        Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.focus_not_allowed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
 
         }else{
@@ -1771,9 +1872,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
             mediaPlayer.pause();
             am.abandonAudioFocus(afChangeListener);
             play_button.setSelected(false);
-            enableButtonIcon(stop_button);
-            disableButtonIcon(ff_button);
-            disableButtonIcon(rewind_button);
+//            enableButtonIcon(stop_button);
+//            disableButtonIcon(ff_button);
+//            disableButtonIcon(rewind_button);
             mediaPlayerState = MP_State.Paused;
         }else{
             Toast.makeText(PaginaRenderActivity.this,
@@ -1781,6 +1882,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     Toast.LENGTH_SHORT).show();
         }
         showMediaPlayerState();
+
+//        mHandler.removeCallbacksAndMessages(mScrollBar);
     }
 
     private void cmdStop(){
@@ -1790,9 +1893,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
             mediaPlayer.reset();
             am.abandonAudioFocus(afChangeListener);
             play_button.setSelected(false);
-            disableButtonIcon(stop_button);
-            disableButtonIcon(ff_button);
-            disableButtonIcon(rewind_button);
+//            disableButtonIcon(stop_button);
+//            disableButtonIcon(ff_button);
+//            disableButtonIcon(rewind_button);
             mediaPlayerState = MP_State.Stopped;
             showMediaPlayerState();
             mediaPlayerState = MP_State.Idle;
@@ -1801,6 +1904,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     "Invalid State@cmdStop() - skip",
                     Toast.LENGTH_SHORT).show();
         }
+
+//        mHandler.removeCallbacksAndMessages(mScrollBar);
+        scroll_song_bar.setEnabled(false);
     }
 
     private void showMediaPlayerState(){
@@ -1843,7 +1949,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
 
         Toast.makeText(PaginaRenderActivity.this
-                , "Stato del lettore: " + state, Toast.LENGTH_SHORT).show();
+                , getString(R.string.player_state) + " " + state, Toast.LENGTH_SHORT).show();
     }
 
     OnErrorListener mediaPlayerOnErrorListener
@@ -1874,6 +1980,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
             catch (IllegalArgumentException e) {}
             mediaPlayerState = MP_State.Prepared;
             cmdStart();
+            scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+            scroll_song_bar.setEnabled(true);
         }
     };
 
@@ -1889,176 +1997,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
     };
 
-//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-//        private int clickedCode;
-//
-//        public ButtonClickedListener(int code) {
-//            clickedCode = code;
-//        }
-//
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            switch (clickedCode) {
-//                case Utility.DISMISS:
-//                    setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.DISMISS_EXIT:
-//                    pulisciVars();
-//                    mLUtils.closeActivityWithTransition();
-//                    break;
-//                case Utility.DOWNLOAD_CANCEL:
-//                    mProgressDialog.cancel();
-//                    break;
-//                case Utility.DOWNLOAD_OK:
-//                    final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
-//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-//                    int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-//                    if (saveLocation == 1) {
-//                        if (Utility.isExternalStorageWritable()) {
-//                            boolean folderCreated = new File(Environment.getExternalStoragePublicDirectory(
-//                                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
-////                            Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
-//                            String localFile = Environment.getExternalStoragePublicDirectory(
-//                                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
-//                                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
-////                            Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
-//                            downloadTask.execute(url, localFile);
-//                        }
-//                        else
-//                            Toast.makeText(PaginaRenderActivity.this
-//                                    , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
-//                    }
-//                    else {
-//                        String localFile = PaginaRenderActivity.this.getFilesDir()
-//                                + "/"
-//                                + Utility.filterMediaLink(url);
-//                        downloadTask.execute(url, localFile);
-//                    }
-//
-//                    mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                        @Override
-//                        public void onCancel(DialogInterface dialog) {
-//                            Toast.makeText(PaginaRenderActivity.this, getString(R.string.download_cancelled), Toast.LENGTH_SHORT).show();
-//                            downloadTask.cancel(true);
-//                            setRequestedOrientation(prevOrientation);
-//                        }
-//                    });
-//                    break;
-//                case Utility.DOWNLOAD_LINK:
-//                    setRequestedOrientation(prevOrientation);
-//                    // This always works
-//                    Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
-//
-//                    // Set these depending on your use case. These are the defaults.
-//                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                    i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                    i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                    i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-//                    i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
-//                    startActivityForResult(i, REQUEST_CODE);
-//                    break;
-//                case Utility.DELETE_MP3_OK:
-//                    File fileToDelete = new File(localUrl);
-//                    fileToDelete.delete();
-//                    if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
-//                        // initiate media scan and put the new things into the path array to
-//                        // make the scanner aware of the location and the files you want to see
-//                        MediaScannerConnection.scanFile(getApplicationContext()
-//                                , new String[] {fileToDelete.getAbsolutePath()}
-//                                , null
-//                                , null);
-//                    }
-//                    Toast.makeText(PaginaRenderActivity.this
-//                            , getString(R.string.file_delete)
-//                            , Toast.LENGTH_SHORT).show();
-//
-//                    if (mediaPlayerState == MP_State.Started
-//                            || mediaPlayerState == MP_State.Paused)
-//                        cmdStop();
-//
-//                    mediaPlayer = new MediaPlayer();
-//                    mediaPlayerState = MP_State.Idle;
-//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                    localFile = false;
-//                    cmdSetDataSource(url);
-//                    save_file.setSelected(false);
-//                    setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.DELETE_LINK_OK:
-//                    Toast.makeText(PaginaRenderActivity.this
-//                            , getString(R.string.delink_delete)
-//                            , Toast.LENGTH_SHORT).show();
-//
-//                    if (mediaPlayerState == MP_State.Started
-//                            || mediaPlayerState == MP_State.Paused)
-//                        cmdStop();
-//
-//                    mediaPlayer = new MediaPlayer();
-//                    mediaPlayerState = MP_State.Idle;
-//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                    localFile = false;
-//                    personalUrl = "";
-//
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                    String sql = "DELETE FROM LOCAL_LINKS" +
-//                            "  WHERE _id =  " + idCanto;
-//                    db.execSQL(sql);
-//                    db.close();
-//
-//                    save_file.setSelected(false);
-//
-//                    setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.DELETE_ONLY_LINK_OK:
-//                    Toast.makeText(PaginaRenderActivity.this
-//                            , getString(R.string.delink_delete)
-//                            , Toast.LENGTH_SHORT).show();
-//
-//                    if (mediaPlayerState == MP_State.Started
-//                            || mediaPlayerState == MP_State.Paused)
-//                        cmdStop();
-//
-//                    mediaPlayer = new MediaPlayer();
-//                    mediaPlayerState = MP_State.Idle;
-//                    mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                    localFile = false;
-//                    personalUrl = "";
-//
-//                    db = listaCanti.getReadableDatabase();
-//                    sql = "DELETE FROM LOCAL_LINKS" +
-//                            "  WHERE _id =  " + idCanto;
-//                    db.execSQL(sql);
-//                    db.close();
-//
-//                    save_file.setSelected(false);
-//
-//                    play_button.setVisibility(View.GONE);
-//                    stop_button.setVisibility(View.GONE);
-//                    rewind_button.setVisibility(View.GONE);
-//                    ff_button.setVisibility(View.GONE);
-//
-//                    setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.SAVE_TAB_OK:
-//                    db = listaCanti.getReadableDatabase();
-//                    sql = "UPDATE ELENCO" +
-//                            "  SET saved_tab = \'" + notaCambio + "\' " +
-//                            "    , saved_barre = \'" + barreCambio + "\' " +
-//                            "  WHERE _id =  " + idCanto;
-//                    db.execSQL(sql);
-//                    db.close();
-//                    pulisciVars();
-//                    mLUtils.closeActivityWithTransition();
-//                    break;
-//                default:
-//                    setRequestedOrientation(prevOrientation);
-//                    break;
-//            }
-//        }
-//    }
 
     private void saveZoom(){
         defaultZoomLevel = (int) (paginaView.getScale() *100);
@@ -2098,10 +2036,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                        try {
                 // Get the file path from the URI
                 String path = uri.getPath();
-                Toast.makeText(PaginaRenderActivity.this,
-                        getResources().getString(R.string.file_selected)
-                                + ": "
-                                + path, Toast.LENGTH_LONG).show();
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        getResources().getString(R.string.file_selected)
+//                                + ": "
+//                                + path, Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        getString(R.string.file_selected) + ": " + path
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
 
                 if (mediaPlayerState == MP_State.Started
                         || mediaPlayerState == MP_State.Paused)
@@ -2123,10 +2065,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 save_file.setSelected(true);
 
                 //mostra i pulsanti per il lettore musicale
-                play_button.setVisibility(View.VISIBLE);
-                stop_button.setVisibility(View.VISIBLE);
-                rewind_button.setVisibility(View.VISIBLE);
-                ff_button.setVisibility(View.VISIBLE);
+                music_buttons.setVisibility(View.VISIBLE);
+//                play_button.setVisibility(View.VISIBLE);
+//                time_text.setVisibility(View.VISIBLE);
+//                scroll_song_bar.setVisibility(View.VISIBLE);
+                no_records_text.setVisibility(View.INVISIBLE);
+//                stop_button.setVisibility(View.VISIBLE);
+//                rewind_button.setVisibility(View.VISIBLE);
+//                ff_button.setVisibility(View.VISIBLE);
 //                        } catch (Exception e) {
 //                            Log.e(getClass().toString(), "File select error", e);
 //                            Toast.makeText(PaginaRenderActivity.this,
@@ -2249,240 +2195,222 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     private void showHelp() {
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
-                , PaginaRenderActivity.this
-                , R.string.action_tonalita
-                , R.string.showcase_tonalita_desc);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setScaleMultiplier(0.3f);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
-                        , PaginaRenderActivity.this
-                        , "1) " + getString(R.string.action_trasporta)
-                        , getString(R.string.showcase_chtab_desc));
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setScaleMultiplier(0.3f);
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
-                                , PaginaRenderActivity.this
-                                , "2) " + getString(R.string.action_salva_tonalita)
-                                , getString(R.string.showcase_savetab_desc));
-                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                        showCase.setScaleMultiplier(0.3f);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
-                                        , PaginaRenderActivity.this
-                                        , "3) " + getString(R.string.action_reset_tonalita)
-                                        , getString(R.string.showcase_restab_desc));
-                                showCase.setButtonText(getString(R.string.showcase_button_next));
-                                showCase.setScaleMultiplier(0.3f);
-                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                    @Override
-                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                    @Override
-                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                , PaginaRenderActivity.this
-                                                , R.string.action_barre
-                                                , R.string.showcase_barre_desc);
-                                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                                        showCase.setScaleMultiplier(0.3f);
-                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                            @Override
-                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                            @Override
-                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                        new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                        , PaginaRenderActivity.this
-                                                        , "1) " + getString(R.string.action_trasporta)
-                                                        , getString(R.string.showcase_chbarre_desc));
-                                                showCase.setButtonText(getString(R.string.showcase_button_next));
-                                                showCase.setScaleMultiplier(0.3f);
-                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                    @Override
-                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                    @Override
-                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                                , PaginaRenderActivity.this
-                                                                , "2) " + getString(R.string.action_salva_tonalita)
-                                                                , getString(R.string.showcase_savebarre_desc));
-                                                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                                                        showCase.setScaleMultiplier(0.3f);
-                                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                            @Override
-                                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                            @Override
-                                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                                                        new ViewTarget(R.id.barre, PaginaRenderActivity.this)
-                                                                        , PaginaRenderActivity.this
-                                                                        , "3) " + getString(R.string.action_reset_barre)
-                                                                        , getString(R.string.showcase_resbarre_desc));
-                                                                showCase.setScaleMultiplier(0.3f);
-                                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                                                    @Override
-                                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                                                                    @Override
-                                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                                                        showScrollHelp();
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                                });
-                                                            }
-
-                                                            @Override
-                                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                        });
-                                                    }
-
-                                                    @Override
-                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                                });
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                        });
-                    }
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                });
-
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-        });
-    }
-
-    public void showScrollHelp() {
-        lps = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
-        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
-        }
-        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
-
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.buttonLayoutParams = lps;
-
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.play_scroll, PaginaRenderActivity.this)
-                , PaginaRenderActivity.this
-                , R.string.play_scroll
-                , R.string.showcase_scroll_desc
-                , co);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setScaleMultiplier(0.3f);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                co.buttonLayoutParams = lps;
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
-                        , PaginaRenderActivity.this
-                        , R.string.scroll_seekbar
-                        , R.string.showcase_seekbar_desc
-                        , co);
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
-                                , PaginaRenderActivity.this
-                                , R.string.showcase_end_title
-                                , R.string.showcase_help_general);
-                        showCase.setShowcase(ShowcaseView.NONE);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                        });
-                    }
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-                });
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-        });
+        Intent intent = new Intent(PaginaRenderActivity.this, IntroPaginaRender.class);
+        startActivity(intent);
+//        prevOrientation = getRequestedOrientation();
+//        Utility.blockOrientation(PaginaRenderActivity.this);
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.cantoView, PaginaRenderActivity.this)
+//                , PaginaRenderActivity.this
+//                , R.string.sc_pagina_render_title
+//                , R.string.sc_pagina_render_desc);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setShowcase(ShowcaseView.NONE);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.tonalita, PaginaRenderActivity.this)
+//                        , PaginaRenderActivity.this
+//                        , R.string.action_tonalita
+//                        , R.string.sc_tonalita_desc);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setScaleMultiplier(0.3f);
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.barre, PaginaRenderActivity.this)
+//                                , PaginaRenderActivity.this
+//                                , R.string.action_barre
+//                                , R.string.sc_barre_desc);
+//                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                        showCase.setScaleMultiplier(0.3f);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                        new ViewTarget(R.id.music_controls, PaginaRenderActivity.this)
+//                                        , PaginaRenderActivity.this
+//                                        , R.string.sc_audio_title
+//                                        , R.string.sc_audio_desc);
+//                                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                                showCase.setScaleMultiplier(1.0f);
+//                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                    @Override
+//                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                    @Override
+//                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                        lps = new RelativeLayout.LayoutParams(
+//                                                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                                                ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//                                        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//                                        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
+//                                        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+//                                                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                                            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
+//                                        }
+//                                        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
+//
+//                                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                                        co.buttonLayoutParams = lps;
+//
+//                                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                                new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
+//                                                , PaginaRenderActivity.this
+//                                                , R.string.sc_scroll_title
+//                                                , R.string.sc_scroll_desc
+//                                                , co);
+//                                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                                        showCase.setScaleMultiplier(1.0f);
+//                                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                            @Override
+//                                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                            @Override
+//                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                                        new ViewTarget(R.id.bottom_bar, PaginaRenderActivity.this)
+//                                                        , PaginaRenderActivity.this
+//                                                        , R.string.showcase_end_title
+//                                                        , R.string.showcase_help_general);
+//                                                showCase.setShowcase(ShowcaseView.NONE);
+//                                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                                        setRequestedOrientation(prevOrientation);
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                                });
+//                                            }
+//
+//                                            @Override
+//                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                        });
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//        });
+//    }
+//
+//    public void showScrollHelp() {
+//        lps = new RelativeLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//        int marginTop = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 40)).intValue();
+//        int marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+//                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            marginRight = ((Number) ( getApplicationContext().getResources().getDisplayMetrics().density * 62)).intValue();
+//        }
+//        lps.setMargins(marginTop, marginTop, marginRight, marginTop);
+//
+//        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//        co.buttonLayoutParams = lps;
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.play_scroll, PaginaRenderActivity.this)
+//                , PaginaRenderActivity.this
+//                , R.string.play_scroll
+//                , R.string.showcase_scroll_desc
+//                , co);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setScaleMultiplier(0.3f);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                co.buttonLayoutParams = lps;
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
+//                        , PaginaRenderActivity.this
+//                        , R.string.scroll_seekbar
+//                        , R.string.showcase_seekbar_desc
+//                        , co);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.speed_seekbar, PaginaRenderActivity.this)
+//                                , PaginaRenderActivity.this
+//                                , R.string.showcase_end_title
+//                                , R.string.showcase_help_general);
+//                        showCase.setShowcase(ShowcaseView.NONE);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//                });
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
+//        });
     }
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
@@ -2601,8 +2529,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                ((ProgressView)mProgressDialog.findViewById(R.id.progressDeterminate)).stop();
                 mProgressDialog.dismiss();
             }
-            if (result != null)
-                Toast.makeText(context,"Errore nel download: " + result, Toast.LENGTH_LONG).show();
+            if (result != null) {
+//                Toast.makeText(context, "Errore nel download: " + result, Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , getString(R.string.download_error) + " " + result
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
+            }
             else {
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                 int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
@@ -2624,7 +2557,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             , null
                             , null);
                 }
-                Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, getString(R.string.download_completed), Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        R.string.download_completed
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
 
                 if (mediaPlayerState == MP_State.Started
                         || mediaPlayerState == MP_State.Paused)
@@ -2672,8 +2609,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     localPDFPath = fileArray[0].getAbsolutePath();
                 }
                 else {
-                    Toast.makeText(PaginaRenderActivity.this
-                            , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PaginaRenderActivity.this
+//                            , getString(R.string.no_memory_writable), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.no_memory_writable
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
                     this.cancel(true);
                 }
                 localPDFPath += "/output.pdf";
@@ -2783,21 +2724,25 @@ public class PaginaRenderActivity extends ThemeableActivity {
             try {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(PaginaRenderActivity.this
-                        , getString(R.string.no_pdf_reader), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(PaginaRenderActivity.this
+//                        , getString(R.string.no_pdf_reader), Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.no_pdf_reader
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
         }
     }
 
-    private void enableButtonIcon(ImageButton bIcon) {
-        bIcon.setEnabled(true);
-        bIcon.setColorFilter(getResources().getColor(android.R.color.black));
-    }
-
-    private void disableButtonIcon(ImageButton bIcon) {
-        bIcon.setEnabled(false);
-        bIcon.setColorFilter(getResources().getColor(R.color.item_disabled));
-    }
+//    private void enableButtonIcon(ImageButton bIcon) {
+//        bIcon.setEnabled(true);
+//        bIcon.setColorFilter(getResources().getColor(android.R.color.black));
+//    }
+//
+//    private void disableButtonIcon(ImageButton bIcon) {
+//        bIcon.setEnabled(false);
+//        bIcon.setColorFilter(getResources().getColor(R.color.item_disabled));
+//    }
 
     private void initializeLoadingDialogs() {
 //        mp3Dialog = new ProgressDialogPro(PaginaRenderActivity.this);

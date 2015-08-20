@@ -1,7 +1,9 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,10 +126,16 @@ public class CantoExpandableAdapter
                 holder.mMorphButton.setState(indicatorState, true);
             }
             if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
+                Drawable drawable;
                 if (indicatorState == MorphButton.MorphState.END)
-                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.expander_close_holo_light));
+                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_black_24dp);
+//                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_less_black_24dp));
                 else
-                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.expander_open_holo_light));
+                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp);
+//                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp));
+                drawable = DrawableCompat.wrap(drawable);
+                DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
+                holder.mMorphButtonOld.setBackgroundDrawable(drawable);
             }
         }
     }

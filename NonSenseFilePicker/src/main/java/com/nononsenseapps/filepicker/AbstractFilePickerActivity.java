@@ -228,7 +228,7 @@ public abstract class AbstractFilePickerActivity<T> extends AppCompatActivity
             }
             i.setClipData(clip);
         } else {
-            ArrayList<String> paths = new ArrayList<String>();
+            ArrayList<String> paths = new ArrayList<>();
             for (Uri file : files) {
                 paths.add(file.toString());
             }

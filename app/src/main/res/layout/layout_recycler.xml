@@ -3,8 +3,6 @@
     android:id="@+id/recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_min_margin"
-    android:paddingRight="@dimen/activity_min_margin"
     android:clipChildren="true"
     android:clipToPadding="false"
     android:scrollbarStyle="outsideOverlay"

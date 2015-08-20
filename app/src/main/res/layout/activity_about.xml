@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/risuscito_toolbar" />
+
     <LinearLayout
+        android:layout_gravity="top"
+        android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_min_margin"
@@ -28,18 +32,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <view
-            class="it.gmariotti.changelibs.library.view.ChangeLogListView"
+        <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:changeLogFileResourceId="@raw/changelog_full"
             risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
             risuscito:rowLayoutId="@layout/changelogrow_material_layout"
-            android:id="@+id/aboutText"/>
+            android:id="@+id/aboutText" />
 
     </LinearLayout>
 
     <View
+        android:layout_marginTop="?actionBarSize"
+        android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />

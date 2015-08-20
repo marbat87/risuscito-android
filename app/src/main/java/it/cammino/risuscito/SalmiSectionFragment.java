@@ -10,7 +10,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +28,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -51,6 +52,9 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     private int idListaClick;
     private int idPosizioneClick;
     private int prevOrientation;
+    private View rootView;
+
+    private long mLastClickTime = 0;
 
     private final int ID_FITTIZIO = 99999999;
     private final int ID_BASE = 100;
@@ -60,7 +64,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(
+        rootView = inflater.inflate(
                 R.layout.fragment_alphanum_index, container, false);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -87,7 +91,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                     , lista.getInt(3)
                     , lista.getString(2)
                     , lista.getInt(0)
-                    , lista.getString(5)).setNumeroSalmo(lista.getString(4)));
+                    , lista.getString(5)
+                    , lista.getString(4)));
             lista.moveToNext();
         }
 
@@ -97,6 +102,9 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();
@@ -291,15 +299,22 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
 
-                            Toast.makeText(getActivity()
-                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity()
+//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                    .show();
+
                         }
                         else {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView
+                                        , R.string.present_yet
+                                        , Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
@@ -331,8 +346,10 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-                                                Toast.makeText(getActivity()
-                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(getActivity()
+//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                                        .show();
                                             }
 
                                             @Override
@@ -385,9 +402,11 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         db.execSQL(sql);
         db.close();
 
-        Toast toast = Toast.makeText(getActivity()
-                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getActivity()
+//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
+//        toast.show();
+        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -409,12 +428,18 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 
         try {
             db.execSQL(sql);
-            Toast.makeText(getActivity()
-                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                    .show();
         } catch (SQLException e) {
-            Toast toast = Toast.makeText(getActivity()
-                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity()
+//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//            toast.show();
+            Snackbar.make(rootView
+                    , R.string.present_yet
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
         }
 
         db.close();
@@ -446,9 +471,13 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
             db.close();
 
             if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-                Toast toast = Toast.makeText(getActivity()
-                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getActivity()
+//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//                toast.show();
+                Snackbar.make(rootView
+                        , R.string.present_yet
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
             else {
                 idListaDaAgg = idLista;
@@ -475,8 +504,10 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                                         + "    AND position = " + posizioneDaAgg;
                                 db.execSQL(sql);
                                 getActivity().setRequestedOrientation(prevOrientation);
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
 
                             @Override
@@ -515,8 +546,10 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         db.execSQL(sql);
         db.close();
 
-        Toast.makeText(getActivity()
-                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity()
+//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     private ThemeUtils getThemeUtils() {

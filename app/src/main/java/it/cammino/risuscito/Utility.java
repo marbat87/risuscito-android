@@ -34,45 +34,7 @@ public class Utility {
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
 
-    public static final int DISMISS = 1;
-    public static final int RENAME_CONFERMA = 2;
-    public static final int AGGIUNGI_CONFERMA = 3;
-    public static final int SAVE_LIST_OK = 4;
-    public static final int SAVE_LIST_KO = 5;
-    public static final int ALPHA_LISTAPERS_OK = 6;
-    public static final int ALPHA_LISTAPRED_OK = 7;
-    public static final int ARG_LISTAPERS_OK = 8;
-    public static final int ARG_LISTAPRED_OK = 9;
-    public static final int NUM_LISTAPERS_OK = 10;
-    public static final int NUM_LISTAPRED_OK = 11;
-    public static final int SAL_LISTAPERS_OK = 12;
-    public static final int SAL_LISTAPRED_OK = 13;
-    public static final int EUCAR_RESET_OK = 14;
-    public static final int PAROLA_RESET_OK = 15;
-    public static final int PERS_RESET_OK = 16;
-    public static final int VELOCE_LISTAPERS_OK = 17;
-    public static final int VELOCE_LISTAPRED_OK = 18;
-    public static final int AVANZATA_LISTAPERS_OK = 19;
-    public static final int AVANZATA_LISTAPRED_OK = 20;
-    public static final int PREFERENCE_DEFINDEX_OK = 21;
-    public static final int PREFERENCE_SAVELOC_OK = 22;
-    public static final int ADD_LIST_OK = 23;
-    public static final int DOWNLOAD_CANCEL = 24;
-    public static final int DOWNLOAD_OK = 25;
-    public static final int DOWNLOAD_LINK = 26;
-    public static final int DELETE_MP3_OK = 27;
-    public static final int DELETE_LINK_OK = 28;
-    public static final int DELETE_ONLY_LINK_OK = 29;
-    public static final int SAVE_TAB_OK = 30;
-    public static final int DISMISS_EXIT = 31;
-    public static final int DISMISS_RENAME = 32;
-    public static final int DISMISS_ADD = 33;
-    public static final int CHANGE_COLOR = 34;
-    public static final int RESET_COLOR = 35;
-    public static final int IND_LIT_LISTAPERS_OK = 36;
-    public static final int IND_LIT_LISTAPRED_OK = 37;
-    public static final int PREFERENCE_LANGUAGE_OK = 38;
-
+    public static final long CLICK_DELAY = 1000;
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     public static final String URL_CANTO = "urlCanto";

@@ -3,15 +3,13 @@ package it.cammino.risuscito;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,8 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,10 +36,9 @@ import io.codetail.animation.ViewAnimationUtils;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.objects.Canto;
+import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.slides.IntroConsegnati;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.showcaseview.OnShowcaseEventListener;
-import it.cammino.utilities.showcaseview.ShowcaseView;
-import it.cammino.utilities.showcaseview.targets.ViewTarget;
 
 public class ConsegnatiFragment extends Fragment {
 
@@ -62,12 +57,14 @@ public class ConsegnatiFragment extends Fragment {
     private int prevOrientation;
     private MaterialDialog mProgressDialog;
     private int totalConsegnati;
-    private RelativeLayout.LayoutParams lps;
-    private boolean byGuide;
+//    private RelativeLayout.LayoutParams lps;
+//    private boolean byGuide;
 
     private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
 
     private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,9 +72,10 @@ public class ConsegnatiFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
 //        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_consegnati);
-        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
-        ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
+//        ((MainActivity) getActivity()).getSupportActionBar()
+//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -85,11 +83,8 @@ public class ConsegnatiFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
 
         rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
-        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-        ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
-
-
-
+//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+//        ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
 
         if (savedInstanceState == null)
             editMode = false;
@@ -113,7 +108,7 @@ public class ConsegnatiFragment extends Fragment {
             updateConsegnatiList(true);
         }
 
-        ((ImageButton)rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -123,7 +118,7 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ((ImageButton)rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -133,7 +128,7 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ((ImageButton)rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
@@ -157,7 +152,7 @@ public class ConsegnatiFragment extends Fragment {
                 animator.start();
             }
         });
-        ((ImageButton)rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 (new ConsegnatiSaveTask()).execute();
@@ -219,6 +214,31 @@ public class ConsegnatiFragment extends Fragment {
                 })
                 .build();
 
+//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+//                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                else
+//                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//
+//                if(PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .getBoolean(PREF_FIRST_OPEN, true)) {
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    editor.putBoolean(PREF_FIRST_OPEN, false);
+//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+//                        editor.commit();
+//                    } else {
+//                        editor.apply();
+//                    }
+//                    showHelp();
+//                }
+//            }
+//        });
+
         if(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(PREF_FIRST_OPEN, true)) {
@@ -231,14 +251,15 @@ public class ConsegnatiFragment extends Fragment {
             } else {
                 editor.apply();
             }
-            final Runnable mMyRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    showHelp();
-                }
-            };
-            Handler myHandler = new Handler();
-            myHandler.postDelayed(mMyRunnable, 1000);
+            showHelp();
+//            final Runnable mMyRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    showHelp();
+//                }
+//            };
+//            Handler myHandler = new Handler();
+//            myHandler.postDelayed(mMyRunnable, 1000);
         }
 
         return rootView;
@@ -312,7 +333,7 @@ public class ConsegnatiFragment extends Fragment {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca dei preferiti
-        String query = "SELECT A.titolo, A.color, A.pagina" +
+        String query = "SELECT A.titolo, A.color, A.pagina, A._id, A.source" +
                 "		FROM ELENCO A, CANTI_CONSEGNATI B" +
                 "		WHERE A._id = B.id_canto" +
                 "		ORDER BY TITOLO ASC";
@@ -326,10 +347,15 @@ public class ConsegnatiFragment extends Fragment {
             rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoItem> titoli = new ArrayList<CantoItem>();
+        List<CantoRecycled> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < totalConsegnati; i++) {
-            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+//            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
+            titoli.add(new CantoRecycled(lista.getString(0)
+                    , lista.getInt(2)
+                    , lista.getString(1)
+                    , lista.getInt(3)
+                    , lista.getString(4)));
             lista.moveToNext();
         }
 
@@ -340,32 +366,39 @@ public class ConsegnatiFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
+//                db.close();
 
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
-                db.close();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+//                bundle.putString("pagina", pagina);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);
@@ -534,130 +567,132 @@ public class ConsegnatiFragment extends Fragment {
     }
 
     private void showHelp() {
-        prevOrientation = getActivity().getRequestedOrientation();
-        Utility.blockOrientation(getActivity());
-
-        lps = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        int margin = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        int marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        int marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-                marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-                        .density * 62)).intValue();
-            else
-                marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-                        .density * 62)).intValue();
-        }
-        lps.setMargins(marginLeft, margin, margin, marginBottom);
-
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                new ViewTarget(R.id.action_edit_choose, getActivity())
-                , getActivity()
-                , R.string.title_activity_consegnati
-                , R.string.showcase_consegnati_desc);
-        showCase.setButtonText(getString(R.string.showcase_button_next));
-        showCase.setShowcase(ShowcaseView.NONE);
-        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-            }
-
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                        new ViewTarget(R.id.action_edit_choose, getActivity())
-                        , getActivity()
-                        , R.string.title_activity_consegnati
-                        , R.string.showcase_consegnati_howto);
-                showCase.setButtonText(getString(R.string.showcase_button_next));
-                showCase.setScaleMultiplier(0.3f);
-                if (rootView.findViewById(R.id.choose_view).getVisibility() != View.VISIBLE) {
-                    byGuide = true;
-                    updateChooseList(true);
-                    rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
-                    rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-                } else {
-                    byGuide = false;
-                }
-                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                    @Override
-                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                    }
-
-                    @Override
-                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                        co.buttonLayoutParams = lps;
-                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                new ViewTarget(R.id.confirm_changes, getActivity())
-                                , getActivity()
-                                , R.string.title_activity_consegnati
-                                , R.string.single_choice_ok
-                                , co);
-                        showCase.setButtonText(getString(R.string.showcase_button_next));
-                        showCase.setScaleMultiplier(0.3f);
-                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                            @Override
-                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                            }
-
-                            @Override
-                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-                                co.buttonLayoutParams = lps;
-                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-                                        new ViewTarget(R.id.cancel_change, getActivity())
-                                        , getActivity()
-                                        , R.string.title_activity_consegnati
-                                        , R.string.cancel
-                                        , co);
-                                showCase.setScaleMultiplier(0.3f);
-                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-
-                                    @Override
-                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-                                        if (byGuide) {
-                                            if (rootView.findViewById(R.id.choose_view).getVisibility() == View.VISIBLE)
-                                                rootView.findViewById(R.id.cancel_change).performClick();
-                                        }
-                                        getActivity().setRequestedOrientation(prevOrientation);
-                                    }
-
-                                    @Override
-                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                            }
-                        });
-                    }
-
-
-                    @Override
-                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                    }
-                });
-
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
-        });
+        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
+        startActivity(intent);
+//        prevOrientation = getActivity().getRequestedOrientation();
+//        Utility.blockOrientation(getActivity());
+//
+//        lps = new RelativeLayout.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//        int margin = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        int marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        int marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+//                marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
+//                        .density * 62)).intValue();
+//            else
+//                marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
+//                        .density * 62)).intValue();
+//        }
+//        lps.setMargins(marginLeft, margin, margin, marginBottom);
+//
+//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                new ViewTarget(R.id.action_edit_choose, getActivity())
+//                , getActivity()
+//                , R.string.title_activity_consegnati
+//                , R.string.showcase_consegnati_desc);
+//        showCase.setButtonText(getString(R.string.showcase_button_next));
+//        showCase.setShowcase(ShowcaseView.NONE);
+//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//            @Override
+//            public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//            }
+//
+//            @Override
+//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                        new ViewTarget(R.id.action_edit_choose, getActivity())
+//                        , getActivity()
+//                        , R.string.title_activity_consegnati
+//                        , R.string.showcase_consegnati_howto);
+//                showCase.setButtonText(getString(R.string.showcase_button_next));
+//                showCase.setScaleMultiplier(0.3f);
+//                if (rootView.findViewById(R.id.choose_view).getVisibility() != View.VISIBLE) {
+//                    byGuide = true;
+//                    updateChooseList(true);
+//                    rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+//                    rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+//                } else {
+//                    byGuide = false;
+//                }
+//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                    @Override
+//                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                    }
+//
+//                    @Override
+//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                        co.buttonLayoutParams = lps;
+//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                new ViewTarget(R.id.confirm_changes, getActivity())
+//                                , getActivity()
+//                                , R.string.title_activity_consegnati
+//                                , R.string.single_choice_ok
+//                                , co);
+//                        showCase.setButtonText(getString(R.string.showcase_button_next));
+//                        showCase.setScaleMultiplier(0.3f);
+//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                            @Override
+//                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//                                co.buttonLayoutParams = lps;
+//                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
+//                                        new ViewTarget(R.id.cancel_change, getActivity())
+//                                        , getActivity()
+//                                        , R.string.title_activity_consegnati
+//                                        , R.string.cancel
+//                                        , co);
+//                                showCase.setScaleMultiplier(0.3f);
+//                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+//
+//                                    @Override
+//                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//                                        if (byGuide) {
+//                                            if (rootView.findViewById(R.id.choose_view).getVisibility() == View.VISIBLE)
+//                                                rootView.findViewById(R.id.cancel_change).performClick();
+//                                        }
+//                                        getActivity().setRequestedOrientation(prevOrientation);
+//                                    }
+//
+//                                    @Override
+//                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                                    }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                            }
+//                        });
+//                    }
+//
+//
+//                    @Override
+//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
+//        });
     }
 
 }

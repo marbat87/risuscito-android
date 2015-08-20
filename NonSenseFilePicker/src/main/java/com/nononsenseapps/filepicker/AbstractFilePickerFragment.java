@@ -201,7 +201,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
     protected abstract boolean isDir(final T path);
 
     protected List<Uri> toUri(List<T> files) {
-        ArrayList<Uri> uris = new ArrayList<Uri>();
+        ArrayList<Uri> uris = new ArrayList<>();
         for (T file : files) {
             uris.add(toUri(file));
         }
@@ -214,7 +214,7 @@ public abstract class AbstractFilePickerFragment<T> extends ListFragment
     protected List<T> getCheckedItems() {
         final BindableArrayAdapter<T> adapter =
                 (BindableArrayAdapter<T>) getListAdapter();
-        final ArrayList<T> files = new ArrayList<T>();
+        final ArrayList<T> files = new ArrayList<>();
         for (int pos : checkedItems.keySet()) {
             if (checkedItems.get(pos)) {
                 files.add(adapter.getItem(pos));

@@ -38,16 +38,8 @@
     <color name="navdrawer_background">#ffffffff</color>
     <color name="navdrawer_text_color">#DE000000</color>
     <!--<color name="navdrawer_text_color_selected">@color/theme_primary</color>-->
-    <color name="navdrawer_icon_tint">#8A000000</color>
+    <color name="navdrawer_icon_tint">@color/icon_ative_black</color>
     <!--<color name="navdrawer_icon_tint_selected">@color/theme_primary</color>-->
-
-    <color name="body_text_1">#de000000</color>
-    <color name="body_text_2">#8a000000</color>
-    <color name="body_text_3">#60000000</color>
-    <color name="body_text_disabled">#44000000</color>
-
-    <color name="body_text_1_inverse">#deffffff</color>
-    <color name="body_text_2_inverse">#8affffff</color>
 
     <color name="theme_primary">@color/BlueGrey</color>
     <color name="theme_accent">@color/Teal</color>
@@ -86,5 +78,8 @@
     <color name="orange_light">#FFB300</color>
     <color name="orange">#FB8C00</color>
     <color name="red_light">#F4511E</color>
+
+    <color name="icon_ative_black">#8A000000</color>
+    <color name="icon_inactive_black">#42000000</color>
 
 </resources> 

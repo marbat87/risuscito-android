@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.0'
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 23
+        versionCode 1
+        versionName "0.5.1"
+    }
+    productFlavors {
+    }
+}
+
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+dependencies {
+    compile supportDependencies.appCompat
+    compile genericDependencies.CircularReveal
+    compile supportDependencies.recyclerView
+    compile supportDependencies.design
+}

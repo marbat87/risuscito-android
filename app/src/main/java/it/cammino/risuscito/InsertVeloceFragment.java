@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +23,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,8 @@ public class InsertVeloceFragment extends Fragment {
 
     private LUtils mLUtils;
 
+    private long mLastClickTime = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,6 +65,10 @@ public class InsertVeloceFragment extends Fragment {
 //                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
 //                        .getText().toString();
 //                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
+
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -87,7 +95,9 @@ public class InsertVeloceFragment extends Fragment {
                     try {
                         db.execSQL(query);
                     } catch (SQLException e) {
-                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                 }
                 else {
@@ -120,6 +130,7 @@ public class InsertVeloceFragment extends Fragment {
                     db.close();
                 }
 
+                getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, R.anim.slide_out_right);
             }
@@ -128,6 +139,9 @@ public class InsertVeloceFragment extends Fragment {
         View.OnClickListener seeOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();

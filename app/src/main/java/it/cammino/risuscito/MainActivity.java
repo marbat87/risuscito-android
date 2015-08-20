@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,20 +14,16 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -36,14 +31,14 @@ import it.cammino.risuscito.utils.ColorChooserDialog;
 
 public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
 
-    private DrawerLayout mDrawerLayout;
-    private Toolbar mActionBarToolbar;
+    public DrawerLayout mDrawerLayout;
+//    private Toolbar mActionBarToolbar;
 
     // list of navdrawer items that were actually added to the navdrawer, in order
-    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
+//    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
 
     // views that correspond to each navdrawer item, null if not yet created
-    private View[] mNavDrawerItemViews = null;
+//    private View[] mNavDrawerItemViews = null;
 
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
@@ -111,10 +106,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             (new TranslationTask()).execute();
         }
 
-        mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        mActionBarToolbar.setTitle("");
-        setSupportActionBar(mActionBarToolbar);
+//        mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+//        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//        mActionBarToolbar.setTitle("");
+//        setSupportActionBar(mActionBarToolbar);
 
         setupNavDrawer();
 
@@ -145,7 +140,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
 //        savedInstanceState.putInt(SELECTED_ITEM, mNavigationView.);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
-        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_consegnati));
+        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
             ConsegnatiFragment.RetainedFragment dataFragment = new ConsegnatiFragment.RetainedFragment();
             getSupportFragmentManager().beginTransaction().add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE).commit();
@@ -176,15 +171,15 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
 //
-        if (mActionBarToolbar != null) {
-            mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            });
-        }
+//        if (mActionBarToolbar != null) {
+//            mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+//            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                }
+//            });
+//        }
 //
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 //
@@ -227,7 +222,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                     case R.id.navitagion_lists:
                         fragment = new CustomLists();
                         break;
-                    case R.id.navitagion_favorites:
+                    case R.id.navigation_favorites:
                         fragment = new FavouritesActivity();
                         break;
                     case R.id.navigation_settings:
@@ -239,10 +234,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                     case R.id.navigation_donate:
                         fragment = new DonateActivity();
                         break;
-                    case R.id.navitagion_consegnati:
+                    case R.id.navigation_consegnati:
                         fragment = new ConsegnatiFragment();
                         break;
-                    case R.id.navitagion_history:
+                    case R.id.navigation_history:
                         fragment = new HistoryFragment();
                         break;
                     default:
@@ -273,7 +268,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         ColorStateList mIconStateList = new ColorStateList(
                 new int[][]{
                         new int[]{android.R.attr.state_checked}, //1
-                        new int[]{-android.R.attr.state_checked} //2
+                        new int[]{} //2
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
@@ -284,7 +279,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         ColorStateList mTextStateList = new ColorStateList(
                 new int[][]{
                         new int[]{android.R.attr.state_checked}, //1
-                        new int[]{-android.R.attr.state_checked} //2
+                        new int[]{} //2
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
@@ -294,8 +289,6 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
         mNavigationView.setItemIconTintList(mIconStateList);
         mNavigationView.setItemTextColor(mTextStateList);
-//        mNavigationView.setItemBackgroundResource(R.drawable.selected_navdrawer_item_background);
-//        Log.i(getClass().toString(), mNavigationView.getMenu().getItem(0).getActionView().getClass().toString());
 
     }
 
@@ -535,14 +528,31 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
             if (myFragment != null && myFragment.isVisible()) {
                 finish();
+                return true;
             }
-            else {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-                transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-                mNavigationView.getMenu().getItem(0).setChecked(true);
+
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_favorites));
+//            if (myFragment != null && myFragment.isVisible()) {
+//                Log.i(getClass().getName(), "ENTROALPHA");
+//                if (((FavouritesActivity) myFragment).onBackPressed())
+//                    return true;
+//            }
+//
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_history));
+//            if (myFragment != null && myFragment.isVisible())
+//                if (((HistoryFragment) myFragment).onBackPressed())
+//                    return true;
+//
+//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_lists));
+//            if (myFragment != null && myFragment.isVisible())
+//                if (((CustomLists) myFragment).onBackPressed())
+//                    return true;
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            mNavigationView.getMenu().getItem(0).setChecked(true);
 //                setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
-            }
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -647,6 +657,23 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             }
             catch (IllegalArgumentException e) {}
         }
+    }
+
+    public void setupToolbar(View toolbar, int titleResId) {
+
+        Toolbar mActionToolbar = (Toolbar) toolbar;
+        setSupportActionBar(mActionToolbar);
+        mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        getSupportActionBar().setTitle("");
+        ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
     }
 
 }

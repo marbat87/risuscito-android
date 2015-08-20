@@ -69,7 +69,9 @@ public class ThemeUtils {
     }
 
     public int accentColorLight() {
-        return shiftColorUp(accentColor());
+//        return shiftColorUp(accentColor());
+        return lighter(accentColor(),0.5f);
+
     }
 
     public int accentColorDark() {
@@ -156,63 +158,81 @@ public class ThemeUtils {
 //                return R.style.RisuscitoTheme;
 //        }
 //        else {
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_dark))
-                return R.style.RisuscitoTheme_BlueDark;
-            if (accentColor() == mContext.getResources().getColor(R.color.grey))
-                return R.style.RisuscitoTheme_Grey;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_grey))
-                return R.style.RisuscitoTheme_BlueGrey;
-            if (accentColor() == mContext.getResources().getColor(R.color.black))
-                return R.style.RisuscitoTheme_Black;
-            if (accentColor() == mContext.getResources().getColor(R.color.brown))
-                return R.style.RisuscitoTheme_Brown;
-            if (accentColor() == mContext.getResources().getColor(R.color.red))
-                return R.style.RisuscitoTheme_Red;
-            if (accentColor() == mContext.getResources().getColor(R.color.pink))
-                return R.style.RisuscitoTheme_Pink;
-            if (accentColor() == mContext.getResources().getColor(R.color.purple))
-                return R.style.RisuscitoTheme_Purple;
-            if (accentColor() == mContext.getResources().getColor(R.color.violet))
-                return R.style.RisuscitoTheme_Violet;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue))
-                return R.style.RisuscitoTheme_Blue;
-            if (accentColor() == mContext.getResources().getColor(R.color.blue_light))
-                return R.style.RisuscitoTheme_BlueLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.torqouise))
-                return R.style.RisuscitoTheme_Torqouise;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_water))
-                return R.style.RisuscitoTheme_GreenWater;
-            if (accentColor() == mContext.getResources().getColor(R.color.green))
-                return R.style.RisuscitoTheme_Green;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_light))
-                return R.style.RisuscitoTheme_GreenLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.green_bean))
-                return R.style.RisuscitoTheme_GreenBean;
-            if (accentColor() == mContext.getResources().getColor(R.color.yellow))
-                return R.style.RisuscitoTheme_Yellow;
-            if (accentColor() == mContext.getResources().getColor(R.color.orange_light))
-                return R.style.RisuscitoTheme_OrangeLight;
-            if (accentColor() == mContext.getResources().getColor(R.color.orange))
-                return R.style.RisuscitoTheme_Orange;
-            if (accentColor() == mContext.getResources().getColor(R.color.red_light))
-                return R.style.RisuscitoTheme_RedLight;
-            else
-                return R.style.RisuscitoTheme;
+        if (accentColor() == mContext.getResources().getColor(R.color.blue_dark))
+            return R.style.RisuscitoTheme_BlueDark;
+        if (accentColor() == mContext.getResources().getColor(R.color.grey))
+            return R.style.RisuscitoTheme_Grey;
+        if (accentColor() == mContext.getResources().getColor(R.color.blue_grey))
+            return R.style.RisuscitoTheme_BlueGrey;
+        if (accentColor() == mContext.getResources().getColor(R.color.black))
+            return R.style.RisuscitoTheme_Black;
+        if (accentColor() == mContext.getResources().getColor(R.color.brown))
+            return R.style.RisuscitoTheme_Brown;
+        if (accentColor() == mContext.getResources().getColor(R.color.red))
+            return R.style.RisuscitoTheme_Red;
+        if (accentColor() == mContext.getResources().getColor(R.color.pink))
+            return R.style.RisuscitoTheme_Pink;
+        if (accentColor() == mContext.getResources().getColor(R.color.purple))
+            return R.style.RisuscitoTheme_Purple;
+        if (accentColor() == mContext.getResources().getColor(R.color.violet))
+            return R.style.RisuscitoTheme_Violet;
+        if (accentColor() == mContext.getResources().getColor(R.color.blue))
+            return R.style.RisuscitoTheme_Blue;
+        if (accentColor() == mContext.getResources().getColor(R.color.blue_light))
+            return R.style.RisuscitoTheme_BlueLight;
+        if (accentColor() == mContext.getResources().getColor(R.color.torqouise))
+            return R.style.RisuscitoTheme_Torqouise;
+        if (accentColor() == mContext.getResources().getColor(R.color.green_water))
+            return R.style.RisuscitoTheme_GreenWater;
+        if (accentColor() == mContext.getResources().getColor(R.color.green))
+            return R.style.RisuscitoTheme_Green;
+        if (accentColor() == mContext.getResources().getColor(R.color.green_light))
+            return R.style.RisuscitoTheme_GreenLight;
+        if (accentColor() == mContext.getResources().getColor(R.color.green_bean))
+            return R.style.RisuscitoTheme_GreenBean;
+        if (accentColor() == mContext.getResources().getColor(R.color.yellow))
+            return R.style.RisuscitoTheme_Yellow;
+        if (accentColor() == mContext.getResources().getColor(R.color.orange_light))
+            return R.style.RisuscitoTheme_OrangeLight;
+        if (accentColor() == mContext.getResources().getColor(R.color.orange))
+            return R.style.RisuscitoTheme_Orange;
+        if (accentColor() == mContext.getResources().getColor(R.color.red_light))
+            return R.style.RisuscitoTheme_RedLight;
+        else
+            return R.style.RisuscitoTheme;
 //        }
     }
 
     public static int shiftColorDown(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        hsv[2] *= 0.9f; // value component
+        hsv[2] *= 0.8f; // value component
         return Color.HSVToColor(hsv);
     }
 
     public static int shiftColorUp(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        hsv[2] *= 1.2f; // value component
+//        hsv[2] *= 1.2f; // value component
+        hsv[2] = 0.2f + 0.8f * hsv[2];
         return Color.HSVToColor(hsv);
+    }
+
+    /**
+     * Lightens a color by a given factor.
+     *
+     * @param color
+     *            The color to lighten
+     * @param factor
+     *            The factor to lighten the color. 0 will make the color unchanged. 1 will make the
+     *            color white.
+     * @return lighter version of the specified color.
+     */
+    public static int lighter(int color, float factor) {
+        int red = (int) ((Color.red(color) * (1 - factor) / 255 + factor) * 255);
+        int green = (int) ((Color.green(color) * (1 - factor) / 255 + factor) * 255);
+        int blue = (int) ((Color.blue(color) * (1 - factor) / 255 + factor) * 255);
+        return Color.argb(Color.alpha(color), red, green, blue);
     }
 
 

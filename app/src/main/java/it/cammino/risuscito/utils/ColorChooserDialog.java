@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.utilities.colorpicker.ColorPickerDialog;
 import it.cammino.utilities.colorpicker.ColorPickerPalette;
 import it.cammino.utilities.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
@@ -120,28 +119,4 @@ public class ColorChooserDialog extends ColorPickerDialog implements OnColorSele
 //                ((ThemeableActivity) mActivity).getThemeUtils().accentColor());
     }
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-//                    mActivity.setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.CHANGE_COLOR:
-//                    mActivity.setRequestedOrientation(prevOrientation);
-                    dismiss();
-                    mCallback.onColorSelection(mTitleResId, mSelectedColor);
-                    break;
-                default:
-//                    mActivity.setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
 }

@@ -11,6 +11,7 @@ public class CantoHistory {
     private String timestamp;
     private int idCanto;
     private String source;
+    private boolean mSelected;
 
     public CantoHistory(String total, int idCanto, String source, String timestamp) {
         this.setTitolo(total.substring(10));
@@ -19,6 +20,7 @@ public class CantoHistory {
         this.setIdCanto(idCanto);
         this.setTimestamp(timestamp);
         this.setSource(source);
+        this.setmSelected(false);
     }
 
     public int getPagina() {
@@ -67,5 +69,13 @@ public class CantoHistory {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public boolean ismSelected() {
+        return mSelected;
+    }
+
+    public void setmSelected(boolean mSelected) {
+        this.mSelected = mSelected;
     }
 }

@@ -11,11 +11,9 @@ utilities/build
 utilities/utilities.iml
 NonSenseFilePicker/NonSenseFilePicker.iml
 android-floating-action-button/android-floating-action-button.iml
-discreteSeekBar/discreteSeekBar.iml
 .navigation
 NonSenseFilePicker/build
-discreteSeekBar/build
-circulareveal/build
-circulareveal/circulareveal.iml
 android-floating-action-button/build
 recyclerviewfastscroller/recyclerviewfastscroller.iml
+fab-toolbar/fab-toolbar.iml
+fab-toolbar/build

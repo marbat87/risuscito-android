@@ -10,6 +10,7 @@
         <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
         <changelogtext>Nuova sezione "Cronologia" con lo storico dei canti visualizzati</changelogtext>
         <changelogtext>Aggiunta la funzione di anteprima del canto, quando si fa la ricerca per inserimento in una lista personalizzata</changelogtext>
+        <changelogtext>Adesso si possono scambiare i canti nelle liste personalizzate con una pressione prolungata</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.4.0" changeDate="05 Aprile 2015">

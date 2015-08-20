@@ -13,7 +13,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +35,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.rey.material.widget.ProgressView;
@@ -50,12 +51,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private DatabaseCanti listaCanti;
-    private List<CantoItem> titoli;
+    private List<CantoRecycled> titoli;
     private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
@@ -81,6 +83,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     private SearchTask searchTask ;
 
+    private long mLastClickTime = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,31 +99,37 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
 
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);
@@ -127,7 +137,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
+        titoli = new ArrayList<>();
         cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
@@ -366,18 +376,24 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                             db.close();
 
-                            Toast.makeText(getActivity()
-                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity()
+//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                    .show();
                         }
                         else {
 //                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
 //                                    .equalsIgnoreCase(titoloDaAgg)) {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView
+                                        , R.string.present_yet
+                                        , Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
@@ -419,8 +435,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-                                                Toast.makeText(getActivity()
-                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(getActivity()
+//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                                        .show();
                                             }
 
                                             @Override
@@ -470,9 +488,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast toast = Toast.makeText(getActivity()
-                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getActivity()
+//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
+//        toast.show();
+        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -492,12 +512,18 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         try {
             db.execSQL(sql);
-            Toast.makeText(getActivity()
-                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                    .show();
         } catch (SQLException e) {
-            Toast toast = Toast.makeText(getActivity()
-                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity()
+//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//            toast.show();
+            Snackbar.make(rootView
+                    , R.string.present_yet
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
         }
 
         db.close();
@@ -528,9 +554,13 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             db.close();
 
             if (titolo.equalsIgnoreCase(titoloPresente)) {
-                Toast toast = Toast.makeText(getActivity()
-                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getActivity()
+//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//                toast.show();
+                Snackbar.make(rootView
+                        , R.string.present_yet
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
             else {
                 idListaDaAgg = idLista;
@@ -564,8 +594,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-                                Toast.makeText(getActivity()
-                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
 
                             @Override
@@ -603,8 +635,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast.makeText(getActivity()
-                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity()
+//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
 //    private class ButtonClickedListener implements DialogInterface.OnClickListener {
@@ -685,6 +719,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             String text = "";
             String[] aResults = new String[300];
             int totalResults = 0;
+            titoli.clear();
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -714,7 +749,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 if (found) {
 
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             +		"		FROM ELENCO"
                             +		"		WHERE source = '" + aTexts[k][0] + "'";
 
@@ -725,6 +760,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //		    			Log.i("TROVATO IN", aTexts[k][0]);
 //		    			Log.i("LUNGHEZZA", aResults.length+"");
                         aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+                        titoli.add(new CantoRecycled(lista.getString(0)
+                                , lista.getInt(2)
+                                , lista.getString(1)
+                                , lista.getInt(3)
+                                , lista.getString(4)));
                     }
                     // chiude il cursore
                     lista.close();
@@ -732,12 +772,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 }
             }
 
-            titoli.clear();
-            for (int i = 0; i < aResults.length; i++) {
-                if (aResults[i] == null)
-                    break;
-                titoli.add(new CantoItem(aResults[i]));
-            }
+//            titoli.clear();
+//            for (int i = 0; i < aResults.length; i++) {
+//                if (aResults[i] == null)
+//                    break;
+//                titoli.add(new CantoItem(aResults[i]));
+//            }
 
             return null;
         }

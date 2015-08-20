@@ -64,7 +64,7 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
             }
         });
 
-        cantoHolder.wholeView.setOnClickListener(new View.OnClickListener() {
+        cantoHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cantoHolder.checkBox.setChecked(!cantoHolder.checkBox.isChecked());
@@ -84,7 +84,6 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
         public TextView cantoTitle;
         public TextView cantoPage;
         public CheckBox checkBox;
-        private View wholeView;
 
 
         public CantoViewHolder(View itemView) {
@@ -92,7 +91,6 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
             cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
             cantoPage = (TextView) itemView.findViewById(R.id.text_page);
             checkBox = (CheckBox) itemView.findViewById(R.id.check_box);
-            wholeView = itemView.findViewById(R.id.checkable_bck);
         }
 
     }

@@ -24,7 +24,7 @@
         android:theme="@style/RisuscitoTheme" >
         <activity
             android:name="it.cammino.risuscito.MainActivity"
-            android:theme="@style/RisuscitoTheme" >
+            android:theme="@style/RisuscitoTheme.Launcher" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -73,6 +73,10 @@
                 <!--<category android:name="android.intent.category.DEFAULT" />-->
             <!--</intent-filter>-->
         </activity>
+        <activity android:name="it.cammino.risuscito.slides.IntroPaginaRender" android:label=""/>
+        <activity android:name="it.cammino.risuscito.slides.IntroConsegnati" android:label=""/>
+        <activity android:name="it.cammino.risuscito.slides.IntroCreaLista" android:label=""/>
+        <activity android:name="it.cammino.risuscito.slides.IntroMain" android:label=""/>
     </application>
 
 </manifest>

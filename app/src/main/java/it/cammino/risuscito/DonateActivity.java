@@ -27,9 +27,10 @@ public class DonateActivity extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.activity_donate, container, false);
 //		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_donate);
-		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
-		((MainActivity) getActivity()).getSupportActionBar()
-				.setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+//		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
+//		((MainActivity) getActivity()).getSupportActionBar()
+//				.setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+		((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_donate);
 
 		WebView donateView = (WebView) rootView.findViewById(R.id.donate_text);
 		donateView.setBackgroundColor(0);
@@ -86,10 +87,10 @@ public class DonateActivity extends Fragment {
 		return rootView;
 	}
 
-	public int dpToPx(int dp) {
-		DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-		return px;
-	}
+//	public int dpToPx(int dp) {
+//		DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//		return px;
+//	}
 
 }

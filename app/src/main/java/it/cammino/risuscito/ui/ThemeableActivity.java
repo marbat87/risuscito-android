@@ -32,10 +32,8 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         if (isMenuWorkaroundRequired()) {
             forceOverflowMenu();
         }
-        super.onCreate(savedInstanceState);
         mThemeUtils = new ThemeUtils(this);
         setTheme(mThemeUtils.getCurrent());
-
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 //        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
@@ -57,18 +55,17 @@ public abstract class ThemeableActivity extends AppCompatActivity {
             getBaseContext().getResources().updateConfiguration(config,
                     getBaseContext().getResources().getDisplayMetrics());
         }
+        super.onCreate(savedInstanceState);
 
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-
         try {
             float actualScale = getResources().getConfiguration().fontScale;
-//            Log.i(getClass().toString(), "actualScale: " + actualScale);
+            Log.d(getClass().toString(), "actualScale: " + actualScale);
             float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
-//            Log.i(getClass().toString(), "systemScale: " + systemScale);
+            Log.d(getClass().toString(), "systemScale: " + systemScale);
             if (actualScale != systemScale) {
                 Configuration config = new Configuration();
                 config.fontScale = systemScale;
@@ -76,16 +73,19 @@ public abstract class ThemeableActivity extends AppCompatActivity {
             }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
             for (StackTraceElement ste: e.getStackTrace()) {
                 Log.e(getClass().toString(), ste.toString());
             }
         }
         catch (NullPointerException e) {
             Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
+            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
             for (StackTraceElement ste: e.getStackTrace()) {
                 Log.e(getClass().toString(), ste.toString());
             }
         }
+        super.onResume();
 
         checkScreenAwake();
     }

@@ -29,6 +29,9 @@
 
         <item name="md_medium_font">Roboto-Medium.ttf</item>
         <item name="md_regular_font">Roboto-Regular.ttf</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/abc_ic_clear_mtrl_alpha</item>
+        <item name="actionModeBackground">@color/background_material_light</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >
@@ -113,6 +116,10 @@
 
     <style name="RisuscitoTheme.RedLight">
         <item name="colorAccent">#F4511E</item>
+    </style>
+
+    <style name="RisuscitoTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
 </resources>

@@ -4,6 +4,7 @@
     <style name="ActionBarThemeOverlay" parent="">
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#3fff</item>
+        <item name="android:textColorPrimary">@color/icon_ative_black</item>
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -60,10 +61,6 @@
         <item name="rd_padding">0dp</item>
     </style>
 
-    <!--<style name="TabTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Small">-->
-        <!--<item name="android:textColor">@color/color_tpi</item>-->
-    <!--</style>-->
-
     <style name="Material.Widget.Slider.Discrete.Risuscito">
         <item name="sl_travelAnimDuration">1</item>
         <item name="sl_thumbFocusRadius">40dip</item>
@@ -73,8 +70,8 @@
         <item name="sl_primaryColor">?colorAccent</item>
     </style>
 
-    <style name="TitoloPosizioneText">
-        <item name="android:gravity">start</item>
+    <style name="TitoloSezione">
+        <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
         <item name="fontPath">fonts/Roboto-Medium.ttf</item>
         <item name="android:textColor">?colorAccent</item>
@@ -94,29 +91,31 @@
     </style>
 
     <style name="Widget.Design.TabLayout.Risuscito">
-        <item name="tabSelectedTextColor">@android:color/white</item>
+        <!--<item name="tabSelectedTextColor">@android:color/white</item>-->
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="tabTextColor">#99FFFFFF</item>
-        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
+        <!--<item name="tabTextColor">#99FFFFFF</item>-->
+        <!--<item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>-->
         <item name="android:background">?colorPrimary</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="android:theme">@style/ActionBarThemeOverlay</item>
     </style>
 
-    <style name="TextAppearance.Design.Tab.Risuscito">
-        <item name="android:textStyle">bold</item>
-    </style>
+    <!--<style name="TextAppearance.Design.Tab.Risuscito">-->
+        <!--<item name="android:textStyle">bold</item>-->
+    <!--</style>-->
 
     <style name="Widget.Design.NavigationView.Risuscito">
         <item name="android:background">@color/navdrawer_background</item>
         <item name="colorControlHighlight">#12000000</item>
-        <item name="android:textAppearance">@style/TextAppearanceNavigation</item>
     </style>
 
-    <style name="TextAppearanceNavigation">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
+    <style name="ActionBar.TitleText.Collapsed">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="ActionBar.TitleText.Expanded">
+        <item name="android:textColor">@android:color/transparent</item>
     </style>
 
 </resources>

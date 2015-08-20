@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:id="@+id/toolbar_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:elevation="@dimen/toolbar_elevation"-->
+    <!--android:theme="@style/ActionBarThemeOverlay">-->
+
+    <include layout="@layout/risuscito_toolbar" />
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <!--<it.cammino.risuscito.ui.NestedScrollView-->
+    <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!--android:overScrollMode="never"-->
+    <!--android:weightSum="1.0"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
     <ScrollView
+        android:layout_gravity="top"
+        android:layout_marginTop="?actionBarSize"
         android:overScrollMode="never"
-        android:weightSum="1.0"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -21,9 +45,9 @@
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardCornerRadius="4dp"
-                card_view:cardElevation = "4dp">
+                risuscito:cardUseCompatPadding="true"
+                risuscito:cardCornerRadius="4dp"
+                risuscito:cardElevation = "4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -33,17 +57,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textColor="?colorAccent"
-                        android:textSize="14sp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="16dp"
                         android:text="@string/theme"
-                        android:gravity="start|center_vertical"
-                        android:layout_gravity="start|center_vertical"
-                        android:textAlignment="viewStart"
-                        fontPath="fonts/Roboto-Medium.ttf"
-                        tools:ignore="MissingPrefix" />
+                        style="@style/TitoloSezione" />
 
                     <RelativeLayout
                         android:id="@+id/primary_color_selection"
@@ -153,9 +168,9 @@
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardCornerRadius="4dp"
-                card_view:cardElevation = "4dp">
+                risuscito:cardUseCompatPadding="true"
+                risuscito:cardCornerRadius="4dp"
+                risuscito:cardElevation = "4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -165,17 +180,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textColor="?colorAccent"
-                        android:textSize="14sp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="16dp"
                         android:text="@string/lists_pref"
-                        android:gravity="start|center_vertical"
-                        android:layout_gravity="start|center_vertical"
-                        android:textAlignment="viewStart"
-                        fontPath="fonts/Roboto-Medium.ttf"
-                        tools:ignore="MissingPrefix" />
+                        style="@style/TitoloSezione" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -368,9 +374,9 @@
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardCornerRadius="4dp"
-                card_view:cardElevation = "4dp">
+                risuscito:cardUseCompatPadding="true"
+                risuscito:cardCornerRadius="4dp"
+                risuscito:cardElevation = "4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -380,17 +386,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textColor="?colorAccent"
-                        android:textSize="14sp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="16dp"
                         android:text="@string/system"
-                        android:gravity="start|center_vertical"
-                        android:layout_gravity="start|center_vertical"
-                        android:textAlignment="viewStart"
-                        fontPath="fonts/Roboto-Medium.ttf"
-                        tools:ignore="MissingPrefix" />
+                        style="@style/TitoloSezione" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -565,8 +562,12 @@
     </ScrollView>
 
     <View
+        android:layout_marginTop="?actionBarSize"
+        android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />
+
+    <!--</it.cammino.risuscito.ui.NestedScrollView>-->
 
 </FrameLayout>
