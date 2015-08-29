@@ -271,6 +271,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 
             updateLista();
             cantoAdapter.notifyDataSetChanged();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

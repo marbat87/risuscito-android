@@ -14,6 +14,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -22,14 +23,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.ColorChooserDialog;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.risuscito.utils.ColorChooserDialog;
 
-public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
+public class MainActivity extends ThemeableActivity implements com.afollestad.materialdialogs.ColorChooserDialog.ColorCallback {
 
     public DrawerLayout mDrawerLayout;
 //    private Toolbar mActionBarToolbar;
@@ -558,13 +559,31 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public void onColorSelection(int title, int color) {
+//    @Override
+//    public void onColorSelection(int title, int color) {
+//
+//        if (title == R.string.primary_color)
+//            getThemeUtils().primaryColor(color);
+//        else if (title == R.string.accent_color)
+//            getThemeUtils().accentColor(color);
+//
+//        if (android.os.Build.VERSION.SDK_INT >= 11) {
+//            recreate();
+//        }
+//        else {
+//            Intent i = getBaseContext().getPackageManager()
+//                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(i);
+//        }
+//    }
 
-        if (title == R.string.primary_color)
-            getThemeUtils().primaryColor(color);
-        else if (title == R.string.accent_color)
+    @Override
+    public void onColorSelection(com.afollestad.materialdialogs.ColorChooserDialog colorChooserDialog, int color) {
+        if (colorChooserDialog.isAccentMode())
             getThemeUtils().accentColor(color);
+        else
+            getThemeUtils().primaryColor(color);
 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
             recreate();

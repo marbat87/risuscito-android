@@ -218,6 +218,7 @@ public class CantiEucarestiaFragment extends Fragment {
         if (requestCode == TAG_INSERT_EUCARESTIA && resultCode == Activity.RESULT_OK) {
             updateLista();
             cantoAdapter.notifyDataSetChanged();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -1032,7 +1033,7 @@ public class CantiEucarestiaFragment extends Fragment {
                 , 2
                 , position
                 , tag
-                , (position == 4 || position == 3) ? true: false), list);
+                , position == 4 || position == 3), list);
 
         cursor.close();
         db.close();
@@ -1719,7 +1720,7 @@ public class CantiEucarestiaFragment extends Fragment {
             }
             return true;
         }
-    };
+    }
 
     private void scambioCanto(View v, int position) {
 //        String cantoCliccato = ((TextView) v.findViewById(idText)).getText().toString();

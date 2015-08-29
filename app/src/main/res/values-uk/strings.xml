@@ -292,5 +292,7 @@
     <string name="player_state">Stato del lettore:</string>
     <string name="focus_not_allowed">AudioFocus non consentito</string>
     <string name="download_error">Errore nel download:</string>
+    <string name="back">INDIETRO</string>
+    <string name="done">FATTO</string>
 
 </resources>

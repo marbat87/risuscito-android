@@ -220,6 +220,7 @@ public class CantiParolaFragment extends Fragment {
         if (requestCode == TAG_INSERT_PAROLA && resultCode == Activity.RESULT_OK) {
             updateLista();
             cantoAdapter.notifyDataSetChanged();
+            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
