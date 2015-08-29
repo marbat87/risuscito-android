@@ -587,11 +587,11 @@ public class PreferencesFragment extends Fragment {
 //        }
 //    }
 
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
+//    private int dpToPx(int dp) {
+//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//        return px;
+//    }
 
     private int[] getIntArray(int arrayId) {
         final TypedArray ta = getActivity().getResources().obtainTypedArray(arrayId);
