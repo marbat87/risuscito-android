@@ -370,6 +370,9 @@ public class PreferencesFragment extends Fragment {
 //                colorChooser.show(getFragmentManager(),"primaryCC");
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
                         .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
+                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+                        .backButton(R.string.dialog_back)  // optional string, changes back button label
                         .show();
             }
         });
@@ -390,6 +393,9 @@ public class PreferencesFragment extends Fragment {
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
                         .accentMode(true)  // optional boolean, true shows accent palette
                         .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
+                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+                        .backButton(R.string.dialog_back)  // optional string, changes back button label
                         .show();
             }
         });

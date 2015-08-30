@@ -190,7 +190,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         toolbar.setTitle("");
-        ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
+//        ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
+        TextView title = (TextView) findViewById(R.id.main_toolbarTitle);
+        title.setText(R.string.title_activity_inserisci_titolo);
+        if (getThemeUtils().isLightColor())
+            title.setTextColor(getResources().getColor(android.R.color.black));
+        else
+            title.setTextColor(getResources().getColor(android.R.color.white));
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);

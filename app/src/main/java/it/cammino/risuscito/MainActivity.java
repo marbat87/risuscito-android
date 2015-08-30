@@ -679,12 +679,17 @@ public class MainActivity extends ThemeableActivity implements com.afollestad.ma
     }
 
     public void setupToolbar(View toolbar, int titleResId) {
-
         Toolbar mActionToolbar = (Toolbar) toolbar;
         setSupportActionBar(mActionToolbar);
         mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         getSupportActionBar().setTitle("");
-        ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+        TextView title = (TextView)toolbar.findViewById(R.id.main_toolbarTitle);
+//        ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+        title.setText(titleResId);
+        if (getThemeUtils().isLightColor())
+            title.setTextColor(getResources().getColor(android.R.color.black));
+        else
+            title.setTextColor(getResources().getColor(android.R.color.white));
         mActionToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -692,7 +697,6 @@ public class MainActivity extends ThemeableActivity implements com.afollestad.ma
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-
     }
 
 }

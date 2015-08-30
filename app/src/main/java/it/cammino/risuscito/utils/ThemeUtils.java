@@ -70,7 +70,7 @@ public class ThemeUtils {
 
     public int accentColorLight() {
 //        return shiftColorUp(accentColor());
-        return lighter(accentColor(),0.5f);
+        return lighter(accentColor(), 0.5f);
 
     }
 
@@ -379,6 +379,28 @@ public class ThemeUtils {
         int green = (int) ((Color.green(color) * (1 - factor) / 255 + factor) * 255);
         int blue = (int) ((Color.blue(color) * (1 - factor) / 255 + factor) * 255);
         return Color.argb(Color.alpha(color), red, green, blue);
+    }
+
+    public boolean isLightColor() {
+        return (primaryColor() == Color.parseColor("#FFEBEE")
+            || primaryColor() == Color.parseColor("#FCE4EC")
+                || primaryColor() == Color.parseColor("#F3E5F5")
+                || primaryColor() == Color.parseColor("#EDE7F6")
+                || primaryColor() == Color.parseColor("#E8EAF6")
+                || primaryColor() == Color.parseColor("#E3F2FD")
+                || primaryColor() == Color.parseColor("#E1F5FE")
+                || primaryColor() == Color.parseColor("#E0F7FA")
+                || primaryColor() == Color.parseColor("#E0F2F1")
+                || primaryColor() == Color.parseColor("#E8F5E9")
+                || primaryColor() == Color.parseColor("#F1F8E9")
+                || primaryColor() == Color.parseColor("#F9FBE7")
+                || primaryColor() == Color.parseColor("#FFFDE7")
+                || primaryColor() == Color.parseColor("#FFF8E1")
+                || primaryColor() == Color.parseColor("#FFF3E0")
+                || primaryColor() == Color.parseColor("#FBE9E7")
+                || primaryColor() == Color.parseColor("#EFEBE9")
+                || primaryColor() == Color.parseColor("#FAFAFA")
+                || primaryColor() == Color.parseColor("#ECEFF1"));
     }
 
 

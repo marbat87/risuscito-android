@@ -39,7 +39,7 @@ dependencies {
     compile project(':NonSenseFilePicker')
     compile supportDependencies.cardView
     compile 'com.github.rey5137:material:1.2.1'
-    compile 'com.afollestad:material-dialogs:0.7.9.0'
+    compile 'com.afollestad:material-dialogs:0.7.9.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile project(':recyclerviewfastscroller')
     compile genericDependencies.CircularReveal
