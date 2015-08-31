@@ -248,50 +248,49 @@
     <string name="language_summary">Налаштуй мову меню та пісень.</string>
     <string name="page_contracted">СТОР.</string>
     <string name="translation_running">Переклад&#8230;</string>
-    <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
-    <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
-    <string name="title_activity_consegnati">Canti consegnati</string>
-    <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
-    <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
-    <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
-    <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
-    <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
-    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
-    <string name="title_activity_history">Cronologia</string>
-    <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
-    <string name="history_remove">Rimuovere dalla cronologia?</string>
-    <string name="history_empty">La cronologia è vuota.</string>
-    <string name="last_open_date">ULTIMA APERTURA:</string>
-    <string name="dialog_reset_history_title">Svuota cronologia</string>
-    <string name="dialog_reset_history_desc">Vuoi svuotare la cronologia dei canti visualizzati?</string>
-    <string name="canto_title_activity">Canto</string>
-    <string name="dialog_reset_favorites_title">Svuota preferiti</string>
-    <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
-    <string name="action_remove">Rimuovi</string>
-    <string name="history_removed">Rimosso dalla cronologia</string>
-    <string name="action_switch_to">Scambia con...</string>
-    <string name="song_removed">Canto rimosso</string>
-    <string name="switch_done">Scambio effettuato</string>
-    <string name="switch_impossible">Non puoi scambiare una canto con se stesso</string>
-    <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
-    <string name="switch_started">Scambio in corso&#8230;</string>
-    <string name="list_removed">Rimossa la lista \'</string>
-    <string name="favorites_removed">% rimossi dai preferiti</string>
-    <string name="histories_removed">% rimossi dalla cronologia</string>
-    <string name="sc_pagina_render_title">Pagina del canto</string>
-    <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
-    <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
-         salvataggio della tonalit&#224; impostata e reset di quella predefinita.</string>
-    <string name="sc_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le stesse tre funzioni della tonalit&#224;.</string>
-    <string name="sc_audio_title">Riproduzione audio</string>
-    <string name="sc_audio_desc">Usando questi controlli puoi riprodurre la registrazione del canto con le funzioni di: play, pausa,
-         posizionamento nel brano tramite barra, visualizzazione del tempo trascorso.</string>
-    <string name="sc_scroll_title">Scroll automatico del testo</string>
-    <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
-        \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
-    <string name="player_state">Stato del lettore:</string>
-    <string name="focus_not_allowed">AudioFocus non consentito</string>
-    <string name="download_error">Errore nel download:</string>
-    <string name="dialog_back">INDIETRO</string>
-
+    <string name="no_favourites_short">Ви не додали жодної закладки.</string>
+    <string name="no_consegnati">Ві не додали жодної пісні як \"вручену\".</string>
+    <string name="title_activity_consegnati">Вручені пісні</string>
+    <string name="favorite_on_off">Додати/видалити с закладок</string>
+    <string name="showcase_consegnati_desc">Вітаємо, тут Ви можете позначити пісні, які навчили вас катехісти.</string>
+    <string name="showcase_consegnati_howto">Натисніть цю кнопку, щоб відкрити список та позначити пісні.</string>
+    <string name="showcase_consegnati_confirm">Коли закінчите, натисніть ПІДТВЕРДИТИ, щоб зберегти зміни&#8230;</string>
+    <string name="showcase_consegnati_cancel">&#8230;або натисніть СКАСУВАТИ, щоб скасувати.</string>
+    <string name="save_consegnati_running">Збереження&#8230;</string>
+    <string name="title_activity_history">Хронологія</string>
+    <string name="new_hint_remove">Натисніть на елемент та тримайте для того, щоб видалити його</string>
+    <string name="history_remove">Видалити з хронології?</string>
+    <string name="history_empty">Хронологія пуста.</string>
+    <string name="last_open_date">ОСТАННЄ ВІДКРИТТЯ:</string>
+    <string name="dialog_reset_history_title">Очистити хронологію</string>
+    <string name="dialog_reset_history_desc">Бажаєш видалити хронологію продивлених пічень?</string>
+    <string name="canto_title_activity">Пісня</string>
+    <string name="dialog_reset_favorites_title">Очистити закладки</string>
+    <string name="dialog_reset_favorites_desc">Бажаєш очистити список закладок?</string>
+    <string name="action_remove">Видалити</string>
+    <string name="history_removed">Видалено з хронології</string>
+    <string name="action_switch_to">Змінити на...</string>
+    <string name="song_removed">Пічня видалена</string>
+    <string name="switch_done">Зміну здійснено</string>
+    <string name="switch_impossible">Не можна змінити пісню на ту ж саму пісню</string>
+    <string name="switch_tooltip">Натисніть на пісню або на пустий рядок зі списку, на яку хочете змінити пісню</string>
+    <string name="switch_started">Змінюється&#8230;</string>
+    <string name="list_removed">Список видалено \'</string>
+    <string name="favorites_removed">% видалено з закладок</string>
+    <string name="histories_removed">% видалено з хронології</string>
+    <string name="sc_pagina_render_title">Сторінка пісні</string>
+    <string name="sc_pagina_render_desc">Вітаємо в нову сторінку пісні. \nОсь головні функції:</string>
+    <string name="sc_tonalita_desc">З цього меню можна здійснити зміну тональності з наступними функціями: перенесення аккордів,
+         збереження встановленої тональності та відновлення стандартної.</string>
+    <string name="sc_barre_desc">З цього меню можна здійснити зміну баре з тими самими трьома функціями тональності.</string>
+    <string name="sc_audio_title">Відтворення аудіо</string>
+    <string name="sc_audio_desc">За допомогою цього меню можна відтворити запис пісні з функціями: відтворення, пауза,
+         переміщення по пісні завдяки строчці, візуалізація програнного часу.</string>
+    <string name="sc_scroll_title">Автоматичне перегортання тексту</string>
+    <string name="sc_scroll_desc">За допомогою цього меню можна зробити так, щоб текст перегортався автоматично та регулювати швидкість перегортання.
+        \nПОРАДА: Регулюйте зум для того, щоб отримати кращий ефект.</string>
+    <string name="player_state">Статус програвача:</string>
+    <string name="focus_not_allowed">AudioFocus не дозволений</string>
+    <string name="download_error">Помилка в завантаженні:</string>
+    <string name="dialog_back">НАЗАД</string>
 </resources>

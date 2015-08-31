@@ -2,18 +2,18 @@
 <changelog bulletedList="true">
 
     <changelogversion versionName="3.5.0" changeDate="XX Agosto 2015">
-        <changelogtext>Miglioramenti delle dimensioni e degli stili dei popup su tablet</changelogtext>
-        <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
-        <changelogtext>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nella nuova "FloatingToolbar"</changelogtext>
-        <changelogtext>Pagina del canto: Aggiunta nuovamente la percentuale di velocità di scorrimento sempre visibile</changelogtext>
-        <changelogtext>Pagina del canto: Aggiunto tempo di esecuzione della registrazione e barra per scorrerla velocemente</changelogtext>
-        <changelogtext>Liste personalizzate: spostate le funzioni di modifica lista nella nuova "FloatingToolbar"</changelogtext>
-        <changelogtext>Liste personalizzate: Ora si possono scambiare i canti tra le varie posizioni (tieni premuto per aprire il menù apposito)</changelogtext>
-        <changelogtext>Liste personalizzate: Quando si sta cercando un canto da inserire, ora si può visualizzarlo prima di inserirlo</changelogtext>
-        <changelogtext>Preferiti: Ora è possibile rimuovere più preferiti in una volta</changelogtext>
-        <changelogtext>Nuova sezione "Cronologia" con lo storico dei canti visualizzati</changelogtext>
-        <changelogtext>Nuova sezione "Canti Consegnati" in cui è possibile segnarsi i canti che sono stati consegnati dai propri catechisti</changelogtext>
-        <changelogtext>Nuove stile per le guide di spiegazione delle funzioni</changelogtext>
+	<changelogtext>Покращення розмірів та стилів поп ап для планшетів</changelogtext>
+        <changelogtext>Деякі графічні покращення для пристосування до Material Design Google</changelogtext>
+        <changelogtext>Сторінка пісні: Переміщено функцію "додати до закладок" в новий "FloatingToolbar"</changelogtext>
+        <changelogtext>Сторінка пісні: Знову додано проценти швидкості переготання</changelogtext>
+        <changelogtext>Сторінка пісні: Додано час прослуховування та строку, щоб швидко перегортати</changelogtext>
+        <changelogtext>Особисті списки: переміщено функцію змінення списку в новий "FloatingToolbar"</changelogtext>
+        <changelogtext>Особисті списки: Зараз модна змінити пісні містами в меню (натисніть та тримайте щоб відкрити спеціальне меню)</changelogtext>
+        <changelogtext>Особисті списки: При пошуці пісні, можна продивитись пісні перед тим, як її додати</changelogtext>
+        <changelogtext>Закладки: Зараз можна видалити декілька закладок за один раз</changelogtext>
+        <changelogtext>Нова можливість "Хронологія" з історією продивлених пісень</changelogtext>
+        <changelogtext>Нова можливість "Вручені пісні", в якій можна позначити ті пісні, які навчили вам катехісти</changelogtext>
+        <changelogtext>Новий стиль пояснення функцій</changelogtext>
     </changelogversion>
 
 </changelog>
