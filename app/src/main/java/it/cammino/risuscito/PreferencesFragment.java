@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,10 +25,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.ColorChooserDialog;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.utilities.colorpicker.ColorPickerDialog;
 
 public class PreferencesFragment extends Fragment {
 
@@ -360,20 +360,20 @@ public class PreferencesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-//                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
-//                        R.string.primary_color,
-//                        getIntArray(R.array.colors_primary),
-//                        getThemeUtils().primaryColor(),
-//                        4,
-//                        ColorPickerDialog.SIZE_SMALL);
+                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
+                        R.string.primary_color,
+                        getIntArray(R.array.colors_primary),
+                        getThemeUtils().primaryColor(),
+                        4,
+                        ColorPickerDialog.SIZE_SMALL);
                 //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
-//                colorChooser.show(getFragmentManager(),"primaryCC");
-                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
-                        .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
-                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
-                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
-                        .backButton(R.string.dialog_back)  // optional string, changes back button label
-                        .show();
+                colorChooser.show(getFragmentManager(),"primaryCC");
+//                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
+//                        .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
+//                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+//                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+//                        .backButton(R.string.dialog_back)  // optional string, changes back button label
+//                        .show();
             }
         });
 
@@ -382,21 +382,21 @@ public class PreferencesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-//                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
-//                        R.string.accent_color,
-//                        getIntArray(R.array.colors_accent),
-//                        getThemeUtils().accentColor(),
-//                        4,
-//                        ColorPickerDialog.SIZE_SMALL);
+                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
+                        R.string.accent_color,
+                        getIntArray(R.array.colors_accent),
+                        getThemeUtils().accentColor(),
+                        4,
+                        ColorPickerDialog.SIZE_SMALL);
                 //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
-//                colorChooser.show(getFragmentManager(),"primaryCC");
-                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
-                        .accentMode(true)  // optional boolean, true shows accent palette
-                        .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
-                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
-                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
-                        .backButton(R.string.dialog_back)  // optional string, changes back button label
-                        .show();
+                colorChooser.show(getFragmentManager(),"primaryCC");
+//                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
+//                        .accentMode(true)  // optional boolean, true shows accent palette
+//                        .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
+//                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+//                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+//                        .backButton(R.string.dialog_back)  // optional string, changes back button label
+//                        .show();
             }
         });
 
