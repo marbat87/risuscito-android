@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -558,31 +559,13 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public void onColorSelection(int title, int color) {
-
-        if (title == R.string.primary_color)
-            getThemeUtils().primaryColor(color);
-        else if (title == R.string.accent_color)
-            getThemeUtils().accentColor(color);
-
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
-            recreate();
-        }
-        else {
-            Intent i = getBaseContext().getPackageManager()
-                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        }
-    }
-
 //    @Override
-//    public void onColorSelection(com.afollestad.materialdialogs.ColorChooserDialog colorChooserDialog, int color) {
-//        if (colorChooserDialog.isAccentMode())
-//            getThemeUtils().accentColor(color);
-//        else
+//    public void onColorSelection(int title, int color) {
+//
+//        if (title == R.string.primary_color)
 //            getThemeUtils().primaryColor(color);
+//        else if (title == R.string.accent_color)
+//            getThemeUtils().accentColor(color);
 //
 //        if (android.os.Build.VERSION.SDK_INT >= 11) {
 //            recreate();
@@ -595,17 +578,35 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 //        }
 //    }
 
+    @Override
+    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, int color) {
+        if (colorChooserDialog.isAccentMode())
+            getThemeUtils().accentColor(color);
+        else
+            getThemeUtils().primaryColor(color);
+
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            recreate();
+        }
+        else {
+            Intent i = getBaseContext().getPackageManager()
+                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        }
+    }
+
     //converte gli accordi salvati dalla lingua vecchia alla nuova
     private void convertTabs(SQLiteDatabase db, String conversion) {
 //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
         HashMap<String, String> mappa = null;
         if (conversion.equalsIgnoreCase("it-uk")) {
-            mappa = new HashMap<String, String>();
+            mappa = new HashMap<>();
             for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
                 mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
         }
         if (conversion.equalsIgnoreCase("uk-it")) {
-            mappa = new HashMap<String, String>();
+            mappa = new HashMap<>();
             for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
                 mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
         }

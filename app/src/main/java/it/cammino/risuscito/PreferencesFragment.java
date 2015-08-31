@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -29,7 +28,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.cammino.risuscito.utils.ColorChooserDialog;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.cammino.utilities.colorpicker.ColorPickerDialog;
 
 public class PreferencesFragment extends Fragment {
 
@@ -360,20 +358,20 @@ public class PreferencesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
-                        R.string.primary_color,
-                        getIntArray(R.array.colors_primary),
-                        getThemeUtils().primaryColor(),
-                        4,
-                        ColorPickerDialog.SIZE_SMALL);
+//                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
+//                        R.string.primary_color,
+//                        ColorPalette.PRIMARY_COLORS,
+//                        getThemeUtils().primaryColor(),
+//                        4,
+//                        ColorPickerDialog.SIZE_SMALL);
                 //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
-                colorChooser.show(getFragmentManager(),"primaryCC");
-//                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
-//                        .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
-//                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
-//                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
-//                        .backButton(R.string.dialog_back)  // optional string, changes back button label
-//                        .show();
+//                colorChooser.show(getFragmentManager(),"primaryCC");
+                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
+                        .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
+                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+                        .backButton(R.string.dialog_back)  // optional string, changes back button label
+                        .show();
             }
         });
 
@@ -382,21 +380,21 @@ public class PreferencesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
-                        R.string.accent_color,
-                        getIntArray(R.array.colors_accent),
-                        getThemeUtils().accentColor(),
-                        4,
-                        ColorPickerDialog.SIZE_SMALL);
+//                ColorChooserDialog colorChooser = ColorChooserDialog.newInstance(
+//                        R.string.accent_color,
+//                        getIntArray(R.array.colors_accent),
+//                        getThemeUtils().accentColor(),
+//                        4,
+//                        ColorPickerDialog.SIZE_SMALL);
                 //il SIZE_SMALL è ininfluente perchè in realtà va in base alla dimensione ed è automatico
-                colorChooser.show(getFragmentManager(),"primaryCC");
-//                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
-//                        .accentMode(true)  // optional boolean, true shows accent palette
-//                        .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
-//                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
-//                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
-//                        .backButton(R.string.dialog_back)  // optional string, changes back button label
-//                        .show();
+//                colorChooser.show(getFragmentManager(),"primaryCC");
+                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
+                        .accentMode(true)  // optional boolean, true shows accent palette
+                        .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
+                        .doneButton(R.string.single_choice_ok)  // optional string, changes done button label
+                        .cancelButton(R.string.cancel)  // optional string, changes cancel button label
+                        .backButton(R.string.dialog_back)  // optional string, changes back button label
+                        .show();
             }
         });
 
@@ -605,14 +603,14 @@ public class PreferencesFragment extends Fragment {
 //        return px;
 //    }
 
-    private int[] getIntArray(int arrayId) {
-        final TypedArray ta = getActivity().getResources().obtainTypedArray(arrayId);
-        int[] mColors = new int[ta.length()];
-        for (int i = 0; i < ta.length(); i++)
-            mColors[i] = ta.getColor(i, 0);
-        ta.recycle();
-        return mColors;
-    }
+//    private int[] getIntArray(int arrayId) {
+//        final TypedArray ta = getActivity().getResources().obtainTypedArray(arrayId);
+//        int[] mColors = new int[ta.length()];
+//        for (int i = 0; i < ta.length(); i++)
+//            mColors[i] = ta.getColor(i, 0);
+//        ta.recycle();
+//        return mColors;
+//    }
 
     private static void setColorViewValue(View view, int color) {
         if (view instanceof ImageView) {
