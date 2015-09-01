@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.5.0" changeDate="XX Agosto 2015">
+    <changelogversion versionName="3.5.0" changeDate="14 Settembre 2015">
         <changelogtext>Miglioramenti delle dimensioni e degli stili dei popup su tablet</changelogtext>
         <changelogtext>Miglioramenti grafici vari per adeguamento al Material Design di Google</changelogtext>
         <changelogtext>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nella nuova "FloatingToolbar"</changelogtext>
