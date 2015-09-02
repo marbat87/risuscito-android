@@ -91,6 +91,7 @@ public class CantiParolaFragment extends Fragment {
                 db.execSQL(sql);
                 db.close();
                 updateLista();
+                cantoAdapter.notifyDataSetChanged();
                 mShareActionProvider.setShareIntent(getDefaultIntent());
             }
         });
