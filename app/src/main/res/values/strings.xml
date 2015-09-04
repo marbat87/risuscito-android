@@ -293,6 +293,8 @@
     <string name="focus_not_allowed">AudioFocus non consentito</string>
     <string name="download_error">Errore nel download:</string>
     <string name="dialog_back">INDIETRO</string>
+    <string name="share_by">CONDIVIDI CON&#8230;</string>
+    <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>

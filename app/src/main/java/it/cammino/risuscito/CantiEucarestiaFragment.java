@@ -10,21 +10,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +36,7 @@ import java.util.Locale;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
+import it.cammino.risuscito.ui.BottomSheetHelper;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -50,7 +46,7 @@ public class CantiEucarestiaFragment extends Fragment {
     private int idDaCanc;
     private String timestampDaCanc;
     private View rootView;
-    private ShareActionProvider mShareActionProvider;
+    //    private ShareActionProvider mShareActionProvider;
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
     public ActionMode mMode;
@@ -89,7 +85,17 @@ public class CantiEucarestiaFragment extends Fragment {
                 db.close();
                 updateLista();
                 cantoAdapter.notifyDataSetChanged();
-                mShareActionProvider.setShareIntent(getDefaultIntent());
+//                mShareActionProvider.setShareIntent(getDefaultIntent());
+            }
+        });
+
+        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Log.i(getClass().toString(), "cantieucarestia");
+                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
+                        .title(R.string.share_by)
+                        .show();
             }
         });
 
@@ -197,11 +203,11 @@ public class CantiEucarestiaFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        setHasOptionsMenu(true);
+//    }
 
 //    @Override
 //    public void onResume() {
@@ -218,7 +224,7 @@ public class CantiEucarestiaFragment extends Fragment {
         if (requestCode == TAG_INSERT_EUCARESTIA && resultCode == Activity.RESULT_OK) {
             updateLista();
             cantoAdapter.notifyDataSetChanged();
-            mShareActionProvider.setShareIntent(getDefaultIntent());
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -232,14 +238,14 @@ public class CantiEucarestiaFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        MenuItem shareItem = menu.findItem(R.id.action_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-        ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-        if (mShareActionProvider != null && tempPager.getCurrentItem() == 1)
-            mShareActionProvider.setShareIntent(getDefaultIntent());
-    }
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        MenuItem shareItem = menu.findItem(R.id.action_share);
+//        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+//        ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
+//        if (mShareActionProvider != null && tempPager.getCurrentItem() == 1)
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
+//    }
 
     private Intent getDefaultIntent() {
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -1674,7 +1680,7 @@ public class CantiEucarestiaFragment extends Fragment {
                     db.close();
                     updateLista();
                     cantoAdapter.notifyItemChanged(longclickedPos);
-                    mShareActionProvider.setShareIntent(getDefaultIntent());
+//                    mShareActionProvider.setShareIntent(getDefaultIntent());
                     actionModeOk = true;
                     mode.finish();
                     Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
@@ -1691,7 +1697,7 @@ public class CantiEucarestiaFragment extends Fragment {
                                     db.close();
                                     updateLista();
                                     cantoAdapter.notifyItemChanged(longclickedPos);
-                                    mShareActionProvider.setShareIntent(getDefaultIntent());
+//                                    mShareActionProvider.setShareIntent(getDefaultIntent());
                                 }
                             })
                             .setActionTextColor(getThemeUtils().accentColor())
@@ -1768,7 +1774,7 @@ public class CantiEucarestiaFragment extends Fragment {
             View parent = (View) v.getParent().getParent();
             cantoAdapter.notifyItemChanged(longclickedPos);
             cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString()));
-            mShareActionProvider.setShareIntent(getDefaultIntent());
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
 //            Toast.makeText(getActivity()
 //                    , getResources().getString(R.string.switch_done)
 //                    , Toast.LENGTH_SHORT).show();
@@ -1805,7 +1811,7 @@ public class CantiEucarestiaFragment extends Fragment {
         updateLista();
         cantoAdapter.notifyItemChanged(longclickedPos);
         cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
-        mShareActionProvider.setShareIntent(getDefaultIntent());
+//        mShareActionProvider.setShareIntent(getDefaultIntent());
 //        Toast.makeText(getActivity()
 //                , getResources().getString(R.string.switch_done)
 //                , Toast.LENGTH_SHORT).show();

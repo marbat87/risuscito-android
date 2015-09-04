@@ -293,4 +293,7 @@
     <string name="focus_not_allowed">AudioFocus не дозволений</string>
     <string name="download_error">Помилка в завантаженні:</string>
     <string name="dialog_back">НАЗАД</string>
+    <string name="share_by">ПОДІЛИТИСЯ З&#8230;</string>
+    <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
+
 </resources>

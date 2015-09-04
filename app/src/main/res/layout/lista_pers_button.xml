@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/button_pulisci"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:visibility="gone"
-    android:soundEffectsEnabled="false" />
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+    <Button
+        android:id="@+id/button_pulisci"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:soundEffectsEnabled="false" />
+    <Button
+        android:id="@+id/button_condividi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:soundEffectsEnabled="false" />
+</FrameLayout>

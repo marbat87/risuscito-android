@@ -9,22 +9,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,13 +37,14 @@ import java.util.Locale;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
+import it.cammino.risuscito.ui.BottomSheetHelper;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ListaPersonalizzataFragment extends Fragment {
 
     private int posizioneDaCanc;
     private View rootView;
-    private ShareActionProvider mShareActionProvider;
+//    private ShareActionProvider mShareActionProvider;
     private DatabaseCanti listaCanti;
     String cantoDaCanc;
     private SQLiteDatabase db;
@@ -192,7 +188,17 @@ public class ListaPersonalizzataFragment extends Fragment {
                 db.close();
                 updateLista();
                 cantoAdapter.notifyDataSetChanged();
-                mShareActionProvider.setShareIntent(getDefaultIntent());
+//                mShareActionProvider.setShareIntent(getDefaultIntent());
+            }
+        });
+
+        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Log.i(getClass().toString(), "idLista: " + idLista);
+                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
+                        .title(R.string.share_by)
+                        .show();
             }
         });
 
@@ -215,11 +221,11 @@ public class ListaPersonalizzataFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        setHasOptionsMenu(true);
+//    }
 
 //    @Override
 //    public void onResume() {
@@ -271,7 +277,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 
             updateLista();
             cantoAdapter.notifyDataSetChanged();
-            mShareActionProvider.setShareIntent(getDefaultIntent());
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -285,15 +291,15 @@ public class ListaPersonalizzataFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-//		inflater.inflate(R.menu.list_with_delete, menu);
-        MenuItem shareItem = menu.findItem(R.id.action_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-        ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
-        if (listaPersonalizzata != null && mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
-            mShareActionProvider.setShareIntent(getDefaultIntent());
-    }
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+////		inflater.inflate(R.menu.list_with_delete, menu);
+//        MenuItem shareItem = menu.findItem(R.id.action_share);
+//        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+//        ViewPager tempPager = (ViewPager) getActivity().findViewById(R.id.view_pager);
+//        if (listaPersonalizzata != null && mShareActionProvider != null && tempPager.getCurrentItem() == fragmentIndex)
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
+//    }
 
     private Intent getDefaultIntent() {
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -731,7 +737,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                     db.close();
                     updateLista();
                     cantoAdapter.notifyItemChanged(longclickedPos);
-                    mShareActionProvider.setShareIntent(getDefaultIntent());
+//                    mShareActionProvider.setShareIntent(getDefaultIntent());
                     actionModeOk = true;
                     mode.finish();
                     Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
@@ -746,7 +752,7 @@ public class ListaPersonalizzataFragment extends Fragment {
                                     db.close();
                                     updateLista();
                                     cantoAdapter.notifyItemChanged(longclickedPos);
-                                    mShareActionProvider.setShareIntent(getDefaultIntent());
+//                                    mShareActionProvider.setShareIntent(getDefaultIntent());
                                 }
                             })
                             .setActionTextColor(getThemeUtils().accentColor())
@@ -790,7 +796,7 @@ public class ListaPersonalizzataFragment extends Fragment {
             cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString()));
             actionModeOk = true;
             mMode.finish();
-            mShareActionProvider.setShareIntent(getDefaultIntent());
+//            mShareActionProvider.setShareIntent(getDefaultIntent());
 //            Toast.makeText(getActivity()
 //                    , getResources().getString(R.string.switch_done)
 //                    , Toast.LENGTH_SHORT).show();
@@ -824,10 +830,10 @@ public class ListaPersonalizzataFragment extends Fragment {
         updateLista();
         cantoAdapter.notifyItemChanged(longclickedPos);
         cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
-        mShareActionProvider.setShareIntent(getDefaultIntent());
+//        mShareActionProvider.setShareIntent(getDefaultIntent());
         actionModeOk = true;
         mMode.finish();
-        mShareActionProvider.setShareIntent(getDefaultIntent());
+//        mShareActionProvider.setShareIntent(getDefaultIntent());
 //        Toast.makeText(getActivity()
 //                , getResources().getString(R.string.switch_done)
 //                , Toast.LENGTH_SHORT).show();
