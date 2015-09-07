@@ -68,6 +68,7 @@
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
+            xmlns:risuscito="http://schemas.android.com/apk/res-auto"
             android:id="@+id/matchedList"
             android:layout_width= "match_parent"
             android:layout_height = "match_parent"
