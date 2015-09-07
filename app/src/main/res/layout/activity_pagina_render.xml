@@ -227,7 +227,8 @@
             android:layout_height="match_parent"
             android:visibility="invisible"
             android:background="@android:color/transparent"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:elevation="@dimen/design_appbar_elevation" />
 
         <com.github.alexkolpa.fabtoolbar.FabToolbar
             android:id="@+id/fab_toolbar"
@@ -237,7 +238,8 @@
             android:layout_marginBottom="@dimen/fab_toolbar_bottom_tb"
             risuscito:tb_anim_duration="500"
             risuscito:tb_button_gravity="end"
-            risuscito:tb_container_gravity="center">
+            risuscito:tb_container_gravity="center"
+            android:elevation="@dimen/design_fab_elevation" >
 
             <ImageButton
                 android:id="@+id/fab_fullscreen_on"

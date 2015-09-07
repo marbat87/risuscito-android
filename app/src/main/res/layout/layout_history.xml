@@ -87,8 +87,8 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginEnd="@dimen/fab_margin_end"
         android:layout_marginRight="@dimen/fab_margin_end"
-        risuscito:elevation="@dimen/toolbar_elevation"
-        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed"
+        risuscito:elevation="@dimen/design_fab_elevation"
+        risuscito:pressedTranslationZ="@dimen/design_fab_translation_z_pressed"
         risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>
