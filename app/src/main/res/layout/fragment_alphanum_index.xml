@@ -30,7 +30,6 @@
 <!--</RelativeLayout>-->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_min_margin"
@@ -40,19 +39,18 @@
         android:id="@+id/cantiList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
         />
 
-    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-        android:id="@+id/fast_scroller"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        risuscito:rvfs_barColor="@android:color/transparent"
-        risuscito:rvfs_handleBackground="@drawable/rvfs_fast_scroller_handle_rounded"
-        risuscito:rvfs_fast_scroller_layout="@layout/vertical_recycler_fast_scroller_layout_with_color_group_section_indicator"
-        />
+    <!--<xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller-->
+        <!--android:id="@+id/fast_scroller"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--risuscito:rvfs_barColor="@android:color/transparent"-->
+        <!--risuscito:rvfs_handleBackground="@drawable/rvfs_fast_scroller_handle_rounded"-->
+        <!--risuscito:rvfs_fast_scroller_layout="@layout/vertical_recycler_fast_scroller_layout_with_color_group_section_indicator"-->
+        <!--/>-->
 
 </RelativeLayout>

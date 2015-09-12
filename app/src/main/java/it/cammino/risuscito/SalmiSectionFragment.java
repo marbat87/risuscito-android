@@ -8,13 +8,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -30,14 +28,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.MaterialScrollBar;
 
 import java.util.ArrayList;
 
-import it.cammino.risuscito.adapters.CantoSalmoAdapter;
+import it.cammino.risuscito.adapters.CantoAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.ui.RisuscitoSectionTitleIndicator;
 import it.cammino.risuscito.utils.ThemeUtils;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class SalmiSectionFragment extends Fragment implements View.OnCreateContextMenuListener {
 
@@ -122,23 +120,29 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         };
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
-        VerticalRecyclerViewFastScroller fastScroller =
-                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
+//        VerticalRecyclerViewFastScroller fastScroller =
+//                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoSalmoAdapter adapter = new CantoSalmoAdapter(titoli, clickListener, this);
+        CantoAdapter adapter = new CantoAdapter(2, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(recyclerView);
+//        fastScroller.setRecyclerView(recyclerView);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+//        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
 
         // Connect the scroller to the adapter to observe data set changes
-        adapter.registerAdapterDataObserver(fastScroller.getAdapterDataObserver());
+//        adapter.registerAdapterDataObserver(fastScroller.getAdapterDataObserver());
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        new MaterialScrollBar(getActivity(), recyclerView, true)
+                .addIndicator(new CustomIndicator(getActivity()))
+                .setHideDuration(Utility.HIDE_DELAY)
+                .setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()))
+                .setAutoHide(true);
 
         query = "SELECT _id, lista" +
                 "		FROM LISTE_PERS" +
@@ -161,16 +165,16 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        if (!mLUtils.hasL()) {
-            Drawable myDrawable = getResources().getDrawable(R.drawable.rvfs_fast_scroller_handle_rounded);
-            Drawable compatDrawable  = DrawableCompat.wrap(myDrawable);
-            DrawableCompat.setTint(compatDrawable, getThemeUtils().accentColor());
-            fastScroller.setHandleBackground(compatDrawable);
-        }
-
-        RisuscitoSectionTitleIndicator indicator = (RisuscitoSectionTitleIndicator)
-                rootView.findViewById(R.id.rvfs_scroll_section_indicator)  ;
-        indicator.setIndicatorBackgroundColor(getThemeUtils().accentColor());
+//        if (!mLUtils.hasL()) {
+//            Drawable myDrawable = getResources().getDrawable(R.drawable.rvfs_fast_scroller_handle_rounded);
+//            Drawable compatDrawable  = DrawableCompat.wrap(myDrawable);
+//            DrawableCompat.setTint(compatDrawable, getThemeUtils().accentColor());
+//            fastScroller.setHandleBackground(compatDrawable);
+//        }
+//
+//        RisuscitoSectionTitleIndicator indicator = (RisuscitoSectionTitleIndicator)
+//                rootView.findViewById(R.id.rvfs_scroll_section_indicator)  ;
+//        indicator.setIndicatorBackgroundColor(getThemeUtils().accentColor());
 
         return rootView;
     }
