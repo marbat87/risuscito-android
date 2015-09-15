@@ -112,15 +112,15 @@ public class CustomLists extends Fragment  {
         tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
 //        tabs.setupWithViewPager(mViewPager);
-        tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                tabs.setupWithViewPager(mViewPager);
-//                mLUtils.applyFontedTab(mViewPager, tabs);
-//            }
-//        });
+//        tabs.setupWithViewPager(mViewPager);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
+        tabs.post(new Runnable() {
+            @Override
+            public void run() {
+                tabs.setupWithViewPager(mViewPager);
+                mLUtils.applyFontedTab(mViewPager, tabs);
+            }
+        });
 //        final Runnable mMyRunnable = new Runnable() {
 //            @Override
 //            public void run() {
@@ -339,15 +339,15 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                tabs.setupWithViewPager(mViewPager);
-                                mLUtils.applyFontedTab(mViewPager, tabs);
-//                                tabs.post(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        tabs.setupWithViewPager(mViewPager);
-//                                        mLUtils.applyFontedTab(mViewPager, tabs);
-//                                    }
-//                                });
+//                                tabs.setupWithViewPager(mViewPager);
+//                                mLUtils.applyFontedTab(mViewPager, tabs);
+                                tabs.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tabs.setupWithViewPager(mViewPager);
+                                        mLUtils.applyFontedTab(mViewPager, tabs);
+                                    }
+                                });
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override
@@ -371,15 +371,15 @@ public class CustomLists extends Fragment  {
 
                                                 updateLista();
                                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                                tabs.setupWithViewPager(mViewPager);
-                                                mLUtils.applyFontedTab(mViewPager, tabs);
-//                                                tabs.post(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        tabs.setupWithViewPager(mViewPager);
-//                                                        mLUtils.applyFontedTab(mViewPager, tabs);
-//                                                    }
-//                                                });
+//                                                tabs.setupWithViewPager(mViewPager);
+//                                                mLUtils.applyFontedTab(mViewPager, tabs);
+                                                tabs.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        tabs.setupWithViewPager(mViewPager);
+                                                        mLUtils.applyFontedTab(mViewPager, tabs);
+                                                    }
+                                                });
                                                 Handler myHandler = new Handler();
                                                 final Runnable mMyRunnable2 = new Runnable() {
                                                     @Override

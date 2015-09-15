@@ -125,10 +125,10 @@
         android:layout_width="wrap_content"
         android:layout_marginEnd="@dimen/toolbar_fab_margin_lateral"
         android:layout_marginRight="@dimen/toolbar_fab_margin_lateral"
-        risuscito:elevation="@dimen/design_fab_elevation"
+        risuscito:elevation="@dimen/fab_elevation"
         risuscito:layout_anchor="@id/appbarlayout"
         risuscito:layout_anchorGravity="bottom|right|end"
-        risuscito:pressedTranslationZ="@dimen/design_fab_translation_z_pressed" />
+        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed" />
 
     <!--</RelativeLayout>-->
 

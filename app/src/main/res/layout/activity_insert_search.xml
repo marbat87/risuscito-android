@@ -10,7 +10,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/design_appbar_elevation"
+        android:elevation="@dimen/appbar_elevation"
         android:theme="@style/ActionBarThemeOverlay">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />

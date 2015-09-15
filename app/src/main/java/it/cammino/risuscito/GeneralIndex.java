@@ -57,15 +57,15 @@ public class GeneralIndex extends Fragment {
 
         final TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                tabs.setupWithViewPager(mViewPager);
-//                mLUtils.applyFontedTab(mViewPager, tabs);
-//            }
-//        });
+//        tabs.setupWithViewPager(mViewPager);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
+        tabs.post(new Runnable() {
+                @Override
+                public void run() {
+                    tabs.setupWithViewPager(mViewPager);
+                    mLUtils.applyFontedTab(mViewPager, tabs);
+                }
+        });
 
 //        Log.i(getClass().getName(), "ViewCompat.isLaidOut(tabs): " + ViewCompat.isLaidOut(tabs));
 //        if (ViewCompat.isLaidOut(tabs)) {

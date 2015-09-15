@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.0'
+    buildToolsVersion '23.0.1'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
@@ -45,7 +45,7 @@ dependencies {
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.+@aar'
-    compile 'com.turingtechnologies.materialscrollbar:lib:4+'
+    compile 'com.turingtechnologies.materialscrollbar:lib:4.1.0'
     compile supportDependencies.appCompat
     compile supportDependencies.design
     compile genericDependencies.CircularReveal

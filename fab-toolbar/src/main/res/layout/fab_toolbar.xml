@@ -25,8 +25,8 @@
         android:layout_marginTop="@dimen/tb_button_margin_top"
         android:layout_marginRight="@dimen/tb_button_margin_right"
         android:layout_marginBottom="@dimen/tb_button_margin_bottom"
-        app:elevation="@dimen/design_fab_elevation"
-        app:pressedTranslationZ="@dimen/design_fab_translation_z_pressed" />
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_translation_z_pressed" />
 
     <LinearLayout
         android:id="@+id/container"
