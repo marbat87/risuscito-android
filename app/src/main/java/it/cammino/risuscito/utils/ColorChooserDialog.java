@@ -16,15 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.CircleView;
 
 import java.io.Serializable;
 
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.ui.CircleView;
 import it.cammino.utilities.colorpicker.ColorPalette;
 
 /**
@@ -52,7 +51,6 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     private int mCircleSize;
     private ColorCallback mCallback;
     private GridView mGrid;
-    private int prevOrientation;
 
     @Override
     public void onAttach(Activity activity) {
@@ -119,10 +117,8 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
             if (builder.mDynamicButtonColor) {
                 int selectedColor = getSelectedColor();
-                ((TextView)dialog.getActionButton(DialogAction.POSITIVE)).setTextColor(selectedColor);
-                ((TextView)dialog.getActionButton(DialogAction.NEUTRAL)).setTextColor(selectedColor);
-//                dialog.positiveButton.setTextColor(selectedColor);
-//                dialog.neutralButton.setTextColor(selectedColor);
+                dialog.getActionButton(DialogAction.POSITIVE).setTextColor(selectedColor);
+                dialog.getActionButton(DialogAction.NEUTRAL).setTextColor(selectedColor);
             }
 
             invalidate();
