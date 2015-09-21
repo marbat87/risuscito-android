@@ -295,5 +295,7 @@
     <string name="dialog_back">НАЗАД</string>
     <string name="share_by">ПОДІЛИТИСЯ З&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
+    <string name="barre_search_string">Баре</string>
+    <string name="barre_add_al">на</string>
 
 </resources>

@@ -295,9 +295,12 @@
     <string name="dialog_back">INDIETRO</string>
     <string name="share_by">CONDIVIDI CON&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
+    <string name="barre_search_string">Barrè</string>
+    <string name="barre_add_al">al</string>
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
+    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
     <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
     <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
 
