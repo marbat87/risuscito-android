@@ -41,16 +41,10 @@
         <activity
             android:name="it.cammino.risuscito.GeneralInsertSearch"
             android:label="" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.cammino.risuscito.CustomLists" />
         </activity>
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"
             android:label="" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.cammino.risuscito.CustomLists" />
         </activity>
         <!--<activity-->
             <!--android:name="com.ipaulpro.afilechooser.FileChooserActivity"-->

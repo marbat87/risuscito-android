@@ -112,6 +112,8 @@ public class CustomLists extends Fragment  {
         tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
 //        tabs.setupWithViewPager(mViewPager);
+//        tabs.setupWithViewPager(mViewPager);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
         tabs.post(new Runnable() {
             @Override
             public void run() {
@@ -337,6 +339,8 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
+//                                tabs.setupWithViewPager(mViewPager);
+//                                mLUtils.applyFontedTab(mViewPager, tabs);
                                 tabs.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -367,6 +371,8 @@ public class CustomLists extends Fragment  {
 
                                                 updateLista();
                                                 mSectionsPagerAdapter.notifyDataSetChanged();
+//                                                tabs.setupWithViewPager(mViewPager);
+//                                                mLUtils.applyFontedTab(mViewPager, tabs);
                                                 tabs.post(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -569,15 +575,15 @@ public class CustomLists extends Fragment  {
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
-//            tabs.setupWithViewPager(mViewPager);
-//            mLUtils.applyFontedTab(mViewPager, tabs);
-            tabs.post(new Runnable() {
-                @Override
-                public void run() {
-                    tabs.setupWithViewPager(mViewPager);
-                    mLUtils.applyFontedTab(mViewPager, tabs);
-                }
-            });
+            tabs.setupWithViewPager(mViewPager);
+            mLUtils.applyFontedTab(mViewPager, tabs);
+//            tabs.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    tabs.setupWithViewPager(mViewPager);
+//                    mLUtils.applyFontedTab(mViewPager, tabs);
+//                }
+//            });
 //            final Runnable mMyRunnable = new Runnable() {
 //                @Override
 //                public void run() {
@@ -658,7 +664,7 @@ public class CustomLists extends Fragment  {
     }
 
     public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-        SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+        SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);

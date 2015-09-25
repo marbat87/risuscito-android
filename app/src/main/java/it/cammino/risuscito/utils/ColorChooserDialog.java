@@ -7,6 +7,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -16,15 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.CircleView;
 
 import java.io.Serializable;
 
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.ui.CircleView;
 import it.cammino.utilities.colorpicker.ColorPalette;
 
 /**
@@ -32,6 +32,8 @@ import it.cammino.utilities.colorpicker.ColorPalette;
  */
 @SuppressWarnings({"FieldCanBeLocal", "ConstantConditions"})
 public class ColorChooserDialog extends DialogFragment implements View.OnClickListener {
+
+    private final static String TAG = "[MD_COLOR_CHOOSER]";
 
     private int[] mColorsTop;
     private int[][] mColorsSub;
@@ -52,7 +54,6 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     private int mCircleSize;
     private ColorCallback mCallback;
     private GridView mGrid;
-    private int prevOrientation;
 
     @Override
     public void onAttach(Activity activity) {
@@ -119,10 +120,8 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
             if (builder.mDynamicButtonColor) {
                 int selectedColor = getSelectedColor();
-                ((TextView)dialog.getActionButton(DialogAction.POSITIVE)).setTextColor(selectedColor);
-                ((TextView)dialog.getActionButton(DialogAction.NEUTRAL)).setTextColor(selectedColor);
-//                dialog.positiveButton.setTextColor(selectedColor);
-//                dialog.neutralButton.setTextColor(selectedColor);
+                dialog.getActionButton(DialogAction.POSITIVE).setTextColor(selectedColor);
+                dialog.getActionButton(DialogAction.NEUTRAL).setTextColor(selectedColor);
             }
 
             invalidate();
@@ -146,7 +145,7 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (getBuilder() == null)
+        if (getArguments() == null || !getArguments().containsKey("builder"))
             throw new IllegalStateException("ColorChooserDialog should be created using its Builder interface.");
         generateColors();
 
@@ -281,11 +280,11 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
         @ColorInt
         protected int mPreselect;
         @StringRes
-        protected int mDoneBtn = R.string.md_done_label;
+        protected int mDoneBtn = R.string.single_choice_ok;
         @StringRes
-        protected int mBackBtn = R.string.md_back_label;
+        protected int mBackBtn = R.string.dialog_back;
         @StringRes
-        protected int mCancelBtn = R.string.md_cancel_label;
+        protected int mCancelBtn = R.string.cancel;
 
         protected boolean mAccentMode = false;
         protected boolean mDynamicButtonColor = true;
@@ -361,7 +360,13 @@ public class ColorChooserDialog extends DialogFragment implements View.OnClickLi
 
     @NonNull
     public ColorChooserDialog show(AppCompatActivity context) {
-        show(context.getSupportFragmentManager(), "[MD_COLOR_CHOOSER]");
+        Fragment frag = context.getSupportFragmentManager().findFragmentByTag(TAG);
+        if (frag != null) {
+            ((DialogFragment) frag).dismiss();
+            context.getSupportFragmentManager().beginTransaction()
+                    .remove(frag).commit();
+        }
+        show(context.getSupportFragmentManager(), TAG);
         return this;
     }
 }

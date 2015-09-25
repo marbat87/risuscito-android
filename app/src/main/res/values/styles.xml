@@ -14,12 +14,12 @@
         <!--<item name="android:textSize">18sp</item>-->
     </style>
 
-    <style name="menu_labels_style">
-        <item name="android:background">@drawable/fab_label_background</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">left|start</item>
-        <item name="android:layout_gravity">left|start</item>
-    </style>
+    <!--<style name="menu_labels_style">-->
+        <!--<item name="android:background">@drawable/fab_label_background</item>-->
+        <!--<item name="android:textColor">@android:color/white</item>-->
+        <!--<item name="android:gravity">left|start</item>-->
+        <!--<item name="android:layout_gravity">left|start</item>-->
+    <!--</style>-->
 
     <style name="FloatingWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">
         <item name="rd_rippleColor">#33000000</item>

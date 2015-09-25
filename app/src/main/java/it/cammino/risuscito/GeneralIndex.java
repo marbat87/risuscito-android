@@ -60,11 +60,11 @@ public class GeneralIndex extends Fragment {
 //        tabs.setupWithViewPager(mViewPager);
 //        mLUtils.applyFontedTab(mViewPager, tabs);
         tabs.post(new Runnable() {
-            @Override
-            public void run() {
-                tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
-            }
+                @Override
+                public void run() {
+                    tabs.setupWithViewPager(mViewPager);
+                    mLUtils.applyFontedTab(mViewPager, tabs);
+                }
         });
 
 //        Log.i(getClass().getName(), "ViewCompat.isLaidOut(tabs): " + ViewCompat.isLaidOut(tabs));
