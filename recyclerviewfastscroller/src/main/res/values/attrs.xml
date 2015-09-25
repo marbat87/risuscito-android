@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="rvfs_AbsRecyclerViewFastScroller">
+        <attr name="rvfs_fast_scroller_layout" format="reference" />
+        <attr name="rvfs_barColor" format="color|reference" />
+        <attr name="rvfs_barBackground" format="reference" />
+        <attr name="rvfs_handleColor" format="color|reference" />
+        <attr name="rvfs_handleBackground" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="rvfs_AbsSectionIndicator">
+        <attr name="rvfs_section_indicator_layout" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="rvfs_SectionTitleIndicator">
+        <attr name="rvfs_textColor" format="color|reference" />
+        <attr name="rvfs_backgroundColor" format="color|reference" />
+    </declare-styleable>
+
+</resources>

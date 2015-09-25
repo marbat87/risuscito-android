@@ -1,135 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:orientation="vertical"-->
+<!--android:focusable="true"-->
+<!--android:fitsSystemWindows="true"-->
+<!--android:focusableInTouchMode="true">-->
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:focusable="true"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/risuscito_toolbar"
-        android:layout_height="?attr/actionBarSize"
-        risuscito:theme="@style/ActionBarThemeOverlay"
-        risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
-        risuscito:titleTextAppearance="@style/ActionBar.TitleText"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"
-        android:elevation="@dimen/toolbar_elevation" />
-
-    <RelativeLayout
-        android:background="?attr/colorPrimary"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="130dp"
         android:elevation="@dimen/toolbar_elevation">
 
-        <TextView
-            android:paddingTop="@dimen/action_bar_text_field_margin"
-            android:paddingLeft="@dimen/action_bar_text_field_margin"
-            android:id="@+id/textTitleDescription"
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/white"
-            android:text="@string/list_title" />
-
-        <android.support.v7.internal.widget.TintEditText
-            android:id="@+id/textfieldTitle"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:layout_marginLeft="@dimen/activity_min_margin"
-            android:layout_marginRight="@dimen/activity_min_margin"
-            android:layout_marginBottom="@dimen/activity_min_margin"
-            android:layout_alignBaseline="@id/textTitleDescription"
-            android:layout_toRightOf="@id/textTitleDescription"
-            android:layout_toEndOf="@id/textTitleDescription"
-            android:textSize="30sp"
-            android:textColor="@android:color/white"
-            android:textCursorDrawable="@null"
-            android:imeOptions="actionDone"
-            android:hint="@string/list_title_modif" />
+            android:layout_height="match_parent"
+            risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
+            risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-    </RelativeLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:paddingTop="@dimen/activity_min_margin"
-                android:layout_marginLeft="@dimen/activity_min_margin"
-                android:layout_marginStart="@dimen/activity_min_margin"
-                android:text="@string/list_elements" />
-
-            <FrameLayout
+            <RelativeLayout
+                android:id="@+id/action_title_bar"
+                android:background="?attr/colorPrimary"
                 android:layout_width="match_parent"
+                risuscito:layout_collapseMode="parallax"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/activity_min_margin"
-                android:paddingRight="@dimen/activity_min_margin" >
+                android:gravity="bottom">
 
                 <TextView
-                    android:id="@+id/noElementsAdded"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_elements_added" />
-
-                <it.cammino.utilities.dslv.DragSortListView
-                    android:id="@android:id/list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:divider="@android:color/transparent"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="0dp"
-                    android:dividerHeight="1dp"
-                    risuscito:drag_enabled="true"
-                    risuscito:collapsed_height="2dp"
-                    risuscito:drag_scroll_start="0.33"
-                    risuscito:max_drag_scroll_speed="0.5"
-                    risuscito:float_alpha="0.6"
-                    risuscito:slide_shuffle_speed="0.3"
-                    risuscito:track_drag_sort="false"
-                    risuscito:use_default_controller="true"
-                    risuscito:drag_handle_id="@id/drag_handle"
-                    risuscito:sort_enabled="true"
-                    risuscito:remove_enabled="true"
-                    risuscito:drag_start_mode="onMove"
-                    risuscito:remove_mode="flingRemove"
-                    android:drawSelectorOnTop="false"
-                    risuscito:float_background_color="@color/ripple_color" />
-
-                <com.melnykov.fab.FloatingActionButton
-                    android:id="@+id/fab_crea_lista"
+                    android:id="@+id/textTitleDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="@dimen/floating_margin_lateral"
-                    android:src="@drawable/ic_add_white_24dp"
-                    risuscito:fab_colorNormal="@color/theme_accent"
-                    risuscito:fab_colorPressed="@color/theme_primary_dark"
-                    risuscito:fab_colorRipple="@color/theme_primary_dark"/>
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    style="@style/TitoloSezione"
+                    android:textColor="@android:color/white"
+                    android:text="@string/list_title" />
 
-            </FrameLayout>
+                <EditText
+                    android:id="@+id/textfieldTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:layout_marginLeft="@dimen/activity_min_margin"
+                    android:layout_marginRight="@dimen/activity_min_margin"
+                    android:layout_marginBottom="@dimen/activity_min_margin"
+                    android:layout_alignBaseline="@id/textTitleDescription"
+                    android:layout_toRightOf="@id/textTitleDescription"
+                    android:layout_toEndOf="@id/textTitleDescription"
+                    android:textSize="30sp"
+                    android:textColor="@android:color/white"
+                    android:textCursorDrawable="@null"
+                    android:textColorHighlight="@color/ripple_color"
+                    android:imeOptions="actionDone"
+                    android:hint="@string/list_title_modif" />
 
-        </LinearLayout>
+            </RelativeLayout>
 
-        <View
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/risuscito_toolbar"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/ActionBarThemeOverlay"
+                risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
+                risuscito:contentInsetStart="72dp"
+                android:layout_width="match_parent"
+                android:background="?attr/colorPrimary"
+                risuscito:layout_collapseMode="pin" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+        <!--<include layout="@layout/risuscito_toolbar_noelevation" />-->
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/activity_min_margin"
+        android:layout_marginRight="@dimen/activity_min_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_min_margin"
+            android:text="@string/list_elements" />
+
+        <TextView
+            android:id="@+id/noElementsAdded"
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
+            android:layout_height="wrap_content"
+            android:text="@string/no_elements_added" />
 
-    </FrameLayout>
+        <include layout="@layout/layout_recycler" />
 
-</LinearLayout>
+    </LinearLayout>
+
+    <View
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_below="@id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/toolbar_shadow" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_crea_lista"
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginEnd="@dimen/toolbar_fab_margin_lateral"
+        android:layout_marginRight="@dimen/toolbar_fab_margin_lateral"
+        risuscito:elevation="@dimen/toolbar_elevation"
+        risuscito:layout_anchor="@id/appbarlayout"
+        risuscito:layout_anchorGravity="bottom|right|end"
+        risuscito:pressedTranslationZ="@dimen/fab_translation_z_pressed" />
+
+    <!--</RelativeLayout>-->
+
+</android.support.design.widget.CoordinatorLayout>

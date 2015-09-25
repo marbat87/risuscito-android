@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_min_margin"
     android:paddingRight="@dimen/activity_min_margin"
     android:paddingTop="@dimen/activity_min_margin"
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/fast_search_subtitle"/>
 
-    <android.support.v7.internal.widget.TintEditText
+    <EditText
         android:id="@+id/textfieldRicerca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:textColorHighlight="@color/ripple_color"
         android:imeOptions="actionDone"
         android:hint="@string/search_hint" />
 
-    <!--<com.gc.materialdesign.views.ButtonRectangle-->
-    <!--android:id="@+id/pulisci_ripple"-->
-    <!--android:layout_width="88dip"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:layout_marginRight="@dimen/min_button_margin"-->
-    <!--android:layout_marginEnd="@dimen/min_button_margin"-->
-    <!--android:layout_gravity="end"-->
-    <!--risuscito:clickAfterRipple="false"-->
-    <!--risuscito:rippleColor="@color/ripple_color"-->
-    <!--android:background="@color/theme_primary"-->
-    <!--android:soundEffectsEnabled="true"-->
-    <!--android:text="@string/button_pulisci" />-->
-    <it.cammino.utilities.material.PaperButton
+    <com.rey.material.widget.Button
         android:id="@+id/pulisci_ripple"
-        risuscito:paper_text="@string/button_pulisci"
-        risuscito:paper_color="@color/theme_primary"
-        risuscito:paper_text_color="@android:color/white"
-        risuscito:paper_font="fonts/Roboto-Medium.ttf"
-        android:layout_width="88dip"
-        risuscito:paper_text_size="@dimen/text_size_paper_button"
+        risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"
+        android:background="@drawable/bg_bt_raise"
+        android:text="@string/button_pulisci"
+        android:minWidth="@dimen/paper_button_width"
+        android:layout_width="wrap_content"
         android:layout_margin="@dimen/min_button_margin"
         android:layout_gravity="end"
-        android:paddingLeft="4dip"
-        android:paddingRight="4dip"
-        android:layout_height="48dip"/>
+        android:textColor="#FF000000"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"
+        android:paddingLeft="@dimen/button_text_padding"
+        android:paddingRight="@dimen/button_text_padding"
+        android:layout_height="36dp"
+        fontPath="fonts/Roboto-Medium.ttf"
+        tools:ignore="MissingPrefix" />
 
     <TextView
         android:id="@+id/search_no_results"
@@ -55,18 +48,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="15sp"
         android:text="@string/search_no_results"
         android:visibility="gone" />
 
-    <!--<ListView-->
-    <!--android:id="@+id/matchedList"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:drawSelectorOnTop="false"-->
-    <!--android:divider="@null" />-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/matchedList"
         android:layout_width= "match_parent"
-        android:layout_height = "match_parent" />
+        android:layout_height = "match_parent"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true" />
 
 </LinearLayout>

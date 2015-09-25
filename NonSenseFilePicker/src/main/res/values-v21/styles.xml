@@ -18,6 +18,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="FilePicker.Theme" parent="FilePicker.Theme.Base">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
         <item name="actionBarStyle">@style/FilePicker.ActionBar</item>
         <item name="actionOverflowButtonStyle">@style/FilePicker.ActionButton.Overflow</item>
         <item name="actionBarItemBackground">@drawable/ab_solid_filepickertheme</item>

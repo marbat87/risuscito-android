@@ -13,9 +13,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,10 +35,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alertdialogpro.AlertDialogPro;
-import com.alertdialogpro.material.ProgressBarCompat;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.rey.material.widget.ProgressView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -47,26 +47,28 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private DatabaseCanti listaCanti;
-    //    private String[] titoli;
-    private List<CantoItem> titoli;
-    private TintEditText searchPar;
+    private List<CantoRecycled> titoli;
+    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-    //    ListView lv;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
-    private ProgressBarCompat progress;
+    private ProgressView progress;
     private int prevOrientation;
     private static Map<Character, Character> MAP_NORM;
 
     private String titoloDaAgg;
+    private int idDaAgg;
     private int idListaDaAgg;
     private int posizioneDaAgg;
     private ListaPersonalizzata[] listePers;
@@ -81,47 +83,53 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     private SearchTask searchTask ;
 
+    private long mLastClickTime = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(
                 R.layout.activity_ricerca_avanzata, container, false);
 
-        searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
-
-//        lv = (ListView) rootView.findViewById(R.id.matchedList);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
+//
+//                // crea un manipolatore per il DB in modalità READ
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                // esegue la query per il recupero del nome del file della pagina da visualizzare
+//                String query = "SELECT source, _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccato + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                String pagina = cursor.getString(0);
+//                int idCanto = cursor.getInt(1);
+//
+//                // chiude il cursore
+//                cursor.close();
 
-                // crea un manipolatore per il DB in modalità READ
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                // esegue la query per il recupero del nome del file della pagina da visualizzare
-                String query = "SELECT source, _id" +
-                        "  FROM ELENCO" +
-                        "  WHERE titolo =  '" + cantoCliccato + "'";
-                Cursor cursor = db.rawQuery(query, null);
-
-                // recupera il nome del file
-                cursor.moveToFirst();
-                String pagina = cursor.getString(0);
-                int idCanto = cursor.getInt(1);
-
-                // chiude il cursore
-                cursor.close();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", pagina);
-                bundle.putInt("idCanto", idCanto);
+                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", idCanto);
+                bundle.putInt("idCanto", Integer.valueOf(
+                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);
@@ -129,18 +137,20 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
+        titoli = new ArrayList<>();
         cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
         searchPar.setText("");
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
+            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();
@@ -164,6 +174,14 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     searchTask = new SearchTask();
                     searchTask.execute(searchPar.getText().toString());
                 }
+                else {
+                    if (s.length() == 0) {
+                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        titoli.clear();
+                        cantoAdapter.notifyDataSetChanged();
+                        progress.stop();
+                    }
+                }
             }
 
             @Override
@@ -174,7 +192,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         });
 
-        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -207,17 +225,16 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         });
 
-//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
+//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
+//        paperPulisci.setColor(getThemeUtils().primaryColor());
         rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.GONE);
-                titoli.clear();
-                cantoAdapter.notifyDataSetChanged();
-                progress.setVisibility(View.GONE);
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                titoli.clear();
+//                cantoAdapter.notifyDataSetChanged();
+//                progress.stop();
             }
         });
 
@@ -240,8 +257,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         lista.close();
         db.close();
 
-//        setHasOptionsMenu(true);
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
@@ -260,8 +275,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-//        titoloDaAgg = ((TextView) info.targetView.findViewById(R.id.text_title)).getText().toString();
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         menu.setHeaderTitle("Aggiungi canto a:");
 
@@ -332,47 +345,107 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     idPosizioneClick = item.getItemId();
                     if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
                         idListaClick -= 100;
+
+                        //recupero ID del canto cliccato
+                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                        String query = "SELECT _id" +
+                                "		FROM ELENCO" +
+                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+                        Cursor cursor = db.rawQuery(query, null);
+                        cursor.moveToFirst();
+                        idDaAgg = cursor.getInt(0);
+                        cursor.close();
+
                         if (listePers[idListaClick]
-                                .getCantoPosizione(idPosizioneClick).equalsIgnoreCase("")) {
-                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                .getCantoPosizione(idPosizioneClick).equals("")) {
+//                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                            String query = "SELECT color, pagina" +
+//                                    "		FROM ELENCO" +
+//                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                            Cursor cursor = db.rawQuery(query, null);
+//
+//                            cursor.moveToFirst();
+//
+//                            listePers[idListaClick].addCanto(Utility.intToString(
+//                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+//                            cursor.close();
 
-                            String query = "SELECT color, pagina" +
-                                    "		FROM ELENCO" +
-                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                            Cursor cursor = db.rawQuery(query, null);
-
-                            cursor.moveToFirst();
-
-                            listePers[idListaClick].addCanto(Utility.intToString(
-                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-
+                            listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+                            db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                             db.close();
 
-                            Toast.makeText(getActivity()
-                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity()
+//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                    .show();
                         }
                         else {
-                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-                                    .equalsIgnoreCase(titoloDaAgg)) {
-                                Toast toast = Toast.makeText(getActivity()
-                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                                toast.show();
+//                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
+//                                    .equalsIgnoreCase(titoloDaAgg)) {
+                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView
+                                        , R.string.present_yet
+                                        , Snackbar.LENGTH_SHORT)
+                                        .show();
                             }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
                                 Utility.blockOrientation(getActivity());
-                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-                                        .setMessage(getString(R.string.dialog_present_yet) + " "
+                                //recupero titolo del canto presente
+                                query = "SELECT titolo" +
+                                        "		FROM ELENCO" +
+                                        "		WHERE _id = "
+                                        + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
+                                cursor = db.rawQuery(query, null);
+                                cursor.moveToFirst();
+//                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+//                                        .setMessage(getString(R.string.dialog_present_yet) + " "
+////                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+////                                                .substring(10)
+//                                                + cursor.getString(0)
+//                                                + getString(R.string.dialog_wonna_replace))
+//                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPERS_OK))
+//                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                                        .show();
+                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                                        .title(R.string.dialog_replace_title)
+                                        .content(getString(R.string.dialog_present_yet) + " "
                                                 + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
                                                 .substring(10)
+                                                + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPERS_OK))
-                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                                        .positiveText(R.string.confirm)
+                                        .negativeText(R.string.dismiss)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+
+                                                ContentValues  values = new  ContentValues( );
+                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+                                                db.close();
+                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                                Toast.makeText(getActivity()
+//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                                        .show();
+                                            }
+
+                                            @Override
+                                            public void onNegative(MaterialDialog dialog) {
+                                                getActivity().setRequestedOrientation(prevOrientation);
+                                            }
+                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -388,6 +461,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                     }
                                 });
                                 dialog.setCancelable(false);
+                                cursor.close();
+                                db.close();
                             }
                         }
                         return true;
@@ -413,9 +488,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast toast = Toast.makeText(getActivity()
-                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-        toast.show();
+//        Toast toast = Toast.makeText(getActivity()
+//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
+//        toast.show();
+        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -435,12 +512,18 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         try {
             db.execSQL(sql);
-            Toast.makeText(getActivity()
-                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity()
+//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+            Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                    .show();
         } catch (SQLException e) {
-            Toast toast = Toast.makeText(getActivity()
-                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity()
+//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//            toast.show();
+            Snackbar.make(rootView
+                    , R.string.present_yet
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
         }
 
         db.close();
@@ -471,9 +554,13 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             db.close();
 
             if (titolo.equalsIgnoreCase(titoloPresente)) {
-                Toast toast = Toast.makeText(getActivity()
-                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                toast.show();
+//                Toast toast = Toast.makeText(getActivity()
+//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
+//                toast.show();
+                Snackbar.make(rootView
+                        , R.string.present_yet
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
             }
             else {
                 idListaDaAgg = idLista;
@@ -481,12 +568,43 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-                        .setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
+//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
+//                        .setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                                + getString(R.string.dialog_wonna_replace))
+//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPRED_OK))
+//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+//                        .show();
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.dialog_replace_title)
+                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.AVANZATA_LISTAPRED_OK))
-                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+                                String sql = "UPDATE CUST_LISTS "
+                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
+                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+                                        + "WHERE _id = " + idListaDaAgg
+                                        + "  AND position = " + posizioneDaAgg;
+                                db.execSQL(sql);
+                                db.close();
+                                getActivity().setRequestedOrientation(prevOrientation);
+//                                Toast.makeText(getActivity()
+//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -517,108 +635,71 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-        Toast.makeText(getActivity()
-                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity()
+//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
-    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-        private int clickedCode;
-
-        public ButtonClickedListener(int code) {
-            clickedCode = code;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (clickedCode) {
-                case Utility.DISMISS:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-                case Utility.AVANZATA_LISTAPERS_OK:
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                    String query = "SELECT color, pagina" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                    Cursor cursor = db.rawQuery(query, null);
-
-                    cursor.moveToFirst();
-
-                    listePers[idListaClick].addCanto(Utility.intToString(
-                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-
-                    ContentValues  values = new  ContentValues( );
-                    values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                    db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Toast.makeText(getActivity()
-                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-                    break;
-                case Utility.AVANZATA_LISTAPRED_OK:
-                    db = listaCanti.getReadableDatabase();
-                    cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                    String sql = "UPDATE CUST_LISTS "
-                            + "SET id_canto = (SELECT _id  FROM ELENCO"
-                            + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-                            + "WHERE _id = " + idListaDaAgg
-                            + "  AND position = " + posizioneDaAgg;
-                    db.execSQL(sql);
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    Toast.makeText(getActivity()
-                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    break;
-            }
-        }
-    }
+//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
+//        private int clickedCode;
+//
+//        public ButtonClickedListener(int code) {
+//            clickedCode = code;
+//        }
+//
+//        @Override
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (clickedCode) {
+//                case Utility.DISMISS:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//                case Utility.AVANZATA_LISTAPERS_OK:
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+////                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+////                    String query = "SELECT color, pagina" +
+////                            "		FROM ELENCO" +
+////                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+////                    Cursor cursor = db.rawQuery(query, null);
+////
+////                    cursor.moveToFirst();
+////
+////                    listePers[idListaClick].addCanto(Utility.intToString(
+////                            cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
+//                    listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                    ContentValues  values = new  ContentValues( );
+//                    values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                    db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null );
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Toast.makeText(getActivity()
+//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                    break;
+//                case Utility.AVANZATA_LISTAPRED_OK:
+//                    db = listaCanti.getReadableDatabase();
+//                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                    String sql = "UPDATE CUST_LISTS "
+//                            + "SET id_canto = (SELECT _id  FROM ELENCO"
+//                            + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+//                            + "WHERE _id = " + idListaDaAgg
+//                            + "  AND position = " + posizioneDaAgg;
+//                    db.execSQL(sql);
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    Toast.makeText(getActivity()
+//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                    break;
+//                default:
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    break;
+//            }
+//        }
+//    }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity().getApplicationContext(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
-
-//    private class SongRowAdapter extends ArrayAdapter<String> {
-//
-//        SongRowAdapter() {
-//            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//
-//            View row=super.getView(position, convertView, parent);
-//
-//            TextView canto = (TextView) row.findViewById(R.id.text_title);
-//
-//            String totalString = canto.getText().toString();
-//
-//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            String colore = totalString.substring(3, 10);
-//
-//            ((TextView) row.findViewById(R.id.text_title))
-//                    .setText(totalString.substring(10));
-//
-//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-////            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            return(row);
-//        }
-//    }
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
@@ -638,6 +719,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             String text = "";
             String[] aResults = new String[300];
             int totalResults = 0;
+            titoli.clear();
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -648,7 +730,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 for (int j = 0; j < words.length; j++) {
                     if (words[j].trim().length() > 1) {
                         text = words[j].trim();
-                        text = text.toLowerCase(Locale.getDefault());
+                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
 
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
                             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -667,7 +749,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 if (found) {
 
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             +		"		FROM ELENCO"
                             +		"		WHERE source = '" + aTexts[k][0] + "'";
 
@@ -678,6 +760,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //		    			Log.i("TROVATO IN", aTexts[k][0]);
 //		    			Log.i("LUNGHEZZA", aResults.length+"");
                         aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+                        titoli.add(new CantoRecycled(lista.getString(0)
+                                , lista.getInt(2)
+                                , lista.getString(1)
+                                , lista.getInt(3)
+                                , lista.getString(4)));
                     }
                     // chiude il cursore
                     lista.close();
@@ -685,14 +772,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 }
             }
 
-//            titoli = new String[totalResults];
-//            System.arraycopy(aResults, 0, titoli, 0, totalResults);
-            titoli.clear();
-            for (int i = 0; i < aResults.length; i++) {
-                if (aResults[i] == null)
-                    break;
-                titoli.add(new CantoItem(aResults[i]));
-            }
+//            titoli.clear();
+//            for (int i = 0; i < aResults.length; i++) {
+//                if (aResults[i] == null)
+//                    break;
+//                titoli.add(new CantoItem(aResults[i]));
+//            }
 
             return null;
         }
@@ -702,64 +787,22 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 //            lv.setVisibility(View.GONE);
-            progress.setVisibility(View.VISIBLE);
+//            progress.setVisibility(View.VISIBLE);
+            progress.start();
         }
 
         @Override
         protected void onPostExecute(String result) {
 
             cantoAdapter.notifyDataSetChanged();
-            // crea un list adapter per l'oggetto di tipo ListView
-//            lv.setAdapter(new SongRowAdapter());
+//            progress.setVisibility(View.GONE);
+            progress.stop();
 
-//            // setta l'azione al click su ogni voce dell'elenco
-//            lv.setOnItemClickListener(new OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                    // recupera il titolo della voce cliccata
-//                    String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
-//                            .getText().toString();
-//                    cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                    // crea un manipolatore per il DB in modalità READ
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                    // esegue la query per il recupero del nome del file della pagina da visualizzare
-//                    String query = "SELECT source, _id" +
-//                            "  FROM ELENCO" +
-//                            "  WHERE titolo =  '" + cantoCliccato + "'";
-//                    Cursor cursor = db.rawQuery(query, null);
-//
-//                    // recupera il nome del file
-//                    cursor.moveToFirst();
-//                    String pagina = cursor.getString(0);
-//                    int idCanto = cursor.getInt(1);
-//
-//                    // chiude il cursore
-//                    cursor.close();
-//
-//                    // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("pagina", pagina);
-//                    bundle.putInt("idCanto", idCanto);
-//
-//                    // lancia l'activity che visualizza il canto passando il parametro creato
-//                    startSubActivity(bundle, view);
-//
-//                }
-//            });
-
-            progress.setVisibility(View.GONE);
-
-//            if (titoli.length == 0) {
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-//                lv.setVisibility(View.GONE);
             }
             else {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.VISIBLE);
-//                registerForContextMenu(lv);
             }
         }
 
@@ -840,6 +883,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         return sb.toString();
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

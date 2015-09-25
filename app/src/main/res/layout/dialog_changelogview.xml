@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<it.gmariotti.changelibs.library.view.ChangeLogListView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    risuscito:changeLogFileResourceId="@raw/changelog"
-    android:id="@+id/aboutText" />
+    android:layout_height="wrap_content">
+
+    <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
+        android:baselineAligned="false"
+        android:paddingTop="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        risuscito:changeLogFileResourceId="@raw/changelog"
+        risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
+        risuscito:rowLayoutId="@layout/changelogrow_material_layout"
+        android:id="@+id/aboutText" />
+
+</FrameLayout>

@@ -59,8 +59,8 @@
     <string name="stop_song">ferma</string>
     <string name="pause_song">pausa</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
-    <string name="no_connection">Nessuna connessione ad internet attiva!</string>
-    <string name="no_record">Registrazione non presente!</string>
+    <string name="no_connection">Nessuna connessione ad internet attiva</string>
+    <string name="no_record">Registrazione non presente</string>
     <string name="about_subtitle">Versione per smartphone/tablet Android</string>
     <string name="search_text_also">cerca anche nel testo</string>
     <string name="dialog_download_mp3">Vuoi salvare il brano nel dispositivo? Potrai riascoltarlo da qui senza connessione internet!</string>
@@ -70,13 +70,13 @@
     <string name="cancel">ANNULLA</string>
     <string name="save_location_title">Memoria predefinita</string>
     <string name="save_location_summary">Indica se vuoi rendere i file scaricati visibili alle altre applicazioni (per es. lettore musicale).</string>
-    <string name="favorite_added">Aggiunto ai preferiti!</string>
-    <string name="favorite_removed">Rimosso dai preferiti!</string>
-    <string name="file_delete">File cancellato!</string>
-    <string name="download_completed">File salvato!</string>
+    <string name="favorite_added">Aggiunto ai preferiti</string>
+    <string name="favorite_removed">Rimosso dai preferiti</string>
+    <string name="file_delete">File cancellato</string>
+    <string name="download_completed">File salvato</string>
     <string name="download_running">Download in corso&#8230;</string>
-    <string name="download_cancelled">Download annullato!</string>
-    <string name="present_yet">Canto già presente!</string>
+    <string name="download_cancelled">Download annullato</string>
+    <string name="present_yet">Canto già presente</string>
     <string name="dialog_present_yet">&#200; già presente il canto: </string>
     <string name="dialog_wonna_replace">. Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
@@ -97,10 +97,10 @@
     <string name="content_drag">trascina elemento</string>
     <string name="aggiungi_confirm">AGGIUNGI</string>
     <string name="aggiungi_dismiss">ANNULLA</string>
-    <string name="titolo_pos_vuoto">Nessun titolo inserito!</string>
+    <string name="titolo_pos_vuoto">Nessun titolo inserito</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
-    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 20!</string>
-    <string name="lista_pers_vuota">La lista è vuota!</string>
+    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 20</string>
+    <string name="lista_pers_vuota">La lista è vuota</string>
     <string name="aggiungi_lista_crea">CREA</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>
     <string name="save_list_question">Stai per uscire dalla creazione della lista personalizzata. Vuoi salvare le modifiche?</string>
@@ -130,12 +130,12 @@
     <string name="showcase_restab_desc">Fa tornare il canto alla tonalit&#224; predefinita nel Risuscit&#242;.</string>
     <string name="showcase_button_next">AVANTI</string>
     <string name="showcase_help_general">Puoi rivedere questi suggerimenti scegliendo la voce di menù \"Aiuto\".</string>
-    <string name="tab_saved">Tonalit&#224; salvata!</string>
-    <string name="barre_saved">Posizione del barr&#232; salvata!</string>
-    <string name="tab_not_saved">Non hai cambiato la tonalit&#224;!</string>
-    <string name="barre_not_saved">Non hai cambiato la posizione del barr&#232;!</string>
+    <string name="tab_saved">Tonalit&#224; salvata</string>
+    <string name="barre_saved">Posizione del barr&#232; salvata</string>
+    <string name="tab_not_saved">Non hai cambiato la tonalit&#224;</string>
+    <string name="barre_not_saved">Non hai cambiato la posizione del barr&#232;</string>
     <string name="showcase_end_title">Fine</string>
-    <string name="list_added">Aggiunto alla lista!</string>
+    <string name="list_added">Aggiunto alla lista</string>
     <string name="posizione_rename">Rinomina elemento</string>
     <string name="showcase_welcome_crea">Benvenuto. Da qui puoi creare/modificare la tua lista personalizzata per qualsiasi celebrazione.</string>
     <string name="showcase_add_pos_desc">Con questo pulsante puoi aggiungere un nuovo elemento a piacere (es. \"Canto iniziale\", \"prima lettura\", etc.).
@@ -173,15 +173,15 @@
     <string name="applicatgion_theme_summary">Cambia il tema dell\'applicazione. Attenzione: L\'applicazione sar&#224; riavviata.</string>
     <string name="favorite_remove">Rimuovere dai preferiti?</string>
     <string name="action_exp_pdf">Esporta PDF</string>
-    <string name="no_pdf_reader">Nessun PDF Reader trovato!</string>
+    <string name="no_pdf_reader">Nessun PDF Reader trovato</string>
     <string name="export_running">Esportazione in corso&#8230;</string>
     <string name="open_pdf">Apri PDF</string>
     <string name="content_donate">Dona</string>
     <string name="title_activity_donate">Ringrazia</string>
     <string name="activity_homepage">Home page</string>
     <string name="button_note_cantore">Note per il cantore</string>
-    <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura!</string>
-    <string name="help_new_menu_title">Nuovo men&#249;!</string>
+    <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
+    <string name="help_new_menu_title">Nuovo men&#249;</string>
     <string name="help_new_menu_desc">&#200; stato introdotto il nuovo men&#249; di navigazione, apribile cliccando sul simbolo in alto a sinistra, sulla copertina o facendo
         swype da sinistra col dito. Prova!</string>
     <string name="salmi_musica_index">Indice salmi musicati</string>
@@ -190,11 +190,11 @@
     <string name="downlink_choose">ASSOCIA</string>
     <string name="only_link">Vuoi associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="dialog_delete_link">Sei sicuro di voler scollegare dal brano presente nella memoria? (Il file non sarà cancellato)</string>
-    <string name="delink_delete">File scollegato!</string>
+    <string name="delink_delete">File scollegato</string>
     <string name="list_title">Titolo della lista</string>
     <string name="list_title_modif">Modifica il titolo&#8230;</string>
     <string name="list_elements">ELEMENTI DELLA LISTA:</string>
-    <string name="no_title_edited">Il titolo non è stato modificato in quanto vuoto!</string>
+    <string name="no_title_edited">Il titolo non è stato modificato in quanto vuoto</string>
     <string name="title_activity_settings_capital">IMPOSTAZIONI</string>
     <string name="title_activity_about_capital">CHANGELOG</string>
     <string name="title_activity_donate_capital">RINGRAZIA</string>
@@ -221,5 +221,86 @@
     <string name="fullscreen">Schermo intero</string>
     <string name="audio_on_off">Mostra/Nascondi audio</string>
     <string name="file_selected">File selezionato</string>
+    <string name="primary_color">Colore principale</string>
+    <string name="primary_color_desc">Il colore usato maggiormente nell\'interfaccia</string>
+    <string name="accent_color">Colore di risalto</string>
+    <string name="accent_color_desc">Il colore usato per i widget e altri dettagli dell\'interfaccia</string>
+    <string name="theme">Tema</string>
+    <string name="lists_pref">Liste</string>
+    <string name="system">Sistema</string>
+    <string name="show_audio_title">Mostra riproduzione audio</string>
+    <string name="show_audio_summary">Mostra di default la barra di riproduzione audio nella pagina dei canti</string>
+    <string name="indice_liturgico_index">Indice Liturgico</string>
+    <string name="title_trasporta_do">Do</string>
+    <string name="title_trasporta_dod">Do#</string>
+    <string name="title_trasporta_re">Re</string>
+    <string name="title_trasporta_mib">Mib</string>
+    <string name="title_trasporta_mi">Mi</string>
+    <string name="title_trasporta_fa">Fa</string>
+    <string name="title_trasporta_fad">Fa#</string>
+    <string name="title_trasporta_sol">Sol</string>
+    <string name="title_trasporta_sold">Sol#</string>
+    <string name="title_trasporta_la">La</string>
+    <string name="title_trasporta_sib">Sib</string>
+    <string name="title_trasporta_si">Si</string>
+    <string name="to_be_chosen">da scegliere</string>
+    <string name="language_title">Lingua</string>
+    <string name="language_summary">Imposta la lingua per il menù e i canti.</string>
+    <string name="page_contracted">PAG.</string>
+    <string name="translation_running">Traduzione in corso&#8230;</string>
+    <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
+    <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
+    <string name="title_activity_consegnati">Canti consegnati</string>
+    <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
+    <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
+    <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
+    <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
+    <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
+    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
+    <string name="title_activity_history">Cronologia</string>
+    <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
+    <string name="history_remove">Rimuovere dalla cronologia?</string>
+    <string name="history_empty">La cronologia è vuota.</string>
+    <string name="last_open_date">ULTIMA APERTURA:</string>
+    <string name="dialog_reset_history_title">Svuota cronologia</string>
+    <string name="dialog_reset_history_desc">Vuoi svuotare la cronologia dei canti visualizzati?</string>
+    <string name="canto_title_activity">Canto</string>
+    <string name="dialog_reset_favorites_title">Svuota preferiti</string>
+    <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
+    <string name="action_remove">Rimuovi</string>
+    <string name="history_removed">Rimosso dalla cronologia</string>
+    <string name="action_switch_to">Scambia con...</string>
+    <string name="song_removed">Canto rimosso</string>
+    <string name="switch_done">Scambio effettuato</string>
+    <string name="switch_impossible">Non puoi scambiare una canto con se stesso</string>
+    <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
+    <string name="switch_started">Scambio in corso&#8230;</string>
+    <string name="list_removed">Rimossa la lista \'</string>
+    <string name="favorites_removed">% rimossi dai preferiti</string>
+    <string name="histories_removed">% rimossi dalla cronologia</string>
+    <string name="sc_pagina_render_title">Pagina del canto</string>
+    <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
+    <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
+         salvataggio della tonalit&#224; impostata e reset di quella predefinita.</string>
+    <string name="sc_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le stesse tre funzioni della tonalit&#224;.</string>
+    <string name="sc_audio_title">Riproduzione audio</string>
+    <string name="sc_audio_desc">Usando questi controlli puoi riprodurre la registrazione del canto con le funzioni di: play, pausa,
+         posizionamento nel brano tramite barra, visualizzazione del tempo trascorso.</string>
+    <string name="sc_scroll_title">Scroll automatico del testo</string>
+    <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
+        \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
+    <string name="player_state">Stato del lettore:</string>
+    <string name="focus_not_allowed">AudioFocus non consentito</string>
+    <string name="download_error">Errore nel download:</string>
+    <string name="dialog_back">INDIETRO</string>
+    <string name="share_by">CONDIVIDI CON&#8230;</string>
+    <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
+
+    <string name="lang_it" translatable="false">Italiano</string>
+    <string name="lang_uk" translatable="false">Українська</string>
+    <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
+    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
+
+
 
 </resources>

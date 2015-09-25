@@ -13,33 +13,36 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 public class DonateActivity extends Fragment {
 
 	private final int TEXTZOOM = 90;
-	
+
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
+							 Bundle savedInstanceState) {
+
 		View rootView = inflater.inflate(R.layout.activity_donate, container, false);
-		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_donate);
-        ((MainActivity) getActivity()).getSupportActionBar()
-                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
-		
+//		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_donate);
+//		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
+//		((MainActivity) getActivity()).getSupportActionBar()
+//				.setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
+		((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_donate);
+
 		WebView donateView = (WebView) rootView.findViewById(R.id.donate_text);
 		donateView.setBackgroundColor(0);
 //		String text;
-		
-    	String text = "<html><head>"
-        + "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
-        + "</style></head>"
-        + "<body>"                          
-        + getString(R.string.donate_long_text)
-        + "</body></html>";
-		
+
+		String text = "<html><head>"
+				+ "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
+				+ "</style></head>"
+				+ "<body>"
+				+ getString(R.string.donate_long_text)
+				+ "</body></html>";
+
 //        if (Utility.getChoosedTheme(getActivity()) == 1
 //        		|| Utility.getChoosedTheme(getActivity()) == 3
 //        		|| Utility.getChoosedTheme(getActivity()) == 5
@@ -61,7 +64,7 @@ public class DonateActivity extends Fragment {
 //  		          + getString(R.string.donate_long_text)
 //  		          + "</body></html>";
 //        }
-		
+
 		donateView.loadData(text, "text/html; charset=utf-8", "UTF-8");
 
 		WebSettings wSettings = donateView.getSettings();
@@ -69,9 +72,9 @@ public class DonateActivity extends Fragment {
 			wSettings.setTextZoom(TEXTZOOM);
 		else
 			wSettings.setTextSize(WebSettings.TextSize.SMALLER);
-		
+
 		(rootView.findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
@@ -80,14 +83,14 @@ public class DonateActivity extends Fragment {
 				startActivity(browserIntent);
 			}
 		});
-		
+
 		return rootView;
 	}
 
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
+//	public int dpToPx(int dp) {
+//		DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//		return px;
+//	}
 
 }

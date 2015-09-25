@@ -45,26 +45,9 @@
         <attr name="use_default_controller" format="boolean" />
     </declare-styleable>
 
-    <!-- PaperButton Attribute -->
-    <declare-styleable name="PaperButton">
-        <attr name="paper_text" format="string"/>
-        <attr name="paper_text_size" format="dimension"/>
-        <attr name="paper_text_color" format="color"/>
-        <attr name="paper_font" format="string"/>
-        <attr name="paper_color" format="color"/>
-        <attr name="paper_corner_radius" format="dimension"/>
-        <attr name="paper_shadow_radius" format="float"/>
-        <attr name="paper_shadow_offset_x" format="float"/>
-        <attr name="paper_shadow_offset_y" format="float"/>
-        <attr name="paper_shadow_color" format="color"/>
-    </declare-styleable>
-
-    <!-- LinearProgress Attribute -->
-    <declare-styleable name="LinearProgress">
-        <attr name="linear_progress_color" format="color"/>
-        <attr name="linear_progress_line_width" format="dimension"/>
-        <attr name="linear_progress_max" format="integer"/>
-        <attr name="linear_progress_duration" format="integer"/>
+    <!-- ScrimInsetsView Attributes -->
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="myInsetForeground" format="reference|color" />
     </declare-styleable>
 
 </resources>

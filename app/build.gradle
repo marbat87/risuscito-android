@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.0'
     defaultConfig {
         applicationId "it.cammino.risuscito"
-        minSdkVersion 8
-        targetSdkVersion 21
-        versionCode 67
-        versionName '3.2.1'
+        minSdkVersion 9
+        targetSdkVersion 22
+        versionCode 89
+        versionName '3.5.0'
     }
     buildTypes {
         release {
@@ -16,7 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -24,16 +24,30 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.github.gabrielemariotti.changeloglib:library:1.5.2'
-    compile 'com.itextpdf:itextpdf:5.5.3'
+    compile supportDependencies.appCompat
+    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
+    compile 'com.itextpdf:itextpdf:5.5.6'
     compile project(':utilities')
-    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.1'
-    compile project(':discreteSeekBar')
-    compile project(':android-floating-action-button')
     compile project(':NonSenseFilePicker')
-    compile 'com.nispok:snackbar:2.8.0'
-    compile 'com.melnykov:floatingactionbutton:1.2.0'
+    compile supportDependencies.cardView
+    compile 'com.github.rey5137:material:1.2.1'
+    compile 'com.afollestad:material-dialogs:0.7.9.1'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile project(':recyclerviewfastscroller')
+    compile genericDependencies.CircularReveal
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
+    // NOTE: vector-compat is available on API level 14 or later
+    compile 'com.wnafee:vector-compat:1.0.5'
+    compile supportDependencies.design
+    compile project(':fab-toolbar')
+    compile 'com.github.paolorotolo:appintro:3.1.0'
+    compile 'com.cocosw:bottomsheet:1.+@aar'
 }

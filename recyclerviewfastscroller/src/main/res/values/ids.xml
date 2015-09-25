@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rvfs_scroll_section_indicator" type="id" />
+    <item name="rvfs_section_indicator_text" type="id" />
+    <item name="rvfs_section_title_popup" type="id" />
+    <item name="rvfs_scroll_bar_handle_container" type="id" />
+    <item name="rvfs_scroll_bar" type="id" />
+    <item name="rvfs_scroll_handle" type="id" />
+</resources>

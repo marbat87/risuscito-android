@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Set AppCompat’s actionBarStyle -->
@@ -12,29 +12,322 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
         <item name="colorAccent">@color/theme_accent</item>
-        <item name="colorControlHighlight">@color/theme_accent_semi_tr</item>
+        <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
-        <item name="colorControlActivated">@color/theme_accent_semi_tr</item>
+        <!--<item name="colorControlActivated">#12000000</item>-->
 
         <!-- The rest of your attributes -->
-        <item name="customHelp">@drawable/ic_action_help</item>
         <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
-        <item name="alertDialogProTheme">@style/AppTheme.FlavoredMaterialLight</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
-        <item name="customSelectorTab">@drawable/custom_tab_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
-        <item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>
-        <item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>
-        <item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>
-        <item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>
-        <item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>
+        <!--<item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>-->
+        <!--<item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>-->
+        <!--<item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>-->
+        <!--<item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>-->
+        <!--<item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>-->
+
+        <item name="md_medium_font">Roboto-Medium.ttf</item>
+        <item name="md_regular_font">Roboto-Regular.ttf</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/abc_ic_clear_mtrl_alpha</item>
+        <item name="actionModeBackground">@color/background_material_light</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >
         <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
     </style>
 
-    <style name="RisuscitoTheme.WithNavDrawer" parent="RisuscitoTheme" />
+    <!--<style name="RisuscitoTheme.BlueDark">-->
+    <!--<item name="colorAccent">#3F51B5</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Grey">-->
+    <!--<item name="colorAccent">#9E9E9E</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.BlueGrey">-->
+    <!--<item name="colorAccent">#607D8B</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Black">-->
+    <!--<item name="colorAccent">#37474F</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Brown">-->
+    <!--<item name="colorAccent">#795548</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Red">-->
+    <!--<item name="colorAccent">#D32F2F</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Pink">-->
+    <!--<item name="colorAccent">#E91E63</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Purple">-->
+    <!--<item name="colorAccent">#9C27B0</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Violet">-->
+    <!--<item name="colorAccent">#5E35B1</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Blue">-->
+    <!--<item name="colorAccent">#1976D2</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.BlueLight">-->
+    <!--<item name="colorAccent">#03A9F4</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Torqouise">-->
+    <!--<item name="colorAccent">#00BCD4</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.GreenWater">-->
+    <!--<item name="colorAccent">#009688</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Green">-->
+    <!--<item name="colorAccent">#4CAF50</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.GreenLight">-->
+    <!--<item name="colorAccent">#8BC34A</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.GreenBean">-->
+    <!--<item name="colorAccent">#CDDC39</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Yellow">-->
+    <!--<item name="colorAccent">#FDD835</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.OrangeLight">-->
+    <!--<item name="colorAccent">#FFB300</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.Orange">-->
+    <!--<item name="colorAccent">#FB8C00</item>-->
+    <!--</style>-->
+
+    <!--<style name="RisuscitoTheme.RedLight">-->
+    <!--<item name="colorAccent">#F4511E</item>-->
+    <!--</style>-->
+
+    <style name="RisuscitoTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+    <style name="RisuscitoTheme.Red1">
+        <item name="colorAccent">#FF8A80</item>
+    </style>
+    <style name="RisuscitoTheme.Red2">
+        <item name="colorAccent">#FF5252</item>
+    </style>
+    <style name="RisuscitoTheme.Red3">
+        <item name="colorAccent">#FF1744</item>
+    </style>
+    <style name="RisuscitoTheme.Red4">
+        <item name="colorAccent">#D50000</item>
+    </style>
+
+    <style name="RisuscitoTheme.Pink1">
+        <item name="colorAccent">#FF80AB</item>
+    </style>
+    <style name="RisuscitoTheme.Pink2">
+        <item name="colorAccent">#FF4081</item>
+    </style>
+    <style name="RisuscitoTheme.Pink3">
+        <item name="colorAccent">#F50057</item>
+    </style>
+    <style name="RisuscitoTheme.Pink4">
+        <item name="colorAccent">#C51162</item>
+    </style>
+
+    <style name="RisuscitoTheme.Purple1">
+        <item name="colorAccent">#EA80FC</item>
+    </style>
+    <style name="RisuscitoTheme.Purple2">
+        <item name="colorAccent">#E040FB</item>
+    </style>
+    <style name="RisuscitoTheme.Purple3">
+        <item name="colorAccent">#D500F9</item>
+    </style>
+    <style name="RisuscitoTheme.Purple4">
+        <item name="colorAccent">#AA00FF</item>
+    </style>
+
+    <style name="RisuscitoTheme.Violet1">
+        <item name="colorAccent">#B388FF</item>
+    </style>
+    <style name="RisuscitoTheme.Violet2">
+        <item name="colorAccent">#7C4DFF</item>
+    </style>
+    <style name="RisuscitoTheme.Violet3">
+        <item name="colorAccent">#651FFF</item>
+    </style>
+    <style name="RisuscitoTheme.Violet4">
+        <item name="colorAccent">#6200EA</item>
+    </style>
+
+    <style name="RisuscitoTheme.Blue1">
+        <item name="colorAccent">#8C9EFF</item>
+    </style>
+    <style name="RisuscitoTheme.Blue2">
+        <item name="colorAccent">#536DFE</item>
+    </style>
+    <style name="RisuscitoTheme.Blue3">
+        <item name="colorAccent">#3D5AFE</item>
+    </style>
+    <style name="RisuscitoTheme.Blue4">
+        <item name="colorAccent">#304FFE</item>
+    </style>
+
+    <style name="RisuscitoTheme.Azure1">
+        <item name="colorAccent">#82B1FF</item>
+    </style>
+    <style name="RisuscitoTheme.Azure2">
+        <item name="colorAccent">#448AFF</item>
+    </style>
+    <style name="RisuscitoTheme.Azure3">
+        <item name="colorAccent">#2979FF</item>
+    </style>
+    <style name="RisuscitoTheme.Azure4">
+        <item name="colorAccent">#2962FF</item>
+    </style>
+
+    <style name="RisuscitoTheme.Turqouise1">
+        <item name="colorAccent">#80D8FF</item>
+    </style>
+    <style name="RisuscitoTheme.Turqouise2">
+        <item name="colorAccent">#40C4FF</item>
+    </style>
+    <style name="RisuscitoTheme.Turqouise3">
+        <item name="colorAccent">#00B0FF</item>
+    </style>
+    <style name="RisuscitoTheme.Turqouise4">
+        <item name="colorAccent">#0091EA</item>
+    </style>
+
+    <style name="RisuscitoTheme.BlueLight1">
+        <item name="colorAccent">#84FFFF</item>
+    </style>
+    <style name="RisuscitoTheme.BlueLight2">
+        <item name="colorAccent">#18FFFF</item>
+    </style>
+    <style name="RisuscitoTheme.BlueLight3">
+        <item name="colorAccent">#00E5FF</item>
+    </style>
+    <style name="RisuscitoTheme.BlueLight4">
+        <item name="colorAccent">#00B8D4</item>
+    </style>
+
+    <style name="RisuscitoTheme.GreenWater1">
+        <item name="colorAccent">#A7FFEB</item>
+    </style>
+    <style name="RisuscitoTheme.GreenWater2">
+        <item name="colorAccent">#64FFDA</item>
+    </style>
+    <style name="RisuscitoTheme.GreenWater3">
+        <item name="colorAccent">#1DE9B6</item>
+    </style>
+    <style name="RisuscitoTheme.GreenWater4">
+        <item name="colorAccent">#00BFA5</item>
+    </style>
+
+    <style name="RisuscitoTheme.Green1">
+        <item name="colorAccent">#B9F6CA</item>
+    </style>
+    <style name="RisuscitoTheme.Green2">
+        <item name="colorAccent">#69F0AE</item>
+    </style>
+    <style name="RisuscitoTheme.Green3">
+        <item name="colorAccent">#00E676</item>
+    </style>
+    <style name="RisuscitoTheme.Green4">
+        <item name="colorAccent">#00C853</item>
+    </style>
+
+    <style name="RisuscitoTheme.GreenLight1">
+        <item name="colorAccent">#CCFF90</item>
+    </style>
+    <style name="RisuscitoTheme.GreenLight2">
+        <item name="colorAccent">#B2FF59</item>
+    </style>
+    <style name="RisuscitoTheme.GreenLight3">
+        <item name="colorAccent">#76FF03</item>
+    </style>
+    <style name="RisuscitoTheme.GreenLight4">
+        <item name="colorAccent">#64DD17</item>
+    </style>
+
+    <style name="RisuscitoTheme.Lime1">
+        <item name="colorAccent">#F4FF81</item>
+    </style>
+    <style name="RisuscitoTheme.Lime2">
+        <item name="colorAccent">#EEFF41</item>
+    </style>
+    <style name="RisuscitoTheme.Lime3">
+        <item name="colorAccent">#C6FF00</item>
+    </style>
+    <style name="RisuscitoTheme.Lime4">
+        <item name="colorAccent">#AEEA00</item>
+    </style>
+
+    <style name="RisuscitoTheme.Yellow1">
+        <item name="colorAccent">#FFFF8D</item>
+    </style>
+    <style name="RisuscitoTheme.Yellow2">
+        <item name="colorAccent">#FFFF00</item>
+    </style>
+    <style name="RisuscitoTheme.Yellow3">
+        <item name="colorAccent">#FFEA00</item>
+    </style>
+    <style name="RisuscitoTheme.Yellow4">
+        <item name="colorAccent">#FFD600</item>
+    </style>
+
+    <style name="RisuscitoTheme.OrangeLight1">
+        <item name="colorAccent">#FFE57F</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeLight2">
+        <item name="colorAccent">#FFD740</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeLight3">
+        <item name="colorAccent">#FFC400</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeLight4">
+        <item name="colorAccent">#FFAB00</item>
+    </style>
+
+    <style name="RisuscitoTheme.Orange1">
+        <item name="colorAccent">#FFD180</item>
+    </style>
+    <style name="RisuscitoTheme.Orange2">
+        <item name="colorAccent">#FFAB40</item>
+    </style>
+    <style name="RisuscitoTheme.Orange3">
+        <item name="colorAccent">#FF9100</item>
+    </style>
+    <style name="RisuscitoTheme.Orange4">
+        <item name="colorAccent">#FF6D00</item>
+    </style>
+
+    <style name="RisuscitoTheme.OrangeDark1">
+        <item name="colorAccent">#FF9E80</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeDark2">
+        <item name="colorAccent">#FF6E40</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeDark3">
+        <item name="colorAccent">#FF3D00</item>
+    </style>
+    <style name="RisuscitoTheme.OrangeDark4">
+        <item name="colorAccent">#DD2C00</item>
+    </style>
 
 </resources>

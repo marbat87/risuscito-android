@@ -1,16 +1,19 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -23,9 +26,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alertdialogpro.material.ProgressBarCompat;
+import com.rey.material.widget.ProgressView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -35,22 +37,22 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
+import it.cammino.risuscito.objects.CantoInsert;
 
 public class InsertAvanzataFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
-//    private String[] titoli;
-    private List<CantoItem> titoli;
-    private TintEditText searchPar;
+    private List<CantoInsert> titoli;
+    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-//    ListView lv;
     RecyclerView recyclerView;
-    CantoRecyclerAdapter cantoAdapter;
-    private ProgressBarCompat progress;
+    CantoInsertRecyclerAdapter cantoAdapter;
+    private ProgressView progress;
     private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
@@ -59,54 +61,62 @@ public class InsertAvanzataFragment extends Fragment {
 
     private SearchTask searchTask;
 
+    private LUtils mLUtils;
+
+    private long mLastClickTime = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(
                 R.layout.activity_ricerca_avanzata, container, false);
 
-        searchPar = (TintEditText) rootView.findViewById(R.id.textfieldRicerca);
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
-//        lv = (ListView) rootView.findViewById(R.id.matchedList);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 // recupera il titolo della voce cliccata
-                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-                        .getText().toString();
-                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
+//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
+//                        .getText().toString();
+//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
 
+//                String query = "SELECT _id" +
+//                        "  FROM ELENCO" +
+//                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
+//                Cursor cursor = db.rawQuery(query, null);
+//
+//                // recupera il nome del file
+//                cursor.moveToFirst();
+//                int idCanto = cursor.getInt(0);
+//
+//                // chiude il cursore
+//                cursor.close();
+
+                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+                        .getText().toString();
+
                 if (fromAdd == 1)  {
                     // chiamato da una lista predefinita
-                    String query = "SELECT _id" +
-                            "  FROM ELENCO" +
-                            "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-                    Cursor cursor = db.rawQuery(query, null);
-
-                    // recupera il nome del file
-                    cursor.moveToFirst();
-                    int idCanto = cursor.getInt(0);
-
-                    // chiude il cursore
-                    cursor.close();
-
-                    String sql = "INSERT INTO CUST_LISTS ";
-                    sql+= "VALUES (" + idLista + ", "
+                    String query = "INSERT INTO CUST_LISTS ";
+                    query+= "VALUES (" + idLista + ", "
                             + listPosition + ", "
                             + idCanto
                             + ", CURRENT_TIMESTAMP)";
-
                     try {
-                        db.execSQL(sql);
+                        db.execSQL(query);
                     } catch (SQLException e) {
-                        Toast toast = Toast.makeText(getActivity()
-                                , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-                        toast.show();
+//                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+                                .show();
                     }
                 }
                 else {
@@ -115,7 +125,6 @@ public class InsertAvanzataFragment extends Fragment {
                             "  FROM LISTE_PERS" +
                             "  WHERE _id =  " + idLista;
                     Cursor cursor = db.rawQuery(query, null);
-
                     // recupera l'oggetto lista personalizzata
                     cursor.moveToFirst();
 
@@ -126,14 +135,14 @@ public class InsertAvanzataFragment extends Fragment {
                     cursor.close();
 
                     // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-                    query = "SELECT color, pagina" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                    cursor = db.rawQuery(query, null);
-
-                    cursor.moveToFirst();
-
-                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
+//                    query = "SELECT color, pagina" +
+//                            "		FROM ELENCO" +
+//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                    cursor = db.rawQuery(query, null);
+//                    cursor.moveToFirst();
+//                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
+                    listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
+                    cursor.close();
 
                     ContentValues  values = new  ContentValues( );
                     values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
@@ -141,20 +150,43 @@ public class InsertAvanzataFragment extends Fragment {
                     db.close();
                 }
 
+                getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, R.anim.slide_out_right);
             }
         };
 
+        View.OnClickListener seeOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                // recupera il titolo della voce cliccata
+                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+                        .getText().toString();
+                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+                        .getText().toString();
+
+                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", source);
+                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, v);
+            }
+        };
+
         // Creating new adapter object
-        titoli = new ArrayList<CantoItem>();
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener);
+        titoli = new ArrayList<>();
+        cantoAdapter = new CantoInsertRecyclerAdapter(titoli, clickListener, seeOnClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressBarCompat) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
         searchPar.setText("");
 
         Bundle bundle = getArguments();
@@ -164,6 +196,8 @@ public class InsertAvanzataFragment extends Fragment {
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
+            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();
@@ -187,6 +221,14 @@ public class InsertAvanzataFragment extends Fragment {
                     searchTask = new SearchTask();
                     searchTask.execute(searchPar.getText().toString());
                 }
+                else {
+                    if (s.length() == 0) {
+                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        titoli.clear();
+                        cantoAdapter.notifyDataSetChanged();
+                        progress.stop();
+                    }
+                }
             }
 
             @Override
@@ -197,7 +239,7 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-        searchPar.setOnEditorActionListener(new TintEditText.OnEditorActionListener() {
+        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -228,20 +270,19 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-//        ButtonRectangle pulisci = (ButtonRectangle) rootView.findViewById(R.id.pulisci_ripple);
+//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
+//        paperPulisci.setColor(getThemeUtils().primaryColor());
         rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                 searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.GONE);
-                titoli.clear();
-                cantoAdapter.notifyDataSetChanged();
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                titoli.clear();
+//                cantoAdapter.notifyDataSetChanged();
             }
         });
 
-//        setHasOptionsMenu(true);
+        mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
     }
@@ -253,45 +294,6 @@ public class InsertAvanzataFragment extends Fragment {
             listaCanti.close();
         super.onDestroy();
     }
-
-//    private class SongRowAdapter extends ArrayAdapter<String> {
-//
-//        SongRowAdapter() {
-//            super(getActivity(), R.layout.row_item, R.id.text_title, titoli);
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//
-//            View row=super.getView(position, convertView, parent);
-//            TextView canto = (TextView) row.findViewById(R.id.text_title);
-//
-//            String totalString = canto.getText().toString();
-//
-//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            String colore = totalString.substring(3, 10);
-//
-//            ((TextView) row.findViewById(R.id.text_title))
-//                    .setText(totalString.substring(10));
-//
-//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-////            row.findViewById(R.id.full_row).setBackgroundColor(Color.parseColor(colore));
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            return(row);
-//        }
-//    }
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
@@ -305,8 +307,9 @@ public class InsertAvanzataFragment extends Fragment {
             String[] words = sSearchText[0].split("\\W");
 
             String text;
-            String[] aResults = new String[300];
-            int totalResults = 0;
+            titoli.clear();
+//            String[] aResults = new String[300];
+//            int totalResults = 0;
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -317,7 +320,7 @@ public class InsertAvanzataFragment extends Fragment {
                 for (int j = 0; j < words.length; j++) {
                     if (words[j].trim().length() > 1) {
                         text = words[j].trim();
-                        text = text.toLowerCase(Locale.getDefault());
+                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
 
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
                             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -336,7 +339,7 @@ public class InsertAvanzataFragment extends Fragment {
                 if (found) {
 
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
-                    String query = "SELECT titolo, color, pagina"
+                    String query = "SELECT titolo, color, pagina, _id, source"
                             +		"		FROM ELENCO"
                             +		"		WHERE source = '" + aTexts[k][0] + "'";
 
@@ -344,21 +347,22 @@ public class InsertAvanzataFragment extends Fragment {
 
                     if (lista.getCount() > 0) {
                         lista.moveToFirst();
-                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+                        titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
+                                                , lista.getInt(3)
+                                                , lista.getString(4)));
+//                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
                     }
                     // chiude il cursore
                     lista.close();
                 }
             }
 
-//            titoli = new String[totalResults];
-//            System.arraycopy(aResults, 0, titoli, 0, totalResults);
-            titoli.clear();
-            for (int i = 0; i < aResults.length; i++) {
-                if (aResults[i] == null)
-                    break;
-                titoli.add(new CantoItem(aResults[i]));
-            }
+//            titoli.clear();
+//            for (int i = 0; i < aResults.length; i++) {
+//                if (aResults[i] == null)
+//                    break;
+//                titoli.add(new CantoItem(aResults[i]));
+//            }
 
             return null;
         }
@@ -366,105 +370,23 @@ public class InsertAvanzataFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//            lv.setVisibility(View.GONE);
-            progress.setVisibility(View.VISIBLE);
+//            progress.setVisibility(View.VISIBLE);
+            progress.start();
         }
 
         @Override
         protected void onPostExecute(String result) {
 
             cantoAdapter.notifyDataSetChanged();
-            // crea un list adapter per l'oggetto di tipo ListView
-//            lv.setAdapter(new SongRowAdapter());
 
-            // setta l'azione al click su ogni voce dell'elenco
-//            lv.setOnItemClickListener(new OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                    // recupera il titolo della voce cliccata
-//                    String cantoCliccato = ((TextView) view.findViewById(R.id.text_title))
-//                            .getText().toString();
-//                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                    if (fromAdd == 1)  {
-//                        // chiamato da una lista predefinita
-//                        String query = "SELECT _id" +
-//                                "  FROM ELENCO" +
-//                                "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//
-//                        // recupera il nome del file
-//                        cursor.moveToFirst();
-//                        int idCanto = cursor.getInt(0);
-//
-//                        // chiude il cursore
-//                        cursor.close();
-//
-//                        String sql = "INSERT INTO CUST_LISTS ";
-//                        sql+= "VALUES (" + idLista + ", "
-//                                + listPosition + ", "
-//                                + idCanto
-//                                + ", CURRENT_TIMESTAMP)";
-//
-//                        try {
-//                            db.execSQL(sql);
-//                        } catch (SQLException e) {
-//                            Toast toast = Toast.makeText(getActivity()
-//                                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                            toast.show();
-//                        }
-//                    }
-//                    else {
-//                        //chiamato da una lista personalizzata
-//                        String query = "SELECT lista" +
-//                                "  FROM LISTE_PERS" +
-//                                "  WHERE _id =  " + idLista;
-//                        Cursor cursor = db.rawQuery(query, null);
-//
-//                        // recupera l'oggetto lista personalizzata
-//                        cursor.moveToFirst();
-//
-//                        ListaPersonalizzata listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
-//                                deserializeObject(cursor.getBlob(0));
-//
-//                        // chiude il cursore
-//                        cursor.close();
-//
-//                        // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-//                        query = "SELECT color, pagina" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        cursor = db.rawQuery(query, null);
-//
-//                        cursor.moveToFirst();
-//
-//                        listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
-//
-//                        ContentValues  values = new  ContentValues( );
-//                        values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//                        db.update("LISTE_PERS", values, "_id = " + idLista, null );
-//                        db.close();
-//                    }
-//
-//                    getActivity().finish();
-//                    getActivity().overridePendingTransition(0, R.anim.slide_out_right);
-//
-//                }
-//            });
+//            progress.setVisibility(View.GONE);
+            progress.stop();
 
-            progress.setVisibility(View.GONE);
-
-//            if (titoli.length == 0) {
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-//                lv.setVisibility(View.GONE);
             }
             else {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                lv.setVisibility(View.VISIBLE);
-//                registerForContextMenu(lv);
             }
         }
 
@@ -544,6 +466,17 @@ public class InsertAvanzataFragment extends Fragment {
         }
 
         return sb.toString();
+    }
+
+//    private ThemeUtils getThemeUtils() {
+//        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
+//    }
+
+    private void startSubActivity(Bundle bundle, View view) {
+        Intent intent = new Intent(getActivity().getApplicationContext(),
+                PaginaRenderActivity.class);
+        intent.putExtras(bundle);
+        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
 }

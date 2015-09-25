@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fab_toolbar_bottom_tb">@dimen/abc_action_bar_default_height_material</dimen>
+    <dimen name="fab_toolbar_bottom_no_tb">0dp</dimen>
+    <dimen name="bottom_toolbar_height">@dimen/abc_action_bar_default_height_material</dimen>
+
+</resources>

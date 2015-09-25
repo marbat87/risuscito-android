@@ -38,6 +38,9 @@ public abstract class BaseReflector {
             if (currentLevel.getSimpleName().equals("ActionBarActivity")) {
                 return ActionBarType.APP_COMPAT;
             }
+            if (currentLevel.getSimpleName().equals("AppCompatActivity")) {
+                return ActionBarType.APP_COMPAT;
+            }
             currentLevel = currentLevel.getSuperclass();
         }
         return ActionBarType.STANDARD;

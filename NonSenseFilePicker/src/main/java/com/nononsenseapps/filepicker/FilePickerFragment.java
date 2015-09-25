@@ -140,7 +140,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
 
             @Override
             public List<File> loadInBackground() {
-                ArrayList<File> files = new ArrayList<File>();
+                ArrayList<File> files = new ArrayList<>();
                 File[] listFiles = currentPath.listFiles();
                 if(listFiles != null) {
                     for (java.io.File f : listFiles) {

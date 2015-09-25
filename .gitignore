@@ -5,11 +5,20 @@
 .DS_Store
 /build
 
-materialDesign
 app/app.iml
+/.idea/copyright
+/.idea/dictionaries
+/.idea/inspectionProfiles
+/.idea/scopes
 app/build
-aFileChooser/build
-aFileChooser/aFileChooser.iml
+/recyclerviewfastscroller/build
 utilities/build
 utilities/utilities.iml
 NonSenseFilePicker/NonSenseFilePicker.iml
+android-floating-action-button/android-floating-action-button.iml
+.navigation
+NonSenseFilePicker/build
+android-floating-action-button/build
+recyclerviewfastscroller/recyclerviewfastscroller.iml
+fab-toolbar/fab-toolbar.iml
+fab-toolbar/build
