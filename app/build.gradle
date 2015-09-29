@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 23
@@ -6,9 +7,9 @@ android {
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
-        targetSdkVersion 22
-        versionCode 91
-        versionName '3.5.3'
+        targetSdkVersion 23
+        versionCode 92
+        versionName '3.6.0'
     }
     buildTypes {
         release {
@@ -16,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -45,7 +46,9 @@ dependencies {
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.+@aar'
-    compile 'com.turingtechnologies.materialscrollbar:lib:4.1.0'
+    compile 'com.turingtechnologies.materialscrollbar:lib:5.+'
+    compile 'com.github.hotchemi:permissionsdispatcher:1.2.1'
+    apt 'com.github.hotchemi:permissionsdispatcher-processor:1.2.1'
     compile supportDependencies.appCompat
     compile supportDependencies.design
     compile genericDependencies.CircularReveal

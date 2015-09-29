@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -79,11 +78,7 @@ public class BottomSheetHelper {
                         .getDefaultSharedPreferences(activity)
                         .edit();
                 editor.putString("ULTIMA_APP_USATA", activityInfo.applicationInfo.packageName);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
+                editor.apply();
 
                 ComponentName name = new ComponentName(activityInfo.applicationInfo.packageName,
                         activityInfo.name);

@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -15,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -246,11 +244,7 @@ public class ConsegnatiFragment extends Fragment {
                     .getDefaultSharedPreferences(getActivity())
                     .edit();
             editor.putBoolean(PREF_FIRST_OPEN, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
             showHelp();
 //            final Runnable mMyRunnable = new Runnable() {
 //                @Override
@@ -432,7 +426,7 @@ public class ConsegnatiFragment extends Fragment {
             Cursor lista = db.rawQuery(query, null);
 
             // crea un array e ci memorizza i titoli estratti
-            titoliChoose = new ArrayList<Canto>();
+            titoliChoose = new ArrayList<>();
             lista.moveToFirst();
             for (int i = 0; i < lista.getCount(); i++) {
 //            Log.i(getClass().toString(), "CANTO: " + Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0));
@@ -461,11 +455,11 @@ public class ConsegnatiFragment extends Fragment {
 
     }
 
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
+//    private int dpToPx(int dp) {
+//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//        return px;
+//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -116,11 +115,7 @@ public class Risuscito extends Fragment {
                                         .getDefaultSharedPreferences(getActivity())
                                         .edit();
                                 editor.putBoolean(FIRST_OPEN_MENU, false);
-                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                                    editor.commit();
-                                } else {
-                                    editor.apply();
-                                }
+                                editor.apply();
                                 showHelp();
                             }
                         }
@@ -142,11 +137,7 @@ public class Risuscito extends Fragment {
                                     .getDefaultSharedPreferences(getActivity())
                                     .edit();
                             editor.putBoolean(FIRST_OPEN_MENU, false);
-                            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                                editor.commit();
-                            } else {
-                                editor.apply();
-                            }
+                            editor.apply();
                             showHelp();
                         }
                         return true;
@@ -157,11 +148,7 @@ public class Risuscito extends Fragment {
             dialog.setCancelable(false);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(VERSION_KEY, thisVersion);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
         }
         else {
             if(PreferenceManager
@@ -171,11 +158,7 @@ public class Risuscito extends Fragment {
                         .getDefaultSharedPreferences(getActivity())
                         .edit();
                 editor.putBoolean(FIRST_OPEN_MENU, false);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
+                editor.apply();
                 final Runnable mMyRunnable = new Runnable() {
                     @Override
                     public void run() {

@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -138,11 +137,7 @@ public class FavouritesActivity extends Fragment {
                     .getDefaultSharedPreferences(getActivity())
                     .edit();
             editor.putBoolean(PREFERITI_OPEN, true);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
             android.os.Handler mHandler = new android.os.Handler();
             mHandler.postDelayed(new Runnable() {
                 @Override

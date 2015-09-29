@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="lang_it" translatable="false">Italiano</string>
+    <string name="lang_uk" translatable="false">Українська</string>
+    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
+    <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
+    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
+
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
     <string name="action_favourites">Preferiti</string>
@@ -297,13 +303,14 @@
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
-
-    <string name="lang_it" translatable="false">Italiano</string>
-    <string name="lang_uk" translatable="false">Українська</string>
-    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
-    <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
-    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
-
-
+    <string name="phone_listener_title">Accesso al telefono</string>
+    <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Tale permesso è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattamente automaticamente.</string>
+    <string name="phone_listener_denied">La funzione di pausa automatica all\'arrivo della chiamata è disattivata. Per riattivarla concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_title">Accesso alla memoria pubblica</string>
+    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
+    <string name="external_storage_denied">Il salvataggio nella memoria pubblica non è possibile. Per rendere visibile l\'opzione, concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
+    <string name="file_picker_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per sfogliare la memoria e scegliere il file da associare. Se non accetterai, non potrai usare questa funzione.</string>
+    <string name="file_picker_denied">Mancata autorizzazione a sfogliare la memoria pubblica. Per abilitare la funzione, concedi il permesso necessario nelle impostazioni.</string>
 
 </resources>

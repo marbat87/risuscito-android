@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
@@ -178,25 +179,31 @@ public class Utility {
             File fileExt = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC), "/Risuscitò/" + filterMediaLinkNew(link));
             if (fileExt.exists()) {
-//				Log.i("FILE esterno:", fileExt.getAbsolutePath());
+                Log.d("Utility.java", "FILE esterno: " + fileExt.getAbsolutePath());
                 return fileExt.getAbsolutePath();
             } else {
                 //cerca file esterno con vecchi path e nome
                 File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
                 fileExt = new File(fileArray[0], filterMediaLink(link));
                 if (fileExt.exists()) {
-//				    Log.i("FILE esterno:", fileExt.getAbsolutePath());
+                    Log.d("Utility.java", "FILE esterno: " + fileExt.getAbsolutePath());
                     return fileExt.getAbsolutePath();
                 }
+                else
+                    Log.d("Utility.java", "FILE ESTERNO NON TROVATO");
             }
         }
-//		Log.i("FILE ESTERNO:", "NON TROVATO");
+        else {
+            Log.d("Utility.java", "isExternalStorageReadable: FALSE");
+        }
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
         if (fileInt.exists()) {
-//			Log.i("FILE interno:", fileInt.getAbsolutePath());
+			Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
             return fileInt.getAbsolutePath();
         }
+        else
+            Log.d("Utility.java", "FILE INTERNO NON TROVATO");
 //		Log.i("FILE INTERNO:", "NON TROVATO");
         return "";
     }

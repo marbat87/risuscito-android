@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.NinePatchDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -551,11 +550,7 @@ public class CreaListaActivity extends ThemeableActivity {
                     .getDefaultSharedPreferences(CreaListaActivity.this)
                     .edit();
             editor.putBoolean(PREF_FIRST_OPEN, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
             showHelp();
         }
 

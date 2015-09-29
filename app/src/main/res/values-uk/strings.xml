@@ -297,5 +297,14 @@
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
+    <string name="phone_listener_title">Accesso al telefono</string>
+    <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Tale permesso è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattamente automaticamente.</string>
+    <string name="phone_listener_denied">La funzione di pausa automatica all\'arrivo della chiamata è disattivata. Per riattivarla concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_title">Accesso alla memoria pubblica</string>
+    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
+    <string name="external_storage_denied">Il salvataggio nella memoria pubblica non è possibile. Per rendere visibile l\'opzione, concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
+    <string name="file_picker_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per sfogliare la memoria e scegliere il file da associare. Se non accetterai, non potrai usare questa funzione.</string>
+    <string name="file_picker_denied">Mancata autorizzazione a sfogliare la memoria pubblica. Per abilitare la funzione, concedi il permesso necessario nelle impostazioni.</string>
 
 </resources>
