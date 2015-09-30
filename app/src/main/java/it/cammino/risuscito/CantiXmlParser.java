@@ -81,7 +81,6 @@ public class CantiXmlParser {
 //        Log.i("TITOLO[:" + i + "][0]:", title);
         entries[i][1] = summary;
 //        Log.i("TESTO[:" + i + "][1]:", summary);
-        return;
     }
 
     // Processes title tags in the feed.

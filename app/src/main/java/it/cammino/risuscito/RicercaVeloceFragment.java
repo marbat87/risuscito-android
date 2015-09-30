@@ -40,7 +40,6 @@ import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener{
 
@@ -709,8 +708,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
+//    private ThemeUtils getThemeUtils() {
+//        return ((MainActivity)getActivity()).getThemeUtils();
+//    }
 
 }

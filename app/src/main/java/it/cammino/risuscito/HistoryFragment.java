@@ -46,7 +46,7 @@ public class HistoryFragment extends Fragment {
     private List<CantoHistory> titoli;
     //    private String cantoDaCanc;
     private int posizDaCanc;
-    private CantoHistory removedItem;
+//    private CantoHistory removedItem;
     private List<CantoHistory> removedItems;
     private View rootView;
     private RecyclerView recyclerView;

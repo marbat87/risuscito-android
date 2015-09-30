@@ -15,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -43,7 +44,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
 
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
 
-    protected int selectedItem;
+//    protected int selectedItem;
     //    private ProgressDialogPro translationDialog;
     private int prevOrientation;
 
@@ -674,7 +675,9 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 if (translationDialog.isShowing())
                     translationDialog.dismiss();
             }
-            catch (IllegalArgumentException e) {}
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
         }
     }
 

@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
 
 import java.io.File;
@@ -53,15 +52,15 @@ public class Utility {
     public static final String VERDE = "#8FC490";
     public static final String GRIGIO = "#CAC8BC";
 
-    @SuppressLint("NewApi")
-    public static void setAccessibilityIgnore(View view) {
-        view.setClickable(false);
-        view.setFocusable(false);
-        view.setContentDescription("");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
-    }
+//    @SuppressLint("NewApi")
+//    public static void setAccessibilityIgnore(View view) {
+//        view.setClickable(false);
+//        view.setFocusable(false);
+//        view.setContentDescription("");
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+//        }
+//    }
 
     //metodo che restituisce la stringa di input senza la pagina all'inizio
     public static String truncatePage(String input) {

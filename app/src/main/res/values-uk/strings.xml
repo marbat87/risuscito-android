@@ -269,7 +269,7 @@
     <string name="dialog_reset_favorites_desc">Бажаєш очистити список закладок?</string>
     <string name="action_remove">Видалити</string>
     <string name="history_removed">Видалено з хронології</string>
-    <string name="action_switch_to">Змінити на...</string>
+    <string name="action_switch_to">Змінити на&#8230;</string>
     <string name="song_removed">Пічня видалена</string>
     <string name="switch_done">Зміну здійснено</string>
     <string name="switch_impossible">Не можна змінити пісню на ту ж саму пісню</string>

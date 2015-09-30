@@ -48,7 +48,7 @@ public class ListaPersonalizzataFragment extends Fragment {
     private DatabaseCanti listaCanti;
     String cantoDaCanc;
     private SQLiteDatabase db;
-    private int fragmentIndex;
+//    private int fragmentIndex;
     private int idLista;
     private ListaPersonalizzata listaPersonalizzata;
     public ActionMode mMode;
@@ -102,7 +102,7 @@ public class ListaPersonalizzataFragment extends Fragment {
         mMode = null;
         mSwhitchMode = false;
 
-        fragmentIndex = getArguments().getInt("position");
+//        fragmentIndex = getArguments().getInt("position");
         idLista = getArguments().getInt("idLista");
 
         db = listaCanti.getReadableDatabase();
@@ -257,7 +257,7 @@ public class ListaPersonalizzataFragment extends Fragment {
 //        Log.i(getClass().getName(), "requestCode: " + requestCode);
         if (requestCode == TAG_INSERT_PERS + idLista && resultCode == Activity.RESULT_OK) {
 //            Log.i("LISTA PERS", "ON RESUME");
-            fragmentIndex = getArguments().getInt("position");
+//            fragmentIndex = getArguments().getInt("position");
             idLista = getArguments().getInt("idLista");
 //		Log.i("fragmentIndex", fragmentIndex+"");
 //		Log.i("idLista", idLista+"");

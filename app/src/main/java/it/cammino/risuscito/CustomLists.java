@@ -681,7 +681,7 @@ public class CustomLists extends Fragment  {
                     Bundle bundle=new Bundle();
 //            	Log.i("INVIO", "position = " + position);
 //            	Log.i("INVIO", "idLista = " + idListe[position - 2]);
-                    bundle.putInt("position", position);
+//                    bundle.putInt("position", position);
                     bundle.putInt("idLista", idListe[position - 2]);
                     ListaPersonalizzataFragment listaPersFrag = new ListaPersonalizzataFragment();
                     listaPersFrag.setArguments(bundle);

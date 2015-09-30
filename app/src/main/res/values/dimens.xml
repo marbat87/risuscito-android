@@ -3,50 +3,50 @@
 
     <dimen name="activity_min_margin">5dip</dimen>
     <dimen name="settings_min_margin">10dip</dimen>
-    <dimen name="list_preferred_item_height_small">40dip</dimen>
-    <dimen name="default_padding_selectable">5dip</dimen>
-    <dimen name="list_preferred_item_height_medium">50dip</dimen>
+    <!--<dimen name="list_preferred_item_height_small">40dip</dimen>-->
+    <!--<dimen name="default_padding_selectable">5dip</dimen>-->
+    <!--<dimen name="list_preferred_item_height_medium">50dip</dimen>-->
     <dimen name="myListPreferredItemMargin">16dip</dimen>
-    <dimen name="myListPreferredExpTextMargin">40dip</dimen>
+    <!--<dimen name="myListPreferredExpTextMargin">40dip</dimen>-->
     <dimen name="myListPreferredTextMarginStart">72dip</dimen>
-    <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
+    <!--<dimen name="myListPreferredItemHeightSmall">48dip</dimen>-->
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <dimen name="about_image_width">100dip</dimen>
-    <dimen name="percent_padding">15dip</dimen>
+    <!--<dimen name="percent_padding">15dip</dimen>-->
 
     <dimen name="navdrawer_chosen_account_height">100dp</dimen>
-    <dimen name="navdrawer_width">302dp</dimen>
+    <!--<dimen name="navdrawer_width">302dp</dimen>-->
 
     <!--<dimen name="action_bar_text_field_margin">15dip</dimen>-->
     <dimen name="min_button_margin">10dip</dimen>
 
-    <dimen name="text_size_small">12sp</dimen>
-    <dimen name="text_size_paper_button">14sp</dimen>
-    <dimen name="keyline_1">16dp</dimen>
+    <!--<dimen name="text_size_small">12sp</dimen>-->
+    <!--<dimen name="text_size_paper_button">14sp</dimen>-->
+    <!--<dimen name="keyline_1">16dp</dimen>-->
 
-    <dimen name="preference_min_margin">15dip</dimen>
+    <!--<dimen name="preference_min_margin">15dip</dimen>-->
 
-    <dimen name="button_icon_padding">-5dip</dimen>
+    <!--<dimen name="button_icon_padding">-5dip</dimen>-->
 
     <dimen name="toolbar_elevation">4dp</dimen>
     <!--<integer name="toolbar_elevation">4</integer>-->
 
-    <dimen name="button_icon_radius">40dp</dimen>
-    <dimen name="button_icon_drawable">26dp</dimen>
+    <!--<dimen name="button_icon_radius">40dp</dimen>-->
+    <!--<dimen name="button_icon_drawable">26dp</dimen>-->
     <dimen name="button_playbar_padding">14dp</dimen>
-    <dimen name="floating_margin_lateral">8dp</dimen>
+    <!--<dimen name="floating_margin_lateral">8dp</dimen>-->
     <dimen name="fab_margin_end">16dp</dimen>
     <dimen name="fab_margin_bottom">16dp</dimen>
-    <dimen name="fab_translation_z">10dp</dimen>
-    <dimen name="floating_margin_lateral_menu">11dp</dimen>
+    <!--<dimen name="fab_translation_z">10dp</dimen>-->
+    <!--<dimen name="floating_margin_lateral_menu">11dp</dimen>-->
 
-    <dimen name="circle_view_border">1dp</dimen>
-    <dimen name="circle_view_check">24dp</dimen>
+    <!--<dimen name="circle_view_border">1dp</dimen>-->
+    <!--<dimen name="circle_view_check">24dp</dimen>-->
     <dimen name="paper_button_width">88dip</dimen>
 
-    <dimen name="tabs_height">48dip</dimen>
-    <dimen name="tabs_text_size">13sp</dimen>
+    <!--<dimen name="tabs_height">48dip</dimen>-->
+    <!--<dimen name="tabs_text_size">13sp</dimen>-->
 
     <dimen name="text_min_margin">20dip</dimen>
 

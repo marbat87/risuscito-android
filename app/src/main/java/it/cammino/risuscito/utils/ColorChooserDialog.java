@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.ui.CircleView;
-import it.cammino.utilities.colorpicker.ColorPalette;
 
 /**
  * @author marcello.battain

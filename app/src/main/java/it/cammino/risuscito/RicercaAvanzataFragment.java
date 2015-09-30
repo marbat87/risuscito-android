@@ -52,7 +52,6 @@ import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
@@ -717,7 +716,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //					Log.i("PAROLA[" + j + "]:", words[j].trim());
 
             String text = "";
-            String[] aResults = new String[300];
+//            String[] aResults = new String[300];
             int totalResults = 0;
             titoli.clear();
 
@@ -759,7 +758,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         lista.moveToFirst();
 //		    			Log.i("TROVATO IN", aTexts[k][0]);
 //		    			Log.i("LUNGHEZZA", aResults.length+"");
-                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
+//                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
                         titoli.add(new CantoRecycled(lista.getString(0)
                                 , lista.getInt(2)
                                 , lista.getString(1)
@@ -812,7 +811,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     {
         if (MAP_NORM == null || MAP_NORM.size() == 0)
         {
-            MAP_NORM = new HashMap<Character, Character>();
+            MAP_NORM = new HashMap<>();
             MAP_NORM.put('À', 'A');
             MAP_NORM.put('Á', 'A');
             MAP_NORM.put('Â', 'A');
@@ -878,15 +877,15 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         for(int i = 0; i < value.length(); i++) {
             Character c = MAP_NORM.get(sb.charAt(i));
             if(c != null) {
-                sb.setCharAt(i, c.charValue());
+                sb.setCharAt(i, c);
             }
         }
 
         return sb.toString();
     }
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
+//    private ThemeUtils getThemeUtils() {
+//        return ((MainActivity)getActivity()).getThemeUtils();
+//    }
 
 }

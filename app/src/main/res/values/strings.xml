@@ -275,7 +275,7 @@
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
     <string name="history_removed">Rimosso dalla cronologia</string>
-    <string name="action_switch_to">Scambia con...</string>
+    <string name="action_switch_to">Scambia con&#8230;</string>
     <string name="song_removed">Canto rimosso</string>
     <string name="switch_done">Scambio effettuato</string>
     <string name="switch_impossible">Non puoi scambiare una canto con se stesso</string>

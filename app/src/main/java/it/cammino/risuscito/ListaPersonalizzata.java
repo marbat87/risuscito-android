@@ -151,9 +151,9 @@ public class ListaPersonalizzata implements Serializable {
 	      out.close(); 
 	 
 	      // Get the bytes of the serialized object 
-	      byte[] buf = bos.toByteArray(); 
+//	      byte[] buf = bos.toByteArray();
 	 
-	      return buf; 
+	      return bos.toByteArray();
 	    } catch(IOException ioe) { 
 	      Log.e("serializeObject", "error", ioe); 
 	 

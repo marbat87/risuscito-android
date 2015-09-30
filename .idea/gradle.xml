@@ -14,8 +14,6 @@
             <option value="$PROJECT_DIR$/NonSenseFilePicker" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/fab-toolbar" />
-            <option value="$PROJECT_DIR$/recyclerviewfastscroller" />
-            <option value="$PROJECT_DIR$/utilities" />
           </set>
         </option>
       </GradleProjectSettings>

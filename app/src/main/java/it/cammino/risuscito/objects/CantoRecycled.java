@@ -1,5 +1,7 @@
 package it.cammino.risuscito.objects;
 
+import android.util.Log;
+
 /**
  * Created by marcello.battain on 17/05/2015.
  */
@@ -32,7 +34,9 @@ public class CantoRecycled {
         int numeroTemp = 0;
         try {
             numeroTemp = Integer.valueOf(numeroSalmo.substring(0, 3));
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {}
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+        }
         this.setNumeroSalmo(numeroTemp);
         this.setmSelected(false);
     }
