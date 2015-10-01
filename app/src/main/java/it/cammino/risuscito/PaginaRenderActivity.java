@@ -81,6 +81,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.filepicker.ThemedFilePickerActivity;
 import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import permissions.dispatcher.DeniedPermission;
@@ -129,9 +130,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private int defaultScrollY = 0;
 
     private static final String PREF_FIRST_OPEN_NEW = "prima_apertura_audio";
-
-    private boolean isDownload;
-    private static final String IS_DOWNLOAD = "isDownload";
 
     private Handler mHandler = new Handler();
     final Runnable mScrollDown = new Runnable() {
@@ -192,9 +190,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
-
-        if (savedInstanceState != null)
-            isDownload = savedInstanceState.getBoolean(IS_DOWNLOAD, false);
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         Bundle bundle = this.getIntent().getExtras();
@@ -543,7 +538,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                                        final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
                                         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                                         int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-                                        isDownload = true;
                                         if (saveLocation == 1) {
 //                                            if (Utility.isExternalStorageWritable()) {
 //                                                new File(Environment.getExternalStoragePublicDirectory(
@@ -560,7 +554,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //                                                    , R.string.no_memory_writable
 //                                                    , Snackbar.LENGTH_SHORT)
 //                                                    .show();
-                                            checkExternalStorageAndDo();
+                                            startExternalDownload();
                                         }
                                         else {
                                             startInternalDownload();
@@ -587,17 +581,15 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     public void onNegative(MaterialDialog dialog) {
                                         setRequestedOrientation(prevOrientation);
                                         // This always works
-//                                        Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
 //
 //                                        // Set these depending on your use case. These are the defaults.
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
 //                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
 //                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
-//                                        startActivityForResult(i, REQUEST_CODE);
-                                        isDownload = false;
-                                        checkExternalStorageAndDo();
+                                        startActivityForResult(i, REQUEST_CODE);
                                     }
 
                                     @Override
@@ -734,14 +726,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     public void onPositive(MaterialDialog dialog) {
                                         setRequestedOrientation(prevOrientation);
                                         // This always works
-                                        Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
+                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
 
                                         // Set these depending on your use case. These are the defaults.
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
                                         i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+//                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+//                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
                                         startActivityForResult(i, REQUEST_CODE);
                                     }
 
@@ -919,12 +911,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(IS_DOWNLOAD, isDownload);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -2227,48 +2213,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void checkExternalStorageAndDo() {
+    void startExternalDownload() {
         Log.d(getClass().getName(), " WRITE_EXTERNAL_STORAGE OK");
-        if (isDownload) {
-            if (Utility.isExternalStorageWritable()) {
-                final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
-                new File(Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
+        if (Utility.isExternalStorageWritable()) {
+            final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
+            new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
 //                                                      Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
-                String localFile = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_MUSIC).getAbsolutePath()
-                        + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
+            String localFile = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
+                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
 //                                                      Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
-                downloadTask.execute(url, localFile);
-                mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        downloadTask.cancel(true);
-                        Snackbar.make(findViewById(android.R.id.content)
-                                , R.string.download_cancelled
-                                , Snackbar.LENGTH_SHORT)
-                                .show();
-                        setRequestedOrientation(prevOrientation);
-                    }
-                });
-            } else
-                Snackbar.make(findViewById(android.R.id.content)
-                        , R.string.no_memory_writable
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-        }
-        else {
-            // This always works
-            Intent i = new Intent(getApplicationContext(), FilePickerActivity.class);
-
-            // Set these depending on your use case. These are the defaults.
-            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-            i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-            i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-            i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
-            startActivityForResult(i, REQUEST_CODE);
-        }
+            downloadTask.execute(url, localFile);
+            mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    downloadTask.cancel(true);
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.download_cancelled
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    setRequestedOrientation(prevOrientation);
+                }
+            });
+        } else
+            Snackbar.make(findViewById(android.R.id.content)
+                    , R.string.no_memory_writable
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
     }
 
     // Option
@@ -2279,7 +2251,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         Utility.blockOrientation(PaginaRenderActivity.this);
         MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
                 .title(R.string.external_storage_title)
-                .content(isDownload? R.string.external_storage_rationale: R.string.file_picker_rationale)
+                .content(R.string.external_storage_rationale)
                 .positiveText(R.string.dialog_chiudi)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
@@ -2308,36 +2280,28 @@ public class PaginaRenderActivity extends ThemeableActivity {
     @DeniedPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void startInternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED or CHOOSED INTERNAL");
-        if (isDownload) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
-            editor.apply();
-            final DownloadTask internalDownloadTask = new DownloadTask(PaginaRenderActivity.this);
-            String localFile = PaginaRenderActivity.this.getFilesDir()
-                    + "/"
-                    + Utility.filterMediaLink(url);
-            internalDownloadTask.execute(url, localFile);
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                .edit();
+        editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+        editor.apply();
+        final DownloadTask internalDownloadTask = new DownloadTask(PaginaRenderActivity.this);
+        String localFile = PaginaRenderActivity.this.getFilesDir()
+                + "/"
+                + Utility.filterMediaLink(url);
+        internalDownloadTask.execute(url, localFile);
 
-            mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    internalDownloadTask.cancel(true);
-                    Snackbar.make(findViewById(android.R.id.content)
-                            , R.string.download_cancelled
-                            , Snackbar.LENGTH_SHORT)
-                            .show();
-                    setRequestedOrientation(prevOrientation);
-                }
-            });
-        }
-        else {
-            Snackbar.make(findViewById(android.R.id.content)
-                    , R.string.file_picker_denied
-                    , Snackbar.LENGTH_SHORT)
-                    .show();
-        }
+        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                internalDownloadTask.cancel(true);
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.download_cancelled
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
+                setRequestedOrientation(prevOrientation);
+            }
+        });
     }
 
 }
