@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
@@ -66,12 +69,14 @@ public class DraggableSwipeableAdapter
         public ViewGroup mContainer;
         public View mDragHandle;
         public TextView mTextView;
+        public ImageView mDragImage;
 
         public MyViewHolder(View v) {
             super(v);
             mContainer = (ViewGroup) v.findViewById(R.id.container);
             mDragHandle = v.findViewById(R.id.drag_handle);
             mTextView = (TextView) v.findViewById(android.R.id.text1);
+            mDragImage = (ImageView) v.findViewById(R.id.drag_image);
 //            if(longClickListener != null)
 //                v.setOnLongClickListener(longClickListener);
         }
@@ -151,6 +156,9 @@ public class DraggableSwipeableAdapter
                 return true;
             }
         });
+
+        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
+        DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
 
         // set text
         holder.mTextView.setText(item.getTitolo());

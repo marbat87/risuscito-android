@@ -12,6 +12,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -69,6 +70,8 @@ public class FabToolbar extends RevealFrameLayout {
 
         inflate(getContext(), R.layout.fab_toolbar, this);
         button = (FloatingActionButton) findViewById(R.id.button);
+        Drawable drawable = DrawableCompat.wrap(button.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         button.setOnClickListener(new ButtonClickListener());
         container = ((LinearLayout) findViewById(R.id.container));
     }

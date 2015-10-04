@@ -17,7 +17,6 @@
         <!--<item name="colorControlActivated">#12000000</item>-->
 
         <!-- The rest of your attributes -->
-        <item name="customInsertItem">@drawable/ic_fa_plus_circle_dark</item>
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>

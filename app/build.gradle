@@ -40,7 +40,6 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.4'
     // NOTE: vector-compat is available on API level 14 or later
-    compile 'com.wnafee:vector-compat:1.0.5'
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.+@aar'

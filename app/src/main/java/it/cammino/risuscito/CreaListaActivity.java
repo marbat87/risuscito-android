@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -393,7 +396,10 @@ public class CreaListaActivity extends ThemeableActivity {
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
 //        getFab();
-        findViewById(R.id.fab_crea_lista).setOnClickListener(new OnClickListener() {
+        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
+        Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        fabAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 prevOrientation = getRequestedOrientation();

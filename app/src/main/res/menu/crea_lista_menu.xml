@@ -5,14 +5,14 @@
     <item
         android:id="@+id/action_save_list"
         android:orderInCategory="98"
-        android:icon="@drawable/ic_action_tab_save"
+        android:icon="@drawable/ic_save_white_24dp"
         risuscito:showAsAction="always"
         android:title="@string/list_save_exit" />
 
     <item
         android:id="@+id/action_help"
         android:orderInCategory="99"
-        android:icon="@drawable/ic_action_help"
+        android:icon="@drawable/ic_help_white_24dp"
         risuscito:showAsAction="always"
         android:title="@string/action_help" />
 

@@ -83,7 +83,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_delete_white_48dp"
+            android:src="@drawable/ic_delete_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -96,7 +96,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_add_white_48dp"
+            android:src="@drawable/ic_add_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -109,7 +109,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_create_white_48dp"
+            android:src="@drawable/ic_edit_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton

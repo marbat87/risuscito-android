@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
@@ -24,6 +26,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.alexkolpa.fabtoolbar.FabToolbar;
@@ -46,7 +50,7 @@ public class CustomLists extends Fragment  {
     //    TabPageIndicator mSlidingTabLayout = null;
     private FabToolbar mFab;
     //    public FloatingActionButton fabAddLista, fabPulisci, fabEdit, fabDelete;
-    public View fabEdit, fabDelete;
+    public ImageView fabEdit, fabDelete;
     private View rootView;
     private static final String PAGE_VIEWED = "pageViewed";
     private static final String PAGE_EDITED = "pageEdited";
@@ -164,7 +168,10 @@ public class CustomLists extends Fragment  {
 //        });
 
 //        fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
-        rootView.findViewById(R.id.fab_add_lista).setOnClickListener(new View.OnClickListener() {
+        ImageButton buttonAddLista = (ImageButton) rootView.findViewById(R.id.fab_add_lista);
+        Drawable drawable = DrawableCompat.wrap(buttonAddLista.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        buttonAddLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().hide();
@@ -282,7 +289,9 @@ public class CustomLists extends Fragment  {
         });
 
 
-        fabEdit = rootView.findViewById(R.id.fab_edit_lista);
+        fabEdit = (ImageButton) rootView.findViewById(R.id.fab_edit_lista);
+        drawable = DrawableCompat.wrap(fabEdit.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -299,7 +308,9 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        fabDelete = rootView.findViewById(R.id.fab_delete_lista);
+        fabDelete = (ImageButton) rootView.findViewById(R.id.fab_delete_lista);
+        drawable = DrawableCompat.wrap(fabDelete.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

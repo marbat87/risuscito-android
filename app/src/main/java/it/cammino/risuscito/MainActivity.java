@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -686,9 +688,11 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         setSupportActionBar(mActionToolbar);
         mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         getSupportActionBar().setTitle("");
-        TextView title = (TextView)toolbar.findViewById(R.id.main_toolbarTitle);
+//        TextView title = (TextView)toolbar.findViewById(R.id.main_toolbarTitle);
         ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
-        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

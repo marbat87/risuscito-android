@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true"
-          android:drawable="@drawable/ic_favorite_white_48dp" /> <!-- selected -->
-   	<item android:drawable="@drawable/ic_favorite_border_white_48dp" /> <!-- default -->
+          android:drawable="@drawable/ic_favorite_48dp" /> <!-- selected -->
+   	<item android:drawable="@drawable/ic_favorite_outline_48dp" /> <!-- default -->
 </selector>

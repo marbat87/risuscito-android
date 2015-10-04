@@ -96,7 +96,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private String pagina;
     private int idCanto;
     private static MediaPlayer mediaPlayer;
-    private ImageButton play_scroll, play_button, save_file;
+    private ImageButton play_scroll, play_button, save_file, fab_favorite, fab_sound_off;
     private TextView no_records_text;
     private View music_buttons;
     public FabToolbar mFab; // the floating blue add/paste button
@@ -231,7 +231,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
         no_records_text = (TextView) findViewById(R.id.no_record);
         music_buttons = findViewById(R.id.music_buttons);
         save_file = (ImageButton) findViewById(R.id.save_file);
+        drawable = DrawableCompat.wrap(save_file.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
+        drawable = DrawableCompat.wrap(play_scroll.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
         scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
         scroll_song_bar = (Slider) findViewById(R.id.music_seekbar);
 
@@ -800,7 +804,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             @Override
             public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
                 speedValue = String.valueOf(newValue);
-                ((TextView)findViewById(R.id.slider_text)).setText(String.valueOf(newValue) + " %");
+                ((TextView) findViewById(R.id.slider_text)).setText(String.valueOf(newValue) + " %");
 //                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
             }
         });
@@ -815,8 +819,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     play_scroll.setSelected(false);
                     scrollPlaying = false;
                     mHandler.removeCallbacks(mScrollDown);
-                }
-                else {
+                } else {
                     play_scroll.setSelected(true);
                     scrollPlaying = true;
                     mScrollDown.run();
@@ -827,7 +830,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
         initializeLoadingDialogs();
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
-        findViewById(R.id.fab_fullscreen_on).setOnClickListener(new OnClickListener() {
+        ImageButton fab_fullscreen_on = (ImageButton) findViewById(R.id.fab_fullscreen_on);
+        drawable = DrawableCompat.wrap(fab_fullscreen_on.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        fab_fullscreen_on.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().hide();
@@ -847,7 +853,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        findViewById(R.id.fab_sound_off).setOnClickListener(new OnClickListener() {
+        fab_sound_off = (ImageButton) findViewById(R.id.fab_sound_off);
+        drawable = DrawableCompat.wrap(fab_sound_off.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        fab_sound_off.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
@@ -859,7 +868,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
         });
 
-        findViewById(R.id.fab_favorite).setOnClickListener(new OnClickListener() {
+        fab_favorite = (ImageButton) findViewById(R.id.fab_favorite);
+        drawable = DrawableCompat.wrap(fab_favorite.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        fab_favorite.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setSelected(!v.isSelected());
@@ -1263,8 +1275,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
 
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
-        findViewById(R.id.fab_sound_off).setSelected(!mostraAudioBool);
-        findViewById(R.id.fab_favorite).setSelected(selectFavouriteFromSource() == 1);
+        fab_sound_off.setSelected(!mostraAudioBool);
+        fab_favorite.setSelected(selectFavouriteFromSource() == 1);
         if (getFab().isVisible()) {
             showOuterFrame();
         }
