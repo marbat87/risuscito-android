@@ -2,6 +2,7 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,9 +17,6 @@ import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoInsert;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
 
     private List<CantoInsert> dataItems;
@@ -69,7 +67,7 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.sourceCanto.setText(dataItem.getSource());
 
         Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
-        DrawableCompat.setTint(drawable, context.getResources().getColor(R.color.icon_ative_black));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
 
         if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);

@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 
 import it.cammino.risuscito.R;
 
-/**
- * Created by marcello.battain on 12/02/2015.
- */
 public class ThemeUtils {
 
     public ThemeUtils(Activity context) {
@@ -51,7 +49,7 @@ public class ThemeUtils {
     }
 
     public int primaryColor() {
-        final int defaultColor = mContext.getResources().getColor(R.color.theme_primary);
+        final int defaultColor = ContextCompat.getColor(mContext, R.color.theme_primary);
         return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("primary_color", defaultColor);
     }
 
@@ -64,7 +62,7 @@ public class ThemeUtils {
     }
 
     public int accentColor() {
-        final int defaultColor = mContext.getResources().getColor(R.color.theme_accent);
+        final int defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent);
         return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("accent_color", defaultColor);
     }
 

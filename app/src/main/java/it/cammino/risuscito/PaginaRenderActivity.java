@@ -225,17 +225,17 @@ public class PaginaRenderActivity extends ThemeableActivity {
         //recupera i pulsanti
         play_button = (ImageButton) findViewById(R.id.play_song);
         Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
         play_button.setImageDrawable(drawable);
 //        time_text = (TextView) findViewById(R.id.time_text);
         no_records_text = (TextView) findViewById(R.id.no_record);
         music_buttons = findViewById(R.id.music_buttons);
         save_file = (ImageButton) findViewById(R.id.save_file);
         drawable = DrawableCompat.wrap(save_file.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
         drawable = DrawableCompat.wrap(play_scroll.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
         scroll_song_bar = (Slider) findViewById(R.id.music_seekbar);
 
@@ -832,7 +832,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
         ImageButton fab_fullscreen_on = (ImageButton) findViewById(R.id.fab_fullscreen_on);
         drawable = DrawableCompat.wrap(fab_fullscreen_on.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         fab_fullscreen_on.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -855,7 +855,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         fab_sound_off = (ImageButton) findViewById(R.id.fab_sound_off);
         drawable = DrawableCompat.wrap(fab_sound_off.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         fab_sound_off.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -870,7 +870,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         fab_favorite = (ImageButton) findViewById(R.id.fab_favorite);
         drawable = DrawableCompat.wrap(fab_favorite.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         fab_favorite.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

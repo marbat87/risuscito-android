@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -32,9 +33,6 @@ import it.cammino.risuscito.objects.DraggableItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ViewUtils;
 
-/**
- * Created by marcello.battain on 25/05/2015.
- */
 public class DraggableSwipeableAdapter
         extends RecyclerView.Adapter<DraggableSwipeableAdapter.MyViewHolder>
         implements DraggableItemAdapter<DraggableSwipeableAdapter.MyViewHolder>,
@@ -158,7 +156,7 @@ public class DraggableSwipeableAdapter
         });
 
         Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
-        DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
 
         // set text
         holder.mTextView.setText(item.getTitolo());
@@ -195,7 +193,7 @@ public class DraggableSwipeableAdapter
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
                 holder.mContainer.setBackgroundResource(typedValue.resourceId);
-                holder.itemView.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.transparent));
             }
 
 //            holder.mContainer.setBackgroundResource(bgResId);

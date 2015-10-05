@@ -2,6 +2,7 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
@@ -21,9 +22,6 @@ import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.objects.ExpandableGroup;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoExpandableAdapter
         extends AbstractExpandableItemAdapter<CantoExpandableAdapter.GroupViewHolder, CantoExpandableAdapter.CantoViewHolder> {
 
@@ -119,7 +117,7 @@ public class CantoExpandableAdapter
                 drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_24dp);
             }
             drawable = DrawableCompat.wrap(drawable);
-            DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
             holder.indicator.setBackgroundDrawable(drawable);
 
 //            holder.mContainer.setBackgroundResource(bgResId);

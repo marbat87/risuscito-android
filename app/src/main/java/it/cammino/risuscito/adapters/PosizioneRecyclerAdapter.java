@@ -3,6 +3,7 @@ package it.cammino.risuscito.adapters;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
@@ -22,9 +23,6 @@ import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
 
     //    private List<PosizioneItem> dataItems;
@@ -80,7 +78,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
             if (dataItem.isMultiple()) {
                 titleHolder.addCanto.setVisibility(View.VISIBLE);
                 Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
-                DrawableCompat.setTint(drawable, context.getResources().getColor(R.color.icon_ative_black));
+                DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
                 if (clickListener != null)
                     titleHolder.addCanto.setOnClickListener(clickListener);
             }
@@ -135,7 +133,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         else {
             titleHolder.addCanto.setVisibility(View.VISIBLE);
             Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
-            DrawableCompat.setTint(drawable, context.getResources().getColor(R.color.icon_ative_black));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
 //            titleHolder.canto.setVisibility(View.GONE);
             if (clickListener != null)
                 titleHolder.addCanto.setOnClickListener(clickListener);

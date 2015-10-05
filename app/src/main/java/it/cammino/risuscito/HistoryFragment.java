@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -380,7 +381,7 @@ public class HistoryFragment extends Fragment {
             cantoAdapter.notifyItemChanged(posizDaCanc);
             removedItems = new ArrayList<>();
             Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, getResources().getColor(R.color.icon_ative_black));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
             menu.findItem(R.id.action_remove_item).setIcon(drawable);
             actionModeOk = false;
             return true;

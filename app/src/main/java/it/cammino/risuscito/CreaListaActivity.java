@@ -18,6 +18,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -398,7 +399,7 @@ public class CreaListaActivity extends ThemeableActivity {
 //        getFab();
         FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
         Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
         fabAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

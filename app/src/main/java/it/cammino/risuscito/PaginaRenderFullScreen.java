@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.KeyEvent;
@@ -82,7 +83,7 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
         Drawable drawable = DrawableCompat.wrap(fabFullscreen.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderFullScreen.this, android.R.color.white));
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

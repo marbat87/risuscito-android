@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -123,7 +124,7 @@ public class ConsegnatiFragment extends Fragment {
 
         ImageButton cancel_change = (ImageButton) rootView.findViewById(R.id.cancel_change);
         Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         cancel_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,7 +152,7 @@ public class ConsegnatiFragment extends Fragment {
 
         ImageButton confirm_changes = (ImageButton) rootView.findViewById(R.id.confirm_changes);
         drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         confirm_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

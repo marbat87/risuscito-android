@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -276,7 +277,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
-                        getResources().getColor(R.color.navdrawer_icon_tint) //2
+                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
                 }
         );
 
@@ -287,7 +288,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
-                        getResources().getColor(R.color.navdrawer_text_color) //2
+                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
                 }
         );
 
@@ -692,7 +693,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
         mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
         mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

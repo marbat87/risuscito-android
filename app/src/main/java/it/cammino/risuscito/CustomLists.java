@@ -16,6 +16,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -170,7 +171,7 @@ public class CustomLists extends Fragment  {
 //        fabAddLista = (FloatingActionButton) rootView.findViewById(R.id.fab_add_lista);
         ImageButton buttonAddLista = (ImageButton) rootView.findViewById(R.id.fab_add_lista);
         Drawable drawable = DrawableCompat.wrap(buttonAddLista.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         buttonAddLista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -280,7 +281,7 @@ public class CustomLists extends Fragment  {
 
         ImageButton fab_share = (ImageButton) rootView.findViewById(R.id.fab_condividi);
         drawable = DrawableCompat.wrap(fab_share.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         fab_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -294,7 +295,7 @@ public class CustomLists extends Fragment  {
 
         fabEdit = (ImageButton) rootView.findViewById(R.id.fab_edit_lista);
         drawable = DrawableCompat.wrap(fabEdit.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -313,7 +314,7 @@ public class CustomLists extends Fragment  {
 
         fabDelete = (ImageButton) rootView.findViewById(R.id.fab_delete_lista);
         drawable = DrawableCompat.wrap(fabDelete.getDrawable());
-        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
