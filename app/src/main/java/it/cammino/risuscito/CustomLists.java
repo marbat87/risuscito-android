@@ -278,7 +278,10 @@ public class CustomLists extends Fragment  {
             }
         });
 
-        rootView.findViewById(R.id.fab_condividi).setOnClickListener(new View.OnClickListener() {
+        ImageButton fab_share = (ImageButton) rootView.findViewById(R.id.fab_condividi);
+        drawable = DrawableCompat.wrap(fab_share.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        fab_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().hide();

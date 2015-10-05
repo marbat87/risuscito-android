@@ -160,7 +160,7 @@ public class InsertVeloceFragment extends Fragment {
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoInsertRecyclerAdapter(titoli, clickListener, seeOnClickListener);
+        cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager

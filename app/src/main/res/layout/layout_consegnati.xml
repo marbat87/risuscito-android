@@ -75,7 +75,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_undo_white_24dp"
+                android:src="@drawable/ic_undo_24dp"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -88,7 +88,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_save_white_24dp"
+                android:src="@drawable/ic_save_24dp"
                 android:soundEffectsEnabled="true" />
 
         </LinearLayout>

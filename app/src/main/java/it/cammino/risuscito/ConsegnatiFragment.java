@@ -6,12 +6,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -55,8 +58,6 @@ public class ConsegnatiFragment extends Fragment {
     private int prevOrientation;
     private MaterialDialog mProgressDialog;
     private int totalConsegnati;
-//    private RelativeLayout.LayoutParams lps;
-//    private boolean byGuide;
 
     private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
 
@@ -69,10 +70,6 @@ public class ConsegnatiFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_consegnati);
-//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_consegnati);
-//        ((MainActivity) getActivity()).getSupportActionBar()
-//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -81,8 +78,6 @@ public class ConsegnatiFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
 
         rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
-//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-//        ((TextView) rootView.findViewById(R.id.consegnati_text)).setTypeface(face);
 
         if (savedInstanceState == null)
             editMode = false;
@@ -126,7 +121,10 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        (rootView.findViewById(R.id.cancel_change)).setOnClickListener(new View.OnClickListener() {
+        ImageButton cancel_change = (ImageButton) rootView.findViewById(R.id.cancel_change);
+        Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        cancel_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
@@ -150,54 +148,14 @@ public class ConsegnatiFragment extends Fragment {
                 animator.start();
             }
         });
-        (rootView.findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
+
+        ImageButton confirm_changes = (ImageButton) rootView.findViewById(R.id.confirm_changes);
+        drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
+        DrawableCompat.setTint(drawable, getResources().getColor(android.R.color.white));
+        confirm_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 (new ConsegnatiSaveTask()).execute();
-//                rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.GONE: View.VISIBLE);
-//                editMode = false;
-//                rootView.findViewById(R.id.choose_view).setVisibility(View.GONE);
-////                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-//                View myView = rootView.findViewById(R.id.consegnati_view);
-//                myView.setVisibility(View.VISIBLE);
-//
-//                // get the center for the clipping circle
-//                int cx = myView.getRight();
-//                int cy = myView.getBottom();
-//
-//                // get the final radius for the clipping circle
-//                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-//
-//                SupportAnimator animator =
-//                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-//                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-//                animator.setDuration(CIRCLE_DURATION);
-//                animator.start();
-//
-//                //aggiorno la lista dei consegnati
-//                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                db.delete("CANTI_CONSEGNATI", "", null);
-//
-//                List<Canto> choosedList = selectableAdapter.getCantiChoose();
-//                for (int i = 0; i < choosedList.size(); i++) {
-//                    Canto singoloCanto = choosedList.get(i);
-//                    if (singoloCanto.isSelected()) {
-//                        String sql = "INSERT INTO CANTI_CONSEGNATI" +
-//                                "       (_id, id_canto)" +
-//                                "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
-//                                "             FROM CANTI_CONSEGNATI";
-//
-//                        try {
-//                            db.execSQL(sql);
-//                        } catch (SQLException e) {
-//                            Log.e(getClass().toString(), "ERRORE INSERT:");
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//                db.close();
-//
-//                updateConsegnatiList();
             }
         });
 
@@ -212,31 +170,6 @@ public class ConsegnatiFragment extends Fragment {
                 })
                 .build();
 
-//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-//                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-//                else
-//                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//
-//                if(PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .getBoolean(PREF_FIRST_OPEN, true)) {
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(getActivity())
-//                            .edit();
-//                    editor.putBoolean(PREF_FIRST_OPEN, false);
-//                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-//                        editor.commit();
-//                    } else {
-//                        editor.apply();
-//                    }
-//                    showHelp();
-//                }
-//            }
-//        });
-
         if(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(PREF_FIRST_OPEN, true)) {
@@ -246,14 +179,6 @@ public class ConsegnatiFragment extends Fragment {
             editor.putBoolean(PREF_FIRST_OPEN, false);
             editor.apply();
             showHelp();
-//            final Runnable mMyRunnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    showHelp();
-//                }
-//            };
-//            Handler myHandler = new Handler();
-//            myHandler.postDelayed(mMyRunnable, 1000);
         }
 
         return rootView;
@@ -359,38 +284,13 @@ public class ConsegnatiFragment extends Fragment {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-//                        .getText().toString();
-//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                // crea un manipolatore per il DB in modalità READ
-//                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                // esegue la query per il recupero del nome del file della pagina da visualizzare
-//                String query = "SELECT source, _id" +
-//                        "  FROM ELENCO" +
-//                        "  WHERE titolo =  '" + cantoCliccato + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                // recupera il nome del file
-//                cursor.moveToFirst();
-//                String pagina = cursor.getString(0);
-//                int idCanto = cursor.getInt(1);
-//
-//                // chiude il cursore
-//                cursor.close();
-//                db.close();
-
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-//                bundle.putString("pagina", pagina);
                 bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-//                bundle.putInt("idCanto", idCanto);
                 bundle.putInt("idCanto", Integer.valueOf(
                         String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
 
@@ -455,12 +355,6 @@ public class ConsegnatiFragment extends Fragment {
 
     }
 
-//    private int dpToPx(int dp) {
-//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-//        return px;
-//    }
-
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
@@ -490,10 +384,6 @@ public class ConsegnatiFragment extends Fragment {
     public List<Canto> getTitoliChoose() {
         return titoliChoose;
     }
-
-//    public void setTitoliChoose(List<Canto> titoliChoose) {
-//        this.titoliChoose = titoliChoose;
-//    }
 
     private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
 
@@ -563,130 +453,6 @@ public class ConsegnatiFragment extends Fragment {
     private void showHelp() {
         Intent intent = new Intent(getActivity(), IntroConsegnati.class);
         startActivity(intent);
-//        prevOrientation = getActivity().getRequestedOrientation();
-//        Utility.blockOrientation(getActivity());
-//
-//        lps = new RelativeLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//        int margin = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//        int marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//        int marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-//                marginBottom = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-//                        .density * 62)).intValue();
-//            else
-//                marginLeft = ((Number) (getActivity().getApplicationContext().getResources().getDisplayMetrics()
-//                        .density * 62)).intValue();
-//        }
-//        lps.setMargins(marginLeft, margin, margin, marginBottom);
-//
-//        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-//                new ViewTarget(R.id.action_edit_choose, getActivity())
-//                , getActivity()
-//                , R.string.title_activity_consegnati
-//                , R.string.showcase_consegnati_desc);
-//        showCase.setButtonText(getString(R.string.showcase_button_next));
-//        showCase.setShowcase(ShowcaseView.NONE);
-//        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//            }
-//
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-//                        new ViewTarget(R.id.action_edit_choose, getActivity())
-//                        , getActivity()
-//                        , R.string.title_activity_consegnati
-//                        , R.string.showcase_consegnati_howto);
-//                showCase.setButtonText(getString(R.string.showcase_button_next));
-//                showCase.setScaleMultiplier(0.3f);
-//                if (rootView.findViewById(R.id.choose_view).getVisibility() != View.VISIBLE) {
-//                    byGuide = true;
-//                    updateChooseList(true);
-//                    rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
-//                    rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-//                } else {
-//                    byGuide = false;
-//                }
-//                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//                    @Override
-//                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//                    }
-//
-//                    @Override
-//                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//                        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//                        co.buttonLayoutParams = lps;
-//                        ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-//                                new ViewTarget(R.id.confirm_changes, getActivity())
-//                                , getActivity()
-//                                , R.string.title_activity_consegnati
-//                                , R.string.single_choice_ok
-//                                , co);
-//                        showCase.setButtonText(getString(R.string.showcase_button_next));
-//                        showCase.setScaleMultiplier(0.3f);
-//                        showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//                            @Override
-//                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//                            }
-//
-//                            @Override
-//                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//                                ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//                                co.buttonLayoutParams = lps;
-//                                ShowcaseView showCase = ShowcaseView.insertShowcaseView(
-//                                        new ViewTarget(R.id.cancel_change, getActivity())
-//                                        , getActivity()
-//                                        , R.string.title_activity_consegnati
-//                                        , R.string.cancel
-//                                        , co);
-//                                showCase.setScaleMultiplier(0.3f);
-//                                showCase.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//                                    @Override
-//                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//                                    }
-//
-//                                    @Override
-//                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//                                        if (byGuide) {
-//                                            if (rootView.findViewById(R.id.choose_view).getVisibility() == View.VISIBLE)
-//                                                rootView.findViewById(R.id.cancel_change).performClick();
-//                                        }
-//                                        getActivity().setRequestedOrientation(prevOrientation);
-//                                    }
-//
-//                                    @Override
-//                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//                                    }
-//                                });
-//                            }
-//
-//                            @Override
-//                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//                            }
-//                        });
-//                    }
-//
-//
-//                    @Override
-//                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {}
-//        });
     }
 
 }

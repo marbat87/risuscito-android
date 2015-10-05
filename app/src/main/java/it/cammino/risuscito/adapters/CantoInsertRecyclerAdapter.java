@@ -1,9 +1,13 @@
 package it.cammino.risuscito.adapters;
 
+import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -20,21 +24,24 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
     private List<CantoInsert> dataItems;
     private View.OnClickListener clickListener;
     private View.OnClickListener seeClickListener;
+    private Activity context;
 
     // Adapter constructor 1
-    public CantoInsertRecyclerAdapter(List<CantoInsert> dataItems
+    public CantoInsertRecyclerAdapter(Activity context, List<CantoInsert> dataItems
             , View.OnClickListener clickListener) {
 
+        this.context = context;
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.seeClickListener = null;
     }
 
     // Adapter constructor 2
-    public CantoInsertRecyclerAdapter(List<CantoInsert> dataItems
+    public CantoInsertRecyclerAdapter(Activity context, List<CantoInsert> dataItems
             , View.OnClickListener clickListener
             , View.OnClickListener seeClickListener) {
 
+        this.context = context;
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.seeClickListener = seeClickListener;
@@ -61,6 +68,9 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.idCanto.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.sourceCanto.setText(dataItem.getSource());
 
+        Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
+        DrawableCompat.setTint(drawable, context.getResources().getColor(R.color.icon_ative_black));
+
         if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
         if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
@@ -85,7 +95,7 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         public TextView cantoPage;
         public TextView idCanto;
         public TextView sourceCanto;
-//        public View seeCanto;
+        public ImageView seeCanto;
 
         public CantoViewHolder(View itemView
                 , View.OnClickListener onClickListener
@@ -95,12 +105,12 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
             cantoPage = (TextView) itemView.findViewById(R.id.text_page);
             idCanto = (TextView) itemView.findViewById(R.id.text_id_canto);
             sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
-            View seeCanto = itemView.findViewById(R.id.preview);
+            seeCanto = (ImageView) itemView.findViewById(R.id.see_canto);
 
             if (onClickListener != null)
                 itemView.setOnClickListener(onClickListener);
             if (seeOnClickListener != null)
-                seeCanto.setOnClickListener(seeOnClickListener);
+                itemView.findViewById(R.id.preview).setOnClickListener(seeOnClickListener);
         }
 
     }

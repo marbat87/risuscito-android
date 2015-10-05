@@ -122,7 +122,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_share_white_48dp"
+            android:src="@drawable/ic_share_48dp"
             android:soundEffectsEnabled="true" />
 
     </com.github.alexkolpa.fabtoolbar.FabToolbar>

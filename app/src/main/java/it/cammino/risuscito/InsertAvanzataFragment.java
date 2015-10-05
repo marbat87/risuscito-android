@@ -180,7 +180,7 @@ public class InsertAvanzataFragment extends Fragment {
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoInsertRecyclerAdapter(titoli, clickListener, seeOnClickListener);
+        cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -462,7 +462,7 @@ public class InsertAvanzataFragment extends Fragment {
         for(int i = 0; i < value.length(); i++) {
             Character c = MAP_NORM.get(sb.charAt(i));
             if(c != null)
-                sb.setCharAt(i, c.charValue());
+                sb.setCharAt(i, c);
         }
 
         return sb.toString();

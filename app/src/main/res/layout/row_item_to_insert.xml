@@ -34,9 +34,10 @@
         android:background="?attr/customSelectorRoundAccent" >
 
         <ImageView
+            android:id="@+id/see_canto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_visibility_grey600_24dp"
+            android:src="@drawable/ic_visibility_24dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter" />
 

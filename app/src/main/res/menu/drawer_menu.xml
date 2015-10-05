@@ -10,15 +10,15 @@
                     android:checked="true"/>
                 <item
                     android:id="@+id/navigation_search"
-                    android:icon="@drawable/ic_search_black_48dp"
+                    android:icon="@drawable/ic_search_48dp"
                     android:title="@string/search_name_text"/>
                 <item
                     android:id="@+id/navigation_indexes"
-                    android:icon="@drawable/ic_view_list_black_48dp"
+                    android:icon="@drawable/ic_view_list_48dp"
                     android:title="@string/title_activity_general_index"/>
                 <item
                     android:id="@+id/navitagion_lists"
-                    android:icon="@drawable/ic_view_carousel_black_48dp"
+                    android:icon="@drawable/ic_view_carousel_48dp"
                     android:title="@string/title_activity_custom_lists"/>
                 <item
                     android:id="@+id/navigation_favorites"
@@ -38,7 +38,7 @@
             <!--<menu>-->
                 <item
                     android:id="@+id/navigation_settings"
-                    android:icon="@drawable/ic_settings_black_48dp"
+                    android:icon="@drawable/ic_settings_48dp"
                     android:title="@string/title_activity_settings"/>
                 <item
                     android:id="@+id/navigation_changelog"
@@ -46,7 +46,7 @@
                     android:title="@string/title_activity_about"/>
                 <item
                     android:id="@+id/navigation_donate"
-                    android:icon="@drawable/ic_thumb_up_black_48dp"
+                    android:icon="@drawable/ic_thumb_up_48dp"
                     android:title="@string/title_activity_donate"/>
             <!--</menu>-->
         <!--</item>-->
