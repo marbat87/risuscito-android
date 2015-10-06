@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -49,6 +50,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.alexkolpa.fabtoolbar.FabToolbar;
 import com.itextpdf.text.BaseColor;
@@ -418,9 +420,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     .content(R.string.dialog_delete_mp3)
                                     .positiveText(R.string.confirm)
                                     .negativeText(R.string.dismiss)
-                                    .callback(new MaterialDialog.ButtonCallback() {
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
-                                        public void onPositive(MaterialDialog dialog) {
+                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                             File fileToDelete = new File(localUrl);
                                             fileToDelete.delete();
                                             if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
@@ -447,12 +449,48 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             save_file.setSelected(false);
                                             setRequestedOrientation(prevOrientation);
                                         }
-
+                                    })
+                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
                                         @Override
-                                        public void onNegative(MaterialDialog dialog) {
+                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                             setRequestedOrientation(prevOrientation);
                                         }
                                     })
+//                                    .callback(new MaterialDialog.ButtonCallback() {
+//                                        @Override
+//                                        public void onPositive(MaterialDialog dialog) {
+//                                            File fileToDelete = new File(localUrl);
+//                                            fileToDelete.delete();
+//                                            if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+//                                                // initiate media scan and put the new things into the path array to
+//                                                // make the scanner aware of the location and the files you want to see
+//                                                MediaScannerConnection.scanFile(getApplicationContext()
+//                                                        , new String[]{fileToDelete.getAbsolutePath()}
+//                                                        , null
+//                                                        , null);
+//                                            }
+//                                            Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+//                                                    .show();
+//
+//                                            if (mediaPlayerState == MP_State.Started
+//                                                    || mediaPlayerState == MP_State.Paused)
+//                                                cmdStop();
+//
+//                                            mediaPlayer = new MediaPlayer();
+//                                            mediaPlayerState = MP_State.Idle;
+//                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                                            localFile = false;
+//                                            cmdSetDataSource(url);
+//                                            save_file.setSelected(false);
+//                                            setRequestedOrientation(prevOrientation);
+//                                        }
+//
+//                                        @Override
+//                                        public void onNegative(MaterialDialog dialog) {
+//                                            setRequestedOrientation(prevOrientation);
+//                                        }
+//                                    })
                                     .show();
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
@@ -477,9 +515,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     .content(R.string.dialog_delete_link)
                                     .positiveText(R.string.confirm)
                                     .negativeText(R.string.dismiss)
-                                    .callback(new MaterialDialog.ButtonCallback() {
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
-                                        public void onPositive(MaterialDialog dialog) {
+                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                             Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                                                     .show();
 
@@ -504,12 +542,46 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                                             setRequestedOrientation(prevOrientation);
                                         }
-
+                                    })
+                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
                                         @Override
-                                        public void onNegative(MaterialDialog dialog) {
+                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                             setRequestedOrientation(prevOrientation);
                                         }
                                     })
+//                                    .callback(new MaterialDialog.ButtonCallback() {
+//                                        @Override
+//                                        public void onPositive(MaterialDialog dialog) {
+//                                            Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+//                                                    .show();
+//
+//                                            if (mediaPlayerState == MP_State.Started
+//                                                    || mediaPlayerState == MP_State.Paused)
+//                                                cmdStop();
+//
+//                                            mediaPlayer = new MediaPlayer();
+//                                            mediaPlayerState = MP_State.Idle;
+//                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                                            localFile = false;
+//                                            personalUrl = "";
+//
+//                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                            String sql = "DELETE FROM LOCAL_LINKS" +
+//                                                    "  WHERE _id =  " + idCanto;
+//                                            db.execSQL(sql);
+//                                            db.close();
+//
+//                                            save_file.setSelected(false);
+//
+//                                            setRequestedOrientation(prevOrientation);
+//                                        }
+//
+//                                        @Override
+//                                        public void onNegative(MaterialDialog dialog) {
+//                                            setRequestedOrientation(prevOrientation);
+//                                        }
+//                                    })
                                     .show();
                             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                 @Override
@@ -536,71 +608,100 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .positiveText(R.string.downlink_download)
                                 .negativeText(R.string.downlink_choose)
                                 .neutralText(R.string.cancel)
-                                .callback(new MaterialDialog.ButtonCallback() {
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onPositive(MaterialDialog dialog) {
-//                                        final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                                         int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-                                        if (saveLocation == 1) {
-//                                            if (Utility.isExternalStorageWritable()) {
-//                                                new File(Environment.getExternalStoragePublicDirectory(
-//                                                        Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
-////                                                      Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
-//                                                String localFile = Environment.getExternalStoragePublicDirectory(
-//                                                        Environment.DIRECTORY_MUSIC).getAbsolutePath()
-//                                                        + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
-////                                                      Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
-//                                                downloadTask.execute(url, localFile);
-//                                            }
-//                                            else
-//                                            Snackbar.make(findViewById(android.R.id.content)
-//                                                    , R.string.no_memory_writable
-//                                                    , Snackbar.LENGTH_SHORT)
-//                                                    .show();
+                                        if (saveLocation == 1)
                                             startExternalDownload();
-                                        }
-                                        else {
+                                        else
                                             startInternalDownload();
-//                                            String localFile = PaginaRenderActivity.this.getFilesDir()
-//                                                    + "/"
-//                                                    + Utility.filterMediaLink(url);
-//                                            downloadTask.execute(url, localFile);
-                                        }
-
-//                                        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                                            @Override
-//                                            public void onCancel(DialogInterface dialog) {
-//                                                downloadTask.cancel(true);
-//                                                Snackbar.make(findViewById(android.R.id.content)
-//                                                        , R.string.download_cancelled
-//                                                        , Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                                setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        });
                                     }
-
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onNegative(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         setRequestedOrientation(prevOrientation);
                                         // This always works
                                         Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-//
 //                                        // Set these depending on your use case. These are the defaults.
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
                                         i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-//                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
                                         startActivityForResult(i, REQUEST_CODE);
                                     }
-
+                                })
+                                .onNeutral(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onNeutral(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         setRequestedOrientation(prevOrientation);
                                     }
                                 })
+//                                .callback(new MaterialDialog.ButtonCallback() {
+//                                    @Override
+//                                    public void onPositive(MaterialDialog dialog) {
+////                                        final DownloadTask downloadTask = new DownloadTask(PaginaRenderActivity.this);
+//                                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+//                                        int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+//                                        if (saveLocation == 1) {
+////                                            if (Utility.isExternalStorageWritable()) {
+////                                                new File(Environment.getExternalStoragePublicDirectory(
+////                                                        Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
+//////                                                      Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
+////                                                String localFile = Environment.getExternalStoragePublicDirectory(
+////                                                        Environment.DIRECTORY_MUSIC).getAbsolutePath()
+////                                                        + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
+//////                                                      Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
+////                                                downloadTask.execute(url, localFile);
+////                                            }
+////                                            else
+////                                            Snackbar.make(findViewById(android.R.id.content)
+////                                                    , R.string.no_memory_writable
+////                                                    , Snackbar.LENGTH_SHORT)
+////                                                    .show();
+//                                            startExternalDownload();
+//                                        } else {
+//                                            startInternalDownload();
+////                                            String localFile = PaginaRenderActivity.this.getFilesDir()
+////                                                    + "/"
+////                                                    + Utility.filterMediaLink(url);
+////                                            downloadTask.execute(url, localFile);
+//                                        }
+//
+////                                        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+////                                            @Override
+////                                            public void onCancel(DialogInterface dialog) {
+////                                                downloadTask.cancel(true);
+////                                                Snackbar.make(findViewById(android.R.id.content)
+////                                                        , R.string.download_cancelled
+////                                                        , Snackbar.LENGTH_SHORT)
+////                                                        .show();
+////                                                setRequestedOrientation(prevOrientation);
+////                                            }
+////                                        });
+//                                    }
+//
+//                                    @Override
+//                                    public void onNegative(MaterialDialog dialog) {
+//                                        setRequestedOrientation(prevOrientation);
+//                                        // This always works
+//                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+////
+////                                        // Set these depending on your use case. These are the defaults.
+//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+//                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+////                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+////                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+//                                        startActivityForResult(i, REQUEST_CODE);
+//                                    }
+//
+//                                    @Override
+//                                    public void onNeutral(MaterialDialog dialog) {
+//                                        setRequestedOrientation(prevOrientation);
+//                                    }
+//                                })
                                 .show();
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
@@ -665,9 +766,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .content(R.string.dialog_delete_link)
                                 .positiveText(R.string.confirm)
                                 .negativeText(R.string.dismiss)
-                                .callback(new MaterialDialog.ButtonCallback() {
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onPositive(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                                                 .show();
 
@@ -695,12 +796,49 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
                                         setRequestedOrientation(prevOrientation);
                                     }
-
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onNegative(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         setRequestedOrientation(prevOrientation);
                                     }
                                 })
+//                                .callback(new MaterialDialog.ButtonCallback() {
+//                                    @Override
+//                                    public void onPositive(MaterialDialog dialog) {
+//                                        Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+//                                                .show();
+//
+//                                        if (mediaPlayerState == MP_State.Started
+//                                                || mediaPlayerState == MP_State.Paused)
+//                                            cmdStop();
+//
+//                                        mediaPlayer = new MediaPlayer();
+//                                        mediaPlayerState = MP_State.Idle;
+//                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                                        localFile = false;
+//                                        personalUrl = "";
+//
+//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                        String sql = "DELETE FROM LOCAL_LINKS" +
+//                                                "  WHERE _id =  " + idCanto;
+//                                        db.execSQL(sql);
+//                                        db.close();
+//
+//                                        save_file.setSelected(false);
+//
+//                                        music_buttons.setVisibility(View.INVISIBLE);
+//                                        no_records_text.setVisibility(View.VISIBLE);
+//
+//                                        setRequestedOrientation(prevOrientation);
+//                                    }
+//
+//                                    @Override
+//                                    public void onNegative(MaterialDialog dialog) {
+//                                        setRequestedOrientation(prevOrientation);
+//                                    }
+//                                })
                                 .show();
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
@@ -725,27 +863,46 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .content(R.string.only_link)
                                 .positiveText(R.string.confirm)
                                 .negativeText(R.string.dismiss)
-                                .callback(new MaterialDialog.ButtonCallback() {
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onPositive(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         setRequestedOrientation(prevOrientation);
                                         // This always works
                                         Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-
                                         // Set these depending on your use case. These are the defaults.
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                                         i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
                                         i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
-//                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
                                         startActivityForResult(i, REQUEST_CODE);
                                     }
-
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
                                     @Override
-                                    public void onNegative(MaterialDialog dialog) {
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                         setRequestedOrientation(prevOrientation);
                                     }
                                 })
+//                                .callback(new MaterialDialog.ButtonCallback() {
+//                                    @Override
+//                                    public void onPositive(MaterialDialog dialog) {
+//                                        setRequestedOrientation(prevOrientation);
+//                                        // This always works
+//                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+//
+//                                        // Set these depending on your use case. These are the defaults.
+//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+//                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+////                                        i.putExtra(FilePickerActivity.PRIMARY_COLOR, getThemeUtils().primaryColor());
+////                                        i.putExtra(FilePickerActivity.ACCENT_COLOR, getThemeUtils().accentColor());
+//                                        startActivityForResult(i, REQUEST_CODE);
+//                                    }
+//
+//                                    @Override
+//                                    public void onNegative(MaterialDialog dialog) {
+//                                        setRequestedOrientation(prevOrientation);
+//                                    }
+//                                })
                                 .show();
                         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                             @Override
@@ -952,9 +1109,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                             .content(R.string.dialog_save_tab)
                             .positiveText(R.string.confirm)
                             .negativeText(R.string.dismiss)
-                            .callback(new MaterialDialog.ButtonCallback() {
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onPositive(MaterialDialog dialog) {
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                     SQLiteDatabase db = listaCanti.getReadableDatabase();
                                     String sql = "UPDATE ELENCO" +
                                             "  SET saved_tab = \'" + notaCambio + "\' " +
@@ -965,13 +1122,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                     pulisciVars();
                                     mLUtils.closeActivityWithTransition();
                                 }
-
+                            })
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onNegative(MaterialDialog dialog) {
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                     pulisciVars();
                                     mLUtils.closeActivityWithTransition();
                                 }
                             })
+//                            .callback(new MaterialDialog.ButtonCallback() {
+//                                @Override
+//                                public void onPositive(MaterialDialog dialog) {
+//                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                    String sql = "UPDATE ELENCO" +
+//                                            "  SET saved_tab = \'" + notaCambio + "\' " +
+//                                            "    , saved_barre = \'" + barreCambio + "\' " +
+//                                            "  WHERE _id =  " + idCanto;
+//                                    db.execSQL(sql);
+//                                    db.close();
+//                                    pulisciVars();
+//                                    mLUtils.closeActivityWithTransition();
+//                                }
+//
+//                                @Override
+//                                public void onNegative(MaterialDialog dialog) {
+//                                    pulisciVars();
+//                                    mLUtils.closeActivityWithTransition();
+//                                }
+//                            })
                             .show();
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override
@@ -1140,9 +1318,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         .content(R.string.dialog_save_tab)
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                 String sql = "UPDATE ELENCO" +
                                         "  SET saved_tab = \'" + notaCambio + "\' " +
@@ -1153,13 +1331,34 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 pulisciVars();
                                 mLUtils.closeActivityWithTransition();
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 pulisciVars();
                                 mLUtils.closeActivityWithTransition();
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                String sql = "UPDATE ELENCO" +
+//                                        "  SET saved_tab = \'" + notaCambio + "\' " +
+//                                        "    , saved_barre = \'" + barreCambio + "\' " +
+//                                        "  WHERE _id =  " + idCanto;
+//                                db.execSQL(sql);
+//                                db.close();
+//                                pulisciVars();
+//                                mLUtils.closeActivityWithTransition();
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                pulisciVars();
+//                                mLUtils.closeActivityWithTransition();
+//                            }
+//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -2162,12 +2361,18 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 .title(R.string.download_running)
                 .progress(false, 100, false)
                 .positiveText(R.string.cancel)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         mProgressDialog.cancel();
                     }
                 })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        mProgressDialog.cancel();
+//                    }
+//                })
                 .build();
 
     }
@@ -2191,12 +2396,18 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 .title(R.string.phone_listener_title)
                 .content(R.string.phone_state_rationale)
                 .positiveText(R.string.dialog_chiudi)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         setRequestedOrientation(prevOrientation);
                     }
                 })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        setRequestedOrientation(prevOrientation);
+//                    }
+//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -2265,12 +2476,18 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 .title(R.string.external_storage_title)
                 .content(R.string.external_storage_rationale)
                 .positiveText(R.string.dialog_chiudi)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         setRequestedOrientation(prevOrientation);
                     }
                 })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        setRequestedOrientation(prevOrientation);
+//                    }
+//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override

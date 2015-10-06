@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
@@ -45,10 +47,7 @@ public class FavouritesActivity extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoRecycled> titoli;
-    //    private String cantoDaCanc;
-//    private int idDaCanc;
     private int posizDaCanc;
-    //    private CantoRecycled removedItem;
     private List<CantoRecycled> removedItems;
     private View rootView;
     private RecyclerView recyclerView;
@@ -69,10 +68,6 @@ public class FavouritesActivity extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.activity_favourites, container, false);
-//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_favourites);
-//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_favourites);
-//        ((MainActivity) getActivity()).getSupportActionBar()
-//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -82,8 +77,6 @@ public class FavouritesActivity extends Fragment {
         mMode = null;
 
         fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
-//        fabClear.setColorNormal(getThemeUtils().accentColor());
-//        fabClear.setColorPressed(getThemeUtils().accentColorDark());
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,25 +87,41 @@ public class FavouritesActivity extends Fragment {
                         .content(R.string.dialog_reset_favorites_desc)
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                 ContentValues  values = new  ContentValues();
                                 values.put("favourite" , 0);
                                 db.update("ELENCO", values,  null, null);
                                 db.close();
                                 updateFavouritesList();
-//                                if (titoli.size() == 0)
-//                                    fabClear.hide();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                ContentValues values = new ContentValues();
+//                                values.put("favourite", 0);
+//                                db.update("ELENCO", values, null, null);
+//                                db.close();
+//                                updateFavouritesList();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -204,14 +213,10 @@ public class FavouritesActivity extends Fragment {
                 "		ORDER BY TITOLO ASC";
         Cursor lista = db.rawQuery(query, null);
 
-        //recupera il numero di record trovati
-//        int total = lista.getCount();
-
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < lista.getCount(); i++) {
-//            titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)));
             titoli.add(new CantoRecycled(lista.getString(0)
                     , lista.getInt(2)
                     , lista.getString(1)
@@ -226,41 +231,15 @@ public class FavouritesActivity extends Fragment {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-//                        .getText().toString();
-//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                // crea un manipolatore per il DB in modalità READ
-//                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                // esegue la query per il recupero del nome del file della pagina da visualizzare
-//                String query = "SELECT source, _id" +
-//                        "  FROM ELENCO" +
-//                        "  WHERE titolo =  '" + cantoCliccato + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                // recupera il nome del file
-//                cursor.moveToFirst();
-//                String pagina = cursor.getString(0);
-//                int idCanto = cursor.getInt(1);
-//
-//                // chiude il cursore
-//                cursor.close();
-//                db.close();
-
                 if (mMode == null) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                         return;
                     mLastClickTime = SystemClock.elapsedRealtime();
                     // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                     Bundle bundle = new Bundle();
-//                bundle.putString("pagina", pagina);
                     bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-//                bundle.putInt("idCanto", idCanto);
                     bundle.putInt("idCanto", Integer.parseInt(
                             String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     startSubActivity(bundle, v);
                 }
@@ -275,34 +254,6 @@ public class FavouritesActivity extends Fragment {
         View.OnLongClickListener longClickListener  = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                cantoDaCanc = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-//                cantoDaCanc = Utility.duplicaApostrofi(cantoDaCanc);
-//                posizDaCanc = recyclerView.getChildAdapterPosition(v);
-//                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.favorite_remove, Snackbar.LENGTH_LONG)
-//                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                ContentValues values = new ContentValues();
-//                                values.put("favourite", 0);
-//                                db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
-////                                String sql = "UPDATE ELENCO" +
-////                                        "  SET favourite = 0" +
-////                                        "  WHERE titolo =  '" + cantoDaCanc + "'";
-////                                db.execSQL(sql);
-//                                db.close();
-//                                titoli.remove(posizDaCanc);
-//                                cantoAdapter.notifyItemRemoved(posizDaCanc);
-//                                rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-//                                if (titoli.size() == 0) {
-//                                    fabClear.hide();
-//                                    fabClear.setmIgnoreLayoutChanges(true);
-//                                }
-//                            }
-//                        })
-//                        .setActionTextColor(getThemeUtils().accentColor())
-//                        .show();
-//                idDaCanc = Integer.valueOf(String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText()));
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
@@ -325,37 +276,10 @@ public class FavouritesActivity extends Fragment {
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
         rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (titoli.size() == 0) {
+        if (titoli.size() == 0)
             fabClear.hide();
-//            fabClear.setmIgnoreLayoutChanges(true);
-        }
-        else {
+        else
             fabClear.show();
-//            fabClear.setmIgnoreLayoutChanges(false);
-        }
-
-        //decide se mostrare o nascondere il floatin button in base allo scrolling
-        /*
-            SERVE SOLO PRIMA DELLE API 21, PERCHE' NON C'E' IL TOOLBARLAYOUT
-        */
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-//            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//                @Override
-//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                    float y = recyclerView.getScrollY();
-//                    super.onScrolled(recyclerView, dx, dy);
-//                    if (y < dy) {
-//                        if (titoli.size() > 0)
-//                            fabClear.hide();
-//                    } else {
-//                        if (titoli.size() > 0)
-//                            fabClear.show();
-//                    }
-//                }
-//
-//            });
-//        }
-
     }
 
     private ThemeUtils getThemeUtils() {
@@ -367,8 +291,6 @@ public class FavouritesActivity extends Fragment {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Create the menu from the xml file
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
             getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
             titoli.get(posizDaCanc).setmSelected(true);
             cantoAdapter.notifyItemChanged(posizDaCanc);
@@ -388,8 +310,6 @@ public class FavouritesActivity extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
             Log.i(getClass().getName(), "actionModeOk: " + actionModeOk);
@@ -399,8 +319,6 @@ public class FavouritesActivity extends Fragment {
                     cantoAdapter.notifyDataSetChanged();
                 }
             }
-//            for (CantoRecycled canto: removedItems)
-//                canto.setmSelected(false);
         }
 
         @Override
@@ -411,7 +329,6 @@ public class FavouritesActivity extends Fragment {
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
                     ContentValues values = new ContentValues();
                     values.put("favourite", 0);
-//                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
                     for(int i = 0; i < titoli.size(); i++) {
                         Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
                         if (titoli.get(i).ismSelected()) {
@@ -423,13 +340,9 @@ public class FavouritesActivity extends Fragment {
                         }
                     }
                     db.close();
-//                    removedItem = titoli.remove(posizDaCanc);
-//                    cantoAdapter.notifyItemRemoved(posizDaCanc);
                     rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    if (titoli.size() == 0) {
+                    if (titoli.size() == 0)
                         fabClear.hide();
-//                        fabClear.setmIgnoreLayoutChanges(true);
-                    }
                     actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {
@@ -443,17 +356,11 @@ public class FavouritesActivity extends Fragment {
                                         SQLiteDatabase db = listaCanti.getReadableDatabase();
                                         ContentValues values = new ContentValues();
                                         values.put("favourite", 1);
-//                                    db.update("ELENCO", values, "titolo =  '" + cantoDaCanc + "'", null);
                                         for (CantoRecycled cantoRemoved: removedItems) {
                                             db.update("ELENCO", values, "_id =  " + cantoRemoved.getIdCanto(), null);
                                         }
                                         db.close();
                                         updateFavouritesList();
-//                                    titoli.add(posizDaCanc, removedItem);
-//                                    cantoAdapter.notifyItemInserted(posizDaCanc);
-//                                        rootView.findViewById(R.id.no_favourites).setVisibility(View.INVISIBLE);
-//                                        fabClear.show();
-//                                        fabClear.setmIgnoreLayoutChanges(false);
                                     }
                                 })
                                 .setActionTextColor(getThemeUtils().accentColor())
@@ -465,19 +372,4 @@ public class FavouritesActivity extends Fragment {
             }
         }
     }
-
-//    public boolean onBackPressed() {
-//        Log.i(getClass().getName(), "ENTRO1");
-//        if (mMode != null) {
-//            for (CantoRecycled canto: titoli) {
-//                Log.i(getClass().getName(), "ENTRO2");
-//                canto.setmSelected(false);
-//                cantoAdapter.notifyDataSetChanged();
-//            }
-//            mMode.finish();
-//            return true;
-//        }
-//        return false;
-//    }
-
 }

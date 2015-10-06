@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
@@ -45,9 +47,7 @@ public class HistoryFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoHistory> titoli;
-    //    private String cantoDaCanc;
     private int posizDaCanc;
-//    private CantoHistory removedItem;
     private List<CantoHistory> removedItems;
     private View rootView;
     private RecyclerView recyclerView;
@@ -68,10 +68,6 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_history, container, false);
-//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_history);
-//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_history);
-//        ((MainActivity) getActivity()).getSupportActionBar()
-//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_history);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -80,12 +76,7 @@ public class HistoryFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-//        Typeface face=Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-//        ((TextView) rootView.findViewById(R.id.no_history_text)).setTypeface(face);
-
         fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_history);
-//        fabClear.setColorNormal(getThemeUtils().accentColor());
-//        fabClear.setColorPressed(getThemeUtils().accentColorDark());
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,23 +87,39 @@ public class HistoryFragment extends Fragment {
                         .content(R.string.dialog_reset_history_desc)
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                 db.delete("CRONOLOGIA", null, null);
                                 db.close();
                                 updateHistoryList();
-//                                if (titoli.size() == 0)
-//                                    fabClear.hide();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                getActivity().setRequestedOrientation(prevOrientation);
+                            }
+                        })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                db.delete("CRONOLOGIA", null, null);
+//                                db.close();
+//                                updateHistoryList();
+////                                if (titoli.size() == 0)
+////                                    fabClear.hide();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -205,41 +212,14 @@ public class HistoryFragment extends Fragment {
                 "		ORDER BY B.ultima_visita DESC";
         Cursor lista = db.rawQuery(query, null);
 
-        //recupera il numero di record trovati
-//        int total = lista.getCount();
-
         // crea un array e ci memorizza i titoli estratti
         titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < lista.getCount(); i++) {
 
-            //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
-//            DateFormat df = DateFormat.getDateTimeInstance(
-//                    DateFormat.SHORT
-//                    , DateFormat.MEDIUM
-//                    , getActivity().getResources().getConfiguration().locale);
-//            String timestamp = "";
-//
-//            if (df instanceof SimpleDateFormat)
-//            {
-////                Log.i(getClass().toString(), "is Simple");
-//                SimpleDateFormat sdf = (SimpleDateFormat) df;
-//                // To show Locale specific short date expression with full year
-//                String pattern = sdf.toPattern().replaceAll("y+","yyyy");
-//                sdf.applyPattern(pattern);
-//                timestamp = sdf.format(Timestamp.valueOf(lista.getString(5)));
-//            }
-//            else {
-////                Log.i(getClass().toString(), "is NOT Simple");
-//                timestamp = df.format(Timestamp.valueOf(lista.getString(5)));
-//            }
-//            Log.i(getClass().toString(), "timestamp: " + timestamp);
-
             titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
                     , lista.getInt(0)
                     , lista.getString(4)
-//                            , getString(R.string.last_open_date) + " " + lista.getString(5)));
-//                    , getString(R.string.last_open_date) + " " + timestamp));
                     , lista.getString(5)));
             lista.moveToNext();
         }
@@ -249,24 +229,15 @@ public class HistoryFragment extends Fragment {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-//                        .getText().toString();
-//                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-//                        .getText().toString();
-
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 if (mMode == null) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                         return;
                     mLastClickTime = SystemClock.elapsedRealtime();
                     Bundle bundle = new Bundle();
-//                bundle.putString("pagina", pagina);
                     bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-//                bundle.putInt("idCanto", idCanto);
                     bundle.putInt("idCanto", Integer.parseInt(
                             String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     startSubActivity(bundle, v);
                 }
@@ -281,27 +252,6 @@ public class HistoryFragment extends Fragment {
         View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                cantoDaCanc = ((TextView) v.findViewById(R.id.text_id_canto)).getText().toString();
-//                posizDaCanc = recyclerView.getChildAdapterPosition(v);
-//                Snackbar.make(rootView.findViewById(R.id.main_content), R.string.history_remove, Snackbar.LENGTH_LONG)
-//                        .setAction(R.string.snackbar_remove, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                db.delete("CRONOLOGIA", "id_canto = " + cantoDaCanc, null);
-//                                db.close();
-//                                titoli.remove(posizDaCanc);
-//                                cantoAdapter.notifyItemRemoved(posizDaCanc);
-//                                //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-//                                rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-//                                if (titoli.size() == 0) {
-//                                    fabClear.hide();
-//                                    fabClear.setmIgnoreLayoutChanges(true);
-//                                }
-//                            }
-//                        })
-//                        .setActionTextColor(getThemeUtils().accentColor())
-//                        .show();
                 posizDaCanc = recyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
@@ -310,7 +260,6 @@ public class HistoryFragment extends Fragment {
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
                 }
                 return true;
-
             }
         };
 
@@ -325,44 +274,11 @@ public class HistoryFragment extends Fragment {
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
         rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (titoli.size() == 0) {
+        if (titoli.size() == 0)
             fabClear.hide();
-//            fabClear.setmIgnoreLayoutChanges(true);
-        }
-        else {
+        else
             fabClear.show();
-//            fabClear.setmIgnoreLayoutChanges(false);
-        }
-
-        //decide se mostrare o nascondere il floatin button in base allo scrolling
-        /*
-            SERVE SOLO PRIMA DELLE API 21, PERCHE' NON C'E' IL TOOLBARLAYOUT
-        */
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-//            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//                @Override
-//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                    float y = recyclerView.getScrollY();
-//                    super.onScrolled(recyclerView, dx, dy);
-//                    if (y < dy) {
-//                        if (titoli.size() > 0)
-//                            fabClear.hide();
-//                    } else {
-//                        if (titoli.size() > 0)
-//                            fabClear.show();
-//                    }
-//                }
-//
-//            });
-//        }
-
     }
-
-//    private int dpToPx(int dp) {
-//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-//        return px;
-//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
@@ -373,9 +289,6 @@ public class HistoryFragment extends Fragment {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Create the menu from the xml file
-//            MenuInflater inflater = getActivity().getMenuInflater();
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
             getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
             titoli.get(posizDaCanc).setmSelected(true);
             cantoAdapter.notifyItemChanged(posizDaCanc);
@@ -395,8 +308,6 @@ public class HistoryFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().show();
             if (mode == mMode)
                 mMode = null;
             if (!actionModeOk) {
@@ -405,8 +316,6 @@ public class HistoryFragment extends Fragment {
                     cantoAdapter.notifyDataSetChanged();
                 }
             }
-//            for (CantoHistory canto: removedItems)
-//                canto.setmSelected(false);
         }
 
         @Override
@@ -414,8 +323,6 @@ public class HistoryFragment extends Fragment {
             switch(item.getItemId()) {
                 case R.id.action_remove_item:
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                    removedItem = titoli.remove(posizDaCanc);
-//                    db.delete("CRONOLOGIA", "id_canto = " + removedItem.getIdCanto(), null);
                     for (int i = 0; i < titoli.size(); i++) {
                         Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
                         if (titoli.get(i).ismSelected()) {
@@ -427,12 +334,9 @@ public class HistoryFragment extends Fragment {
                         }
                     }
                     db.close();
-//                    cantoAdapter.notifyItemRemoved(posizDaCanc);
                     rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    if (titoli.size() == 0) {
+                    if (titoli.size() == 0)
                         fabClear.hide();
-//                        fabClear.setmIgnoreLayoutChanges(true);
-                    }
                     actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {
@@ -450,17 +354,8 @@ public class HistoryFragment extends Fragment {
                                             values.put("ultima_visita", cantoRemoved.getTimestamp());
                                             db.insert("CRONOLOGIA", null, values);
                                         }
-//                                        values.put("id_canto", removedItem.getIdCanto());
-//                                        values.put("ultima_visita", removedItem.getTimestamp());
-//                                        db.insert("CRONOLOGIA", null, values);
                                         db.close();
                                         updateHistoryList();
-//                                        titoli.add(posizDaCanc, removedItem);
-//                                        cantoAdapter.notifyItemInserted(posizDaCanc);
-                                        //nel caso sia presente almeno un canto recente, viene nascosto il testo di nessun canto presente
-//                                        rootView.findViewById(R.id.no_history).setVisibility(View.INVISIBLE);
-//                                        fabClear.show();
-//                                        fabClear.setmIgnoreLayoutChanges(false);
                                     }
                                 })
                                 .setActionTextColor(getThemeUtils().accentColor())
@@ -472,13 +367,4 @@ public class HistoryFragment extends Fragment {
             }
         }
     }
-
-//    public boolean onBackPressed() {
-//        if (mMode != null) {
-//            mMode.finish();
-//            return true;
-//        }
-//        return false;
-//    }
-
 }

@@ -99,7 +99,7 @@
     <string name="aggiungi_dismiss">СКАСУВАТИ</string>
     <string name="titolo_pos_vuoto">Не введено жодної назви</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
-    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 20</string>
+    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
     <string name="aggiungi_lista_crea">СТВОРИТИ</string>
     <string name="lista_add_desc">Назва нового списку:</string>

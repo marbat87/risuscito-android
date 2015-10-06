@@ -105,7 +105,7 @@
     <string name="aggiungi_dismiss">ANNULLA</string>
     <string name="titolo_pos_vuoto">Nessun titolo inserito</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
-    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 20</string>
+    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
     <string name="aggiungi_lista_crea">CREA</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>

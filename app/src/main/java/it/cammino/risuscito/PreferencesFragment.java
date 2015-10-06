@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
@@ -26,9 +27,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
 
-import it.cammino.risuscito.utils.ColorChooserDialog;
+import it.cammino.risuscito.utils.ColorPalette;
 import it.cammino.risuscito.utils.ThemeUtils;
 import permissions.dispatcher.DeniedPermission;
 import permissions.dispatcher.NeedsPermission;
@@ -183,12 +186,18 @@ public class PreferencesFragment extends Fragment {
                             }
                         })
                         .negativeText(R.string.cancel)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 defIndexDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -210,12 +219,6 @@ public class PreferencesFragment extends Fragment {
         View saveLocationView = rootView.findViewById(R.id.save_location_layout);
 
         checkExternalStorage();
-//        if (Utility.isExternalStorageWritable()) {
-//            saveEntries = R.array.save_location_sd_entries;
-//        }
-//        else {
-//            saveEntries = R.array.save_location_nosd_entries;
-//        }
 
         saveLocationView.setOnClickListener(new OnClickListener() {
 
@@ -242,12 +245,18 @@ public class PreferencesFragment extends Fragment {
                             }
                         })
                         .negativeText(R.string.cancel)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 defMemoryDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -272,6 +281,10 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
+                        .customColors(ColorPalette.PRIMARY_COLORS, ColorPalette.PRIMARY_COLORS_SUB)
+                        .doneButton(R.string.single_choice_ok)  // changes label of the done button
+                        .cancelButton(R.string.cancel)  // changes label of the cancel button
+                        .backButton(R.string.dialog_back)  // changes label of the back button
                         .preselect(getThemeUtils().primaryColor())  // optional color int, preselects a color
                         .show();
             }
@@ -283,7 +296,11 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
+                        .customColors(ColorPalette.ACCENT_COLORS, ColorPalette.ACCENT_COLORS_SUB)
                         .accentMode(true)  // optional boolean, true shows accent palette
+                        .doneButton(R.string.single_choice_ok)  // changes label of the done button
+                        .cancelButton(R.string.cancel)  // changes label of the cancel button
+                        .backButton(R.string.dialog_back)  // changes label of the back button
                         .preselect(getThemeUtils().accentColor())  // optional color int, preselects a color
                         .show();
             }
@@ -358,12 +375,18 @@ public class PreferencesFragment extends Fragment {
                             }
                         })
                         .negativeText(R.string.cancel)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 languageDialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -441,12 +464,18 @@ public class PreferencesFragment extends Fragment {
                 .title(R.string.external_storage_title)
                 .content(R.string.external_storage_pref_rationale)
                 .positiveText(R.string.dialog_chiudi)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         getActivity().setRequestedOrientation(prevOrientation);
                     }
                 })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        getActivity().setRequestedOrientation(prevOrientation);
+//                    }
+//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
