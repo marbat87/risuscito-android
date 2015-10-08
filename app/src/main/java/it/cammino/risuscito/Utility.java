@@ -52,15 +52,9 @@ public class Utility {
     public static final String VERDE = "#8FC490";
     public static final String GRIGIO = "#CAC8BC";
 
-//    @SuppressLint("NewApi")
-//    public static void setAccessibilityIgnore(View view) {
-//        view.setClickable(false);
-//        view.setFocusable(false);
-//        view.setContentDescription("");
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-//        }
-//    }
+    public static final int EXTERNAL_FILE_RC = 122;
+    public static final int WRITE_STORAGE_RC = 123;
+    public static final int PHONE_LISTENER_RC = 124;
 
     //metodo che restituisce la stringa di input senza la pagina all'inizio
     public static String truncatePage(String input) {
@@ -169,9 +163,9 @@ public class Utility {
         }
     }
 
-    public static String retrieveMediaFileLink(Context activity, String link) {
+    public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
 
-        if (isExternalStorageReadable()) {
+        if (isExternalStorageReadable() && cercaEsterno) {
 //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
 //			File fileExt = new File(fileArray[0], filterMediaLink(link));
             //cerca file esterno con nuovi path e nome
@@ -246,6 +240,10 @@ public class Utility {
 
     public static int random(int start, int end) {
         return ((new Random()).nextInt(end - start + 1) + start);
+    }
+
+    public static boolean hasMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
 }

@@ -31,6 +31,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
@@ -86,12 +87,7 @@ import java.util.regex.Pattern;
 import it.cammino.risuscito.filepicker.ThemedFilePickerActivity;
 import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import permissions.dispatcher.DeniedPermission;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
-import permissions.dispatcher.ShowsRationale;
 
-@RuntimePermissions
 public class PaginaRenderActivity extends ThemeableActivity {
 
     private DatabaseCanti listaCanti;
@@ -207,7 +203,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"));
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
         }
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -279,11 +275,13 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 //        }
 //        Log.i(getClass().getName(), "STO PER...");
-        attachPhoneListener();
+//        PaginaRenderActivityPermissionsDispatcher.attachPhoneListenerWithCheck(PaginaRenderActivity.this);
+        checkPhoneStatePermission();
 
         if (!url.equalsIgnoreCase("")) {
 
-            localUrl = Utility.retrieveMediaFileLink(this, url);
+//            localUrl = Utility.retrieveMediaFileLink(this, url);
+            checkExternalFilePermissions();
 
             if (localUrl.equalsIgnoreCase("") &&
                     personalUrl.equalsIgnoreCase(""))
@@ -367,7 +365,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         case Stopped:
                         case PlaybackCompleted:
                         default:
-                            localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
+//                            localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
+                            checkExternalFilePermissions();
                             if (localUrl.equalsIgnoreCase("")) {
                                 if (personalUrl.equalsIgnoreCase("")) {
                                     localFile = false;
@@ -614,7 +613,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                                         int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
                                         if (saveLocation == 1)
-                                            startExternalDownload();
+//                                            PaginaRenderActivityPermissionsDispatcher.startExternalDownloadWithCheck(PaginaRenderActivity.this);
+                                            checkStoragePermissions();
                                         else
                                             startInternalDownload();
                                     }
@@ -1643,6 +1643,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 if (!localFile)
                     mediaPlayer.setDataSource(path);
                 else {
+
                     FileInputStream fileInputStream = new FileInputStream(path);
                     mediaPlayer.setDataSource(fileInputStream.getFD());
                     fileInputStream.close();
@@ -1651,7 +1652,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             } catch (IllegalArgumentException | IOException | IllegalStateException e) {
                 Toast.makeText(PaginaRenderActivity.this,
                         e.toString(), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
             }
         }else{
             Toast.makeText(PaginaRenderActivity.this,
@@ -1678,7 +1679,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             } catch (IllegalStateException e) {
                 Toast.makeText(PaginaRenderActivity.this,
                         e.toString(), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
             }
         }else{
             Toast.makeText(PaginaRenderActivity.this,
@@ -2024,7 +2025,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
             return cantoTrasportato;
         }
         catch(Exception e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
             return null;
         }
     }
@@ -2061,7 +2062,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     connection = (HttpURLConnection) url.openConnection();
                     connection.connect();
 
-                    // expect HTTP 200 OK, so we don't mistakenly save error report 
+                    // expect HTTP 200 OK, so we don't mistakenly save error report
                     // instead of the file
                     if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                         return "Server returned HTTP " + connection.getResponseCode()
@@ -2178,7 +2179,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 mediaPlayerState = MP_State.Idle;
                 mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
-                localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
+//                localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
+                checkExternalFilePermissions();
                 localFile = true;
                 cmdSetDataSource(localUrl);
                 save_file.setSelected(true);
@@ -2293,7 +2295,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     br.close();
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(getClass().getName(), e.getLocalizedMessage(), e);
                 }
                 //step 5
                 document.close();
@@ -2301,7 +2303,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //		        Log.i("DONE", "PDF Created!");
             }
             catch (FileNotFoundException | DocumentException e) {
-                e.printStackTrace();
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
             }
             return null;
         }
@@ -2377,65 +2379,29 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     }
 
-    @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
-    void attachPhoneListener() {
-        Log.d(getClass().getName(), "READ_PHONE_STATE OK");
-        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mgr != null) {
-            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-    }
-
-    // Option
-    @ShowsRationale(Manifest.permission.READ_PHONE_STATE)
-    void showRationaleForPhoneListener() {
-        Log.d(getClass().getName(), "READ_PHONE_STATE RATIONALE");
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
-                .title(R.string.phone_listener_title)
-                .content(R.string.phone_state_rationale)
-                .positiveText(R.string.dialog_chiudi)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setRequestedOrientation(prevOrientation);
-                    }
-                })
-//                .callback(new MaterialDialog.ButtonCallback() {
-//                    @Override
-//                    public void onPositive(MaterialDialog dialog) {
-//                        setRequestedOrientation(prevOrientation);
-//                    }
-//                })
-                .show();
-        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    arg0.dismiss();
-                    setRequestedOrientation(prevOrientation);
-                    return true;
-                }
-                return false;
+    private void checkStoragePermissions() {
+        // Here, thisActivity is the current activity
+        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                !=PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                showRationaleForExternalDownload();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        Utility.WRITE_STORAGE_RC);
             }
-        });
-        dialog.setCancelable(false);
+        }
+        else
+            startExternalDownload();
     }
 
-    // Option
-    @DeniedPermission(Manifest.permission.READ_PHONE_STATE)
-    void showDeniedForPhoneListener() {
-        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
-        Snackbar.make(findViewById(android.R.id.content)
-                , getString(R.string.phone_listener_denied)
-                , Snackbar.LENGTH_SHORT)
-                .show();
-    }
-
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void startExternalDownload() {
         Log.d(getClass().getName(), " WRITE_EXTERNAL_STORAGE OK");
         if (Utility.isExternalStorageWritable()) {
@@ -2466,8 +2432,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     .show();
     }
 
-    // Option
-    @ShowsRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void showRationaleForExternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE RATIONALE");
         prevOrientation = getRequestedOrientation();
@@ -2480,6 +2444,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         setRequestedOrientation(prevOrientation);
+                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                Utility.WRITE_STORAGE_RC);
                     }
                 })
 //                .callback(new MaterialDialog.ButtonCallback() {
@@ -2505,15 +2472,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         dialog.setCancelable(false);
     }
 
-    // Option
-    @DeniedPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void startInternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED or CHOOSED INTERNAL");
-        SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                .edit();
-        editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
-        editor.apply();
         final DownloadTask internalDownloadTask = new DownloadTask(PaginaRenderActivity.this);
         String localFile = PaginaRenderActivity.this.getFilesDir()
                 + "/"
@@ -2531,6 +2491,214 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 setRequestedOrientation(prevOrientation);
             }
         });
+    }
+
+    private void checkExternalFilePermissions() {
+        // Here, thisActivity is the current activity
+        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                !=PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                showRationalForExternalFile();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        Utility.EXTERNAL_FILE_RC);
+            }
+            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+        }
+        else
+            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+    }
+
+    void showRationalForExternalFile() {
+        Log.d(getClass().getName(), "EXTERNAL_FILE RATIONALE");
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(PaginaRenderActivity.this);
+        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                .title(R.string.external_storage_title)
+                .content(R.string.external_file_rationale)
+                .positiveText(R.string.dialog_chiudi)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        setRequestedOrientation(prevOrientation);
+                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                Utility.EXTERNAL_FILE_RC);
+                    }
+                })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        setRequestedOrientation(prevOrientation);
+//                    }
+//                })
+                .show();
+        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK
+                        && event.getAction() == KeyEvent.ACTION_UP) {
+                    arg0.dismiss();
+                    setRequestedOrientation(prevOrientation);
+                    return true;
+                }
+                return false;
+            }
+        });
+        dialog.setCancelable(false);
+    }
+
+    private void checkPhoneStatePermission() {
+        // Here, thisActivity is the current activity
+        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+                Manifest.permission.READ_PHONE_STATE)
+                !=PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                showRationaleForPhoneListener();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                        Utility.PHONE_LISTENER_RC);
+            }
+        }
+        else
+            attachPhoneListener();
+    }
+
+    void attachPhoneListener() {
+        Log.d(getClass().getName(), "READ_PHONE_STATE OK");
+        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        if(mgr != null) {
+            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+    }
+
+    void showRationaleForPhoneListener() {
+        Log.d(getClass().getName(), "READ_PHONE_STATE RATIONALE");
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(PaginaRenderActivity.this);
+        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                .title(R.string.phone_listener_title)
+                .content(R.string.phone_state_rationale)
+                .positiveText(R.string.dialog_chiudi)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        setRequestedOrientation(prevOrientation);
+                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                Utility.PHONE_LISTENER_RC);
+                    }
+                })
+//                .callback(new MaterialDialog.ButtonCallback() {
+//                    @Override
+//                    public void onPositive(MaterialDialog dialog) {
+//                        setRequestedOrientation(prevOrientation);
+//                    }
+//                })
+                .show();
+        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK
+                        && event.getAction() == KeyEvent.ACTION_UP) {
+                    arg0.dismiss();
+                    setRequestedOrientation(prevOrientation);
+                    return true;
+                }
+                return false;
+            }
+        });
+        dialog.setCancelable(false);
+    }
+
+    void showDeniedForPhoneListener() {
+        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
+        Snackbar.make(findViewById(android.R.id.content)
+                , getString(R.string.phone_listener_denied)
+                , Snackbar.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
+        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+        switch (requestCode) {
+            case Utility.WRITE_STORAGE_RC: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    startExternalDownload();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putInt(Utility.SAVE_LOCATION, 0);
+                    editor.apply();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.forced_private
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    startInternalDownload();
+                }
+                return;
+            }
+            case Utility.PHONE_LISTENER_RC: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    attachPhoneListener();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    showDeniedForPhoneListener();
+                }
+                return;
+            }
+            case Utility.EXTERNAL_FILE_RC: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+                    if (android.os.Build.VERSION.SDK_INT >= 11) {
+                        recreate();
+                    }
+                    else {
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
+                    }
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putInt(Utility.SAVE_LOCATION, 0);
+                    editor.apply();
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+                }
+            }
+        }
     }
 
 }

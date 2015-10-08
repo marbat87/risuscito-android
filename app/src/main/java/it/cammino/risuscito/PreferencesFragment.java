@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -13,8 +14,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -33,17 +35,13 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 
 import it.cammino.risuscito.utils.ColorPalette;
 import it.cammino.risuscito.utils.ThemeUtils;
-import permissions.dispatcher.DeniedPermission;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
-import permissions.dispatcher.ShowsRationale;
 
-@RuntimePermissions
 public class PreferencesFragment extends Fragment {
 
     private int prevOrientation;
     private SwitchCompat screenSwitch, secondaSwitch, paceSwitch, santoSwitch, audioSwitch;
     private int saveEntries;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -218,7 +216,11 @@ public class PreferencesFragment extends Fragment {
 
         View saveLocationView = rootView.findViewById(R.id.save_location_layout);
 
-        checkExternalStorage();
+//        PreferencesFragmentPermissionsDispatcher.loadExternalStorageWithCheck(PreferencesFragment.this);
+        if (Utility.hasMarshmallow())
+            checkStoragePermissions();
+        else
+            loadExternalStorage();
 
         saveLocationView.setOnClickListener(new OnClickListener() {
 
@@ -440,22 +442,63 @@ public class PreferencesFragment extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return ((MainActivity) getActivity()).getThemeUtils();
     }
 
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void checkExternalStorage() {
+    private void checkStoragePermissions() {
+        // Here, thisActivity is the current activity
+        if(ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                !=PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                showRationaleForExternalDownload();
+            } else {
+                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(getActivity(),
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        Utility.WRITE_STORAGE_RC);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        Utility.WRITE_STORAGE_RC);
+            }
+        }
+        else
+            loadExternalStorage();
+    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
+//        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+//        switch (requestCode) {
+//            case Utility.WRITE_STORAGE_RC: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // permission was granted, yay! Do the task you need to do.
+//                    loadExternalStorage();
+//                } else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    showDeniedForExternalDownload();
+//                }
+//                return;
+//            }
+//        }
+//    }
+
+    void loadExternalStorage() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE OK");
         if (Utility.isExternalStorageWritable()) {
             saveEntries = R.array.save_location_sd_entries;
-        }
-        else {
+        } else {
             saveEntries = R.array.save_location_nosd_entries;
         }
     }
 
-    // Option
-    @ShowsRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void showRationaleForExternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE RATIONALE");
         prevOrientation = getActivity().getRequestedOrientation();
@@ -468,14 +511,13 @@ public class PreferencesFragment extends Fragment {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         getActivity().setRequestedOrientation(prevOrientation);
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                Utility.WRITE_STORAGE_RC);
+//                        ActivityCompat.requestPermissions(getActivity(),
+//                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                                Utility.WRITE_STORAGE_RC);
                     }
                 })
-//                .callback(new MaterialDialog.ButtonCallback() {
-//                    @Override
-//                    public void onPositive(MaterialDialog dialog) {
-//                        getActivity().setRequestedOrientation(prevOrientation);
-//                    }
-//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -493,15 +535,59 @@ public class PreferencesFragment extends Fragment {
         dialog.setCancelable(false);
     }
 
-    // Option
-    @DeniedPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     void showDeniedForExternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED");
         saveEntries = R.array.save_location_nosd_entries;
-        Snackbar.make(getActivity().findViewById(android.R.id.content)
-                , getString(R.string.external_storage_denied)
-                , Snackbar.LENGTH_SHORT)
+        prevOrientation = getActivity().getRequestedOrientation();
+        Utility.blockOrientation(getActivity());
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.external_storage_title)
+                .content(R.string.external_storage_denied)
+                .positiveText(R.string.dialog_chiudi)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        getActivity().setRequestedOrientation(prevOrientation);
+                    }
+                })
                 .show();
+        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK
+                        && event.getAction() == KeyEvent.ACTION_UP) {
+                    arg0.dismiss();
+                    getActivity().setRequestedOrientation(prevOrientation);
+                    return true;
+                }
+                return false;
+            }
+        });
+        dialog.setCancelable(false);
+//        Snackbar.make(getActivity().findViewById(android.R.id.content)
+//                , getString(R.string.external_storage_denied)
+//                , Snackbar.LENGTH_SHORT)
+//                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
+        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+        switch (requestCode) {
+            case Utility.WRITE_STORAGE_RC: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    loadExternalStorage();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    showDeniedForExternalDownload();
+                }
+            }
+        }
     }
 
 }
