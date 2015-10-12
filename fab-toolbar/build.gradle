@@ -21,6 +21,6 @@ repositories {
 
 dependencies {
     compile supportDependencies.appCompat
-    compile genericDependencies.CircularReveal
+    compile (genericDependencies.CircularReveal) {transitive = true}
     compile supportDependencies.design
 }

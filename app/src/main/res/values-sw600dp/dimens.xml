@@ -14,4 +14,7 @@
 
     <!--<dimen name="floating_margin_lateral_minus_shadow">12dp</dimen>-->
 
+    <dimen name="product_logo_bottom">24dp</dimen>
+    <dimen name="brand_name_bottom">56dp</dimen>
+
 </resources>
