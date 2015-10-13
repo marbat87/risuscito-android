@@ -21,11 +21,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -35,7 +33,8 @@ import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
+public class MainActivity extends ThemeableActivity
+        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener {
 
     public DrawerLayout mDrawerLayout;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
@@ -98,84 +97,85 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        int drawerWidth  = calculateDrawerWidth();
-
-        DrawerLayout.LayoutParams lps = new DrawerLayout.LayoutParams(
-                drawerWidth,
-                DrawerLayout.LayoutParams.MATCH_PARENT);
-        lps.gravity = Gravity.START;
-
-        findViewById(R.id.navigation_view).setLayoutParams(lps);
-
-        LinearLayout.LayoutParams lps2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                Math.round(drawerWidth * 9 / 19));
-        lps2.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
-
-        findViewById(R.id.navdrawer_image).setLayoutParams(lps2);
+//        int drawerWidth  = calculateDrawerWidth();
+//
+//        DrawerLayout.LayoutParams lps = new DrawerLayout.LayoutParams(
+//                drawerWidth,
+//                DrawerLayout.LayoutParams.MATCH_PARENT);
+//        lps.gravity = Gravity.START;
+//
+//        findViewById(R.id.navigation_view).setLayoutParams(lps);
+//
+//        LinearLayout.LayoutParams lps2 = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT,
+//                Math.round(drawerWidth * 9 / 19));
+//        lps2.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
+//
+//        findViewById(R.id.navdrawer_image).setLayoutParams(lps2);
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                menuItem.setChecked(true);
-                Fragment fragment;
-
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-                        fragment = new Risuscito();
-                        break;
-                    case R.id.navigation_search:
-                        fragment = new GeneralSearch();
-                        break;
-                    case R.id.navigation_indexes:
-                        fragment = new GeneralIndex();
-                        break;
-                    case R.id.navitagion_lists:
-                        fragment = new CustomLists();
-                        break;
-                    case R.id.navigation_favorites:
-                        fragment = new FavouritesActivity();
-                        break;
-                    case R.id.navigation_settings:
-                        fragment = new PreferencesFragment();
-                        break;
-                    case R.id.navigation_changelog:
-                        fragment = new AboutActivity();
-                        break;
-                    case R.id.navigation_donate:
-                        fragment = new DonateActivity();
-                        break;
-                    case R.id.navigation_consegnati:
-                        fragment = new ConsegnatiFragment();
-                        break;
-                    case R.id.navigation_history:
-                        fragment = new HistoryFragment();
-                        break;
-                    default:
-                        fragment = new Risuscito();
-                        break;
-                }
-
-                //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(menuItem.getItemId()));
-                if (myFragment == null || !myFragment.isVisible()) {
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-                    transaction.replace(R.id.content_frame, fragment, String.valueOf(menuItem.getItemId())).commit();
-
-                    android.os.Handler mHandler = new android.os.Handler();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                        }
-                    }, 250);
-                }
-                return true;
-            }
-
-        });
+        mNavigationView.setNavigationItemSelectedListener(this);
+//        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(MenuItem menuItem) {
+//                menuItem.setChecked(true);
+//                Fragment fragment;
+//
+//                switch (menuItem.getItemId()) {
+//                    case R.id.navigation_home:
+//                        fragment = new Risuscito();
+//                        break;
+//                    case R.id.navigation_search:
+//                        fragment = new GeneralSearch();
+//                        break;
+//                    case R.id.navigation_indexes:
+//                        fragment = new GeneralIndex();
+//                        break;
+//                    case R.id.navitagion_lists:
+//                        fragment = new CustomLists();
+//                        break;
+//                    case R.id.navigation_favorites:
+//                        fragment = new FavouritesActivity();
+//                        break;
+//                    case R.id.navigation_settings:
+//                        fragment = new PreferencesFragment();
+//                        break;
+//                    case R.id.navigation_changelog:
+//                        fragment = new AboutActivity();
+//                        break;
+//                    case R.id.navigation_donate:
+//                        fragment = new DonateActivity();
+//                        break;
+//                    case R.id.navigation_consegnati:
+//                        fragment = new ConsegnatiFragment();
+//                        break;
+//                    case R.id.navigation_history:
+//                        fragment = new HistoryFragment();
+//                        break;
+//                    default:
+//                        fragment = new Risuscito();
+//                        break;
+//                }
+//
+//                //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+//                Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(menuItem.getItemId()));
+//                if (myFragment == null || !myFragment.isVisible()) {
+//                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+//                    transaction.replace(R.id.content_frame, fragment, String.valueOf(menuItem.getItemId())).commit();
+//
+//                    android.os.Handler mHandler = new android.os.Handler();
+//                    mHandler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mDrawerLayout.closeDrawer(GravityCompat.START);
+//                        }
+//                    }, 250);
+//                }
+//                return true;
+//            }
+//
+//        });
 
         ColorStateList mIconStateList = new ColorStateList(
                 new int[][]{
@@ -375,6 +375,65 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        item.setChecked(true);
+        Fragment fragment;
+
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                fragment = new Risuscito();
+                break;
+            case R.id.navigation_search:
+                fragment = new GeneralSearch();
+                break;
+            case R.id.navigation_indexes:
+                fragment = new GeneralIndex();
+                break;
+            case R.id.navitagion_lists:
+                fragment = new CustomLists();
+                break;
+            case R.id.navigation_favorites:
+                fragment = new FavouritesActivity();
+                break;
+            case R.id.navigation_settings:
+                fragment = new PreferencesFragment();
+                break;
+            case R.id.navigation_changelog:
+                fragment = new AboutActivity();
+                break;
+            case R.id.navigation_donate:
+                fragment = new DonateActivity();
+                break;
+            case R.id.navigation_consegnati:
+                fragment = new ConsegnatiFragment();
+                break;
+            case R.id.navigation_history:
+                fragment = new HistoryFragment();
+                break;
+            default:
+                fragment = new Risuscito();
+                break;
+        }
+
+        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item.getItemId()));
+        if (myFragment == null || !myFragment.isVisible()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+            transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
+
+            android.os.Handler mHandler = new android.os.Handler();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+            }, 250);
+        }
+        return true;
     }
 
 }

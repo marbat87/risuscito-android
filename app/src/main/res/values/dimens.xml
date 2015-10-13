@@ -16,6 +16,7 @@
     <!--<dimen name="percent_padding">15dip</dimen>-->
 
     <dimen name="navdrawer_chosen_account_height">100dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
     <!--<dimen name="navdrawer_width">302dp</dimen>-->
 
     <!--<dimen name="action_bar_text_field_margin">15dip</dimen>-->
