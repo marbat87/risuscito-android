@@ -1202,7 +1202,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap != null) {
-                    String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin);
+                    String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin, true);
                     if (nuovoFile != null)
                         paginaView.loadUrl("file://" + nuovoFile);
                 }
@@ -1243,7 +1243,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     convMin1 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap1 != null) {
-                    String nuovoFile = cambiaAccordi(convMap1, barreCambio, convMin1);
+                    String nuovoFile = cambiaAccordi(convMap1, barreCambio, convMin1, true);
                     if (nuovoFile != null)
                         paginaView.loadUrl("file://" + nuovoFile);
                 }
@@ -1263,7 +1263,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         convMin2 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap2 != null) {
-                        String nuovoFile = cambiaAccordi(convMap2, barreCambio, convMin2);
+                        String nuovoFile = cambiaAccordi(convMap2, barreCambio, convMin2, true);
                         if (nuovoFile != null)
                             paginaView.loadUrl("file://" + nuovoFile);
                     }
@@ -1283,7 +1283,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         convMin3 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap3 != null) {
-                        String nuovoFile = cambiaAccordi(convMap3, barreCambio, convMin3);
+                        String nuovoFile = cambiaAccordi(convMap3, barreCambio, convMin3, true);
                         if (nuovoFile != null)
                             paginaView.loadUrl("file://" + nuovoFile);
                     }
@@ -1434,7 +1434,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
             convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         if (convMap != null) {
-            String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin);
+            String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin, true);
             if (nuovoFile != null)
                 paginaView.loadUrl("file://" + nuovoFile);
         }
@@ -1938,7 +1938,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
     }
 
-    private String cambiaAccordi(HashMap<String, String> conversione, String barre, HashMap<String, String> conversioneMin ) {
+    private String cambiaAccordi(HashMap<String, String> conversione, String barre, HashMap<String, String> conversioneMin, boolean higlightDiff) {
         String cantoTrasportato = this.getFilesDir() + "/temporaneo.htm";
 
         boolean barre_scritto = false;
@@ -1960,9 +1960,15 @@ public class PaginaRenderActivity extends ThemeableActivity {
             Pattern patternMinore = null;
             if (language.equalsIgnoreCase("uk")) {
                 pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
-                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a|b|h");
+                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
+                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
             }
+
+            //serve per segnarsi se si è già evidenziato il primo accordo del testo
+            boolean notaHighlighed = !higlightDiff;
+
             while (line != null) {
+                Log.d(getClass().getName(), "RIGA DA ELAB: " + line);
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
                     if (language.equalsIgnoreCase("uk")) {
                         line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
@@ -1979,11 +1985,40 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         while (matcherMin.find())
                             matcherMin.appendReplacement(sb2, conversioneMin.get(matcherMin.group(0)));
                         matcherMin.appendTail(sb2);
-                        line = sb2.toString().replaceAll("<K>","</FONT><FONT COLOR='#A13F3C'>");
+                        line = sb2.toString();
+//                        Log.d(getClass().getName(), "RIGA ELAB 1: " + line);
+//                        Log.d(getClass().getName(), "notaHighlighed: " + notaHighlighed);
+//                        Log.d(getClass().getName(), "notaCambio: " + notaCambio);
+//                        Log.d(getClass().getName(), "primaNota: " + primaNota);
+                        if (!notaHighlighed) {
+                            if (!primaNota.equalsIgnoreCase(notaCambio)) {
+                                if (Utility.isLowerCase(primaNota.charAt(0))) {
+                                    String notaCambioMin = notaCambio;
+                                    if (notaCambioMin.length() == 1)
+                                        notaCambioMin = notaCambioMin.toLowerCase();
+                                    else
+                                        notaCambioMin = notaCambioMin.substring(0,1).toLowerCase() + notaCambioMin.substring(1);
+                                    line = line.replaceFirst(notaCambioMin, "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">" + notaCambioMin + "</SPAN>");
+                                }
+                                else
+                                    line = line.replaceFirst(notaCambio, "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">" + notaCambio + "</SPAN>");
+                                notaHighlighed = true;
+                            }
+                        }
+//                        Log.d(getClass().getName(), "RIGA ELAB 2: " + line);
+                        line = line.replaceAll("<K>", "</FONT><FONT COLOR='#A13F3C'>");
                         line = line.replaceAll("<K2>", "</FONT><FONT COLOR='#000000'>");
+//                        Log.d(getClass().getName(), "RIGA ELAB 3: " + line);
                     }
-                    else
+                    else {
                         line = sb.toString();
+                        if (!notaHighlighed) {
+                            if (!primaNota.equalsIgnoreCase(notaCambio)) {
+                                line = line.replaceFirst(notaCambio, "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">" + notaCambio + "</SPAN>");
+                                notaHighlighed = true;
+                            }
+                        }
+                    }
                     out.write(line);
                     out.newLine();
                 }
@@ -1991,9 +2026,28 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     if (line.contains("<H3>")) {
                         if (barre != null && !barre.equals("0")) {
                             if (!barre_scritto) {
-                                String oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Barrè al " + barre + " tasto</I></FONT></H4>";
-                                if (language.equalsIgnoreCase("uk"))
-                                    oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Баре на " + barre + " лад</I></FONT></H4>";
+                                String oldLine;
+                                if (higlightDiff && !barre.equalsIgnoreCase(primoBarre)) {
+                                    oldLine = "<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
+                                            + getString(R.string.barre_al_tasto_I)
+                                            + " "
+                                            + barre
+                                            + " "
+                                            + getString(R.string.barre_al_tasto_II)
+                                            + "</I></FONT></SPAN></H4>";
+                                }
+                                else {
+                                    oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>"
+                                            + getString(R.string.barre_al_tasto_I)
+                                            + " "
+                                            + barre
+                                            + " "
+                                            + getString(R.string.barre_al_tasto_II)
+                                            + "</I></FONT></H4>";
+                                }
+//                                String oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Barrè al " + barre + " tasto</I></FONT></H4>";
+//                                if (language.equalsIgnoreCase("uk"))
+//                                    oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>Баре на " + barre + " лад</I></FONT></H4>";
                                 out.write(oldLine);
                                 out.newLine();
                                 barre_scritto = true;
@@ -2003,18 +2057,19 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         out.newLine();
                     }
                     else {
-                        if (language.equalsIgnoreCase("uk")) {
-                            if (!line.contains("Баре")) {
-                                out.write(line);
-                                out.newLine();
-                            }
+                        if (!line.contains(getString(R.string.barre_search_string))) {
+//                        if (language.equalsIgnoreCase("uk")) {
+//                            if (!line.contains("Баре")) {
+                            out.write(line);
+                            out.newLine();
                         }
-                        else {
-                            if (!line.contains("Barrè") && !line.contains("Barr&#232;")) {
-                                out.write(line);
-                                out.newLine();
-                            }
-                        }
+//                        }
+//                        else {
+//                            if (!line.contains("Barrè") && !line.contains("Barr&#232;")) {
+//                                out.write(line);
+//                                out.newLine();
+//                            }
+//                        }
                     }
                 }
                 line = br.readLine();
@@ -2201,7 +2256,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
             String urlHtml = "";
             if (testConv != null) {
-                String nuovoFile = cambiaAccordi(testConv, barreCambio, testConvMin);
+                String nuovoFile = cambiaAccordi(testConv, barreCambio, testConvMin, false);
                 if (nuovoFile != null)
                     urlHtml = nuovoFile;
             }

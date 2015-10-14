@@ -297,6 +297,8 @@
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
+    <string name="barre_al_tasto_I">Баре на</string>
+    <string name="barre_al_tasto_II">лад</string>
     <string name="phone_listener_title">Accesso al telefono</string>
     <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Tale permesso è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattamente automaticamente.</string>
     <string name="phone_listener_denied">La funzione di pausa automatica all\'arrivo della chiamata è disattivata. Per riattivarla concedi il permesso necessario nelle impostazioni.</string>

@@ -246,4 +246,12 @@ public class Utility {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
+    public static boolean isLowerCase(char ch) {
+        return ch >= 'a' && ch <= 'z';
+    }
+
+    public static boolean isUpperCase(char ch) {
+        return ch >= 'A' && ch <= 'Z';
+    }
+
 }
