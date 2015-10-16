@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="3.6.0" changeDate="31 Ottobre 2015">
+        <changelogtext>Compabilità con Android Marshmallow</changelogtext>
+        <changelogtext>Ora nella pagina del canto, il primo accordo e/o il barrè vengono evidenziati in caso di variazione rispetto all\'originale</changelogtext>
+        <changelogtext>Nuovo stile per lo scroller rapido</changelogtext>
+        <changelogtext>Correzione su cambio accordi in Ucraino</changelogtext>
+        <changelogtext>Nuova grafica per la sezione di scelta registrazione da collegare</changelogtext>
+        <changelogtext>Pulizia generale del codice</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="3.5.1" changeDate="15 вересень 2015">
         <changelogtext>crashfix for Android 4.0.X (hopefully)</changelogtext>
 	    <changelogtext>Покращення розмірів та стилів поп ап для планшетів</changelogtext>

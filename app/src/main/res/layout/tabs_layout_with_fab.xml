@@ -47,7 +47,7 @@
         android:visibility="gone"
         android:background="@android:color/transparent"
         tools:ignore="RtlSymmetry"
-        android:elevation="@dimen/appbar_elevation" />
+        android:elevation="@dimen/design_appbar_elevation" />
 
     <com.github.alexkolpa.fabtoolbar.FabToolbar
         android:id="@+id/fab_pager"
@@ -58,7 +58,7 @@
         risuscito:tb_anim_duration="500"
         risuscito:tb_button_gravity="end"
         risuscito:tb_container_gravity="center"
-        android:elevation="@dimen/fab_elevation">
+        android:elevation="@dimen/design_fab_elevation">
 
         <ImageButton
             android:id="@+id/fab_pulisci"
