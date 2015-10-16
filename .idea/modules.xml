@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" filepath="$PROJECT_DIR$/NonSenseFilePicker/NonSenseFilePicker.iml" />
+    <component name="ProjectModuleManager">
+        <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/fab-toolbar/fab-toolbar.iml" filepath="$PROJECT_DIR$/fab-toolbar/fab-toolbar.iml" />
-      <module fileurl="file://$PROJECT_DIR$/recyclerviewfastscroller/recyclerviewfastscroller.iml" filepath="$PROJECT_DIR$/recyclerviewfastscroller/recyclerviewfastscroller.iml" />
       <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/utilities/utilities.iml" filepath="$PROJECT_DIR$/utilities/utilities.iml" />
     </modules>
   </component>
 </project>

@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -143,9 +144,8 @@ public class CambioAccordi {
 //            Log.i("risultato", primoBarre);
             return primoBarre;
         }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
+        catch (Exception ex) {
+            Log.e(getClass().getName(), ex.getLocalizedMessage(), ex);
             return "";
         }
     }

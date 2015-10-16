@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.MaterialScrollBar;
@@ -196,7 +198,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
@@ -223,59 +224,45 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:
-//                    addToFavorites(titoloDaAgg);
                     addToFavorites();
                     return true;
                 case R.id.add_to_p_iniziale:
-//                    addToListaNoDup(1, 1, titoloDaAgg);
                     addToListaNoDup(1, 1);
                     return true;
                 case R.id.add_to_p_prima:
-//                    addToListaNoDup(1, 2, titoloDaAgg);
                     addToListaNoDup(1, 2);
                     return true;
                 case R.id.add_to_p_seconda:
-//                    addToListaNoDup(1, 3, titoloDaAgg);
                     addToListaNoDup(1, 3);
                     return true;
                 case R.id.add_to_p_terza:
-//                    addToListaNoDup(1, 4, titoloDaAgg);
                     addToListaNoDup(1, 4);
                     return true;
                 case R.id.add_to_p_pace:
-//                    addToListaNoDup(1, 6, titoloDaAgg);
                     addToListaNoDup(1, 6);
                     return true;
                 case R.id.add_to_p_fine:
-//                    addToListaNoDup(1, 5, titoloDaAgg);
                     addToListaNoDup(1, 5);
                     return true;
                 case R.id.add_to_e_iniziale:
-//                    addToListaNoDup(2, 1, titoloDaAgg);
                     addToListaNoDup(2, 1);
                     return true;
                 case R.id.add_to_e_seconda:
-//                    addToListaNoDup(2, 6, titoloDaAgg);
                     addToListaNoDup(2, 6);
                     return true;
                 case R.id.add_to_e_pace:
-//                    addToListaNoDup(2, 2, titoloDaAgg);
                     addToListaNoDup(2, 2);
                     return true;
                 case R.id.add_to_e_santo:
-//                    addToListaNoDup(2, 7, titoloDaAgg);
                     addToListaNoDup(2, 7);
                     return true;
                 case R.id.add_to_e_pane:
-//                    addToListaDup(2, 3, titoloDaAgg);
                     addToListaDup(2, 3);
                     return true;
                 case R.id.add_to_e_vino:
-//                    addToListaDup(2, 4, titoloDaAgg);
                     addToListaDup(2, 4);
                     return true;
                 case R.id.add_to_e_fine:
-//                    addToListaNoDup(2, 5, titoloDaAgg);
                     addToListaNoDup(2, 5);
                     return true;
                 default:
@@ -283,17 +270,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                     idPosizioneClick = item.getItemId();
                     if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
                         idListaClick -= 100;
-
-                        //recupero ID del canto cliccato
-//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                        String query = "SELECT _id" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//                        cursor.moveToFirst();
-//                        idDaAgg = cursor.getInt(0);
-//                        cursor.close();
 
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -303,16 +279,11 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                             db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-
-//                            Toast.makeText(getActivity()
-//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
                         else {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
@@ -335,9 +306,9 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                                                 + getString(R.string.dialog_wonna_replace))
                                         .positiveText(R.string.confirm)
                                         .negativeText(R.string.dismiss)
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onPositive(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                                 listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
 
@@ -346,17 +317,36 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                                Toast.makeText(getActivity()
-//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                         .show();
                                             }
-
+                                        })
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onNegative(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
+//                                        .callback(new MaterialDialog.ButtonCallback() {
+//                                            @Override
+//                                            public void onPositive(MaterialDialog dialog) {
+//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                                                ContentValues values = new ContentValues();
+//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+//                                                db.close();
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                                        .show();
+//                                            }
+//
+//                                            @Override
+//                                            public void onNegative(MaterialDialog dialog) {
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -387,54 +377,37 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     }
 
     //aggiunge il canto premuto ai preferiti
-//    public void addToFavorites(String titolo) {
     public void addToFavorites() {
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         String sql = "UPDATE ELENCO" +
                 "  SET favourite = 1" +
-//                "  WHERE titolo =  \'" + titoloNoApex + "\'";
                 "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
 
-//        Toast toast = Toast.makeText(getActivity()
-//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-//        toast.show();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
                 .show();
 
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
-//    public void addToListaDup(int idLista, int listPosition, String titolo) {
     public void addToListaDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql+= "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
         try {
             db.execSQL(sql);
-//            Toast.makeText(getActivity()
-//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                     .show();
         } catch (SQLException e) {
-//            Toast toast = Toast.makeText(getActivity()
-//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//            toast.show();
             Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -443,10 +416,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
-//    public void addToListaNoDup(int idLista, int listPosition, String titolo) {
     public void addToListaNoDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -468,9 +438,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
             db.close();
 
             if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-//                Toast toast = Toast.makeText(getActivity()
-//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                toast.show();
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -486,31 +453,48 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                                 + getString(R.string.dialog_wonna_replace))
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                                 String sql = "UPDATE CUST_LISTS"
-//                                        + " SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
                                         + " SET id_canto = " + idDaAgg
                                         + " WHERE _id = " + idListaDaAgg
                                         + " AND position = " + posizioneDaAgg;
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                         .show();
-                            }
 
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                String sql = "UPDATE CUST_LISTS"
+//                                        + " SET id_canto = " + idDaAgg
+//                                        + " WHERE _id = " + idListaDaAgg
+//                                        + " AND position = " + posizioneDaAgg;
+//                                db.execSQL(sql);
+//                                db.close();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                        .show();
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -535,15 +519,11 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         String sql = "INSERT INTO CUST_LISTS "
                 + "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
         db.close();
 
-//        Toast.makeText(getActivity()
-//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
         Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                 .show();
     }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="lang_it" translatable="false">Italiano</string>
+    <string name="lang_uk" translatable="false">Українська</string>
+    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
+    <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
+    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
+
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
     <string name="action_favourites">Preferiti</string>
@@ -99,7 +105,7 @@
     <string name="aggiungi_dismiss">ANNULLA</string>
     <string name="titolo_pos_vuoto">Nessun titolo inserito</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
-    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 20</string>
+    <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
     <string name="aggiungi_lista_crea">CREA</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>
@@ -269,7 +275,7 @@
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
     <string name="history_removed">Rimosso dalla cronologia</string>
-    <string name="action_switch_to">Scambia con...</string>
+    <string name="action_switch_to">Scambia con&#8230;</string>
     <string name="song_removed">Canto rimosso</string>
     <string name="switch_done">Scambio effettuato</string>
     <string name="switch_impossible">Non puoi scambiare una canto con se stesso</string>
@@ -297,13 +303,16 @@
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
-
-    <string name="lang_it" translatable="false">Italiano</string>
-    <string name="lang_uk" translatable="false">Українська</string>
-    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
-    <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
-    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
-
-
+    <string name="barre_al_tasto_I">Barrè al</string>
+    <string name="barre_al_tasto_II">tasto</string>
+    <string name="phone_listener_title">Accesso al telefono</string>
+    <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Tale permesso è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattamente automaticamente.</string>
+    <string name="phone_listener_denied">La funzione di pausa automatica all\'arrivo della chiamata è disattivata. Per riattivarla concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_title">Accesso alla memoria pubblica</string>
+    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
+    <string name="external_storage_denied">Il salvataggio nella memoria pubblica non è possibile. Per rendere visibile l\'opzione, concedi il permesso necessario nelle impostazioni.</string>
+    <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
+    <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
+    <string name="forced_private">Forzato download in memoria privata</string>
 
 </resources>

@@ -61,8 +61,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:scaleType="center"
-                android:contentDescription="@string/add_inizio"
-                android:src="?customInsertItem" />
+                android:contentDescription="@string/select_canto"
+                android:src="@drawable/ic_add_circle_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"

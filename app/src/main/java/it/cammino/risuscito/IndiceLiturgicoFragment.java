@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -47,11 +49,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
 
     private DatabaseCanti listaCanti;
-    //    private List<Map<String, String>> groupData;
-//    private List<List<Map<String, String>>> childData;
-//    private static final String NAME = "NAME";
-//    private ExpandableListView expList;
-//    int lastExpandedGroupPosition = 0;
     private String titoloDaAgg;
     private int idDaAgg;
     private int idListaDaAgg;
@@ -81,8 +78,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         rootView = inflater.inflate(
                 R.layout.layout_recycler, container, false);
 
-//        expList = (ExpandableListView) rootView.findViewById(R.id.argomentiList);
-
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
@@ -99,19 +94,10 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         int total = arguments.getCount();
         arguments.moveToFirst();
 
-//        groupData = new ArrayList<Map<String, String>>();
-//        childData = new ArrayList<List<Map<String, String>>>();
         List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
 
         for (int i = 0; i < total; i++) {
-
-//            Map<String, String> curGroupMap = new HashMap<String, String>();
-//            groupData.add(curGroupMap);
-//
-//            curGroupMap.put(NAME, arguments.getString(1));
             int argId =  arguments.getInt(0);
-//            arguments.moveToNext();
-
             query = "SELECT B._id, B.titolo, B.color, B.pagina, B.source" +
                     "		FROM INDICE_LIT A, ELENCO B " +
                     "       WHERE A._id = " + argId +
@@ -123,14 +109,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             int totCanti = argCanti.getCount();
             argCanti.moveToFirst();
 
-//            List<Map<String, String>> children = new ArrayList<Map<String, String>>();
             List<CantoRecycled> children =  new ArrayList<>();
 
             for (int j = 0; j < totCanti; j++) {
-//                Map<String, String> curChildMap = new HashMap<String, String>();
-//                children.add(curChildMap);
-//                curChildMap.put(NAME, Utility.intToString(argCanti.getInt(2),3)
-//                        + argCanti.getString(1) + argCanti.getString(0));
                 children.add(new CantoRecycled(argCanti.getString(1)
                         , argCanti.getInt(3)
                         , argCanti.getString(2)
@@ -138,7 +119,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                         , argCanti.getString(4)));
                 argCanti.moveToNext();
             }
-//            childData.add(children);
             argCanti.close();
 
             dataItems.add(new Pair(
@@ -150,7 +130,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         }
 
         arguments.close();
-//        expList.setAdapter(new SongRowAdapter());
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -163,12 +142,10 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                         .getText());
                 String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
                         .getText());
-
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
                 bundle.putString("pagina", source);
                 bundle.putInt("idCanto", Integer.parseInt(idCanto));
-
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle, v);
             }
@@ -196,87 +173,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setHasFixedSize(false);
 
-//         additional decorations
-//        noinspection StatementWithEmptyBody
-//        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-//            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
-//        } else {
-//            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1)));
-//        }
-//        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
-
         mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
-
-        // fa in modo che la visuale scolli al gruppo cliccato
-//        expList.setOnGroupClickListener(new OnGroupClickListener() {
-//
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition,
-//                                        long id) {
-//
-//                parent.smoothScrollToPosition(groupPosition);
-//
-//                if (parent.isGroupExpanded(groupPosition)) {
-//                    parent.collapseGroup(groupPosition);
-//                } else {
-//                    parent.expandGroup(groupPosition);
-//                }
-//
-//                return true;
-//            }
-//        });
-//
-//        expList.setOnGroupExpandListener(new OnGroupExpandListener() {
-//            @Override
-//            public void onGroupExpand(int arg0) {
-//                if(arg0 != lastExpandedGroupPosition){
-//                    expList.collapseGroup(lastExpandedGroupPosition);
-//                }
-//                lastExpandedGroupPosition = arg0;
-//            }
-//        });
-//
-//        // setta l'azione al click su ogni voce dell'elenco
-//        expList.setOnChildClickListener(new OnChildClickListener() {
-//
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v,
-//                                        int groupPosition, int childPosition, long id) {
-//                TextView exptv = (TextView)v.findViewById(R.id.text_title);
-//
-//                String cantoCliccato = exptv.getText().toString();
-//                cantoCliccato = Utility.duplicaApostrofi(cantoCliccato);
-//
-//                // crea un manipolatore per il Database in modalità READ
-//                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                // esegue la query per il recupero del nome del file della pagina da visualizzare
-//                String query = "SELECT source, _id" +
-//                        "  FROM ELENCO" +
-//                        "  WHERE titolo =  '" + cantoCliccato + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                // recupera il nome del file
-//                cursor.moveToFirst();
-//                String pagina = cursor.getString(0);
-//                int idCanto = cursor.getInt(1);
-//
-//                // chiude il cursore
-//                cursor.close();
-//                db.close();
-//
-//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-//                Bundle bundle = new Bundle();
-//                bundle.putString("pagina", pagina);
-//                bundle.putInt("idCanto", idCanto);
-//
-//                // lancia l'activity che visualizza il canto passando il parametro creato
-//                startSubActivity(bundle, v);
-//
-//                return false;
-//            }
-//
-//        });
 
         query = "SELECT _id, lista" +
                 "		FROM LISTE_PERS" +
@@ -296,8 +193,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
         lista.close();
         db.close();
-
-//        registerForContextMenu(expList);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -351,63 +246,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-//    private class SongRowAdapter extends SimpleExpandableListAdapter {
-//
-//        SongRowAdapter() {
-//            super(	getActivity(),
-//                    groupData,
-//                    R.layout.simple_expandable_list_item_1,
-//                    new String[] { NAME },
-//                    new int[] { android.R.id.text1 },
-//                    childData,
-//                    R.layout.row_item,
-//                    new String[] { NAME },
-//                    new int[] { R.id.text_title }
-//            );
-//        }
-//
-//        @Override
-//        public View getChildView(int groupPosition, int childPosition,
-//                                 boolean isLastChild, View convertView, ViewGroup parent) {
-//
-//            View row = super.getChildView(groupPosition, childPosition,
-//                    isLastChild, convertView, parent);
-//            TextView canto = (TextView) row.findViewById(R.id.text_title);
-//
-//            String totalString = canto.getText().toString();
-//            int tempPagina = Integer.valueOf(totalString.substring(0,3));
-//            String pagina = String.valueOf(tempPagina);
-//            String colore = totalString.substring(3, 10);
-//
-//            canto.setText(totalString.substring(10));
-//
-//            TextView textPage = (TextView) row.findViewById(R.id.text_page);
-//            textPage.setText(pagina);
-//            if (colore.equalsIgnoreCase(Utility.GIALLO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//            if (colore.equalsIgnoreCase(Utility.GRIGIO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//            if (colore.equalsIgnoreCase(Utility.VERDE))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_green);
-//            if (colore.equalsIgnoreCase(Utility.AZZURRO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//            if (colore.equalsIgnoreCase(Utility.BIANCO))
-//                textPage.setBackgroundResource(R.drawable.bkg_round_white);
-//
-//            return row;
-//        }
-//
-//    }
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-//        ExpandableListView.ExpandableListContextMenuInfo info =
-//                (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-//        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-//        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD)  {
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
@@ -425,7 +268,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
         menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
         menu.findItem(R.id.add_to_e_santo).setVisible(pref.getBoolean(Utility.SHOW_SANTO, false));
-//        }
     }
 
     @Override
@@ -480,17 +322,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                     if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
                         idListaClick -= 100;
 
-                        //recupero ID del canto cliccato
-//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                        String query = "SELECT _id" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//                        cursor.moveToFirst();
-//                        idDaAgg = cursor.getInt(0);
-//                        cursor.close();
-
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
                         if (listePers[idListaClick]
@@ -499,16 +330,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                             db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-
-//                            Toast.makeText(getActivity()
-//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
                         else {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
@@ -531,28 +357,47 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                                 + getString(R.string.dialog_wonna_replace))
                                         .positiveText(R.string.confirm)
                                         .negativeText(R.string.dismiss)
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onPositive(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                                 listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
 
-                                                ContentValues  values = new  ContentValues( );
+                                                ContentValues values = new ContentValues();
                                                 values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                                Toast.makeText(getActivity()
-//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                         .show();
                                             }
-
+                                        })
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onNegative(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
+//                                        .callback(new MaterialDialog.ButtonCallback() {
+//                                            @Override
+//                                            public void onPositive(MaterialDialog dialog) {
+//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                                                ContentValues values = new ContentValues();
+//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+//                                                db.close();
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                                        .show();
+//                                            }
+//
+//                                            @Override
+//                                            public void onNegative(MaterialDialog dialog) {
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -584,21 +429,12 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     //aggiunge il canto premuto ai preferiti
     public void addToFavorites() {
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         String sql = "UPDATE ELENCO" +
                 "  SET favourite = 1" +
-//                "  WHERE titolo =  \'" + titoloNoApex + "\'";
                 "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
-
-//        Toast toast = Toast.makeText(getActivity()
-//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-//        toast.show();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
                 .show();
 
@@ -606,29 +442,19 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
     public void addToListaDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql+= "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
         try {
             db.execSQL(sql);
-//            Toast.makeText(getActivity()
-//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                     .show();
         } catch (SQLException e) {
-//            Toast toast = Toast.makeText(getActivity()
-//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//            toast.show();
             Snackbar.make(rootView
                     , R.string.present_yet, Snackbar.LENGTH_SHORT)
                     .show();
@@ -639,8 +465,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     //aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
     public void addToListaNoDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -661,13 +485,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             lista.close();
             db.close();
 
-            if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-//                Toast toast = Toast.makeText(getActivity()
-//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                toast.show();
+            if (titoloDaAgg.equalsIgnoreCase(titoloPresente))
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                         .show();
-            }
             else {
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
@@ -679,31 +499,52 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                 + getString(R.string.dialog_wonna_replace))
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                                 String sql = "UPDATE CUST_LISTS "
-//                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
                                         + "     SET id_canto = " + idDaAgg
                                         + "     WHERE _id = " + idListaDaAgg
                                         + "     AND position = " + posizioneDaAgg;
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
+//                        .callback(new MaterialDialog.ButtonCallback() {
+//                            @Override
+//                            public void onPositive(MaterialDialog dialog) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+////                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                                String sql = "UPDATE CUST_LISTS "
+////                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
+////                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+//                                        + "     SET id_canto = " + idDaAgg
+//                                        + "     WHERE _id = " + idListaDaAgg
+//                                        + "     AND position = " + posizioneDaAgg;
+//                                db.execSQL(sql);
+//                                db.close();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+////                                Toast.makeText(getActivity()
+////                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
+//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                        .show();
+//                            }
+//
+//                            @Override
+//                            public void onNegative(MaterialDialog dialog) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -728,8 +569,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         String sql = "INSERT INTO CUST_LISTS"
                 + " VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);

@@ -10,9 +10,9 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
 
 import java.io.File;
@@ -52,15 +52,9 @@ public class Utility {
     public static final String VERDE = "#8FC490";
     public static final String GRIGIO = "#CAC8BC";
 
-    @SuppressLint("NewApi")
-    public static void setAccessibilityIgnore(View view) {
-        view.setClickable(false);
-        view.setFocusable(false);
-        view.setContentDescription("");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
-    }
+    public static final int EXTERNAL_FILE_RC = 122;
+    public static final int WRITE_STORAGE_RC = 123;
+    public static final int PHONE_LISTENER_RC = 124;
 
     //metodo che restituisce la stringa di input senza la pagina all'inizio
     public static String truncatePage(String input) {
@@ -169,34 +163,40 @@ public class Utility {
         }
     }
 
-    public static String retrieveMediaFileLink(Context activity, String link) {
+    public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
 
-        if (isExternalStorageReadable()) {
+        if (isExternalStorageReadable() && cercaEsterno) {
 //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
 //			File fileExt = new File(fileArray[0], filterMediaLink(link));
             //cerca file esterno con nuovi path e nome
             File fileExt = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC), "/Risuscitò/" + filterMediaLinkNew(link));
             if (fileExt.exists()) {
-//				Log.i("FILE esterno:", fileExt.getAbsolutePath());
+                Log.d("Utility.java", "FILE esterno: " + fileExt.getAbsolutePath());
                 return fileExt.getAbsolutePath();
             } else {
                 //cerca file esterno con vecchi path e nome
                 File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
                 fileExt = new File(fileArray[0], filterMediaLink(link));
                 if (fileExt.exists()) {
-//				    Log.i("FILE esterno:", fileExt.getAbsolutePath());
+                    Log.d("Utility.java", "FILE esterno: " + fileExt.getAbsolutePath());
                     return fileExt.getAbsolutePath();
                 }
+                else
+                    Log.d("Utility.java", "FILE ESTERNO NON TROVATO");
             }
         }
-//		Log.i("FILE ESTERNO:", "NON TROVATO");
+        else {
+            Log.d("Utility.java", "isExternalStorageReadable: FALSE");
+        }
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
         if (fileInt.exists()) {
-//			Log.i("FILE interno:", fileInt.getAbsolutePath());
+			Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
             return fileInt.getAbsolutePath();
         }
+        else
+            Log.d("Utility.java", "FILE INTERNO NON TROVATO");
 //		Log.i("FILE INTERNO:", "NON TROVATO");
         return "";
     }
@@ -240,6 +240,18 @@ public class Utility {
 
     public static int random(int start, int end) {
         return ((new Random()).nextInt(end - start + 1) + start);
+    }
+
+    public static boolean hasMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    public static boolean isLowerCase(char ch) {
+        return ch >= 'a' && ch <= 'z';
+    }
+
+    public static boolean isUpperCase(char ch) {
+        return ch >= 'A' && ch <= 'Z';
     }
 
 }

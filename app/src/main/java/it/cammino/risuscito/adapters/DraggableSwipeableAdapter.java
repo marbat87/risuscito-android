@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
@@ -19,6 +23,9 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionDefault;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 
@@ -29,9 +36,6 @@ import it.cammino.risuscito.objects.DraggableItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ViewUtils;
 
-/**
- * Created by marcello.battain on 25/05/2015.
- */
 public class DraggableSwipeableAdapter
         extends RecyclerView.Adapter<DraggableSwipeableAdapter.MyViewHolder>
         implements DraggableItemAdapter<DraggableSwipeableAdapter.MyViewHolder>,
@@ -66,12 +70,14 @@ public class DraggableSwipeableAdapter
         public ViewGroup mContainer;
         public View mDragHandle;
         public TextView mTextView;
+        public ImageView mDragImage;
 
         public MyViewHolder(View v) {
             super(v);
             mContainer = (ViewGroup) v.findViewById(R.id.container);
             mDragHandle = v.findViewById(R.id.drag_handle);
             mTextView = (TextView) v.findViewById(android.R.id.text1);
+            mDragImage = (ImageView) v.findViewById(R.id.drag_image);
 //            if(longClickListener != null)
 //                v.setOnLongClickListener(longClickListener);
         }
@@ -152,6 +158,9 @@ public class DraggableSwipeableAdapter
             }
         });
 
+        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
+
         // set text
         holder.mTextView.setText(item.getTitolo());
 
@@ -187,7 +196,7 @@ public class DraggableSwipeableAdapter
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
                 holder.mContainer.setBackgroundResource(typedValue.resourceId);
-                holder.itemView.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.transparent));
             }
 
 //            holder.mContainer.setBackgroundResource(bgResId);
@@ -277,7 +286,7 @@ public class DraggableSwipeableAdapter
     }
 
     @Override
-    public int onSwipeItem(MyViewHolder holder, int position, int result) {
+    public SwipeResultAction onSwipeItem(MyViewHolder holder, int position, int result) {
         Log.d(TAG, "onSwipeItem(result = " + result + ")");
 
         switch (result) {
@@ -291,44 +300,93 @@ public class DraggableSwipeableAdapter
 //                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
 //                }
 //                // swipe left -- pin
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
+                return new SwipeRightResultAction(this , position);
+//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
             case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION;
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
+                return new SwipeRightResultAction(this , position);
+//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
             // other --- do nothing
             case RecyclerViewSwipeManager.RESULT_CANCELED:
             default:
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+                return new UnpinResultAction();
+//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
         }
     }
 
-    @Override
-    public void onPerformAfterSwipeReaction(MyViewHolder holder, int position, int result, int reaction) {
-        Log.d(TAG, "onPerformAfterSwipeReaction(result = " + result + ", reaction = " + reaction + ")");
+    private static class SwipeRightResultAction extends SwipeResultActionRemoveItem {
+        private DraggableSwipeableAdapter mAdapter;
+        private final int mPosition;
 
-//        final AbstractDataProvider.Data item = mProvider.getItem(position);
-//        final DraggableItem item = mData.get(position);
+        SwipeRightResultAction(DraggableSwipeableAdapter adapter, int position) {
+            mAdapter = adapter;
+            mPosition = position;
+        }
 
-        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-//            mProvider.removeItem(position);
-            mData.remove(position);
-            notifyItemRemoved(position);
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
 
-            if (mEventListener != null) {
-                mEventListener.onItemRemoved(position);
+            mAdapter.mData.remove(mPosition);
+            mAdapter.notifyItemRemoved(mPosition);
+        }
+
+        @Override
+        protected void onSlideAnimationEnd() {
+            super.onSlideAnimationEnd();
+
+            if (mAdapter.mEventListener != null) {
+                mAdapter.mEventListener.onItemRemoved(mPosition);
             }
         }
-//        else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
-//            item.setPinnedToSwipeLeft(true);
-//            notifyItemChanged(position);
+
+        @Override
+        protected void onCleanUp() {
+            super.onCleanUp();
+            // clear the references
+            mAdapter = null;
+        }
+    }
+
+    private static class UnpinResultAction extends SwipeResultActionDefault {
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
+        }
+
+        @Override
+        protected void onCleanUp() {
+            super.onCleanUp();
+            // clear the references
+        }
+    }
+
+//    @Override
+//    public void onPerformAfterSwipeReaction(MyViewHolder holder, int position, int result, int reaction) {
+//        Log.d(TAG, "onPerformAfterSwipeReaction(result = " + result + ", reaction = " + reaction + ")");
+//
+////        final AbstractDataProvider.Data item = mProvider.getItem(position);
+////        final DraggableItem item = mData.get(position);
+//
+//        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
+////            mProvider.removeItem(position);
+//            mData.remove(position);
+//            notifyItemRemoved(position);
 //
 //            if (mEventListener != null) {
-//                mEventListener.onItemPinned(position);
+//                mEventListener.onItemRemoved(position);
 //            }
-//        } else {
-//            item.setPinnedToSwipeLeft(false);
 //        }
-    }
+////        else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
+////            item.setPinnedToSwipeLeft(true);
+////            notifyItemChanged(position);
+////
+////            if (mEventListener != null) {
+////                mEventListener.onItemPinned(position);
+////            }
+////        } else {
+////            item.setPinnedToSwipeLeft(false);
+////        }
+//    }
 
     public EventListener getEventListener() {
         return mEventListener;

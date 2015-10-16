@@ -19,7 +19,8 @@
             android:layout_alignParentLeft="true">
 
             <ImageView
-                android:background="@drawable/ic_reorder_grey600_24dp"
+                android:id="@+id/drag_image"
+                android:background="@drawable/ic_reorder_24dp"
                 android:contentDescription="@string/content_drag"
                 android:layout_width="24dp"
                 android:layout_height="24dp"

@@ -24,7 +24,7 @@ public class GeneralIndex extends Fragment {
 
     private static final String PAGE_VIEWED = "pageViewed";
     private LUtils mLUtils;
-    private int lastPosition;
+//    private int lastPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

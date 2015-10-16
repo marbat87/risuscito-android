@@ -2,10 +2,13 @@ package it.cammino.risuscito;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.KeyEvent;
 import android.view.View;
@@ -79,8 +82,8 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
         ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
-//        fabFullscreen.setColorNormal(getThemeUtils().accentColor());
-//        fabFullscreen.setColorPressed(getThemeUtils().accentColorDark());
+        Drawable drawable = DrawableCompat.wrap(fabFullscreen.getDrawable());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderFullScreen.this, android.R.color.white));
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

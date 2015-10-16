@@ -251,7 +251,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_fullscreen_white_48dp"
+                android:src="@drawable/ic_fullscreen_48dp"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton

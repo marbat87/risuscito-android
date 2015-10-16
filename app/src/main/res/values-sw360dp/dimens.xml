@@ -2,6 +2,6 @@
 <resources>
 
     <dimen name="navdrawer_chosen_account_height">120dp</dimen>
-    <dimen name="navdrawer_width">320dp</dimen>
+    <!--<dimen name="navdrawer_width">320dp</dimen>-->
 
 </resources>

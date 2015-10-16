@@ -9,4 +9,10 @@
             android:src="@drawable/product_logo_144dp"
             android:gravity="center"/>
     </item>
+    <item
+        android:bottom="@dimen/brand_name_bottom">
+        <bitmap
+            android:src="@drawable/brand_logo"
+            android:gravity="center_horizontal|bottom"/>
+    </item>
 </layer-list>

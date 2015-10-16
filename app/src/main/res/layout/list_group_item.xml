@@ -24,12 +24,12 @@
             android:id="@android:id/text1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/indicatorOld"
+            android:layout_toLeftOf="@+id/indicator"
             android:gravity="start|center_vertical"
             style="@style/TitoloGroupStyle" />
 
         <ImageView
-            android:id="@+id/indicatorOld"
+            android:id="@+id/indicator"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentRight="true"

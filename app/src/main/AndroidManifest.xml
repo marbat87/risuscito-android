@@ -3,22 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="it.cammino.risuscito"
     android:installLocation="auto"
-    android:versionCode="81"
-    android:versionName="3.5.0">
+    android:versionCode="92"
+    android:versionName="3.6.0">
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="22"
+        android:targetSdkVersion="23"
         tools:overrideLibrary="com.wnafee.vector" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name="it.cammino.risuscito.ui.RisuscitoApplication"
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/RisuscitoTheme" >
@@ -46,26 +46,10 @@
             android:name="it.cammino.risuscito.CreaListaActivity"
             android:label="" >
         </activity>
-        <!--<activity-->
-            <!--android:name="com.ipaulpro.afilechooser.FileChooserActivity"-->
-            <!--android:exported="true"-->
-            <!--android:icon="@drawable/abc_ic_ab_back_mtrl_am_alpha"-->
-            <!--android:theme="@style/Theme.AppCompat.Light">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.GET_CONTENT" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<category android:name="android.intent.category.OPENABLE" />-->
-                <!--<data android:mimeType="audio/mpeg" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
         <activity
-            android:name="com.nononsenseapps.filepicker.FilePickerActivity"
+            android:name="it.cammino.risuscito.filepicker.ThemedFilePickerActivity"
             android:label="@string/app_name"
-            android:theme="@style/FilePicker.Theme">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.GET_CONTENT" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--</intent-filter>-->
+            android:theme="@style/FilePickerTheme">
         </activity>
         <activity android:name="it.cammino.risuscito.slides.IntroPaginaRender" android:label=""/>
         <activity android:name="it.cammino.risuscito.slides.IntroConsegnati" android:label=""/>

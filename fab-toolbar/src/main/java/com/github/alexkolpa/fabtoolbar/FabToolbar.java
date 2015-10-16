@@ -12,15 +12,15 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -41,24 +41,24 @@ public class FabToolbar extends RevealFrameLayout {
     private int animationDuration = DEFAULT_ANIMATION_DURATION;
     private OnClickListener clickListener;
     private boolean mVisible;
-    private final Interpolator mInterpolator;
+//    private final Interpolator mInterpolator;
 
     public FabToolbar(Context context) {
         super(context);
-        this.mInterpolator = new AccelerateDecelerateInterpolator();
+//        this.mInterpolator = new AccelerateDecelerateInterpolator();
         init();
     }
 
     public FabToolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mInterpolator = new AccelerateDecelerateInterpolator();
+//        this.mInterpolator = new AccelerateDecelerateInterpolator();
         init();
         loadAttributes(attrs);
     }
 
     public FabToolbar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        this.mInterpolator = new AccelerateDecelerateInterpolator();
+//        this.mInterpolator = new AccelerateDecelerateInterpolator();
         init();
         loadAttributes(attrs);
     }
@@ -69,6 +69,8 @@ public class FabToolbar extends RevealFrameLayout {
 
         inflate(getContext(), R.layout.fab_toolbar, this);
         button = (FloatingActionButton) findViewById(R.id.button);
+        Drawable drawable = DrawableCompat.wrap(button.getDrawable());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getContext(), android.R.color.white));
         button.setOnClickListener(new ButtonClickListener());
         container = ((LinearLayout) findViewById(R.id.container));
     }
@@ -82,7 +84,7 @@ public class FabToolbar extends RevealFrameLayout {
         int containerGravity;
         int buttonGravity;
         try {
-            setColor(a.getColor(R.styleable.FabToolbar_tb_color, getResources().getColor(R.color.blue)));
+            setColor(a.getColor(R.styleable.FabToolbar_tb_color, ContextCompat.getColor(getContext(), R.color.blue)));
             animationDuration = a.getInteger(R.styleable.FabToolbar_tb_anim_duration, DEFAULT_ANIMATION_DURATION);
             containerGravity = a.getInteger(R.styleable.FabToolbar_tb_container_gravity, 1);
             buttonGravity = a.getInteger(R.styleable.FabToolbar_tb_button_gravity, 2);
@@ -434,7 +436,7 @@ public class FabToolbar extends RevealFrameLayout {
 
         public void onDependentViewRemoved(CoordinatorLayout parent, FabToolbar child, View dependency) {
             if(dependency instanceof Snackbar.SnackbarLayout) {
-                ViewCompat.animate(child).translationY(0.0F).setInterpolator(new FastOutSlowInInterpolator()).setListener((ViewPropertyAnimatorListener)null);
+                ViewCompat.animate(child).translationY(0.0F).setInterpolator(new FastOutSlowInInterpolator()).setListener(null);
             }
         }
 
