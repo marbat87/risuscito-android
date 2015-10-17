@@ -58,7 +58,7 @@ public class CustomLists extends Fragment  {
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
-    private int lastPosition;
+//    private int lastPosition;
     private LUtils mLUtils;
 
     @Override
@@ -81,39 +81,41 @@ public class CustomLists extends Fragment  {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         if (savedInstanceState != null) {
-            lastPosition = savedInstanceState.getInt(PAGE_VIEWED, 0);
+//            lastPosition = savedInstanceState.getInt(PAGE_VIEWED, 0);
             indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
         }
         else {
-            lastPosition = 0;
+//            lastPosition = 0;
             indDaModif = 0;
         }
 
         tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.post(new Runnable() {
-            @Override
-            public void run() {
-                tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
-            }
-        });
-        Handler myHandler = new Handler();
-        final Runnable mMyRunnable2 = new Runnable() {
-            @Override
-            public void run() {
-                tabs.getTabAt(lastPosition).select();
-            }
-        };
-        myHandler.postDelayed(mMyRunnable2, 200);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrollStateChanged(int arg0) {}
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
-            public void onPageSelected(int currentPage) {
-                lastPosition = currentPage;
-            }
-        });
+        tabs.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, tabs);
+//        tabs.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                tabs.setupWithViewPager(mViewPager);
+//                mLUtils.applyFontedTab(mViewPager, tabs);
+//            }
+//        });
+//        Handler myHandler = new Handler();
+//        final Runnable mMyRunnable2 = new Runnable() {
+//            @Override
+//            public void run() {
+//                tabs.getTabAt(lastPosition).select();
+//            }
+//        };
+//        myHandler.postDelayed(mMyRunnable2, 200);
+//
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            public void onPageScrollStateChanged(int arg0) {}
+//            public void onPageScrolled(int arg0, float arg1, int arg2) {}
+//            public void onPageSelected(int currentPage) {
+//                lastPosition = currentPage;
+//            }
+//        });
 
         ImageButton buttonAddLista = (ImageButton) rootView.findViewById(R.id.fab_add_lista);
         Drawable drawable = DrawableCompat.wrap(buttonAddLista.getDrawable());
@@ -333,13 +335,15 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                tabs.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tabs.setupWithViewPager(mViewPager);
-                                        mLUtils.applyFontedTab(mViewPager, tabs);
-                                    }
-                                });
+                                tabs.setupWithViewPager(mViewPager);
+                                mLUtils.applyFontedTab(mViewPager, tabs);
+//                                tabs.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        tabs.setupWithViewPager(mViewPager);
+//                                        mLUtils.applyFontedTab(mViewPager, tabs);
+//                                    }
+//                                });
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override
@@ -363,13 +367,15 @@ public class CustomLists extends Fragment  {
 
                                                 updateLista();
                                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                                tabs.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        tabs.setupWithViewPager(mViewPager);
-                                                        mLUtils.applyFontedTab(mViewPager, tabs);
-                                                    }
-                                                });
+                                                tabs.setupWithViewPager(mViewPager);
+                                                mLUtils.applyFontedTab(mViewPager, tabs);
+//                                                tabs.post(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        tabs.setupWithViewPager(mViewPager);
+//                                                        mLUtils.applyFontedTab(mViewPager, tabs);
+//                                                    }
+//                                                });
                                                 Handler myHandler = new Handler();
                                                 final Runnable mMyRunnable2 = new Runnable() {
                                                     @Override
@@ -499,7 +505,7 @@ public class CustomLists extends Fragment  {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(PAGE_VIEWED, lastPosition);
+//        outState.putInt(PAGE_VIEWED, lastPosition);
         outState.putInt(PAGE_EDITED, indDaModif);
     }
 
@@ -509,20 +515,21 @@ public class CustomLists extends Fragment  {
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
-            tabs.post(new Runnable() {
-                @Override
-                public void run() {
-                    tabs.setupWithViewPager(mViewPager);
-                    mLUtils.applyFontedTab(mViewPager, tabs);
-                }
-            });
-//            tabs.setupWithViewPager(mViewPager);
-//            mLUtils.applyFontedTab(mViewPager, tabs);
+//            tabs.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    tabs.setupWithViewPager(mViewPager);
+//                    mLUtils.applyFontedTab(mViewPager, tabs);
+//                }
+//            });
+            tabs.setupWithViewPager(mViewPager);
+            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
                 @Override
                 public void run() {
-                    mViewPager.setCurrentItem(indDaModif, false);
+//                    mViewPager.setCurrentItem(indDaModif, false);
+                    tabs.getTabAt(indDaModif).select();
                 }
             };
             myHandler.postDelayed(mMyRunnable2, 200);

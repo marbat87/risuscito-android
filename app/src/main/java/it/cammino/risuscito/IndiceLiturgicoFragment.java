@@ -18,7 +18,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -33,6 +32,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
@@ -161,19 +162,14 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, IndiceLiturgicoFragment.this);
         mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
-//        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Need to disable them when using animation indicator.
-        final RecyclerView.ItemAnimator animator = mRecyclerView.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }
-//        animator.setSupportsChangeAnimations(false);
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+        animator.setSupportsChangeAnimations(false);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-//        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setHasFixedSize(false);
 
         mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
