@@ -4,9 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
-
-import com.rey.material.widget.CheckBox;
 
 import java.util.List;
 
@@ -56,7 +55,8 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
         if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
             cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
-        cantoHolder.checkBox.setCheckedImmediately(dataItem.isSelected());
+        cantoHolder.checkBox.setChecked(dataItem.isSelected());
+//        cantoHolder.checkBox.setCheckedImmediately(dataItem.isSelected());
         cantoHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

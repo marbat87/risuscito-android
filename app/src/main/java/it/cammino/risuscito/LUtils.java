@@ -131,9 +131,9 @@ public class LUtils {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    public static boolean hasHoneycomb() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    }
+//    public static boolean hasHoneycomb() {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+//    }
 
     public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
         for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
@@ -142,6 +142,10 @@ public class LUtils {
             tv.setText(viewPager.getAdapter().getPageTitle(i));
             tabLayout.getTabAt(i).setCustomView(tv);
         }
+    }
+
+    public static boolean hasICS() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
     }
 
 }

@@ -25,9 +25,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.rey.material.widget.ProgressView;
+import com.afollestad.materialdialogs.internal.MDTintHelper;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -42,6 +43,8 @@ import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
+import it.cammino.risuscito.utils.ThemeUtils;
+import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -52,7 +55,8 @@ public class InsertAvanzataFragment extends Fragment {
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
-    private ProgressView progress;
+//    private ProgressView progress;
+    private ProgressBar progress;
     private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
@@ -186,7 +190,16 @@ public class InsertAvanzataFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
+        if (LUtils.hasICS()) {
+            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
+            d.setTint(getThemeUtils().accentColor());
+            progress.setProgressDrawable(d);
+            progress.setIndeterminateDrawable(d);
+        }
+        else
+            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
+
         searchPar.setText("");
 
         Bundle bundle = getArguments();
@@ -226,7 +239,8 @@ public class InsertAvanzataFragment extends Fragment {
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-                        progress.stop();
+//                        progress.stop();
+                        progress.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -370,8 +384,8 @@ public class InsertAvanzataFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//            progress.setVisibility(View.VISIBLE);
-            progress.start();
+            progress.setVisibility(View.VISIBLE);
+//            progress.start();
         }
 
         @Override
@@ -379,8 +393,8 @@ public class InsertAvanzataFragment extends Fragment {
 
             cantoAdapter.notifyDataSetChanged();
 
-//            progress.setVisibility(View.GONE);
-            progress.stop();
+            progress.setVisibility(View.INVISIBLE);
+//            progress.stop();
 
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
@@ -396,7 +410,7 @@ public class InsertAvanzataFragment extends Fragment {
     {
         if (MAP_NORM == null || MAP_NORM.size() == 0)
         {
-            MAP_NORM = new HashMap<Character, Character>();
+            MAP_NORM = new HashMap<>();
             MAP_NORM.put('À', 'A');
             MAP_NORM.put('Á', 'A');
             MAP_NORM.put('Â', 'A');
@@ -477,6 +491,10 @@ public class InsertAvanzataFragment extends Fragment {
                 PaginaRenderActivity.class);
         intent.putExtras(bundle);
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
     }
 
 }

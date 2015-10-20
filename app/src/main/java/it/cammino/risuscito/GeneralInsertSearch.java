@@ -47,6 +47,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
 
         final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
 //        tabs.setupWithViewPager(mViewPager);
 //        tabs.post(new Runnable() {

@@ -283,6 +283,7 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
+                        .allowUserColorInput(false)
                         .customColors(ColorPalette.PRIMARY_COLORS, ColorPalette.PRIMARY_COLORS_SUB)
                         .doneButton(R.string.single_choice_ok)  // changes label of the done button
                         .cancelButton(R.string.cancel)  // changes label of the cancel button
@@ -298,6 +299,7 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
+                        .allowUserColorInput(false)
                         .customColors(ColorPalette.ACCENT_COLORS, ColorPalette.ACCENT_COLORS_SUB)
                         .accentMode(true)  // optional boolean, true shows accent palette
                         .doneButton(R.string.single_choice_ok)  // changes label of the done button

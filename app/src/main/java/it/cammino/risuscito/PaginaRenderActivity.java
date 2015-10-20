@@ -48,6 +48,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +66,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.rey.material.widget.Slider;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -98,7 +98,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private TextView no_records_text;
     private View music_buttons;
     public FabToolbar mFab; // the floating blue add/paste button
-    Slider scroll_speed_bar, scroll_song_bar;
+//    Slider scroll_speed_bar, scroll_song_bar;
+    SeekBar scroll_speed_bar, scroll_song_bar;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
     private static OnAudioFocusChangeListener afChangeListener;
@@ -147,7 +148,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     final Runnable mScrollBar = new Runnable() {
         public void run() {
             if (mediaPlayer != null && mediaPlayerState == MP_State.Started) {
-                scroll_song_bar.setValue((float) mediaPlayer.getCurrentPosition(), false);
+//                scroll_song_bar.setValue((float) mediaPlayer.getCurrentPosition(), false);
+                scroll_song_bar.setProgress(mediaPlayer.getCurrentPosition());
                 mHandler.postDelayed(this, SONG_STEP);
             }
             else
@@ -234,8 +236,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
         drawable = DrawableCompat.wrap(play_scroll.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
-        scroll_speed_bar = (Slider) findViewById(R.id.speed_seekbar);
-        scroll_song_bar = (Slider) findViewById(R.id.music_seekbar);
+        scroll_speed_bar = (SeekBar) findViewById(R.id.speed_seekbar);
+        scroll_song_bar = (SeekBar) findViewById(R.id.music_seekbar);
 
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         afChangeListener = new OnAudioFocusChangeListener() {
@@ -317,17 +319,20 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 switch (mediaPlayerState) {
                     case Started:
                         play_button.setSelected(true);
-                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setMax(mediaPlayer.getDuration());
+//                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
                         scroll_song_bar.setEnabled(true);
                         mScrollBar.run();
                         break;
                     case Paused:
-                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+//                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setMax(mediaPlayer.getDuration());
                         scroll_song_bar.setEnabled(true);
                         play_button.setSelected(false);
                         break;
                     case Prepared:
-                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+//                        scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+                        scroll_song_bar.setMax(mediaPlayer.getDuration());
                         scroll_song_bar.setEnabled(true);
                         break;
                     default:
@@ -391,18 +396,37 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
             });
 
-            scroll_song_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+//            scroll_song_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+//                @Override
+//                public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
+////                    Log.i(getClass().getName(), "newValue: " + newValue);
+//                    if (fromUser)
+//                        mediaPlayer.seekTo(newValue);
+//                    int seconds = newValue / 1000 % 60;
+////                    Log.i(getClass().getName(), "seconds: " + seconds);
+//                    int minutes = (newValue / (1000 * 60));
+////                    Log.i(getClass().getName(), "minutes: " + minutes);
+//                    ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+//                }
+//            });
+            scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
-                public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
-//                    Log.i(getClass().getName(), "newValue: " + newValue);
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Log.d(getClass().getName(), "newValue: " + progress);
                     if (fromUser)
-                        mediaPlayer.seekTo(newValue);
-                    int seconds = newValue / 1000 % 60 ;
-//                    Log.i(getClass().getName(), "seconds: " + seconds);
-                    int minutes = (newValue / (1000*60));
-//                    Log.i(getClass().getName(), "minutes: " + minutes);
+                        mediaPlayer.seekTo(progress);
+                    int seconds = progress / 1000 % 60;
+                    Log.d(getClass().getName(), "seconds: " + seconds);
+                    int minutes = (progress / (1000 * 60));
+                    Log.d(getClass().getName(), "minutes: " + minutes);
                     ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
                 }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
             });
 
             save_file.setOnClickListener(new OnClickListener() {
@@ -957,13 +981,27 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         }
 
-        scroll_speed_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+//        scroll_speed_bar.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+//            @Override
+//            public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
+//                speedValue = String.valueOf(newValue);
+//                ((TextView) findViewById(R.id.slider_text)).setText(String.valueOf(newValue) + " %");
+////                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
+//            }
+//        });
+        scroll_speed_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onPositionChanged(Slider slider, boolean fromUser, float oldPos, float newPos, int oldValue, int newValue) {
-                speedValue = String.valueOf(newValue);
-                ((TextView) findViewById(R.id.slider_text)).setText(String.valueOf(newValue) + " %");
-//                Log.i(getClass().toString(), "speedValue cambiato! " + speedValue);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                speedValue = String.valueOf(progress);
+                ((TextView) findViewById(R.id.slider_text)).setText(String.valueOf(progress) + " %");
+                Log.d(getClass().toString(), "speedValue cambiato! " + speedValue);
             }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
         play_scroll.setSelected(false);
@@ -999,7 +1037,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 saveZoom();
                 Bundle bundle = new Bundle();
                 bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
-                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
+//                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getValue());
+                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
                 bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
                 bundle.putInt(Utility.ID_CANTO, idCanto);
 
@@ -1459,12 +1498,14 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         if (speedValue == null) {
 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-            scroll_speed_bar.setValue(savedSpeed, false);
+//            scroll_speed_bar.setValue(savedSpeed, false);
+            scroll_speed_bar.setProgress(savedSpeed);
 //            speedValue = String.valueOf(scroll_speed_bar.getValue());
         }
         else {
 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
-            scroll_speed_bar.setValue(Float.valueOf(speedValue), false);
+//            scroll_speed_bar.setValue(Float.valueOf(speedValue), false);
+            scroll_speed_bar.setProgress(Integer.valueOf(speedValue));
         }
 
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
@@ -1837,7 +1878,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
             mediaPlayerState = MP_State.Prepared;
             cmdStart();
-            scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+//            scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+            scroll_song_bar.setMax(mediaPlayer.getDuration());
             scroll_song_bar.setEnabled(true);
         }
     };
