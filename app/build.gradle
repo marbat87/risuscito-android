@@ -38,7 +38,6 @@ dependencies {
     compile ('com.afollestad.material-dialogs:commons:68fd646664@aar') {transitive = true}
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.2'
-    // NOTE: vector-compat is available on API level 14 or later
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.+@aar'
