@@ -14,7 +14,6 @@
         android:theme="@style/ActionBarThemeOverlay">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
-
         <android.support.design.widget.TabLayout
             android:layout_height="48dp"
             android:layout_width="match_parent"
@@ -54,7 +53,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/fab_toolbar_bottom_no_tb"
         risuscito:tb_anim_duration="500"
         risuscito:tb_button_gravity="end"
         risuscito:tb_container_gravity="center"
@@ -126,61 +124,5 @@
             android:soundEffectsEnabled="true" />
 
     </com.github.alexkolpa.fabtoolbar.FabToolbar>
-
-    <!--<com.getbase.floatingactionbutton.FloatingActionsMenu-->
-        <!--android:id="@+id/fab_pager"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--risuscito:fab_labelStyle="@style/menu_labels_style"-->
-        <!--android:layout_marginRight="@dimen/floating_margin_lateral"-->
-        <!--android:layout_marginBottom="@dimen/floating_margin_lateral_minus_shadow"-->
-        <!--android:elevation="@dimen/toolbar_elevation">-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-            <!--android:id="@+id/fab_delete_lista"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--risuscito:fab_title="@string/action_remove_list"-->
-            <!--risuscito:fab_colorNormal="@android:color/white"-->
-            <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-            <!--risuscito:fab_colorDisabled="@color/item_disabled"-->
-            <!--risuscito:fab_icon="@drawable/ic_delete_grey600_24dp"-->
-            <!--risuscito:fab_size="mini" />-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-            <!--android:id="@+id/fab_edit_lista"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--risuscito:fab_title="@string/action_edit_list"-->
-            <!--risuscito:fab_colorNormal="@android:color/white"-->
-            <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-            <!--risuscito:fab_colorDisabled="@color/item_disabled"-->
-            <!--risuscito:fab_icon="@drawable/ic_create_grey600_24dp"-->
-            <!--risuscito:fab_size="mini" />-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-            <!--android:id="@+id/fab_add_lista"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--risuscito:fab_title="@string/action_add_list"-->
-            <!--risuscito:fab_colorNormal="@android:color/white"-->
-            <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-            <!--risuscito:fab_colorDisabled="@color/item_disabled"-->
-            <!--risuscito:fab_icon="@drawable/ic_add_grey600_24dp"-->
-            <!--risuscito:fab_size="mini" />-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-            <!--android:id="@+id/fab_pulisci"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--risuscito:fab_title="@string/button_clean_list"-->
-            <!--risuscito:fab_colorNormal="@android:color/white"-->
-            <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-            <!--risuscito:fab_colorDisabled="@color/item_disabled"-->
-            <!--risuscito:fab_icon="@drawable/ic_eraser_grey600_24dp"-->
-            <!--risuscito:fab_size="mini" />-->
-
-    <!--</com.getbase.floatingactionbutton.FloatingActionsMenu>-->
 
 </android.support.design.widget.CoordinatorLayout>

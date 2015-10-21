@@ -91,7 +91,7 @@
                 android:layout_alignParentBottom="true"
                 android:background="@color/theme_primary"
                 android:divider="?attr/dividerVertical"
-                android:layout_height="@dimen/bottom_toolbar_height"
+                android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:orientation="horizontal">
 
                 <TextView
@@ -162,7 +162,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/fab_toolbar_bottom_tb"
+            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"
             risuscito:tb_anim_duration="500"
             risuscito:tb_button_gravity="end"
             risuscito:tb_container_gravity="center"
