@@ -2727,10 +2727,40 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     void showDeniedForPhoneListener() {
         Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
-        Snackbar.make(findViewById(android.R.id.content)
-                , getString(R.string.phone_listener_denied)
-                , Snackbar.LENGTH_SHORT)
+        prevOrientation = getRequestedOrientation();
+        Utility.blockOrientation(PaginaRenderActivity.this);
+        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+                .title(R.string.phone_listener_title)
+                .content(R.string.phone_listener_denied)
+                .positiveText(R.string.dialog_chiudi)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        setRequestedOrientation(prevOrientation);
+                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                Utility.PHONE_LISTENER_RC);
+                    }
+                })
                 .show();
+        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK
+                        && event.getAction() == KeyEvent.ACTION_UP) {
+                    arg0.dismiss();
+                    setRequestedOrientation(prevOrientation);
+                    return true;
+                }
+                return false;
+            }
+        });
+        dialog.setCancelable(false);
+//        Snackbar.make(findViewById(android.R.id.content)
+//                , getString(R.string.phone_listener_denied)
+//                , Snackbar.LENGTH_SHORT)
+//                .show();
     }
 
     @Override
