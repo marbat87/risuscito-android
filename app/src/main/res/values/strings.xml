@@ -306,7 +306,7 @@
     <string name="barre_al_tasto_I">Barrè al</string>
     <string name="barre_al_tasto_II">tasto</string>
     <string name="phone_listener_title">Accesso al telefono</string>
-    <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Tale permesso è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattamente automaticamente.</string>
+    <string name="phone_state_rationale">Risuscitò ti sta per chiedere il permesso di accesso a leggere lo stato del telefono. Ciò è necessario per poter interrompere automaticamente la riproduzione audio in caso di chiamata in arrivo: se non non concedi tale permesso, la funzione sarà disattivata automaticamente.</string>
     <string name="phone_listener_denied">La funzione di pausa automatica all\'arrivo della chiamata è disattivata. Per riattivarla concedi il permesso necessario nelle impostazioni.</string>
     <string name="external_storage_title">Accesso alla memoria pubblica</string>
     <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
