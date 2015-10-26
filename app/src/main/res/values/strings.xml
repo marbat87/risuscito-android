@@ -5,7 +5,7 @@
     <string name="lang_uk" translatable="false">Українська</string>
     <string name="lang_pt" translatable="false">Portugu&#234;s</string>
     <!-- Converted from ic_expand_less_24px.svg part of the material-design-icons -->
-    <string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>
+    <!--<string name="path_expand_less" translatable="false">M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z</string>-->
 
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
