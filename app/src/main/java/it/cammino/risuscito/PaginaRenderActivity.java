@@ -98,7 +98,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private TextView no_records_text;
     private View music_buttons;
     public FabToolbar mFab; // the floating blue add/paste button
-//    Slider scroll_speed_bar, scroll_song_bar;
+    //    Slider scroll_speed_bar, scroll_song_bar;
     SeekBar scroll_speed_bar, scroll_song_bar;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
@@ -173,6 +173,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public static String mostraAudio;
     public boolean mostraAudioBool;
 
+    public boolean audioRequested = false;
+
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
 
     @SuppressLint("NewApi")
@@ -188,6 +190,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+
+        if (savedInstanceState != null)
+            audioRequested = savedInstanceState.getBoolean(Utility.AUDIO_REQUESTED, false);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -278,7 +283,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //        }
 //        Log.i(getClass().getName(), "STO PER...");
 //        PaginaRenderActivityPermissionsDispatcher.attachPhoneListenerWithCheck(PaginaRenderActivity.this);
-        checkPhoneStatePermission();
+//        checkPhoneStatePermission();
 
         if (!url.equalsIgnoreCase("")) {
 
@@ -1533,6 +1538,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
+    }
+
     public FabToolbar getFab() {
         if (mFab == null) {
             mFab = (FabToolbar) findViewById(R.id.fab_toolbar);
@@ -2561,6 +2572,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         && event.getAction() == KeyEvent.ACTION_UP) {
                     arg0.dismiss();
                     setRequestedOrientation(prevOrientation);
+                    ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Utility.WRITE_STORAGE_RC);
                     return true;
                 }
                 return false;
@@ -2608,10 +2622,28 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Utility.EXTERNAL_FILE_RC);
             }
+//            showDeniedForExternalFile();
             localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
         }
-        else
-            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+        else {
+            searchExternalFile(false);
+//            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+            if (!audioRequested)
+                checkPhoneStatePermission();
+        }
+    }
+
+    void searchExternalFile(boolean recreate) {
+        localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+        if (recreate) {
+            if (android.os.Build.VERSION.SDK_INT >= 11) {
+                recreate();
+            } else {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        }
     }
 
     void showRationalForExternalFile() {
@@ -2631,12 +2663,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 Utility.EXTERNAL_FILE_RC);
                     }
                 })
-//                .callback(new MaterialDialog.ButtonCallback() {
-//                    @Override
-//                    public void onPositive(MaterialDialog dialog) {
-//                        setRequestedOrientation(prevOrientation);
-//                    }
-//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -2646,6 +2672,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         && event.getAction() == KeyEvent.ACTION_UP) {
                     arg0.dismiss();
                     setRequestedOrientation(prevOrientation);
+                    ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Utility.EXTERNAL_FILE_RC);
                     return true;
                 }
                 return false;
@@ -2654,8 +2683,23 @@ public class PaginaRenderActivity extends ThemeableActivity {
         dialog.setCancelable(false);
     }
 
+    void showDeniedForExternalFile() {
+        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                .edit();
+        editor.putInt(Utility.SAVE_LOCATION, 0);
+        editor.apply();
+//        localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+        Snackbar.make(findViewById(android.R.id.content)
+                , getString(R.string.external_storage_denied)
+                , Snackbar.LENGTH_SHORT)
+                .show();
+    }
+
     private void checkPhoneStatePermission() {
         // Here, thisActivity is the current activity
+        audioRequested = true;
         if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
                 Manifest.permission.READ_PHONE_STATE)
                 !=PackageManager.PERMISSION_GRANTED) {
@@ -2717,6 +2761,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         && event.getAction() == KeyEvent.ACTION_UP) {
                     arg0.dismiss();
                     setRequestedOrientation(prevOrientation);
+                    ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+                            new String[]{Manifest.permission.READ_PHONE_STATE},
+                            Utility.PHONE_LISTENER_RC);
                     return true;
                 }
                 return false;
@@ -2727,40 +2774,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     void showDeniedForPhoneListener() {
         Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
-                .title(R.string.phone_listener_title)
-                .content(R.string.phone_listener_denied)
-                .positiveText(R.string.dialog_chiudi)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setRequestedOrientation(prevOrientation);
-                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                                new String[]{Manifest.permission.READ_PHONE_STATE},
-                                Utility.PHONE_LISTENER_RC);
-                    }
-                })
+        Snackbar.make(findViewById(android.R.id.content)
+                , getString(R.string.phone_listener_denied)
+                , Snackbar.LENGTH_SHORT)
                 .show();
-        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    arg0.dismiss();
-                    setRequestedOrientation(prevOrientation);
-                    return true;
-                }
-                return false;
-            }
-        });
-        dialog.setCancelable(false);
-//        Snackbar.make(findViewById(android.R.id.content)
-//                , getString(R.string.phone_listener_denied)
-//                , Snackbar.LENGTH_SHORT)
-//                .show();
     }
 
     @Override
@@ -2805,24 +2822,28 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the task you need to do.
-                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
-                    if (android.os.Build.VERSION.SDK_INT >= 11) {
-                        recreate();
-                    }
-                    else {
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
-                    }
+                    searchExternalFile(true);
+//                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+//                    if (android.os.Build.VERSION.SDK_INT >= 11) {
+//                        recreate();
+//                    }
+//                    else {
+//                        Intent intent = getIntent();
+//                        finish();
+//                        startActivity(intent);
+//                    }
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putInt(Utility.SAVE_LOCATION, 0);
-                    editor.apply();
-                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+                    showDeniedForExternalFile();
+                    if (!audioRequested)
+                        checkPhoneStatePermission();
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                            .edit();
+//                    editor.putInt(Utility.SAVE_LOCATION, 0);
+//                    editor.apply();
+//                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
                 }
             }
         }

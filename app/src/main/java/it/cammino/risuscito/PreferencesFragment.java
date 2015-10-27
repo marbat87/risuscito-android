@@ -14,6 +14,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -540,37 +541,37 @@ public class PreferencesFragment extends Fragment {
     void showDeniedForExternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED");
         saveEntries = R.array.save_location_nosd_entries;
-        prevOrientation = getActivity().getRequestedOrientation();
-        Utility.blockOrientation(getActivity());
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.external_storage_title)
-                .content(R.string.external_storage_denied)
-                .positiveText(R.string.dialog_chiudi)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        getActivity().setRequestedOrientation(prevOrientation);
-                    }
-                })
-                .show();
-        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    arg0.dismiss();
-                    getActivity().setRequestedOrientation(prevOrientation);
-                    return true;
-                }
-                return false;
-            }
-        });
-        dialog.setCancelable(false);
-//        Snackbar.make(getActivity().findViewById(android.R.id.content)
-//                , getString(R.string.external_storage_denied)
-//                , Snackbar.LENGTH_SHORT)
+//        prevOrientation = getActivity().getRequestedOrientation();
+//        Utility.blockOrientation(getActivity());
+//        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                .title(R.string.external_storage_title)
+//                .content(R.string.external_storage_denied)
+//                .positiveText(R.string.dialog_chiudi)
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                        getActivity().setRequestedOrientation(prevOrientation);
+//                    }
+//                })
 //                .show();
+//        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface arg0, int keyCode,
+//                                 KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_BACK
+//                        && event.getAction() == KeyEvent.ACTION_UP) {
+//                    arg0.dismiss();
+//                    getActivity().setRequestedOrientation(prevOrientation);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//        dialog.setCancelable(false);
+        Snackbar.make(getActivity().findViewById(android.R.id.content)
+                , getString(R.string.external_storage_denied)
+                , Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     @Override
