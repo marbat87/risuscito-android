@@ -18,8 +18,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:layout_marginLeft="@dimen/cardListPreferredItemMargin"
-        android:layout_marginStart="@dimen/cardListPreferredItemMargin"
-        android:background="@drawable/bkg_round_blue" />
+        android:layout_marginStart="@dimen/cardListPreferredItemMargin" />
 
     <!--<com.rey.material.widget.CheckBox-->
         <!--style="@style/Material.Drawable.CheckBox"-->

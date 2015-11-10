@@ -124,7 +124,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 //        VerticalRecyclerViewFastScroller fastScroller =
 //                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoAdapter adapter = new CantoAdapter(0, titoli, clickListener, this);
+        CantoAdapter adapter = new CantoAdapter(getActivity(), 0, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)

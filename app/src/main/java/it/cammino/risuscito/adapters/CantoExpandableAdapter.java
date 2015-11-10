@@ -1,6 +1,7 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -17,8 +18,8 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 
 import java.util.List;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.objects.ExpandableGroup;
 
@@ -140,6 +141,7 @@ public class CantoExpandableAdapter
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindChildViewHolder(CantoViewHolder holder, int groupPosition, int childPosition, int viewType) {
         // group item
@@ -149,16 +151,23 @@ public class CantoExpandableAdapter
         holder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         holder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         holder.cantoSource.setText(dataItem.getSource());
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(activity, R.drawable.page_oval_bkg));
+        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        if (LUtils.hasJB())
+            holder.cantoPage.setBackground(drawable);
+        else
+            holder.cantoPage.setBackgroundDrawable(drawable);
+
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
     }
 
     public static class CantoViewHolder extends AbstractExpandableItemViewHolder {

@@ -125,7 +125,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 //        VerticalRecyclerViewFastScroller fastScroller =
 //                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoAdapter adapter = new CantoAdapter(2, titoli, clickListener, this);
+        CantoAdapter adapter = new CantoAdapter(getActivity(), 2, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)

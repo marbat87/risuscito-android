@@ -2,6 +2,7 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -17,8 +18,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -61,6 +62,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         return new TitleViewHolder(layoutView);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -102,16 +104,22 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 sourceCanto.setText(canto.getSource());
                 timestamp.setText(canto.getTimestamp());
                 itemTag.setText(String.valueOf(i));
-                if (canto.getColore().equalsIgnoreCase(Utility.GIALLO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-                if (canto.getColore().equalsIgnoreCase(Utility.GRIGIO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-                if (canto.getColore().equalsIgnoreCase(Utility.VERDE))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-                if (canto.getColore().equalsIgnoreCase(Utility.AZZURRO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-                if (canto.getColore().equalsIgnoreCase(Utility.BIANCO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+                Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+                DrawableCompat.setTint(drawable, Color.parseColor(canto.getColore()));
+                if (LUtils.hasJB())
+                    cantoPage.setBackground(drawable);
+                else
+                    cantoPage.setBackgroundDrawable(drawable);
+//                if (canto.getColore().equalsIgnoreCase(Utility.GIALLO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//                if (canto.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//                if (canto.getColore().equalsIgnoreCase(Utility.VERDE))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//                if (canto.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//                if (canto.getColore().equalsIgnoreCase(Utility.BIANCO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
                 if (context != null) {
                     if (canto.ismSelected())
                         cantoView.setBackgroundColor(((ThemeableActivity) context).getThemeUtils().accentColorLight());

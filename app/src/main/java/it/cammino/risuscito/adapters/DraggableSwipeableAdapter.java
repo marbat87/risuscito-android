@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
@@ -31,6 +30,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 
 import java.util.List;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.DraggableItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -256,7 +256,7 @@ public class DraggableSwipeableAdapter
 //        } else {
 //            return mProvider.getItem(position).getSwipeReactionType();
 //        }
-        return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        return RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH_H;
     }
 
     @Override
@@ -399,7 +399,7 @@ public class DraggableSwipeableAdapter
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
     private void setBackgroundGeneric(View v, int color) {
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN))
+        if (LUtils.hasJB())
             v.setBackground(new ColorDrawable(color));
         else
             v.setBackgroundDrawable(new ColorDrawable(color));

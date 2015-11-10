@@ -43,7 +43,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -1099,30 +1098,43 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
 
-        findViewById(R.id.pagina_render_view).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                else
-                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//        findViewById(R.id.pagina_render_view).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @SuppressWarnings("deprecation")
+//            @Override
+//            public void onGlobalLayout() {
+//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+//                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                else
+//                    findViewById(R.id.pagina_render_view).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//
+//                boolean showHelp = PreferenceManager
+//                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                        .getBoolean(PREF_FIRST_OPEN_NEW, true);
+//
+//                if(showHelp) {
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                            .edit();
+//                    editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+//                    editor.apply();
+//                    showHelp();
+//                }
+//
+//            }
+//        });
 
-                boolean showHelp = PreferenceManager
-                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                        .getBoolean(PREF_FIRST_OPEN_NEW, true);
+        boolean showHelp = PreferenceManager
+                .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                .getBoolean(PREF_FIRST_OPEN_NEW, true);
 
-                if(showHelp) {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
-                    editor.apply();
-                    showHelp();
-                }
-
-            }
-        });
+        if(showHelp) {
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                    .edit();
+            editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+            editor.apply();
+            showHelp();
+        }
 
     }
 
