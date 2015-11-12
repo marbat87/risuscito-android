@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.6.0" changeDate="31 Ottobre 2015">
+    <changelogversion versionName="3.6.0" changeDate="20 Novembre 2015">
         <changelogtext>Compabilità con Android Marshmallow</changelogtext>
         <changelogtext>Ora nella pagina del canto, il primo accordo e/o il barrè vengono evidenziati in caso di variazione rispetto all\'originale</changelogtext>
         <changelogtext>Nuovo stile per lo scroller rapido</changelogtext>
