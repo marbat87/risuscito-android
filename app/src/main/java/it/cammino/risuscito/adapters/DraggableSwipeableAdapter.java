@@ -256,7 +256,7 @@ public class DraggableSwipeableAdapter
 //        } else {
 //            return mProvider.getItem(position).getSwipeReactionType();
 //        }
-        return RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH_H;
+        return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
     @Override
