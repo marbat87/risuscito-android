@@ -2,6 +2,10 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,8 +15,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -28,28 +32,29 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
     private Activity context;
 
     // Adapter constructor 1
-    public CantoRecyclerAdapter(List<CantoRecycled> dataItems
+    public CantoRecyclerAdapter(Activity activity, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener) {
 
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.longClickListener = null;
         createContextMenuListener = null;
+        this.context = activity;
     }
 
-    // Adapter constructor 2
-    public CantoRecyclerAdapter(List<CantoRecycled> dataItems
-            , View.OnClickListener clickListener
-            , View.OnLongClickListener longClickListener) {
-
-        this.dataItems = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.createContextMenuListener = null;
-    }
+//    // Adapter constructor 2
+//    public CantoRecyclerAdapter(List<CantoRecycled> dataItems
+//            , View.OnClickListener clickListener
+//            , View.OnLongClickListener longClickListener) {
+//
+//        this.dataItems = dataItems;
+//        this.clickListener = clickListener;
+//        this.longClickListener = longClickListener;
+//        this.createContextMenuListener = null;
+//    }
 
     // Adapter constructor 3
-    public CantoRecyclerAdapter(List<CantoRecycled> dataItems
+    public CantoRecyclerAdapter(Activity activity, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnCreateContextMenuListener createContextMenuListener) {
 
@@ -57,6 +62,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         this.clickListener = clickListener;
         this.longClickListener = null;
         this.createContextMenuListener = createContextMenuListener;
+        this.context = activity;
     }
 
     // Adapter constructor 4
@@ -81,6 +87,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -92,16 +99,23 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        if (LUtils.hasJB())
+            cantoHolder.cantoPage.setBackground(drawable);
+        else
+            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
         if (context != null) {
             if (dataItem.ismSelected())

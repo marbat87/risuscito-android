@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="3.6.0" changeDate="20 листопад 2015">
+        <changelogtext>Сумісний з Android Marshmallow</changelogtext>
+        <changelogtext>Зараз на сторінці пісні, перший аккорд та/або баре виділені, якщо вони не сходяться з оригіналом</changelogtext>
+        <changelogtext>Новий стиль для швидкого перегортання</changelogtext>
+        <changelogtext>Зміни в зміні аккордів в українській мові</changelogtext>
+        <changelogtext>Нова графіка для вибору запису</changelogtext>
+        <changelogtext>Загальна чистка коду</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="3.5.1" changeDate="15 вересень 2015">
         <changelogtext>crashfix for Android 4.0.X (hopefully)</changelogtext>
         <changelogtext>Покращення розмірів та стилів поп ап для планшетів</changelogtext>

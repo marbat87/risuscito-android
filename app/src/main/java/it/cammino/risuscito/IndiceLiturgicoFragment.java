@@ -162,10 +162,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, IndiceLiturgicoFragment.this);
         mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Need to disable them when using animation indicator.
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
         animator.setSupportsChangeAnimations(false);
 
         mRecyclerView.setLayoutManager(mLayoutManager);

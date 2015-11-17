@@ -53,12 +53,10 @@ public class CustomLists extends Fragment  {
     private FabToolbar mFab;
     public ImageView fabEdit, fabDelete;
     private View rootView;
-    private static final String PAGE_VIEWED = "pageViewed";
     private static final String PAGE_EDITED = "pageEdited";
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
-    private int lastPosition;
     private LUtils mLUtils;
 
     @Override
@@ -80,40 +78,15 @@ public class CustomLists extends Fragment  {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if (savedInstanceState != null) {
-            lastPosition = savedInstanceState.getInt(PAGE_VIEWED, 0);
+        if (savedInstanceState != null)
             indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
-        }
-        else {
-            lastPosition = 0;
+        else
             indDaModif = 0;
-        }
 
         tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.post(new Runnable() {
-            @Override
-            public void run() {
-                tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
-            }
-        });
-        Handler myHandler = new Handler();
-        final Runnable mMyRunnable2 = new Runnable() {
-            @Override
-            public void run() {
-                tabs.getTabAt(lastPosition).select();
-            }
-        };
-        myHandler.postDelayed(mMyRunnable2, 200);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrollStateChanged(int arg0) {}
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
-            public void onPageSelected(int currentPage) {
-                lastPosition = currentPage;
-            }
-        });
+        tabs.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, tabs);
 
         ImageButton buttonAddLista = (ImageButton) rootView.findViewById(R.id.fab_add_lista);
         Drawable drawable = DrawableCompat.wrap(buttonAddLista.getDrawable());
@@ -158,31 +131,6 @@ public class CustomLists extends Fragment  {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
-//                                bundle.putBoolean("modifica", false);
-//                                indDaModif = 2 + idListe.length;
-////                                startActivity(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle));
-////                                lastPosition = mViewPager.getCurrentItem();
-//                                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
-//                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -231,19 +179,6 @@ public class CustomLists extends Fragment  {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-//                                        .getView().findViewById(R.id.button_pulisci).performClick();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -274,7 +209,6 @@ public class CustomLists extends Fragment  {
                         .getView().findViewById(R.id.button_condividi).performClick();
             }
         });
-
 
         fabEdit = (ImageButton) rootView.findViewById(R.id.fab_edit_lista);
         drawable = DrawableCompat.wrap(fabEdit.getDrawable());
@@ -333,13 +267,8 @@ public class CustomLists extends Fragment  {
 
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                tabs.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        tabs.setupWithViewPager(mViewPager);
-                                        mLUtils.applyFontedTab(mViewPager, tabs);
-                                    }
-                                });
+                                tabs.setupWithViewPager(mViewPager);
+                                mLUtils.applyFontedTab(mViewPager, tabs);
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override
@@ -363,13 +292,8 @@ public class CustomLists extends Fragment  {
 
                                                 updateLista();
                                                 mSectionsPagerAdapter.notifyDataSetChanged();
-                                                tabs.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        tabs.setupWithViewPager(mViewPager);
-                                                        mLUtils.applyFontedTab(mViewPager, tabs);
-                                                    }
-                                                });
+                                                tabs.setupWithViewPager(mViewPager);
+                                                mLUtils.applyFontedTab(mViewPager, tabs);
                                                 Handler myHandler = new Handler();
                                                 final Runnable mMyRunnable2 = new Runnable() {
                                                     @Override
@@ -391,76 +315,6 @@ public class CustomLists extends Fragment  {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                db.delete("LISTE_PERS", "_id = " + idDaCanc, null);
-//                                db.close();
-//
-//                                updateLista();
-//                                mSectionsPagerAdapter.notifyDataSetChanged();
-////                                tabs.setupWithViewPager(mViewPager);
-////                                mLUtils.applyFontedTab(mViewPager, tabs);
-//                                tabs.post(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        tabs.setupWithViewPager(mViewPager);
-//                                        mLUtils.applyFontedTab(mViewPager, tabs);
-//                                    }
-//                                });
-//                                Handler myHandler = new Handler();
-//                                final Runnable mMyRunnable2 = new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        tabs.getTabAt(0).select();
-//                                    }
-//                                };
-//                                myHandler.postDelayed(mMyRunnable2, 200);
-//                                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.list_removed) + titoloDaCanc + "'!", Snackbar.LENGTH_LONG)
-//                                        .setAction(R.string.cancel, new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View view) {
-////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("_id", idDaCanc);
-//                                                values.put("titolo_lista", titoloDaCanc);
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(celebrazioneDaCanc));
-//                                                db.insert("LISTE_PERS", "", values);
-//                                                db.close();
-//
-//                                                updateLista();
-//                                                mSectionsPagerAdapter.notifyDataSetChanged();
-////                                                tabs.setupWithViewPager(mViewPager);
-////                                                mLUtils.applyFontedTab(mViewPager, tabs);
-//                                                tabs.post(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        tabs.setupWithViewPager(mViewPager);
-//                                                        mLUtils.applyFontedTab(mViewPager, tabs);
-//                                                    }
-//                                                });
-//                                                Handler myHandler = new Handler();
-//                                                final Runnable mMyRunnable2 = new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        mViewPager.setCurrentItem(listaDaCanc + 2, false);
-//                                                    }
-//                                                };
-//                                                myHandler.postDelayed(mMyRunnable2, 200);
-//                                            }
-//                                        })
-//                                        .setActionTextColor(getThemeUtils().accentColor())
-//                                        .show();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -499,7 +353,7 @@ public class CustomLists extends Fragment  {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(PAGE_VIEWED, lastPosition);
+//        outState.putInt(PAGE_VIEWED, lastPosition);
         outState.putInt(PAGE_EDITED, indDaModif);
     }
 
@@ -509,20 +363,13 @@ public class CustomLists extends Fragment  {
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
-            tabs.post(new Runnable() {
-                @Override
-                public void run() {
-                    tabs.setupWithViewPager(mViewPager);
-                    mLUtils.applyFontedTab(mViewPager, tabs);
-                }
-            });
-//            tabs.setupWithViewPager(mViewPager);
-//            mLUtils.applyFontedTab(mViewPager, tabs);
+            tabs.setupWithViewPager(mViewPager);
+            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
                 @Override
                 public void run() {
-                    mViewPager.setCurrentItem(indDaModif, false);
+                    tabs.getTabAt(indDaModif).select();
                 }
             };
             myHandler.postDelayed(mMyRunnable2, 200);

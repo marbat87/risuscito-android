@@ -36,11 +36,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.rey.material.widget.ProgressView;
+import com.afollestad.materialdialogs.internal.MDTintHelper;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -55,6 +56,8 @@ import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.utils.ThemeUtils;
+import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener {
 
@@ -65,7 +68,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
-    private ProgressView progress;
+    //    private ProgressView progress;
+    private ProgressBar progress;
     private int prevOrientation;
     private static Map<Character, Character> MAP_NORM;
 
@@ -116,13 +120,22 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
+        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
+        if (LUtils.hasICS()) {
+            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
+            d.setTint(getThemeUtils().accentColor());
+            progress.setProgressDrawable(d);
+            progress.setIndeterminateDrawable(d);
+        }
+        else
+            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
+
         searchPar.setText("");
 
         try {
@@ -157,7 +170,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-                        progress.stop();
+//                        progress.stop();
+                        progress.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -699,13 +713,15 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         protected void onPreExecute() {
             super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-            progress.start();
+            progress.setVisibility(View.VISIBLE);
+//            progress.start();
         }
 
         @Override
         protected void onPostExecute(String result) {
             cantoAdapter.notifyDataSetChanged();
-            progress.stop();
+            progress.setVisibility(View.INVISIBLE);
+//            progress.stop();
             if (titoli.size() == 0)
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
             else
@@ -789,6 +805,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         return sb.toString();
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

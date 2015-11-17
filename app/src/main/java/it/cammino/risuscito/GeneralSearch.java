@@ -16,7 +16,6 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
 
-    //    TabPageIndicator mSlidingTabLayout = null;
     private LUtils mLUtils;
 
     @Override
@@ -24,9 +23,6 @@ public class GeneralSearch extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
-//		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_search);
-//		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_search);
-//		((MainActivity) getActivity()).getSupportActionBar().setElevation(0);
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
 
         mLUtils = LUtils.getInstance(getActivity());
@@ -34,40 +30,17 @@ public class GeneralSearch extends Fragment {
         final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-//        TabPageIndicator mSlidingTabLayout = (TabPageIndicator) rootView.findViewById(R.id.sliding_tabs);
-//        mSlidingTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
-//        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-//
-//        Resources res = getResources();
-//        mSlidingTabLayout.setSelectedIndicatorColors(res.getColor(android.R.color.white));
-//        mSlidingTabLayout.setDistributeEvenly(false);
-//        mSlidingTabLayout.setViewPager(mViewPager);
-        // Bind the tabs to the ViewPager
-//		MaterialTabs tabs = (MaterialTabs) rootView.findViewById(R.id.material_tabs);
-//		tabs.setBackgroundColor(getThemeUtils().primaryColor());
-//		tabs.setViewPager(mViewPager);
-
         final TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
-//        tabs.setupWithViewPager(mViewPager);
-//        mLUtils.applyFontedTab(mViewPager, tabs);
-        tabs.post(new Runnable() {
-            @Override
-            public void run() {
-                tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
-            }
-        });
-
-//        final Runnable mMyRunnable = new Runnable() {
+        tabs.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, tabs);
+//        tabs.post(new Runnable() {
 //            @Override
 //            public void run() {
 //                tabs.setupWithViewPager(mViewPager);
 //                mLUtils.applyFontedTab(mViewPager, tabs);
 //            }
-//        };
-//        Handler myHandler = new Handler();
-//        myHandler.postDelayed(mMyRunnable, 200);
+//        });
 
         return rootView;
     }
@@ -100,17 +73,11 @@ public class GeneralSearch extends Fragment {
             Locale l = getActivity().getResources().getConfiguration().locale;
             switch (position) {
                 case 0:
-//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     return getString(R.string.fast_search_title).toUpperCase(l);
-//				else
-//					return getString(R.string.fast_search_title);
                 case 1:
-//				if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     return getString(R.string.advanced_search_title).toUpperCase(l);
-//				else
-//					return getString(R.string.advanced_search_title);
                 default:
-                    return null;
+                    return "";
             }
         }
     }

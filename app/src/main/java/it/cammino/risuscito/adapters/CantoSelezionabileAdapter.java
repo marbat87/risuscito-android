@@ -1,17 +1,21 @@
 package it.cammino.risuscito.adapters;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
-
-import com.rey.material.widget.CheckBox;
 
 import java.util.List;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.Canto;
 
 /**
@@ -20,10 +24,12 @@ import it.cammino.risuscito.objects.Canto;
 public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
 
     private List<Canto> dataItems;
+    private Activity context;
 
     // Adapter constructor 1
-    public CantoSelezionabileAdapter(List<Canto> dataItems) {
+    public CantoSelezionabileAdapter(Activity activity, List<Canto> dataItems) {
         this.dataItems = dataItems;
+        this.context = activity;
     }
 
     @Override
@@ -35,6 +41,7 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
         return new CantoViewHolder(layoutView);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -45,18 +52,25 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
         final CantoViewHolder cantoHolder = (CantoViewHolder) viewHolder;
         cantoHolder.cantoTitle.setText(dataItem.getTitolo());
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        if (LUtils.hasJB())
+            cantoHolder.cantoPage.setBackground(drawable);
+        else
+            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
-        cantoHolder.checkBox.setCheckedImmediately(dataItem.isSelected());
+        cantoHolder.checkBox.setChecked(dataItem.isSelected());
+//        cantoHolder.checkBox.setCheckedImmediately(dataItem.isSelected());
         cantoHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

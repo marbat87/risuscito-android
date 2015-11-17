@@ -18,11 +18,22 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:layout_marginLeft="@dimen/cardListPreferredItemMargin"
-        android:layout_marginStart="@dimen/cardListPreferredItemMargin"
-        android:background="@drawable/bkg_round_blue" />
+        android:layout_marginStart="@dimen/cardListPreferredItemMargin" />
 
-    <com.rey.material.widget.CheckBox
-        style="@style/Material.Drawable.CheckBox"
+    <!--<com.rey.material.widget.CheckBox-->
+        <!--style="@style/Material.Drawable.CheckBox"-->
+        <!--android:id="@+id/check_box"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="@dimen/cardListPreferredItemMargin"-->
+        <!--android:layout_marginEnd="@dimen/cardListPreferredItemMargin"-->
+        <!--android:layout_marginLeft="@dimen/cardListPreferredItemMargin"-->
+        <!--android:layout_marginStart="@dimen/cardListPreferredItemMargin"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:checked="false" />-->
+    <CheckBox
         android:id="@+id/check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

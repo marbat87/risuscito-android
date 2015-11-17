@@ -20,8 +20,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:layout_marginLeft="@dimen/cardListPreferredItemMargin"
-        android:layout_marginStart="@dimen/cardListPreferredItemMargin"
-        android:background="@drawable/bkg_round_blue" />
+        android:layout_marginStart="@dimen/cardListPreferredItemMargin" />
 
     <TextView
         android:id="@+id/text_title"

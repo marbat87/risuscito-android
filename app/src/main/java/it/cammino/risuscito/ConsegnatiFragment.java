@@ -303,7 +303,7 @@ public class ConsegnatiFragment extends Fragment {
         RecyclerView cantiRecycler = (RecyclerView) rootView.findViewById(R.id.cantiRecycler);
 
         // Creating new adapter object
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener);
+        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
         cantiRecycler.setAdapter(cantoAdapter);
 
         cantiRecycler.setHasFixedSize(true);
@@ -346,7 +346,7 @@ public class ConsegnatiFragment extends Fragment {
         RecyclerView chooseRecycler = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
 
         // Creating new adapter object
-        selectableAdapter = new CantoSelezionabileAdapter(titoliChoose);
+        selectableAdapter = new CantoSelezionabileAdapter(getActivity(), titoliChoose);
         chooseRecycler.setAdapter(selectableAdapter);
 
         chooseRecycler.setHasFixedSize(true);

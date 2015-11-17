@@ -56,6 +56,8 @@ public class Utility {
     public static final int WRITE_STORAGE_RC = 123;
     public static final int PHONE_LISTENER_RC = 124;
 
+    public static final String AUDIO_REQUESTED = "AUDIO_REQUESTED";
+
     //metodo che restituisce la stringa di input senza la pagina all'inizio
     public static String truncatePage(String input) {
 

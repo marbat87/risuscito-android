@@ -42,7 +42,7 @@
     <!--<dimen name="fab_translation_z">10dp</dimen>-->
     <!--<dimen name="floating_margin_lateral_menu">11dp</dimen>-->
 
-    <!--<dimen name="circle_view_border">1dp</dimen>-->
+    f <!--<dimen name="circle_view_border">1dp</dimen>-->
     <!--<dimen name="circle_view_check">24dp</dimen>-->
     <dimen name="paper_button_width">88dip</dimen>
 
@@ -55,9 +55,9 @@
     <dimen name="cardListPreferredTextMarginStart">60dip</dimen>
     <dimen name="cardListElevation">3dip</dimen>
     <dimen name="button_text_padding">4dp</dimen>
-    <dimen name="fab_toolbar_bottom_tb">31dp</dimen>
-    <dimen name="fab_toolbar_bottom_no_tb">-25dp</dimen>
-    <dimen name="bottom_toolbar_height">56dp</dimen>
+    <!--<dimen name="fab_toolbar_bottom_tb">@dimen/abc_action_bar_default_height_material</dimen>-->
+    <!--<dimen name="fab_toolbar_bottom_no_tb">-25dp</dimen>-->
+    <!--<dimen name="bottom_toolbar_height">56dp</dimen>-->
 
     <!--<dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>-->
     <!--<dimen name="toolbar_expansion_height">85dip</dimen>-->

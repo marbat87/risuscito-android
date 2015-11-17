@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 92
+        versionCode 96
         versionName '3.6.0'
     }
     buildTypes {
@@ -34,17 +34,15 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
     compile 'com.itextpdf:itextpdf:5.5.6'
-    compile 'com.github.rey5137:material:1.2.1'
-    compile ('com.afollestad.material-dialogs:core:0.8.3.0@aar') {transitive = true}
-    compile ('com.afollestad.material-dialogs:commons:0.8.3.0@aar') {transitive = true}
+    compile ('com.github.afollestad.material-dialogs:core:0.8.5.1@aar') {transitive = true}
+    compile ('com.github.afollestad.material-dialogs:commons:0.8.5.1@aar') {transitive = true}
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.1'
-    // NOTE: vector-compat is available on API level 14 or later
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.4'
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.+@aar'
     compile 'com.turingtechnologies.materialscrollbar:lib:5.+'
-    compile 'com.nononsenseapps:filepicker:2.4.2'
+    compile 'com.nononsenseapps:filepicker:2.5.0'
     compile supportDependencies.appCompat
     compile supportDependencies.design
     compile (genericDependencies.CircularReveal) {transitive = true}

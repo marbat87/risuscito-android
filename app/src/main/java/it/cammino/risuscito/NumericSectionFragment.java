@@ -119,7 +119,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 //        VerticalRecyclerViewFastScroller fastScroller =
 //                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoAdapter adapter = new CantoAdapter(1, titoli, clickListener, this);
+        CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
