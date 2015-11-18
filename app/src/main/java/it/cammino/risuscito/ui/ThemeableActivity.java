@@ -23,7 +23,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class ThemeableActivity extends AppCompatActivity {
 
     private ThemeUtils mThemeUtils;
-    //    protected boolean alsoLollipop = true;
     protected boolean hasNavDrawer = false;
 
 
@@ -36,11 +35,6 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         setTheme(mThemeUtils.getCurrent());
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-//        		|| Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH) {
-//        	findViewById(R.id.content_layout).setPadding(0, getStatusBarHeight(), 0, 0);
-//        	findViewById(R.id.navdrawer).setPadding(0, getStatusBarHeight(), 0, 0);
-//        }
 
         //lingua
         SharedPreferences sp = PreferenceManager

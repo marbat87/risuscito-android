@@ -25,8 +25,10 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.SignInButton;
 
 import it.cammino.risuscito.slides.IntroMain;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class Risuscito extends Fragment {
 
@@ -94,22 +96,6 @@ public class Risuscito extends Fragment {
                             }
                         }
                     })
-//                    .callback(new MaterialDialog.ButtonCallback() {
-//                        @Override
-//                        public void onPositive(MaterialDialog dialog) {
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            if (PreferenceManager
-//                                    .getDefaultSharedPreferences(getActivity())
-//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                                SharedPreferences.Editor editor = PreferenceManager
-//                                        .getDefaultSharedPreferences(getActivity())
-//                                        .edit();
-//                                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                                editor.apply();
-//                                showHelp();
-//                            }
-//                        }
-//                    })
                     .show();
 
             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
@@ -164,6 +150,26 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.speedValue = null;
         PaginaRenderActivity.scrollPlaying = false;
         PaginaRenderActivity.mostraAudio = null;
+
+        SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+//        signInButton.setScopes(gso.getScopeArray());
+        signInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).setShowSnackbar(true);
+                ((MainActivity)getActivity()).signIn();
+            }
+        });
+
+        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity.getmGoogleApiClient() != null
+                    && activity.getmGoogleApiClient().isConnected())
+                rootView.findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
+            else
+                rootView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }

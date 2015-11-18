@@ -13,7 +13,13 @@ ext {
     ]
 
     genericDependencies = [
-            CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar",
-            NineOldAndroids  :    "com.nineoldandroids:library:2.4.0"
+            CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar"
+    ]
+
+    servicesLibrary = '8.3.0'
+
+    playServices = [
+            auth             :    "com.google.android.gms:play-services-auth:${servicesLibrary}",
+            plus             :    "com.google.android.gms:play-services-plus:${servicesLibrary}"
     ]
 }

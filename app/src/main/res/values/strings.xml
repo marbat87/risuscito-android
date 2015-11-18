@@ -314,5 +314,11 @@
     <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
     <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
     <string name="forced_private">Forzato download in memoria privata</string>
+    <string name="connected_as">Sei connesso come %1$s</string>
+    <string name="gplus_signout">Disconnetti account</string>
+    <string name="menu_account_section">Backup e Ripristino Impostazioni</string>
+    <string name="play_services_error_fmt">Google Play Services Error: %i</string>
+    <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere il tuo account Google dall\'applicazione?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
 
 </resources>
