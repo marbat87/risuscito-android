@@ -166,11 +166,7 @@ public class Risuscito extends Fragment {
         if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
             MainActivity activity = (MainActivity) getActivity();
             Log.d(getClass().getName(), "activity.getmGoogleApiClient().isConnected(): " + activity.getmGoogleApiClient().isConnected());
-            if (activity.getmGoogleApiClient() != null
-                    && activity.getmGoogleApiClient().isConnected())
-                rootView.findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
-            else
-                rootView.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
         }
 
         return rootView;

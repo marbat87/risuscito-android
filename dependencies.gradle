@@ -20,6 +20,6 @@ ext {
 
     playServices = [
             auth             :    "com.google.android.gms:play-services-auth:${servicesLibrary}",
-            plus             :    "com.google.android.gms:play-services-plus:${servicesLibrary}"
+            drive             :    "com.google.android.gms:play-services-drive:${servicesLibrary}"
     ]
 }

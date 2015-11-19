@@ -316,9 +316,14 @@
     <string name="forced_private">Forzato download in memoria privata</string>
     <string name="connected_as">Sei connesso come %1$s</string>
     <string name="gplus_signout">Disconnetti account</string>
+    <string name="gplus_revoke">Revoca permessi</string>
     <string name="menu_account_section">Backup e Ripristino Impostazioni</string>
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
-    <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere il tuo account Google dall\'applicazione?
+    <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google?
     \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="dialog_acc_revoke_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google e di volerle revocare tutti i permessi Google concessi?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="disconnected">Disconnesso da Google</string>
+    <string name="connection_running">Connessione in corso&#8230;</string>
 
 </resources>

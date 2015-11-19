@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/copertina_account"
     android:layout_width="match_parent"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:layout_height="@dimen/nav_header_height"

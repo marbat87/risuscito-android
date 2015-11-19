@@ -3,10 +3,10 @@ package it.cammino.risuscito;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -22,9 +21,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,12 +36,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -52,7 +47,7 @@ import java.util.HashMap;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
-        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener{
 
     public DrawerLayout mDrawerLayout;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
@@ -62,14 +57,17 @@ public class MainActivity extends ThemeableActivity
 
     private NavigationView mNavigationView;
 
-    private static final int TALBLET_DP = 600;
-    private static final int WIDTH_320 = 320;
-    private static final int WIDTH_400 = 400;
+//    private static final int TALBLET_DP = 600;
+//    private static final int WIDTH_320 = 320;
+//    private static final int WIDTH_400 = 400;
+
+    MaterialDialog mProgressDialog;
 
     private boolean showSnackbar;
     private GoogleSignInAccount acct;
     private ImageView profileImage;
     private ImageView profileBackground;
+    private View copertinaAccount;
     private ImageView accountMenu;
     private TextView usernameTextView;
     private TextView emailTextView;
@@ -107,6 +105,7 @@ public class MainActivity extends ThemeableActivity
         emailTextView = (TextView) header.findViewById(R.id.email);
         emailTextView.setVisibility(View.INVISIBLE);
         profileBackground = (ImageView) header.findViewById(R.id.copertina);
+        copertinaAccount = header.findViewById(R.id.copertina_account);
         accountMenu = (ImageView) header.findViewById(R.id.account_menu);
         Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
@@ -137,6 +136,12 @@ public class MainActivity extends ThemeableActivity
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
         }
 
+        mProgressDialog = new MaterialDialog.Builder(this)
+                .title(R.string.connection_running)
+                .progress(true, 0)
+                .progressIndeterminateStyle(true)
+                .build();
+
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -150,9 +155,7 @@ public class MainActivity extends ThemeableActivity
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addConnectionCallbacks(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addApi(Plus.API)
                 .build();
         // [END build_client]
 
@@ -161,17 +164,27 @@ public class MainActivity extends ThemeableActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(getClass().getName(), "mResolvingError: " + mResolvingError);
-        if (!mResolvingError) {  // more about this later
-            mGoogleApiClient.connect();
-        }
-    }
 
-    @Override
-    protected void onStop() {
-        if (mGoogleApiClient.isConnected())
-            mGoogleApiClient.disconnect();
-        super.onStop();
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(getClass().getName(), "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
     }
 
     @Override
@@ -233,37 +246,6 @@ public class MainActivity extends ThemeableActivity
         mNavigationView.setItemIconTintList(mIconStateList);
         mNavigationView.setItemTextColor(mTextStateList);
 
-    }
-
-    private int calculateDrawerWidth() {
-
-        //Recupero dp di larghezza e altezza dello schermo
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-//        Log.i(getClass().toString(), "dpHeight:" + dpHeight);
-//        Log.i(getClass().toString(), "dpWidth:" + dpWidth);
-
-        //recupero l'altezza dell'actionbar
-        TypedValue value = new TypedValue();
-        getTheme().resolveAttribute(R.attr.actionBarSize, value, true);
-        TypedValue.coerceToString(value.type, value.data);
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        float actionBarSize = value.getDimension(displayMetrics) / displayMetrics.density;
-//        Log.i(getClass().toString(), "actionBarSize:" + actionBarSize);
-
-        // min(altezza, larghezza) - altezza actionbar
-        float smallestDim = Math.min(dpWidth, dpHeight);
-//        Log.i(getClass().toString(), "smallestDim:" + smallestDim);
-        int difference = Math.round((smallestDim - actionBarSize) * displayMetrics.density);
-//        Log.i(getClass().toString(), "difference:" + difference);
-
-        int maxWidth = Math.round(WIDTH_320 * displayMetrics.density);
-        if (smallestDim >= TALBLET_DP)
-            maxWidth = Math.round(WIDTH_400 * displayMetrics.density);
-//        Log.i(getClass().toString(), "maxWidth:" + maxWidth);
-
-        return Math.min(difference, maxWidth);
     }
 
     @Override
@@ -457,15 +439,47 @@ public class MainActivity extends ThemeableActivity
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                                        new ResultCallback<Status>() {
-                                            @Override
-                                            public void onResult(Status status) {
-                                                // [START_EXCLUDE]
-                                                updateUI(false);
-                                                // [END_EXCLUDE]
-                                            }
-                                        });
+                                signOut();
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            case R.id.gplus_revoke:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gplus_revoke)
+                        .content(R.string.dialog_acc_revoke_text)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                revokeAccess();
+                                setRequestedOrientation(prevOrientation);
                             }
                         })
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -520,26 +534,52 @@ public class MainActivity extends ThemeableActivity
     }
     // [END signIn]
 
-    // [START tResult]
+    // [START signOut]
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        // [START_EXCLUDE]
+                        updateUI(false);
+                        Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+    // [END signOut]
+
+    // [START revokeAccess]
+    private void revokeAccess() {
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        // [START_EXCLUDE]
+                        updateUI(false);
+                        Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+    // [END revokeAccess]
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
+    }
+
+    // [START onActivityResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(getClass().getName(), "requestCode: " + requestCode);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == (RC_SIGN_IN)) {
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }
-
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!mGoogleApiClient.isConnecting() &&
-                        !mGoogleApiClient.isConnected()) {
-                    mGoogleApiClient.connect();
-                }
-            }
         }
     }
     // [END onActivityResult]
@@ -557,169 +597,92 @@ public class MainActivity extends ThemeableActivity
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
+            acct = null;
             updateUI(false);
         }
     }
     // [END handleSignInResult]
 
+    @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
         if (signedIn) {
 //            Log.d(getClass().getName(), "currentPerson: " + Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
-            if (mGoogleApiClient.isConnected() && Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+//            if (mGoogleApiClient.isConnected() && Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+//
+//                String personCoverUrl = currentPerson.getCover().getCoverPhoto().getUrl();
+//                Picasso.with(this)
+//                        .load(personCoverUrl)
+//                        .error(R.drawable.copertina_about)
+//                        .into(profileBackground);
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+            profileBackground.setVisibility(View.INVISIBLE);
 
-                String personCoverUrl = currentPerson.getCover().getCoverPhoto().getUrl();
-                Picasso.with(this)
-                        .load(personCoverUrl)
-                        .error(R.drawable.copertina_about)
-                        .into(profileBackground);
+//            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
+            String personPhotoUrl = acct.getPhotoUrl().toString();
+            // by default the profile url gives 50x50 px image only
+            // we can replace the value with whatever dimension we want by
+            // replacing sz=X
+            personPhotoUrl = personPhotoUrl.substring(0,
+                    personPhotoUrl.length() - 2)
+                    + 400;
+            Picasso.with(this)
+                    .load(personPhotoUrl)
+                    .error(R.drawable.copertina_about)
+                    .into(profileImage);
+            profileImage.setVisibility(View.VISIBLE);
 
-                String personPhotoUrl = currentPerson.getImage().getUrl();
-                // by default the profile url gives 50x50 px image only
-                // we can replace the value with whatever dimension we want by
-                // replacing sz=X
-                personPhotoUrl = personPhotoUrl.substring(0,
-                        personPhotoUrl.length() - 2)
-                        + 400;
-                Picasso.with(this)
-                        .load(personPhotoUrl)
-                        .error(R.drawable.copertina_about)
-                        .into(profileImage);
-                profileImage.setVisibility(View.VISIBLE);
-
-                String personName = currentPerson.getDisplayName();
+            String personName = acct.getDisplayName();
 //                Log.d(getClass().getName(), "personName: " + personName);
-                usernameTextView.setText(personName);
-                usernameTextView.setVisibility(View.VISIBLE);
+            usernameTextView.setText(personName);
+            usernameTextView.setVisibility(View.VISIBLE);
 
-                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+//                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            String email = acct.getEmail();
 //                Log.d(getClass().getName(), "email: " + email);
-                emailTextView.setText(email);
-                emailTextView.setVisibility(View.VISIBLE);
+            emailTextView.setText(email);
+            emailTextView.setVisibility(View.VISIBLE);
 
-                if (findViewById(R.id.sign_in_button) != null)
-                    findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
+            if (findViewById(R.id.sign_in_button) != null)
+                findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
 
-                accountMenu.setVisibility(View.VISIBLE);
-            }
+            accountMenu.setVisibility(View.VISIBLE);
+//            }
         }
         else {
             profileImage.setVisibility(View.INVISIBLE);
             usernameTextView.setVisibility(View.INVISIBLE);
             emailTextView.setVisibility(View.INVISIBLE);
-            profileBackground.setImageResource(R.drawable.copertina_about);
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+            profileBackground.setVisibility(View.VISIBLE);
+//            profileBackground.setImageResource(R.drawable.copertina_about);
             if (findViewById(R.id.sign_in_button) != null)
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             accountMenu.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void showErrorDialog(int errorCode) {
-//        int errorCode = connectionResult.getErrorCode();
-//
-//        if (GooglePlayServicesUtil.isUserRecoverableError(errorCode)) {
-//            // Show the default Google Play services error dialog which may still start an intent
-//            // on our behalf if the user can resolve the issue.
-//            GooglePlayServicesUtil.getErrorDialog(errorCode, this, RC_SIGN_IN,
-//                    new DialogInterface.OnCancelListener() {
-//                        @Override
-//                        public void onCancel(DialogInterface dialog) {
-//                            updateUI(false);
-//                        }
-//                    }).show();
-//        } else {
-//            // No default Google Play Services error, display a message to the user.
-//            Snackbar.make(findViewById(android.R.id.content), getString(R.string.play_services_error_fmt, errorCode), Snackbar.LENGTH_SHORT).show();
-//        }
-        // Create a fragment for the error dialog
-        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
-        // Pass the error that should be displayed
-        Bundle args = new Bundle();
-        args.putInt(DIALOG_ERROR, errorCode);
-        dialogFragment.setArguments(args);
-        dialogFragment.show(getSupportFragmentManager(), "errordialog");
+    private void showProgressDialog() {
+        if (mProgressDialog == null && !mProgressDialog.isShowing())
+            mProgressDialog.show();
     }
 
-    public GoogleApiClient getmGoogleApiClient() {
-        return mGoogleApiClient;
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing())
+            mProgressDialog.hide();
     }
 
     public void setShowSnackbar(boolean showSnackbar) {
         this.showSnackbar = showSnackbar;
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        // Connected to Google Play services!
-        // The good stuff goes here.
-        Log.d(getClass().getName(), "onConnected");
-        String name = "NULL";
-        if (Plus.PeopleApi.getCurrentPerson(getmGoogleApiClient()) != null)
-            name = Plus.PeopleApi.getCurrentPerson(getmGoogleApiClient()).getDisplayName();
-        if (showSnackbar) {
-            Snackbar.make(findViewById(android.R.id.content), getString(R.string.connected_as, name), Snackbar.LENGTH_SHORT).show();
-            showSnackbar = false;
-        }
-//        Log.d(getClass().getName(), "onConnected:" + bundle);
-
-        // Show the signed-in UI
-        updateUI(true);
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
     }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection has been interrupted.
-        // Disable any UI components that depend on Google APIs
-        // until onConnected() is called.
-        Log.d(getClass().getName(), "onConnectionSuspended");
-        updateUI(false);
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
-//        showErrorDialog(connectionResult);
-        if (mResolvingError) {
-            // Already attempting to resolve an error.
-            return;
-        } else if (connectionResult.hasResolution()) {
-            try {
-                mResolvingError = true;
-                connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
-            } catch (IntentSender.SendIntentException e) {
-                // There was an error with the resolution intent. Try again.
-                mGoogleApiClient.connect();
-            }
-        } else {
-            // Show dialog using GoogleApiAvailability.getErrorDialog()
-            showErrorDialog(connectionResult.getErrorCode());
-            mResolvingError = true;
-        }
-    }
-
-    /* A fragment to display an error dialog */
-    public static class ErrorDialogFragment extends DialogFragment {
-        public ErrorDialogFragment() { }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Get the error code and retrieve the appropriate dialog
-            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
-            return GoogleApiAvailability.getInstance().getErrorDialog(
-                    this.getActivity(), errorCode, REQUEST_RESOLVE_ERROR);
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            ((MainActivity) getActivity()).onDialogDismissed();
-        }
-    }
-    /* Called from ErrorDialogFragment when the dialog is dismissed. */
-    public void onDialogDismissed() {
-        mResolvingError = false;
-    }
-
 }

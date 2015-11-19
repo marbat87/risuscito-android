@@ -15,8 +15,12 @@
                 <!--android:title="@string/gdrive_restore"/>-->
             <item
                 android:id="@+id/gplus_signout"
-                android:icon="@drawable/ic_exit_to_app_48dp"
+                android:icon="@drawable/ic_logout_48dp"
                 android:title="@string/gplus_signout"/>
+            <item
+                android:id="@+id/gplus_revoke"
+                android:icon="@drawable/ic_revoke_48dp"
+                android:title="@string/gplus_revoke"/>
 
         </menu>
     </item>
