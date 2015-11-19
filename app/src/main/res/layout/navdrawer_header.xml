@@ -62,7 +62,7 @@
                 android:gravity="left"
                 android:singleLine="true"
                 android:ellipsize="marquee"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="2dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:id="@+id/username"

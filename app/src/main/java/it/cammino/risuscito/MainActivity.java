@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +14,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -37,9 +39,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
@@ -51,10 +52,11 @@ import java.util.HashMap;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
-        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener{
+        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     public DrawerLayout mDrawerLayout;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
+    private static final String SHOW_SNACKBAR = "mostra_snackbar";
 
     private int prevOrientation;
 
@@ -74,8 +76,15 @@ public class MainActivity extends ThemeableActivity
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
+    private static final String STATE_RESOLVING_ERROR = "resolving_error";
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    // Unique tag for the error dialog fragment
+    private static final String DIALOG_ERROR = "dialog_error";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,14 +119,20 @@ public class MainActivity extends ThemeableActivity
                         ? R.menu.drawer_account_menu : R.menu.drawer_menu);
             }
         });
-        showSnackbar = false;
+
+        mResolvingError = savedInstanceState != null
+                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
+
+        showSnackbar = savedInstanceState == null
+                || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
 
         if (findViewById(R.id.content_frame) != null) {
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState != null)
+            if (savedInstanceState != null) {
                 mNavigationView.getMenu().getItem(savedInstanceState.getInt(SELECTED_ITEM)).setChecked(true);
+            }
             else
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
         }
@@ -135,6 +150,7 @@ public class MainActivity extends ThemeableActivity
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addConnectionCallbacks(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(Plus.API)
                 .build();
@@ -145,34 +161,17 @@ public class MainActivity extends ThemeableActivity
     @Override
     public void onStart() {
         super.onStart();
-
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(getClass().getName(), "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-//            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-//                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+        Log.d(getClass().getName(), "mResolvingError: " + mResolvingError);
+        if (!mResolvingError) {  // more about this later
+            mGoogleApiClient.connect();
         }
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
         if (mGoogleApiClient.isConnected())
             mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -190,6 +189,10 @@ public class MainActivity extends ThemeableActivity
             getSupportFragmentManager().beginTransaction().add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE).commit();
             dataFragment.setData(consegnatiFragment.getTitoliChoose());
         }
+
+        savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
+        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -517,7 +520,7 @@ public class MainActivity extends ThemeableActivity
     }
     // [END signIn]
 
-    // [START onActivityResult]
+    // [START tResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -526,6 +529,17 @@ public class MainActivity extends ThemeableActivity
         if (requestCode == (RC_SIGN_IN)) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        }
+
+        if (requestCode == REQUEST_RESOLVE_ERROR) {
+            mResolvingError = false;
+            if (resultCode == RESULT_OK) {
+                // Make sure the app is not already connected or attempting to connect
+                if (!mGoogleApiClient.isConnecting() &&
+                        !mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.connect();
+                }
+            }
         }
     }
     // [END onActivityResult]
@@ -600,31 +614,30 @@ public class MainActivity extends ThemeableActivity
         }
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
-        showErrorDialog(connectionResult);
-    }
-
-    private void showErrorDialog(ConnectionResult connectionResult) {
-        int errorCode = connectionResult.getErrorCode();
-
-        if (GooglePlayServicesUtil.isUserRecoverableError(errorCode)) {
-            // Show the default Google Play services error dialog which may still start an intent
-            // on our behalf if the user can resolve the issue.
-            GooglePlayServicesUtil.getErrorDialog(errorCode, this, RC_SIGN_IN,
-                    new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            updateUI(false);
-                        }
-                    }).show();
-        } else {
-            // No default Google Play Services error, display a message to the user.
-            Snackbar.make(findViewById(android.R.id.content), getString(R.string.play_services_error_fmt, errorCode), Snackbar.LENGTH_SHORT).show();
-        }
+    private void showErrorDialog(int errorCode) {
+//        int errorCode = connectionResult.getErrorCode();
+//
+//        if (GooglePlayServicesUtil.isUserRecoverableError(errorCode)) {
+//            // Show the default Google Play services error dialog which may still start an intent
+//            // on our behalf if the user can resolve the issue.
+//            GooglePlayServicesUtil.getErrorDialog(errorCode, this, RC_SIGN_IN,
+//                    new DialogInterface.OnCancelListener() {
+//                        @Override
+//                        public void onCancel(DialogInterface dialog) {
+//                            updateUI(false);
+//                        }
+//                    }).show();
+//        } else {
+//            // No default Google Play Services error, display a message to the user.
+//            Snackbar.make(findViewById(android.R.id.content), getString(R.string.play_services_error_fmt, errorCode), Snackbar.LENGTH_SHORT).show();
+//        }
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "errordialog");
     }
 
     public GoogleApiClient getmGoogleApiClient() {
@@ -634,4 +647,79 @@ public class MainActivity extends ThemeableActivity
     public void setShowSnackbar(boolean showSnackbar) {
         this.showSnackbar = showSnackbar;
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        // Connected to Google Play services!
+        // The good stuff goes here.
+        Log.d(getClass().getName(), "onConnected");
+        String name = "NULL";
+        if (Plus.PeopleApi.getCurrentPerson(getmGoogleApiClient()) != null)
+            name = Plus.PeopleApi.getCurrentPerson(getmGoogleApiClient()).getDisplayName();
+        if (showSnackbar) {
+            Snackbar.make(findViewById(android.R.id.content), getString(R.string.connected_as, name), Snackbar.LENGTH_SHORT).show();
+            showSnackbar = false;
+        }
+//        Log.d(getClass().getName(), "onConnected:" + bundle);
+
+        // Show the signed-in UI
+        updateUI(true);
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection has been interrupted.
+        // Disable any UI components that depend on Google APIs
+        // until onConnected() is called.
+        Log.d(getClass().getName(), "onConnectionSuspended");
+        updateUI(false);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
+//        showErrorDialog(connectionResult);
+        if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (connectionResult.hasResolution()) {
+            try {
+                mResolvingError = true;
+                connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
+            }
+        } else {
+            // Show dialog using GoogleApiAvailability.getErrorDialog()
+            showErrorDialog(connectionResult.getErrorCode());
+            mResolvingError = true;
+        }
+    }
+
+    /* A fragment to display an error dialog */
+    public static class ErrorDialogFragment extends DialogFragment {
+        public ErrorDialogFragment() { }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GoogleApiAvailability.getInstance().getErrorDialog(
+                    this.getActivity(), errorCode, REQUEST_RESOLVE_ERROR);
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            ((MainActivity) getActivity()).onDialogDismissed();
+        }
+    }
+    /* Called from ErrorDialogFragment when the dialog is dismissed. */
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
 }

@@ -66,18 +66,18 @@ public abstract class ThemeableActivity extends AppCompatActivity {
                 getResources().updateConfiguration(config, getResources().getDisplayMetrics());
             }
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
-            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
-            for (StackTraceElement ste: e.getStackTrace()) {
-                Log.e(getClass().toString(), ste.toString());
-            }
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+//            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
+//            for (StackTraceElement ste: e.getStackTrace()) {
+//                Log.e(getClass().toString(), ste.toString());
+//            }
         }
         catch (NullPointerException e) {
-            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA");
-            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
-            for (StackTraceElement ste: e.getStackTrace()) {
-                Log.e(getClass().toString(), ste.toString());
-            }
+            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+//            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
+//            for (StackTraceElement ste: e.getStackTrace()) {
+//                Log.e(getClass().toString(), ste.toString());
+//            }
         }
         super.onResume();
 
@@ -116,7 +116,7 @@ public abstract class ThemeableActivity extends AppCompatActivity {
 
     private void forceOverflowMenu() {
         try {
-            ViewConfiguration config       = ViewConfiguration.get(this);
+            ViewConfiguration config = ViewConfiguration.get(this);
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
             if(menuKeyField != null) {
                 menuKeyField.setAccessible(true);
