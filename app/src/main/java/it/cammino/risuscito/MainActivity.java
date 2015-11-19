@@ -3,13 +3,16 @@ package it.cammino.risuscito;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -36,9 +39,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
@@ -147,6 +152,7 @@ public class MainActivity extends ThemeableActivity
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
         // [END configure_signin]
 
@@ -542,6 +548,11 @@ public class MainActivity extends ThemeableActivity
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
                         updateUI(false);
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(MainActivity.this)
+                                .edit();
+                        editor.putBoolean(Utility.SIGNED_IN, false);
+                        editor.apply();
                         Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
                         // [END_EXCLUDE]
                     }
@@ -557,6 +568,11 @@ public class MainActivity extends ThemeableActivity
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
                         updateUI(false);
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(MainActivity.this)
+                                .edit();
+                        editor.putBoolean(Utility.SIGNED_IN, false);
+                        editor.apply();
                         Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
                         // [END_EXCLUDE]
                     }
@@ -590,6 +606,11 @@ public class MainActivity extends ThemeableActivity
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             acct = result.getSignInAccount();
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(MainActivity.this)
+                    .edit();
+            editor.putBoolean(Utility.SIGNED_IN, true);
+            editor.apply();
             if (showSnackbar) {
                 Snackbar.make(findViewById(android.R.id.content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
                 showSnackbar = false;
@@ -622,17 +643,26 @@ public class MainActivity extends ThemeableActivity
             profileBackground.setVisibility(View.INVISIBLE);
 
 //            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
-            String personPhotoUrl = acct.getPhotoUrl().toString();
-            // by default the profile url gives 50x50 px image only
-            // we can replace the value with whatever dimension we want by
-            // replacing sz=X
-            personPhotoUrl = personPhotoUrl.substring(0,
-                    personPhotoUrl.length() - 2)
-                    + 400;
-            Picasso.with(this)
-                    .load(personPhotoUrl)
-                    .error(R.drawable.copertina_about)
-                    .into(profileImage);
+            Uri profilePhoto = acct.getPhotoUrl();
+            if (profilePhoto != null) {
+                String personPhotoUrl = profilePhoto.toString();
+                // by default the profile url gives 50x50 px image only
+                // we can replace the value with whatever dimension we want by
+                // replacing sz=X
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + 400;
+                Picasso.with(this)
+                        .load(personPhotoUrl)
+                        .error(R.drawable.icon_user_default)
+                        .into(profileImage);
+            }
+            else {
+                Picasso.with(this)
+                        .load(R.drawable.icon_user_default)
+                        .into(profileImage);
+            }
+
             profileImage.setVisibility(View.VISIBLE);
 
             String personName = acct.getDisplayName();

@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,7 +28,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.SignInButton;
 
 import it.cammino.risuscito.slides.IntroMain;
-import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class Risuscito extends Fragment {
 
@@ -163,11 +161,13 @@ public class Risuscito extends Fragment {
             }
         });
 
-        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            Log.d(getClass().getName(), "activity.getmGoogleApiClient().isConnected(): " + activity.getmGoogleApiClient().isConnected());
-            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
-        }
+//        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
+//            MainActivity activity = (MainActivity) getActivity();
+//            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
+        rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
+//        }
 
         return rootView;
     }
