@@ -45,8 +45,20 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResource;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -55,7 +67,7 @@ public class MainActivity extends ThemeableActivity
         implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener{
 
     public DrawerLayout mDrawerLayout;
-    protected static final String SELECTED_ITEM = "oggetto_selezionato";
+    //    protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
 
     private int prevOrientation;
@@ -79,15 +91,17 @@ public class MainActivity extends ThemeableActivity
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
-    private static final String STATE_RESOLVING_ERROR = "resolving_error";
-    // Request code to use when launching the resolution activity
-    private static final int REQUEST_RESOLVE_ERROR = 1001;
-    // Unique tag for the error dialog fragment
-    private static final String DIALOG_ERROR = "dialog_error";
+    //    private static final String STATE_RESOLVING_ERROR = "resolving_error";
+//    // Request code to use when launching the resolution activity
+//    private static final int REQUEST_RESOLVE_ERROR = 1001;
+//    // Unique tag for the error dialog fragment
+//    private static final String DIALOG_ERROR = "dialog_error";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
     // Bool to track whether the app is already resolving an error
-    private boolean mResolvingError = false;
+//    private boolean mResolvingError = false;
+
+    private MaterialDialog backupDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,8 +138,8 @@ public class MainActivity extends ThemeableActivity
             }
         });
 
-        mResolvingError = savedInstanceState != null
-                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
+//        mResolvingError = savedInstanceState != null
+//                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
 
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
@@ -134,10 +148,12 @@ public class MainActivity extends ThemeableActivity
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                mNavigationView.getMenu().getItem(savedInstanceState.getInt(SELECTED_ITEM)).setChecked(true);
-            }
-            else
+//            if (savedInstanceState != null) {
+////                mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
+//            }
+//            else
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            if (savedInstanceState == null)
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
         }
 
@@ -162,6 +178,7 @@ public class MainActivity extends ThemeableActivity
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Drive.API)
                 .build();
         // [END build_client]
 
@@ -195,12 +212,12 @@ public class MainActivity extends ThemeableActivity
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        for (int i = 0; mNavigationView.getMenu().getItem(i) != null; i++) {
-            if (mNavigationView.getMenu().getItem(i).isChecked()) {
-                savedInstanceState.putInt(SELECTED_ITEM, i);
-                break;
-            }
-        }
+//        for (int i = 0; mNavigationView.getMenu().getItem(i) != null; i++) {
+//            if (mNavigationView.getMenu().getItem(i).isChecked()) {
+//                savedInstanceState.putInt(SELECTED_ITEM, i);
+//                break;
+//            }
+//        }
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
         ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
@@ -210,7 +227,7 @@ public class MainActivity extends ThemeableActivity
         }
 
         savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
-        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
+//        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -325,6 +342,7 @@ public class MainActivity extends ThemeableActivity
                 }
                 cursor.moveToNext();
             }
+            cursor.close();
         }
     }
 
@@ -432,12 +450,67 @@ public class MainActivity extends ThemeableActivity
             case R.id.navigation_history:
                 fragment = new HistoryFragment();
                 break;
-            case R.id.gplus_signout:
+            case R.id.gdrive_backup:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(MainActivity.this);
                 MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gdrive_backup)
+                        .content(R.string.gdrive_backup_content)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                backupDialog = new MaterialDialog.Builder(MainActivity.this)
+                                        .content(R.string.backup_running)
+                                        .progress(true, 0)
+                                        .dismissListener(new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                setRequestedOrientation(prevOrientation);
+                                            }
+                                        })
+                                        .show();
+//                                String dbName = DatabaseCanti.DB_NAME + ".db";
+                                saveToDrive(
+                                        Drive.DriveApi.getAppFolder(mGoogleApiClient),
+                                        DatabaseCanti.getDbName(),
+                                        "application/x-sqlite3",
+//                                        new java.io.File("/data/data/it.cammino.risuscito/databases/" + dbName)
+                                        getDbPath()
+                                );
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            case R.id.gplus_signout:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                dialog = new MaterialDialog.Builder(MainActivity.this)
                         .title(R.string.gplus_signout)
                         .content(R.string.dialog_acc_disconn_text)
                         .positiveText(R.string.confirm)
@@ -714,5 +787,94 @@ public class MainActivity extends ThemeableActivity
 
     public GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
+    }
+
+    /******************************************************************
+     * create file in GOODrive
+     * @param pFldr parent's ID
+     * @param titl  file name
+     * @param mime  file mime type  (application/x-sqlite3)
+     * @param file  file (with content) to create
+     */
+    void saveToDrive(final DriveFolder pFldr, final String titl,
+                     final String mime, final java.io.File file) {
+        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && file != null) try {
+            // create content from file
+            Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(DriveApi.DriveContentsResult driveContentsResult) {
+                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
+                            driveContentsResult.getDriveContents() : null;
+
+                    // write file to content, chunk by chunk
+                    if (cont != null) try {
+                        OutputStream oos = cont.getOutputStream();
+                        if (oos != null) try {
+                            InputStream is = new FileInputStream(file);
+                            byte[] buf = new byte[4096];
+                            int c;
+                            while ((c = is.read(buf, 0, buf.length)) > 0) {
+                                oos.write(buf, 0, c);
+                                oos.flush();
+                            }
+                        }
+                        finally { oos.close();}
+
+                        // content's COOL, create metadata
+                        MetadataChangeSet meta = new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
+
+                        // now create file on GooDrive
+                        pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+                            @Override
+                            public void onResult(DriveFolder.DriveFileResult driveFileResult) {
+                                if (driveFileResult != null && driveFileResult.getStatus().isSuccess()) {
+                                    DriveFile dFil = driveFileResult != null && driveFileResult.getStatus().isSuccess() ?
+                                            driveFileResult.getDriveFile() : null;
+                                    if (dFil != null) {
+                                        // BINGO , file uploaded
+                                        dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
+                                            @Override
+                                            public void onResult(DriveResource.MetadataResult metadataResult) {
+                                                if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
+                                                    DriveId mDriveId = metadataResult.getMetadata().getDriveId();
+                                                    Log.d(getClass().getName(), "mDriveId:" + mDriveId);
+                                                    if (backupDialog != null && backupDialog.isShowing())
+                                                        backupDialog.dismiss();
+                                                    String error = "FILE CARICATO - CODE: "  + metadataResult.getStatus().getStatusCode();
+                                                    Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                 /* report error */
+                                    if (backupDialog != null && backupDialog.isShowing())
+                                        backupDialog.dismiss();
+                                    String error = "driveFile error: "  + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
+                                    Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e(getClass().getName(), "Exc1: " + e.getLocalizedMessage(), e);
+                        if (backupDialog != null && backupDialog.isShowing())
+                            backupDialog.dismiss();
+                        String error = "error: "  + e.getLocalizedMessage();
+                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
+            if (backupDialog != null && backupDialog.isShowing())
+                backupDialog.dismiss();
+            String error = "error: "  + e.getLocalizedMessage();
+            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    private File getDbPath() {
+        Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
+        return getDatabasePath(DatabaseCanti.getDbName());
     }
 }

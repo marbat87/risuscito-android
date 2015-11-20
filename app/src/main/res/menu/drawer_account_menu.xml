@@ -4,11 +4,10 @@
         android:title="@string/menu_account_section">
         <menu>
 
-            <!--<item-->
-                <!--android:id="@+id/gdrive_backup"-->
-                <!--android:icon="@drawable/ic_cloud_upload_48dp"-->
-                <!--android:title="@string/gdrive_backup"-->
-                <!--android:checked="true"/>-->
+            <item
+                android:id="@+id/gdrive_backup"
+                android:icon="@drawable/ic_cloud_upload_48dp"
+                android:title="@string/gdrive_backup"/>
             <!--<item-->
                 <!--android:id="@+id/gdrive_restore"-->
                 <!--android:icon="@drawable/ic_cloud_download_48dp"-->
