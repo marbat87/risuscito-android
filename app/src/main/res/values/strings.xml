@@ -327,6 +327,11 @@
     <string name="connection_running">Connessione in corso&#8230;</string>
     <string name="gdrive_backup">Backup su account</string>
     <string name="gdrive_backup_content">Verrà ora effettuato un backup delle impostazioni sul tuo account. Il precedente backup (se presente) sarà sovrascritto. Vuoi procedere?</string>
+    <string name="gdrive_restore_content">Risuscit&#242; verrà ora ripristinata dalle impostazioni presenti sul tuo account. Vuoi procedere?</string>
     <string name="backup_running">Backup in corso&#8230;</string>
+    <string name="restore_running">Ripristino in corso&#8230;</string>
+    <string name="gdrive_restore">Ripristina da account</string>
+    <string name="gdrive_restore_success">Ripristino effettuato correttamente</string>
+    <string name="gdrive_backup_success">Backup effettuato correttamente</string>
 
 </resources>
