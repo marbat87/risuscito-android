@@ -331,7 +331,13 @@
     <string name="backup_running">Backup in corso&#8230;</string>
     <string name="restore_running">Ripristino in corso&#8230;</string>
     <string name="gdrive_restore">Ripristina da account</string>
-    <string name="gdrive_restore_success">Ripristino effettuato correttamente</string>
+    <string name="gdrive_restore_success">Ripristino effettuato correttamente, Risuscit&#242; sar&#224; ora riavviato</string>
     <string name="gdrive_backup_success">Backup effettuato correttamente</string>
+    <string name="no_restore_found">Non hai backup salvati sul tuo account</string>
+    <string name="backup_database">Backup del database(1/2)</string>
+    <string name="backup_settings">Backup delle impostazioni(2/2)</string>
+    <string name="restoring_database">Ripristino del database(1/2)</string>
+    <string name="restoring_settings">Ripristino delle impostazioni(2/2)</string>
+    <string name="general_message">Info</string>
 
 </resources>

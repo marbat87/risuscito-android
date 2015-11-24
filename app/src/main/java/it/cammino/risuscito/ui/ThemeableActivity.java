@@ -7,14 +7,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Locale;
+import java.util.Map;
 
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -66,14 +73,14 @@ public abstract class ThemeableActivity extends AppCompatActivity {
                 getResources().updateConfiguration(config, getResources().getDisplayMetrics());
             }
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
 //            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
 //            for (StackTraceElement ste: e.getStackTrace()) {
 //                Log.e(getClass().toString(), ste.toString());
 //            }
         }
         catch (NullPointerException e) {
-            Log.e(getClass().toString(), "FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
 //            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
 //            for (StackTraceElement ste: e.getStackTrace()) {
 //                Log.e(getClass().toString(), ste.toString());
@@ -123,9 +130,9 @@ public abstract class ThemeableActivity extends AppCompatActivity {
                 menuKeyField.setBoolean(config, false);
             }
         } catch (IllegalAccessException e) {
-            Log.w(getClass().toString(), "Failed to force overflow menu.");
+            Log.w(getClass().toString(), "IllegalAccessException - Failed to force overflow menu.", e);
         } catch (NoSuchFieldException e) {
-            Log.w(getClass().toString(), "Failed to force overflow menu.");
+            Log.w(getClass().toString(), "NoSuchFieldException - Failed to force overflow menu.", e);
         }
     }
 
@@ -136,6 +143,87 @@ public abstract class ThemeableActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    protected boolean saveSharedPreferencesToFile(OutputStream out) {
+        boolean res = false;
+        ObjectOutputStream output = null;
+        try {
+            output = new ObjectOutputStream(out);
+            SharedPreferences pref =
+                    PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this);
+            output.writeObject(pref.getAll());
+
+        }
+        catch (IOException e) {
+            String error = "saveSharedPreferencesToFile - IOException: " + e.getLocalizedMessage();
+            Log.e(getClass().getName(), error, e);
+            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+        }
+        finally {
+            try {
+                if (output != null) {
+                    output.flush();
+                    output.close();
+                    res = true;
+                }
+            } catch (IOException e) {
+                String error = "saveSharedPreferencesToFile - IOException: " + e.getLocalizedMessage();
+                Log.e(getClass().getName(), error, e);
+                Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+        return res;
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    protected boolean loadSharedPreferencesFromFile(InputStream in) {
+        boolean res = false;
+        ObjectInputStream input = null;
+        try {
+            input = new ObjectInputStream(in);
+            SharedPreferences.Editor prefEdit = PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this).edit();
+            prefEdit.clear();
+            Map<String, ?> entries = (Map<String, ?>) input.readObject();
+            for (Map.Entry<String, ?> entry : entries.entrySet()) {
+                Object v = entry.getValue();
+                String key = entry.getKey();
+
+                if (v instanceof Boolean)
+                    prefEdit.putBoolean(key, (Boolean) v);
+                else if (v instanceof Float)
+                    prefEdit.putFloat(key, (Float) v);
+                else if (v instanceof Integer)
+                    prefEdit.putInt(key, (Integer) v);
+                else if (v instanceof Long)
+                    prefEdit.putLong(key, (Long) v);
+                else if (v instanceof String)
+                    prefEdit.putString(key, ((String) v));
+            }
+            prefEdit.apply();
+        } catch (ClassNotFoundException e) {
+            String error = "loadSharedPreferencesFromFile - ClassNotFoundException: " + e.getLocalizedMessage();
+            Log.e(getClass().getName(), error, e);
+            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+        }
+        catch (IOException e) {
+            String error = "loadSharedPreferencesFromFile - IOException: " + e.getLocalizedMessage();
+            Log.e(getClass().getName(), error, e);
+            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+        }
+        finally {
+            try {
+                if (input != null) {
+                    input.close();
+                    res = true;
+                }
+            } catch (IOException e) {
+                String error = "loadSharedPreferencesFromFile - IOException: " + e.getLocalizedMessage();
+                Log.e(getClass().getName(), error, e);
+                Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+        return res;
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -149,6 +150,12 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.speedValue = null;
         PaginaRenderActivity.scrollPlaying = false;
         PaginaRenderActivity.mostraAudio = null;
+
+        //apertura e chiusura database per consentire eventuale aggiornamento
+        DatabaseCanti listaCanti = new DatabaseCanti(getActivity());
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        db.close();
+        listaCanti.close();
 
         SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
