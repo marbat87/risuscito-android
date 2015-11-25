@@ -144,6 +144,8 @@ public class MainActivity extends ThemeableActivity
                 mNavigationView.getMenu().clear();
                 mNavigationView.inflateMenu(accountMenu.isSelected()
                         ? R.menu.drawer_account_menu : R.menu.drawer_menu);
+                if (!accountMenu.isSelected())
+                    mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
             }
         });
 
