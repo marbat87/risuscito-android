@@ -6,10 +6,27 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_marginTop="?actionBarSize"
+            android:layout_gravity="center_horizontal|top"
+            android:visibility="invisible"
+            risuscito:mlpb_progress_stoke_width="3dp"
+            risuscito:mlpb_progress_text_visibility="invisible"
+            android:elevation="1dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+    </FrameLayout>
 
     <!-- Drawer items -->
     <android.support.design.widget.NavigationView

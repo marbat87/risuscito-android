@@ -55,6 +55,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
@@ -86,7 +87,8 @@ public class MainActivity extends ThemeableActivity
 //    private static final int WIDTH_320 = 320;
 //    private static final int WIDTH_400 = 400;
 
-    MaterialDialog mProgressDialog;
+//    MaterialDialog mProgressDialog;
+    CircleProgressBar mCircleProgressBar;
 
     private boolean showSnackbar;
     private GoogleSignInAccount acct;
@@ -169,10 +171,13 @@ public class MainActivity extends ThemeableActivity
 //                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
         }
 
-        mProgressDialog = new MaterialDialog.Builder(this)
-                .content(R.string.connection_running)
-                .progress(true, 0)
-                .build();
+//        mProgressDialog = new MaterialDialog.Builder(this)
+//                .content(R.string.connection_running)
+//                .progress(true, 0)
+//                .build();
+        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
+        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
+
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -854,13 +859,15 @@ public class MainActivity extends ThemeableActivity
     }
 
     private void showProgressDialog() {
-        if (mProgressDialog != null && !mProgressDialog.isShowing())
-            mProgressDialog.show();
+//        if (mProgressDialog != null && !mProgressDialog.isShowing())
+//            mProgressDialog.show();
+        mCircleProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing())
-            mProgressDialog.hide();
+//        if (mProgressDialog != null && mProgressDialog.isShowing())
+//            mProgressDialog.hide();
+        mCircleProgressBar.setVisibility(View.GONE);
     }
 
     public void setShowSnackbar(boolean showSnackbar) {

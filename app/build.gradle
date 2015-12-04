@@ -25,18 +25,12 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url "https://jitpack.io"
-    }
-}
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
     compile 'com.itextpdf:itextpdf:5.5.6'
-    compile ('com.github.afollestad.material-dialogs:core:0.8.5.1@aar') {transitive = true}
-    compile ('com.github.afollestad.material-dialogs:commons:0.8.5.1@aar') {transitive = true}
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.2@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.2@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.5'
     compile project(':fab-toolbar')
@@ -46,9 +40,10 @@ dependencies {
     compile 'com.nononsenseapps:filepicker:2.5.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     compile supportDependencies.appCompat
     compile supportDependencies.design
-    compile (genericDependencies.CircularReveal) {transitive = true}
+    compile(genericDependencies.CircularReveal) {transitive = true}
     compile supportDependencies.cardView
     compile playServices.auth
     compile playServices.drive
