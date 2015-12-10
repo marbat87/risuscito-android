@@ -309,4 +309,29 @@
     <string name="external_storage_pref_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб активувати збереження в публічну память.  Якщо Ви не згодитесь, опція стане невидимою.</string>
     <string name="external_file_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб бачити, якщо Ви завантажили запис на публічну память. Якщо Ви не згодитесь, пошук буде здійснюватись лише в приватній памяті.</string>
     <string name="forced_private">Вимушене завантження на приватну память</string>
+    <string name="connected_as">Sei connesso come %1$s</string>
+    <string name="gplus_signout">Disconnetti account</string>
+    <string name="gplus_revoke">Revoca permessi</string>
+    <string name="menu_account_section">Backup e Ripristino Impostazioni</string>
+    <string name="play_services_error_fmt">Google Play Services Error: %i</string>
+    <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="dialog_acc_revoke_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google e di volerle revocare tutti i permessi Google concessi?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="disconnected">Disconnesso da Google</string>
+    <string name="connection_running">Connessione in corso&#8230;</string>
+    <string name="gdrive_backup">Backup su account</string>
+    <string name="gdrive_backup_content">Verrà ora effettuato un backup delle impostazioni sul tuo account. Il precedente backup (se presente) sarà sovrascritto. Vuoi procedere?</string>
+    <string name="gdrive_restore_content">Risuscit&#242; verrà ora ripristinata dalle impostazioni presenti sul tuo account. Vuoi procedere?</string>
+    <string name="backup_running">Backup in corso&#8230;</string>
+    <string name="restore_running">Ripristino in corso&#8230;</string>
+    <string name="gdrive_restore">Ripristina da account</string>
+    <string name="gdrive_restore_success">Ripristino effettuato correttamente, Risuscit&#242; sar&#224; ora riavviato</string>
+    <string name="gdrive_backup_success">Backup effettuato correttamente</string>
+    <string name="no_restore_found">Non hai backup salvati sul tuo account</string>
+    <string name="backup_database">Backup del database(1/2)</string>
+    <string name="backup_settings">Backup delle impostazioni(2/2)</string>
+    <string name="restoring_database">Ripristino del database(1/2)</string>
+    <string name="restoring_settings">Ripristino delle impostazioni(2/2)</string>
+    <string name="general_message">Info</string>
 </resources>

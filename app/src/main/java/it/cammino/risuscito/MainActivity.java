@@ -1075,6 +1075,7 @@ public class MainActivity extends ThemeableActivity
     }
 
     void restoreDriveBackup() {
+        Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
         Query query = new Query.Builder()
                 .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
                 .build();
@@ -1207,6 +1208,7 @@ public class MainActivity extends ThemeableActivity
             };
 
     void restoreDrivePrefBackup(String title) {
+        Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
         Query query = new Query.Builder()
                 .addFilter(Filters.eq(SearchableField.TITLE, title))
                 .build();

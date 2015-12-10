@@ -41,9 +41,6 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
-    compile supportDependencies.appCompat
-    compile supportDependencies.design
-    compile(genericDependencies.CircularReveal) {transitive = true}
     compile supportDependencies.cardView
     compile playServices.auth
     compile playServices.drive
