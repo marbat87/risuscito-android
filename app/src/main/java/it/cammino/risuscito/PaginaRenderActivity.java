@@ -563,7 +563,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                        setRequestedOrientation(prevOrientation);
+//                                        setRequestedOrientation(prevOrientation);
                                         // This always works
                                         Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
 //                                        // Set these depending on your use case. These are the defaults.
@@ -1662,6 +1662,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setRequestedOrientation(prevOrientation);
         // If the file selection was successful
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
