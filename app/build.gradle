@@ -8,8 +8,8 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 96
-        versionName '3.6.0'
+        versionCode 97
+        versionName '3.7.0'
     }
     buildTypes {
         release {
@@ -29,8 +29,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
     compile 'com.itextpdf:itextpdf:5.5.6'
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.2@aar') { transitive = true }
-    compile('com.github.afollestad.material-dialogs:commons:0.8.5.2@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.3@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.5'
     compile project(':fab-toolbar')
