@@ -736,6 +736,7 @@ public class MainActivity extends ThemeableActivity
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed, connectionResult), Snackbar.LENGTH_SHORT).show();
         Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
     }
 
@@ -755,6 +756,7 @@ public class MainActivity extends ThemeableActivity
     // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(getClass().getName(), "handleSignInResult:" + result.isSuccess());
+        Log.d(getClass().getName(), "signin result: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             acct = result.getSignInAccount();

@@ -34,7 +34,7 @@ public class Risuscito extends Fragment {
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
-    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_MENU4";
+    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
     private int prevOrientation;
 
     @SuppressLint("NewApi")
