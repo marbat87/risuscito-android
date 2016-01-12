@@ -16,7 +16,7 @@ ext {
             CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar"
     ]
 
-    servicesLibrary = '8.3.0'
+    servicesLibrary = '8.4.0'
 
     playServices = [
             auth             :    "com.google.android.gms:play-services-auth:${servicesLibrary}",

@@ -143,7 +143,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         new MaterialScrollBar(getActivity(), recyclerView, true)
-                .addIndicator(new CustomIndicator(getActivity()))
+                .addIndicator(new CustomIndicator(getActivity()), true)
                 .setHideDuration(Utility.HIDE_DELAY)
                 .setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()))
                 .setAutoHide(true);

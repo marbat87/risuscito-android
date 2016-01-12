@@ -87,7 +87,7 @@ public class MainActivity extends ThemeableActivity
 //    private static final int WIDTH_320 = 320;
 //    private static final int WIDTH_400 = 400;
 
-//    MaterialDialog mProgressDialog;
+    //    MaterialDialog mProgressDialog;
     CircleProgressBar mCircleProgressBar;
 
     private boolean showSnackbar;
@@ -218,7 +218,7 @@ public class MainActivity extends ThemeableActivity
             showProgressDialog();
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
                     hideProgressDialog();
                     handleSignInResult(googleSignInResult);
                 }
@@ -663,6 +663,7 @@ public class MainActivity extends ThemeableActivity
                 dialog.setCancelable(false);
                 return true;
             default:
+                selectedItemIndex = 0;
                 fragment = new Risuscito();
                 break;
         }
@@ -697,7 +698,7 @@ public class MainActivity extends ThemeableActivity
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
-                    public void onResult(Status status) {
+                    public void onResult(@NonNull Status status) {
                         // [START_EXCLUDE]
                         updateUI(false);
                         SharedPreferences.Editor editor = PreferenceManager
@@ -717,7 +718,7 @@ public class MainActivity extends ThemeableActivity
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
-                    public void onResult(Status status) {
+                    public void onResult(@NonNull Status status) {
                         // [START_EXCLUDE]
                         updateUI(false);
                         SharedPreferences.Editor editor = PreferenceManager
@@ -733,7 +734,7 @@ public class MainActivity extends ThemeableActivity
     // [END revokeAccess]
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed, connectionResult), Snackbar.LENGTH_SHORT).show();
@@ -899,7 +900,7 @@ public class MainActivity extends ThemeableActivity
 
             Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
                 @Override
-                public void onResult(DriveApi.MetadataBufferResult metadataBufferResult) {
+                public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
 
                     int count = metadataBufferResult.getMetadataBuffer().getCount();
                     Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
@@ -909,10 +910,11 @@ public class MainActivity extends ThemeableActivity
                         Log.d(getClass().getName(), "saveCheckDupl - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
                         metadataBufferResult.getMetadataBuffer().release();
 
-                        DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
-                        mfile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+//                        DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                        DriveFile mFile = mDriveId.asDriveFile();
+                        mFile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                             @Override
-                            public void onResult(Status status) {
+                            public void onResult(@NonNull Status status) {
                                 if (status.isSuccess()) {
                                     Log.d(getClass().getName(), "saveCheckDupl - CANCELLAZIONE OK: " + status.getStatusCode());
                                     if (dataBase)
@@ -959,12 +961,14 @@ public class MainActivity extends ThemeableActivity
             // create content from file
             Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
                 @Override
-                public void onResult(DriveApi.DriveContentsResult driveContentsResult) {
-                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
-                            driveContentsResult.getDriveContents() : null;
+                public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
+//                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
+//                            driveContentsResult.getDriveContents() : null;
 
                     // write file to content, chunk by chunk
-                    if (cont != null) {
+//                    if (cont != null) {
+                    if (driveContentsResult.getStatus().isSuccess()) {
+                        DriveContents cont = driveContentsResult.getDriveContents();
                         if (dataBase) {
                             try {
                                 OutputStream oos = cont.getOutputStream();
@@ -1002,63 +1006,72 @@ public class MainActivity extends ThemeableActivity
                         // now create file on GooDrive
                         pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
                             @Override
-                            public void onResult(DriveFolder.DriveFileResult driveFileResult) {
-                                if (driveFileResult != null)
-                                    if (driveFileResult.getStatus().isSuccess()) {
+                            public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
+//                                if (driveFileResult != null)
+                                if (driveFileResult.getStatus().isSuccess()) {
 //                                    DriveFile dFil = driveFileResult != null && driveFileResult.getStatus().isSuccess() ?
 //                                            driveFileResult.getDriveFile() : null;
-                                        DriveFile dFil = driveFileResult.getDriveFile();
-                                        if (dFil != null) {
-                                            // BINGO , file uploaded
-                                            dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
-                                                @Override
-                                                public void onResult(DriveResource.MetadataResult metadataResult) {
-                                                    if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
-                                                        DriveId mDriveId = metadataResult.getMetadata().getDriveId();
-                                                        Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
+                                    DriveFile dFil = driveFileResult.getDriveFile();
+                                    if (dFil != null) {
+                                        // BINGO , file uploaded
+                                        dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
+                                            @Override
+                                            public void onResult(@NonNull DriveResource.MetadataResult metadataResult) {
+//                                                if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
+                                                if (metadataResult.getStatus().isSuccess()) {
+                                                    DriveId mDriveId = metadataResult.getMetadata().getDriveId();
+                                                    Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
 //                                                    if (backupDialog != null && backupDialog.isShowing())
 //                                                        backupDialog.dismiss();
-                                                        String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
-                                                        Log.d(getClass().getName(), error);
+                                                    String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
+                                                    Log.d(getClass().getName(), error);
 //                                                    Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
-                                                        if (dataBase) {
-                                                            if (backupDialog != null && backupDialog.isShowing())
-                                                                backupDialog.setContent(R.string.backup_settings);
-                                                            saveCheckDupl(
-                                                                    Drive.DriveApi.getAppFolder(mGoogleApiClient)
-                                                                    , PREF_DRIVE_FILE_NAME
-                                                                    , "application/json"
-                                                                    , null
-                                                                    , false
-                                                            );
-                                                        }
-                                                        else {
-                                                            if (backupDialog != null && backupDialog.isShowing())
-                                                                backupDialog.dismiss();
-                                                            Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
-                                                        }
+                                                    if (dataBase) {
+                                                        if (backupDialog != null && backupDialog.isShowing())
+                                                            backupDialog.setContent(R.string.backup_settings);
+                                                        saveCheckDupl(
+                                                                Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                                                , PREF_DRIVE_FILE_NAME
+                                                                , "application/json"
+                                                                , null
+                                                                , false
+                                                        );
+                                                    }
+                                                    else {
+                                                        if (backupDialog != null && backupDialog.isShowing())
+                                                            backupDialog.dismiss();
+                                                        Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
                                                     }
                                                 }
-                                            });
-                                        }
-                                    } else {
-                                 /* report error */
-                                        if (backupDialog != null && backupDialog.isShowing())
-                                            backupDialog.dismiss();
-                                        String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
-                                        Log.e(getClass().getName(), error);
-                                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
-                                else {
+                                } else {
                                  /* report error */
                                     if (backupDialog != null && backupDialog.isShowing())
                                         backupDialog.dismiss();
-                                    String error = "saveToDrive - driveFileResult null";
+                                    String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
                                     Log.e(getClass().getName(), error);
                                     Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
                                 }
+//                                else {
+//                                 /* report error */
+//                                    if (backupDialog != null && backupDialog.isShowing())
+//                                        backupDialog.dismiss();
+//                                    String error = "saveToDrive - driveFileResult null";
+//                                    Log.e(getClass().getName(), error);
+//                                    Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+//                                }
                             }
                         });
+                    }
+                    else {
+                        /* report error */
+                        if (backupDialog != null && backupDialog.isShowing())
+                            backupDialog.dismiss();
+                        String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
+                        Log.e(getClass().getName(), error);
+                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -1084,7 +1097,7 @@ public class MainActivity extends ThemeableActivity
 
         Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
             @Override
-            public void onResult(DriveApi.MetadataBufferResult metadataBufferResult) {
+            public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
 
             /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
                 debug("got index "+i);
@@ -1101,8 +1114,9 @@ public class MainActivity extends ThemeableActivity
                     metadataBufferResult.getMetadataBuffer().release();
 
 
-                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
-                    mfile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
+//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                    DriveFile mFile = mDriveId.asDriveFile();
+                    mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
                         @Override
                         public void onProgress(long bytesDown, long bytesExpected) {
                         }
@@ -1120,7 +1134,7 @@ public class MainActivity extends ThemeableActivity
     final private ResultCallback<DriveApi.DriveContentsResult> restoreContentsCallback =
             new ResultCallback<DriveApi.DriveContentsResult>() {
                 @Override
-                public void onResult(DriveApi.DriveContentsResult result) {
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
 //                        mToast("Unable to open file, try again.");
                         String error = "restoreContentsCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
@@ -1217,7 +1231,7 @@ public class MainActivity extends ThemeableActivity
 
         Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
             @Override
-            public void onResult(DriveApi.MetadataBufferResult metadataBufferResult) {
+            public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
 
             /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
                 debug("got index "+i);
@@ -1234,8 +1248,9 @@ public class MainActivity extends ThemeableActivity
                     metadataBufferResult.getMetadataBuffer().release();
 
 
-                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
-                    mfile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
+//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                    DriveFile mFile = mDriveId.asDriveFile();
+                    mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
                         @Override
                         public void onProgress(long bytesDown, long bytesExpected) {
                         }
@@ -1254,7 +1269,7 @@ public class MainActivity extends ThemeableActivity
     final private ResultCallback<DriveApi.DriveContentsResult> restoreContentsPrefCallback =
             new ResultCallback<DriveApi.DriveContentsResult>() {
                 @Override
-                public void onResult(DriveApi.DriveContentsResult result) {
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
                         String error = "restoreContentsPrefCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
