@@ -5,10 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -101,7 +103,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
     private PhoneStateListener phoneStateListener;
     private static OnAudioFocusChangeListener afChangeListener;
-    private static AudioManager am;
+    private static AudioManager mAudioManager;
+    private BroadcastReceiver mNoisyReveiver;
     private String url;
     private int prevOrientation;
     private String primaNota;
@@ -170,7 +173,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public static String mostraAudio;
     public boolean mostraAudioBool;
 
-    public boolean audioRequested = false;
+//    public boolean audioRequested = false;
 
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
 
@@ -188,8 +191,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
         setSupportActionBar(toolbar);
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
-        if (savedInstanceState != null)
-            audioRequested = savedInstanceState.getBoolean(Utility.AUDIO_REQUESTED, false);
+//        if (savedInstanceState != null)
+//            audioRequested = savedInstanceState.getBoolean(Utility.AUDIO_REQUESTED, false);
 
         listaCanti = new DatabaseCanti(this);
 
@@ -240,45 +243,73 @@ public class PaginaRenderActivity extends ThemeableActivity {
         scroll_speed_bar = (SeekBar) findViewById(R.id.speed_seekbar);
         scroll_song_bar = (SeekBar) findViewById(R.id.music_seekbar);
 
-        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         afChangeListener = new OnAudioFocusChangeListener() {
             public void onAudioFocusChange(int focusChange) {
-                if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-                    // Lower the volume
-                    if (mediaPlayerState == MP_State.Started) {
-                        mediaPlayer.setVolume(0.1f, 0.1f);
-                    }
-                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                    // Raise it back to normal
-                    if (mediaPlayerState == MP_State.Started) {
-                        mediaPlayer.setVolume(1.0f, 1.0f);
-                    }
+                switch (focusChange) {
+                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                        // Lower the volume
+                        if (mediaPlayerState == MP_State.Started) {
+                            mediaPlayer.setVolume(0.1f, 0.1f);
+                        }
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS:
+                        cmdPause();
+                        break;
+                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                        cmdPause();
+                        break;
+                    case AudioManager.AUDIOFOCUS_GAIN:
+                        // Raise it back to normal
+                        if (mediaPlayerState == MP_State.Started) {
+                            mediaPlayer.setVolume(1.0f, 1.0f);
+                        }
+                        break;
                 }
+//                if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+//                    // Lower the volume
+//                    if (mediaPlayerState == MP_State.Started) {
+//                        mediaPlayer.setVolume(0.1f, 0.1f);
+//                    }
+//                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+//                    // Raise it back to normal
+//                    if (mediaPlayerState == MP_State.Started) {
+//                        mediaPlayer.setVolume(1.0f, 1.0f);
+//                    }
+//                }
             }
         };
 
-
-        phoneStateListener = new PhoneStateListener() {
+        mNoisyReveiver = new BroadcastReceiver() {
             @Override
-            public void onCallStateChanged(int state, String incomingNumber) {
-                if (state == TelephonyManager.CALL_STATE_RINGING) {
-                    //Incoming call: Pause music
-                    if (mediaPlayerState == MP_State.Started)
-                        cmdPause();
-                } else if(state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                    //A call is dialing, active or on hold
-                    if (mediaPlayerState == MP_State.Started)
-                        cmdPause();
-                }
-                super.onCallStateChanged(state, incomingNumber);
+            public void onReceive(Context context, Intent intent) {
+                cmdPause();
             }
         };
-//        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-//        if(mgr != null) {
-//            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-//        }
-//        Log.i(getClass().getName(), "STO PER...");
-//        PaginaRenderActivityPermissionsDispatcher.attachPhoneListenerWithCheck(PaginaRenderActivity.this);
+
+        /*Da lollipop, l'utilizzo del phonestatelistener non è più necessario perchè lo stato è integrato
+        nella gestione dell'audioFocus */
+        if(!LUtils.hasL()) {
+            phoneStateListener = new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String incomingNumber) {
+                    if (state == TelephonyManager.CALL_STATE_RINGING) {
+                        //Incoming call: Pause music
+                        if (mediaPlayerState == MP_State.Started)
+                            cmdPause();
+                    } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        //A call is dialing, active or on hold
+                        if (mediaPlayerState == MP_State.Started)
+                            cmdPause();
+                    }
+                    super.onCallStateChanged(state, incomingNumber);
+                }
+            };
+            TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            if (mgr != null) {
+                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
+        }
 //        checkPhoneStatePermission();
 
         if (!url.equalsIgnoreCase("")) {
@@ -1158,12 +1189,26 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public void onResume() {
         super.onResume();
 
-        if (am != null && mediaPlayerState == MP_State.Started) {
-            am.requestAudioFocus(afChangeListener,
+        if (mAudioManager != null && mediaPlayerState == MP_State.Started) {
+            int result = mAudioManager.requestAudioFocus(afChangeListener,
                     // Use the music stream.
                     AudioManager.STREAM_MUSIC,
                     // Request permanent focus.
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+            switch (result) {
+                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+                    registerReceiver(mNoisyReveiver, filter);
+                    break;
+                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.focus_not_allowed
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    cmdPause();
+                    break;
+            }
         }
 
         if (notaSalvata == null) {
@@ -1258,18 +1303,21 @@ public class PaginaRenderActivity extends ThemeableActivity {
     @Override
     public void onDestroy() {
         saveZoom();
-        if (am != null)
-            am.abandonAudioFocus(afChangeListener);
+        if (mAudioManager != null)
+            mAudioManager.abandonAudioFocus(afChangeListener);
+        //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+        if (mediaPlayerState == MP_State.Started)
+            unregisterReceiver(mNoisyReveiver);
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
+//    }
 
     public FabToolbar getFab() {
         if (mFab == null) {
@@ -1310,8 +1358,11 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
 
         //cancello il listener sullo stato del telefono, solo se avevo il permesso di settarlo, altrimenti non serve
-        if (ContextCompat.checkSelfPermission(PaginaRenderActivity.this, Manifest.permission.READ_PHONE_STATE)
-                == PackageManager.PERMISSION_GRANTED) {
+//        if (ContextCompat.checkSelfPermission(PaginaRenderActivity.this, Manifest.permission.READ_PHONE_STATE)
+//                == PackageManager.PERMISSION_GRANTED) {
+        /*Da lollipop, l'utilizzo del phonestatelistener non è più necessario perchè lo stato è integrato
+        nella gestione dell'audioFocus */
+        if(!LUtils.hasL()) {
             TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
             if (mgr != null)
                 mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
@@ -1478,26 +1529,44 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 ||mediaPlayerState == MP_State.PlaybackCompleted){
 
             //gestisce l'abbassamento del volume in caso di altre riproduzioni (sms, etc.)
-            int result = am.requestAudioFocus(afChangeListener,
+            int result = mAudioManager.requestAudioFocus(afChangeListener,
                     // Use the music stream.
                     AudioManager.STREAM_MUSIC,
                     // Request permanent focus.
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
-            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mediaPlayer.start();
-                play_button.setSelected(true);
-                mediaPlayerState = MP_State.Started;
-
-                mScrollBar.run();
-
+            switch (result) {
+                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+                    mediaPlayer.start();
+                    play_button.setSelected(true);
+                    mediaPlayerState = MP_State.Started;
+                    mScrollBar.run();
+                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+                    registerReceiver(mNoisyReveiver, filter);
+                    break;
+                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , R.string.focus_not_allowed
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    break;
             }
-            else {
-                Snackbar.make(findViewById(android.R.id.content)
-                        , R.string.focus_not_allowed
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-            }
+//            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+//                mediaPlayer.start();
+//                play_button.setSelected(true);
+//                mediaPlayerState = MP_State.Started;
+//                mScrollBar.run();
+//                //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+//                IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+//                registerReceiver(mNoisyReveiver, filter);
+//            }
+//            else {
+//                Snackbar.make(findViewById(android.R.id.content)
+//                        , R.string.focus_not_allowed
+//                        , Snackbar.LENGTH_SHORT)
+//                        .show();
+//            }
 
         }else{
             Toast.makeText(PaginaRenderActivity.this,
@@ -1508,10 +1577,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     private void cmdPause(){
-        if(mediaPlayerState == MP_State.Started
-                ||mediaPlayerState == MP_State.Paused){
+        if(mediaPlayerState == MP_State.Started) {
+//                ||mediaPlayerState == MP_State.Paused){
             mediaPlayer.pause();
-            am.abandonAudioFocus(afChangeListener);
+            mAudioManager.abandonAudioFocus(afChangeListener);
+            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+            unregisterReceiver(mNoisyReveiver);
             play_button.setSelected(false);
             mediaPlayerState = MP_State.Paused;
         }else{
@@ -1527,7 +1598,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 ||mediaPlayerState == MP_State.Paused) {
             mediaPlayer.stop();
             mediaPlayer.reset();
-            am.abandonAudioFocus(afChangeListener);
+            mAudioManager.abandonAudioFocus(afChangeListener);
+            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+            if (mediaPlayerState == MP_State.Started)
+                unregisterReceiver(mNoisyReveiver);
             play_button.setSelected(false);
             mediaPlayerState = MP_State.Stopped;
             showMediaPlayerState();
@@ -2279,12 +2353,6 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                 Utility.WRITE_STORAGE_RC);
                     }
                 })
-//                .callback(new MaterialDialog.ButtonCallback() {
-//                    @Override
-//                    public void onPositive(MaterialDialog dialog) {
-//                        setRequestedOrientation(prevOrientation);
-//                    }
-//                })
                 .show();
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -2344,14 +2412,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Utility.EXTERNAL_FILE_RC);
             }
-//            showDeniedForExternalFile();
             localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
         }
         else {
             searchExternalFile(false);
-//            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
-            if (!audioRequested)
-                checkPhoneStatePermission();
+//            if (!audioRequested)
+//                checkPhoneStatePermission();
         }
     }
 
@@ -2406,95 +2472,94 @@ public class PaginaRenderActivity extends ThemeableActivity {
     }
 
     void showDeniedForExternalFile() {
-        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
+        Log.d(getClass().getName(), " EXTERNAL_FILE DENIED");
         SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(PaginaRenderActivity.this)
                 .edit();
         editor.putInt(Utility.SAVE_LOCATION, 0);
         editor.apply();
-//        localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
         Snackbar.make(findViewById(android.R.id.content)
                 , getString(R.string.external_storage_denied)
                 , Snackbar.LENGTH_SHORT)
                 .show();
     }
 
-    private void checkPhoneStatePermission() {
-        // Here, thisActivity is the current activity
-        audioRequested = true;
-        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
-                Manifest.permission.READ_PHONE_STATE)
-                !=PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
-                    Manifest.permission.READ_PHONE_STATE)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                showRationaleForPhoneListener();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                        new String[]{Manifest.permission.READ_PHONE_STATE},
-                        Utility.PHONE_LISTENER_RC);
-            }
-        }
-        else
-            attachPhoneListener();
-    }
+//    private void checkPhoneStatePermission() {
+//        // Here, thisActivity is the current activity
+//        audioRequested = true;
+//        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+//                Manifest.permission.READ_PHONE_STATE)
+//                !=PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+//                    Manifest.permission.READ_PHONE_STATE)) {
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//                showRationaleForPhoneListener();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                        new String[]{Manifest.permission.READ_PHONE_STATE},
+//                        Utility.PHONE_LISTENER_RC);
+//            }
+//        }
+//        else
+//            attachPhoneListener();
+//    }
 
-    void attachPhoneListener() {
-        Log.d(getClass().getName(), "READ_PHONE_STATE OK");
-        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mgr != null) {
-            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-    }
+//    void attachPhoneListener() {
+//        Log.d(getClass().getName(), "READ_PHONE_STATE OK");
+//        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//        if(mgr != null) {
+//            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+//        }
+//    }
 
-    void showRationaleForPhoneListener() {
-        Log.d(getClass().getName(), "READ_PHONE_STATE RATIONALE");
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
-                .title(R.string.phone_listener_title)
-                .content(R.string.phone_state_rationale)
-                .positiveText(R.string.dialog_chiudi)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setRequestedOrientation(prevOrientation);
-                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                                new String[]{Manifest.permission.READ_PHONE_STATE},
-                                Utility.PHONE_LISTENER_RC);
-                    }
-                })
-                .show();
-        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK
-                        && event.getAction() == KeyEvent.ACTION_UP) {
-                    arg0.dismiss();
-                    setRequestedOrientation(prevOrientation);
-                    ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                            new String[]{Manifest.permission.READ_PHONE_STATE},
-                            Utility.PHONE_LISTENER_RC);
-                    return true;
-                }
-                return false;
-            }
-        });
-        dialog.setCancelable(false);
-    }
+//    void showRationaleForPhoneListener() {
+//        Log.d(getClass().getName(), "READ_PHONE_STATE RATIONALE");
+//        prevOrientation = getRequestedOrientation();
+//        Utility.blockOrientation(PaginaRenderActivity.this);
+//        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//                .title(R.string.phone_listener_title)
+//                .content(R.string.phone_state_rationale)
+//                .positiveText(R.string.dialog_chiudi)
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                        setRequestedOrientation(prevOrientation);
+//                        ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                                new String[]{Manifest.permission.READ_PHONE_STATE},
+//                                Utility.PHONE_LISTENER_RC);
+//                    }
+//                })
+//                .show();
+//        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface arg0, int keyCode,
+//                                 KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_BACK
+//                        && event.getAction() == KeyEvent.ACTION_UP) {
+//                    arg0.dismiss();
+//                    setRequestedOrientation(prevOrientation);
+//                    ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                            new String[]{Manifest.permission.READ_PHONE_STATE},
+//                            Utility.PHONE_LISTENER_RC);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//        dialog.setCancelable(false);
+//    }
 
-    void showDeniedForPhoneListener() {
-        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
-        Snackbar.make(findViewById(android.R.id.content)
-                , getString(R.string.phone_listener_denied)
-                , Snackbar.LENGTH_SHORT)
-                .show();
-    }
+//    void showDeniedForPhoneListener() {
+//        Log.d(getClass().getName(), " READ_PHONE_STATE DENIED");
+//        Snackbar.make(findViewById(android.R.id.content)
+//                , getString(R.string.phone_listener_denied)
+//                , Snackbar.LENGTH_SHORT)
+//                .show();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -2522,44 +2587,29 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
                 return;
             }
-            case Utility.PHONE_LISTENER_RC: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the task you need to do.
-                    attachPhoneListener();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    showDeniedForPhoneListener();
-                }
-                return;
-            }
+//            case Utility.PHONE_LISTENER_RC: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // permission was granted, yay! Do the task you need to do.
+//                    attachPhoneListener();
+//                } else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    showDeniedForPhoneListener();
+//                }
+//                return;
+//            }
             case Utility.EXTERNAL_FILE_RC: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the task you need to do.
                     searchExternalFile(true);
-//                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
-//                    if (android.os.Build.VERSION.SDK_INT >= 11) {
-//                        recreate();
-//                    }
-//                    else {
-//                        Intent intent = getIntent();
-//                        finish();
-//                        startActivity(intent);
-//                    }
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     showDeniedForExternalFile();
-                    if (!audioRequested)
-                        checkPhoneStatePermission();
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-//                            .edit();
-//                    editor.putInt(Utility.SAVE_LOCATION, 0);
-//                    editor.apply();
-//                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+//                    if (!audioRequested)
+//                        checkPhoneStatePermission();
                 }
             }
         }

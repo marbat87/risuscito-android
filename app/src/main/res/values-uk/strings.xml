@@ -300,9 +300,6 @@
     <string name="barre_add_al">на</string>
     <string name="barre_al_tasto_I">Баре на</string>
     <string name="barre_al_tasto_II">лад</string>
-    <string name="phone_listener_title">Доступ до телефону</string>
-    <string name="phone_state_rationale">Додаток просить доступу до статусу телефона. Це необхідне для того, щоб програвання аудіо призупинялось у випадку вхідного дзвінка: якщо Ви не дасте доступ, функція буде вимкнена автоматично.</string>
-    <string name="phone_listener_denied">Автоматична пауза вимкнена</string>
     <string name="external_storage_title">Доступ до публічної памяті</string>
     <string name="external_storage_rationale">Додаток просить доступ до зовнішної памяті. Це наобхідне для того, щоб завантажений файл був видимий для інших додатків. Якщо Ви не згодитесь, файл буде збережений в приватній памяті додатку.</string>
     <string name="external_storage_denied">Немає доступу до публічної памяті.</string>
