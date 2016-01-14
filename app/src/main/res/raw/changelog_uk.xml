@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="3.7.0" changeDate="XX Gennaio 2015">
+        <changelogtext>Possibile fix per arresto anomalo su Samsung e Wiko con Android 4.2.2</changelogtext>
+        <changelogtext>Inserito backup e ripristino delle impostazioni su Gdrive</changelogtext>
+        <changelogtext>Correzione testi vari</changelogtext>
+        <changelogtext>Espansi i testi dei canti togliendo tutti i "2 volte" o "assemblea ripete"</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="3.6.0" changeDate="20 листопад 2015">
         <changelogtext>Сумісний з Android Marshmallow</changelogtext>
         <changelogtext>Зараз на сторінці пісні, перший аккорд та/або баре виділені, якщо вони не сходяться з оригіналом</changelogtext>

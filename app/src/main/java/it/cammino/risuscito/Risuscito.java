@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.SignInButton;
 
 import it.cammino.risuscito.slides.IntroMain;
 
@@ -32,7 +34,7 @@ public class Risuscito extends Fragment {
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
-    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_MENU4";
+    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
     private int prevOrientation;
 
     @SuppressLint("NewApi")
@@ -94,22 +96,6 @@ public class Risuscito extends Fragment {
                             }
                         }
                     })
-//                    .callback(new MaterialDialog.ButtonCallback() {
-//                        @Override
-//                        public void onPositive(MaterialDialog dialog) {
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            if (PreferenceManager
-//                                    .getDefaultSharedPreferences(getActivity())
-//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                                SharedPreferences.Editor editor = PreferenceManager
-//                                        .getDefaultSharedPreferences(getActivity())
-//                                        .edit();
-//                                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                                editor.apply();
-//                                showHelp();
-//                            }
-//                        }
-//                    })
                     .show();
 
             dialog.setOnKeyListener(new Dialog.OnKeyListener() {
@@ -164,6 +150,31 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.speedValue = null;
         PaginaRenderActivity.scrollPlaying = false;
         PaginaRenderActivity.mostraAudio = null;
+
+        //apertura e chiusura database per consentire eventuale aggiornamento
+        DatabaseCanti listaCanti = new DatabaseCanti(getActivity());
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        db.close();
+        listaCanti.close();
+
+        SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+//        signInButton.setScopes(gso.getScopeArray());
+        signInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).setShowSnackbar(true);
+                ((MainActivity)getActivity()).signIn();
+            }
+        });
+
+//        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
+//            MainActivity activity = (MainActivity) getActivity();
+//            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
+        rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
+//        }
 
         return rootView;
     }

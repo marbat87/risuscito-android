@@ -33,6 +33,7 @@ public class Utility {
     public static final String SYSTEM_LANGUAGE = "lingua_sistema";
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
+    public static final String SIGNED_IN = "signed_id";
 
     public static final int HIDE_DELAY = 1500;
 
@@ -46,11 +47,11 @@ public class Utility {
     public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
 
-    public static final String GIALLO = "#EBD0A5";
-    public static final String BIANCO = "#FCFCFC";
-    public static final String AZZURRO = "#6F949A";
-    public static final String VERDE = "#8FC490";
-    public static final String GRIGIO = "#CAC8BC";
+//    public static final String GIALLO = "#EBD0A5";
+//    public static final String BIANCO = "#FCFCFC";
+//    public static final String AZZURRO = "#6F949A";
+//    public static final String VERDE = "#8FC490";
+//    public static final String GRIGIO = "#CAC8BC";
 
     public static final int EXTERNAL_FILE_RC = 122;
     public static final int WRITE_STORAGE_RC = 123;

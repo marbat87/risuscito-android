@@ -187,9 +187,9 @@
     <string name="activity_homepage">Home page</string>
     <string name="button_note_cantore">Note per il cantore</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
-    <string name="help_new_menu_title">Nuovo men&#249;</string>
+    <!--<string name="help_new_menu_title">Nuovo men&#249;</string>
     <string name="help_new_menu_desc">&#200; stato introdotto il nuovo men&#249; di navigazione, apribile cliccando sul simbolo in alto a sinistra, sulla copertina o facendo
-        swype da sinistra col dito. Prova!</string>
+        swype da sinistra col dito. Prova!</string>-->
     <string name="salmi_musica_index">Indice salmi musicati</string>
     <string name="downlink_message">Desideri utilizzare la funzione di donwload della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="downlink_download">DOWNLOAD</string>
@@ -314,5 +314,34 @@
     <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
     <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
     <string name="forced_private">Forzato download in memoria privata</string>
-
+    <string name="connected_as">Sei connesso come %1$s</string>
+    <string name="gplus_signout">Disconnetti account</string>
+    <string name="gplus_revoke">Revoca permessi</string>
+    <string name="menu_account_section">Backup e Ripristino Impostazioni</string>
+    <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="dialog_acc_revoke_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google e di volerle revocare tutti i permessi Google concessi?
+    \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
+    <string name="disconnected">Disconnesso da Google</string>
+    <string name="connection_running">Connessione in corso&#8230;</string>
+    <string name="gdrive_backup">Backup su account</string>
+    <string name="gdrive_backup_content">Verrà ora effettuato un backup delle impostazioni sul tuo account. Il precedente backup (se presente) sarà sovrascritto. Vuoi procedere?</string>
+    <string name="gdrive_restore_content">Risuscit&#242; verrà ora ripristinata dalle impostazioni presenti sul tuo account. Vuoi procedere?</string>
+    <string name="backup_running">Backup in corso&#8230;</string>
+    <string name="restore_running">Ripristino in corso&#8230;</string>
+    <string name="gdrive_restore">Ripristina da account</string>
+    <string name="gdrive_restore_success">Ripristino effettuato correttamente, Risuscit&#242; sar&#224; ora riavviato</string>
+    <string name="gdrive_backup_success">Backup effettuato correttamente</string>
+    <string name="no_restore_found">Non hai backup salvati sul tuo account</string>
+    <string name="backup_database">Backup del database(1/2)</string>
+    <string name="backup_settings">Backup delle impostazioni(2/2)</string>
+    <string name="restoring_database">Ripristino del database(1/2)</string>
+    <string name="restoring_settings">Ripristino delle impostazioni(2/2)</string>
+    <string name="general_message">Info</string>
+    <string name="login_failed">Login fallito - codice errore: %+d</string>
+    <string name="login_intro_title">Login con Google</string>
+    <string name="login_intro_desc_0">Ora puoi fare login col tuo account Google per abilitare il backup/ripristino di tutte le tue impostazioni, anche tra dispositivi diversi. Il pulsante in basso d&#225; inizio al processo di login.</string>
+    <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>
+    <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
+    <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
 </resources>

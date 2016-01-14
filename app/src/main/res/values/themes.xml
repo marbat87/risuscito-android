@@ -28,7 +28,7 @@
 
         <item name="md_medium_font">Roboto-Medium.ttf</item>
         <item name="md_regular_font">Roboto-Regular.ttf</item>
-        <item name="md_btn_ripple_color">@color/ripple_color</item>
+        <item name="md_btn_ripple_color">@color/ripple_color_light</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeCloseDrawable">@drawable/abc_ic_clear_mtrl_alpha</item>
         <item name="actionModeBackground">@color/background_material_light</item>

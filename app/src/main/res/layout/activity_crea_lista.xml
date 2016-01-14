@@ -59,7 +59,7 @@
                     android:textSize="30sp"
                     android:textColor="@android:color/white"
                     android:textCursorDrawable="@null"
-                    android:textColorHighlight="@color/ripple_color"
+                    android:textColorHighlight="@color/ripple_color_light"
                     android:imeOptions="actionDone"
                     android:hint="@string/list_title_modif" />
 

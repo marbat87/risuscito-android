@@ -17,4 +17,5 @@
 #}
 -dontwarn
 -ignorewarnings
--keep class !android.support.v7.internal.view.menu.**,** {*;}
+#-keep class !android.support.v7.internal.view.menu.**,** {*;}
+-keep class !android.support.v7.view.menu.**,!android.support.design.internal.NavigationMenu,!android.support.design.internal.NavigationMenuPresenter,!android.support.design.internal.NavigationSubMenu,** {*;}

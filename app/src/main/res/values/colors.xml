@@ -50,6 +50,7 @@
     <!--<color name="favorite_accent">#F48FB1</color>-->
     <!--<color name="ripple_shape">#8080CBC4</color>-->
     <color name="ripple_color">#4D000000</color>
+    <color name="ripple_color_light">#12000000</color>
     <color name="theme_primary_semi_tr">@color/BlueGrey_semi_transparent</color>
 
     <color name="dialtacts_secondary_text_color">#737373</color>

@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -75,8 +76,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         rootView = inflater.inflate(R.layout.activity_ricerca_titolo,
                 container, false);
 
-        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
-        listaCanti = new DatabaseCanti(getActivity());
+        if (listaCanti == null)
+            listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
@@ -107,6 +108,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         searchPar.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -219,27 +221,69 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             }
         });
 
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        String query = "SELECT _id, lista" + "		FROM LISTE_PERS"
-                + "		ORDER BY _id ASC";
-        Cursor lista = db.rawQuery(query, null);
-
-        listePers = new ListaPersonalizzata[lista.getCount()];
-        idListe = new int[lista.getCount()];
-
-        lista.moveToFirst();
-        for (int i = 0; i < lista.getCount(); i++) {
-            idListe[i] = lista.getInt(0);
-            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata
-                    .deserializeObject(lista.getBlob(1));
-            lista.moveToNext();
-        }
-        lista.close();
-        db.close();
+//        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//        String query = "SELECT _id, lista" + "		FROM LISTE_PERS"
+//                + "		ORDER BY _id ASC";
+//        Cursor lista = db.rawQuery(query, null);
+//
+//        listePers = new ListaPersonalizzata[lista.getCount()];
+//        idListe = new int[lista.getCount()];
+//
+//        lista.moveToFirst();
+//        for (int i = 0; i < lista.getCount(); i++) {
+//            idListe[i] = lista.getInt(0);
+//            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata
+//                    .deserializeObject(lista.getBlob(1));
+//            lista.moveToNext();
+//        }
+//        lista.close();
+//        db.close();
 
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
+    }
+
+    /**
+     * Set a hint to the system about whether this fragment's UI is currently visible
+     * to the user. This hint defaults to true and is persistent across fragment instance
+     * state save and restore.
+     * <p/>
+     * <p>An app may set this to false to indicate that the fragment's UI is
+     * scrolled out of visibility or is otherwise not directly visible to the user.
+     * This may be used by the system to prioritize operations such as fragment lifecycle updates
+     * or loader ordering behavior.</p>
+     *
+     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
+     *                        false if it is not.
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.d(getClass().getName(), "VISIBLE");
+            if (listaCanti == null)
+                listaCanti = new DatabaseCanti(getActivity());
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            String query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            Cursor lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+        }
     }
 
     @Override
@@ -367,8 +411,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
-                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-                                                .substring(10)
+//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+//                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
                                         .positiveText(R.string.confirm)
