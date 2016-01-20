@@ -737,7 +737,7 @@ public class MainActivity extends ThemeableActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed, connectionResult), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed, connectionResult.getErrorCode(), connectionResult.getErrorMessage()), Snackbar.LENGTH_SHORT).show();
         Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
     }
 

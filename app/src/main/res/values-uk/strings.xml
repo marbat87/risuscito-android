@@ -330,7 +330,7 @@
     <string name="restoring_database">Ripristino del database(1/2)</string>
     <string name="restoring_settings">Ripristino delle impostazioni(2/2)</string>
     <string name="general_message">Info</string>
-    <string name="login_failed">Login fallito - codice errore: %+d</string>
+    <string name="login_failed">Login fallito: %1$+d - %2$s</string>
     <string name="login_intro_title">Login con Google</string>
     <string name="login_intro_desc_0">Ora puoi fare login col tuo account Google per abilitare il backup/ripristino di tutte le tue impostazioni, anche tra dispositivi diversi. Il pulsante in basso d&#225; inizio al processo di login.</string>
     <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>

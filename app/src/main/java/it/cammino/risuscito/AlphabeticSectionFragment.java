@@ -32,7 +32,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.MaterialScrollBar;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
+import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,11 +143,17 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        new MaterialScrollBar(getActivity(), recyclerView, true)
-                .addIndicator(new CustomIndicator(getActivity()), true)
-                .setHideDuration(Utility.HIDE_DELAY)
-                .setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()))
-                .setAutoHide(true);
+//        new MaterialScrollBar(getActivity(), recyclerView, true)
+//                .addIndicator(new CustomIndicator(getActivity()), true)
+//                .setHideDuration(Utility.HIDE_DELAY)
+//                .setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()))
+//                .setAutoHide(true);
+        TouchScrollBar mDragScrollbar =
+                new TouchScrollBar(getActivity(), recyclerView, true);
+        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
+        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
+        mDragScrollbar.setAutoHide(true);
+        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
 
 //        query = "SELECT _id, lista" +
 //                "		FROM LISTE_PERS" +
