@@ -31,11 +31,11 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:core:0.8.5.4@aar') { transitive = true }
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.5'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.6'
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.2.0@aar'
-    compile 'com.turingtechnologies.materialscrollbar:lib:7.1.1'
+    compile 'com.turingtechnologies.materialscrollbar:lib:7.2.0'
     compile 'com.nononsenseapps:filepicker:2.5.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
