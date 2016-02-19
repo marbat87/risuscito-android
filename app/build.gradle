@@ -10,6 +10,9 @@ android {
         versionCode 105
         versionName '3.7.0'
     }
+    lintOptions {
+        disable 'PrivateResource'
+    }
     buildTypes {
         release {
             minifyEnabled true

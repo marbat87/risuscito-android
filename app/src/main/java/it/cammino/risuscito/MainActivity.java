@@ -706,7 +706,7 @@ public class MainActivity extends ThemeableActivity
                                 .edit();
                         editor.putBoolean(Utility.SIGNED_IN, false);
                         editor.apply();
-                        Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
                         // [END_EXCLUDE]
                     }
                 });
@@ -726,7 +726,7 @@ public class MainActivity extends ThemeableActivity
                                 .edit();
                         editor.putBoolean(Utility.SIGNED_IN, false);
                         editor.apply();
-                        Snackbar.make(findViewById(android.R.id.content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
                         // [END_EXCLUDE]
                     }
                 });
@@ -737,7 +737,7 @@ public class MainActivity extends ThemeableActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_failed, connectionResult.getErrorCode(), connectionResult.getErrorMessage()), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.main_content), getString(R.string.login_failed, connectionResult.getErrorCode(), connectionResult.getErrorMessage()), Snackbar.LENGTH_SHORT).show();
         Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
     }
 
@@ -767,7 +767,7 @@ public class MainActivity extends ThemeableActivity
             editor.putBoolean(Utility.SIGNED_IN, true);
             editor.apply();
             if (showSnackbar) {
-                Snackbar.make(findViewById(android.R.id.content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
                 showSnackbar = false;
             }
             updateUI(true);
@@ -927,7 +927,7 @@ public class MainActivity extends ThemeableActivity
                                     Log.e(getClass().getName(), "saveCheckDupl - " + errore);
                                     if (backupDialog != null && backupDialog.isShowing())
                                         backupDialog.dismiss();
-                                    Snackbar.make(findViewById(android.R.id.content), errore, Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(findViewById(R.id.main_content), errore, Snackbar.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -943,7 +943,7 @@ public class MainActivity extends ThemeableActivity
             if (backupDialog != null && backupDialog.isShowing())
                 backupDialog.dismiss();
             String error = "error: "  + e.getLocalizedMessage();
-            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -988,7 +988,7 @@ public class MainActivity extends ThemeableActivity
                                 if (backupDialog != null && backupDialog.isShowing())
                                     backupDialog.dismiss();
                                 String error = "error: " + e.getLocalizedMessage();
-                                Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                                 return;
                             }
                         }
@@ -1025,7 +1025,7 @@ public class MainActivity extends ThemeableActivity
 //                                                        backupDialog.dismiss();
                                                     String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
                                                     Log.d(getClass().getName(), error);
-//                                                    Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+//                                                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
                                                     if (dataBase) {
                                                         if (backupDialog != null && backupDialog.isShowing())
                                                             backupDialog.setContent(R.string.backup_settings);
@@ -1040,7 +1040,7 @@ public class MainActivity extends ThemeableActivity
                                                     else {
                                                         if (backupDialog != null && backupDialog.isShowing())
                                                             backupDialog.dismiss();
-                                                        Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+                                                        Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
                                                     }
                                                 }
                                             }
@@ -1052,7 +1052,7 @@ public class MainActivity extends ThemeableActivity
                                         backupDialog.dismiss();
                                     String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
                                     Log.e(getClass().getName(), error);
-                                    Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                                 }
 //                                else {
 //                                 /* report error */
@@ -1060,7 +1060,7 @@ public class MainActivity extends ThemeableActivity
 //                                        backupDialog.dismiss();
 //                                    String error = "saveToDrive - driveFileResult null";
 //                                    Log.e(getClass().getName(), error);
-//                                    Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+//                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
 //                                }
                             }
                         });
@@ -1071,7 +1071,7 @@ public class MainActivity extends ThemeableActivity
                             backupDialog.dismiss();
                         String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
-                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -1080,7 +1080,7 @@ public class MainActivity extends ThemeableActivity
             if (backupDialog != null && backupDialog.isShowing())
                 backupDialog.dismiss();
             String error = "error: "  + e.getLocalizedMessage();
-            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -1125,7 +1125,7 @@ public class MainActivity extends ThemeableActivity
                 } else {
                     if (restoreDialog != null && restoreDialog.isShowing())
                         restoreDialog.dismiss();
-                    Snackbar.make(findViewById(android.R.id.content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -1141,7 +1141,7 @@ public class MainActivity extends ThemeableActivity
                         Log.e(getClass().getName(), error);
                         if (restoreDialog != null && restoreDialog.isShowing())
                             restoreDialog.dismiss();
-                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -1191,7 +1191,7 @@ public class MainActivity extends ThemeableActivity
                         if (restoreDialog != null && restoreDialog.isShowing())
                             restoreDialog.dismiss();
                         String error = "error: "  + e.getLocalizedMessage();
-                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     } catch (IOException e) {
                         Log.e(getClass().getName(), "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(), e);
@@ -1199,12 +1199,12 @@ public class MainActivity extends ThemeableActivity
                         if (restoreDialog != null && restoreDialog.isShowing())
                             restoreDialog.dismiss();
                         String error = "error: "  + e.getLocalizedMessage();
-                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
 
 //                    mToast(act.getResources().getString(R.string.restoreComplete));
-//                    Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
 //                    DialogFragment_Sync.dismissDialog();
 //                    if (restoreDialog != null && restoreDialog.isShowing())
 //                        restoreDialog.dismiss();
@@ -1260,7 +1260,7 @@ public class MainActivity extends ThemeableActivity
                 else {
                     if (restoreDialog != null && restoreDialog.isShowing())
                         restoreDialog.dismiss();
-                    Snackbar.make(findViewById(android.R.id.content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -1275,7 +1275,7 @@ public class MainActivity extends ThemeableActivity
                         Log.e(getClass().getName(), error);
                         if (restoreDialog != null && restoreDialog.isShowing())
                             restoreDialog.dismiss();
-                        Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -1283,7 +1283,7 @@ public class MainActivity extends ThemeableActivity
 
                     loadSharedPreferencesFromFile(contents.getInputStream());
                     contents.discard(mGoogleApiClient);
-//                    Snackbar.make(findViewById(android.R.id.content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
                     if (restoreDialog != null && restoreDialog.isShowing())
                         restoreDialog.dismiss();
                     prevOrientation = getRequestedOrientation();

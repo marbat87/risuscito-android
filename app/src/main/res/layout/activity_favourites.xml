@@ -6,11 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<FrameLayout-->
-        <!--android:id="@+id/no_favourites"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
         <RelativeLayout
             android:id="@+id/no_favourites"
             android:layout_gravity="center"
@@ -40,8 +35,6 @@
                 tools:ignore="MissingPrefix" />
 
         </RelativeLayout>
-
-    <!--</FrameLayout>-->
 
     <View
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
