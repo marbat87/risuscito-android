@@ -38,7 +38,7 @@ dependencies {
     compile project(':fab-toolbar')
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.cocosw:bottomsheet:1.2.0@aar'
-    compile 'com.turingtechnologies.materialscrollbar:lib:7.2.0'
+    compile 'com.turingtechnologies.materialscrollbar:lib:8.0.0'
     compile 'com.nononsenseapps:filepicker:2.5.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
