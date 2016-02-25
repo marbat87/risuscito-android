@@ -34,13 +34,6 @@ public class GeneralSearch extends Fragment {
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                tabs.setupWithViewPager(mViewPager);
-//                mLUtils.applyFontedTab(mViewPager, tabs);
-//            }
-//        });
 
         return rootView;
     }

@@ -25,23 +25,6 @@
         android:imeOptions="actionDone"
         android:hint="@string/search_hint" />
 
-    <!--<com.rey.material.widget.Button-->
-        <!--android:id="@+id/pulisci_ripple"-->
-        <!--risuscito:rd_style="@style/Material.Drawable.Ripple.Wave.Light.Risuscito"-->
-        <!--android:background="@drawable/bg_bt_raise"-->
-        <!--android:text="@string/button_pulisci"-->
-        <!--android:minWidth="@dimen/paper_button_width"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_margin="@dimen/min_button_margin"-->
-        <!--android:layout_gravity="end"-->
-        <!--android:textColor="#FF000000"-->
-        <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
-        <!--android:paddingLeft="@dimen/button_text_padding"-->
-        <!--android:paddingRight="@dimen/button_text_padding"-->
-        <!--android:layout_height="36dp"-->
-        <!--fontPath="fonts/Roboto-Medium.ttf"-->
-        <!--tools:ignore="MissingPrefix" />-->
-
     <android.support.v7.widget.CardView
         android:id="@+id/pulisci_ripple"
         android:stateListAnimator="@anim/raise"
@@ -49,7 +32,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="@dimen/min_button_margin"
-        android:layout_centerHorizontal="true"
         android:clickable="true"
         android:soundEffectsEnabled="true"
         android:foreground="?attr/selectableItemBackground"
@@ -88,15 +70,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<com.rey.material.widget.ProgressView-->
-            <!--android:id="@+id/search_progress"-->
-            <!--android:layout_width="32dp"-->
-            <!--android:layout_height="32dp"-->
-            <!--android:layout_gravity="center_horizontal|top"-->
-            <!--risuscito:pv_autostart="false"-->
-            <!--risuscito:pv_circular="true"-->
-            <!--risuscito:pv_progressStyle="@style/Material.Drawable.CircularProgress.Risuscito"-->
-            <!--risuscito:pv_progressMode="indeterminate"/>-->
         <include layout="@layout/tinted_progressbar" />
 
         <TextView

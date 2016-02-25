@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,26 +62,11 @@ public class InsertVeloceFragment extends Fragment {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-//                        .getText().toString();
-//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
-
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-//                String query = "SELECT _id" +
-//                        "  FROM ELENCO" +
-//                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//                // recupera l'ID del canto
-//                cursor.moveToFirst();
-//                int idCanto = cursor.getInt(0);
-//                // chiude il cursore
-//                cursor.close();
 
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();
@@ -95,7 +81,6 @@ public class InsertVeloceFragment extends Fragment {
                     try {
                         db.execSQL(query);
                     } catch (SQLException e) {
-//                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                         Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
@@ -115,12 +100,6 @@ public class InsertVeloceFragment extends Fragment {
                     // chiude il cursore
                     cursor.close();
 
-//                    query = "SELECT color, pagina" +
-//                            "		FROM ELENCO" +
-//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                    cursor = db.rawQuery(query, null);
-//                    cursor.moveToFirst();
-//                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
                     listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
                     cursor.close();
 
@@ -267,8 +246,6 @@ public class InsertVeloceFragment extends Fragment {
 
         });
 
-//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
-//        paperPulisci.setColor(getThemeUtils().primaryColor());
         rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,16 +259,37 @@ public class InsertVeloceFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Set a hint to the system about whether this fragment's UI is currently visible
+     * to the user. This hint defaults to true and is persistent across fragment instance
+     * state save and restore.
+     * <p/>
+     * <p>An app may set this to false to indicate that the fragment's UI is
+     * scrolled out of visibility or is otherwise not directly visible to the user.
+     * This may be used by the system to prioritize operations such as fragment lifecycle updates
+     * or loader ordering behavior.</p>
+     *
+     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
+     *                        false if it is not.
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.d(getClass().getName(), "VISIBLE");
+            //to hide soft keyboard
+            if (searchPar != null)
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+        }
+    }
+
     @Override
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
     }
-
-//    private ThemeUtils getThemeUtils() {
-//        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
-//    }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity().getApplicationContext(),

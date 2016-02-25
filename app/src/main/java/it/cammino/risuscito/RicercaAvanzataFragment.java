@@ -69,7 +69,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
-    //    private ProgressView progress;
     private ProgressBar progress;
     private int prevOrientation;
     private static Map<Character, Character> MAP_NORM;
@@ -225,25 +224,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             }
         });
 
-//        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//        String query = "SELECT _id, lista" +
-//                "		FROM LISTE_PERS" +
-//                "		ORDER BY _id ASC";
-//        Cursor lista = db.rawQuery(query, null);
-//
-//        listePers = new ListaPersonalizzata[lista.getCount()];
-//        idListe = new int[lista.getCount()];
-//
-//        lista.moveToFirst();
-//        for (int i = 0; i < lista.getCount(); i++) {
-//            idListe[i] = lista.getInt(0);
-//            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-//                    deserializeObject(lista.getBlob(1));
-//            lista.moveToNext();
-//        }
-//        lista.close();
-//        db.close();
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
@@ -287,7 +267,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             }
 
             lista.close();
-            db.close();
+//            db.close();
+
+            //to hide soft keyboard
+            if (searchPar != null)
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
         }
     }
 
@@ -443,28 +428,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
-//                                        .callback(new MaterialDialog.ButtonCallback() {
-//                                            @Override
-//                                            public void onPositive(MaterialDialog dialog) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-////                                                Toast.makeText(getActivity()
-////                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//
-//                                            @Override
-//                                            public void onNegative(MaterialDialog dialog) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -601,30 +564,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                                String sql = "UPDATE CUST_LISTS "
-//                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                                        + "WHERE _id = " + idListaDaAgg
-//                                        + "  AND position = " + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-////                                Toast.makeText(getActivity()
-////                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -673,6 +612,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
             // crea un manipolatore per il Database in modalità READ
             SQLiteDatabase db = listaCanti.getReadableDatabase();
+            Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
 
             String[] words = sSearchText[0].split("\\W");
 
@@ -690,24 +630,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     break;
 
                 boolean found = true;
-//                for (int j = 0; j < words.length; j++) {
-//                    if (words[j].trim().length() > 1) {
-//                        text = words[j].trim();
-//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
-//
-//                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
-//                            String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
-//                            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-//                            text =  pattern.matcher(nfdNormalizedString).replaceAll("");
-//                        }
-//                        else
-//                            text = removeAccents(text);
-//
-//                        if (!aTexts[k][1].contains(text)) {
-//                            found = false;
-//                        }
-//                    }
-//                }
                 for (String word : words) {
                     if (word.trim().length() > 1) {
                         text = word.trim();

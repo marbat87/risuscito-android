@@ -204,7 +204,6 @@ public class CreaListaActivity extends ThemeableActivity {
         myItemAdapter.setEventListener(new DraggableSwipeableAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
-//				((DraggableSwipeableExampleActivity) getActivity()).onItemRemoved(position);
                 if (modifica) {
                     nomiCanti.remove(position);
 //                    	Log.i("RIMOSSO", which + "");
@@ -256,26 +255,6 @@ public class CreaListaActivity extends ThemeableActivity {
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                elementi.set(positionToRename, new DraggableItem(dialog.getInputEditText().getText().toString()
-//                                        , elementi.get(positionToRename).getIdPosizione()));
-//                                mAdapter.notifyDataSetChanged();
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -370,28 +349,6 @@ public class CreaListaActivity extends ThemeableActivity {
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-//                                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
-//                                if (modifica)
-//                                    nomiCanti.add("");
-//                                mAdapter.notifyItemInserted(elementi.size() - 1);
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
@@ -530,30 +487,6 @@ public class CreaListaActivity extends ThemeableActivity {
                                     setRequestedOrientation(prevOrientation);
                                 }
                             })
-//                            .callback(new MaterialDialog.ButtonCallback() {
-//                                @Override
-//                                public void onPositive(MaterialDialog dialog) {
-//                                    setRequestedOrientation(prevOrientation);
-//                                    if (saveList()) {
-//                                        setResult(Activity.RESULT_OK);
-//                                        finish();
-//                                        overridePendingTransition(0, R.anim.slide_out_bottom);
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onNegative(MaterialDialog dialog) {
-//                                    setRequestedOrientation(prevOrientation);
-//                                    setResult(Activity.RESULT_CANCELED);
-//                                    finish();
-//                                    overridePendingTransition(0, R.anim.slide_out_bottom);
-//                                }
-//
-//                                @Override
-//                                public void onNeutral(MaterialDialog dialog) {
-//                                    setRequestedOrientation(prevOrientation);
-//                                }
-//                            })
                             .show();
                     dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                         @Override
@@ -619,30 +552,6 @@ public class CreaListaActivity extends ThemeableActivity {
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                setRequestedOrientation(prevOrientation);
-//                                if (saveList()) {
-//                                    setResult(Activity.RESULT_OK);
-//                                    finish();
-//                                    overridePendingTransition(0, R.anim.slide_out_bottom);
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                setRequestedOrientation(prevOrientation);
-//                                setResult(Activity.RESULT_CANCELED);
-//                                finish();
-//                                overridePendingTransition(0, R.anim.slide_out_bottom);
-//                            }
-//
-//                            @Override
-//                            public void onNeutral(MaterialDialog dialog) {
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override

@@ -11,64 +11,7 @@
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#fff</item>
-        <!--<item name="android:textSize">18sp</item>-->
     </style>
-
-    <!--<style name="menu_labels_style">-->
-        <!--<item name="android:background">@drawable/fab_label_background</item>-->
-        <!--<item name="android:textColor">@android:color/white</item>-->
-        <!--<item name="android:gravity">left|start</item>-->
-        <!--<item name="android:layout_gravity">left|start</item>-->
-    <!--</style>-->
-
-    <!--<style name="FloatingWaveColorButtonRippleStyle" parent="Material.Drawable.Ripple.Wave.Light">-->
-        <!--<item name="rd_rippleColor">#33000000</item>-->
-    <!--</style>-->
-
-    <!--<style name="Material.Drawable.Ripple.Wave.Light.Risuscito">-->
-        <!--<item name="rd_rippleColor">?colorAccent</item>-->
-        <!--<item name="rd_leftPadding">1dp</item>-->
-        <!--<item name="rd_topPadding">1dp</item>-->
-        <!--<item name="rd_rightPadding">1dp</item>-->
-        <!--<item name="rd_bottomPadding">2dp</item>-->
-        <!--<item name="rd_delayClick">none</item>-->
-    <!--</style>-->
-
-    <!--<style name="Material.Drawable.CircularProgress.Risuscito">-->
-        <!--<item name="cpd_strokeColor">?attr/colorAccent</item>-->
-        <!--<item name="cpd_strokeSecondaryColor">@android:color/transparent</item>-->
-    <!--</style>-->
-
-    <!--<style name="Material.Drawable.LinearProgress.Query.Risuscito">-->
-        <!--<item name="lpd_strokeColor">?attr/colorAccent</item>-->
-        <!--&lt;!&ndash;<item name="lpd_strokeSecondaryColor">#FFB6CDF2</item>&ndash;&gt;-->
-    <!--</style>-->
-
-    <!--<style  name="Material.Widget.TabPageIndicator.Light.Risuscito">-->
-        <!--<item name="tpi_tabPadding">12dp</item>-->
-        <!--<item name="tpi_tabRipple">@style/Material.Drawable.Ripple.Wave.Risuscito</item>-->
-        <!--<item name="tpi_indicatorHeight">3dp</item>-->
-        <!--<item name="android:textAppearance">@style/TabTextAppearance</item>-->
-        <!--<item name="tpi_mode">scroll</item>-->
-    <!--</style>-->
-
-    <!--<style name="Material.Drawable.Ripple.Wave.Risuscito">-->
-        <!--<item name="android:background">@null</item>-->
-        <!--<item name="rd_rippleColor">?colorAccent</item>-->
-        <!--<item name="rd_rippleAnimDuration">300</item>-->
-        <!--<item name="rd_maskType">rectangle</item>-->
-        <!--<item name="rd_cornerRadius">0dp</item>-->
-        <!--<item name="rd_padding">0dp</item>-->
-    <!--</style>-->
-
-    <!--<style name="Material.Widget.Slider.Discrete.Risuscito">-->
-        <!--<item name="sl_travelAnimDuration">1</item>-->
-        <!--<item name="sl_thumbFocusRadius">40dip</item>-->
-        <!--<item name="sl_minValue">0</item>-->
-        <!--<item name="sl_maxValue">100</item>-->
-        <!--<item name="sl_textSize">@dimen/abc_text_size_title_material</item>-->
-        <!--<item name="sl_primaryColor">?colorAccent</item>-->
-    <!--</style>-->
 
     <style name="TitoloSezione">
         <item name="android:gravity">start|center_vertical</item>
@@ -91,19 +34,12 @@
     </style>
 
     <style name="Widget.Design.TabLayout.Risuscito">
-        <!--<item name="tabSelectedTextColor">@android:color/white</item>-->
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <!--<item name="tabTextColor">#99FFFFFF</item>-->
-        <!--<item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>-->
         <item name="android:background">?colorPrimary</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="android:theme">@style/ActionBarThemeOverlay</item>
     </style>
-
-    <!--<style name="TextAppearance.Design.Tab.Risuscito">-->
-        <!--<item name="android:textStyle">bold</item>-->
-    <!--</style>-->
 
     <style name="Widget.Design.NavigationView.Risuscito">
         <item name="android:background">@color/navdrawer_background</item>

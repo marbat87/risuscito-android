@@ -20,11 +20,6 @@
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
-        <!--<item name="android:fastScrollThumbDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_thumb_material</item>-->
-        <!--<item name="android:fastScrollTextColor" tools:targetApi="HONEYCOMB">@android:color/white</item>-->
-        <!--<item name="android:fastScrollPreviewBackgroundRight" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_right_material</item>-->
-        <!--<item name="android:fastScrollPreviewBackgroundLeft" tools:targetApi="HONEYCOMB">@drawable/fastscroll_label_left_material</item>-->
-        <!--<item name="android:fastScrollTrackDrawable" tools:targetApi="HONEYCOMB">@drawable/fastscroll_track_material</item>-->
 
         <item name="md_medium_font">Roboto-Medium.ttf</item>
         <item name="md_regular_font">Roboto-Regular.ttf</item>
@@ -37,86 +32,6 @@
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >
         <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
     </style>
-
-    <!--<style name="RisuscitoTheme.BlueDark">-->
-    <!--<item name="colorAccent">#3F51B5</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Grey">-->
-    <!--<item name="colorAccent">#9E9E9E</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.BlueGrey">-->
-    <!--<item name="colorAccent">#607D8B</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Black">-->
-    <!--<item name="colorAccent">#37474F</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Brown">-->
-    <!--<item name="colorAccent">#795548</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Red">-->
-    <!--<item name="colorAccent">#D32F2F</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Pink">-->
-    <!--<item name="colorAccent">#E91E63</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Purple">-->
-    <!--<item name="colorAccent">#9C27B0</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Violet">-->
-    <!--<item name="colorAccent">#5E35B1</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Blue">-->
-    <!--<item name="colorAccent">#1976D2</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.BlueLight">-->
-    <!--<item name="colorAccent">#03A9F4</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Torqouise">-->
-    <!--<item name="colorAccent">#00BCD4</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.GreenWater">-->
-    <!--<item name="colorAccent">#009688</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Green">-->
-    <!--<item name="colorAccent">#4CAF50</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.GreenLight">-->
-    <!--<item name="colorAccent">#8BC34A</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.GreenBean">-->
-    <!--<item name="colorAccent">#CDDC39</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Yellow">-->
-    <!--<item name="colorAccent">#FDD835</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.OrangeLight">-->
-    <!--<item name="colorAccent">#FFB300</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.Orange">-->
-    <!--<item name="colorAccent">#FB8C00</item>-->
-    <!--</style>-->
-
-    <!--<style name="RisuscitoTheme.RedLight">-->
-    <!--<item name="colorAccent">#F4511E</item>-->
-    <!--</style>-->
 
     <style name="RisuscitoTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>

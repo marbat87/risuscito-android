@@ -119,6 +119,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 if (!tempText.equals(s.toString()))
                     ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
 
+
                 if (s.length() >= 3) {
 
                     rootView.findViewById(R.id.search_no_results)
@@ -221,24 +222,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             }
         });
 
-//        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//        String query = "SELECT _id, lista" + "		FROM LISTE_PERS"
-//                + "		ORDER BY _id ASC";
-//        Cursor lista = db.rawQuery(query, null);
-//
-//        listePers = new ListaPersonalizzata[lista.getCount()];
-//        idListe = new int[lista.getCount()];
-//
-//        lista.moveToFirst();
-//        for (int i = 0; i < lista.getCount(); i++) {
-//            idListe[i] = lista.getInt(0);
-//            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata
-//                    .deserializeObject(lista.getBlob(1));
-//            lista.moveToNext();
-//        }
-//        lista.close();
-//        db.close();
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
@@ -283,6 +266,11 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
             lista.close();
             db.close();
+
+            //to hide soft keyboard
+            if (searchPar != null)
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
         }
     }
 
@@ -438,28 +426,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
-//                                        .callback(new MaterialDialog.ButtonCallback() {
-//                                            @Override
-//                                            public void onPositive(MaterialDialog dialog) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-////                                                Toast.makeText(getActivity()
-////                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//
-//                                            @Override
-//                                            public void onNegative(MaterialDialog dialog) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -590,30 +556,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                                String sql = "UPDATE CUST_LISTS "
-//                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                                        + "WHERE _id = " + idListaDaAgg + "  AND position = "
-//                                        + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-////                                Toast.makeText(getActivity()
-////                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
