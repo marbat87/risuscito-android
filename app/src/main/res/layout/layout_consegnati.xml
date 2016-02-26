@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -49,8 +50,9 @@
                 android:scaleType="center"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_unselectall_white_30dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/select_all"
@@ -62,8 +64,9 @@
                 android:scaleType="center"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_selectall_white_30dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/cancel_change"
@@ -75,8 +78,9 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_undo_24dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_undo_24dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/confirm_changes"
@@ -88,8 +92,9 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_save_24dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_save_24dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
         </LinearLayout>
 

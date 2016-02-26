@@ -38,7 +38,7 @@ import java.util.Locale;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
-import it.cammino.risuscito.ui.BottomSheetHelper;
+import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ListaPersonalizzataFragment extends Fragment {
@@ -87,6 +87,7 @@ public class ListaPersonalizzataFragment extends Fragment {
         cursor.moveToFirst();
         listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
                 deserializeObject(cursor.getBlob(0));
+        cursor.close();
 
         updateLista();
 
@@ -167,9 +168,11 @@ public class ListaPersonalizzataFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                Log.i(getClass().toString(), "idLista: " + idLista);
-                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
-                        .title(R.string.share_by)
-                        .show();
+//                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
+//                        .title(R.string.share_by)
+//                        .show();
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getString(R.string.share_by), getDefaultIntent());
+                bottomSheetDialog.show(getFragmentManager(), null);
             }
         });
 
@@ -209,6 +212,8 @@ public class ListaPersonalizzataFragment extends Fragment {
 
             listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
                     deserializeObject(cursor.getBlob(0));
+
+            cursor.close();
 
             updateLista();
             cantoAdapter.notifyDataSetChanged();

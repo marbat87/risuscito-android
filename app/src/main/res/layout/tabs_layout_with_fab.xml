@@ -68,7 +68,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_eraser_white_48dp"
+            risuscito:srcCompat="@drawable/ic_eraser_white_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -81,7 +81,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_delete_48dp"
+            risuscito:srcCompat="@drawable/ic_delete_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -94,7 +94,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_add_48dp"
+            risuscito:srcCompat="@drawable/ic_add_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -107,7 +107,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_edit_48dp"
+            risuscito:srcCompat="@drawable/ic_edit_48dp"
             android:soundEffectsEnabled="true" />
 
         <ImageButton
@@ -120,7 +120,7 @@
             android:scaleType="fitCenter"
             android:theme="@style/ActionBarThemeOverlay"
             android:background="?attr/customSelectorRound"
-            android:src="@drawable/ic_share_48dp"
+            risuscito:srcCompat="@drawable/ic_share_48dp"
             android:soundEffectsEnabled="true" />
 
     </com.github.alexkolpa.fabtoolbar.FabToolbar>

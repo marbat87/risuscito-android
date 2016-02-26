@@ -91,7 +91,7 @@ public class CreaListaActivity extends ThemeableActivity {
         setContentView(R.layout.activity_crea_lista);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());

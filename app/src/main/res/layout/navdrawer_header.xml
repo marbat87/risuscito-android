@@ -59,14 +59,13 @@
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 fontPath="fonts/Roboto-Medium.ttf"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:id="@+id/username"
-                android:layout_above="@+id/email"
                 tools:ignore="MissingPrefix" />
 
             <TextView
@@ -75,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:text="Test@gmail.com"
                 android:id="@+id/email"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:layout_marginLeft="16dp"
@@ -95,12 +94,13 @@
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="12dp"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:theme="@style/ActionBarThemeOverlay"
         android:background="?attr/customSelectorRoundAccent"
-        android:src="@drawable/expand_account_menu_bg"
+        risuscito:srcCompat="@drawable/expand_account_menu_bg"
         android:visibility="invisible"
-        android:soundEffectsEnabled="true" />
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
 
 </FrameLayout>
 

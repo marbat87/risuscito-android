@@ -37,7 +37,7 @@ import java.util.Locale;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
-import it.cammino.risuscito.ui.BottomSheetHelper;
+import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -88,9 +88,11 @@ public class CantiEucarestiaFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                Log.i(getClass().toString(), "cantieucarestia");
-                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
-                        .title(R.string.share_by)
-                        .show();
+//                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
+//                        .title(R.string.share_by)
+//                        .show();
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getString(R.string.share_by), getDefaultIntent());
+                bottomSheetDialog.show(getFragmentManager(), null);
             }
         });
 

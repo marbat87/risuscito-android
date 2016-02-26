@@ -44,21 +44,13 @@
                         android:id="@+id/time_text"
                         android:layout_width="50dip"
                         android:paddingLeft="@dimen/activity_min_margin"
+                        android:paddingStart="@dimen/activity_min_margin"
                         android:layout_gravity="center_vertical"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:layout_height="wrap_content"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat" />
 
-                    <!--<com.rey.material.widget.Slider-->
-                        <!--style="@style/Material.Widget.Slider"-->
-                        <!--android:id="@+id/music_seekbar"-->
-                        <!--android:layout_width="0dip"-->
-                        <!--android:layout_weight="1"-->
-                        <!--risuscito:sl_stepValue="1000"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--android:padding="16dp" />-->
                     <SeekBar
                         android:id="@+id/music_seekbar"
                         android:layout_width="0dip"
@@ -78,8 +70,9 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/play_button_drawable"
-                        android:soundEffectsEnabled="true" />
+                        risuscito:srcCompat="@drawable/play_button_drawable"
+                        android:soundEffectsEnabled="true"
+                        tools:ignore="MissingPrefix" />
 
                 </LinearLayout>
 
@@ -99,7 +92,7 @@
                     android:layout_width="50dip"
                     android:paddingLeft="@dimen/activity_min_margin"
                     android:layout_gravity="center_vertical"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse" />
@@ -133,8 +126,9 @@
                     android:scaleType="fitCenter"
                     android:theme="@style/ActionBarThemeOverlay"
                     android:background="?attr/customSelectorRound"
-                    android:src="@drawable/play_scroll_button_drawable"
-                    android:soundEffectsEnabled="true" />
+                    risuscito:srcCompat="@drawable/play_scroll_button_drawable"
+                    android:soundEffectsEnabled="true"
+                    tools:ignore="MissingPrefix" />
 
             </LinearLayout>
 
@@ -178,7 +172,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_fullscreen_48dp"
+                risuscito:srcCompat="@drawable/ic_fullscreen_48dp"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -191,7 +185,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/hide_music_background"
+                risuscito:srcCompat="@drawable/hide_music_background"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -204,7 +198,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/download_delete_button_drawable"
+                risuscito:srcCompat="@drawable/download_delete_button_drawable"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -217,7 +211,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/fab_add_to_favorites"
+                risuscito:srcCompat="@drawable/fab_add_to_favorites"
                 android:soundEffectsEnabled="true" />
 
         </com.github.alexkolpa.fabtoolbar.FabToolbar>

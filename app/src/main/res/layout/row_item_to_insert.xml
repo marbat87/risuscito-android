@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/checkable_bck"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -37,9 +39,10 @@
             android:id="@+id/see_canto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_visibility_24dp"
+            risuscito:srcCompat="@drawable/ic_visibility_24dp"
             android:layout_gravity="center"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            tools:ignore="MissingPrefix" />
 
         <TextView
             android:id="@+id/text_id_canto"
