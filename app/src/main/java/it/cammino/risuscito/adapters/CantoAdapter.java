@@ -19,9 +19,6 @@ import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.CantoRecycled;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter {
 
     private List<CantoRecycled> dataItems;
@@ -72,33 +69,7 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
         this.createContextMenuListener = createContextMenuListener;
         this.mMode = mMode;
         this.context = activity;
-//        init();
     }
-
-//    private void init() {
-//        alphaIndexer = new HashMap<String, Integer>();
-//        int size = dataItems.size();
-//        String prevLetter = " ";
-//
-//        for (int x = 0; x < size; x++) {
-//            // get the first letter of the store
-//            // convert to uppercase otherwise lowercase a -z will be sorted after upper A-Z
-//            String ch = dataItems.get(x).getTitolo().substring(0, 1).toUpperCase();
-//
-//            if (!ch.equals(prevLetter)) {
-//                // HashMap will prevent duplicates
-//                alphaIndexer.put(ch, x);
-//                prevLetter = ch;
-//            }
-//        }
-//
-//        Set<String> sectionLetters = alphaIndexer.keySet();
-//        // create a list from the set to sort
-//        ArrayList<String> sectionList = new ArrayList<>(sectionLetters);
-//        Collections.sort(sectionList);
-//        sections = new String[sectionList.size()];
-//        sectionList.toArray(sections);
-//    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -127,17 +98,6 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
             cantoHolder.cantoPage.setBackground(drawable);
         else
             cantoHolder.cantoPage.setBackgroundDrawable(drawable);
-
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
     }
 
     @Override
@@ -170,26 +130,6 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
         }
 
     }
-
-//    @Override
-//    public String[] getSections() {
-//        return sections;
-//    }
-//
-//    @Override
-//    public int getPositionForSection(int section) {
-//        return alphaIndexer.get(sections[section]);
-//    }
-//
-//    @Override
-//    public int getSectionForPosition(int position) {
-//        String first = dataItems.get(position).getTitolo().substring(0, 1).toUpperCase();
-//        for (int i = 0; i < sections.length; i++) {
-//            if (first.equals(sections[i]))
-//                return i;
-//        }
-//        return 0;
-//    }
 
     @Override
     public String getCustomStringForElement(int i) {
