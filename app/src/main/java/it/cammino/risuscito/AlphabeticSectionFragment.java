@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
 import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
@@ -131,12 +132,17 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        TouchScrollBar mDragScrollbar =
-                new TouchScrollBar(getActivity(), recyclerView, true);
-        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
-        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
-        mDragScrollbar.setAutoHide(true);
-        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
+//        TouchScrollBar mDragScrollbar =
+//                new TouchScrollBar(getActivity(), recyclerView, true);
+//        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
+//        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
+//        mDragScrollbar.setAutoHide(true);
+//        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
+
+        new DragScrollBar(getActivity(), recyclerView, true)
+                .addIndicator(new CustomIndicator(getActivity()), true)
+                .setHandleColour(getThemeUtils().accentColor())
+                .setHandleOffColour(getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 

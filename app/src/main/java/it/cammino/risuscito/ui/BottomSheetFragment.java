@@ -25,10 +25,20 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
 //    AlertDialogListener mListener;
 
+    public static BottomSheetFragment newInstance(Intent intent) {
+        BottomSheetFragment frag = new BottomSheetFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("showTitle", false);
+        args.putParcelable("intent", intent);
+        frag.setArguments(args);
+        return frag;
+    }
+
     public static BottomSheetFragment newInstance(String title, Intent intent) {
         BottomSheetFragment frag = new BottomSheetFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
+        args.putBoolean("showTitle", true);
         args.putParcelable("intent", intent);
         frag.setArguments(args);
         return frag;
@@ -53,11 +63,19 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet, container, false);
-        String title = getArguments().getString("title");
-        final Intent intent = getArguments().getParcelable("intent");
-        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
-        titleView.setText(title);
 
+        Boolean showTitle = getArguments().getBoolean("showTitle");
+        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
+        if (showTitle) {
+            String title = getArguments().getString("title");
+            titleView.setText(title);
+            titleView.setVisibility(View.VISIBLE);
+        }
+        else {
+            titleView.setVisibility(View.GONE);
+        }
+
+        final Intent intent = getArguments().getParcelable("intent");
         PackageManager pm = getActivity().getPackageManager();
 
         final List<ResolveInfo> list = pm.queryIntentActivities(intent, 0);
@@ -105,7 +123,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.shareList);
         BottomSheetAdapter adapter = new BottomSheetAdapter(getActivity(), list, clickListener);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         return view;
     }

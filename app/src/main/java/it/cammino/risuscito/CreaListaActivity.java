@@ -241,8 +241,8 @@ public class CreaListaActivity extends ThemeableActivity {
                                         , elementi.get(positionToRename).getIdPosizione()));
                                 mAdapter.notifyDataSetChanged();
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -250,8 +250,8 @@ public class CreaListaActivity extends ThemeableActivity {
                             @Override
                             public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -274,8 +274,8 @@ public class CreaListaActivity extends ThemeableActivity {
                 dialog.getInputEditText().selectAll();
                 dialog.setCancelable(false);
                 //to show soft keyboard
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
 
         });
@@ -335,8 +335,8 @@ public class CreaListaActivity extends ThemeableActivity {
                                     nomiCanti.add("");
                                 mAdapter.notifyItemInserted(elementi.size() - 1);
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -344,8 +344,8 @@ public class CreaListaActivity extends ThemeableActivity {
                             @Override
                             public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -366,8 +366,8 @@ public class CreaListaActivity extends ThemeableActivity {
                 dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 dialogAdd.setCancelable(false);
                 //to show soft keyboard
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 

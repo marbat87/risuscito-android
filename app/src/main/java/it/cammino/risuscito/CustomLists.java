@@ -111,8 +111,8 @@ public class CustomLists extends Fragment  {
                             @Override
                             public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 getActivity().setRequestedOrientation(prevOrientation);
                                 Bundle bundle = new Bundle();
                                 bundle.putString("titolo", materialDialog.getInputEditText().getText().toString());
@@ -126,8 +126,8 @@ public class CustomLists extends Fragment  {
                             @Override
                             public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -148,8 +148,8 @@ public class CustomLists extends Fragment  {
                 dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 dialog.setCancelable(false);
                 //to show soft keyboard
-                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 

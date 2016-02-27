@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
 import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
@@ -117,67 +118,25 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         };
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
-//        VerticalRecyclerViewFastScroller fastScroller =
-//                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
         CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-//        fastScroller.setRecyclerView(recyclerView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-//        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-
-        // Connect the scroller to the adapter to observe data set changes
-//        adapter.registerAdapterDataObserver(fastScroller.getAdapterDataObserver());
-
-        // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-//        new MaterialScrollBar(getActivity(), recyclerView, true)
-//                .addIndicator(new CustomIndicator(getActivity()), true)
-//                .setHideDuration(Utility.HIDE_DELAY)
-//                .setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()))
-//                .setAutoHide(true);
-        TouchScrollBar mDragScrollbar =
-                new TouchScrollBar(getActivity(), recyclerView, true);
-        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
-        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
-        mDragScrollbar.setAutoHide(true);
-        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
+//        TouchScrollBar mDragScrollbar =
+//                new TouchScrollBar(getActivity(), recyclerView, true);
+//        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
+//        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
+//        mDragScrollbar.setAutoHide(true);
+//        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
 
-//        query = "SELECT _id, lista" +
-//                "		FROM LISTE_PERS" +
-//                "		ORDER BY _id ASC";
-//        lista = db.rawQuery(query, null);
-//
-//        listePers = new ListaPersonalizzata[lista.getCount()];
-//        idListe = new int[lista.getCount()];
-//
-//        lista.moveToFirst();
-//        for (int i = 0; i < lista.getCount(); i++) {
-//            idListe[i] = lista.getInt(0);
-//            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-//                    deserializeObject(lista.getBlob(1));
-//            lista.moveToNext();
-//        }
-//
-//        lista.close();
-//        db.close();
+        new DragScrollBar(getActivity(), recyclerView, true)
+                .addIndicator(new CustomIndicator(getActivity()), true)
+                .setHandleColour(getThemeUtils().accentColor())
+                .setHandleOffColour(getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
-
-//        if (!mLUtils.hasL()) {
-//            Drawable myDrawable = getResources().getDrawable(R.drawable.rvfs_fast_scroller_handle_rounded);
-//            Drawable compatDrawable  = DrawableCompat.wrap(myDrawable);
-//            DrawableCompat.setTint(compatDrawable, getThemeUtils().accentColor());
-//            fastScroller.setHandleBackground(compatDrawable);
-//        }
-//
-//        RisuscitoSectionTitleIndicator indicator = (RisuscitoSectionTitleIndicator)
-//                rootView.findViewById(R.id.rvfs_scroll_section_indicator)  ;
-//        indicator.setIndicatorBackgroundColor(getThemeUtils().accentColor());
 
         return rootView;
     }
@@ -368,28 +327,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
-//                                        .callback(new MaterialDialog.ButtonCallback() {
-//                                            @Override
-//                                            public void onPositive(MaterialDialog dialog) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-////                                                Toast.makeText(getActivity()
-////                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//
-//                                            @Override
-//                                            public void onNegative(MaterialDialog dialog) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
                                         .show();
                                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                                     @Override
@@ -513,31 +450,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                                String sql = "UPDATE CUST_LISTS "
-////                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-////                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                                        + "    SET id_canto = " + idDaAgg
-//                                        + "    WHERE _id = " + idListaDaAgg
-//                                        + "    AND position = " + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-////                                Toast.makeText(getActivity()
-////                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
                         .show();
                 dialog.setOnKeyListener(new Dialog.OnKeyListener() {
                     @Override
