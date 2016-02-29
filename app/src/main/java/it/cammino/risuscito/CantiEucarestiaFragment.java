@@ -91,7 +91,7 @@ public class CantiEucarestiaFragment extends Fragment {
 //                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
 //                        .title(R.string.share_by)
 //                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getString(R.string.share_by), getDefaultIntent());
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
                 bottomSheetDialog.show(getFragmentManager(), null);
             }
         });
