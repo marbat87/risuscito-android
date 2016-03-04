@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,18 +42,11 @@ public class DraggableSwipeableAdapter
 
     private List<DraggableItem> mData;
     private Activity activity;
-    //    private AbstractDataProvider mProvider;
     private EventListener mEventListener;
-//    private View.OnClickListener mItemViewOnClickListener;
-//    private View.OnClickListener mSwipeableViewContainerOnClickListener;
 
     public interface EventListener {
         void onItemRemoved(int position);
-
         void onItemMoved(int from, int to);
-//        void onItemPinned(int position);
-
-        //        void onItemViewClicked(View v, boolean pinned);
         void onItemViewLongClicked(View v);
     }
 
@@ -78,8 +69,6 @@ public class DraggableSwipeableAdapter
             mDragHandle = v.findViewById(R.id.drag_handle);
             mTextView = (TextView) v.findViewById(android.R.id.text1);
             mDragImage = (ImageView) v.findViewById(R.id.drag_image);
-//            if(longClickListener != null)
-//                v.setOnLongClickListener(longClickListener);
         }
 
         @Override
@@ -88,48 +77,11 @@ public class DraggableSwipeableAdapter
         }
     }
 
-//    public DraggableSwipeableAdapter(AbstractDataProvider dataProvider) {
-//        mProvider = dataProvider;
-//        mItemViewOnClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onItemViewClick(v);
-//            }
-//        };
-//        mSwipeableViewContainerOnClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onSwipeableViewContainerClick(v);
-//            }
-//        };
-//
-//        // DraggableItemAdapter and SwipeableItemAdapter require stable ID, and also
-//        // have to implement the getItemId() method appropriately.
-//        setHasStableIds(true);
-//    }
-//
-//    private void onItemViewClick(View v) {
-//        if (mEventListener != null) {
-//            mEventListener.onItemViewClicked(v, true); // true --- pinned
-//        }
-//    }
-//
-//    private void onSwipeableViewContainerClick(View v) {
-//        if (mEventListener != null) {
-//            mEventListener.onItemViewClicked(RecyclerViewAdapterUtils.getParentViewHolderItemView(v));  // false --- not pinned
-//        }
-//    }
 
     @Override
     public long getItemId(int position) {
-//        return mProvider.getItem(position).getId();
         return mData.get(position).getIdPosizione();
     }
-
-//    @Override
-//    public int getItemViewType(int position) {
-//        return mProvider.getItem(position).getViewType();
-//    }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -140,14 +92,8 @@ public class DraggableSwipeableAdapter
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-//        final AbstractDataProvider.Data item = mProvider.getItem(position);
         final DraggableItem item = mData.get(position);
 
-        // set listeners
-        // (if the item is *not pinned*, click event comes to the itemView)
-//        holder.itemView.setOnClickListener(mItemViewOnClickListener);
-        // (if the item is *pinned*, click event comes to the mContainer)
-//        holder.mContainer.setOnClickListener(mSwipeableViewContainerOnClickListener);
         holder.mContainer.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -158,8 +104,10 @@ public class DraggableSwipeableAdapter
             }
         });
 
-        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
+//        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
+        holder.mDragImage.setImageResource(R.drawable.ic_reorder_24dp);
+        holder.mDragImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         // set text
         holder.mTextView.setText(item.getTitolo());
@@ -170,28 +118,22 @@ public class DraggableSwipeableAdapter
 
         if (((dragState & RecyclerViewDragDropManager.STATE_FLAG_IS_UPDATED) != 0) ||
                 ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0)) {
-//            int bgResId;
 
             if ((dragState & RecyclerViewDragDropManager.STATE_FLAG_IS_ACTIVE) != 0) {
-//                bgResId = R.drawable.bg_item_dragging_active_state;
                 setBackgroundGeneric(holder.mContainer, ((ThemeableActivity) activity).getThemeUtils().accentColorLight());
             } else if ((dragState & RecyclerViewDragDropManager.STATE_FLAG_DRAGGING) != 0) {
-//                bgResId = R.drawable.bg_item_dragging_state;
                 TypedValue typedValue = new TypedValue();
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
                 holder.mContainer.setBackgroundResource(typedValue.resourceId);
             } else if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_ACTIVE) != 0) {
-//                bgResId = R.drawable.bg_item_swiping_active_state;
                 setBackgroundGeneric(holder.mContainer, ((ThemeableActivity) activity).getThemeUtils().accentColorLight());
             } else if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
-//                bgResId = R.drawable.bg_item_swiping_state;
                 TypedValue typedValue = new TypedValue();
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
                 holder.mContainer.setBackgroundResource(typedValue.resourceId);
             } else {
-//                bgResId = R.drawable.bg_item_normal_state;
                 TypedValue typedValue = new TypedValue();
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
@@ -199,17 +141,12 @@ public class DraggableSwipeableAdapter
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.transparent));
             }
 
-//            holder.mContainer.setBackgroundResource(bgResId);
         }
 
-        // set swiping properties
-//        holder.setSwipeItemSlideAmount(
-//                item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
     }
 
     @Override
     public int getItemCount() {
-//        return mProvider.getCount();
         return mData.size();
     }
 
@@ -221,7 +158,6 @@ public class DraggableSwipeableAdapter
             return;
         }
 
-//        mProvider.moveItem(fromPosition, toPosition);
         mData.add(toPosition, mData.remove(fromPosition));
 
         notifyItemMoved(fromPosition, toPosition);
@@ -251,11 +187,6 @@ public class DraggableSwipeableAdapter
 
     @Override
     public int onGetSwipeReactionType(MyViewHolder holder, int position, int x, int y) {
-//        if (onCheckCanStartDrag(holder, position, x, y)) {
-//            return RecyclerViewSwipeManager.REACTION_CAN_NOT_SWIPE_BOTH;
-//        } else {
-//            return mProvider.getItem(position).getSwipeReactionType();
-//        }
         return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
@@ -264,25 +195,19 @@ public class DraggableSwipeableAdapter
         int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
-//                bgRes = R.drawable.bg_swipe_item_neutral;
                 TypedValue typedValue = new TypedValue();
                 Resources.Theme theme = activity.getTheme();
                 theme.resolveAttribute(R.attr.customSelector, typedValue, true);
                 holder.itemView.setBackgroundResource(typedValue.resourceId);
                 break;
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
-//                bgRes = R.drawable.bg_swipe_item_left;
                 holder.itemView.setBackgroundResource(R.drawable.bg_swipe_item_left);
-//                setBackgroundGeneric(holder.itemView, ((ThemeableActivity)activity).getThemeUtils().accentColorDark());
                 break;
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
-//                bgRes = R.drawable.bg_swipe_item_right;
                 holder.itemView.setBackgroundResource(R.drawable.bg_swipe_item_right);
-//                setBackgroundGeneric(holder.itemView, ((ThemeableActivity) activity).getThemeUtils().accentColorDark());
                 break;
         }
 
-//        holder.itemView.setBackgroundResource(bgRes);
     }
 
     @Override
@@ -292,24 +217,14 @@ public class DraggableSwipeableAdapter
         switch (result) {
             // swipe right
             case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-//                if (mProvider.getItem(position).isPinnedToSwipeLeft()) {
-//                    // pinned --- back to default position
-//                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-//                } else {
-//                    // not pinned --- remove
-//                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-//                }
-//                // swipe left -- pin
+                // swipe left -- pin
                 return new SwipeRightResultAction(this , position);
-//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
             case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
                 return new SwipeRightResultAction(this , position);
-//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
             // other --- do nothing
             case RecyclerViewSwipeManager.RESULT_CANCELED:
             default:
                 return new UnpinResultAction();
-//                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
         }
     }
 
@@ -359,34 +274,6 @@ public class DraggableSwipeableAdapter
             // clear the references
         }
     }
-
-//    @Override
-//    public void onPerformAfterSwipeReaction(MyViewHolder holder, int position, int result, int reaction) {
-//        Log.d(TAG, "onPerformAfterSwipeReaction(result = " + result + ", reaction = " + reaction + ")");
-//
-////        final AbstractDataProvider.Data item = mProvider.getItem(position);
-////        final DraggableItem item = mData.get(position);
-//
-//        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-////            mProvider.removeItem(position);
-//            mData.remove(position);
-//            notifyItemRemoved(position);
-//
-//            if (mEventListener != null) {
-//                mEventListener.onItemRemoved(position);
-//            }
-//        }
-////        else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
-////            item.setPinnedToSwipeLeft(true);
-////            notifyItemChanged(position);
-////
-////            if (mEventListener != null) {
-////                mEventListener.onItemPinned(position);
-////            }
-////        } else {
-////            item.setPinnedToSwipeLeft(false);
-////        }
-//    }
 
     public EventListener getEventListener() {
         return mEventListener;

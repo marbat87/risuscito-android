@@ -1,5 +1,7 @@
 package it.cammino.risuscito;
 
+import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -23,8 +26,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -33,8 +36,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.codetail.animation.SupportAnimator;
-import io.codetail.animation.ViewAnimationUtils;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.objects.Canto;
@@ -133,20 +134,24 @@ public class ConsegnatiFragment extends Fragment {
                 rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
                 View myView = rootView.findViewById(R.id.consegnati_view);
-                myView.setVisibility(View.VISIBLE);
-
-                // get the center for the clipping circle
-                int cx = myView.getRight();
-                int cy = myView.getBottom();
-
-                // get the final radius for the clipping circle
-                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-                SupportAnimator animator =
-                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(CIRCLE_DURATION);
-                animator.start();
+                if (LUtils.hasL())
+                    enterReveal(myView, 1);
+                else
+                    myView.setVisibility(View.VISIBLE);
+//                myView.setVisibility(View.VISIBLE);
+//
+//                // get the center for the clipping circle
+//                int cx = myView.getRight();
+//                int cy = myView.getBottom();
+//
+//                // get the final radius for the clipping circle
+//                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//
+//                SupportAnimator animator =
+//                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+//                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//                animator.setDuration(CIRCLE_DURATION);
+//                animator.start();
             }
         });
 
@@ -219,20 +224,24 @@ public class ConsegnatiFragment extends Fragment {
                 rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
                 View myView = rootView.findViewById(R.id.choose_view);
-                myView.setVisibility(View.VISIBLE);
-
-                // get the center for the clipping circle
-                int cx = myView.getRight();
-                int cy = myView.getTop();
-
-                // get the final radius for the clipping circle
-                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-                SupportAnimator animator =
-                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(CIRCLE_DURATION);
-                animator.start();
+                if (LUtils.hasL())
+                    enterReveal(myView, 2);
+                else
+                    myView.setVisibility(View.VISIBLE);
+//                myView.setVisibility(View.VISIBLE);
+//
+//                // get the center for the clipping circle
+//                int cx = myView.getRight();
+//                int cy = myView.getTop();
+//
+//                // get the final radius for the clipping circle
+//                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//
+//                SupportAnimator animator =
+//                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+//                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//                animator.setDuration(CIRCLE_DURATION);
+//                animator.start();
                 return true;
             case R.id.action_help:
                 showHelp();
@@ -434,26 +443,58 @@ public class ConsegnatiFragment extends Fragment {
             rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
 //            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
             View myView = rootView.findViewById(R.id.consegnati_view);
-            myView.setVisibility(View.VISIBLE);
-
-            // get the center for the clipping circle
-            int cx = myView.getRight();
-            int cy = myView.getBottom();
-
-            // get the final radius for the clipping circle
-            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-            SupportAnimator animator =
-                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-            animator.setDuration(CIRCLE_DURATION);
-            animator.start();
+            if (LUtils.hasL())
+                enterReveal(myView, 1);
+            else
+                myView.setVisibility(View.VISIBLE);
+//            myView.setVisibility(View.VISIBLE);
+//
+//            // get the center for the clipping circle
+//            int cx = myView.getRight();
+//            int cy = myView.getBottom();
+//
+//            // get the final radius for the clipping circle
+//            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//
+//            SupportAnimator animator =
+//                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+//            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+//            animator.setDuration(CIRCLE_DURATION);
+//            animator.start();
         }
     }
 
     private void showHelp() {
         Intent intent = new Intent(getActivity(), IntroConsegnati.class);
         startActivity(intent);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    void enterReveal(View view, int mode) {
+        // previously invisible view
+//        final View myView = findViewById(R.id.my_view);
+
+        // get the center for the clipping circle
+
+//        int cx = view.getMeasuredWidth() / 2;
+//        int cy = view.getMeasuredHeight() / 2;
+        int cx = view.getRight();
+        int cy = view.getBottom();
+        if (mode == 2) {
+            cx = view.getRight();
+            cy = view.getTop();
+        }
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(view.getWidth(), view.getHeight());
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+
+        // make the view visible and start the animation
+        view.setVisibility(View.VISIBLE);
+        anim.start();
     }
 
 }
