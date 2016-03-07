@@ -83,8 +83,8 @@
 
     <style name="BottomSheet.GridItem">
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
     </style>
 
     <style name="Text"/>
@@ -101,6 +101,16 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">?android:textColorHint</item>
         <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
     </style>
 
 </resources>

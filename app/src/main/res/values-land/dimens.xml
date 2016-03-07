@@ -9,4 +9,6 @@
 
     <dimen name="product_logo_bottom">48dp</dimen>
 
+    <dimen name="custom_peek_height">260dp</dimen>
+
 </resources>
