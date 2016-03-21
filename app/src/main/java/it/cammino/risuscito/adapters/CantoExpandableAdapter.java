@@ -1,7 +1,6 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -151,8 +150,10 @@ public class CantoExpandableAdapter
         holder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         holder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         holder.cantoSource.setText(dataItem.getSource());
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(activity, R.drawable.page_oval_bkg));
-        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        Drawable drawable = ContextCompat.getDrawable(activity,
+                activity.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", activity.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(activity, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
         if (LUtils.hasJB())
             holder.cantoPage.setBackground(drawable);
         else

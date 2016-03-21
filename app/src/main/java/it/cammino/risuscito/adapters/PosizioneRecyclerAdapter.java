@@ -2,7 +2,6 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -104,8 +103,10 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 sourceCanto.setText(canto.getSource());
                 timestamp.setText(canto.getTimestamp());
                 itemTag.setText(String.valueOf(i));
-                Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-                DrawableCompat.setTint(drawable, Color.parseColor(canto.getColore()));
+                Drawable drawable = ContextCompat.getDrawable(context,
+                        context.getResources().getIdentifier("page_oval__border_bkg_" + canto.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//                Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//                DrawableCompat.setTint(drawable, Color.parseColor(canto.getColore()));
                 if (LUtils.hasJB())
                     cantoPage.setBackground(drawable);
                 else

@@ -94,7 +94,7 @@ public class MainActivity extends ThemeableActivity
     private GoogleSignInAccount acct;
     private ImageView profileImage;
     private ImageView profileBackground;
-    //    private View copertinaAccount;
+        private View copertinaAccount;
     private ImageView accountMenu;
     private TextView usernameTextView;
     private TextView emailTextView;
@@ -135,7 +135,7 @@ public class MainActivity extends ThemeableActivity
         emailTextView = (TextView) header.findViewById(R.id.email);
         emailTextView.setVisibility(View.INVISIBLE);
         profileBackground = (ImageView) header.findViewById(R.id.copertina);
-//        copertinaAccount = header.findViewById(R.id.copertina_account);
+        copertinaAccount = header.findViewById(R.id.copertina_account);
         accountMenu = (ImageView) header.findViewById(R.id.account_menu);
         Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
@@ -792,15 +792,16 @@ public class MainActivity extends ThemeableActivity
 //                        .load(personCoverUrl)
 //                        .error(R.drawable.copertina_about)
 //                        .into(profileBackground);
-            Picasso.with(this)
-                    .load(R.drawable.gplus_default_cover)
-                    .error(R.drawable.copertina_about)
-                    .into(profileBackground);
+//            Picasso.with(this)
+//                    .load(R.drawable.gplus_default_cover)
+//                    .error(R.drawable.copertina_about)
+//                    .into(profileBackground);
 //            if (LUtils.hasJB())
 //                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
 //            else
 //                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
-//            profileBackground.setVisibility(View.INVISIBLE);
+            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
+            profileBackground.setVisibility(View.INVISIBLE);
 
 //            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
             Uri profilePhoto = acct.getPhotoUrl();
@@ -850,7 +851,8 @@ public class MainActivity extends ThemeableActivity
 //                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
 //            else
 //                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-//            profileBackground.setVisibility(View.VISIBLE);
+            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
+            profileBackground.setVisibility(View.VISIBLE);
 //            profileBackground.setImageResource(R.drawable.copertina_about);
             Picasso.with(this)
                     .load(R.drawable.copertina_about)

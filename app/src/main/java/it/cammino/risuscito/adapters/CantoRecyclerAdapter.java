@@ -2,10 +2,8 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,9 +18,6 @@ import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoRecyclerAdapter extends RecyclerView.Adapter {
 
     private List<CantoRecycled> dataItems;
@@ -99,8 +94,10 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        Drawable drawable = ContextCompat.getDrawable(context,
+                context.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
         if (LUtils.hasJB())
             cantoHolder.cantoPage.setBackground(drawable);
         else

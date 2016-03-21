@@ -1,10 +1,8 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +16,6 @@ import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.Canto;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
 
     private List<Canto> dataItems;
@@ -45,15 +40,17 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        Canto dataItem = dataItems.get(position);
-        final int pos = position;
+        Canto dataItem = dataItems.get(viewHolder.getAdapterPosition());
+        final int pos = viewHolder.getAdapterPosition();
 
         // Casting the viewHolder to MyViewHolder so I could interact with the views
         final CantoViewHolder cantoHolder = (CantoViewHolder) viewHolder;
         cantoHolder.cantoTitle.setText(dataItem.getTitolo());
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        Drawable drawable = ContextCompat.getDrawable(context,
+                context.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
         if (LUtils.hasJB())
             cantoHolder.cantoPage.setBackground(drawable);
         else

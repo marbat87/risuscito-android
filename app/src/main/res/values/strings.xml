@@ -266,7 +266,7 @@
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_remove">Rimuovere dalla cronologia?</string>
     <string name="history_empty">La cronologia è vuota.</string>
-    <string name="last_open_date">ULTIMA APERTURA:</string>
+    <string name="last_open_date">ULTIMA APERTURA: %1$s</string>
     <string name="dialog_reset_history_title">Svuota cronologia</string>
     <string name="dialog_reset_history_desc">Vuoi svuotare la cronologia dei canti visualizzati?</string>
     <string name="canto_title_activity">Canto</string>

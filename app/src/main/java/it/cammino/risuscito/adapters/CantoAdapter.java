@@ -1,11 +1,10 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.turingtechnologies.materialscrollbar.ICustomAdapter;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import it.cammino.risuscito.LUtils;
@@ -92,8 +92,10 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+        Drawable drawable = ContextCompat.getDrawable(context,
+                context.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
         if (LUtils.hasJB())
             cantoHolder.cantoPage.setBackground(drawable);
         else
@@ -144,6 +146,17 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
                 return String.valueOf(salmo);
             default:
                 return dataItems.get(i).getTitolo().toUpperCase().substring(0,1);
+        }
+    }
+
+    private int getResId(String resName, Class<?> c) {
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        }
+        catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            return -1;
         }
     }
 
