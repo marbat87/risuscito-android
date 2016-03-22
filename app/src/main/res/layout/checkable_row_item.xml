@@ -17,22 +17,9 @@
         android:textSize="16sp"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:layout_marginLeft="@dimen/cardListPreferredItemMargin"
-        android:layout_marginStart="@dimen/cardListPreferredItemMargin" />
+        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:layout_marginStart="@dimen/myListPreferredItemMargin" />
 
-    <!--<com.rey.material.widget.CheckBox-->
-        <!--style="@style/Material.Drawable.CheckBox"-->
-        <!--android:id="@+id/check_box"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="@dimen/cardListPreferredItemMargin"-->
-        <!--android:layout_marginEnd="@dimen/cardListPreferredItemMargin"-->
-        <!--android:layout_marginLeft="@dimen/cardListPreferredItemMargin"-->
-        <!--android:layout_marginStart="@dimen/cardListPreferredItemMargin"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:checked="false" />-->
     <CheckBox
         android:id="@+id/check_box"
         android:layout_width="wrap_content"
@@ -55,9 +42,11 @@
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
         android:layout_toLeftOf="@id/check_box"
+        android:layout_toStartOf="@id/check_box"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/cardListPreferredTextMarginStart"
-        android:layout_marginStart="@dimen/cardListPreferredTextMarginStart"
-        android:layout_marginRight="@dimen/cardListPreferredItemMargin" />
+        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginRight="@dimen/cardListPreferredItemMargin"
+        android:layout_marginEnd="@dimen/cardListPreferredItemMargin" />
 
 </RelativeLayout>

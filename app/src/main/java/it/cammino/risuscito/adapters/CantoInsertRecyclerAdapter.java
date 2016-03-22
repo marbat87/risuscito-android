@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.CantoInsert;
 
@@ -69,14 +68,18 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
 
         Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
-        drawable = ContextCompat.getDrawable(context,
-                context.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//        drawable = ContextCompat.getDrawable(context,
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
 //        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
-        if (LUtils.hasJB())
-            cantoHolder.cantoPage.setBackground(drawable);
-        else
-            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+//        if (LUtils.hasJB())
+//            cantoHolder.cantoPage.setBackground(drawable);
+//        else
+//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+        cantoHolder.cantoPage.setBackgroundResource(
+                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+                        , "drawable"
+                        , context.getPackageName()));
 
 //        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
 //            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);

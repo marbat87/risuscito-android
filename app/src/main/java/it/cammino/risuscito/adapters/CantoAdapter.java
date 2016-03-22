@@ -1,8 +1,6 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +13,6 @@ import com.turingtechnologies.materialscrollbar.ICustomAdapter;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.CantoRecycled;
 
@@ -92,14 +89,19 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        Drawable drawable = ContextCompat.getDrawable(context,
-                context.getResources().getIdentifier("page_oval__border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
-//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
-        if (LUtils.hasJB())
-            cantoHolder.cantoPage.setBackground(drawable);
-        else
-            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+//        Drawable drawable = ContextCompat.getDrawable(context,
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+////        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+////        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+//        if (LUtils.hasJB())
+//            cantoHolder.cantoPage.setBackground(drawable);
+//        else
+//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+        cantoHolder.cantoPage.setBackgroundResource(
+                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+                        , "drawable"
+                        , context.getPackageName()));
+
     }
 
     @Override
