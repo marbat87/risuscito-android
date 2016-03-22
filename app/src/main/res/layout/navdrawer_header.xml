@@ -19,7 +19,7 @@
 
     <LinearLayout
         android:id="@+id/copertina_account"
-        android:background="?attr/colorPrimary"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
