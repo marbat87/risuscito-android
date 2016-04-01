@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '23.0.3'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 105
+        versionCode 107
         versionName '3.7.0'
         vectorDrawables.useSupportLibrary = true
     }
@@ -17,6 +17,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -32,8 +33,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.1-SNAPSHOT'
     compile 'com.itextpdf:itextpdf:5.5.6'
-    compile('com.github.afollestad.material-dialogs:core:21e109458d@aar') { transitive = true }
-    compile('com.github.afollestad.material-dialogs:commons:21e109458d@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:core:93829ba3b3@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:commons:93829ba3b3@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.6'
     compile project(':fab-toolbar')

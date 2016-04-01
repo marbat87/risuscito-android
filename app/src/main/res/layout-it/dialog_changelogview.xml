@@ -9,7 +9,7 @@
         android:paddingTop="18dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        risuscito:changeLogFileResourceId="@raw/changelog_uk"
+        risuscito:changeLogFileResourceId="@raw/changelog_it"
         risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
         risuscito:rowLayoutId="@layout/changelogrow_material_layout"
         android:id="@+id/aboutText" />

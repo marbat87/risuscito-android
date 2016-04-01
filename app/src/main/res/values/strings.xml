@@ -5,6 +5,8 @@
     <string name="lang_uk" translatable="false">Українська</string>
     <string name="lang_pt" translatable="false">Portugu&#234;s</string>
     <string name="percent_progress" translatable="false">%1$d%%</string>
+    <string name="test_name" translatable="false">Test</string>
+    <string name="test_email" translatable="false">Test@gmail.com</string>
 
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
@@ -186,9 +188,6 @@
     <string name="activity_homepage">Home page</string>
     <string name="button_note_cantore">Note per il cantore</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
-    <!--<string name="help_new_menu_title">Nuovo men&#249;</string>
-    <string name="help_new_menu_desc">&#200; stato introdotto il nuovo men&#249; di navigazione, apribile cliccando sul simbolo in alto a sinistra, sulla copertina o facendo
-        swype da sinistra col dito. Prova!</string>-->
     <string name="salmi_musica_index">Indice salmi musicati</string>
     <string name="downlink_message">Desideri utilizzare la funzione di donwload della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="downlink_download">DOWNLOAD</string>
@@ -340,4 +339,5 @@
     <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
+    <string name="playback_completed">Riproduzione completata</string>
 </resources>

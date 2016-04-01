@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -796,11 +797,11 @@ public class MainActivity extends ThemeableActivity
 //                    .load(R.drawable.gplus_default_cover)
 //                    .error(R.drawable.copertina_about)
 //                    .into(profileBackground);
-//            if (LUtils.hasJB())
-//                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
-//            else
-//                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
-            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+//            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
             profileBackground.setVisibility(View.INVISIBLE);
 
 //            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
@@ -847,11 +848,11 @@ public class MainActivity extends ThemeableActivity
             profileImage.setVisibility(View.INVISIBLE);
             usernameTextView.setVisibility(View.INVISIBLE);
             emailTextView.setVisibility(View.INVISIBLE);
-//            if (LUtils.hasJB())
-//                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-//            else
-//                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+//            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
             profileBackground.setVisibility(View.VISIBLE);
 //            profileBackground.setImageResource(R.drawable.copertina_about);
             Picasso.with(this)

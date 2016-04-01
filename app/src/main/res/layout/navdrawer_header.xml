@@ -19,7 +19,6 @@
 
     <LinearLayout
         android:id="@+id/copertina_account"
-        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
@@ -56,7 +55,7 @@
                 android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Test"
+                android:text="@string/test_name"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 fontPath="fonts/Roboto-Medium.ttf"
@@ -73,7 +72,7 @@
                 android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Test@gmail.com"
+                android:text="@string/test_email"
                 android:id="@+id/email"
                 android:gravity="start"
                 android:singleLine="true"

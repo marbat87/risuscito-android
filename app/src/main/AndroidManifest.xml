@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.cammino.risuscito"
-    android:installLocation="auto"
-    android:versionCode="96"
-    android:versionName="3.6.0">
+    android:installLocation="auto">
 
-    <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="23" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="20" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
-    <!--<uses-permission android:name="android.permission.USE_CREDENTIALS" />-->
     <application
         android:name="it.cammino.risuscito.ui.RisuscitoApplication"
         android:allowBackup="false"
@@ -55,6 +48,29 @@
         <activity android:name="it.cammino.risuscito.slides.IntroConsegnati" android:label=""/>
         <activity android:name="it.cammino.risuscito.slides.IntroCreaLista" android:label=""/>
         <activity android:name="it.cammino.risuscito.slides.IntroMain" android:label=""/>
+
+        <service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">
+            <intent-filter>
+                <action android:name="it.cammino.risuscito.music.action.TOGGLE_PLAYBACK" />
+                <action android:name="it.cammino.risuscito.music.action.PLAY" />
+                <action android:name="it.cammino.risuscito.music.action.PAUSE" />
+                <action android:name="it.cammino.risuscito.music.action.SKIP" />
+                <action android:name="it.cammino.risuscito.music.action.REWIND" />
+                <action android:name="it.cammino.risuscito.music.action.STOP" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="it.cammino.risuscito.music.action.URL" />
+                <data android:scheme="http" />
+            </intent-filter>
+        </service>
+        <receiver android:name="it.cammino.risuscito.music.MusicIntentReceiver">
+            <intent-filter>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

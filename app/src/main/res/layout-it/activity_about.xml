@@ -8,6 +8,7 @@
     <include layout="@layout/risuscito_toolbar" />
 
     <LinearLayout
+        android:layout_gravity="top"
         android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,7 +36,7 @@
         <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            risuscito:changeLogFileResourceId="@raw/changelog_full_uk"
+            risuscito:changeLogFileResourceId="@raw/changelog_full_it"
             risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
             risuscito:rowLayoutId="@layout/changelogrow_material_layout"
             android:id="@+id/aboutText" />

@@ -16,12 +16,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
-import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,8 +32,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -52,7 +44,6 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -87,6 +78,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.filepicker.ThemedFilePickerActivity;
+import it.cammino.risuscito.music.MusicService;
 import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -95,17 +87,18 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private DatabaseCanti listaCanti;
     private String pagina;
     private int idCanto;
-    private static MediaPlayer mediaPlayer;
+    private String titoloCanto;
+    //    private static MediaPlayer mediaPlayer;
     private ImageButton play_scroll, play_button, save_file, fab_favorite, fab_sound_off;
     private TextView no_records_text;
     private View music_buttons;
     public FabToolbar mFab; // the floating blue add/paste button
     SeekBar scroll_speed_bar, scroll_song_bar;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
-    private PhoneStateListener phoneStateListener;
-    private static OnAudioFocusChangeListener afChangeListener;
-    private static AudioManager mAudioManager;
-    private BroadcastReceiver mNoisyReveiver;
+//    private PhoneStateListener phoneStateListener;
+    //    private static OnAudioFocusChangeListener afChangeListener;
+//    private static AudioManager mAudioManager;
+//    private BroadcastReceiver mNoisyReveiver;
     private String url;
     private int prevOrientation;
     private String primaNota;
@@ -114,16 +107,16 @@ public class PaginaRenderActivity extends ThemeableActivity {
     private String primoBarre;
     private String barreSalvato;
     private static String barreCambio;
-    private String personalUrl;
+    private String personalUrl, localUrl,  playUrl;
 
-    enum MP_State {
-        Idle, Initialized, Prepared, Started, Paused,
-        Stopped, PlaybackCompleted, End, Error, Preparing}
+    //    enum MP_State {
+//        Idle, Initialized, Prepared, Started, Paused,
+//        Stopped, PlaybackCompleted, End, Error, Preparing}
+    enum MP_State {Started, Stopped}
 
-    static MP_State mediaPlayerState;
+    static MP_State mediaPlayerState = MP_State.Stopped;
 
     private boolean localFile;
-    private String localUrl;
 
     private WebView paginaView;
     private int defaultZoomLevel = 0;
@@ -147,23 +140,23 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 Log.d(getClass().getName(), "attività chiusa o annullato lo scroll");
         }
     };
-    final Runnable mScrollBar = new Runnable() {
-        public void run() {
-            if (mediaPlayer != null && mediaPlayerState == MP_State.Started) {
-                scroll_song_bar.setProgress(mediaPlayer.getCurrentPosition());
-                mHandler.postDelayed(this, SONG_STEP);
-            }
-            else
-                Log.d(getClass().getName(), "mediaPlayer nullo o non avviato!");
-        }
-    };
+//    final Runnable mScrollBar = new Runnable() {
+//        public void run() {
+//            if (mediaPlayer != null && mediaPlayerState == MP_State.Started) {
+//                scroll_song_bar.setProgress(mediaPlayer.getCurrentPosition());
+//                mHandler.postDelayed(this, SONG_STEP);
+//            }
+//            else
+//                Log.d(getClass().getName(), "mediaPlayer nullo o non avviato!");
+//        }
+//    };
 
     public static String speedValue;
     private int savedSpeed;
     public static boolean scrollPlaying;
 
     private final long SCROLL_SLEEP = 700;
-    private final long SONG_STEP = 1000;
+//    private final long SONG_STEP = 1000;
 
     private String localPDFPath;
 
@@ -177,6 +170,74 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //    public boolean audioRequested = false;
 
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
+
+    private BroadcastReceiver gpsBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_PREPARING_COMPLETED");
+                Log.d(getClass().getName(), "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
+                scroll_song_bar.setMax(intent.getIntExtra(MusicService.DATA_DURATION, 0));
+                scroll_song_bar.setEnabled(true);
+                if (mp3Dialog.isShowing())
+                    mp3Dialog.dismiss();
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
+
+    private BroadcastReceiver stopBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            Log.d(getClass().getName(), "BROADCAST_PLAYBACK_COMPLETED");
+            scroll_song_bar.setProgress(0);
+            scroll_song_bar.setEnabled(false);
+            showPlaying(false);
+            mediaPlayerState = MP_State.Stopped;
+//            Toast.makeText(PaginaRenderActivity.this, R.string.playback_completed, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private BroadcastReceiver positionBRecc = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            Log.d(getClass().getName(), "BROADCAST_PLAYER_POSITION");
+            try {
+                Log.d(getClass().getName(), "POSITION RECEIVED: " + intent.getIntExtra(MusicService.DATA_POSITION, 0));
+                scroll_song_bar.setProgress(intent.getIntExtra(MusicService.DATA_POSITION, 0));
+                scroll_song_bar.setEnabled(true);
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
+
+    private BroadcastReceiver playBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            Log.d(getClass().getName(), "BROADCAST_PLAYER_POSITION");
+            showPlaying(true);
+            mediaPlayerState = MP_State.Started;
+            scroll_song_bar.setEnabled(true);
+        }
+    };
+
+    private BroadcastReceiver pauseBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            Log.d(getClass().getName(), "BROADCAST_PLAYBACK_PAUSED");
+            showPlaying(false);
+            scroll_song_bar.setEnabled(true);
+        }
+    };
 
     @SuppressLint("NewApi")
     @Override
@@ -216,7 +277,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-        String query = "SELECT saved_tab, saved_barre, saved_speed" +
+        String query = "SELECT saved_tab, saved_barre, saved_speed, titolo" +
                 "  FROM ELENCO" +
                 "  WHERE _id =  " + idCanto;
         Cursor cursor = db.rawQuery(query, null);
@@ -225,6 +286,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
         notaSalvata = cursor.getString(0);
         barreSalvato = cursor.getString(1);
         savedSpeed = cursor.getInt(2);
+        titoloCanto = cursor.getString(3);
         cursor.close();
         db.close();
 
@@ -233,6 +295,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
         Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
         play_button.setImageDrawable(drawable);
+//        pause_button = (ImageButton) findViewById(R.id.pause_song);
+//        drawable = DrawableCompat.wrap(pause_button.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
+//        pause_button.setImageDrawable(drawable);
         no_records_text = (TextView) findViewById(R.id.no_record);
         music_buttons = findViewById(R.id.music_buttons);
         save_file = (ImageButton) findViewById(R.id.save_file);
@@ -244,73 +310,84 @@ public class PaginaRenderActivity extends ThemeableActivity {
         scroll_speed_bar = (SeekBar) findViewById(R.id.speed_seekbar);
         scroll_song_bar = (SeekBar) findViewById(R.id.music_seekbar);
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        afChangeListener = new OnAudioFocusChangeListener() {
-            public void onAudioFocusChange(int focusChange) {
-                switch (focusChange) {
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                        // Lower the volume
-                        if (mediaPlayerState == MP_State.Started) {
-                            mediaPlayer.setVolume(0.1f, 0.1f);
-                        }
-                        break;
-                    case AudioManager.AUDIOFOCUS_LOSS:
-                        cmdPause();
-                        break;
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                        cmdPause();
-                        break;
-                    case AudioManager.AUDIOFOCUS_GAIN:
-                        // Raise it back to normal
-                        if (mediaPlayerState == MP_State.Started) {
-                            mediaPlayer.setVolume(1.0f, 1.0f);
-                        }
-                        break;
-                }
-//                if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-//                    // Lower the volume
-//                    if (mediaPlayerState == MP_State.Started) {
-//                        mediaPlayer.setVolume(0.1f, 0.1f);
-//                    }
-//                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-//                    // Raise it back to normal
-//                    if (mediaPlayerState == MP_State.Started) {
-//                        mediaPlayer.setVolume(1.0f, 1.0f);
-//                    }
-//                }
-            }
-        };
+        if (savedInstanceState != null) {
+            mediaPlayerState = (MP_State) savedInstanceState.getSerializable("mediaPlayerState");
+            showPlaying(savedInstanceState.getBoolean("playSelected"));
+            scroll_song_bar.setMax(savedInstanceState.getInt("scroll_audio_max", 0));
+        }
 
-        mNoisyReveiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                cmdPause();
-            }
-        };
+        if (mediaPlayerState == MP_State.Stopped) {
+            scroll_song_bar.setEnabled(false);
+            scroll_song_bar.setProgress(0);
+        }
+
+//        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//        afChangeListener = new OnAudioFocusChangeListener() {
+//            public void onAudioFocusChange(int focusChange) {
+//                switch (focusChange) {
+//                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+//                        // Lower the volume
+//                        if (mediaPlayerState == MP_State.Started) {
+//                            mediaPlayer.setVolume(0.1f, 0.1f);
+//                        }
+//                        break;
+//                    case AudioManager.AUDIOFOCUS_LOSS:
+//                        cmdPause();
+//                        break;
+//                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+//                        cmdPause();
+//                        break;
+//                    case AudioManager.AUDIOFOCUS_GAIN:
+//                        // Raise it back to normal
+//                        if (mediaPlayerState == MP_State.Started) {
+//                            mediaPlayer.setVolume(1.0f, 1.0f);
+//                        }
+//                        break;
+//                }
+////                if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+////                    // Lower the volume
+////                    if (mediaPlayerState == MP_State.Started) {
+////                        mediaPlayer.setVolume(0.1f, 0.1f);
+////                    }
+////                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+////                    // Raise it back to normal
+////                    if (mediaPlayerState == MP_State.Started) {
+////                        mediaPlayer.setVolume(1.0f, 1.0f);
+////                    }
+////                }
+//            }
+//        };
+
+//        mNoisyReveiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                cmdPause();
+//            }
+//        };
 
         /*Da lollipop, l'utilizzo del phonestatelistener non è più necessario perchè lo stato è integrato
         nella gestione dell'audioFocus */
-        if(!LUtils.hasL()) {
-            phoneStateListener = new PhoneStateListener() {
-                @Override
-                public void onCallStateChanged(int state, String incomingNumber) {
-                    if (state == TelephonyManager.CALL_STATE_RINGING) {
-                        //Incoming call: Pause music
-                        if (mediaPlayerState == MP_State.Started)
-                            cmdPause();
-                    } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                        //A call is dialing, active or on hold
-                        if (mediaPlayerState == MP_State.Started)
-                            cmdPause();
-                    }
-                    super.onCallStateChanged(state, incomingNumber);
-                }
-            };
-            TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            if (mgr != null) {
-                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-            }
-        }
+//        if(!LUtils.hasL()) {
+//            phoneStateListener = new PhoneStateListener() {
+//                @Override
+//                public void onCallStateChanged(int state, String incomingNumber) {
+//                    if (state == TelephonyManager.CALL_STATE_RINGING) {
+//                        //Incoming call: Pause music
+//                        if (mediaPlayerState == MP_State.Started)
+//                            cmdPause();
+//                    } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+//                        //A call is dialing, active or on hold
+//                        if (mediaPlayerState == MP_State.Started)
+//                            cmdPause();
+//                    }
+//                    super.onCallStateChanged(state, incomingNumber);
+//                }
+//            };
+//            TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//            if (mgr != null) {
+//                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+//            }
+//        }
 //        checkPhoneStatePermission();
 
         if (!url.equalsIgnoreCase("")) {
@@ -328,123 +405,246 @@ public class PaginaRenderActivity extends ThemeableActivity {
             music_buttons.setVisibility(View.VISIBLE);
             no_records_text.setVisibility(View.INVISIBLE);
 
-            if (mediaPlayer == null) {
-                scroll_song_bar.setEnabled(false);
-                mediaPlayer = new MediaPlayer();
-                mediaPlayerState = MP_State.Idle;
-                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-
-                if (localUrl.equalsIgnoreCase("")
-                        && personalUrl.equalsIgnoreCase("")) {
-                    localFile = false;
-                    cmdSetDataSource(url);
-                }
-                else {
-                    localFile = true;
-                    if (!localUrl.equals(""))
-                        cmdSetDataSource(localUrl);
-                    else
-                        cmdSetDataSource(personalUrl);
-                }
-
+            if (localUrl.equalsIgnoreCase("")
+                    && personalUrl.equalsIgnoreCase("")) {
+                localFile = false;
+                playUrl = url;
+                // Send an intent with the URL of the song to play. This is expected by
+                // MusicService.
+//                Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                i.setAction(MusicService.ACTION_URL);
+//                Uri uri = Uri.parse(url);
+//                i.setData(uri);
+//                startService(i);
+//                scroll_song_bar.setMax(getDuration());
+//                scroll_song_bar.setEnabled(true);
             }
             else {
-                switch (mediaPlayerState) {
-                    case Started:
-                        play_button.setSelected(true);
-                        scroll_song_bar.setMax(mediaPlayer.getDuration());
-                        scroll_song_bar.setEnabled(true);
-                        mScrollBar.run();
-                        break;
-                    case Paused:
-                        scroll_song_bar.setMax(mediaPlayer.getDuration());
-                        scroll_song_bar.setEnabled(true);
-                        play_button.setSelected(false);
-                        break;
-                    case Prepared:
-                        scroll_song_bar.setMax(mediaPlayer.getDuration());
-                        scroll_song_bar.setEnabled(true);
-                        break;
-                    default:
-                        play_button.setSelected(false);
-                        break;
+                localFile = true;
+                if (!localUrl.equals("")) {
+                    playUrl = localUrl;
+                    // Send an intent with the URL of the song to play. This is expected by
+                    // MusicService.
+
+//                    Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                    i.setAction(MusicService.ACTION_URL);
+//                    Uri uri = Uri.parse(localUrl);
+//                    i.setData(uri);
+//                    startService(i);
+//                    scroll_song_bar.setMax(getDuration());
+//                    scroll_song_bar.setEnabled(true);
+                }
+                else {
+                    // Send an intent with the URL of the song to play. This is expected by
+                    // MusicService.
+                    playUrl = personalUrl;
+//                    Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                    i.setAction(MusicService.ACTION_URL);
+//                    Uri uri = Uri.parse(personalUrl);
+//                    i.setData(uri);
+//                    startService(i);
+//                    scroll_song_bar.setMax(getDuration());
+//                    scroll_song_bar.setEnabled(true);
                 }
             }
 
+//            if (mediaPlayer == null) {
+//                scroll_song_bar.setEnabled(false);
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayerState = MP_State.Idle;
+//                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//
+//                if (localUrl.equalsIgnoreCase("")
+//                        && personalUrl.equalsIgnoreCase("")) {
+//                    localFile = false;
+////                    cmdSetDataSource(url);
+//                    // Send an intent with the URL of the song to play. This is expected by
+//                    // MusicService.
+//                    Intent i = new Intent(MusicService.ACTION_URL);
+//                    Uri uri = Uri.parse(url);
+//                    i.setData(uri);
+//                    startService(i);
+//                }
+//                else {
+//                    localFile = true;
+//                    if (!localUrl.equals("")) {
+////                        cmdSetDataSource(localUrl);
+//                        // Send an intent with the URL of the song to play. This is expected by
+//                        // MusicService.
+//                        Intent i = new Intent(MusicService.ACTION_URL);
+//                        Uri uri = Uri.parse(localUrl);
+//                        i.setData(uri);
+//                        startService(i);
+//                    }
+//                    else {
+////                        cmdSetDataSource(personalUrl);
+//                        // Send an intent with the URL of the song to play. This is expected by
+//                        // MusicService.
+//                        Intent i = new Intent(MusicService.ACTION_URL);
+//                        Uri uri = Uri.parse(personalUrl);
+//                        i.setData(uri);
+//                        startService(i);
+//                    }
+//                }
+//
+//            }
+//            else {
+//                switch (mediaPlayerState) {
+//                    case Started:
+//                        play_button.setSelected(true);
+//                        scroll_song_bar.setMax(mediaPlayer.getDuration());
+//                        scroll_song_bar.setEnabled(true);
+//                        mScrollBar.run();
+//                        break;
+//                    case Paused:
+//                        scroll_song_bar.setMax(mediaPlayer.getDuration());
+//                        scroll_song_bar.setEnabled(true);
+//                        play_button.setSelected(false);
+//                        break;
+//                    case Prepared:
+//                        scroll_song_bar.setMax(mediaPlayer.getDuration());
+//                        scroll_song_bar.setEnabled(true);
+//                        break;
+//                    default:
+//                        play_button.setSelected(false);
+//                        break;
+//                }
+//            }
 
-            // aggiunge il clicklistener sul pulsante play
-            play_button.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    //controlla la presenza di una connessione internet
-                    if (!Utility.isOnline(PaginaRenderActivity.this)
-                            && !localFile) {
-                        Snackbar.make(findViewById(android.R.id.content)
-                                , R.string.no_connection
-                                , Snackbar.LENGTH_SHORT)
-                                .show();
-                        return;
-                    }
+//            // aggiunge il clicklistener sul pulsante play
+//            play_button.setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    //controlla la presenza di una connessione internet
+//                    if (!Utility.isOnline(PaginaRenderActivity.this)
+//                            && !localFile) {
+//                        Snackbar.make(findViewById(android.R.id.content)
+//                                , R.string.no_connection
+//                                , Snackbar.LENGTH_SHORT)
+//                                .show();
+//                        return;
+//                    }
+//
+//                    showPlaying(true);
+//
+//                    if (mediaPlayerState == MP_State.Stopped) {
+//                        // Send an intent with the URL of the song to play. This is expected by
+//                        // MusicService.
+//                        mediaPlayerState = MP_State.Started;
+//                        Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                        i.setAction(MusicService.ACTION_URL);
+//                        Uri uri = Uri.parse(playUrl);
+//                        i.setData(uri);
+//                        startService(i);
+//                        prevOrientation = getRequestedOrientation();
+//                        Utility.blockOrientation(PaginaRenderActivity.this);
+//                        mp3Dialog.show();
+//                    }
+//                    else {
+//                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                        i.setAction(MusicService.ACTION_PLAY);
+//                        startService(i);
+//                    }
+//
+//
+////                    switch (mediaPlayerState) {
+////                        case Paused:
+//////                            cmdStart();
+////                            startService(new Intent(MusicService.ACTION_PLAY));
+////                            break;
+////                        case Started:
+//////                            cmdPause();
+////                            play_button.setSelected(false);
+////                            startService(new Intent(MusicService.ACTION_PAUSE));
+////                            break;
+////                        case Initialized:
+////                            cmdPrepare();
+////                            break;
+////                        case Stopped:
+////                        case PlaybackCompleted:
+////                        default:
+//////                            localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
+////                            checkExternalFilePermissions();
+////                            if (localUrl.equalsIgnoreCase("")) {
+////                                if (personalUrl.equalsIgnoreCase("")) {
+////                                    localFile = false;
+//////                                    cmdSetDataSource(url);
+////                                    // Send an intent with the URL of the song to play. This is expected by
+////                                    // MusicService.
+////                                    Intent i = new Intent(MusicService.ACTION_URL);
+////                                    Uri uri = Uri.parse(url);
+////                                    i.setData(uri);
+////                                    startService(i);
+////                                    save_file.setSelected(false);
+////                                } else {
+////                                    localFile = true;
+//////                                    cmdSetDataSource(personalUrl);
+////                                    // Send an intent with the URL of the song to play. This is expected by
+////                                    // MusicService.
+////                                    Intent i = new Intent(MusicService.ACTION_URL);
+////                                    Uri uri = Uri.parse(personalUrl);
+////                                    i.setData(uri);
+////                                    startService(i);
+////                                    save_file.setSelected(true);
+////                                }
+////
+////                            } else {
+////                                localFile = true;
+//////                                cmdSetDataSource(localUrl);
+////                                // Send an intent with the URL of the song to play. This is expected by
+////                                // MusicService.
+////                                Intent i = new Intent(MusicService.ACTION_URL);
+////                                Uri uri = Uri.parse(localUrl);
+////                                i.setData(uri);
+////                                startService(i);
+////                             // aggiunge il clicklistener sul pulsante play
+////                    pause_button.setOnClickListener(new OnClickListener() {
+////
+////                        @Override
+////                        public void onClick(View v) {
+////                            showPlaying(false);
+////                            Intent i = new Intent(getApplicationContext(),MusicService.class);
+////                            i.setAction(MusicService.ACTION_PAUSE);
+////                            startService(i);
+////                        }
+////                    });
+//
+//                    save_file.setSelected(true);
+////                            }
+////
+////                            if (mediaPlayerState == MP_State.Initialized)
+////                                cmdPrepare();
+////                            break;
+////                    }
+//                }
+//            });
 
-                    switch (mediaPlayerState) {
-                        case Paused:
-                            cmdStart();
-                            break;
-                        case Started:
-                            cmdPause();
-                            break;
-                        case Initialized:
-                            cmdPrepare();
-                            break;
-                        case Stopped:
-                        case PlaybackCompleted:
-                        default:
-//                            localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
-                            checkExternalFilePermissions();
-                            if (localUrl.equalsIgnoreCase("")) {
-                                if (personalUrl.equalsIgnoreCase("")) {
-                                    localFile = false;
-                                    cmdSetDataSource(url);
-                                    save_file.setSelected(false);
-                                } else {
-                                    localFile = true;
-                                    cmdSetDataSource(personalUrl);
-                                    save_file.setSelected(true);
-                                }
-
-                            } else {
-                                localFile = true;
-                                cmdSetDataSource(localUrl);
-                                save_file.setSelected(true);
-                            }
-
-                            if (mediaPlayerState == MP_State.Initialized)
-                                cmdPrepare();
-                            break;
-                    }
-                }
-            });
-
-            scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Log.d(getClass().getName(), "newValue: " + progress);
-                    if (fromUser)
-                        mediaPlayer.seekTo(progress);
-                    int seconds = progress / 1000 % 60;
-                    Log.d(getClass().getName(), "seconds: " + seconds);
-                    int minutes = (progress / (1000 * 60));
-                    Log.d(getClass().getName(), "minutes: " + minutes);
-                    ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {}
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {}
-            });
+//            scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//                @Override
+//                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                    Log.d(getClass().getName(), "newValue: " + progress);
+//                    if (fromUser) {
+//                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                        i.setAction(MusicService.ACTION_SEEK);
+//                        Uri uri = Uri.parse(String.valueOf(progress));
+//                        i.setData(uri);
+//                        startService(i);
+//                    }
+//                    int seconds = progress / 1000 % 60;
+//                    Log.d(getClass().getName(), "seconds: " + seconds);
+//                    int minutes = (progress / (1000 * 60));
+//                    Log.d(getClass().getName(), "minutes: " + minutes);
+//                    ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+//                }
+//
+//                @Override
+//                public void onStartTrackingTouch(SeekBar seekBar) {}
+//
+//                @Override
+//                public void onStopTrackingTouch(SeekBar seekBar) {}
+//            });
 
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
@@ -476,16 +676,32 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                                                     .show();
 
-                                            if (mediaPlayerState == MP_State.Started
-                                                    || mediaPlayerState == MP_State.Paused)
-                                                cmdStop();
+                                            scroll_song_bar.setProgress(0);
+                                            scroll_song_bar.setEnabled(false);
+                                            showPlaying(false);
+                                            mediaPlayerState = MP_State.Stopped;
+                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
+                                            i.setAction(MusicService.ACTION_STOP);
+                                            startService(i);
 
-                                            mediaPlayer = new MediaPlayer();
-                                            mediaPlayerState = MP_State.Idle;
-                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//                                            if (mediaPlayerState == MP_State.Started
+//                                                    || mediaPlayerState == MP_State.Paused)
+//                                                cmdStop();
+//
+//                                            mediaPlayer = new MediaPlayer();
+//                                            mediaPlayerState = MP_State.Idle;
+//                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
                                             localFile = false;
-                                            cmdSetDataSource(url);
+                                            playUrl = url;
+//                                            cmdSetDataSource(url);
+                                            // Send an intent with the URL of the song to play. This is expected by
+                                            // MusicService.
+//                                            i = new Intent(getApplicationContext(),MusicService.class);
+//                                            i.setAction(MusicService.ACTION_URL);
+//                                            Uri uri = Uri.parse(url);
+//                                            i.setData(uri);
+//                                            startService(i);
                                             save_file.setSelected(false);
                                             setRequestedOrientation(prevOrientation);
                                         }
@@ -526,16 +742,25 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                                                     .show();
 
-                                            if (mediaPlayerState == MP_State.Started
-                                                    || mediaPlayerState == MP_State.Paused)
-                                                cmdStop();
+                                            scroll_song_bar.setProgress(0);
+                                            scroll_song_bar.setEnabled(false);
+                                            showPlaying(false);
+                                            mediaPlayerState = MP_State.Stopped;
+                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
+                                            i.setAction(MusicService.ACTION_STOP);
+                                            startService(i);
 
-                                            mediaPlayer = new MediaPlayer();
-                                            mediaPlayerState = MP_State.Idle;
-                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//                                            if (mediaPlayerState == MP_State.Started
+//                                                    || mediaPlayerState == MP_State.Paused)
+//                                                cmdStop();
+//
+//                                            mediaPlayer = new MediaPlayer();
+//                                            mediaPlayerState = MP_State.Idle;
+//                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
                                             localFile = false;
                                             personalUrl = "";
+                                            playUrl = url;
 
                                             SQLiteDatabase db = listaCanti.getReadableDatabase();
                                             String sql = "DELETE FROM LOCAL_LINKS" +
@@ -633,34 +858,79 @@ public class PaginaRenderActivity extends ThemeableActivity {
         }
         else {
 
+            localFile = true;
+            playUrl = personalUrl;
+//                            cmdSetDataSource(personalUrl);
+
             // aggiunge il clicklistener sul pulsante play
-            play_button.setOnClickListener(new OnClickListener() {
+//            play_button.setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    // Send an intent with the URL of the song to play. This is expected by
+////                            // MusicService.
+//
+//                    showPlaying(true);
+//
+//                    if (mediaPlayerState == MP_State.Stopped) {
+//                        mediaPlayerState = MP_State.Started;
+//                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                        i.setAction(MusicService.ACTION_URL);
+//                        Uri uri = Uri.parse(playUrl);
+//                        i.setData(uri);
+//                        startService(i);
+//                        prevOrientation = getRequestedOrientation();
+//                        Utility.blockOrientation(PaginaRenderActivity.this);
+//                        mp3Dialog.show();
+//                    }
+//                    else {
+//                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                        i.setAction(MusicService.ACTION_PLAY);
+//                        startService(i);
+//                    }
+////                    switch (mediaPlayerState) {
+////                        case Paused:
+////                            cmdStart();
+////                            break;
+////                        case Started:
+//////                            cmdPause();
+////                            play_button.setSelected(false);
+////                            startService(new Intent(MusicService.ACTION_PAUSE));
+////                            break;
+////                        case Initialized:
+////                            cmdPrepare();
+////                            break;
+////                        case Stopped:
+////                        case PlaybackCompleted:
+////                        default:
+////                            localFile = true;
+//////                            cmdSetDataSource(personalUrl);
+////                            // Send an intent with the URL of the song to play. This is expected by
+////                            // MusicService.
+////                            Intent i = new Intent(MusicService.ACTION_URL);
+////                            Uri uri = Uri.parse(personalUrl);
+////                            i.setData(uri);
+////                            startService(i);
+////                            save_file.setSelected(true);
+////
+////                            if (mediaPlayerState == MP_State.Initialized)
+////                                cmdPrepare();
+////                            break;
+////                    }
+//                }
+//            });
 
-                @Override
-                public void onClick(View v) {
-                    switch (mediaPlayerState) {
-                        case Paused:
-                            cmdStart();
-                            break;
-                        case Started:
-                            cmdPause();
-                            break;
-                        case Initialized:
-                            cmdPrepare();
-                            break;
-                        case Stopped:
-                        case PlaybackCompleted:
-                        default:
-                            localFile = true;
-                            cmdSetDataSource(personalUrl);
-                            save_file.setSelected(true);
-
-                            if (mediaPlayerState == MP_State.Initialized)
-                                cmdPrepare();
-                            break;
-                    }
-                }
-            });
+//            // aggiunge il clicklistener sul pulsante play
+//            pause_button.setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    showPlaying(false);
+//                    Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                    i.setAction(MusicService.ACTION_PAUSE);
+//                    startService(i);
+//                }
+//            });
 
             save_file.setOnClickListener(new OnClickListener() {
                 @Override
@@ -681,16 +951,26 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                         Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                                                 .show();
 
-                                        if (mediaPlayerState == MP_State.Started
-                                                || mediaPlayerState == MP_State.Paused)
-                                            cmdStop();
 
-                                        mediaPlayer = new MediaPlayer();
-                                        mediaPlayerState = MP_State.Idle;
-                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+
+//                                        if (mediaPlayerState == MP_State.Started
+//                                                || mediaPlayerState == MP_State.Paused)
+//                                            cmdStop();
+                                        scroll_song_bar.setProgress(0);
+                                        scroll_song_bar.setEnabled(false);
+                                        showPlaying(false);
+                                        mediaPlayerState = MP_State.Stopped;
+                                        Intent i = new Intent(getApplicationContext(),MusicService.class);
+                                        i.setAction(MusicService.ACTION_STOP);
+                                        startService(i);
+
+//                                        mediaPlayer = new MediaPlayer();
+//                                        mediaPlayerState = MP_State.Idle;
+//                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
                                         localFile = false;
                                         personalUrl = "";
+                                        playUrl = url;
 
                                         SQLiteDatabase db = listaCanti.getReadableDatabase();
                                         String sql = "DELETE FROM LOCAL_LINKS" +
@@ -774,24 +1054,24 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
             });
 
-            if (mediaPlayer == null) {
-                mediaPlayer = new MediaPlayer();
-                mediaPlayerState = MP_State.Idle;
-                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-            }
-            else {
-                switch (mediaPlayerState) {
-                    case Started:
-                        play_button.setSelected(true);
-                        break;
-                    case Paused:
-                        play_button.setSelected(false);
-                        break;
-                    default:
-                        play_button.setSelected(false);
-                        break;
-                }
-            }
+//            if (mediaPlayer == null) {
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayerState = MP_State.Idle;
+//                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//            }
+//            else {
+//                switch (mediaPlayerState) {
+//                    case Started:
+//                        play_button.setSelected(true);
+//                        break;
+//                    case Paused:
+//                        play_button.setSelected(false);
+//                        break;
+//                    default:
+//                        play_button.setSelected(false);
+//                        break;
+//                }
+//            }
 
             if (!personalUrl.equalsIgnoreCase("")) {
                 save_file.setSelected(true);
@@ -808,6 +1088,93 @@ public class PaginaRenderActivity extends ThemeableActivity {
             }
 
         }
+
+        // aggiunge il clicklistener sul pulsante play
+        play_button.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (isPlaying()) {
+                    showPlaying(false);
+                    Intent i = new Intent(getApplicationContext(),MusicService.class);
+                    i.setAction(MusicService.ACTION_PAUSE);
+                    startService(i);
+                }
+                else {
+                    //controlla la presenza di una connessione internet
+                    if (!Utility.isOnline(PaginaRenderActivity.this)
+                            && !localFile) {
+                        Snackbar.make(findViewById(android.R.id.content)
+                                , R.string.no_connection
+                                , Snackbar.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+
+                    showPlaying(true);
+
+                    Log.d(getClass().getName(), "mediaPlayerState" + mediaPlayerState);
+
+                    if (mediaPlayerState == MP_State.Stopped) {
+                        // Send an intent with the URL of the song to play. This is expected by
+                        // MusicService.
+                        mediaPlayerState = MP_State.Started;
+                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+                        i.setAction(MusicService.ACTION_URL);
+                        Uri uri = Uri.parse(playUrl);
+                        i.setData(uri);
+                        i.putExtra(MusicService.DATA_LOCAL, localFile);
+                        i.putExtra(MusicService.DATA_COLOR, getThemeUtils().primaryColorDark());
+                        i.putExtra(MusicService.DATA_TITLE, titoloCanto);
+                        startService(i);
+                        prevOrientation = getRequestedOrientation();
+                        Utility.blockOrientation(PaginaRenderActivity.this);
+                        mp3Dialog.show();
+                    } else {
+                        Intent i = new Intent(getApplicationContext(), MusicService.class);
+                        i.setAction(MusicService.ACTION_PLAY);
+                        startService(i);
+                    }
+                }
+            }
+        });
+
+        // aggiunge il clicklistener sul pulsante play
+//        pause_button.setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                showPlaying(false);
+//                Intent i = new Intent(getApplicationContext(),MusicService.class);
+//                i.setAction(MusicService.ACTION_PAUSE);
+//                startService(i);
+//            }
+//        });
+
+        scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(getClass().getName(), "newValue: " + progress);
+                if (fromUser) {
+                    Intent i = new Intent(getApplicationContext(), MusicService.class);
+                    i.setAction(MusicService.ACTION_SEEK);
+                    Uri uri = Uri.parse(String.valueOf(progress));
+                    i.setData(uri);
+                    startService(i);
+                }
+                int seconds = progress / 1000 % 60;
+                Log.d(getClass().getName(), "seconds: " + seconds);
+                int minutes = (progress / (1000 * 60));
+                Log.d(getClass().getName(), "minutes: " + minutes);
+                ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
         scroll_speed_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -1190,27 +1557,27 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public void onResume() {
         super.onResume();
 
-        if (mAudioManager != null && mediaPlayerState == MP_State.Started) {
-            int result = mAudioManager.requestAudioFocus(afChangeListener,
-                    // Use the music stream.
-                    AudioManager.STREAM_MUSIC,
-                    // Request permanent focus.
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-            switch (result) {
-                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-                    registerReceiver(mNoisyReveiver, filter);
-                    break;
-                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-                    Snackbar.make(findViewById(android.R.id.content)
-                            , R.string.focus_not_allowed
-                            , Snackbar.LENGTH_SHORT)
-                            .show();
-                    cmdPause();
-                    break;
-            }
-        }
+//        if (mAudioManager != null && mediaPlayerState == MP_State.Started) {
+//            int result = mAudioManager.requestAudioFocus(afChangeListener,
+//                    // Use the music stream.
+//                    AudioManager.STREAM_MUSIC,
+//                    // Request permanent focus.
+//                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+//            switch (result) {
+//                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+//                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+//                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+//                    registerReceiver(mNoisyReveiver, filter);
+//                    break;
+//                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
+//                    Snackbar.make(findViewById(android.R.id.content)
+//                            , R.string.focus_not_allowed
+//                            , Snackbar.LENGTH_SHORT)
+//                            .show();
+//                    cmdPause();
+//                    break;
+//            }
+//        }
 
         if (notaSalvata == null) {
             if (notaCambio == null) {
@@ -1299,26 +1666,70 @@ public class PaginaRenderActivity extends ThemeableActivity {
             showOuterFrame();
         }
 
+        //registra un receiver per ricevere la notifica di preparazione della registrazione
+        registerReceiver(gpsBRec, new IntentFilter(
+                MusicService.BROADCAST_PREPARING_COMPLETED));
+        registerReceiver(stopBRec, new IntentFilter(
+                MusicService.BROADCAST_PLAYBACK_COMPLETED));
+        registerReceiver(positionBRecc, new IntentFilter(
+                MusicService.BROADCAST_PLAYER_POSITION));
+        registerReceiver(playBRec, new IntentFilter(
+                MusicService.BROADCAST_PLAYER_STARTED));
+        registerReceiver(pauseBRec, new IntentFilter(
+                MusicService.BROADCAST_PLAYBACK_PAUSED));
     }
+
+//    @Override
+//    protected void onStop() {
+//        Log.d(getClass().getName(), "onStop: CALLED");
+//        super.onStop();
+////        try {
+////            unregisterReceiver(gpsBRec);
+////            unregisterReceiver(stopBRec);
+////            unregisterReceive r(positionBRecc);
+////            unregisterReceiver(playBRec);
+////            unregisterReceiver(pauseBRec);
+////        } catch (IllegalArgumentException e) {
+////            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+////        }
+//    }
 
     @Override
     public void onDestroy() {
+        Log.d(getClass().getName(), "onDestroy()");
+        try {
+            unregisterReceiver(gpsBRec);
+            unregisterReceiver(stopBRec);
+            unregisterReceiver(positionBRecc);
+            unregisterReceiver(playBRec);
+            unregisterReceiver(pauseBRec);
+        } catch (IllegalArgumentException e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+        }
         saveZoom();
-        if (mAudioManager != null)
-            mAudioManager.abandonAudioFocus(afChangeListener);
+        if (isFinishing()) {
+            Intent i = new Intent(getApplicationContext(), MusicService.class);
+            i.setAction(MusicService.ACTION_STOP);
+            startService(i);
+        }
+//        if (mAudioManager != null)
+//            mAudioManager.abandonAudioFocus(afChangeListener);
         //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-        if (mediaPlayerState == MP_State.Started)
-            unregisterReceiver(mNoisyReveiver);
+//        if (mediaPlayerState == MP_State.Started)
+//            unregisterReceiver(mNoisyReveiver);
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("mediaPlayerState", mediaPlayerState);
+        outState.putBoolean("playSelected", isPlaying());
+        outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
 //        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
-//    }
+    }
 
     public FabToolbar getFab() {
         if (mFab == null) {
@@ -1330,7 +1741,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     private void showOuterFrame() {
         View outerFrame = findViewById(R.id.outerFrame);
-        outerFrame.setOnClickListener(new View.OnClickListener() {
+        outerFrame.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFab().hide();
@@ -1349,25 +1760,29 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public void pulisciVars() {
         saveZoom();
 
-        Log.i(getClass().getName(), "pulisciVar()");
-        Log.i(getClass().getName(), "mediaPlayerState: " + mediaPlayerState);
+//        Log.d(getClass().getName(), "pulisciVar()");
+//        Log.d(getClass().getName(), "mediaPlayerState: " + mediaPlayerState);
 
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-            mediaPlayerState = MP_State.Idle;
-        }
+//        if (mediaPlayer != null) {
+//            mediaPlayer.release();
+//            mediaPlayer = null;
+//            mediaPlayerState = MP_State.Idle;
+//        }
+        Intent i = new Intent(getApplicationContext(),MusicService.class);
+        i.setAction(MusicService.ACTION_STOP);
+        startService(i);
+        mediaPlayerState = MP_State.Stopped;
 
         //cancello il listener sullo stato del telefono, solo se avevo il permesso di settarlo, altrimenti non serve
 //        if (ContextCompat.checkSelfPermission(PaginaRenderActivity.this, Manifest.permission.READ_PHONE_STATE)
 //                == PackageManager.PERMISSION_GRANTED) {
         /*Da lollipop, l'utilizzo del phonestatelistener non è più necessario perchè lo stato è integrato
         nella gestione dell'audioFocus */
-        if(!LUtils.hasL()) {
-            TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-            if (mgr != null)
-                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
-        }
+//        if(!LUtils.hasL()) {
+//            TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//            if (mgr != null)
+//                mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+//        }
 
         notaCambio = null;
         barreCambio = null;
@@ -1468,247 +1883,246 @@ public class PaginaRenderActivity extends ThemeableActivity {
 
     }
 
-    private void cmdSetDataSource(String path){
-        if(mediaPlayerState == MP_State.Idle){
-            try {
-                if (!localFile)
-                    mediaPlayer.setDataSource(path);
-                else {
-
-                    FileInputStream fileInputStream = new FileInputStream(path);
-                    mediaPlayer.setDataSource(fileInputStream.getFD());
-                    fileInputStream.close();
-                }
-                mediaPlayerState = MP_State.Initialized;
-            } catch (IllegalArgumentException | IOException | IllegalStateException e) {
-                Toast.makeText(PaginaRenderActivity.this,
-                        e.toString(), Toast.LENGTH_SHORT).show();
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-            }
-        }else{
-            Toast.makeText(PaginaRenderActivity.this,
-                    "Invalid State@cmdSetDataSource - skip",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        if (mediaPlayerState != MP_State.Initialized)
-            showMediaPlayerState();
-    }
-
-    private void cmdPrepare(){
-        prevOrientation = getRequestedOrientation();
-        Utility.blockOrientation(PaginaRenderActivity.this);
-        mp3Dialog.show();
-        mediaPlayer.setOnPreparedListener(mediaPlayerOnPreparedListener);
-        mediaPlayer.setOnCompletionListener(mediaPlayerOnCompletedListener);
-
-        if(mediaPlayerState == MP_State.Initialized
-                ||mediaPlayerState == MP_State.Stopped
-                || mediaPlayerState == MP_State.PlaybackCompleted){
-            try {
-                mediaPlayer.prepareAsync();
-            } catch (IllegalStateException e) {
-                Toast.makeText(PaginaRenderActivity.this,
-                        e.toString(), Toast.LENGTH_SHORT).show();
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-            }
-        }else{
-            Toast.makeText(PaginaRenderActivity.this,
-                    "Invalid State@cmdPrepare() - skip",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        if (mediaPlayerState != MP_State.Prepared
-                && mediaPlayerState != MP_State.Initialized)
-            showMediaPlayerState();
-    }
-
-    private void cmdStart(){
-        if(mediaPlayerState == MP_State.Prepared
-                ||mediaPlayerState == MP_State.Started
-                ||mediaPlayerState == MP_State.Paused
-                ||mediaPlayerState == MP_State.PlaybackCompleted){
-
-            //gestisce l'abbassamento del volume in caso di altre riproduzioni (sms, etc.)
-            int result = mAudioManager.requestAudioFocus(afChangeListener,
-                    // Use the music stream.
-                    AudioManager.STREAM_MUSIC,
-                    // Request permanent focus.
-                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-
-            switch (result) {
-                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
-                    mediaPlayer.start();
-                    play_button.setSelected(true);
-                    mediaPlayerState = MP_State.Started;
-                    mScrollBar.run();
-                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-                    registerReceiver(mNoisyReveiver, filter);
-                    break;
-                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
-                    Snackbar.make(findViewById(android.R.id.content)
-                            , R.string.focus_not_allowed
-                            , Snackbar.LENGTH_SHORT)
-                            .show();
-                    break;
-            }
-//            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-//                mediaPlayer.start();
-//                play_button.setSelected(true);
-//                mediaPlayerState = MP_State.Started;
-//                mScrollBar.run();
-//                //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-//                IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-//                registerReceiver(mNoisyReveiver, filter);
+//    private void cmdSetDataSource(String path){
+//        if(mediaPlayerState == MP_State.Idle){
+//            try {
+//                if (!localFile)
+//                    mediaPlayer.setDataSource(path);
+//                else {
+//
+//                    FileInputStream fileInputStream = new FileInputStream(path);
+//                    mediaPlayer.setDataSource(fileInputStream.getFD());
+//                    fileInputStream.close();
+//                }
+//                mediaPlayerState = MP_State.Initialized;
+//            } catch (IllegalArgumentException | IOException | IllegalStateException e) {
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        e.toString(), Toast.LENGTH_SHORT).show();
+//                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
 //            }
-//            else {
-//                Snackbar.make(findViewById(android.R.id.content)
-//                        , R.string.focus_not_allowed
-//                        , Snackbar.LENGTH_SHORT)
-//                        .show();
+//        }else{
+//            Toast.makeText(PaginaRenderActivity.this,
+//                    "Invalid State@cmdSetDataSource - skip",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//
+//        if (mediaPlayerState != MP_State.Initialized)
+//            showMediaPlayerState();
+//    }
+
+//    private void cmdPrepare(){
+//        prevOrientation = getRequestedOrientation();
+//        Utility.blockOrientation(PaginaRenderActivity.this);
+//        mp3Dialog.show();
+//        mediaPlayer.setOnPreparedListener(mediaPlayerOnPreparedListener);
+//        mediaPlayer.setOnCompletionListener(mediaPlayerOnCompletedListener);
+//
+//        if(mediaPlayerState == MP_State.Initialized
+//                ||mediaPlayerState == MP_State.Stopped
+//                || mediaPlayerState == MP_State.PlaybackCompleted){
+//            try {
+//                mediaPlayer.prepareAsync();
+//            } catch (IllegalStateException e) {
+//                Toast.makeText(PaginaRenderActivity.this,
+//                        e.toString(), Toast.LENGTH_SHORT).show();
+//                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
 //            }
+//        }else{
+//            Toast.makeText(PaginaRenderActivity.this,
+//                    "Invalid State@cmdPrepare() - skip",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//
+//        if (mediaPlayerState != MP_State.Prepared
+//                && mediaPlayerState != MP_State.Initialized)
+//            showMediaPlayerState();
+//    }
 
-        }else{
-            Toast.makeText(PaginaRenderActivity.this,
-                    "Invalid State@cmdStart() - skip",
-                    Toast.LENGTH_SHORT).show();
-        }
-        showMediaPlayerState();
-    }
+//    private void cmdStart(){
+//        if(mediaPlayerState == MP_State.Prepared
+//                ||mediaPlayerState == MP_State.Started
+//                ||mediaPlayerState == MP_State.Paused
+//                ||mediaPlayerState == MP_State.PlaybackCompleted){
+//
+//            //gestisce l'abbassamento del volume in caso di altre riproduzioni (sms, etc.)
+//            int result = mAudioManager.requestAudioFocus(afChangeListener,
+//                    // Use the music stream.
+//                    AudioManager.STREAM_MUSIC,
+//                    // Request permanent focus.
+//                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+//
+//            switch (result) {
+//                case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+//                    mediaPlayer.start();
+//                    play_button.setSelected(true);
+//                    mediaPlayerState = MP_State.Started;
+//                    mScrollBar.run();
+//                    //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+//                    IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+//                    registerReceiver(mNoisyReveiver, filter);
+//                    break;
+//                case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
+//                    Snackbar.make(findViewById(android.R.id.content)
+//                            , R.string.focus_not_allowed
+//                            , Snackbar.LENGTH_SHORT)
+//                            .show();
+//                    break;
+//            }
+////            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+////                mediaPlayer.start();
+////                play_button.setSelected(true);
+////                mediaPlayerState = MP_State.Started;
+////                mScrollBar.run();
+////                //registrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+////                IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+////                registerReceiver(mNoisyReveiver, filter);
+////            }
+////            else {
+////                Snackbar.make(findViewById(android.R.id.content)
+////                        , R.string.focus_not_allowed
+////                        , Snackbar.LENGTH_SHORT)
+////                        .show();
+////            }
+//
+//        }else{
+//            Toast.makeText(PaginaRenderActivity.this,
+//                    "Invalid State@cmdStart() - skip",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        showMediaPlayerState();
+//    }
 
-    private void cmdPause(){
-        if(mediaPlayerState == MP_State.Started) {
-//                ||mediaPlayerState == MP_State.Paused){
-            mediaPlayer.pause();
-            mAudioManager.abandonAudioFocus(afChangeListener);
-            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-            unregisterReceiver(mNoisyReveiver);
-            play_button.setSelected(false);
-            mediaPlayerState = MP_State.Paused;
-        }else{
-            Toast.makeText(PaginaRenderActivity.this,
-                    "Invalid State@cmdPause() - skip",
-                    Toast.LENGTH_SHORT).show();
-        }
-        showMediaPlayerState();
-    }
+//    private void cmdPause(){
+//        if(mediaPlayerState == MP_State.Started) {
+////                ||mediaPlayerState == MP_State.Paused){
+//            mediaPlayer.pause();
+//            mAudioManager.abandonAudioFocus(afChangeListener);
+//            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+//            unregisterReceiver(mNoisyReveiver);
+//            play_button.setSelected(false);
+//            mediaPlayerState = MP_State.Paused;
+//        }else{
+//            Toast.makeText(PaginaRenderActivity.this,
+//                    "Invalid State@cmdPause() - skip",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        showMediaPlayerState();
+//    }
 
-    private void cmdStop(){
-        if(mediaPlayerState == MP_State.Started
-                ||mediaPlayerState == MP_State.Paused) {
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            mAudioManager.abandonAudioFocus(afChangeListener);
-            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
-            if (mediaPlayerState == MP_State.Started)
-                unregisterReceiver(mNoisyReveiver);
-            play_button.setSelected(false);
-            mediaPlayerState = MP_State.Stopped;
-            showMediaPlayerState();
-            mediaPlayerState = MP_State.Idle;
-        }else{
-            Toast.makeText(PaginaRenderActivity.this,
-                    "Invalid State@cmdStop() - skip",
-                    Toast.LENGTH_SHORT).show();
-        }
+//    private void cmdStop(){
+//        if(mediaPlayerState == MP_State.Started
+//                ||mediaPlayerState == MP_State.Paused) {
+//            mediaPlayer.stop();
+//            mediaPlayer.reset();
+//            mAudioManager.abandonAudioFocus(afChangeListener);
+//            //deregistrazione del ricevitore per la pausa automatica in caso di audio troppo rumoroso
+//            if (mediaPlayerState == MP_State.Started)
+//                unregisterReceiver(mNoisyReveiver);
+//            play_button.setSelected(false);
+//            mediaPlayerState = MP_State.Stopped;
+//            showMediaPlayerState();
+//            mediaPlayerState = MP_State.Idle;
+//        }else{
+//            Toast.makeText(PaginaRenderActivity.this,
+//                    "Invalid State@cmdStop() - skip",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//
+//        scroll_song_bar.setEnabled(false);
+//    }
 
-        scroll_song_bar.setEnabled(false);
-    }
+//    private void showMediaPlayerState(){
+//
+//        String state;
+//
+//        switch(mediaPlayerState){
+//            case Idle:
+//                state = "Idle";
+//                break;
+//            case Initialized:
+//                state = "Initialized";
+//                break;
+//            case Prepared:
+//                state = "Prepared";
+//                break;
+//            case Started:
+//                state = "Started";
+//                break;
+//            case Paused:
+//                state = "Paused";
+//                break;
+//            case Stopped:
+//                state = "Stopped";
+//                break;
+//            case PlaybackCompleted:
+//                state = "PlaybackCompleted";
+//                break;
+//            case End:
+//                state = "End";
+//                break;
+//            case Error:
+//                state = "Error";
+//                break;
+//            case Preparing:
+//                state = "Preparing";
+//                break;
+//            default:
+//                state = "Unknown!";
+//        }
+//
+//        Toast.makeText(PaginaRenderActivity.this
+//                , getString(R.string.player_state) + " " + state, Toast.LENGTH_SHORT).show();
+//    }
 
-    private void showMediaPlayerState(){
+//    OnErrorListener mediaPlayerOnErrorListener
+//            = new OnErrorListener(){
+//
+//        @Override
+//        public boolean onError(MediaPlayer mp, int what, int extra) {
+//            try {
+//                if (mp3Dialog.isShowing())
+//                    mp3Dialog.dismiss();
+//            }
+//            catch (IllegalArgumentException e) {
+//                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+//            }
+//            mediaPlayerState = MP_State.Error;
+//            showMediaPlayerState();
+//            return false;
+//        }
+//    };
 
-        String state;
+//    OnPreparedListener mediaPlayerOnPreparedListener
+//            =  new OnPreparedListener() {
+//
+//        @Override
+//        public void onPrepared(MediaPlayer mp) {
+//            try {
+//                if (mp3Dialog.isShowing())
+//                    mp3Dialog.dismiss();
+//            }
+//            catch (IllegalArgumentException e) {
+//                Log.e(getClass().toString(), e.getLocalizedMessage(), e);
+//            }
+//            mediaPlayerState = MP_State.Prepared;
+//            cmdStart();
+////            scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
+//            scroll_song_bar.setMax(mediaPlayer.getDuration());
+//            scroll_song_bar.setEnabled(true);
+//        }
+//    };
 
-        switch(mediaPlayerState){
-            case Idle:
-                state = "Idle";
-                break;
-            case Initialized:
-                state = "Initialized";
-                break;
-            case Prepared:
-                state = "Prepared";
-                break;
-            case Started:
-                state = "Started";
-                break;
-            case Paused:
-                state = "Paused";
-                break;
-            case Stopped:
-                state = "Stopped";
-                break;
-            case PlaybackCompleted:
-                state = "PlaybackCompleted";
-                break;
-            case End:
-                state = "End";
-                break;
-            case Error:
-                state = "Error";
-                break;
-            case Preparing:
-                state = "Preparing";
-                break;
-            default:
-                state = "Unknown!";
-        }
-
-        Toast.makeText(PaginaRenderActivity.this
-                , getString(R.string.player_state) + " " + state, Toast.LENGTH_SHORT).show();
-    }
-
-    OnErrorListener mediaPlayerOnErrorListener
-            = new OnErrorListener(){
-
-        @Override
-        public boolean onError(MediaPlayer mp, int what, int extra) {
-            try {
-                if (mp3Dialog.isShowing())
-                    mp3Dialog.dismiss();
-            }
-            catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-            }
-            mediaPlayerState = MP_State.Error;
-            showMediaPlayerState();
-            return false;
-        }
-    };
-
-    OnPreparedListener mediaPlayerOnPreparedListener
-            =  new OnPreparedListener() {
-
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-            try {
-                if (mp3Dialog.isShowing())
-                    mp3Dialog.dismiss();
-            }
-            catch (IllegalArgumentException e) {
-                Log.e(getClass().toString(), e.getLocalizedMessage(), e);
-            }
-            mediaPlayerState = MP_State.Prepared;
-            cmdStart();
-//            scroll_song_bar.setValueRange(0, mediaPlayer.getDuration(), false);
-            scroll_song_bar.setMax(mediaPlayer.getDuration());
-            scroll_song_bar.setEnabled(true);
-        }
-    };
-
-    OnCompletionListener mediaPlayerOnCompletedListener
-            =  new OnCompletionListener() {
-
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-            cmdStop();
-            mediaPlayerState = MP_State.PlaybackCompleted;
-            showMediaPlayerState();
-            mediaPlayerState = MP_State.Idle;
-        }
-    };
-
+//    OnCompletionListener mediaPlayerOnCompletedListener
+//            =  new OnCompletionListener() {
+//
+//        @Override
+//        public void onCompletion(MediaPlayer mp) {
+//            cmdStop();
+//            mediaPlayerState = MP_State.PlaybackCompleted;
+//            showMediaPlayerState();
+//            mediaPlayerState = MP_State.Idle;
+//        }
+//    };
 
     private void saveZoom(){
         defaultZoomLevel = (int) (paginaView.getScale() *100);
@@ -1752,12 +2166,20 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         , Snackbar.LENGTH_SHORT)
                         .show();
 
-                if (mediaPlayerState == MP_State.Started
-                        || mediaPlayerState == MP_State.Paused)
-                    cmdStop();
-                mediaPlayer = new MediaPlayer();
-                mediaPlayerState = MP_State.Idle;
-                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+                scroll_song_bar.setProgress(0);
+                scroll_song_bar.setEnabled(false);
+                showPlaying(false);
+                mediaPlayerState = MP_State.Stopped;
+                Intent i = new Intent(getApplicationContext(),MusicService.class);
+                i.setAction(MusicService.ACTION_STOP);
+                startService(i);
+
+//                if (mediaPlayerState == MP_State.Started
+//                        || mediaPlayerState == MP_State.Paused)
+//                    cmdStop();
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayerState = MP_State.Idle;
+//                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                 ContentValues values = new ContentValues();
@@ -2074,8 +2496,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
                     // make the scanner aware of the location and the files you want to see
                     MediaScannerConnection.scanFile(context
                             , new String[] {Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_MUSIC).getAbsolutePath()
-                            + "/Risuscitò/" + Utility.filterMediaLinkNew(url)}
+                                    Environment.DIRECTORY_MUSIC).getAbsolutePath()
+                                    + "/Risuscitò/" + Utility.filterMediaLinkNew(url)}
                             , null
                             , null);
                 }
@@ -2084,17 +2506,35 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         , Snackbar.LENGTH_SHORT)
                         .show();
 
-                if (mediaPlayerState == MP_State.Started
-                        || mediaPlayerState == MP_State.Paused)
-                    cmdStop();
-                mediaPlayer = new MediaPlayer();
-                mediaPlayerState = MP_State.Idle;
-                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+//                if (mediaPlayerState == MP_State.Started
+//                        || mediaPlayerState == MP_State.Paused)
+//                    cmdStop();
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayerState = MP_State.Idle;
+//                mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+
+                scroll_song_bar.setProgress(0);
+                scroll_song_bar.setEnabled(false);
+                showPlaying(false);
+                mediaPlayerState = MP_State.Stopped;
+                Intent i = new Intent(getApplicationContext(),MusicService.class);
+                i.setAction(MusicService.ACTION_STOP);
+                startService(i);
 
 //                localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
                 checkExternalFilePermissions();
                 localFile = true;
-                cmdSetDataSource(localUrl);
+                playUrl = localUrl;
+//                cmdSetDataSource(localUrl);
+                // Send an intent with the URL of the song to play. This is expected by
+                // MusicService.
+//                i = new Intent(getApplicationContext(),MusicService.class);
+//                i.setAction(MusicService.ACTION_URL);
+//                Uri uri = Uri.parse(localUrl);
+//                i.setData(uri);
+//                startService(i);
+//                scroll_song_bar.setMax(getDuration());
+//                scroll_song_bar.setEnabled(true);
                 save_file.setSelected(true);
 //	    		}
             }
@@ -2281,6 +2721,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                         mProgressDialog.cancel();
                     }
                 })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        setRequestedOrientation(prevOrientation);
+                    }
+                })
                 .build();
 
     }
@@ -2426,7 +2872,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     void searchExternalFile(boolean recreate) {
         localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
         if (recreate) {
-            if (android.os.Build.VERSION.SDK_INT >= 11) {
+            if (Build.VERSION.SDK_INT >= 11) {
                 recreate();
             } else {
                 Intent intent = getIntent();
@@ -2615,6 +3061,16 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 }
             }
         }
+    }
+
+    private void showPlaying(boolean started) {
+        play_button.setSelected(started);
+//        play_button.setVisibility(started ? View.INVISIBLE : View.VISIBLE);
+//        pause_button.setVisibility(started ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private boolean isPlaying() {
+        return play_button.isSelected();
     }
 
 }
