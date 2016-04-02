@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '24.0.0 rc2'
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
@@ -10,12 +10,6 @@ android {
         versionName "0.5.1"
     }
     productFlavors {
-    }
-}
-
-repositories {
-    maven {
-        url "https://jitpack.io"
     }
 }
 
