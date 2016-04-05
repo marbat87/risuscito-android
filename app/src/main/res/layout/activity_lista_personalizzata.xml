@@ -4,34 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<com.github.ksoichiro.android.observablescrollview.ObservableScrollView-->
-    <!--android:id="@+id/personalizzataScrollView"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:overScrollMode="never"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
-    <!--android:id="@+id/personalizzataScrollView"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/listaScroll"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/button_pulisci"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:visibility="gone"-->
-    <!--android:soundEffectsEnabled="false" />-->
-
-    <!--</android.support.v4.widget.NestedScrollView>-->
-
     <android.support.v7.widget.RecyclerView
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -41,18 +13,5 @@
         android:fadeScrollbars="true" />
 
     <include layout="@layout/lista_pers_button" />
-
-    <!--</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>-->
-
-    <!--<com.melnykov.fab.FloatingActionButton-->
-    <!--android:id="@+id/fab_personalizzata"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--android:layout_margin="@dimen/floating_margin_lateral"-->
-    <!--android:src="@drawable/ic_icon_broom"-->
-    <!--risuscito:fab_colorNormal="@color/theme_accent"-->
-    <!--risuscito:fab_colorPressed="@color/theme_accent_dark"-->
-    <!--risuscito:fab_colorRipple="@color/theme_accent_dark"/>-->
 
 </FrameLayout>
