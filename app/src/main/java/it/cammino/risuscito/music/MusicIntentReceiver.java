@@ -16,7 +16,7 @@ public class MusicIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
-            Toast.makeText(context, "Headphones disconnected.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Headphones disconnected.", Toast.LENGTH_SHORT).show();
             // send an intent to our MusicService to telling it to pause the audio
             Intent i = new Intent(context, MusicService.class);
             i.setAction(MusicService.ACTION_PAUSE);
