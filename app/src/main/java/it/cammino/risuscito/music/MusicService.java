@@ -431,7 +431,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             // If we don't have audio focus and can't duck, we have to pause, even if mState
             // is State.Playing. But we stay in the Playing state so that we know we have to resume
             // playback once we get the focus back.
-            if (mPlayer.isPlaying()) mPlayer.pause();
+//            if (mPlayer.isPlaying()) mPlayer.pause();
+            if (mPlayer.isPlaying())
+                processPauseRequest();
             return;
         } else if (mAudioFocus == AudioFocus.NoFocusCanDuck)
             mPlayer.setVolume(DUCK_VOLUME, DUCK_VOLUME);  // we'll be relatively quiet
@@ -755,7 +757,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 String durationStr = String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
 
                 builder.setStyle(new NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(1)  // show only play/pause in compact view
+                        .setShowActionsInCompactView(0,1)  // show only play/pause in compact view
                         .setMediaSession(mSession.getSessionToken())
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(getActionIntent(this, KeyEvent.KEYCODE_MEDIA_STOP)))
@@ -780,12 +782,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         String label;
         switch (mState) {
             case Playing:
-                icon = android.R.drawable.ic_media_pause;
+                icon = R.drawable.notification_pause;
                 label = "Pause";
                 builder.addAction(new NotificationCompat.Action(icon, label, getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)));
                 break;
             case Paused:
-                icon = android.R.drawable.ic_media_play;
+                icon = R.drawable.notification_play;
                 label = "Play";
                 builder.addAction(new NotificationCompat.Action(icon, label, getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)));
                 break;
@@ -796,7 +798,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     private void addRestartAction(NotificationCompat.Builder builder) {
         builder.addAction(new NotificationCompat.Action(
-                android.R.drawable.ic_media_rew
+                R.drawable.notification_restart
                 , "Restart"
                 , getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PREVIOUS)));
     }
