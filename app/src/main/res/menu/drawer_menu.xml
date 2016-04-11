@@ -1,8 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <!--<item tools:ignore="MenuTitle">-->
-            <!--<menu>-->
                 <item
                     android:id="@+id/navigation_home"
                     android:icon="@drawable/ic_home_48dp"
@@ -32,10 +30,6 @@
                     android:id="@+id/navigation_history"
                     android:icon="@drawable/ic_restore_48dp"
                     android:title="@string/title_activity_history"/>
-            <!--</menu>-->
-        <!--</item>-->
-        <!--<item tools:ignore="MenuTitle">-->
-            <!--<menu>-->
                 <item
                     android:id="@+id/navigation_settings"
                     android:icon="@drawable/ic_settings_48dp"
@@ -48,8 +42,6 @@
                     android:id="@+id/navigation_donate"
                     android:icon="@drawable/ic_thumb_up_48dp"
                     android:title="@string/title_activity_donate"/>
-            <!--</menu>-->
-        <!--</item>-->
     </group>
 
 </menu>
