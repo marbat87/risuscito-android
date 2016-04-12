@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="3.7.0" changeDate="09 April 2015">
-        <changelogtext>Possible fix for crashes on Samsung and Wiko devices with Android 4.2.2</changelogtext>
+    <changelogversion versionName="4.0.0" changeDate="16 April 2015">
         <changelogtext>NEW backup/restore all your preferences and settings on GDrive</changelogtext>
+        <changelogtext>New audio management, with notification and lockscreen controls (may depend on Android version) and Android Wear controls</changelogtext>
+        <changelogtext>Possible fix for crashes on Samsung and Wiko devices with Android 4.2.2</changelogtext>
         <changelogtext>Various songs fixed</changelogtext>
         <changelogtext>Expanded all songs, removing "2 times" or "repeat"</changelogtext>
-        <changelogtext>New audio management, with notification and lockscreen controls (may depend on Android version)</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="3.6.0" changeDate="20 Novembre 2015">
