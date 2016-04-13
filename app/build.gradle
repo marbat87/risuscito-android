@@ -7,7 +7,7 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 109
+        versionCode 110
         versionName '4.0.0'
     }
     lintOptions {
