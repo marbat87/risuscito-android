@@ -1,48 +1,48 @@
 package it.cammino.risuscito.adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import com.turingtechnologies.materialscrollbar.ICustomAdapter;
+
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Set;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoRecycled;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
-public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer {
+public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter {
 
     private List<CantoRecycled> dataItems;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
     private View.OnCreateContextMenuListener createContextMenuListener;
+    private int mMode;
+    private Activity context;
 
-    private HashMap<String, Integer> alphaIndexer;
-    private String[] sections;
+//    private HashMap<String, Integer> alphaIndexer;
+//    private String[] sections;
 
     // Adapter constructor 1
-    public CantoAdapter(List<CantoRecycled> dataItems
+    public CantoAdapter(Activity activity, int mMode, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener) {
 
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.longClickListener = null;
         createContextMenuListener = null;
-        init();
+        this.mMode = mMode;
+        this.context = activity;
+//        init();
     }
 
     // Adapter constructor 2
-    public CantoAdapter(List<CantoRecycled> dataItems
+    public CantoAdapter(Activity activity, int mMode, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
 
@@ -50,11 +50,13 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
         this.createContextMenuListener = null;
-        init();
+        this.mMode = mMode;
+        this.context = activity;
+//        init();
     }
 
     // Adapter constructor 3
-    public CantoAdapter(List<CantoRecycled> dataItems
+    public CantoAdapter(Activity activity, int mMode, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnCreateContextMenuListener createContextMenuListener) {
 
@@ -62,32 +64,8 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
         this.clickListener = clickListener;
         this.longClickListener = null;
         this.createContextMenuListener = createContextMenuListener;
-        init();
-    }
-
-    private void init() {
-        alphaIndexer = new HashMap<String, Integer>();
-        int size = dataItems.size();
-        String prevLetter = " ";
-
-        for (int x = 0; x < size; x++) {
-            // get the first letter of the store
-            // convert to uppercase otherwise lowercase a -z will be sorted after upper A-Z
-            String ch = dataItems.get(x).getTitolo().substring(0, 1).toUpperCase();
-
-            if (!ch.equals(prevLetter)) {
-                // HashMap will prevent duplicates
-                alphaIndexer.put(ch, x);
-                prevLetter = ch;
-            }
-        }
-
-        Set<String> sectionLetters = alphaIndexer.keySet();
-        // create a list from the set to sort
-        ArrayList<String> sectionList = new ArrayList<>(sectionLetters);
-        Collections.sort(sectionList);
-        sections = new String[sectionList.size()];
-        sectionList.toArray(sections);
+        this.mMode = mMode;
+        this.context = activity;
     }
 
     @Override
@@ -99,6 +77,7 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -110,16 +89,19 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        Drawable drawable = ContextCompat.getDrawable(context,
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+////        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+////        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+//        if (LUtils.hasJB())
+//            cantoHolder.cantoPage.setBackground(drawable);
+//        else
+//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+        cantoHolder.cantoPage.setBackgroundResource(
+                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+                        , "drawable"
+                        , context.getPackageName()));
+
     }
 
     @Override
@@ -154,23 +136,30 @@ public class CantoAdapter extends RecyclerView.Adapter implements SectionIndexer
     }
 
     @Override
-    public String[] getSections() {
-        return sections;
-    }
-
-    @Override
-    public int getPositionForSection(int section) {
-        return alphaIndexer.get(sections[section]);
-    }
-
-    @Override
-    public int getSectionForPosition(int position) {
-        String first = dataItems.get(position).getTitolo().substring(0, 1).toUpperCase();
-        for (int i = 0; i < sections.length; i++) {
-            if (first.equals(sections[i]))
-                return i;
+    public String getCustomStringForElement(int i) {
+        switch (mMode) {
+            case 0:
+                return dataItems.get(i).getTitolo().toUpperCase().substring(0,1);
+            case 1:
+                int pagina = dataItems.get(i).getPagina();
+                return String.valueOf(pagina);
+            case 2:
+                int salmo = dataItems.get(i).getNumeroSalmo();
+                return String.valueOf(salmo);
+            default:
+                return dataItems.get(i).getTitolo().toUpperCase().substring(0,1);
         }
-        return 0;
+    }
+
+    private int getResId(String resName, Class<?> c) {
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        }
+        catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            return -1;
+        }
     }
 
 }

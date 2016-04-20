@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?attr/customSelector"
     android:minHeight="@dimen/myListPreferredItemHeightMedium"
-    android:layout_gravity="center_vertical"
-    android:orientation="horizontal">
+    android:layout_gravity="center_vertical">
 
     <TextView
         android:id="@+id/text_page"

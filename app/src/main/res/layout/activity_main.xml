@@ -6,50 +6,27 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:id="@+id/main_content"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <!--<android.support.design.widget.AppBarLayout-->
-            <!--android:id="@+id/toolbar_layout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:theme="@style/ActionBarThemeOverlay">-->
-
-            <!--<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"-->
-                <!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
-                <!--xmlns:tools="http://schemas.android.com/tools"-->
-                <!--android:id="@+id/risuscito_toolbar"-->
-                <!--android:layout_height="?attr/actionBarSize"-->
-                <!--android:theme="@style/ActionBarThemeOverlay"-->
-                <!--risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"-->
-                <!--risuscito:contentInsetStart="72dp"-->
-                <!--risuscito:layout_scrollFlags="scroll|enterAlways"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:background="?attr/colorPrimary">-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:id="@+id/main_toolbarTitle"-->
-                    <!--android:textAppearance="@style/ActionBar.TitleText"-->
-                    <!--fontPath="fonts/Roboto-Medium.ttf"-->
-                    <!--android:gravity="start"-->
-                    <!--tools:ignore="MissingPrefix" />-->
-
-            <!--</android.support.v7.widget.Toolbar>-->
-
-        <!--</android.support.design.widget.AppBarLayout>-->
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_marginTop="?actionBarSize"
+            android:layout_gravity="center_horizontal|top"
+            android:visibility="invisible"
+            risuscito:mlpb_progress_stoke_width="3dp"
+            risuscito:mlpb_progress_text_visibility="invisible"
+            android:elevation="1dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
 
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!--</LinearLayout>-->
-
-    <!--</android.support.design.widget.CoordinatorLayout>-->
+    </FrameLayout>
 
     <!-- Drawer items -->
     <android.support.design.widget.NavigationView
@@ -57,6 +34,7 @@
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_gravity="start"
         risuscito:headerLayout="@layout/navdrawer_header"
         risuscito:menu="@menu/drawer_menu"/>

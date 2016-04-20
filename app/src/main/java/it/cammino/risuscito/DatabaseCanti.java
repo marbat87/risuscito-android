@@ -4396,7 +4396,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     }
 
     public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
-        ContentValues values = null;
+        ContentValues values;
 
         if (newVersion >= 43 && oldVersion >= 19 && oldVersion <= 38) {
             //ricodifica i titoli dei canti con i loro ID
@@ -4711,4 +4711,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         }
     }
 
+    public static String getDbName() {
+        return DB_NAME;
+    }
 }

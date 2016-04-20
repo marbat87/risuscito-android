@@ -2,7 +2,7 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
@@ -14,19 +14,13 @@ import android.widget.TextView;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
-import com.wnafee.vector.MorphButton;
 
 import java.util.List;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
-import it.cammino.risuscito.morph.MorphButtonCompat;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.objects.ExpandableGroup;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoExpandableAdapter
         extends AbstractExpandableItemAdapter<CantoExpandableAdapter.GroupViewHolder, CantoExpandableAdapter.CantoViewHolder> {
 
@@ -110,36 +104,42 @@ public class CantoExpandableAdapter
 
         if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
 //            int bgResId;
-            MorphButton.MorphState indicatorState;
-
+//            MorphButton.MorphState indicatorState;
+            Drawable drawable;
             if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
 //                bgResId = R.drawable.bg_group_item_expanded_state;
-                indicatorState = MorphButton.MorphState.END;
+//                indicatorState = MorphButton.MorphState.END;
+                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_24dp);
             } else {
 //                bgResId = R.drawable.bg_group_item_normal_state;
-                indicatorState = MorphButton.MorphState.START;
+//                indicatorState = MorphButton.MorphState.START;
+                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_24dp);
             }
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
+            holder.indicator.setBackgroundDrawable(drawable);
 
 //            holder.mContainer.setBackgroundResource(bgResId);
 
-            if (holder.mMorphButton.getState() != indicatorState) {
-                holder.mMorphButton.setState(indicatorState, true);
-            }
-            if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
-                Drawable drawable;
-                if (indicatorState == MorphButton.MorphState.END)
-                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_black_24dp);
-//                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_less_black_24dp));
-                else
-                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp);
-//                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp));
-                drawable = DrawableCompat.wrap(drawable);
-                DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
-                holder.mMorphButtonOld.setBackgroundDrawable(drawable);
-            }
+//            if (holder.mMorphButton.getState() != indicatorState) {
+//                holder.mMorphButton.setState(indicatorState, true);
+//            }
+//            if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
+//                Drawable drawable;
+//                if (indicatorState == MorphButton.MorphState.END)
+//                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_24dp);
+////                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_less_black_24dp));
+//                else
+//                    drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_24dp);
+////                    holder.mMorphButtonOld.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp));
+//                drawable = DrawableCompat.wrap(drawable);
+//                DrawableCompat.setTint(drawable, activity.getResources().getColor(R.color.icon_ative_black));
+//                holder.mMorphButtonOld.setBackgroundDrawable(drawable);
+//            }
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindChildViewHolder(CantoViewHolder holder, int groupPosition, int childPosition, int viewType) {
         // group item
@@ -149,16 +149,29 @@ public class CantoExpandableAdapter
         holder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         holder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         holder.cantoSource.setText(dataItem.getSource());
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        Drawable drawable = ContextCompat.getDrawable(activity,
+//                activity.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", activity.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(activity, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+//        if (LUtils.hasJB())
+//            holder.cantoPage.setBackground(drawable);
+//        else
+//            holder.cantoPage.setBackgroundDrawable(drawable);
+        holder.cantoPage.setBackgroundResource(
+                activity.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+                        , "drawable"
+                        , activity.getPackageName()));
+
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
+//            holder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
     }
 
     public static class CantoViewHolder extends AbstractExpandableItemViewHolder {
@@ -191,14 +204,15 @@ public class CantoExpandableAdapter
 
         public TextView groupTitle;
         public TextView groupId;
-        public MorphButtonCompat mMorphButton;
-        public ImageView mMorphButtonOld;
+//        public MorphButtonCompat mMorphButton;
+        public ImageView indicator;
         public ViewGroup mContainer;
 
         public GroupViewHolder(View itemView) {
             super(itemView);
-            mMorphButton = new MorphButtonCompat(itemView.findViewById(R.id.indicator));
-            mMorphButtonOld = (ImageView) itemView.findViewById(R.id.indicatorOld);
+//            mMorphButton = new MorphButtonCompat(itemView.findViewById(R.id.indicator));
+//            mMorphButtonOld = (ImageView) itemView.findViewById(R.id.indicatorOld);
+            indicator = (ImageView) itemView.findViewById(R.id.indicator);
             groupTitle = (TextView) itemView.findViewById(android.R.id.text1);
             groupId = (TextView) itemView.findViewById(R.id.text_id_gruppo);
             mContainer = (ViewGroup) itemView.findViewById(R.id.container);

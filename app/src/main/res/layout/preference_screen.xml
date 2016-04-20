@@ -7,6 +7,7 @@
     android:layout_height="match_parent">-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -38,7 +39,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
@@ -341,8 +342,6 @@
                         android:layout_gravity="start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:paddingTop="15dp"
                         android:paddingBottom="15dp"
                         android:paddingLeft="20dp"
@@ -495,8 +494,6 @@
                         android:id="@+id/save_location_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:layout_gravity="start"
                         android:paddingTop="15dp"
                         android:paddingBottom="15dp"
@@ -528,8 +525,6 @@
                         android:layout_gravity="start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:paddingTop="15dp"
                         android:paddingBottom="15dp"
                         android:paddingLeft="20dp"

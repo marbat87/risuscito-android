@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:visibility="gone"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
     <Button
         android:id="@+id/button_pulisci"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:soundEffectsEnabled="false" />
     <Button
         android:id="@+id/button_condividi"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:soundEffectsEnabled="false" />
-</FrameLayout>
+</merge>

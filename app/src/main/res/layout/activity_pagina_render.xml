@@ -8,15 +8,6 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true" >
 
-    <!--<android.support.v7.widget.Toolbar-->
-    <!--android:id="@+id/risuscito_toolbar"-->
-    <!--android:layout_height="?attr/actionBarSize"-->
-    <!--android:theme="@style/ActionBarThemeOverlay"-->
-    <!--risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"-->
-    <!--risuscito:titleTextAppearance="@style/ActionBar.TitleText"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:elevation="@dimen/toolbar_elevation" />-->
     <include layout="@layout/risuscito_toolbar" />
 
     <FrameLayout
@@ -49,39 +40,26 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <!--<ImageButton-->
-                    <!--android:id="@+id/rewind_song"-->
-                    <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_toLeftOf="@+id/play_song"-->
-                    <!--android:layout_toStartOf="@+id/play_song"-->
-                    <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                    <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:background="?attr/customSelectorRoundAccent"-->
-                    <!--android:src="@drawable/ic_av_rewind_active"-->
-                    <!--android:soundEffectsEnabled="true" />-->
-
                     <TextView
                         android:id="@+id/time_text"
                         android:layout_width="50dip"
                         android:paddingLeft="@dimen/activity_min_margin"
+                        android:paddingStart="@dimen/activity_min_margin"
                         android:layout_gravity="center_vertical"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:layout_height="wrap_content"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat" />
 
-                    <com.rey.material.widget.Slider
-                        style="@style/Material.Widget.Slider"
+                    <SeekBar
                         android:id="@+id/music_seekbar"
                         android:layout_width="0dip"
                         android:layout_weight="1"
-                        risuscito:sl_stepValue="1000"
-                        android:layout_height="wrap_content"
+                        android:maxHeight="1000dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
                         android:layout_gravity="center_vertical"
-                        android:padding="16dp" />
+                        android:layout_height="match_parent"/>
 
                     <ImageButton
                         android:id="@+id/play_song"
@@ -92,50 +70,9 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
-                        android:src="@drawable/play_button_drawable"
-                        android:soundEffectsEnabled="true" />
-
-                    <!--<ImageButton-->
-                    <!--android:id="@+id/fast_forward_song"-->
-                    <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_toLeftOf="@+id/stop_song"-->
-                    <!--android:layout_toStartOf="@+id/stop_song"-->
-                    <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                    <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:background="?attr/customSelectorRoundAccent"-->
-                    <!--android:src="@drawable/ic_av_fast_forward_active"-->
-                    <!--android:soundEffectsEnabled="true" />-->
-
-                    <!--<ImageButton-->
-                    <!--android:id="@+id/stop_song"-->
-                    <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_toLeftOf="@+id/save_file"-->
-                    <!--android:layout_toStartOf="@+id/save_file"-->
-                    <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                    <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:background="?attr/customSelectorRoundAccent"-->
-                    <!--android:src="@drawable/ic_av_stop_active"-->
-                    <!--android:soundEffectsEnabled="true" />-->
-
-                    <!--<ImageButton-->
-                    <!--android:id="@+id/save_file"-->
-                    <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                    <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:scaleType="fitCenter"-->
-                    <!--android:background="?attr/customSelectorRoundAccent"-->
-                    <!--android:src="@drawable/download_delete_button_drawable"-->
-                    <!--android:soundEffectsEnabled="true" />-->
+                        risuscito:srcCompat="@drawable/play_button_drawable"
+                        android:soundEffectsEnabled="true"
+                        tools:ignore="MissingPrefix" />
 
                 </LinearLayout>
 
@@ -147,54 +84,37 @@
                 android:layout_alignParentBottom="true"
                 android:background="@color/theme_primary"
                 android:divider="?attr/dividerVertical"
-                android:layout_height="@dimen/bottom_toolbar_height"
+                android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:orientation="horizontal">
-
-                <!--<ImageButton-->
-                <!--android:id="@+id/favorite"-->
-                <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:scaleType="fitCenter"-->
-                <!--android:theme="@style/ActionBarThemeOverlay"-->
-                <!--android:background="?attr/customSelectorRound"-->
-                <!--android:src="@drawable/ic_rating_favorite_normal_light"-->
-                <!--android:soundEffectsEnabled="true" />-->
-
-
-
-                <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
-                <!--android:id="@+id/speed_seekbar"-->
-                <!--android:layout_width="0dip"-->
-                <!--android:layout_weight="1"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--risuscito:dsb_min="0"-->
-                <!--risuscito:dsb_max="50"-->
-                <!--risuscito:dsb_rippleColor="@color/ripple_material_dark"-->
-                <!--risuscito:dsb_indicatorFormatter="%d%%"-->
-                <!--risuscito:dsb_indicatorElevation="6dp" />-->
 
                 <TextView
                     android:id="@+id/slider_text"
                     android:layout_width="50dip"
                     android:paddingLeft="@dimen/activity_min_margin"
                     android:layout_gravity="center_vertical"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse" />
 
-                <com.rey.material.widget.Slider
-                    style="@style/Material.Widget.Slider"
+                <!--<com.rey.material.widget.Slider-->
+                    <!--style="@style/Material.Widget.Slider"-->
+                    <!--android:id="@+id/speed_seekbar"-->
+                    <!--android:layout_width="0dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:padding="16dp" />-->
+                <SeekBar
                     android:id="@+id/speed_seekbar"
                     android:layout_width="0dip"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
+                    android:maxHeight="1000dp"
+                    android:max="100"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:layout_gravity="center_vertical"
-                    android:padding="16dp" />
+                    android:layout_height="match_parent"/>
 
                 <ImageButton
                     android:id="@+id/play_scroll"
@@ -206,8 +126,9 @@
                     android:scaleType="fitCenter"
                     android:theme="@style/ActionBarThemeOverlay"
                     android:background="?attr/customSelectorRound"
-                    android:src="@drawable/play_scroll_button_drawable"
-                    android:soundEffectsEnabled="true" />
+                    risuscito:srcCompat="@drawable/play_scroll_button_drawable"
+                    android:soundEffectsEnabled="true"
+                    tools:ignore="MissingPrefix" />
 
             </LinearLayout>
 
@@ -227,17 +148,19 @@
             android:layout_height="match_parent"
             android:visibility="invisible"
             android:background="@android:color/transparent"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:elevation="@dimen/design_appbar_elevation" />
 
         <com.github.alexkolpa.fabtoolbar.FabToolbar
             android:id="@+id/fab_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/fab_toolbar_bottom_tb"
+            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"
             risuscito:tb_anim_duration="500"
             risuscito:tb_button_gravity="end"
-            risuscito:tb_container_gravity="center">
+            risuscito:tb_container_gravity="center"
+            android:elevation="@dimen/design_fab_elevation" >
 
             <ImageButton
                 android:id="@+id/fab_fullscreen_on"
@@ -249,7 +172,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_fullscreen_white_48dp"
+                risuscito:srcCompat="@drawable/ic_fullscreen_48dp"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -262,7 +185,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/hide_music_background"
+                risuscito:srcCompat="@drawable/hide_music_background"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -275,7 +198,7 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/download_delete_button_drawable"
+                risuscito:srcCompat="@drawable/download_delete_button_drawable"
                 android:soundEffectsEnabled="true" />
 
             <ImageButton
@@ -288,52 +211,10 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/fab_add_to_favorites"
+                risuscito:srcCompat="@drawable/fab_add_to_favorites"
                 android:soundEffectsEnabled="true" />
 
         </com.github.alexkolpa.fabtoolbar.FabToolbar>
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionsMenu-->
-        <!--android:id="@+id/fab_main_expand"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--risuscito:fab_labelStyle="@style/menu_labels_style"-->
-        <!--android:layout_marginRight="@dimen/floating_margin_lateral_menu"-->
-        <!--android:layout_marginEnd="@dimen/floating_margin_lateral_menu"-->
-        <!--android:layout_marginBottom="@dimen/abc_action_bar_default_height_material">-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab_fullscreen_on"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--risuscito:fab_title="@string/fullscreen"-->
-        <!--risuscito:fab_colorNormal="@android:color/white"-->
-        <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-        <!--risuscito:fab_icon="@drawable/ic_fullscreen_grey600_24dp"-->
-        <!--risuscito:fab_size="mini" />-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab_sound_off"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--risuscito:fab_title="@string/audio_on_off"-->
-        <!--risuscito:fab_colorNormal="@android:color/white"-->
-        <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-        <!--risuscito:fab_icon="@drawable/hide_music_background"-->
-        <!--risuscito:fab_size="mini" />-->
-
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab_favorite"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--risuscito:fab_title="@string/favorite_on_off"-->
-        <!--risuscito:fab_colorNormal="@android:color/white"-->
-        <!--risuscito:fab_colorPressed="@color/ripple_color"-->
-        <!--risuscito:fab_icon="@drawable/fab_add_to_favorites"-->
-        <!--risuscito:fab_size="mini" />-->
-
-        <!--</com.getbase.floatingactionbutton.FloatingActionsMenu>-->
 
         <View
             android:layout_width="match_parent"

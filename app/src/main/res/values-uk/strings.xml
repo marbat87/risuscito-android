@@ -1,6 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Христос Воскрес</string>
     <string name="action_about">Про</string>
     <string name="action_favourites">Закладки</string>
@@ -77,7 +76,7 @@
     <string name="download_running">Завантажується&#8230;</string>
     <string name="download_cancelled">Завантаження відмінено</string>
     <string name="present_yet">Пісня вже є</string>
-    <string name="dialog_present_yet">&#200; вже є пісня: </string>
+    <string name="dialog_present_yet">&#200; вже є пісня:</string>
     <string name="dialog_wonna_replace">. Хочеш замінити?</string>
     <string name="fast_search_title">Швидкий пошук</string>
     <string name="advanced_search_title">Детальний пошук</string>
@@ -99,7 +98,7 @@
     <string name="aggiungi_dismiss">СКАСУВАТИ</string>
     <string name="titolo_pos_vuoto">Не введено жодної назви</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
-    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 20</string>
+    <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
     <string name="aggiungi_lista_crea">СТВОРИТИ</string>
     <string name="lista_add_desc">Назва нового списку:</string>
@@ -181,9 +180,6 @@
     <string name="activity_homepage">Домашня сторінка</string>
     <string name="button_note_cantore">Нотатки для кантора</string>
     <string name="no_memory_writable">Пам\'ять не доступна або в режимі тільки читання</string>
-    <string name="help_new_menu_title">Нове меню</string>
-    <string name="help_new_menu_desc">Введено нове меню, його можа відкрити натиснувши на знак в верхньому лівому куту, або
-        провівши пальцем зліва право. Спробуй!</string>
     <string name="salmi_musica_index">Зміст псалмів з мелодіями</string>
     <string name="downlink_message">Хочеш використати функцію завантаження інтернет запису, щоб можна було його прослуховувати без з\'єднання, або асоціювати існуючий файл mp3 з пристрою?</string>
     <string name="downlink_download">ЗАВАНТАЖИТИ</string>
@@ -269,7 +265,7 @@
     <string name="dialog_reset_favorites_desc">Бажаєш очистити список закладок?</string>
     <string name="action_remove">Видалити</string>
     <string name="history_removed">Видалено з хронології</string>
-    <string name="action_switch_to">Змінити на...</string>
+    <string name="action_switch_to">Змінити на&#8230;</string>
     <string name="song_removed">Пічня видалена</string>
     <string name="switch_done">Зміну здійснено</string>
     <string name="switch_impossible">Не можна змінити пісню на ту ж саму пісню</string>
@@ -295,5 +291,45 @@
     <string name="dialog_back">НАЗАД</string>
     <string name="share_by">ПОДІЛИТИСЯ З&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
-
+    <string name="barre_search_string">Баре</string>
+    <string name="barre_add_al">на</string>
+    <string name="barre_al_tasto_I">Баре на</string>
+    <string name="barre_al_tasto_II">лад</string>
+    <string name="external_storage_title">Доступ до публічної памяті</string>
+    <string name="external_storage_rationale">Додаток просить доступ до зовнішної памяті. Це наобхідне для того, щоб завантажений файл був видимий для інших додатків. Якщо Ви не згодитесь, файл буде збережений в приватній памяті додатку.</string>
+    <string name="external_storage_denied">Немає доступу до публічної памяті.</string>
+    <string name="external_storage_pref_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб активувати збереження в публічну память.  Якщо Ви не згодитесь, опція стане невидимою.</string>
+    <string name="external_file_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб бачити, якщо Ви завантажили запис на публічну память. Якщо Ви не згодитесь, пошук буде здійснюватись лише в приватній памяті.</string>
+    <string name="forced_private">Вимушене завантження на приватну память</string>
+    <string name="connected_as">Ви ввійшли як %1$s</string>
+    <string name="gplus_signout">Вийти з аккаунту</string>
+    <string name="gplus_revoke">Відізвати права</string>
+    <string name="menu_account_section">Здійснити Бекап та Обнулити Налаштування</string>
+    <string name="dialog_acc_disconn_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google?
+\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
+    <string name="dialog_acc_revoke_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google та відізвати усі раніше надані права Google?
+\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
+    <string name="disconnected">Відключено від Google</string>
+    <string name="connection_running">Підключається&#8230;</string>
+    <string name="gdrive_backup">Бекап аккаунту</string>
+    <string name="gdrive_backup_content">Буде здійснено бекап налаштувань на Вашому аккаунті. Попередній бекап (якщо він є) буде перезаписаний. Бажаєте продовжити?</string>
+    <string name="gdrive_restore_content">Христос Воскрес буде обнулений з налаштувань Вашого аккаунту. Бажаєте продовжити?</string>
+    <string name="backup_running">Здійснюється бекап&#8230;</string>
+    <string name="restore_running">Налаштування обнуляються&#8230;</string>
+    <string name="gdrive_restore">Обнулити з аккаунту</string>
+    <string name="gdrive_restore_success">Обнулення здійснено успішно, Христос Воскрес буде перезапущено</string>
+    <string name="gdrive_backup_success">Бекап здійснено успішно</string>
+    <string name="no_restore_found">На твоєму аккаунті немає збережених бекапів</string>
+    <string name="backup_database">Бекап бази даних(1/2)</string>
+    <string name="backup_settings">Бекап налаштувань(2/2)</string>
+    <string name="restoring_database">Відновлення бази даних(1/2)</string>
+    <string name="restoring_settings">Відновлення налаштувань(2/2)</string>
+    <string name="general_message">Інфо</string>
+    <string name="login_failed">Наможливо з\'єднати: %1$+d - %2$s</string>
+    <string name="login_intro_title">Ввійти через Google</string>
+    <string name="login_intro_desc_0">Тепер Ви можете підключитися до Вашого Google аккаунту, щоб стали доступні функції бекапу/відновлення всіх Ваших налаштувань, також з різних пристроїв. Натисніть на кнопку внизу для логіну.</string>
+    <string name="login_intro_desc_1">Вам слід обрати аккаунт до якого хочете підключитися.</string>
+    <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
+    <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
+    <string name="playback_completed">Програвання завершено</string>
 </resources>

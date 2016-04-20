@@ -1,105 +1,123 @@
 package it.cammino.risuscito;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResource;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
+import com.squareup.picasso.Picasso;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.risuscito.utils.ColorChooserDialog;
 
-public class MainActivity extends ThemeableActivity implements ColorChooserDialog.ColorCallback {
+public class MainActivity extends ThemeableActivity
+        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener{
 
     public DrawerLayout mDrawerLayout;
-//    private Toolbar mActionBarToolbar;
-
-    // list of navdrawer items that were actually added to the navdrawer, in order
-//    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
-
-    // views that correspond to each navdrawer item, null if not yet created
-//    private View[] mNavDrawerItemViews = null;
-
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
+    private static final String SHOW_SNACKBAR = "mostra_snackbar";
+    private int selectedItemIndex = 0;
 
-    protected int selectedItem;
-    //    private ProgressDialogPro translationDialog;
     private int prevOrientation;
 
     private NavigationView mNavigationView;
 
-//    protected static final int NAVDRAWER_ITEM_HOMEPAGE = 0;
-//    protected static final int NAVDRAWER_ITEM_SEARCH = 1;
-//    protected static final int NAVDRAWER_ITEM_INDEXES = 2;
-//    protected static final int NAVDRAWER_ITEM_LISTS = 3;
-//    protected static final int NAVDRAWER_ITEM_FAVORITES = 4;
-//    protected static final int NAVDRAWER_ITEM_SETTINGS = 5;
-//    protected static final int NAVDRAWER_ITEM_ABOUT = 6;
-//    protected static final int NAVDRAWER_ITEM_DONATE = 7;
-//    protected static final int NAVDRAWER_ITEM_CONSEGNATI = 8;
-//    protected static final int NAVDRAWER_ITEM_HISTORY = 9;
-//    protected static final int NAVDRAWER_ITEM_INVALID = -1;
-//    protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
+//    private static final int TALBLET_DP = 600;
+//    private static final int WIDTH_320 = 320;
+//    private static final int WIDTH_400 = 400;
 
-    // titles for navdrawer items (indices must correspond to the above)
-//    private static final int[] NAVDRAWER_TITLE_RES_ID = new int[]{
-//            R.string.activity_homepage,
-//            R.string.search_name_text,
-//            R.string.title_activity_general_index,
-//            R.string.title_activity_custom_lists,
-//            R.string.action_favourites,
-//            R.string.title_activity_settings,
-//            R.string.title_activity_about,
-//            R.string.title_activity_donate,
-//            R.string.title_activity_consegnati,
-//            R.string.title_activity_history
-//    };
+    //    MaterialDialog mProgressDialog;
+    CircleProgressBar mCircleProgressBar;
 
-    // icons for navdrawer items (indices must correspond to above array)
-//    private static final int[] NAVDRAWER_ICON_RES_ID = new int[] {
-//            R.drawable.ic_action_home_dark,
-//            R.drawable.ic_action_search_dark,
-//            R.drawable.ic_action_view_as_list_dark,
-//            R.drawable.ic_action_add_to_queue_dark,
-//            R.drawable.ic_action_favorite_dark,
-//            R.drawable.ic_action_settings_dark,
-//            R.drawable.ic_action_about_dark,
-//            R.drawable.ic_action_good_dark,
-//            R.drawable.ic_action_consegnati,
-//            R.drawable.ic_history_black_24dp
-//    };
+    private boolean showSnackbar;
+    private GoogleSignInAccount acct;
+    private ImageView profileImage;
+    private ImageView profileBackground;
+        private View copertinaAccount;
+    private ImageView accountMenu;
+    private TextView usernameTextView;
+    private TextView emailTextView;
 
-    private static final int TALBLET_DP = 600;
-    private static final int WIDTH_320 = 320;
-    private static final int WIDTH_400 = 400;
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 9001;
+    //    private static final String STATE_RESOLVING_ERROR = "resolving_error";
+//    // Request code to use when launching the resolution activity
+//    private static final int REQUEST_RESOLVE_ERROR = 1001;
+//    // Unique tag for the error dialog fragment
+//    private static final String DIALOG_ERROR = "dialog_error";
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
+    // Bool to track whether the app is already resolving an error
+//    private boolean mResolvingError = false;
 
-//    private boolean toast;
+    private MaterialDialog backupDialog, restoreDialog;
+    private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
-//        super.alsoLollipop = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -107,39 +125,117 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             (new TranslationTask()).execute();
         }
 
-//        mActionBarToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-//        mActionBarToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-//        mActionBarToolbar.setTitle("");
-//        setSupportActionBar(mActionBarToolbar);
-
         setupNavDrawer();
 
-        if (findViewById(R.id.content_frame) != null) {
+        View header = mNavigationView.getHeaderView(0);
 
+        profileImage = (ImageView) header.findViewById(R.id.profile_image);
+        profileImage.setVisibility(View.INVISIBLE);
+        usernameTextView = (TextView) header.findViewById(R.id.username);
+        usernameTextView.setVisibility(View.INVISIBLE);
+        emailTextView = (TextView) header.findViewById(R.id.email);
+        emailTextView.setVisibility(View.INVISIBLE);
+        profileBackground = (ImageView) header.findViewById(R.id.copertina);
+        copertinaAccount = header.findViewById(R.id.copertina_account);
+        accountMenu = (ImageView) header.findViewById(R.id.account_menu);
+        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+        accountMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                accountMenu.setSelected(!accountMenu.isSelected());
+                mNavigationView.getMenu().clear();
+                mNavigationView.inflateMenu(accountMenu.isSelected()
+                        ? R.menu.drawer_account_menu : R.menu.drawer_menu);
+                if (!accountMenu.isSelected())
+                    mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
+            }
+        });
+
+//        mResolvingError = savedInstanceState != null
+//                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
+
+        showSnackbar = savedInstanceState == null
+                || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
+
+        if (findViewById(R.id.content_frame) != null) {
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
-//                setSelectedNavDrawerItem(savedInstanceState.getInt(SELECTED_ITEM));
-                mNavigationView.getMenu().getItem(savedInstanceState.getInt(SELECTED_ITEM)).setChecked(true);
+                selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
+                mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
             }
-            else {
+            else
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-//                setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
-            }
+//            if (savedInstanceState == null)
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
         }
+
+//        mProgressDialog = new MaterialDialog.Builder(this)
+//                .content(R.string.connection_running)
+//                .progress(true, 0)
+//                .build();
+        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
+        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
+
+
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Drive.API)
+                .build();
+        // [END build_client]
 
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        for (int i = 0; mNavigationView.getMenu().getItem(i) != null; i++) {
-            if (mNavigationView.getMenu().getItem(i).isChecked()) {
-                savedInstanceState.putInt(SELECTED_ITEM, i);
-                break;
-            }
+    public void onStart() {
+        super.onStart();
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(getClass().getName(), "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                }
+            });
         }
-//        savedInstanceState.putInt(SELECTED_ITEM, mNavigationView.);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        for (int i = 0; mNavigationView.getMenu().getItem(i) != null; i++) {
+//            if (mNavigationView.getMenu().getItem(i).isChecked()) {
+//                savedInstanceState.putInt(SELECTED_ITEM, i);
+//                break;
+//            }
+//        }
+        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
         ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
@@ -147,23 +243,13 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             getSupportFragmentManager().beginTransaction().add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE).commit();
             dataFragment.setData(consegnatiFragment.getTitoliChoose());
         }
+
+        savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
+//        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    /**
-     * Returns the navigation drawer item that corresponds to this Activity. Subclasses
-     * of BaseActivity override this to indicate what nav drawer item corresponds to them
-     * Return NAVDRAWER_ITEM_INVALID to mean that this Activity should not have a Nav Drawer.
-     */
-//    protected int getSelfNavDrawerItem() {
-//        return NAVDRAWER_ITEM_INVALID;
-//    }
-
-    /**
-     * Sets up the navigation drawer as appropriate. Note that the nav drawer will be
-     * different depending on whether the attendee indicated that they are attending the
-     * event on-site vs. attending remotely.
-     */
     private void setupNavDrawer() {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
@@ -171,100 +257,10 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
             return;
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
-//
-//        if (mActionBarToolbar != null) {
-//            mActionBarToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-//            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    mDrawerLayout.openDrawer(GravityCompat.START);
-//                }
-//            });
-//        }
-//
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-//
-        int drawerWidth  = calculateDrawerWidth();
-
-        DrawerLayout.LayoutParams lps = new DrawerLayout.LayoutParams(
-                drawerWidth,
-                DrawerLayout.LayoutParams.MATCH_PARENT);
-        lps.gravity = Gravity.START;
-
-        findViewById(R.id.navigation_view).setLayoutParams(lps);
-
-        LinearLayout.LayoutParams lps2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                Math.round(drawerWidth * 9 / 19));
-        lps2.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
-
-        findViewById(R.id.navdrawer_image).setLayoutParams(lps2);
-////
-//        // populate the nav drawer with the correct items
-//        populateNavDrawer();
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                menuItem.setChecked(true);
-                Fragment fragment;
-
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-                        fragment = new Risuscito();
-                        break;
-                    case R.id.navigation_search:
-                        fragment = new GeneralSearch();
-                        break;
-                    case R.id.navigation_indexes:
-                        fragment = new GeneralIndex();
-                        break;
-                    case R.id.navitagion_lists:
-                        fragment = new CustomLists();
-                        break;
-                    case R.id.navigation_favorites:
-                        fragment = new FavouritesActivity();
-                        break;
-                    case R.id.navigation_settings:
-                        fragment = new PreferencesFragment();
-                        break;
-                    case R.id.navigation_changelog:
-                        fragment = new AboutActivity();
-                        break;
-                    case R.id.navigation_donate:
-                        fragment = new DonateActivity();
-                        break;
-                    case R.id.navigation_consegnati:
-                        fragment = new ConsegnatiFragment();
-                        break;
-                    case R.id.navigation_history:
-                        fragment = new HistoryFragment();
-                        break;
-                    default:
-                        fragment = new Risuscito();
-                        break;
-                }
-
-                //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(menuItem.getItemId()));
-                if (myFragment == null || !myFragment.isVisible()) {
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-                    transaction.replace(R.id.content_frame, fragment, String.valueOf(menuItem.getItemId())).commit();
-
-                    android.os.Handler mHandler = new android.os.Handler();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                        }
-                    }, 250);
-                }
-                return true;
-            }
-
-        });
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         ColorStateList mIconStateList = new ColorStateList(
                 new int[][]{
@@ -273,7 +269,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
-                        getResources().getColor(R.color.navdrawer_icon_tint) //2
+                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
                 }
         );
 
@@ -284,238 +280,13 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 },
                 new int[] {
                         getThemeUtils().primaryColor(), //1
-                        getResources().getColor(R.color.navdrawer_text_color) //2
+                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
                 }
         );
 
         mNavigationView.setItemIconTintList(mIconStateList);
         mNavigationView.setItemTextColor(mTextStateList);
 
-    }
-
-    /** Populates the navigation drawer with the appropriate items. */
-//    private void populateNavDrawer() {
-////        boolean attendeeAtVenue = PrefUtils.isAttendeeAtVenue(this);
-//        mNavDrawerItems.clear();
-//
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_HOMEPAGE);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_SEARCH);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_INDEXES);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_LISTS);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_CONSEGNATI);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_FAVORITES);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_HISTORY);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
-//        mNavDrawerItems.add(NAVDRAWER_ITEM_DONATE);
-//
-//        createNavDrawerItems();
-//    }
-
-//    private void createNavDrawerItems() {
-//        ViewGroup mDrawerItemsListContainer = (ViewGroup) findViewById(R.id.navdrawer_items_list);
-//        if (mDrawerItemsListContainer == null) {
-//            return;
-//        }
-//
-//        mNavDrawerItemViews = new View[mNavDrawerItems.size()];
-//        mDrawerItemsListContainer.removeAllViews();
-//        int i = 0;
-//        for (int itemId : mNavDrawerItems) {
-//            mNavDrawerItemViews[i] = makeNavDrawerItem(itemId, mDrawerItemsListContainer);
-//            mDrawerItemsListContainer.addView(mNavDrawerItemViews[i]);
-//            ++i;
-//        }
-//    }
-
-//    private View makeNavDrawerItem(final int itemId, ViewGroup container) {
-//        boolean selected = getSelfNavDrawerItem() == itemId;
-//        int layoutToInflate;
-//        if (itemId == NAVDRAWER_ITEM_SEPARATOR) {
-//            layoutToInflate = R.layout.navdrawer_separator;
-//        } else {
-//            layoutToInflate = R.layout.navdrawer_item;
-//        }
-//        View view = getLayoutInflater().inflate(layoutToInflate, container, false);
-//
-//        if (isSeparator(itemId)) {
-//            // we are done
-//            Utility.setAccessibilityIgnore(view);
-//            return view;
-//        }
-//
-//        ImageView iconView = (ImageView) view.findViewById(R.id.icon);
-//        TextView titleView = (TextView) view.findViewById(R.id.title);
-//        int iconId = itemId >= 0 && itemId < NAVDRAWER_ICON_RES_ID.length ?
-//                NAVDRAWER_ICON_RES_ID[itemId] : 0;
-//        int titleId = itemId >= 0 && itemId < NAVDRAWER_TITLE_RES_ID.length ?
-//                NAVDRAWER_TITLE_RES_ID[itemId] : 0;
-//
-//        // set icon and text
-//        iconView.setVisibility(iconId > 0 ? View.VISIBLE : View.GONE);
-//        if (iconId > 0) {
-//            iconView.setImageResource(iconId);
-//        }
-//        titleView.setText(getString(titleId));
-//
-//        formatNavDrawerItem(view, itemId, selected);
-//
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onNavDrawerItemClicked(itemId);
-//            }
-//        });
-//
-//        return view;
-//    }
-
-//    private boolean isSeparator(int itemId) {
-//        return itemId == NAVDRAWER_ITEM_SEPARATOR;
-//    }
-//
-//    private void formatNavDrawerItem(View view, int itemId, boolean selected) {
-//        if (isSeparator(itemId)) {
-//            // not applicable
-//            return;
-//        }
-//
-//        ImageView iconView = (ImageView) view.findViewById(R.id.icon);
-//        TextView titleView = (TextView) view.findViewById(R.id.title);
-//
-//        // configure its appearance according to whether or not it's selected
-//        view.setBackgroundResource(selected ?
-//                R.drawable.selected_navdrawer_item_background :
-//                R.drawable.navdrawer_item_background);
-//        view.setSoundEffectsEnabled(!selected);
-//        titleView.setTextColor(selected ?
-//                getThemeUtils().primaryColor() :
-//                getResources().getColor(R.color.navdrawer_text_color));
-//        iconView.setColorFilter(selected ?
-//                getThemeUtils().primaryColor() :
-//                getResources().getColor(R.color.navdrawer_icon_tint));
-//    }
-//
-//    private void onNavDrawerItemClicked(final int itemId) {
-//        if (itemId == getSelfNavDrawerItem()) {
-//            mDrawerLayout.closeDrawer(GravityCompat.START);
-//            return;
-//        }
-//
-//        goToNavDrawerItem(itemId);
-//        setSelectedNavDrawerItem(itemId);
-//
-//    }
-//
-//    private void goToNavDrawerItem(int item) {
-//
-////        toast = false;
-//        Fragment fragment;
-//
-//        switch (item) {
-//            case NAVDRAWER_ITEM_HOMEPAGE:
-//                fragment = new Risuscito();
-//                break;
-//            case NAVDRAWER_ITEM_SEARCH:
-//                fragment = new GeneralSearch();
-//                break;
-//            case NAVDRAWER_ITEM_INDEXES:
-//                fragment = new GeneralIndex();
-//                break;
-//            case NAVDRAWER_ITEM_LISTS:
-//                fragment = new CustomLists();
-//                break;
-//            case NAVDRAWER_ITEM_FAVORITES:
-//                fragment = new FavouritesActivity();
-////                toast = true;
-//                break;
-//            case NAVDRAWER_ITEM_SETTINGS:
-//                fragment = new PreferencesFragment();
-//                break;
-//            case NAVDRAWER_ITEM_ABOUT:
-//                fragment = new AboutActivity();
-//                break;
-//            case NAVDRAWER_ITEM_DONATE:
-//                fragment = new DonateActivity();
-//                break;
-//            case NAVDRAWER_ITEM_CONSEGNATI:
-//                fragment = new ConsegnatiFragment();
-//                break;
-//            case NAVDRAWER_ITEM_HISTORY:
-//                fragment = new HistoryFragment();
-////                toast = true;
-//                break;
-//            default:
-//                fragment = new Risuscito();
-//                break;
-//        }
-//
-//        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-//        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item));
-//        if (myFragment == null || !myFragment.isVisible()) {
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-//            transaction.replace(R.id.content_frame, fragment, String.valueOf(item)).commit();
-//
-//            android.os.Handler mHandler = new android.os.Handler();
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-////                    if (toast)
-////                    Toast.makeText(MainActivity.this
-////                            , getString(R.string.new_hint_remove), Toast.LENGTH_SHORT).show();
-//                }
-//            }, 250);
-//        }
-//    }
-//
-//    /**
-//     * Sets up the given navdrawer item's appearance to the selected state. Note: this could
-//     * also be accomplished (perhaps more cleanly) with state-based layouts.
-//     */
-//    private void setSelectedNavDrawerItem(int itemId) {
-//        selectedItem = itemId;
-//        if (mNavDrawerItemViews != null) {
-//            for (int i = 0; i < mNavDrawerItemViews.length; i++) {
-//                if (i < mNavDrawerItems.size()) {
-//                    int thisItemId = mNavDrawerItems.get(i);
-//                    formatNavDrawerItem(mNavDrawerItemViews[i], thisItemId, itemId == thisItemId);
-//                }
-//            }
-//        }
-//    }
-
-    private int calculateDrawerWidth() {
-
-        //Recupero dp di larghezza e altezza dello schermo
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-//        Log.i(getClass().toString(), "dpHeight:" + dpHeight);
-//        Log.i(getClass().toString(), "dpWidth:" + dpWidth);
-
-        //recupero l'altezza dell'actionbar
-        TypedValue value = new TypedValue();
-        getTheme().resolveAttribute(R.attr.actionBarSize, value, true);
-        TypedValue.coerceToString(value.type, value.data);
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        float actionBarSize = value.getDimension(displayMetrics) / displayMetrics.density;
-//        Log.i(getClass().toString(), "actionBarSize:" + actionBarSize);
-
-        // min(altezza, larghezza) - altezza actionbar
-        float smallestDim = Math.min(dpWidth, dpHeight);
-//        Log.i(getClass().toString(), "smallestDim:" + smallestDim);
-        int difference = Math.round((smallestDim - actionBarSize) * displayMetrics.density);
-//        Log.i(getClass().toString(), "difference:" + difference);
-
-        int maxWidth = Math.round(WIDTH_320 * displayMetrics.density);
-        if (smallestDim >= TALBLET_DP)
-            maxWidth = Math.round(WIDTH_400 * displayMetrics.density);
-//        Log.i(getClass().toString(), "maxWidth:" + maxWidth);
-
-        return Math.min(difference, maxWidth);
     }
 
     @Override
@@ -532,54 +303,17 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 return true;
             }
 
-//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_favorites));
-//            if (myFragment != null && myFragment.isVisible()) {
-//                Log.i(getClass().getName(), "ENTROALPHA");
-//                if (((FavouritesActivity) myFragment).onBackPressed())
-//                    return true;
-//            }
-//
-//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_history));
-//            if (myFragment != null && myFragment.isVisible())
-//                if (((HistoryFragment) myFragment).onBackPressed())
-//                    return true;
-//
-//            myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navitagion_lists));
-//            if (myFragment != null && myFragment.isVisible())
-//                if (((CustomLists) myFragment).onBackPressed())
-//                    return true;
-
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
             mNavigationView.getMenu().getItem(0).setChecked(true);
-//                setSelectedNavDrawerItem(NAVDRAWER_ITEM_HOMEPAGE);
             return true;
         }
         return super.onKeyUp(keyCode, event);
     }
 
-//    @Override
-//    public void onColorSelection(int title, int color) {
-//
-//        if (title == R.string.primary_color)
-//            getThemeUtils().primaryColor(color);
-//        else if (title == R.string.accent_color)
-//            getThemeUtils().accentColor(color);
-//
-//        if (android.os.Build.VERSION.SDK_INT >= 11) {
-//            recreate();
-//        }
-//        else {
-//            Intent i = getBaseContext().getPackageManager()
-//                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(i);
-//        }
-//    }
-
     @Override
-    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, int color) {
+    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, @ColorInt int color) {
         if (colorChooserDialog.isAccentMode())
             getThemeUtils().accentColor(color);
         else
@@ -590,7 +324,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         }
         else {
             Intent i = getBaseContext().getPackageManager()
-                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }
@@ -626,6 +360,7 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
                 }
                 cursor.moveToNext();
             }
+            cursor.close();
         }
     }
 
@@ -671,10 +406,12 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         protected void onPostExecute(String result) {
             getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
             try {
-                if (translationDialog.isShowing())
+                if (translationDialog != null && translationDialog.isShowing())
                     translationDialog.dismiss();
             }
-            catch (IllegalArgumentException e) {}
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
         }
     }
 
@@ -682,10 +419,12 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         Toolbar mActionToolbar = (Toolbar) toolbar;
         setSupportActionBar(mActionToolbar);
         mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        getSupportActionBar().setTitle("");
-        TextView title = (TextView)toolbar.findViewById(R.id.main_toolbarTitle);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle("");
         ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
-        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
         mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -694,4 +433,881 @@ public class MainActivity extends ThemeableActivity implements ColorChooserDialo
         });
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        item.setChecked(true);
+        Fragment fragment;
+
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                selectedItemIndex = 0;
+                fragment = new Risuscito();
+                break;
+            case R.id.navigation_search:
+                selectedItemIndex = 1;
+                fragment = new GeneralSearch();
+                break;
+            case R.id.navigation_indexes:
+                selectedItemIndex = 2;
+                fragment = new GeneralIndex();
+                break;
+            case R.id.navitagion_lists:
+                selectedItemIndex = 3;
+                fragment = new CustomLists();
+                break;
+            case R.id.navigation_favorites:
+                selectedItemIndex = 4;
+                fragment = new FavouritesActivity();
+                break;
+            case R.id.navigation_settings:
+                selectedItemIndex = 5;
+                fragment = new PreferencesFragment();
+                break;
+            case R.id.navigation_changelog:
+                selectedItemIndex = 6;
+                fragment = new AboutActivity();
+                break;
+            case R.id.navigation_donate:
+                selectedItemIndex = 7;
+                fragment = new DonateActivity();
+                break;
+            case R.id.navigation_consegnati:
+                selectedItemIndex = 8;
+                fragment = new ConsegnatiFragment();
+                break;
+            case R.id.navigation_history:
+                selectedItemIndex = 9;
+                fragment = new HistoryFragment();
+                break;
+            case R.id.gdrive_backup:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gdrive_backup)
+                        .content(R.string.gdrive_backup_content)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                backupDialog = new MaterialDialog.Builder(MainActivity.this)
+                                        .title(R.string.backup_running)
+                                        .content(R.string.backup_database)
+                                        .progress(true, 0)
+                                        .dismissListener(new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                setRequestedOrientation(prevOrientation);
+                                            }
+                                        })
+                                        .show();
+                                backupDialog.setCancelable(false);
+                                saveCheckDupl(
+                                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                        , DatabaseCanti.getDbName()
+                                        , "application/x-sqlite3"
+                                        , getDbPath()
+                                        , true
+                                );
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            case R.id.gdrive_restore:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gdrive_restore)
+                        .content(R.string.gdrive_restore_content)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                restoreDialog = new MaterialDialog.Builder(MainActivity.this)
+                                        .title(R.string.restore_running)
+                                        .content(R.string.restoring_database)
+                                        .progress(true, 0)
+                                        .dismissListener(new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                setRequestedOrientation(prevOrientation);
+                                            }
+                                        })
+                                        .show();
+                                restoreDialog.setCancelable(false);
+                                restoreDriveBackup();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            case R.id.gplus_signout:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gplus_signout)
+                        .content(R.string.dialog_acc_disconn_text)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                signOut();
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            case R.id.gplus_revoke:
+                accountMenu.performClick();
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                prevOrientation = getRequestedOrientation();
+                Utility.blockOrientation(MainActivity.this);
+                dialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(R.string.gplus_revoke)
+                        .content(R.string.dialog_acc_revoke_text)
+                        .positiveText(R.string.confirm)
+                        .negativeText(R.string.dismiss)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                revokeAccess();
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                setRequestedOrientation(prevOrientation);
+                            }
+                        })
+                        .show();
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK
+                                && event.getAction() == KeyEvent.ACTION_UP) {
+                            arg0.dismiss();
+                            setRequestedOrientation(prevOrientation);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                dialog.setCancelable(false);
+                return true;
+            default:
+                selectedItemIndex = 0;
+                fragment = new Risuscito();
+                break;
+        }
+
+        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item.getItemId()));
+        if (myFragment == null || !myFragment.isVisible()) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+            transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
+
+            android.os.Handler mHandler = new android.os.Handler();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+            }, 250);
+        }
+        return true;
+    }
+
+    // [START signIn]
+    public void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    // [END signIn]
+
+    // [START signOut]
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        // [START_EXCLUDE]
+                        updateUI(false);
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(MainActivity.this)
+                                .edit();
+                        editor.putBoolean(Utility.SIGNED_IN, false);
+                        editor.apply();
+                        Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+    // [END signOut]
+
+    // [START revokeAccess]
+    private void revokeAccess() {
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        // [START_EXCLUDE]
+                        updateUI(false);
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(MainActivity.this)
+                                .edit();
+                        editor.putBoolean(Utility.SIGNED_IN, false);
+                        editor.apply();
+                        Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+    // [END revokeAccess]
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Snackbar.make(findViewById(R.id.main_content), getString(R.string.login_failed, connectionResult.getErrorCode(), connectionResult.getErrorMessage()), Snackbar.LENGTH_SHORT).show();
+        Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
+    }
+
+    // [START onActivityResult]
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(getClass().getName(), "requestCode: " + requestCode);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (null != result)
+                handleSignInResult(result);
+        }
+    }
+    // [END onActivityResult]
+
+    // [START handleSignInResult]
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(getClass().getName(), "handleSignInResult:" + result.isSuccess());
+        Log.d(getClass().getName(), "signin result: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            acct = result.getSignInAccount();
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(MainActivity.this)
+                    .edit();
+            editor.putBoolean(Utility.SIGNED_IN, true);
+            editor.apply();
+            if (showSnackbar) {
+                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
+                showSnackbar = false;
+            }
+            updateUI(true);
+        } else {
+            // Signed out, show unauthenticated UI.
+            acct = null;
+            updateUI(false);
+        }
+    }
+    // [END handleSignInResult]
+
+    @SuppressWarnings("deprecation")
+    private void updateUI(boolean signedIn) {
+        if (signedIn) {
+//            Log.d(getClass().getName(), "currentPerson: " + Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+//            if (mGoogleApiClient.isConnected() && Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+//
+//                String personCoverUrl = currentPerson.getCover().getCoverPhoto().getUrl();
+//                Picasso.with(this)
+//                        .load(personCoverUrl)
+//                        .error(R.drawable.copertina_about)
+//                        .into(profileBackground);
+//            Picasso.with(this)
+//                    .load(R.drawable.gplus_default_cover)
+//                    .error(R.drawable.copertina_about)
+//                    .into(profileBackground);
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+//            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
+            profileBackground.setVisibility(View.INVISIBLE);
+
+//            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
+            Uri profilePhoto = acct.getPhotoUrl();
+            if (profilePhoto != null) {
+                String personPhotoUrl = profilePhoto.toString();
+                // by default the profile url gives 50x50 px image only
+                // we can replace the value with whatever dimension we want by
+                // replacing sz=X
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + 400;
+                Picasso.with(this)
+                        .load(personPhotoUrl)
+                        .error(R.drawable.gplus_default_avatar)
+                        .into(profileImage);
+            }
+            else {
+                Picasso.with(this)
+                        .load(R.drawable.gplus_default_avatar)
+                        .into(profileImage);
+            }
+
+            profileImage.setVisibility(View.VISIBLE);
+
+            String personName = acct.getDisplayName();
+//                Log.d(getClass().getName(), "personName: " + personName);
+            usernameTextView.setText(personName);
+            usernameTextView.setVisibility(View.VISIBLE);
+
+//                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            String email = acct.getEmail();
+//                Log.d(getClass().getName(), "email: " + email);
+            emailTextView.setText(email);
+            emailTextView.setVisibility(View.VISIBLE);
+
+            if (findViewById(R.id.sign_in_button) != null)
+                findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
+
+            accountMenu.setVisibility(View.VISIBLE);
+//            }
+        }
+        else {
+            profileImage.setVisibility(View.INVISIBLE);
+            usernameTextView.setVisibility(View.INVISIBLE);
+            emailTextView.setVisibility(View.INVISIBLE);
+            if (LUtils.hasJB())
+                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+            else
+                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+//            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
+            profileBackground.setVisibility(View.VISIBLE);
+//            profileBackground.setImageResource(R.drawable.copertina_about);
+            Picasso.with(this)
+                    .load(R.drawable.copertina_about)
+                    .error(R.drawable.copertina_about)
+                    .into(profileBackground);
+            if (findViewById(R.id.sign_in_button) != null)
+                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            accountMenu.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showProgressDialog() {
+//        if (mProgressDialog != null && !mProgressDialog.isShowing())
+//            mProgressDialog.show();
+        mCircleProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressDialog() {
+//        if (mProgressDialog != null && mProgressDialog.isShowing())
+//            mProgressDialog.hide();
+        mCircleProgressBar.setVisibility(View.GONE);
+    }
+
+    public void setShowSnackbar(boolean showSnackbar) {
+        this.showSnackbar = showSnackbar;
+    }
+
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    /******************************************************************
+     * controlla se il file è già esistente; se esiste lo cancella e poi lo ricrea
+     * @param pFldr parent's ID
+     * @param titl  file name
+     * @param mime  file mime type  (application/x-sqlite3)
+     * @param file  file (with content) to create
+     */
+    void saveCheckDupl(final DriveFolder pFldr, final String titl,
+                       final String mime, final java.io.File file, final boolean dataBase) {
+        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null)) try {
+            // create content from file
+            Log.d(getClass().getName(), "saveCheckDupl - dataBase? " + dataBase);
+            Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
+            Query query = new Query.Builder()
+                    .addFilter(Filters.eq(SearchableField.TITLE, titl))
+                    .build();
+
+            Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
+
+                    int count = metadataBufferResult.getMetadataBuffer().getCount();
+                    Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
+                    if (count > 0) {
+                        DriveId mDriveId = metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
+                        Log.d(getClass().getName(), "saveCheckDupl - driveIdRetrieved: " + mDriveId);
+                        Log.d(getClass().getName(), "saveCheckDupl - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
+                        metadataBufferResult.getMetadataBuffer().release();
+
+//                        DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                        DriveFile mFile = mDriveId.asDriveFile();
+                        mFile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(@NonNull Status status) {
+                                if (status.isSuccess()) {
+                                    Log.d(getClass().getName(), "saveCheckDupl - CANCELLAZIONE OK: " + status.getStatusCode());
+                                    if (dataBase)
+                                        saveToDrive(pFldr, titl, mime, file, true);
+                                    else
+                                        saveToDrive(pFldr, titl, mime, file, false);
+                                }
+                                else {
+                                    String errore = "ERRORE CANCELLAZIONE: " + status.getStatusCode() + "-" + status.getStatusMessage();
+                                    Log.e(getClass().getName(), "saveCheckDupl - " + errore);
+                                    if (backupDialog != null && backupDialog.isShowing())
+                                        backupDialog.dismiss();
+                                    Snackbar.make(findViewById(R.id.main_content), errore, Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                    else if (dataBase)
+                        saveToDrive(pFldr, titl, mime, file, true);
+                    else
+                        saveToDrive(pFldr, titl, mime, file, false);
+                }
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
+            if (backupDialog != null && backupDialog.isShowing())
+                backupDialog.dismiss();
+            String error = "error: "  + e.getLocalizedMessage();
+            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    /******************************************************************
+     * create file in GOODrive
+     * @param pFldr parent's ID
+     * @param titl  file name
+     * @param mime  file mime type  (application/x-sqlite3)
+     * @param file  file (with content) to create
+     */
+    void saveToDrive(final DriveFolder pFldr, final String titl,
+                     final String mime, final java.io.File file, final boolean dataBase) {
+        Log.d(getClass().getName(), "saveToDrive - database? " + dataBase);
+        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null)) try {
+            // create content from file
+            Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
+//                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
+//                            driveContentsResult.getDriveContents() : null;
+
+                    // write file to content, chunk by chunk
+//                    if (cont != null) {
+                    if (driveContentsResult.getStatus().isSuccess()) {
+                        DriveContents cont = driveContentsResult.getDriveContents();
+                        if (dataBase) {
+                            try {
+                                OutputStream oos = cont.getOutputStream();
+                                if (oos != null) try {
+                                    InputStream is = new FileInputStream(file);
+                                    byte[] buf = new byte[4096];
+                                    int c;
+                                    while ((c = is.read(buf, 0, buf.length)) > 0) {
+                                        oos.write(buf, 0, c);
+                                        oos.flush();
+                                    }
+                                } finally {
+                                    oos.close();
+                                }
+                            } catch (Exception e) {
+                                Log.e(getClass().getName(), "saveToDrive - Exception1: " + e.getLocalizedMessage(), e);
+                                if (backupDialog != null && backupDialog.isShowing())
+                                    backupDialog.dismiss();
+                                String error = "error: " + e.getLocalizedMessage();
+                                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                        else {
+                            if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
+                                if (backupDialog != null && backupDialog.isShowing())
+                                    backupDialog.dismiss();
+                                return;
+                            }
+                        }
+
+                        // content's COOL, create metadata
+                        MetadataChangeSet meta = new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
+
+                        // now create file on GooDrive
+                        pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+                            @Override
+                            public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
+//                                if (driveFileResult != null)
+                                if (driveFileResult.getStatus().isSuccess()) {
+//                                    DriveFile dFil = driveFileResult != null && driveFileResult.getStatus().isSuccess() ?
+//                                            driveFileResult.getDriveFile() : null;
+                                    DriveFile dFil = driveFileResult.getDriveFile();
+                                    if (dFil != null) {
+                                        // BINGO , file uploaded
+                                        dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
+                                            @Override
+                                            public void onResult(@NonNull DriveResource.MetadataResult metadataResult) {
+//                                                if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
+                                                if (metadataResult.getStatus().isSuccess()) {
+                                                    DriveId mDriveId = metadataResult.getMetadata().getDriveId();
+                                                    Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
+//                                                    if (backupDialog != null && backupDialog.isShowing())
+//                                                        backupDialog.dismiss();
+                                                    String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
+                                                    Log.d(getClass().getName(), error);
+//                                                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+                                                    if (dataBase) {
+                                                        if (backupDialog != null && backupDialog.isShowing())
+                                                            backupDialog.setContent(R.string.backup_settings);
+                                                        saveCheckDupl(
+                                                                Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                                                , PREF_DRIVE_FILE_NAME
+                                                                , "application/json"
+                                                                , null
+                                                                , false
+                                                        );
+                                                    }
+                                                    else {
+                                                        if (backupDialog != null && backupDialog.isShowing())
+                                                            backupDialog.dismiss();
+                                                        Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                 /* report error */
+                                    if (backupDialog != null && backupDialog.isShowing())
+                                        backupDialog.dismiss();
+                                    String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
+                                    Log.e(getClass().getName(), error);
+                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                                }
+//                                else {
+//                                 /* report error */
+//                                    if (backupDialog != null && backupDialog.isShowing())
+//                                        backupDialog.dismiss();
+//                                    String error = "saveToDrive - driveFileResult null";
+//                                    Log.e(getClass().getName(), error);
+//                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+//                                }
+                            }
+                        });
+                    }
+                    else {
+                        /* report error */
+                        if (backupDialog != null && backupDialog.isShowing())
+                            backupDialog.dismiss();
+                        String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
+                        Log.e(getClass().getName(), error);
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
+            if (backupDialog != null && backupDialog.isShowing())
+                backupDialog.dismiss();
+            String error = "error: "  + e.getLocalizedMessage();
+            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    private File getDbPath() {
+        Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
+        return getDatabasePath(DatabaseCanti.getDbName());
+    }
+
+    void restoreDriveBackup() {
+        Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
+                .build();
+
+        Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
+            @Override
+            public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
+
+            /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
+                debug("got index "+i);
+                debug("filesize in cloud "+ metadataBufferResult.getMetadataBuffer().get(i).getFileSize());
+                debug("driveId(1): "+ metadataBufferResult.getMetadataBuffer().get(i).getDriveId());
+            }*/
+
+                int count = metadataBufferResult.getMetadataBuffer().getCount();
+                Log.d(getClass().getName(), "restoreDriveBackup - Count files backup: " + count);
+                if (count > 0) {
+                    DriveId mDriveId = metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
+                    Log.d(getClass().getName(), "restoreDriveBackup - driveIdRetrieved: " + mDriveId);
+                    Log.d(getClass().getName(), "restoreDriveBackup - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
+                    metadataBufferResult.getMetadataBuffer().release();
+
+
+//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                    DriveFile mFile = mDriveId.asDriveFile();
+                    mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
+                        @Override
+                        public void onProgress(long bytesDown, long bytesExpected) {
+                        }
+                    })
+                            .setResultCallback(restoreContentsCallback);
+                } else {
+                    if (restoreDialog != null && restoreDialog.isShowing())
+                        restoreDialog.dismiss();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    final private ResultCallback<DriveApi.DriveContentsResult> restoreContentsCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+//                        mToast("Unable to open file, try again.");
+                        String error = "restoreContentsCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
+                        Log.e(getClass().getName(), error);
+                        if (restoreDialog != null && restoreDialog.isShowing())
+                            restoreDialog.dismiss();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+                    listaCanti.close();
+//                    utilsM.dbClose();
+
+                    File db_file = getDbPath();
+                    String path = db_file.getPath();
+
+                    if (!db_file.exists())
+                        //noinspection ResultOfMethodCallIgnored
+                        db_file.delete();
+
+                    db_file = new File(path);
+
+                    DriveContents contents = result.getDriveContents();
+
+                    try {
+                        FileOutputStream fos = new FileOutputStream(db_file);
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        BufferedInputStream in = new BufferedInputStream(contents.getInputStream());
+
+                        byte[] buffer = new byte[1024];
+                        int n, cnt = 0;
+
+
+                        //debug("before read " + in.available());
+
+                        while( ( n = in.read(buffer) ) > 0) {
+                            bos.write(buffer, 0, n);
+                            cnt += n;
+//                            debug("buffer: " + buffer[0]);
+//                            debug("buffer: " + buffer[1]);
+//                            debug("buffer: " + buffer[2]);
+//                            debug("buffer: " + buffer[3]);
+                            bos.flush();
+                        }
+
+                        //debug(" read done: " + cnt);
+
+                        bos.close();
+
+                    } catch (FileNotFoundException e) {
+                        Log.e(getClass().getName(), "restoreContentsCallback - Exception3: " + e.getLocalizedMessage(), e);
+                        contents.discard(mGoogleApiClient);
+                        if (restoreDialog != null && restoreDialog.isShowing())
+                            restoreDialog.dismiss();
+                        String error = "error: "  + e.getLocalizedMessage();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                        return;
+                    } catch (IOException e) {
+                        Log.e(getClass().getName(), "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(), e);
+                        contents.discard(mGoogleApiClient);
+                        if (restoreDialog != null && restoreDialog.isShowing())
+                            restoreDialog.dismiss();
+                        String error = "error: "  + e.getLocalizedMessage();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+
+//                    mToast(act.getResources().getString(R.string.restoreComplete));
+//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
+//                    DialogFragment_Sync.dismissDialog();
+//                    if (restoreDialog != null && restoreDialog.isShowing())
+//                        restoreDialog.dismiss();
+
+                    listaCanti = new DatabaseCanti(MainActivity.this);
+                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                    db.close();
+                    listaCanti.close();
+//                    utilsM.dbOpen();
+                    contents.discard(mGoogleApiClient);
+
+                    if (restoreDialog != null && restoreDialog.isShowing())
+                        restoreDialog.setContent(R.string.restoring_settings);
+                    restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
+
+                }
+            };
+
+    void restoreDrivePrefBackup(String title) {
+        Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.TITLE, title))
+                .build();
+
+        Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
+            @Override
+            public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
+
+            /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
+                debug("got index "+i);
+                debug("filesize in cloud "+ metadataBufferResult.getMetadataBuffer().get(i).getFileSize());
+                debug("driveId(1): "+ metadataBufferResult.getMetadataBuffer().get(i).getDriveId());
+            }*/
+
+                int count = metadataBufferResult.getMetadataBuffer().getCount();
+                Log.d(getClass().getName(), "restoreDrivePrefBackup - Count files backup: " + count);
+                if (count > 0) {
+                    DriveId mDriveId = metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
+                    Log.d(getClass().getName(), "restoreDrivePrefBackup - driveIdRetrieved: " + mDriveId);
+                    Log.d(getClass().getName(), "restoreDrivePrefBackup - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
+                    metadataBufferResult.getMetadataBuffer().release();
+
+
+//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
+                    DriveFile mFile = mDriveId.asDriveFile();
+                    mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
+                        @Override
+                        public void onProgress(long bytesDown, long bytesExpected) {
+                        }
+                    })
+                            .setResultCallback(restoreContentsPrefCallback);
+                }
+                else {
+                    if (restoreDialog != null && restoreDialog.isShowing())
+                        restoreDialog.dismiss();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    final private ResultCallback<DriveApi.DriveContentsResult> restoreContentsPrefCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        String error = "restoreContentsPrefCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
+                        Log.e(getClass().getName(), error);
+                        if (restoreDialog != null && restoreDialog.isShowing())
+                            restoreDialog.dismiss();
+                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    DriveContents contents = result.getDriveContents();
+
+                    loadSharedPreferencesFromFile(contents.getInputStream());
+                    contents.discard(mGoogleApiClient);
+//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
+                    if (restoreDialog != null && restoreDialog.isShowing())
+                        restoreDialog.dismiss();
+                    prevOrientation = getRequestedOrientation();
+                    Utility.blockOrientation(MainActivity.this);
+                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                            .title(R.string.general_message)
+                            .content(R.string.gdrive_restore_success)
+                            .positiveText(R.string.dialog_chiudi)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                    setRequestedOrientation(prevOrientation);
+                                    Intent i = getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                }
+                            })
+                            .show();
+                    dialog.setCancelable(false);
+                }
+            };
 }

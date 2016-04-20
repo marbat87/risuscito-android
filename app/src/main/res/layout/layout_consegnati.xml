@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,14 +27,11 @@
             android:layout_height="0dp"
             android:scrollbars="vertical"
             android:fadeScrollbars="true"
-            android:layout_weight="1"
-            android:paddingLeft="@dimen/activity_min_margin"
-            android:paddingRight="@dimen/activity_min_margin" />
+            android:layout_weight="1" />
 
         <LinearLayout
             android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
             android:background="@color/theme_primary"
             android:divider="?attr/dividerVertical"
             android:layout_height="@dimen/abc_action_bar_default_height_material"
@@ -49,8 +48,9 @@
                 android:scaleType="center"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_unselectall_white_30dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/select_all"
@@ -62,8 +62,9 @@
                 android:scaleType="center"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_selectall_white_30dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/cancel_change"
@@ -75,8 +76,9 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_undo_white_24dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_undo_24dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
             <ImageButton
                 android:id="@+id/confirm_changes"
@@ -88,18 +90,13 @@
                 android:scaleType="fitCenter"
                 android:theme="@style/ActionBarThemeOverlay"
                 android:background="?attr/customSelectorRound"
-                android:src="@drawable/ic_save_white_24dp"
-                android:soundEffectsEnabled="true" />
+                risuscito:srcCompat="@drawable/ic_save_24dp"
+                android:soundEffectsEnabled="true"
+                tools:ignore="MissingPrefix" />
 
         </LinearLayout>
 
     </LinearLayout>
-
-    <!--</io.codetail.widget.RevealFrameLayout>-->
-
-    <!--<io.codetail.widget.RevealFrameLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
 
         <FrameLayout
             android:id="@+id/consegnati_view"
@@ -111,9 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                android:fadeScrollbars="true"
-                android:paddingLeft="@dimen/activity_min_margin"
-                android:paddingRight="@dimen/activity_min_margin" />
+                android:fadeScrollbars="true" />
 
             <RelativeLayout
                 android:layout_gravity="center"

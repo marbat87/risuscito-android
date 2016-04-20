@@ -2,26 +2,26 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
 
     //    private List<PosizioneItem> dataItems;
@@ -60,6 +60,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         return new TitleViewHolder(layoutView);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -76,6 +77,8 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         if (listItems.size() > 0) {
             if (dataItem.isMultiple()) {
                 titleHolder.addCanto.setVisibility(View.VISIBLE);
+                Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
+                DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
                 if (clickListener != null)
                     titleHolder.addCanto.setOnClickListener(clickListener);
             }
@@ -99,16 +102,28 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 sourceCanto.setText(canto.getSource());
                 timestamp.setText(canto.getTimestamp());
                 itemTag.setText(String.valueOf(i));
-                if (canto.getColore().equalsIgnoreCase(Utility.GIALLO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-                if (canto.getColore().equalsIgnoreCase(Utility.GRIGIO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-                if (canto.getColore().equalsIgnoreCase(Utility.VERDE))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-                if (canto.getColore().equalsIgnoreCase(Utility.AZZURRO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-                if (canto.getColore().equalsIgnoreCase(Utility.BIANCO))
-                    cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+//                Drawable drawable = ContextCompat.getDrawable(context,
+//                        context.getResources().getIdentifier("page_oval_border_bkg_" + canto.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//                Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//                DrawableCompat.setTint(drawable, Color.parseColor(canto.getColore()));
+//                if (LUtils.hasJB())
+//                    cantoPage.setBackground(drawable);
+//                else
+//                    cantoPage.setBackgroundDrawable(drawable);
+                cantoPage.setBackgroundResource(
+                        context.getResources().getIdentifier("page_oval_border_bkg_" + canto.getColore().substring(1).toLowerCase()
+                                , "drawable"
+                                , context.getPackageName()));
+//                if (canto.getColore().equalsIgnoreCase(Utility.GIALLO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//                if (canto.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//                if (canto.getColore().equalsIgnoreCase(Utility.VERDE))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//                if (canto.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//                if (canto.getColore().equalsIgnoreCase(Utility.BIANCO))
+//                    cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
                 if (context != null) {
                     if (canto.ismSelected())
                         cantoView.setBackgroundColor(((ThemeableActivity) context).getThemeUtils().accentColorLight());
@@ -129,6 +144,8 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         }
         else {
             titleHolder.addCanto.setVisibility(View.VISIBLE);
+            Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
 //            titleHolder.canto.setVisibility(View.GONE);
             if (clickListener != null)
                 titleHolder.addCanto.setOnClickListener(clickListener);
@@ -156,6 +173,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         public View cardView;
         public TextView tag;
         public LinearLayout list;
+        public ImageView plusImage;
 
         public TitleViewHolder(View itemView) {
             super(itemView);
@@ -166,6 +184,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
             cardView = itemView.findViewById(R.id.cardView);
             tag = (TextView) itemView.findViewById(R.id.tag);
             list = (LinearLayout) itemView.findViewById(R.id.list);
+            plusImage = (ImageView) itemView.findViewById(R.id.imageViewGenerica);
         }
 
     }

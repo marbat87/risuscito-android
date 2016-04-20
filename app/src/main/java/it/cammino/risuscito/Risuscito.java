@@ -6,10 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +24,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.SignInButton;
 
 import it.cammino.risuscito.slides.IntroMain;
 
@@ -31,10 +34,8 @@ public class Risuscito extends Fragment {
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
-    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_MENU4";
+    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
     private int prevOrientation;
-//    private int screenWidth;
-//    private int screenHeight;
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -44,10 +45,6 @@ public class Risuscito extends Fragment {
 
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 
-//        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.activity_homepage);
-//        ((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.activity_homepage);
-//        ((MainActivity) getActivity()).getSupportActionBar()
-//                .setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
 
         rootView.findViewById(R.id.imageView1)
@@ -58,18 +55,6 @@ public class Risuscito extends Fragment {
                         drawerLayout.openDrawer(GravityCompat.START);
                     }
                 });
-
-//        Display display = getActivity().getWindowManager().getDefaultDisplay();
-//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
-//            screenWidth = display.getWidth();
-//            screenHeight = display.getHeight();
-//        }
-//        else {
-//            Point size = new Point();
-//            display.getSize(size);
-//            screenWidth = size.x;
-//            screenHeight = size.y;
-//        }
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
@@ -88,26 +73,16 @@ public class Risuscito extends Fragment {
         }
 //        Log.i("Changelog", "appVersion: " + thisVersion);
 
-//        if (true) {
         if (!thisVersion.equals(lastVersion)) {
             prevOrientation = getActivity().getRequestedOrientation();
             Utility.blockOrientation(getActivity());
-//            AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-//            ChangeLogListView chglv = new ChangeLogListView(getActivity());
-//            ChangeLogAdapter adapter = (ChangeLogAdapter) chglv.getAdapter();
-//            adapter.setmRowHeaderLayoutId(R.layout.changelogrowheader_material_layout);
-//            adapter.setmRowLayoutId(R.layout.changelogrow_material_layout);
-//            AlertDialogPro dialog = builder.setTitle(getResources().getString(R.string.dialog_change_title))
-//                    .setView(R.layout.dialog_changelogview)
-//                    .setPositiveButton(getResources().getString(R.string.dialog_chiudi), new ButtonClickedListener())
-//                    .show();
             MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                     .title(R.string.dialog_change_title)
                     .customView(R.layout.dialog_changelogview, false)
                     .positiveText(R.string.dialog_chiudi)
-                    .callback(new MaterialDialog.ButtonCallback() {
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
+                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                             getActivity().setRequestedOrientation(prevOrientation);
                             if(PreferenceManager
                                     .getDefaultSharedPreferences(getActivity())
@@ -116,11 +91,7 @@ public class Risuscito extends Fragment {
                                         .getDefaultSharedPreferences(getActivity())
                                         .edit();
                                 editor.putBoolean(FIRST_OPEN_MENU, false);
-                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                                    editor.commit();
-                                } else {
-                                    editor.apply();
-                                }
+                                editor.apply();
                                 showHelp();
                             }
                         }
@@ -142,11 +113,7 @@ public class Risuscito extends Fragment {
                                     .getDefaultSharedPreferences(getActivity())
                                     .edit();
                             editor.putBoolean(FIRST_OPEN_MENU, false);
-                            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                                editor.commit();
-                            } else {
-                                editor.apply();
-                            }
+                            editor.apply();
                             showHelp();
                         }
                         return true;
@@ -157,11 +124,7 @@ public class Risuscito extends Fragment {
             dialog.setCancelable(false);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(VERSION_KEY, thisVersion);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
         }
         else {
             if(PreferenceManager
@@ -171,11 +134,7 @@ public class Risuscito extends Fragment {
                         .getDefaultSharedPreferences(getActivity())
                         .edit();
                 editor.putBoolean(FIRST_OPEN_MENU, false);
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                    editor.commit();
-                } else {
-                    editor.apply();
-                }
+                editor.apply();
                 final Runnable mMyRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -192,7 +151,30 @@ public class Risuscito extends Fragment {
         PaginaRenderActivity.scrollPlaying = false;
         PaginaRenderActivity.mostraAudio = null;
 
-//        setHasOptionsMenu(true);
+        //apertura e chiusura database per consentire eventuale aggiornamento
+        DatabaseCanti listaCanti = new DatabaseCanti(getActivity());
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        db.close();
+        listaCanti.close();
+
+        SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+//        signInButton.setScopes(gso.getScopeArray());
+        signInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).setShowSnackbar(true);
+                ((MainActivity)getActivity()).signIn();
+            }
+        });
+
+//        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
+//            MainActivity activity = (MainActivity) getActivity();
+//            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
+        rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
+//        }
 
         return rootView;
     }
@@ -219,63 +201,9 @@ public class Risuscito extends Fragment {
         return false;
     }
 
-//    @SuppressLint("NewApi")
-//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            getActivity().setRequestedOrientation(prevOrientation);
-//            if(PreferenceManager
-//                    .getDefaultSharedPreferences(getActivity())
-//                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .edit();
-//                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-//                    editor.commit();
-//                } else {
-//                    editor.apply();
-//                }
-//                showHelp();
-//            }
-//        }
-//    }
-
     private void showHelp() {
         Intent intent = new Intent(getActivity(), IntroMain.class);
         startActivity(intent);
-//        prevOrientation = getActivity().getRequestedOrientation();
-//        Utility.blockOrientation(getActivity());
-//
-//        //nuovo menu
-//        ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
-//                new ViewTarget(R.id.imageView1, getActivity())
-//                , getActivity()
-//                , R.string.help_new_menu_title
-//                , R.string.help_new_menu_desc);
-//        showcaseView.setShowcase(ShowcaseView.NONE);
-//        showcaseView.animateGesture(0, screenHeight/2, screenWidth/3, screenHeight/2, true);
-//        showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//            @Override
-//            public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//            @Override
-//            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//                getActivity().setRequestedOrientation(prevOrientation);
-//            }
-//            @Override
-//            public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//        });
     }
-
-//    private int dpToPx(int dp) {
-//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-//        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-//        return px;
-//    }
-
-//    private ThemeUtils getThemeUtils() {
-//        return ((MainActivity)getActivity()).getThemeUtils();
-//    }
 
 }

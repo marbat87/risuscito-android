@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -94,7 +95,7 @@ public class CambioAccordi {
         if (canto == null)
             return "";
 
-        String language = context.getResources().getConfiguration().locale.getLanguage();
+//        String language = context.getResources().getConfiguration().locale.getLanguage();
 
         String primoBarre = "0";
 
@@ -107,11 +108,11 @@ public class CambioAccordi {
             boolean found = false;
 
             while (line != null && !found) {
-                if (language.equalsIgnoreCase("uk")) {
-                    if (line.contains("Баре")) {
+//                if (language.equalsIgnoreCase(context.getResources().getString(R.string.barre_search_string))) {
+                    if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
 //	        		Log.i("RIGA", line);
                         found = true;
-                        int start = line.indexOf("на") + 3;
+                        int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
 
                         primoBarre = "";
                         for (int i = start; i < line.length(); i++) {
@@ -121,31 +122,30 @@ public class CambioAccordi {
                                 primoBarre += line.charAt(i);
                         }
                     }
-                }
-                else {
-                    if (line.contains("Barrè") || line.contains("Barr&#232;")) {
-//	        		Log.i("RIGA", line);
-                        found = true;
-                        int start = line.indexOf("al") + 3;
-
-                        primoBarre = "";
-                        for (int i = start; i < line.length(); i++) {
-                            if (line.charAt(i) == ' ')
-                                break;
-                            else
-                                primoBarre += line.charAt(i);
-                        }
-                    }
-                }
+//                }
+//                else {
+//                    if (line.contains("Barrè") || line.contains("Barr&#232;")) {
+////	        		Log.i("RIGA", line);
+//                        found = true;
+//                        int start = line.indexOf("al") + 3;
+//
+//                        primoBarre = "";
+//                        for (int i = start; i < line.length(); i++) {
+//                            if (line.charAt(i) == ' ')
+//                                break;
+//                            else
+//                                primoBarre += line.charAt(i);
+//                        }
+//                    }
+//                }
                 line = br.readLine();
             }
             br.close();
 //            Log.i("risultato", primoBarre);
             return primoBarre;
         }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
+        catch (Exception ex) {
+            Log.e(getClass().getName(), ex.getLocalizedMessage(), ex);
             return "";
         }
     }
@@ -199,7 +199,7 @@ public class CambioAccordi {
         else
             differenza = (end + 12 - start);
 
-        HashMap<String, String> mappa = new HashMap<String, String>();
+        HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi.length; i++) {
 //			Log.i("NUOVO", (i+differenza)%12 + "");
 //			Log.i("CONVE", accordi[i] + " in " + accordi[(i+differenza)%12]);
@@ -247,7 +247,7 @@ public class CambioAccordi {
         else
             differenza = (end + 12 - start);
 
-        HashMap<String, String> mappa = new HashMap<String, String>();
+        HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi_uk_lower.length; i++) {
 //			Log.i("NUOVO", (i+differenza)%12 + "");
 //			Log.i("CONVE", accordi_uk_lower[i] + " in " + accordi_uk_lower[(i + differenza) % 12]);

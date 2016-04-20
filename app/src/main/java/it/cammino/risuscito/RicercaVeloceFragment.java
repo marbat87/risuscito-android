@@ -12,12 +12,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -33,6 +35,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
@@ -40,7 +43,6 @@ import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener{
 
@@ -74,52 +76,24 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         rootView = inflater.inflate(R.layout.activity_ricerca_titolo,
                 container, false);
 
-        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
-        listaCanti = new DatabaseCanti(getActivity());
+        if (listaCanti == null)
+            listaCanti = new DatabaseCanti(getActivity());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-//                        .getText().toString();
-//                cantoCliccato = Utility
-//                        .duplicaApostrofi(cantoCliccato);
-//
-//                // crea un manipolatore per il DB in modalità READ
-//                SQLiteDatabase db = listaCanti
-//                        .getReadableDatabase();
-//
-//                // esegue la query per il recupero del nome del file
-//                // della pagina da visualizzare
-//                String query = "SELECT source, _id"
-//                        + "  FROM ELENCO" + "  WHERE titolo =  '"
-//                        + cantoCliccato + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                // recupera il nome del file
-//                cursor.moveToFirst();
-//                String pagina = cursor.getString(0);
-//                int idCanto = cursor.getInt(1);
-//
-//                // chiude il cursore
-//                cursor.close();
-
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
-
                 // crea un bundle e ci mette il parametro "pagina",
                 // contente il nome del file della pagina da
                 // visualizzare
                 Bundle bundle = new Bundle();
                 bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-//                bundle.putInt("idCanto", idCanto);
                 bundle.putInt("idCanto", Integer.valueOf(
                         String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-
                 // lancia l'activity che visualizza il canto
                 // passando il parametro creato
                 startSubActivity(bundle, v);
@@ -128,12 +102,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoRecyclerAdapter(titoli, clickListener, this);
+        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         searchPar.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -143,6 +118,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
                 if (!tempText.equals(s.toString()))
                     ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
+
 
                 if (s.length() >= 3) {
 
@@ -168,8 +144,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-//                        titoli.add(new CantoItem(Utility.intToString(lista.getInt(2), 3)
-//                                + lista.getString(1) + lista.getString(0)));
                         titoli.add(new CantoRecycled(lista.getString(0)
                                 , lista.getInt(2)
                                 , lista.getString(1)
@@ -239,8 +213,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         });
 
-//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
-//        paperPulisci.setColor(getThemeUtils().primaryColor());
         rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,29 +222,56 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             }
         });
 
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        String query = "SELECT _id, lista" + "		FROM LISTE_PERS"
-                + "		ORDER BY _id ASC";
-        Cursor lista = db.rawQuery(query, null);
-
-        listePers = new ListaPersonalizzata[lista.getCount()];
-        idListe = new int[lista.getCount()];
-
-        lista.moveToFirst();
-        for (int i = 0; i < lista.getCount(); i++) {
-            idListe[i] = lista.getInt(0);
-            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata
-                    .deserializeObject(lista.getBlob(1));
-            lista.moveToNext();
-        }
-        lista.close();
-        db.close();
-
-//        setHasOptionsMenu(true);
-
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
+    }
+
+    /**
+     * Set a hint to the system about whether this fragment's UI is currently visible
+     * to the user. This hint defaults to true and is persistent across fragment instance
+     * state save and restore.
+     * <p/>
+     * <p>An app may set this to false to indicate that the fragment's UI is
+     * scrolled out of visibility or is otherwise not directly visible to the user.
+     * This may be used by the system to prioritize operations such as fragment lifecycle updates
+     * or loader ordering behavior.</p>
+     *
+     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
+     *                        false if it is not.
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.d(getClass().getName(), "VISIBLE");
+            if (listaCanti == null)
+                listaCanti = new DatabaseCanti(getActivity());
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            String query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            Cursor lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+
+            //to hide soft keyboard
+            if (searchPar != null)
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -372,42 +371,21 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
                         if (listePers[idListaClick]
                                 .getCantoPosizione(idPosizioneClick).equals("")) {
-//                            String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                            String query = "SELECT color, pagina" +
-//                                    "		FROM ELENCO" +
-//                                    "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                            Cursor cursor = db.rawQuery(query, null);
-//
-//                            cursor.moveToFirst();
-//
-//                            listePers[idListaClick].addCanto(Utility.intToString(
-//                                    cursor.getInt(1), 3) + cursor.getString(0) + titoloDaAgg, idPosizioneClick);
-//                            cursor.close();
-
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                             db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                             db.close();
 
-//                            Toast.makeText(getActivity()
-//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
                         else {
-//                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).substring(10)
-//                                    .equalsIgnoreCase(titoloDaAgg)) {
-                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
+                            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg)))
                                 Snackbar.make(rootView
                                         , R.string.present_yet
                                         , Snackbar.LENGTH_SHORT)
                                         .show();
-                            }
                             else {
                                 prevOrientation = getActivity().getRequestedOrientation();
                                 Utility.blockOrientation(getActivity());
@@ -418,28 +396,18 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-//                                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-//                                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-//                                        .setMessage(getString(R.string.dialog_present_yet) + " "
-////                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-////                                                .substring(10)
-//                                                + cursor.getString(0)
-//                                                + getString(R.string.dialog_wonna_replace))
-//                                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.VELOCE_LISTAPERS_OK))
-//                                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                                        .show();
                                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
-                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-                                                .substring(10)
+//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+//                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
                                         .positiveText(R.string.confirm)
                                         .negativeText(R.string.dismiss)
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onPositive(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                                 listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
 
@@ -448,14 +416,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                                Toast.makeText(getActivity()
-//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                         .show();
                                             }
-
+                                        })
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onNegative(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
@@ -489,22 +456,14 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
     // aggiunge il canto premuto ai preferiti
     public void addToFavorites(String titolo) {
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-
         String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         String sql = "UPDATE ELENCO" + "  SET favourite = 1"
                 + "  WHERE titolo =  \'" + titoloNoApex + "\'";
         db.execSQL(sql);
         db.close();
-
-//        Toast toast = Toast.makeText(getActivity(),
-//                getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-//        toast.show();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
                 .show();
-
     }
 
     // aggiunge il canto premuto ad una lista e in una posizione che ammetta
@@ -522,14 +481,9 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         try {
             db.execSQL(sql);
-//            Toast.makeText(getActivity(), getString(R.string.list_added),
-//                    Toast.LENGTH_SHORT).show();
             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                     .show();
         } catch (SQLException e) {
-//            Toast toast = Toast.makeText(getActivity(),
-//                    getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//            toast.show();
             Snackbar.make(rootView
                     , R.string.present_yet
                     , Snackbar.LENGTH_SHORT)
@@ -563,9 +517,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             db.close();
 
             if (titolo.equalsIgnoreCase(titoloPresente)) {
-//                Toast toast = Toast.makeText(getActivity(),
-//                        getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                toast.show();
                 Snackbar.make(rootView
                         , R.string.present_yet
                         , Snackbar.LENGTH_SHORT)
@@ -576,22 +527,15 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
                 prevOrientation = getActivity().getRequestedOrientation();
                 Utility.blockOrientation(getActivity());
-//                AlertDialogPro.Builder builder = new AlertDialogPro.Builder(getActivity());
-//                AlertDialogPro dialog = builder.setTitle(R.string.dialog_replace_title)
-//                        .setMessage(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//                                + getString(R.string.dialog_wonna_replace))
-//                        .setPositiveButton(R.string.confirm, new ButtonClickedListener(Utility.VELOCE_LISTAPRED_OK))
-//                        .setNegativeButton(R.string.dismiss, new ButtonClickedListener(Utility.DISMISS))
-//                        .show();
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                 String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                                 String sql = "UPDATE CUST_LISTS "
@@ -602,14 +546,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -641,76 +584,15 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         db.execSQL(sql);
         db.close();
 
-//        Toast.makeText(getActivity(), getString(R.string.list_added),
-//                Toast.LENGTH_SHORT).show();
         Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                 .show();
     }
-
-//    private class ButtonClickedListener implements DialogInterface.OnClickListener {
-//        private int clickedCode;
-//
-//        public ButtonClickedListener(int code) {
-//            clickedCode = code;
-//        }
-//
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            switch (clickedCode) {
-//                case Utility.DISMISS:
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    break;
-//                case Utility.VELOCE_LISTAPERS_OK:
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-////                    String query = "SELECT color, pagina" + "		FROM ELENCO"
-////                            + "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-////                    Cursor cursor = db.rawQuery(query, null);
-////
-////                    cursor.moveToFirst();
-////
-////                    listePers[idListaClick].addCanto(
-////                            Utility.intToString(cursor.getInt(1), 3)
-////                                    + cursor.getString(0) + titoloDaAgg,
-////                            idPosizioneClick);
-//                    listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                    ContentValues values = new ContentValues();
-//                    values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                    db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    Toast.makeText(getActivity()
-//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                    break;
-//                case Utility.VELOCE_LISTAPRED_OK:
-//                    db = listaCanti.getReadableDatabase();
-//                    String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                    String sql = "UPDATE CUST_LISTS "
-//                            + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                            + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                            + "WHERE _id = " + idListaDaAgg + "  AND position = "
-//                            + posizioneDaAgg;
-//                    db.execSQL(sql);
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    Toast.makeText(getActivity()
-//                            , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                    break;
-//                default:
-//                    getActivity().setRequestedOrientation(prevOrientation);
-//                    break;
-//            }
-//        }
-//    }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity().getApplicationContext(),
                 PaginaRenderActivity.class);
         intent.putExtras(bundle);
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

@@ -10,13 +10,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
@@ -52,23 +57,15 @@ public class CreaListaActivity extends ThemeableActivity {
 
     private ListaPersonalizzata celebrazione;
     private DatabaseCanti listaCanti;
-    //	private PositionAdapter adapter;
-//	private ArrayList<String> nomiElementi;
     private ArrayList<DraggableItem> elementi;
     private String titoloLista;
-    //	private DragSortListView lv;
     private int prevOrientation;
     private boolean modifica;
     private int idModifica;
     private RetainedFragment dataFragment;
     private RetainedFragment dataFragment2;
     private RetainedFragment dataFragment3;
-    //	private RelativeLayout.LayoutParams lps;
-//	private boolean fakeItemCreated;
-//	private int screenWidth;
-//	private int screenHeight;
     private ArrayList<String> nomiCanti;
-    //	private int positionLI;
     private Bundle tempArgs;
 
     private RecyclerView mRecyclerView;
@@ -79,7 +76,6 @@ public class CreaListaActivity extends ThemeableActivity {
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
-    //    private FloatingActionButton mFab;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private EditText textfieldTitle;
 
@@ -95,7 +91,7 @@ public class CreaListaActivity extends ThemeableActivity {
         setContentView(R.layout.activity_crea_lista);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
@@ -142,22 +138,14 @@ public class CreaListaActivity extends ThemeableActivity {
         else
             titoloLista = bundle.getString("titolo");
 
-//		lv = (DragSortListView) findViewById(android.R.id.list);
-//
-//        lv.setDropListener(onDrop);
-//        lv.setRemoveListener(onRemove);
-
         dataFragment = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiElementi");
         if (dataFragment != null) {
-//            nomiElementi = dataFragment.getData();
             elementi = dataFragment.getDataDrag();
         }
         else {
-//        	nomiElementi = new ArrayList<String>();
             elementi = new ArrayList<>();
             if (modifica) {
                 for (int i = 0; i < celebrazione.getNumPosizioni(); i++)
-//	        		nomiElementi.add(celebrazione.getNomePosizione(i));
                     elementi.add(new DraggableItem(celebrazione.getNomePosizione(i), Utility.random(1,500)));
             }
         }
@@ -189,70 +177,6 @@ public class CreaListaActivity extends ThemeableActivity {
             collapsingToolbarLayout.setTitle(titoloLista);
         }
 
-
-//        positionLI = R.layout.position_list_item_light;
-//
-//        adapter = new PositionAdapter();
-//        lv.setAdapter(adapter);
-//
-//		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-//			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//				prevOrientation = getRequestedOrientation();
-//				Utility.blockOrientation(CreaListaActivity.this);
-//				final int positionToRename = position;
-//				final MaterialDialog dialog = new MaterialDialog.Builder(CreaListaActivity.this)
-//						.title(R.string.posizione_rename)
-//						.positiveText(R.string.aggiungi_rename)
-//						.negativeText(R.string.aggiungi_dismiss)
-//						.input("", "", false, new MaterialDialog.InputCallback() {
-//							@Override
-//							public void onInput(MaterialDialog dialog, CharSequence input) {
-//							}
-//						})
-//						.callback(new MaterialDialog.ButtonCallback() {
-//							@Override
-//							public void onPositive(MaterialDialog dialog) {
-//								nomiElementi.set(positionToRename, dialog.getInputEditText().getText().toString());
-//								adapter.notifyDataSetChanged();
-//								//to hide soft keyboard
-//								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//								setRequestedOrientation(prevOrientation);
-//							}
-//
-//							@Override
-//							public void onNegative(MaterialDialog dialog) {
-//								//to hide soft keyboard
-//								((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//										.hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//								setRequestedOrientation(prevOrientation);
-//							}
-//						})
-//						.show();
-//				dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//					@Override
-//					public boolean onKey(DialogInterface arg0, int keyCode,
-//										 KeyEvent event) {
-//						if (keyCode == KeyEvent.KEYCODE_BACK
-//								&& event.getAction() == KeyEvent.ACTION_UP) {
-//							arg0.dismiss();
-//							setRequestedOrientation(prevOrientation);
-//							return true;
-//						}
-//						return false;
-//					}
-//				});
-//				dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-//				dialog.getInputEditText().setText(nomiElementi.get(positionToRename));
-//				dialog.getInputEditText().selectAll();
-//				dialog.setCancelable(false);
-//				//to show soft keyboard
-//				((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//						.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//				return true;
-//			}
-//		});
-
         //noinspection ConstantConditions
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(CreaListaActivity.this);
@@ -280,7 +204,6 @@ public class CreaListaActivity extends ThemeableActivity {
         myItemAdapter.setEventListener(new DraggableSwipeableAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
-//				((DraggableSwipeableExampleActivity) getActivity()).onItemRemoved(position);
                 if (modifica) {
                     nomiCanti.remove(position);
 //                    	Log.i("RIMOSSO", which + "");
@@ -302,32 +225,33 @@ public class CreaListaActivity extends ThemeableActivity {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
                 final int positionToRename = mRecyclerView.getChildAdapterPosition(v);
-                final MaterialDialog dialog = new MaterialDialog.Builder(CreaListaActivity.this)
+                MaterialDialog dialog = new MaterialDialog.Builder(CreaListaActivity.this)
                         .title(R.string.posizione_rename)
                         .positiveText(R.string.aggiungi_rename)
                         .negativeText(R.string.aggiungi_dismiss)
                         .input("", "", false, new MaterialDialog.InputCallback() {
                             @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                             }
                         })
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                elementi.set(positionToRename, new DraggableItem(dialog.getInputEditText().getText().toString()
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                elementi.set(positionToRename, new DraggableItem(materialDialog.getInputEditText().getText().toString()
                                         , elementi.get(positionToRename).getIdPosizione()));
                                 mAdapter.notifyDataSetChanged();
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -350,8 +274,8 @@ public class CreaListaActivity extends ThemeableActivity {
                 dialog.getInputEditText().selectAll();
                 dialog.setCancelable(false);
                 //to show soft keyboard
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
 
         });
@@ -361,23 +285,15 @@ public class CreaListaActivity extends ThemeableActivity {
         mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);      // wrap for dragging
         mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mWrappedAdapter);      // wrap for swiping
 
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Disable the change animation in order to make turning back animation of swiped item works properly.
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         mRecyclerView.setItemAnimator(animator);
 
-        // additional decorations
-        //noinspection StatementWithEmptyBody
-//		if (supportsViewElevation()) {
-//			// Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
-//		} else {
-//			mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1)));
-//		}
         if (LUtils.hasL())
             mRecyclerView.addItemDecoration(
                     new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider, getTheme()), true));
@@ -393,40 +309,43 @@ public class CreaListaActivity extends ThemeableActivity {
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
-//        getFab();
-        findViewById(R.id.fab_crea_lista).setOnClickListener(new OnClickListener() {
+        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
+        Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
+        fabAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
-                final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
+                MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
                         .title(R.string.posizione_add_desc)
                         .positiveText(R.string.aggiungi_confirm)
                         .negativeText(R.string.aggiungi_dismiss)
                         .input("", "", false, new MaterialDialog.InputCallback() {
                             @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                             }
                         })
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-                                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
+                                elementi.add(new DraggableItem(materialDialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
                                 if (modifica)
                                     nomiCanti.add("");
                                 mAdapter.notifyItemInserted(elementi.size() - 1);
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 //to hide soft keyboard
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
+//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -447,102 +366,13 @@ public class CreaListaActivity extends ThemeableActivity {
                 dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                 dialogAdd.setCancelable(false);
                 //to show soft keyboard
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
 
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                float y = recyclerView.getScrollY();
-//                super.onScrolled(recyclerView, dx, dy);
-//                if (y < dy)
-//                    getFab().hide();
-//                else
-//                    getFab().show();
-//            }
-//
-//        });
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-//        fab.setColorNormal(getThemeUtils().accentColor());
-//        fab.setColorPressed(getThemeUtils().accentColorDark());
-//        fab.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                prevOrientation = getRequestedOrientation();
-//                Utility.blockOrientation(CreaListaActivity.this);
-//                final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
-//                        .title(R.string.posizione_add_desc)
-//                        .positiveText(R.string.aggiungi_confirm)
-//                        .negativeText(R.string.aggiungi_dismiss)
-//                        .input("", "", false, new MaterialDialog.InputCallback() {
-//                            @Override
-//                            public void onInput(MaterialDialog dialog, CharSequence input) {
-//                            }
-//                        })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-////								nomiElementi.add(dialog.getInputEditText().getText().toString());
-//                                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
-//                                if (modifica)
-//                                    nomiCanti.add("");
-////								adapter.notifyDataSetChanged();
-//                                mAdapter.notifyItemInserted(elementi.size() - 1);
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-//                dialogAdd.setCancelable(false);
-//                //to show soft keyboard
-//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//            }
-//        });
-
-//		if (nomiElementi.size() > 0)
         if (elementi.size() > 0)
             findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-
-//		Display display = getWindowManager().getDefaultDisplay();
-//		if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
-//			screenWidth = display.getWidth();
-//			screenHeight = display.getHeight();
-//		}
-//		else {
-//			Point size = new Point();
-//			display.getSize(size);
-//			screenWidth = size.x;
-//			screenHeight = size.y;
-//		}
 
         if(PreferenceManager
                 .getDefaultSharedPreferences(this)
@@ -551,11 +381,7 @@ public class CreaListaActivity extends ThemeableActivity {
                     .getDefaultSharedPreferences(CreaListaActivity.this)
                     .edit();
             editor.putBoolean(PREF_FIRST_OPEN, false);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                editor.commit();
-            } else {
-                editor.apply();
-            }
+            editor.apply();
             showHelp();
         }
 
@@ -626,7 +452,6 @@ public class CreaListaActivity extends ThemeableActivity {
                 }
                 return true;
             case android.R.id.home:
-//				if (nomiElementi.size() > 0) {
                 if (elementi.size() > 0) {
                     prevOrientation = getRequestedOrientation();
                     Utility.blockOrientation(CreaListaActivity.this);
@@ -636,9 +461,9 @@ public class CreaListaActivity extends ThemeableActivity {
                             .positiveText(R.string.confirm)
                             .negativeText(R.string.dismiss)
                             .neutralText(R.string.cancel)
-                            .callback(new MaterialDialog.ButtonCallback() {
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onPositive(MaterialDialog dialog) {
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                     setRequestedOrientation(prevOrientation);
                                     if (saveList()) {
                                         setResult(Activity.RESULT_OK);
@@ -646,17 +471,19 @@ public class CreaListaActivity extends ThemeableActivity {
                                         overridePendingTransition(0, R.anim.slide_out_bottom);
                                     }
                                 }
-
+                            })
+                            .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onNegative(MaterialDialog dialog) {
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                     setRequestedOrientation(prevOrientation);
                                     setResult(Activity.RESULT_CANCELED);
                                     finish();
                                     overridePendingTransition(0, R.anim.slide_out_bottom);
                                 }
-
+                            })
+                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
                                 @Override
-                                public void onNeutral(MaterialDialog dialog) {
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                     setRequestedOrientation(prevOrientation);
                                 }
                             })
@@ -690,7 +517,6 @@ public class CreaListaActivity extends ThemeableActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			if (nomiElementi.size() > 0) {
             if (elementi.size() > 0) {
                 prevOrientation = getRequestedOrientation();
                 Utility.blockOrientation(CreaListaActivity.this);
@@ -700,9 +526,9 @@ public class CreaListaActivity extends ThemeableActivity {
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
                         .neutralText(R.string.cancel)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 setRequestedOrientation(prevOrientation);
                                 if (saveList()) {
                                     setResult(Activity.RESULT_OK);
@@ -710,17 +536,19 @@ public class CreaListaActivity extends ThemeableActivity {
                                     overridePendingTransition(0, R.anim.slide_out_bottom);
                                 }
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 setRequestedOrientation(prevOrientation);
                                 setResult(Activity.RESULT_CANCELED);
                                 finish();
                                 overridePendingTransition(0, R.anim.slide_out_bottom);
                             }
-
+                        })
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNeutral(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -751,103 +579,6 @@ public class CreaListaActivity extends ThemeableActivity {
         return super.onKeyUp(keyCode, event);
     }
 
-//	private DragSortListView.DropListener onDrop =
-//			new DragSortListView.DropListener() {
-//				@Override
-//				public void drop(int from, int to) {
-//					String item = adapter.getItem(from);
-//
-//					adapter.remove(item);
-//					adapter.insert(item, to);
-//
-//					if (modifica) {
-////                    	Log.i("SPOSTO CANTO", "da " + from + " a " + to);
-//						String canto = nomiCanti.remove(from);
-//						nomiCanti.add(to, canto);
-//					}
-//				}
-//			};
-
-//	private DragSortListView.RemoveListener onRemove =
-//			new DragSortListView.RemoveListener() {
-//				@Override
-//				public void remove(int which) {
-//					adapter.remove(adapter.getItem(which));
-//
-//					if (modifica) {
-//						nomiCanti.remove(which);
-////                    	Log.i("RIMOSSO", which + "");
-//
-//					}
-//					if (adapter.getCount() == 0)
-//						findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
-//				}
-//			};
-
-//    public FloatingActionButton getFab() {
-//        if (mFab == null) {
-//            mFab = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-//            mFab.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    prevOrientation = getRequestedOrientation();
-//                    Utility.blockOrientation(CreaListaActivity.this);
-//                    final MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
-//                            .title(R.string.posizione_add_desc)
-//                            .positiveText(R.string.aggiungi_confirm)
-//                            .negativeText(R.string.aggiungi_dismiss)
-//                            .input("", "", false, new MaterialDialog.InputCallback() {
-//                                @Override
-//                                public void onInput(MaterialDialog dialog, CharSequence input) {
-//                                }
-//                            })
-//                            .callback(new MaterialDialog.ButtonCallback() {
-//                                @Override
-//                                public void onPositive(MaterialDialog dialog) {
-//                                    findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-//                                    elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
-//                                    if (modifica)
-//                                        nomiCanti.add("");
-//                                    mAdapter.notifyItemInserted(elementi.size() - 1);
-//                                    //to hide soft keyboard
-//                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                    setRequestedOrientation(prevOrientation);
-//                                }
-//
-//                                @Override
-//                                public void onNegative(MaterialDialog dialog) {
-//                                    //to hide soft keyboard
-//                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                            .hideSoftInputFromWindow(dialog.getInputEditText().getWindowToken(), 0);
-//                                    setRequestedOrientation(prevOrientation);
-//                                }
-//                            })
-//                            .show();
-//                    dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
-//                        @Override
-//                        public boolean onKey(DialogInterface arg0, int keyCode,
-//                                             KeyEvent event) {
-//                            if (keyCode == KeyEvent.KEYCODE_BACK
-//                                    && event.getAction() == KeyEvent.ACTION_UP) {
-//                                arg0.dismiss();
-//                                setRequestedOrientation(prevOrientation);
-//                                return true;
-//                            }
-//                            return false;
-//                        }
-//                    });
-//                    dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-//                    dialogAdd.setCancelable(false);
-//                    //to show soft keyboard
-//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                            .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//                }
-//            });
-//        }
-//        return mFab;
-//    }
-
     private boolean saveList()  {
         celebrazione = new ListaPersonalizzata();
 
@@ -863,13 +594,8 @@ public class CreaListaActivity extends ThemeableActivity {
         }
 
         celebrazione.setName(titoloLista);
-//		for (int i = 0; i < nomiElementi.size(); i++) {
         for (int i = 0; i < elementi.size(); i++) {
-//			if (celebrazione.addPosizione(nomiElementi.get(i)) == -2) {
             if (celebrazione.addPosizione(elementi.get(i).getTitolo()) == -2) {
-//                Toast toast = Toast.makeText(getApplicationContext()
-//                        , getString(R.string.lista_pers_piena), Toast.LENGTH_LONG);
-//                toast.show();
                 Snackbar.make(findViewById(android.R.id.content)
                         , R.string.lista_pers_piena, Snackbar.LENGTH_SHORT)
                         .show();
@@ -878,9 +604,6 @@ public class CreaListaActivity extends ThemeableActivity {
         }
 
         if (celebrazione.getNomePosizione(0).equalsIgnoreCase("")) {
-//            Toast toast = Toast.makeText(getApplicationContext()
-//                    , getString(R.string.lista_pers_vuota), Toast.LENGTH_LONG);
-//            toast.show();
             Snackbar.make(findViewById(android.R.id.content)
                     , R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
                     .show();
@@ -888,7 +611,6 @@ public class CreaListaActivity extends ThemeableActivity {
         }
 
         if (modifica) {
-//			for (int i = 0; i < nomiElementi.size(); i++) {
             for (int i = 0; i < elementi.size(); i++) {
 //    			Log.i("SALVO CANTO", nomiCanti.get(i));
                 celebrazione.addCanto(nomiCanti.get(i), i);
@@ -910,19 +632,11 @@ public class CreaListaActivity extends ThemeableActivity {
         return true;
     }
 
-//	@Override
-//	public void onDestroy() {
-//		if (listaCanti != null)
-//			listaCanti.close();
-//		super.onDestroy();
-//	}
-
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
         dataFragment = new RetainedFragment();
         getSupportFragmentManager().beginTransaction().add(dataFragment, "nomiElementi").commit();
-//		dataFragment.setData(nomiElementi);
         dataFragment.setDataDrag(elementi);
 
         if (modifica) {
@@ -939,12 +653,6 @@ public class CreaListaActivity extends ThemeableActivity {
 
         super.onSaveInstanceState(savedInstanceState);
     }
-
-//    private class PositionAdapter extends ArrayAdapter<String> {
-//        public PositionAdapter() {
-//        	super(getApplicationContext(), positionLI, R.id.position_name, nomiElementi);
-//        }
-//    }
 
     public static class RetainedFragment extends Fragment {
 
@@ -980,247 +688,5 @@ public class CreaListaActivity extends ThemeableActivity {
     private void showHelp() {
         Intent intent = new Intent(CreaListaActivity.this, IntroCreaLista.class);
         startActivity(intent);
-//		if (elementi.size() == 0) {
-////   		if (nomiElementi.size() == 0) {
-//			findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-////   			nomiElementi.add(getResources().getString(R.string.example_title));
-//			elementi.add(new DraggableItem(getResources().getString(R.string.example_title), elementi.size()));
-////   			adapter.notifyDataSetChanged();
-//			mAdapter.notifyItemInserted(0);
-//			fakeItemCreated = true;
-//		}
-//		else {
-//			fakeItemCreated = false;
-//		}
-//		prevOrientation = getRequestedOrientation();
-//		Utility.blockOrientation(CreaListaActivity.this);
-//		lps = new RelativeLayout.LayoutParams(
-//				ViewGroup.LayoutParams.WRAP_CONTENT,
-//				ViewGroup.LayoutParams.WRAP_CONTENT);
-//		lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//		lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//		int margin = ((Number) (getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//		int marginLeft = ((Number) (getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//		int marginBottom = ((Number) (getApplicationContext().getResources().getDisplayMetrics().density * 12)).intValue();
-//		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//			if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-//				marginBottom = ((Number) (getApplicationContext().getResources().getDisplayMetrics()
-//						.density * 62)).intValue();
-//			else
-//				marginLeft = ((Number) (getApplicationContext().getResources().getDisplayMetrics()
-//						.density * 62)).intValue();
-//		}
-//		lps.setMargins(marginLeft, margin, margin, marginBottom);
-//
-//		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//		co.buttonLayoutParams = lps;
-//
-//		//benvenuto del tutorial
-//		ShowcaseView showcaseView = ShowcaseView.insertShowcaseView(
-//				new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
-//				, CreaListaActivity.this
-//				, R.string.title_activity_nuova_lista
-//				, R.string.showcase_welcome_crea
-//				, co);
-//		showcaseView.setShowcase(ShowcaseView.NONE);
-//		showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//		showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//			@Override
-//			public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//			@Override
-//			public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//				//spiegazione del pulsante aggiungi posizione
-//				ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//				co.buttonLayoutParams = lps;
-//				showcaseView = ShowcaseView.insertShowcaseView(
-//						new ViewTarget(R.id.fab_crea_lista, CreaListaActivity.this)
-//						, CreaListaActivity.this
-//						, R.string.add_position
-//						, R.string.showcase_add_pos_desc
-//						, co);
-//				showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//				showcaseView.setScaleMultiplier(0.5f);
-//				showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//					@Override
-//					public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//					@Override
-//					public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//						//spi
-//						// egazione di come spostare le posizioni
-//						ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//						co.buttonLayoutParams = lps;
-////						ViewTarget listItem = new ViewTarget(
-////								adapter.getView(0, lv, lv).findViewById(R.id.drag_handle));
-//						ViewTarget listItem = new ViewTarget(
-//								((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mDragHandle);
-//						showcaseView = ShowcaseView.insertShowcaseView(
-//								listItem
-//								, CreaListaActivity.this
-//								, R.string.posizione_reorder
-//								, R.string.showcase_reorder_desc
-//								, co);
-//						showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//						showcaseView.setScaleMultiplier(0.5f);
-//						int[] coords = new int[2];
-////						adapter.getView(0, lv, lv).getLocationOnScreen(coords);
-//						((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mContainer.getLocationOnScreen(coords);
-//						coords[0] = (coords[0]*2 +
-////								adapter.getView(0, lv, lv).findViewById(R.id.drag_handle).getWidth())
-//								((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mDragHandle.getWidth())
-//								/ 2;
-//						coords[1] = (coords[1]*2 +
-////								adapter.getView(0, lv, lv).findViewById(R.id.drag_handle).getHeight())
-//								((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mDragHandle.getHeight())
-//								/ 2;
-//						showcaseView.animateGesture(coords[0], coords[1], coords[0], coords[1] + (screenHeight - coords[1])/3, true);
-//						showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//							@Override
-//							public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//							@Override
-//							public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//								//spiegazione di come rinominare le posizioni
-//								ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//								co.buttonLayoutParams = lps;
-//								ViewTarget listItem = new ViewTarget(
-////										adapter.getView(0, lv, lv).findViewById(R.id.position_name));
-//										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView);
-//								showcaseView = ShowcaseView.insertShowcaseView(
-//										listItem
-//										, CreaListaActivity.this
-//										, R.string.posizione_rename
-//										, R.string.showcase_rename_desc
-//										, co);
-//								showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//								int[] coords = new int[2];
-////								adapter.getView(0, lv, lv).getLocationOnScreen(coords);
-//								((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mContainer.getLocationOnScreen(coords);
-//								coords[0] = (coords[0]*2 +
-////										adapter.getView(0, lv, lv).findViewById(R.id.position_name).getWidth())
-//										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getWidth())
-//										/ 2;
-//								coords[1] = (coords[1]*2 +
-////										adapter.getView(0, lv, lv).findViewById(R.id.position_name).getHeight())
-//										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getHeight())
-//										/ 2;
-//								showcaseView.animateGesture(coords[0], coords[1], coords[0], coords[1], true);
-//								showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//									@Override
-//									public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//									@Override
-//									public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//										//spiegazione di come cancellare le posizioni
-//										ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//										co.buttonLayoutParams = lps;
-//										ViewTarget listItem = new ViewTarget(
-////												adapter.getView(0, lv, lv).findViewById(R.id.position_name));
-//												((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView);
-//										showcaseView = ShowcaseView.insertShowcaseView(
-//												listItem
-//												, CreaListaActivity.this
-//												, R.string.posizione_delete
-//												, R.string.showcase_delete_desc
-//												, co);
-//										showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//										int[] coords = new int[2];
-////										adapter.getView(0, lv, lv).getLocationOnScreen(coords);
-//										((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mContainer.getLocationOnScreen(coords);
-//										coords[0] = (coords[0]*2 +
-////												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getWidth())
-//												((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getWidth())
-//												/ 2;
-//										coords[1] = (coords[1]*2 +
-////												adapter.getView(0, lv, lv).findViewById(R.id.position_name).getHeight())
-//												((DraggableSwipeableAdapter.MyViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0)).mTextView.getHeight())
-//												/ 2;
-//										showcaseView.animateGesture(coords[0], coords[1], coords[0] + (screenWidth - coords[0])/2, coords[1], true);
-//										showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//											@Override
-//											public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//											@Override
-//											public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//												//spiegazione di come salvare
-//												ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//												co.buttonLayoutParams = lps;
-//												showcaseView = ShowcaseView.insertShowcaseView(
-//														new ViewTarget(R.id.action_save_list, CreaListaActivity.this)
-//														, CreaListaActivity.this
-//														, R.string.list_save_exit
-//														, R.string.showcase_saveexit_desc
-//														, co);
-//												showcaseView.setButtonText(getString(R.string.showcase_button_next));
-//												showcaseView.setScaleMultiplier(0.3f);
-//												showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//													@Override
-//													public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//													@Override
-//													public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//														//spiegazione di come rivedere il tutorial
-//														ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//														co.buttonLayoutParams = lps;
-//														showcaseView = ShowcaseView.insertShowcaseView(
-//																new ViewTarget(R.id.action_help, CreaListaActivity.this)
-//																, CreaListaActivity.this
-//																, R.string.showcase_end_title
-//																, R.string.showcase_help_general
-//																, co);
-//														showcaseView.setScaleMultiplier(0.3f);
-//														showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
-//
-//															@Override
-//															public void onShowcaseViewShow(ShowcaseView showcaseView) { }
-//
-//															@Override
-//															public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//																if (fakeItemCreated) {
-//																	findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
-////																	nomiElementi.remove(0);
-//																	elementi.remove(0);
-////																	adapter.notifyDataSetChanged();
-//																	mAdapter.notifyItemRemoved(0);
-//																	fakeItemCreated = false;
-//																}
-//																setRequestedOrientation(prevOrientation);
-//															}
-//															@Override
-//															public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//														});
-//													}
-//
-//													@Override
-//													public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//												});
-//											}
-//
-//											@Override
-//											public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//										});
-//									}
-//									@Override
-//									public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//								});
-//							}
-//							@Override
-//							public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//						});
-//					}
-//					@Override
-//					public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//				});
-//			}
-//			@Override
-//			public void onShowcaseViewDidHide(ShowcaseView showcaseView) { }
-//		});
     }
 }

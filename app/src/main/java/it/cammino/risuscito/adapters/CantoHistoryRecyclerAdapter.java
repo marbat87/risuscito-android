@@ -15,13 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.objects.CantoHistory;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-/**
- * Created by marcello.battain on 12/01/2015.
- */
 public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
 
     private List<CantoHistory> dataItems;
@@ -51,6 +47,7 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
         return new CantoViewHolder(layoutView, clickListener, longClickListener, createContextMenuListener);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
@@ -67,7 +64,7 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
                 DateFormat.SHORT
                 , DateFormat.MEDIUM
                 , context.getResources().getConfiguration().locale);
-        String timestamp = "";
+        String timestamp;
 
         if (df instanceof SimpleDateFormat)
         {
@@ -82,20 +79,31 @@ public class CantoHistoryRecyclerAdapter extends RecyclerView.Adapter {
 //                Log.i(getClass().toString(), "is NOT Simple");
             timestamp = df.format(Timestamp.valueOf(dataItem.getTimestamp()));
         }
-        cantoHolder.timestamp.setText(context.getString(R.string.last_open_date) + " " + timestamp);
-
+//        cantoHolder.timestamp.setText(context.getString(R.string.last_open_date) + " " + timestamp);
+        cantoHolder.timestamp.setText(context.getString(R.string.last_open_date, timestamp));
         cantoHolder.sourceCanto.setText(dataItem.getSource());
-
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        Drawable drawable = ContextCompat.getDrawable(context,
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
+//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
+//        if (LUtils.hasJB())
+//            cantoHolder.cantoPage.setBackground(drawable);
+//        else
+//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
+        cantoHolder.cantoPage.setBackgroundResource(
+                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+                        , "drawable"
+                        , context.getPackageName()));
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
+//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
+//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
         if (context != null) {
             if (dataItem.ismSelected())

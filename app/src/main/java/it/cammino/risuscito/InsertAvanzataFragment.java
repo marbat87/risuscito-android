@@ -18,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +26,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.rey.material.widget.ProgressView;
+import com.afollestad.materialdialogs.internal.MDTintHelper;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -42,6 +44,8 @@ import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
+import it.cammino.risuscito.utils.ThemeUtils;
+import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -52,7 +56,7 @@ public class InsertAvanzataFragment extends Fragment {
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
-    private ProgressView progress;
+    private ProgressBar progress;
     private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
@@ -82,24 +86,8 @@ public class InsertAvanzataFragment extends Fragment {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // recupera il titolo della voce cliccata
-//                String cantoCliccato = ((TextView) v.findViewById(R.id.text_title))
-//                        .getText().toString();
-//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(cantoCliccato);
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-//                String query = "SELECT _id" +
-//                        "  FROM ELENCO" +
-//                        "  WHERE titolo =  '" + cantoCliccatoNoApex + "'";
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                // recupera il nome del file
-//                cursor.moveToFirst();
-//                int idCanto = cursor.getInt(0);
-//
-//                // chiude il cursore
-//                cursor.close();
 
                 String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
                         .getText().toString();
@@ -114,7 +102,6 @@ public class InsertAvanzataFragment extends Fragment {
                     try {
                         db.execSQL(query);
                     } catch (SQLException e) {
-//                        Toast.makeText(getActivity(), getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                         Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
@@ -135,12 +122,6 @@ public class InsertAvanzataFragment extends Fragment {
                     cursor.close();
 
                     // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-//                    query = "SELECT color, pagina" +
-//                            "		FROM ELENCO" +
-//                            "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                    cursor = db.rawQuery(query, null);
-//                    cursor.moveToFirst();
-//                    listaPersonalizzata.addCanto(Utility.intToString(cursor.getInt(1), 3) + cursor.getString(0) + cantoCliccato, listPosition);
                     listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
                     cursor.close();
 
@@ -180,13 +161,22 @@ public class InsertAvanzataFragment extends Fragment {
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoInsertRecyclerAdapter(titoli, clickListener, seeOnClickListener);
+        cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
         recyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressView) rootView.findViewById(R.id.search_progress);
+        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
+        if (LUtils.hasICS()) {
+            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
+            d.setTint(getThemeUtils().accentColor());
+            progress.setProgressDrawable(d);
+            progress.setIndeterminateDrawable(d);
+        }
+        else
+            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
+
         searchPar.setText("");
 
         Bundle bundle = getArguments();
@@ -226,7 +216,8 @@ public class InsertAvanzataFragment extends Fragment {
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-                        progress.stop();
+//                        progress.stop();
+                        progress.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -270,15 +261,10 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-//        Button paperPulisci = (Button) rootView.findViewById(R.id.pulisci_ripple);
-//        paperPulisci.setColor(getThemeUtils().primaryColor());
         rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchPar.setText("");
-//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                titoli.clear();
-//                cantoAdapter.notifyDataSetChanged();
             }
         });
 
@@ -286,6 +272,32 @@ public class InsertAvanzataFragment extends Fragment {
 
         return rootView;
     }
+
+    /**
+     * Set a hint to the system about whether this fragment's UI is currently visible
+     * to the user. This hint defaults to true and is persistent across fragment instance
+     * state save and restore.
+     * <p/>
+     * <p>An app may set this to false to indicate that the fragment's UI is
+     * scrolled out of visibility or is otherwise not directly visible to the user.
+     * This may be used by the system to prioritize operations such as fragment lifecycle updates
+     * or loader ordering behavior.</p>
+     *
+     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
+     *                        false if it is not.
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.d(getClass().getName(), "VISIBLE");
+            //to hide soft keyboard
+            if (searchPar != null)
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+        }
+    }
+
     @Override
     public void onDestroy() {
         if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
@@ -308,8 +320,6 @@ public class InsertAvanzataFragment extends Fragment {
 
             String text;
             titoli.clear();
-//            String[] aResults = new String[300];
-//            int totalResults = 0;
 
             for (int k = 0; k < aTexts.length; k++) {
 
@@ -350,19 +360,11 @@ public class InsertAvanzataFragment extends Fragment {
                         titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
                                                 , lista.getInt(3)
                                                 , lista.getString(4)));
-//                        aResults[totalResults++] = Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0);
                     }
                     // chiude il cursore
                     lista.close();
                 }
             }
-
-//            titoli.clear();
-//            for (int i = 0; i < aResults.length; i++) {
-//                if (aResults[i] == null)
-//                    break;
-//                titoli.add(new CantoItem(aResults[i]));
-//            }
 
             return null;
         }
@@ -370,8 +372,7 @@ public class InsertAvanzataFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//            progress.setVisibility(View.VISIBLE);
-            progress.start();
+            progress.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -379,8 +380,7 @@ public class InsertAvanzataFragment extends Fragment {
 
             cantoAdapter.notifyDataSetChanged();
 
-//            progress.setVisibility(View.GONE);
-            progress.stop();
+            progress.setVisibility(View.INVISIBLE);
 
             if (titoli.size() == 0) {
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
@@ -396,7 +396,7 @@ public class InsertAvanzataFragment extends Fragment {
     {
         if (MAP_NORM == null || MAP_NORM.size() == 0)
         {
-            MAP_NORM = new HashMap<Character, Character>();
+            MAP_NORM = new HashMap<>();
             MAP_NORM.put('À', 'A');
             MAP_NORM.put('Á', 'A');
             MAP_NORM.put('Â', 'A');
@@ -462,21 +462,21 @@ public class InsertAvanzataFragment extends Fragment {
         for(int i = 0; i < value.length(); i++) {
             Character c = MAP_NORM.get(sb.charAt(i));
             if(c != null)
-                sb.setCharAt(i, c.charValue());
+                sb.setCharAt(i, c);
         }
 
         return sb.toString();
     }
-
-//    private ThemeUtils getThemeUtils() {
-//        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
-//    }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity().getApplicationContext(),
                 PaginaRenderActivity.class);
         intent.putExtras(bundle);
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
     }
 
 }

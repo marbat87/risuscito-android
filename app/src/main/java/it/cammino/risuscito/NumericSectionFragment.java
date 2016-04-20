@@ -8,14 +8,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -28,22 +28,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
+import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.cammino.risuscito.adapters.CantoNumericAdapter;
+import it.cammino.risuscito.adapters.CantoAdapter;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.ui.RisuscitoSectionTitleIndicator;
 import it.cammino.risuscito.utils.ThemeUtils;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class NumericSectionFragment extends Fragment implements View.OnCreateContextMenuListener {
 
     private List<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
-    private SQLiteDatabase db;
     private String titoloDaAgg;
     private int idDaAgg;
     private int idListaDaAgg;
@@ -67,10 +68,10 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                 R.layout.fragment_alphanum_index, container, false);
 
         //crea un istanza dell'oggetto DatabaseCanti
-        listaCanti = new DatabaseCanti(getActivity());
+        if (listaCanti == null)
+            listaCanti = new DatabaseCanti(getActivity());
 
-        // crea un manipolatore per il Database in modalit� READ
-        db = listaCanti.getReadableDatabase();
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
         String query = "SELECT _id, titolo, color, pagina, source" +
@@ -95,6 +96,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
         // chiude il cursore
         lista.close();
+        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -116,57 +118,69 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         };
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
-        VerticalRecyclerViewFastScroller fastScroller =
-                (VerticalRecyclerViewFastScroller) rootView.findViewById(R.id.fast_scroller);
 
-        CantoNumericAdapter adapter = new CantoNumericAdapter(titoli, clickListener, this);
+        CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
         recyclerView.setAdapter(adapter);
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(recyclerView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-
-        // Connect the scroller to the adapter to observe data set changes
-        adapter.registerAdapterDataObserver(fastScroller.getAdapterDataObserver());
-
-        // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        query = "SELECT _id, lista" +
-                "		FROM LISTE_PERS" +
-                "		ORDER BY _id ASC";
-        lista = db.rawQuery(query, null);
+//        TouchScrollBar mDragScrollbar =
+//                new TouchScrollBar(getActivity(), recyclerView, true);
+//        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
+//        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
+//        mDragScrollbar.setAutoHide(true);
+//        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
 
-        listePers = new ListaPersonalizzata[lista.getCount()];
-        idListe = new int[lista.getCount()];
-
-        lista.moveToFirst();
-        for (int i = 0; i < lista.getCount(); i++) {
-            idListe[i] = lista.getInt(0);
-            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-                    deserializeObject(lista.getBlob(1));
-            lista.moveToNext();
-        }
-
-        lista.close();
-        db.close();
+        new DragScrollBar(getActivity(), recyclerView, true)
+                .addIndicator(new CustomIndicator(getActivity()), true)
+                .setHandleColour(getThemeUtils().accentColor())
+                .setHandleOffColour(getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        if (!mLUtils.hasL()) {
-            Drawable myDrawable = getResources().getDrawable(R.drawable.rvfs_fast_scroller_handle_rounded);
-            Drawable compatDrawable  = DrawableCompat.wrap(myDrawable);
-            DrawableCompat.setTint(compatDrawable, getThemeUtils().accentColor());
-            fastScroller.setHandleBackground(compatDrawable);
-        }
-
-        RisuscitoSectionTitleIndicator indicator = (RisuscitoSectionTitleIndicator)
-                rootView.findViewById(R.id.rvfs_scroll_section_indicator)  ;
-        indicator.setIndicatorBackgroundColor(getThemeUtils().accentColor());
-
         return rootView;
+    }
+
+    /**
+     * Set a hint to the system about whether this fragment's UI is currently visible
+     * to the user. This hint defaults to true and is persistent across fragment instance
+     * state save and restore.
+     * <p/>
+     * <p>An app may set this to false to indicate that the fragment's UI is
+     * scrolled out of visibility or is otherwise not directly visible to the user.
+     * This may be used by the system to prioritize operations such as fragment lifecycle updates
+     * or loader ordering behavior.</p>
+     *
+     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
+     *                        false if it is not.
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.d(getClass().getName(), "VISIBLE");
+            if (listaCanti == null)
+                listaCanti = new DatabaseCanti(getActivity());
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            String query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            Cursor lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+        }
     }
 
     @Override
@@ -186,7 +200,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
@@ -212,59 +225,45 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:
-//                    addToFavorites(titoloDaAgg);
                     addToFavorites();
                     return true;
                 case R.id.add_to_p_iniziale:
-//                    addToListaNoDup(1, 1, titoloDaAgg);
                     addToListaNoDup(1, 1);
                     return true;
                 case R.id.add_to_p_prima:
-//                    addToListaNoDup(1, 2, titoloDaAgg);
                     addToListaNoDup(1, 2);
                     return true;
                 case R.id.add_to_p_seconda:
-//                    addToListaNoDup(1, 3, titoloDaAgg);
                     addToListaNoDup(1, 3);
                     return true;
                 case R.id.add_to_p_terza:
-//                    addToListaNoDup(1, 4, titoloDaAgg);
                     addToListaNoDup(1, 4);
                     return true;
                 case R.id.add_to_p_pace:
-//                    addToListaNoDup(1, 6, titoloDaAgg);
                     addToListaNoDup(1, 6);
                     return true;
                 case R.id.add_to_p_fine:
-//                    addToListaNoDup(1, 5, titoloDaAgg);
                     addToListaNoDup(1, 5);
                     return true;
                 case R.id.add_to_e_iniziale:
-//                    addToListaNoDup(2, 1, titoloDaAgg);
                     addToListaNoDup(2, 1);
                     return true;
                 case R.id.add_to_e_seconda:
-//                    addToListaNoDup(2, 6, titoloDaAgg);
                     addToListaNoDup(2, 6);
                     return true;
                 case R.id.add_to_e_pace:
-//                    addToListaNoDup(2, 2, titoloDaAgg);
                     addToListaNoDup(2, 2);
                     return true;
                 case R.id.add_to_e_santo:
-//                    addToListaNoDup(2, 7, titoloDaAgg);
                     addToListaNoDup(2, 7);
                     return true;
                 case R.id.add_to_e_pane:
-//                    addToListaDup(2, 3, titoloDaAgg);
                     addToListaDup(2, 3);
                     return true;
                 case R.id.add_to_e_vino:
-//                    addToListaDup(2, 4, titoloDaAgg);
                     addToListaDup(2, 4);
                     return true;
                 case R.id.add_to_e_fine:
-//                    addToListaNoDup(2, 5, titoloDaAgg);
                     addToListaNoDup(2, 5);
                     return true;
                 default:
@@ -272,18 +271,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                     idPosizioneClick = item.getItemId();
                     if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
                         idListaClick -= 100;
-
-                        //recupero ID del canto cliccato
-//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                        String query = "SELECT _id" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//                        cursor.moveToFirst();
-//                        idDaAgg = cursor.getInt(0);
-//                        cursor.close();
-
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
                         if (listePers[idListaClick]
@@ -292,16 +279,11 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
                             db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-
-//                            Toast.makeText(getActivity()
-//                                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
                         else {
                             if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals(String.valueOf(idDaAgg))) {
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.present_yet), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
@@ -318,15 +300,15 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
-                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-                                                .substring(10)
+//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+//                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
                                         .positiveText(R.string.confirm)
                                         .negativeText(R.string.dismiss)
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onPositive(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                                                 listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
 
@@ -335,14 +317,13 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                                                 db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
                                                 db.close();
                                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                                Toast.makeText(getActivity()
-//                                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                         .show();
                                             }
-
+                                        })
+                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                                             @Override
-                                            public void onNegative(MaterialDialog dialog) {
+                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                                 getActivity().setRequestedOrientation(prevOrientation);
                                             }
                                         })
@@ -376,57 +357,33 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     }
 
     //aggiunge il canto premuto ai preferiti
-//    public void addToFavorites(String titolo) {
     public void addToFavorites() {
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         String sql = "UPDATE ELENCO" +
                 "  SET favourite = 1" +
 //                "  WHERE titolo =  \'" + titoloNoApex + "\'";
                 "  WHERE _id = " + idDaAgg;
         db.execSQL(sql);
         db.close();
-
-//        Toast toast = Toast.makeText(getActivity()
-//                , getString(R.string.favorite_added), Toast.LENGTH_SHORT);
-//        toast.show();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
                 .show();
-
-        //permette di aggiornare il numero dei preferiti nel menu laterale
-//		((MainActivity) getActivity()).onResume();
-
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
-//    public void addToListaDup(int idLista, int listPosition, String titolo) {
     public void addToListaDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql+= "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
         try {
             db.execSQL(sql);
-//            Toast.makeText(getActivity()
-//                    , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                     .show();
         } catch (SQLException e) {
-//            Toast toast = Toast.makeText(getActivity()
-//                    , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//            toast.show();
             Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -436,11 +393,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
-//    public void addToListaNoDup(int idLista, int listPosition, String titolo) {
     public void addToListaNoDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // cerca se la posizione nella lista è già occupata
@@ -461,9 +414,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
             db.close();
 
             if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-//                Toast toast = Toast.makeText(getActivity()
-//                        , getString(R.string.present_yet), Toast.LENGTH_SHORT);
-//                toast.show();
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -479,28 +429,24 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                                 + getString(R.string.dialog_wonna_replace))
                         .positiveText(R.string.confirm)
                         .negativeText(R.string.dismiss)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                                 String sql = "UPDATE CUST_LISTS "
-//                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
                                         + "    SET id_canto = " + idDaAgg
                                         + "    WHERE _id = " + idListaDaAgg
                                         + "    AND position = " + posizioneDaAgg;
                                 db.execSQL(sql);
                                 db.close();
                                 getActivity().setRequestedOrientation(prevOrientation);
-//                                Toast.makeText(getActivity()
-//                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
                                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                                         .show();
                             }
-
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
+                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                                 getActivity().setRequestedOrientation(prevOrientation);
                             }
                         })
@@ -528,15 +474,10 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         String sql = "INSERT INTO CUST_LISTS "
                 + "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
         db.close();
-
-//        Toast.makeText(getActivity()
-//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
         Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                 .show();
     }

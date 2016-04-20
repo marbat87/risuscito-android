@@ -16,10 +16,11 @@
             android:id="@+id/drag_handle"
             android:layout_width="32dp"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
             <ImageView
-                android:background="@drawable/ic_reorder_grey600_24dp"
+                android:id="@+id/drag_image"
                 android:contentDescription="@string/content_drag"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -28,17 +29,6 @@
                 android:paddingStart="@dimen/myListPreferredItemMargin" />
 
         </FrameLayout>
-
-        <!--<ImageView-->
-        <!--android:id="@+id/drag_handle"-->
-        <!--android:background="@drawable/ic_reorder_grey600_24dp"-->
-        <!--android:contentDescription="@string/content_drag"-->
-        <!--android:layout_width="24dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:scaleType=""-->
-        <!--android:layout_marginLeft="@dimen/myListPreferredItemMargin"-->
-        <!--android:layout_marginStart="@dimen/myListPreferredItemMargin"/>-->
 
         <TextView
             android:id="@android:id/text1"
