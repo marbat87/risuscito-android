@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '24.0.0 rc2'
+    buildToolsVersion '24.0.0 rc3'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 109
-        versionName '4.0.0'
+        versionCode 110
+        versionName '4.0.1'
     }
     lintOptions {
         disable 'PrivateResource'
@@ -29,7 +29,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.1-SNAPSHOT'
+    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.6'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') { transitive = true }
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar') { transitive = true }

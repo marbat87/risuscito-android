@@ -39,8 +39,7 @@ import it.cammino.risuscito.PaginaRenderActivity;
 import it.cammino.risuscito.R;
 
 public class MusicService extends Service implements OnCompletionListener, OnPreparedListener,
-        OnErrorListener, MusicFocusable, PhoneStateHelper.PhoneListener,
-        PrepareMusicRetrieverTask.MusicRetrieverPreparedListener {
+        OnErrorListener, MusicFocusable, PhoneStateHelper.PhoneListener {
     // The tag we put on debug messages
     final String TAG = getClass().getName();
     // These are the Intent actions that we are prepared to handle. Notice that the fact these
@@ -75,11 +74,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     AudioFocusHelper mAudioFocusHelper = null;
     PhoneStateHelper mPhoneStateHelper = null;
 
-    MusicRetriever.Item playingItem;
+    Item playingItem;
 
     // indicates the state our service:
     enum State {
-        Retrieving, // the MediaRetriever is retrieving music
+//        Retrieving, // the MediaRetriever is retrieving music
         Stopped,    // media player is stopped and not prepared to play
         Preparing,  // media player is preparing...
         Playing,    // playback active (media player ready!). (but the media player may actually be
@@ -88,7 +87,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         Paused      // playback paused (media player ready!)
     }
 
-    State mState = State.Retrieving;
+    //    State mState = State.Retrieving;
+    State mState = State.Stopped;
     // if in Retrieving mode, this flag indicates whether we should start playing immediately
     // when we are ready or not.
     boolean mStartPlayingAfterRetrieve = false;
@@ -124,7 +124,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     final int NOTIFICATION_ID = 1;
     // Our instance of our MusicRetriever, which handles scanning for media and
     // providing titles and URIs as we need.
-    MusicRetriever mRetriever;
+//    MusicRetriever mRetriever;
     // our RemoteControlClient object, which will use remote control APIs available in
     // SDK level >= 14, if they're available.
 //    RemoteControlClientCompat mRemoteControlClientCompat;
@@ -197,8 +197,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         // Create the retriever and start an asynchronous task that will prepare it.
-        mRetriever = new MusicRetriever(getContentResolver());
-        (new PrepareMusicRetrieverTask(mRetriever, this)).execute();
+//        mRetriever = new MusicRetriever(getContentResolver());
+//        (new PrepareMusicRetrieverTask(mRetriever, this)).execute();
         // create the Audio Focus Helper, if the Audio Focus feature is available (SDK 8 or above)
 //        if (android.os.Build.VERSION.SDK_INT >= 8)
         mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
@@ -233,6 +233,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
+        Log.d(TAG, "onStartCommand: " + action);
         switch (action) {
             case ACTION_TOGGLE_PLAYBACK:
                 processTogglePlaybackRequest();
@@ -264,21 +265,23 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processTogglePlaybackRequest() {
-        if (mState == State.Paused || mState == State.Stopped) {
-            processPlayRequest();
-        } else {
-            processPauseRequest();
+        if (mState != State.Stopped) {
+//            if (mState == State.Paused || mState == State.Stopped) {
+            if (mState == State.Paused )
+                processPlayRequest();
+            else
+                processPauseRequest();
         }
     }
 
     void processPlayRequest() {
-        if (mState == State.Retrieving) {
-            // If we are still retrieving media, just set the flag to start playing when we're
-            // ready
-            mWhatToPlayAfterRetrieve = null; // play a random song
-            mStartPlayingAfterRetrieve = true;
-            return;
-        }
+//        if (mState == State.Retrieving) {
+//            // If we are still retrieving media, just set the flag to start playing when we're
+//            // ready
+//            mWhatToPlayAfterRetrieve = null; // play a random song
+//            mStartPlayingAfterRetrieve = true;
+//            return;
+//        }
         tryToGetAudioFocus();
         // actually play the song
         if (mState == State.Stopped) {
@@ -311,12 +314,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processPauseRequest() {
-        if (mState == State.Retrieving) {
-            // If we are still retrieving media, clear the flag that indicates we should start
-            // playing when we're ready
-            mStartPlayingAfterRetrieve = false;
-            return;
-        }
+//        if (mState == State.Retrieving) {
+//            // If we are still retrieving media, clear the flag that indicates we should start
+//            // playing when we're ready
+//            mStartPlayingAfterRetrieve = false;
+//            return;
+//        }
         if (mState == State.Playing) {
             // Pause media player and cancel the 'foreground service' state.
             mState = State.Paused;
@@ -367,8 +370,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processStopRequest(boolean force) {
-        if (mState == State.Playing || mState == State.Paused || force) {
+        Log.d(TAG, "processStopRequest: force" + force);
+        Log.d(TAG, "processStopRequest: mState " + mState);
+        if (mState == State.Playing || mState == State.Paused || mState == State.Preparing || force) {
             mState = State.Stopped;
+            Log.d(TAG, "processStopRequest: ");
             // let go of all resources...
             relaxResources(true);
             giveUpAudioFocus();
@@ -427,6 +433,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * you have to do so from a context where you are sure this is the case.
      */
     void configAndStartMediaPlayer() {
+        Log.d(TAG, "configAndStartMediaPlayer");
         if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
             // If we don't have audio focus and can't duck, we have to pause, even if mState
             // is State.Playing. But we stay in the Playing state so that we know we have to resume
@@ -450,11 +457,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationColor = intent.getIntExtra(DATA_COLOR, ContextCompat.getColor(this, R.color.theme_primary));
         mSongTitle = intent.getStringExtra(DATA_TITLE);
         mLocalFile = intent.getBooleanExtra(DATA_LOCAL, false);
-        if (mState == State.Retrieving) {
-            // we'll play the requested URL right after we finish retrieving
-            mWhatToPlayAfterRetrieve = intent.getData();
-            mStartPlayingAfterRetrieve = true;
-        } else if (mState == State.Playing || mState == State.Paused || mState == State.Stopped) {
+//        if (mState == State.Retrieving) {
+//            // we'll play the requested URL right after we finish retrieving
+//            mWhatToPlayAfterRetrieve = intent.getData();
+//            mStartPlayingAfterRetrieve = true;
+//        } else
+        if (mState == State.Playing || mState == State.Paused || mState == State.Stopped) {
             Log.i(TAG, "Playing from URL/path: " + intent.getData().toString());
             tryToGetAudioFocus();
             playNextSong(intent.getData().toString());
@@ -492,24 +500,25 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     mPlayer.setDataSource(manualUrl);
 //                mIsStreaming = manualUrl.startsWith("http:") || manualUrl.startsWith("https:");
                 mIsStreaming = !mLocalFile;
-                playingItem = new MusicRetriever.Item(0, null, mSongTitle, getString(R.string.risuscito_title), 0);
+                playingItem = new Item(0, null, mSongTitle, getString(R.string.risuscito_title), 0);
             } else {
                 mIsStreaming = false; // playing a locally available song
-                playingItem = mRetriever.getRandomItem();
-                if (playingItem == null) {
-//                    Toast.makeText(this,
-//                            "No available music to play. Place some music on your external storage "
-//                                    + "device (e.g. your SD card) and try again.",
-//                            Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "No available music to play. Place some music on your external storage "
-                            + "device (e.g. your SD card) and try again.");
-                    processStopRequest(true); // stop everything!
-                    return;
-                }
-                // set the source of the media player a a content URI
-                createMediaPlayerIfNeeded();
-                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mPlayer.setDataSource(getApplicationContext(), playingItem.getURI());
+//                playingItem = mRetriever.getRandomItem();
+//                if (playingItem == null) {
+////                    Toast.makeText(this,
+////                            "No available music to play. Place some music on your external storage "
+////                                    + "device (e.g. your SD card) and try again.",
+////                            Toast.LENGTH_LONG).show();
+//                    Log.d(TAG, "No available music to play. Place some music on your external storage "
+//                            + "device (e.g. your SD card) and try again.");
+//                    processStopRequest(true); // stop everything!
+//                    return;
+//                }
+//                // set the source of the media player a a content URI
+//                createMediaPlayerIfNeeded();
+//                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                mPlayer.setDataSource(getApplicationContext(), playingItem.getURI());
+                return;
             }
 //            mSongTitle = playingItem.getTitle();
             mState = State.Preparing;
@@ -549,7 +558,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
             mSession.setPlaybackState(new PlaybackStateCompat.Builder()
                     .setState(PlaybackStateCompat.STATE_PAUSED, 0, 0.0f)
-                    .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_REWIND)
+//                    .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_REWIND)
 //                    .setActions(PlaybackStateCompat.ACTION_REWIND)
                     .build());
             mSession.setMetadata(new MediaMetadataCompat.Builder()
@@ -595,6 +604,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * Called when media player is done preparing.
      */
     public void onPrepared(MediaPlayer player) {
+        Log.d(TAG, "onPrepared");
         // The media player is done preparing. That means we can start playing!
         mState = State.Playing;
 
@@ -797,10 +807,17 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     private void addRestartAction(NotificationCompat.Builder builder) {
-        builder.addAction(new NotificationCompat.Action(
-                R.drawable.notification_restart
-                , "Restart"
-                , getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PREVIOUS)));
+        switch (mState) {
+            case Playing:
+            case Paused:
+                builder.addAction(new NotificationCompat.Action(
+                        R.drawable.notification_restart
+                        , "Restart"
+                        , getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PREVIOUS)));
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -1026,13 +1043,17 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 final int keycode = event.getKeyCode();
                 final int action = event.getAction();
                 if (event.getRepeatCount() == 0 && action == KeyEvent.ACTION_DOWN) {
+                    Log.d(TAG, "onMediaButtonEvent: keycode " + keycode);
                     switch (keycode) {
                         case KeyEvent.KEYCODE_HEADSETHOOK:
                         case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                            if (mState == State.Paused || mState == State.Stopped)
-                                mTransportController.play();
-                            else
-                                mTransportController.pause();
+                            if (mState != State.Stopped) {
+//                                if (mState == State.Paused || mState == State.Stopped)
+                                if (mState == State.Paused)
+                                    mTransportController.play();
+                                else
+                                    mTransportController.pause();
+                            }
                             break;
                         case KeyEvent.KEYCODE_MEDIA_STOP:
                             mTransportController.stop();
@@ -1057,14 +1078,15 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         @Override
         public void onPlay() {
+            Log.d(TAG, "onPause: ");
             super.onPlay();
             processPlayRequest();
         }
 
         @Override
         public void onPause() {
-            super.onPause();
             Log.d(TAG, "onPause: ");
+            super.onPause();
             processPauseRequest();
         }
 
@@ -1080,4 +1102,38 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         }
 
     };
+
+    public static class Item {
+        long id;
+        String artist;
+        String title;
+        String album;
+        long duration;
+        public Item(long id, String artist, String title, String album, long duration) {
+            this.id = id;
+            this.artist = artist;
+            this.title = title;
+            this.album = album;
+            this.duration = duration;
+        }
+        public long getId() {
+            return id;
+        }
+        public String getArtist() {
+            return artist;
+        }
+        public String getTitle() {
+            return title;
+        }
+        public String getAlbum() {
+            return album;
+        }
+        public long getDuration() {
+            return duration;
+        }
+//        public Uri getURI() {
+//            return ContentUris.withAppendedId(
+//                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+//        }
+    }
 }

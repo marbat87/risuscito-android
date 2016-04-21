@@ -95,7 +95,7 @@ public class PaginaRenderActivity extends ThemeableActivity {
     public FabToolbar mFab; // the floating blue add/paste button
     SeekBar scroll_speed_bar, scroll_song_bar;
     private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
-//    private PhoneStateListener phoneStateListener;
+    //    private PhoneStateListener phoneStateListener;
     //    private static OnAudioFocusChangeListener afChangeListener;
 //    private static AudioManager mAudioManager;
 //    private BroadcastReceiver mNoisyReveiver;
@@ -114,7 +114,8 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //        Stopped, PlaybackCompleted, End, Error, Preparing}
     enum MP_State {Started, Stopped}
 
-    static MP_State mediaPlayerState = MP_State.Stopped;
+    //    static MP_State mediaPlayerState = MP_State.Stopped;
+    MP_State mediaPlayerState = MP_State.Stopped;
 
     private boolean localFile;
 
@@ -679,10 +680,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             scroll_song_bar.setProgress(0);
                                             scroll_song_bar.setEnabled(false);
                                             showPlaying(false);
-                                            mediaPlayerState = MP_State.Stopped;
-                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
-                                            i.setAction(MusicService.ACTION_STOP);
-                                            startService(i);
+                                            if (mediaPlayerState != MP_State.Stopped) {
+                                                mediaPlayerState = MP_State.Stopped;
+                                                Intent i = new Intent(getApplicationContext(), MusicService.class);
+                                                i.setAction(MusicService.ACTION_STOP);
+                                                startService(i);
+                                            }
 
 //                                            if (mediaPlayerState == MP_State.Started
 //                                                    || mediaPlayerState == MP_State.Paused)
@@ -745,10 +748,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                             scroll_song_bar.setProgress(0);
                                             scroll_song_bar.setEnabled(false);
                                             showPlaying(false);
-                                            mediaPlayerState = MP_State.Stopped;
-                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
-                                            i.setAction(MusicService.ACTION_STOP);
-                                            startService(i);
+                                            if (mediaPlayerState != MP_State.Stopped) {
+                                                mediaPlayerState = MP_State.Stopped;
+                                                Intent i = new Intent(getApplicationContext(), MusicService.class);
+                                                i.setAction(MusicService.ACTION_STOP);
+                                                startService(i);
+                                            }
 
 //                                            if (mediaPlayerState == MP_State.Started
 //                                                    || mediaPlayerState == MP_State.Paused)
@@ -959,10 +964,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                                         scroll_song_bar.setProgress(0);
                                         scroll_song_bar.setEnabled(false);
                                         showPlaying(false);
-                                        mediaPlayerState = MP_State.Stopped;
-                                        Intent i = new Intent(getApplicationContext(),MusicService.class);
-                                        i.setAction(MusicService.ACTION_STOP);
-                                        startService(i);
+                                        if (mediaPlayerState != MP_State.Stopped) {
+                                            mediaPlayerState = MP_State.Stopped;
+                                            Intent i = new Intent(getApplicationContext(), MusicService.class);
+                                            i.setAction(MusicService.ACTION_STOP);
+                                            startService(i);
+                                        }
 
 //                                        mediaPlayer = new MediaPlayer();
 //                                        mediaPlayerState = MP_State.Idle;
@@ -1707,7 +1714,9 @@ public class PaginaRenderActivity extends ThemeableActivity {
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
         }
         saveZoom();
-        if (isFinishing()) {
+        Log.d(getClass().getName(), "onDestroy: isFinishing " + isFinishing());
+        Log.d(getClass().getName(), "onDestroy: mediaPlayerState " + mediaPlayerState);
+        if (isFinishing() && mediaPlayerState != MP_State.Stopped) {
             Intent i = new Intent(getApplicationContext(), MusicService.class);
             i.setAction(MusicService.ACTION_STOP);
             startService(i);
@@ -1768,10 +1777,10 @@ public class PaginaRenderActivity extends ThemeableActivity {
 //            mediaPlayer = null;
 //            mediaPlayerState = MP_State.Idle;
 //        }
-        Intent i = new Intent(getApplicationContext(),MusicService.class);
-        i.setAction(MusicService.ACTION_STOP);
-        startService(i);
-        mediaPlayerState = MP_State.Stopped;
+//        Intent i = new Intent(getApplicationContext(),MusicService.class);
+//        i.setAction(MusicService.ACTION_STOP);
+//        startService(i);
+//        mediaPlayerState = MP_State.Stopped;
 
         //cancello il listener sullo stato del telefono, solo se avevo il permesso di settarlo, altrimenti non serve
 //        if (ContextCompat.checkSelfPermission(PaginaRenderActivity.this, Manifest.permission.READ_PHONE_STATE)
@@ -2169,10 +2178,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 scroll_song_bar.setProgress(0);
                 scroll_song_bar.setEnabled(false);
                 showPlaying(false);
-                mediaPlayerState = MP_State.Stopped;
-                Intent i = new Intent(getApplicationContext(),MusicService.class);
-                i.setAction(MusicService.ACTION_STOP);
-                startService(i);
+                if (mediaPlayerState != MP_State.Stopped) {
+                    mediaPlayerState = MP_State.Stopped;
+                    Intent i = new Intent(getApplicationContext(), MusicService.class);
+                    i.setAction(MusicService.ACTION_STOP);
+                    startService(i);
+                }
 
 //                if (mediaPlayerState == MP_State.Started
 //                        || mediaPlayerState == MP_State.Paused)
@@ -2516,10 +2527,12 @@ public class PaginaRenderActivity extends ThemeableActivity {
                 scroll_song_bar.setProgress(0);
                 scroll_song_bar.setEnabled(false);
                 showPlaying(false);
-                mediaPlayerState = MP_State.Stopped;
-                Intent i = new Intent(getApplicationContext(),MusicService.class);
-                i.setAction(MusicService.ACTION_STOP);
-                startService(i);
+                if (mediaPlayerState != MP_State.Stopped) {
+                    mediaPlayerState = MP_State.Stopped;
+                    Intent i = new Intent(getApplicationContext(), MusicService.class);
+                    i.setAction(MusicService.ACTION_STOP);
+                    startService(i);
+                }
 
 //                localUrl = Utility.retrieveMediaFileLink(getApplicationContext(), url);
                 checkExternalFilePermissions();
