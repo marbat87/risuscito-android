@@ -71,6 +71,11 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.ConsegnatiSaverService"/>
+        <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.DownloadService"/>
+        <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.ConsegnatiSaverService"/>
+        <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.PdfExportService"/>
     </application>
 
 </manifest>

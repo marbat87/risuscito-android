@@ -113,4 +113,9 @@
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
     </style>
 
+    <style name="listView" parent="@android:style/Widget.ListView.White">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:listSelector">?customSelector</item>
+    </style>
+
 </resources>

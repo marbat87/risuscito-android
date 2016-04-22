@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,12 +12,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,21 +27,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
-import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 
-public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener  {
+public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
     private List<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
@@ -55,7 +51,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private int[] idListe;
     private int idListaClick;
     private int idPosizioneClick;
-    private int prevOrientation;
+//    private int prevOrientation;
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
@@ -146,7 +142,36 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
         mLUtils = LUtils.getInstance(getActivity());
 
+        if (savedInstanceState != null) {
+            Log.d(getClass().getName(), "onCreateView: RESTORING");
+            idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
+            idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
+            idListaClick = savedInstanceState.getInt("idListaClick", 0);
+            idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
+            posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE").setmCallback(AlphabeticSectionFragment.this);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2").setmCallback(AlphabeticSectionFragment.this);
+        }
+
+        Log.d(getClass().getName(), "onCreateView:");
+        Log.d(getClass().getName(), "rootView:" + rootView);
         return rootView;
+    }
+
+    /**
+     *
+     * @param outState Bundle in which to place your saved state.
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("idDaAgg", idDaAgg);
+        outState.putInt("idPosizioneClick", idPosizioneClick);
+        outState.putInt("idListaClick", idListaClick);
+        outState.putInt("idListaDaAgg", idListaDaAgg);
+        outState.putInt("posizioneDaAgg", posizioneDaAgg);
     }
 
     /**
@@ -301,8 +326,8 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                                         .show();
                             }
                             else {
-                                prevOrientation = getActivity().getRequestedOrientation();
-                                Utility.blockOrientation(getActivity());
+//                                prevOrientation = getActivity().getRequestedOrientation();
+//                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
                                 String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
@@ -310,51 +335,59 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                                        .title(R.string.dialog_replace_title)
+//                                        .content(getString(R.string.dialog_present_yet) + " "
+////                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
+////                                                .substring(10)
+//                                                + cursor.getString(0)
+//                                                + getString(R.string.dialog_wonna_replace))
+//                                        .positiveText(R.string.confirm)
+//                                        .negativeText(R.string.dismiss)
+//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                            @Override
+//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                                                ContentValues values = new ContentValues();
+//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+//                                                db.close();
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                                        .show();
+//                                            }
+//                                        })
+//                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                                            @Override
+//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
+//                                        .show();
+//                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                                    @Override
+//                                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                                         KeyEvent event) {
+//                                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                                            arg0.dismiss();
+//                                            getActivity().setRequestedOrientation(prevOrientation);
+//                                            return true;
+//                                        }
+//                                        return false;
+//                                    }
+//                                });
+//                                dialog.setCancelable(false);
+                                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), AlphabeticSectionFragment.this, "ALPHA_REPLACE")
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
-//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveText(R.string.confirm)
-                                        .negativeText(R.string.dismiss)
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-
-                                                ContentValues values = new ContentValues();
-                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-                                                db.close();
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                        .show();
-                                            }
-                                        })
-                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                            }
-                                        })
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
                                         .show();
-                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                                    @Override
-                                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                                         KeyEvent event) {
-                                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                                && event.getAction() == KeyEvent.ACTION_UP) {
-                                            arg0.dismiss();
-                                            getActivity().setRequestedOrientation(prevOrientation);
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                dialog.setCancelable(false);
                                 cursor.close();
                             }
                         }
@@ -413,7 +446,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-        // cerca se la posizione nella lista � gi� occupata
+        // cerca se la posizione nella lista è già occupata
         String query = "SELECT B.titolo" +
                 "		FROM CUST_LISTS A" +
                 "		   , ELENCO B" +
@@ -438,51 +471,58 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
 
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_replace_title)
+//                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                                + getString(R.string.dialog_wonna_replace))
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                String sql = "UPDATE CUST_LISTS"
+//                                        + " SET id_canto = " + idDaAgg
+//                                        + " WHERE _id = " + idListaDaAgg
+//                                        + " AND position = " + posizioneDaAgg;
+//                                db.execSQL(sql);
+//                                db.close();
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                        .show();
+//
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), AlphabeticSectionFragment.this, "ALPHA_REPLACE_2")
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                String sql = "UPDATE CUST_LISTS"
-                                        + " SET id_canto = " + idDaAgg
-                                        + " WHERE _id = " + idListaDaAgg
-                                        + " AND position = " + posizioneDaAgg;
-                                db.execSQL(sql);
-                                db.close();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                        .show();
-
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
             }
             return;
         }
@@ -504,5 +544,38 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "ALPHA_REPLACE":
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+
+                ContentValues values = new ContentValues();
+                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+                db.close();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case "ALPHA_REPLACE_2":
+                db = listaCanti.getReadableDatabase();
+                String sql = "UPDATE CUST_LISTS"
+                        + " SET id_canto = " + idDaAgg
+                        + " WHERE _id = " + idListaDaAgg
+                        + " AND position = " + posizioneDaAgg;
+                db.execSQL(sql);
+                db.close();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

@@ -2,22 +2,24 @@ package it.cammino.risuscito;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,19 +33,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.slides.IntroConsegnati;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class ConsegnatiFragment extends Fragment {
+public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
 
     private DatabaseCanti listaCanti;
     private List<Canto> titoliChoose;
@@ -57,8 +59,8 @@ public class ConsegnatiFragment extends Fragment {
     public static final int CIRCLE_DURATION = 500;
 
     private boolean editMode;
-    private int prevOrientation;
-    private MaterialDialog mProgressDialog;
+//    private int prevOrientation;
+//    private MaterialDialog mProgressDialog;
     private int totalConsegnati;
 
     private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
@@ -66,6 +68,46 @@ public class ConsegnatiFragment extends Fragment {
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
+
+    private BroadcastReceiver positionBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_SINGLE_COMPLETED");
+                Log.d(getClass().getName(), "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
+                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null) {
+                    SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "CONSEGNATI_SAVING")
+                            .setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
+                }
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
+
+    private BroadcastReceiver completedBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_SAVING_COMPLETED");
+                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
+                    SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
+                updateConsegnatiList(true);
+                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+                View myView = rootView.findViewById(R.id.consegnati_view);
+                if (LUtils.hasL())
+                    enterReveal(myView, 1);
+                else
+                    myView.setVisibility(View.VISIBLE);
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,7 +117,7 @@ public class ConsegnatiFragment extends Fragment {
         ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
 
         //crea un istanza dell'oggetto DatabaseCanti
-        listaCanti = new DatabaseCanti(getActivity());
+//        listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -161,20 +203,31 @@ public class ConsegnatiFragment extends Fragment {
         confirm_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                (new ConsegnatiSaveTask()).execute();
+//                (new ConsegnatiSaveTask()).execute();
+                editMode = false;
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ConsegnatiFragment.this, "CONSEGNATI_SAVING")
+                        .content(R.string.save_consegnati_running)
+                        .showProgress(true)
+                        .progressIndeterminate(false)
+                        .progressMax(selectableAdapter.getItemCount())
+                        .show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), ConsegnatiSaverService.class);
+//                intent.putExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                getActivity().getApplicationContext().startService(intent);
             }
         });
 
-        mProgressDialog = new MaterialDialog.Builder(getActivity())
-                .content(R.string.save_consegnati_running)
-                .progress(true, 0)
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        getActivity().setRequestedOrientation(prevOrientation);
-                    }
-                })
-                .build();
+//        mProgressDialog = new MaterialDialog.Builder(getActivity())
+//                .content(R.string.save_consegnati_running)
+//                .progress(true, 0)
+//                .dismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        getActivity().setRequestedOrientation(prevOrientation);
+//                    }
+//                })
+//                .build();
 
         if(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
@@ -186,8 +239,25 @@ public class ConsegnatiFragment extends Fragment {
             editor.apply();
             showHelp();
         }
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(getClass().getName(), "onResume: ");
+        getActivity().registerReceiver(positionBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
+        getActivity().registerReceiver(completedBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(getClass().getName(), "onPause: ");
+        getActivity().unregisterReceiver(positionBRec);
+        getActivity().unregisterReceiver(completedBRec);
     }
 
     @Override
@@ -259,6 +329,7 @@ public class ConsegnatiFragment extends Fragment {
     private void updateConsegnatiList(boolean updateView) {
 
         // crea un manipolatore per il Database in modalità READ
+        listaCanti = new DatabaseCanti(getActivity());
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca dei preferiti
@@ -290,6 +361,9 @@ public class ConsegnatiFragment extends Fragment {
 
         // chiude il cursore
         lista.close();
+        db.close();
+        if (listaCanti != null)
+            listaCanti.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -326,6 +400,7 @@ public class ConsegnatiFragment extends Fragment {
 
         if (reload) {
             // crea un manipolatore per il Database
+            listaCanti = new DatabaseCanti(getActivity());
             SQLiteDatabase db = listaCanti.getReadableDatabase();
 
             // lancia la ricerca dei canti
@@ -350,6 +425,9 @@ public class ConsegnatiFragment extends Fragment {
 
             // chiude il cursore
             lista.close();
+            db.close();
+            if (listaCanti != null)
+                listaCanti.close();
         }
 
         RecyclerView chooseRecycler = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
@@ -395,74 +473,86 @@ public class ConsegnatiFragment extends Fragment {
         return titoliChoose;
     }
 
-    private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
-
-        public ConsegnatiSaveTask() {}
-
-        @Override
-        protected String doInBackground(String... sUrl) {
-            //aggiorno la lista dei consegnati
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            db.delete("CANTI_CONSEGNATI", "", null);
-
-            List<Canto> choosedList = selectableAdapter.getCantiChoose();
-            for (int i = 0; i < choosedList.size(); i++) {
-                Canto singoloCanto = choosedList.get(i);
-                if (singoloCanto.isSelected()) {
-                    String sql = "INSERT INTO CANTI_CONSEGNATI" +
-                            "       (_id, id_canto)" +
-                            "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
-                            "             FROM CANTI_CONSEGNATI";
-
-                    try {
-                        db.execSQL(sql);
-                    } catch (SQLException e) {
-                        Log.e(getClass().toString(), "ERRORE INSERT:");
-                        e.printStackTrace();
-                    }
-                }
-            }
-            db.close();
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            editMode = false;
-            prevOrientation = getActivity().getRequestedOrientation();
-            Utility.blockOrientation(getActivity());
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (mProgressDialog.isShowing())
-                mProgressDialog.dismiss();
-            updateConsegnatiList(true);
-            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-            View myView = rootView.findViewById(R.id.consegnati_view);
-            if (LUtils.hasL())
-                enterReveal(myView, 1);
-            else
-                myView.setVisibility(View.VISIBLE);
-//            myView.setVisibility(View.VISIBLE);
+//    private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
 //
-//            // get the center for the clipping circle
-//            int cx = myView.getRight();
-//            int cy = myView.getBottom();
+//        public ConsegnatiSaveTask() {}
 //
-//            // get the final radius for the clipping circle
-//            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//        @Override
+//        protected String doInBackground(String... sUrl) {
+//            //aggiorno la lista dei consegnati
 //
-//            SupportAnimator animator =
-//                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-//            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-//            animator.setDuration(CIRCLE_DURATION);
-//            animator.start();
-        }
-    }
+//            DatabaseCanti privateListaCanti = new DatabaseCanti(getActivity().getApplicationContext());
+//            SQLiteDatabase db = privateListaCanti.getReadableDatabase();
+//            db.delete("CANTI_CONSEGNATI", "", null);
+//
+//            List<Canto> choosedList = selectableAdapter.getCantiChoose();
+//            for (int i = 0; i < choosedList.size(); i++) {
+//                Canto singoloCanto = choosedList.get(i);
+//                if (singoloCanto.isSelected()) {
+//                    String sql = "INSERT INTO CANTI_CONSEGNATI" +
+//                            "       (_id, id_canto)" +
+//                            "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
+//                            "             FROM CANTI_CONSEGNATI";
+//
+//                    try {
+//                        db.execSQL(sql);
+//                    } catch (SQLException e) {
+//                        Log.e(getClass().toString(), "ERRORE INSERT:");
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            db.close();
+//            if (privateListaCanti != null)
+//                privateListaCanti.close();
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            editMode = false;
+////            prevOrientation = getActivity().getRequestedOrientation();
+////            Utility.blockOrientation(getActivity());
+////            mProgressDialog.show();
+//            new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING")
+//                    .content(R.string.save_consegnati_running)
+//                    .showProgress(true)
+//                    .progressIndeterminate(true)
+//                    .progressMax(0)
+//                    .show();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+////            if (mProgressDialog.isShowing())
+////                mProgressDialog.dismiss();
+//            if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
+//                SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
+//            updateConsegnatiList(true);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+////            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+//            View myView = rootView.findViewById(R.id.consegnati_view);
+//            if (LUtils.hasL())
+//                enterReveal(myView, 1);
+//            else
+//                myView.setVisibility(View.VISIBLE);
+////            myView.setVisibility(View.VISIBLE);
+////
+////            // get the center for the clipping circle
+////            int cx = myView.getRight();
+////            int cy = myView.getBottom();
+////
+////            // get the final radius for the clipping circle
+////            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+////
+////            SupportAnimator animator =
+////                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+////            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+////            animator.setDuration(CIRCLE_DURATION);
+////            animator.start();
+//        }
+//    }
 
     private void showHelp() {
         Intent intent = new Intent(getActivity(), IntroConsegnati.class);
@@ -496,5 +586,12 @@ public class ConsegnatiFragment extends Fragment {
         view.setVisibility(View.VISIBLE);
         anim.start();
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {}
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

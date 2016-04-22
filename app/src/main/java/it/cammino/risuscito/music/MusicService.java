@@ -309,8 +309,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYER_STARTED);
-        Intent intentBroadcast = new Intent(BROADCAST_PLAYER_STARTED);
-        sendBroadcast(intentBroadcast);
+//        Intent intentBroadcast = new Intent(BROADCAST_PLAYER_STARTED);
+//        sendBroadcast(intentBroadcast);
+        sendBroadcast(new Intent(BROADCAST_PLAYER_STARTED));
     }
 
     void processPauseRequest() {
@@ -344,8 +345,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_PAUSED);
-        Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_PAUSED);
-        sendBroadcast(intentBroadcast);
+//        Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_PAUSED);
+//        sendBroadcast(intentBroadcast);
+        sendBroadcast(new Intent(BROADCAST_PLAYBACK_PAUSED));
     }
 
     void processRewindRequest() {
@@ -384,8 +386,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                        .setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
 //            }
             Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_COMPLETED);
-            Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_COMPLETED);
-            sendBroadcast(intentBroadcast);
+//            Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_COMPLETED);
+//            sendBroadcast(intentBroadcast);
+            sendBroadcast(new Intent(BROADCAST_PLAYBACK_COMPLETED));
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
         }

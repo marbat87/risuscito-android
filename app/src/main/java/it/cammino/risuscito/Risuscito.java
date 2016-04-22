@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -15,7 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.KeyEvent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,18 +22,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.SignInButton;
 
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMain;
 
-public class Risuscito extends Fragment {
+public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
     private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
-    private int prevOrientation;
+//    private int prevOrientation;
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -74,54 +71,84 @@ public class Risuscito extends Fragment {
 //        Log.i("Changelog", "appVersion: " + thisVersion);
 
         if (!thisVersion.equals(lastVersion)) {
-            prevOrientation = getActivity().getRequestedOrientation();
-            Utility.blockOrientation(getActivity());
-            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//            prevOrientation = getActivity().getRequestedOrientation();
+//            Utility.blockOrientation(getActivity());
+//            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                    .title(R.string.dialog_change_title)
+//                    .customView(R.layout.dialog_changelogview, false)
+//                    .positiveText(R.string.dialog_chiudi)
+//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            if(PreferenceManager
+//                                    .getDefaultSharedPreferences(getActivity())
+//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
+//                                SharedPreferences.Editor editor = PreferenceManager
+//                                        .getDefaultSharedPreferences(getActivity())
+//                                        .edit();
+//                                editor.putBoolean(FIRST_OPEN_MENU, false);
+//                                editor.apply();
+//                                showHelp();
+//                            }
+//                        }
+//                    })
+//                    .show();
+//
+//            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                @Override
+//                public boolean onKey(DialogInterface arg0, int keyCode,
+//                                     KeyEvent event) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK
+//                            && event.getAction() == KeyEvent.ACTION_UP) {
+//                        arg0.dismiss();
+//                        getActivity().setRequestedOrientation(prevOrientation);
+//                        if(PreferenceManager
+//                                .getDefaultSharedPreferences(getActivity())
+//                                .getBoolean(FIRST_OPEN_MENU, true)) {
+//                            SharedPreferences.Editor editor = PreferenceManager
+//                                    .getDefaultSharedPreferences(getActivity())
+//                                    .edit();
+//                            editor.putBoolean(FIRST_OPEN_MENU, false);
+//                            editor.apply();
+//                            showHelp();
+//                        }
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//            dialog.setCancelable(false);
+            if(PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .getBoolean(FIRST_OPEN_MENU, true)) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(FIRST_OPEN_MENU, false);
+                editor.apply();
+                showHelp();
+            }
+            new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
-                    .customView(R.layout.dialog_changelogview, false)
-                    .positiveText(R.string.dialog_chiudi)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            if(PreferenceManager
-                                    .getDefaultSharedPreferences(getActivity())
-                                    .getBoolean(FIRST_OPEN_MENU, true)) {
-                                SharedPreferences.Editor editor = PreferenceManager
-                                        .getDefaultSharedPreferences(getActivity())
-                                        .edit();
-                                editor.putBoolean(FIRST_OPEN_MENU, false);
-                                editor.apply();
-                                showHelp();
-                            }
-                        }
-                    })
+                    .setCustomView(R.layout.dialog_changelogview)
+                    .positiveButton(R.string.dialog_chiudi)
                     .show();
-
-            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface arg0, int keyCode,
-                                     KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK
-                            && event.getAction() == KeyEvent.ACTION_UP) {
-                        arg0.dismiss();
-                        getActivity().setRequestedOrientation(prevOrientation);
-                        if(PreferenceManager
-                                .getDefaultSharedPreferences(getActivity())
-                                .getBoolean(FIRST_OPEN_MENU, true)) {
-                            SharedPreferences.Editor editor = PreferenceManager
-                                    .getDefaultSharedPreferences(getActivity())
-                                    .edit();
-                            editor.putBoolean(FIRST_OPEN_MENU, false);
-                            editor.apply();
-                            showHelp();
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            dialog.setCancelable(false);
+//                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                        @Override
+//                        public void onCancel(DialogInterface dialog) {
+//                            if(PreferenceManager
+//                                    .getDefaultSharedPreferences(getActivity())
+//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
+//                                SharedPreferences.Editor editor = PreferenceManager
+//                                        .getDefaultSharedPreferences(getActivity())
+//                                        .edit();
+//                                editor.putBoolean(FIRST_OPEN_MENU, false);
+//                                editor.apply();
+//                                showHelp();
+//                            }
+//                        }
+//                    });
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(VERSION_KEY, thisVersion);
             editor.apply();
@@ -205,5 +232,27 @@ public class Risuscito extends Fragment {
         Intent intent = new Intent(getActivity(), IntroMain.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+//        switch (tag) {
+//            case "CHANGELOG":
+//                if(PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .getBoolean(FIRST_OPEN_MENU, true)) {
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(getActivity())
+//                            .edit();
+//                    editor.putBoolean(FIRST_OPEN_MENU, false);
+//                    editor.apply();
+//                    showHelp();
+//                }
+//                break;
+//        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

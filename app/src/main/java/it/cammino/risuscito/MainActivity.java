@@ -1,7 +1,5 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -31,8 +29,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -70,17 +66,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
-        implements ColorChooserDialog.ColorCallback, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener{
+        implements ColorChooserDialog.ColorCallback
+        , NavigationView.OnNavigationItemSelectedListener
+        , GoogleApiClient.OnConnectionFailedListener
+        , SimpleDialogFragment.SimpleCallback {
 
     public DrawerLayout mDrawerLayout;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private int selectedItemIndex = 0;
 
-    private int prevOrientation;
+//    private int prevOrientation;
 
     private NavigationView mNavigationView;
 
@@ -95,7 +95,7 @@ public class MainActivity extends ThemeableActivity
     private GoogleSignInAccount acct;
     private ImageView profileImage;
     private ImageView profileBackground;
-        private View copertinaAccount;
+    private View copertinaAccount;
     private ImageView accountMenu;
     private TextView usernameTextView;
     private TextView emailTextView;
@@ -112,7 +112,7 @@ public class MainActivity extends ThemeableActivity
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
 
-    private MaterialDialog backupDialog, restoreDialog;
+    //    private MaterialDialog backupDialog, restoreDialog;
     private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
 
     @Override
@@ -165,8 +165,7 @@ public class MainActivity extends ThemeableActivity
             if (savedInstanceState != null) {
                 selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
                 mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-            }
-            else
+            } else
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
 //            if (savedInstanceState == null)
 //                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
@@ -199,6 +198,16 @@ public class MainActivity extends ThemeableActivity
                 .build();
         // [END build_client]
 
+        if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK") != null)
+            SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK").setmCallback(MainActivity.this);
+        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_ASK") != null)
+            SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_ASK").setmCallback(MainActivity.this);
+        if (SimpleDialogFragment.findVisible(MainActivity.this, "SIGNOUT") != null)
+            SimpleDialogFragment.findVisible(MainActivity.this, "SIGNOUT").setmCallback(MainActivity.this);
+        if (SimpleDialogFragment.findVisible(MainActivity.this, "REVOKE") != null)
+            SimpleDialogFragment.findVisible(MainActivity.this, "REVOKE").setmCallback(MainActivity.this);
+        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTART") != null)
+            SimpleDialogFragment.findVisible(MainActivity.this, "RESTART").setmCallback(MainActivity.this);
     }
 
     @Override
@@ -237,7 +246,7 @@ public class MainActivity extends ThemeableActivity
 //        }
         savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
-        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment)getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
+        ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment) getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
             ConsegnatiFragment.RetainedFragment dataFragment = new ConsegnatiFragment.RetainedFragment();
             getSupportFragmentManager().beginTransaction().add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE).commit();
@@ -267,7 +276,7 @@ public class MainActivity extends ThemeableActivity
                         new int[]{android.R.attr.state_checked}, //1
                         new int[]{} //2
                 },
-                new int[] {
+                new int[]{
                         getThemeUtils().primaryColor(), //1
                         ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
                 }
@@ -278,7 +287,7 @@ public class MainActivity extends ThemeableActivity
                         new int[]{android.R.attr.state_checked}, //1
                         new int[]{} //2
                 },
-                new int[] {
+                new int[]{
                         getThemeUtils().primaryColor(), //1
                         ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
                 }
@@ -321,8 +330,7 @@ public class MainActivity extends ThemeableActivity
 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
             recreate();
-        }
-        else {
+        } else {
             Intent i = getBaseContext().getPackageManager()
                     .getLaunchIntentForPackage(getBaseContext().getPackageName());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -366,9 +374,11 @@ public class MainActivity extends ThemeableActivity
 
     private class TranslationTask extends AsyncTask<String, Integer, String> {
 
-        public TranslationTask() {}
+        public TranslationTask() {
+        }
 
-        private MaterialDialog translationDialog;
+        //        private MaterialDialog translationDialog;
+//        private SimpleDialogFragment mTranslationDialog;
 
         @Override
         protected String doInBackground(String... sUrl) {
@@ -388,17 +398,23 @@ public class MainActivity extends ThemeableActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            prevOrientation = getRequestedOrientation();
-            Utility.blockOrientation(MainActivity.this);
-            translationDialog = new MaterialDialog.Builder(MainActivity.this)
+//            prevOrientation = getRequestedOrientation();
+//            Utility.blockOrientation(MainActivity.this);
+//            translationDialog = new MaterialDialog.Builder(MainActivity.this)
+//                    .content(R.string.translation_running)
+//                    .progress(true, 0)
+//                    .dismissListener(new DialogInterface.OnDismissListener() {
+//                        @Override
+//                        public void onDismiss(DialogInterface dialog) {
+//                            setRequestedOrientation(prevOrientation);
+//                        }
+//                    })
+//                    .show();
+            new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "TRANSLATION")
                     .content(R.string.translation_running)
-                    .progress(true, 0)
-                    .dismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            setRequestedOrientation(prevOrientation);
-                        }
-                    })
+                    .showProgress(true)
+                    .progressIndeterminate(true)
+                    .progressMax(0)
                     .show();
         }
 
@@ -406,10 +422,11 @@ public class MainActivity extends ThemeableActivity
         protected void onPostExecute(String result) {
             getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
             try {
-                if (translationDialog != null && translationDialog.isShowing())
-                    translationDialog.dismiss();
-            }
-            catch (IllegalArgumentException e) {
+//                if (translationDialog != null && translationDialog.isShowing())
+//                    translationDialog.dismiss();
+                if (SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION") != null)
+                    SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION").dismiss();
+            } catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
             }
         }
@@ -421,7 +438,7 @@ public class MainActivity extends ThemeableActivity
         mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle("");
-        ((TextView)toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+        ((TextView) toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
         mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
@@ -482,186 +499,210 @@ public class MainActivity extends ThemeableActivity
             case R.id.gdrive_backup:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(MainActivity.this);
-                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(MainActivity.this);
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                         .title(R.string.gdrive_backup)
                         .content(R.string.gdrive_backup_content)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                backupDialog = new MaterialDialog.Builder(MainActivity.this)
-                                        .title(R.string.backup_running)
-                                        .content(R.string.backup_database)
-                                        .progress(true, 0)
-                                        .dismissListener(new DialogInterface.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss(DialogInterface dialog) {
-                                                setRequestedOrientation(prevOrientation);
-                                            }
-                                        })
-                                        .show();
-                                backupDialog.setCancelable(false);
-                                saveCheckDupl(
-                                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
-                                        , DatabaseCanti.getDbName()
-                                        , "application/x-sqlite3"
-                                        , getDbPath()
-                                        , true
-                                );
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
+//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                        .title(R.string.gdrive_backup)
+//                        .content(R.string.gdrive_backup_content)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                backupDialog = new MaterialDialog.Builder(MainActivity.this)
+//                                        .title(R.string.backup_running)
+//                                        .content(R.string.backup_database)
+//                                        .progress(true, 0)
+//                                        .dismissListener(new DialogInterface.OnDismissListener() {
+//                                            @Override
+//                                            public void onDismiss(DialogInterface dialog) {
+//                                                setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
+//                                        .show();
+//                                backupDialog.setCancelable(false);
+//                                saveCheckDupl(
+//                                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
+//                                        , DatabaseCanti.getDbName()
+//                                        , "application/x-sqlite3"
+//                                        , getDbPath()
+//                                        , true
+//                                );
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
                 return true;
             case R.id.gdrive_restore:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(MainActivity.this);
-                dialog = new MaterialDialog.Builder(MainActivity.this)
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(MainActivity.this);
+//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                        .title(R.string.gdrive_restore)
+//                        .content(R.string.gdrive_restore_content)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                restoreDialog = new MaterialDialog.Builder(MainActivity.this)
+//                                        .title(R.string.restore_running)
+//                                        .content(R.string.restoring_database)
+//                                        .progress(true, 0)
+//                                        .dismissListener(new DialogInterface.OnDismissListener() {
+//                                            @Override
+//                                            public void onDismiss(DialogInterface dialog) {
+//                                                setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
+//                                        .show();
+//                                restoreDialog.setCancelable(false);
+//                                restoreDriveBackup();
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                         .title(R.string.gdrive_restore)
                         .content(R.string.gdrive_restore_content)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                restoreDialog = new MaterialDialog.Builder(MainActivity.this)
-                                        .title(R.string.restore_running)
-                                        .content(R.string.restoring_database)
-                                        .progress(true, 0)
-                                        .dismissListener(new DialogInterface.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss(DialogInterface dialog) {
-                                                setRequestedOrientation(prevOrientation);
-                                            }
-                                        })
-                                        .show();
-                                restoreDialog.setCancelable(false);
-                                restoreDriveBackup();
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
                 return true;
             case R.id.gplus_signout:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(MainActivity.this);
-                dialog = new MaterialDialog.Builder(MainActivity.this)
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(MainActivity.this);
+//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                        .title(R.string.gplus_signout)
+//                        .content(R.string.dialog_acc_disconn_text)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                signOut();
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                         .title(R.string.gplus_signout)
                         .content(R.string.dialog_acc_disconn_text)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                signOut();
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
                 return true;
             case R.id.gplus_revoke:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(MainActivity.this);
-                dialog = new MaterialDialog.Builder(MainActivity.this)
+//                prevOrientation = getRequestedOrientation();
+//                Utility.blockOrientation(MainActivity.this);
+//                dialog = new MaterialDialog.Builder(MainActivity.this)
+//                        .title(R.string.gplus_revoke)
+//                        .content(R.string.dialog_acc_revoke_text)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                revokeAccess();
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                         .title(R.string.gplus_revoke)
                         .content(R.string.dialog_acc_revoke_text)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                revokeAccess();
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
                 return true;
             default:
                 selectedItemIndex = 0;
@@ -738,6 +779,7 @@ public class MainActivity extends ThemeableActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
+        hideProgressDialog();
         Snackbar.make(findViewById(R.id.main_content), getString(R.string.login_failed, connectionResult.getErrorCode(), connectionResult.getErrorMessage()), Snackbar.LENGTH_SHORT).show();
         Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
     }
@@ -818,8 +860,7 @@ public class MainActivity extends ThemeableActivity
                         .load(personPhotoUrl)
                         .error(R.drawable.gplus_default_avatar)
                         .into(profileImage);
-            }
-            else {
+            } else {
                 Picasso.with(this)
                         .load(R.drawable.gplus_default_avatar)
                         .into(profileImage);
@@ -843,8 +884,7 @@ public class MainActivity extends ThemeableActivity
 
             accountMenu.setVisibility(View.VISIBLE);
 //            }
-        }
-        else {
+        } else {
             profileImage.setVisibility(View.INVISIBLE);
             usernameTextView.setVisibility(View.INVISIBLE);
             emailTextView.setVisibility(View.INVISIBLE);
@@ -887,177 +927,191 @@ public class MainActivity extends ThemeableActivity
 
     /******************************************************************
      * controlla se il file è già esistente; se esiste lo cancella e poi lo ricrea
+     *
      * @param pFldr parent's ID
      * @param titl  file name
      * @param mime  file mime type  (application/x-sqlite3)
      * @param file  file (with content) to create
      */
     void saveCheckDupl(final DriveFolder pFldr, final String titl,
-                       final String mime, final java.io.File file, final boolean dataBase) {
-        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null)) try {
-            // create content from file
-            Log.d(getClass().getName(), "saveCheckDupl - dataBase? " + dataBase);
-            Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
-            Query query = new Query.Builder()
-                    .addFilter(Filters.eq(SearchableField.TITLE, titl))
-                    .build();
+                       final String mime, final File file, final boolean dataBase) {
+        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null))
+            try {
+                // create content from file
+                Log.d(getClass().getName(), "saveCheckDupl - dataBase? " + dataBase);
+                Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
+                Query query = new Query.Builder()
+                        .addFilter(Filters.eq(SearchableField.TITLE, titl))
+                        .build();
 
-            Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
-                @Override
-                public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
+                Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
+                    @Override
+                    public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
 
-                    int count = metadataBufferResult.getMetadataBuffer().getCount();
-                    Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
-                    if (count > 0) {
-                        DriveId mDriveId = metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
-                        Log.d(getClass().getName(), "saveCheckDupl - driveIdRetrieved: " + mDriveId);
-                        Log.d(getClass().getName(), "saveCheckDupl - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
-                        metadataBufferResult.getMetadataBuffer().release();
+                        int count = metadataBufferResult.getMetadataBuffer().getCount();
+                        Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
+                        if (count > 0) {
+                            DriveId mDriveId = metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
+                            Log.d(getClass().getName(), "saveCheckDupl - driveIdRetrieved: " + mDriveId);
+                            Log.d(getClass().getName(), "saveCheckDupl - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
+                            metadataBufferResult.getMetadataBuffer().release();
 
 //                        DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
-                        DriveFile mFile = mDriveId.asDriveFile();
-                        mFile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(@NonNull Status status) {
-                                if (status.isSuccess()) {
-                                    Log.d(getClass().getName(), "saveCheckDupl - CANCELLAZIONE OK: " + status.getStatusCode());
-                                    if (dataBase)
-                                        saveToDrive(pFldr, titl, mime, file, true);
-                                    else
-                                        saveToDrive(pFldr, titl, mime, file, false);
+                            DriveFile mFile = mDriveId.asDriveFile();
+                            mFile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                                @Override
+                                public void onResult(@NonNull Status status) {
+                                    if (status.isSuccess()) {
+                                        Log.d(getClass().getName(), "saveCheckDupl - CANCELLAZIONE OK: " + status.getStatusCode());
+                                        if (dataBase)
+                                            saveToDrive(pFldr, titl, mime, file, true);
+                                        else
+                                            saveToDrive(pFldr, titl, mime, file, false);
+                                    } else {
+                                        String errore = "ERRORE CANCELLAZIONE: " + status.getStatusCode() + "-" + status.getStatusMessage();
+                                        Log.e(getClass().getName(), "saveCheckDupl - " + errore);
+//                                    if (backupDialog != null && backupDialog.isShowing())
+//                                        backupDialog.dismiss();
+                                        if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                            SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                                        Snackbar.make(findViewById(R.id.main_content), errore, Snackbar.LENGTH_SHORT).show();
+                                    }
                                 }
-                                else {
-                                    String errore = "ERRORE CANCELLAZIONE: " + status.getStatusCode() + "-" + status.getStatusMessage();
-                                    Log.e(getClass().getName(), "saveCheckDupl - " + errore);
-                                    if (backupDialog != null && backupDialog.isShowing())
-                                        backupDialog.dismiss();
-                                    Snackbar.make(findViewById(R.id.main_content), errore, Snackbar.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                            });
+                        } else if (dataBase)
+                            saveToDrive(pFldr, titl, mime, file, true);
+                        else
+                            saveToDrive(pFldr, titl, mime, file, false);
                     }
-                    else if (dataBase)
-                        saveToDrive(pFldr, titl, mime, file, true);
-                    else
-                        saveToDrive(pFldr, titl, mime, file, false);
-                }
-            });
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
-            if (backupDialog != null && backupDialog.isShowing())
-                backupDialog.dismiss();
-            String error = "error: "  + e.getLocalizedMessage();
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
+//            if (backupDialog != null && backupDialog.isShowing())
+//                backupDialog.dismiss();
+                if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                    SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                String error = "error: " + e.getLocalizedMessage();
+                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+            }
     }
 
     /******************************************************************
      * create file in GOODrive
+     *
      * @param pFldr parent's ID
      * @param titl  file name
      * @param mime  file mime type  (application/x-sqlite3)
      * @param file  file (with content) to create
      */
     void saveToDrive(final DriveFolder pFldr, final String titl,
-                     final String mime, final java.io.File file, final boolean dataBase) {
+                     final String mime, final File file, final boolean dataBase) {
         Log.d(getClass().getName(), "saveToDrive - database? " + dataBase);
-        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null)) try {
-            // create content from file
-            Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
-                @Override
-                public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
+        if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null))
+            try {
+                // create content from file
+                Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                    @Override
+                    public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
 //                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
 //                            driveContentsResult.getDriveContents() : null;
 
-                    // write file to content, chunk by chunk
+                        // write file to content, chunk by chunk
 //                    if (cont != null) {
-                    if (driveContentsResult.getStatus().isSuccess()) {
-                        DriveContents cont = driveContentsResult.getDriveContents();
-                        if (dataBase) {
-                            try {
-                                OutputStream oos = cont.getOutputStream();
-                                if (oos != null) try {
-                                    InputStream is = new FileInputStream(file);
-                                    byte[] buf = new byte[4096];
-                                    int c;
-                                    while ((c = is.read(buf, 0, buf.length)) > 0) {
-                                        oos.write(buf, 0, c);
-                                        oos.flush();
+                        if (driveContentsResult.getStatus().isSuccess()) {
+                            DriveContents cont = driveContentsResult.getDriveContents();
+                            if (dataBase) {
+                                try {
+                                    OutputStream oos = cont.getOutputStream();
+                                    if (oos != null) try {
+                                        InputStream is = new FileInputStream(file);
+                                        byte[] buf = new byte[4096];
+                                        int c;
+                                        while ((c = is.read(buf, 0, buf.length)) > 0) {
+                                            oos.write(buf, 0, c);
+                                            oos.flush();
+                                        }
+                                    } finally {
+                                        oos.close();
                                     }
-                                } finally {
-                                    oos.close();
+                                } catch (Exception e) {
+                                    Log.e(getClass().getName(), "saveToDrive - Exception1: " + e.getLocalizedMessage(), e);
+//                                if (backupDialog != null && backupDialog.isShowing())
+//                                    backupDialog.dismiss();
+                                    if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                        SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                                    String error = "error: " + e.getLocalizedMessage();
+                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                                    return;
                                 }
-                            } catch (Exception e) {
-                                Log.e(getClass().getName(), "saveToDrive - Exception1: " + e.getLocalizedMessage(), e);
-                                if (backupDialog != null && backupDialog.isShowing())
-                                    backupDialog.dismiss();
-                                String error = "error: " + e.getLocalizedMessage();
-                                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-                                return;
+                            } else {
+                                if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
+//                                if (backupDialog != null && backupDialog.isShowing())
+//                                    backupDialog.dismiss();
+                                    if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                        SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                                    return;
+                                }
                             }
-                        }
-                        else {
-                            if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
-                                if (backupDialog != null && backupDialog.isShowing())
-                                    backupDialog.dismiss();
-                                return;
-                            }
-                        }
 
-                        // content's COOL, create metadata
-                        MetadataChangeSet meta = new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
+                            // content's COOL, create metadata
+                            MetadataChangeSet meta = new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
 
-                        // now create file on GooDrive
-                        pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
-                            @Override
-                            public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
+                            // now create file on GooDrive
+                            pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+                                @Override
+                                public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
 //                                if (driveFileResult != null)
-                                if (driveFileResult.getStatus().isSuccess()) {
+                                    if (driveFileResult.getStatus().isSuccess()) {
 //                                    DriveFile dFil = driveFileResult != null && driveFileResult.getStatus().isSuccess() ?
 //                                            driveFileResult.getDriveFile() : null;
-                                    DriveFile dFil = driveFileResult.getDriveFile();
-                                    if (dFil != null) {
-                                        // BINGO , file uploaded
-                                        dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
-                                            @Override
-                                            public void onResult(@NonNull DriveResource.MetadataResult metadataResult) {
+                                        DriveFile dFil = driveFileResult.getDriveFile();
+                                        if (dFil != null) {
+                                            // BINGO , file uploaded
+                                            dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
+                                                @Override
+                                                public void onResult(@NonNull DriveResource.MetadataResult metadataResult) {
 //                                                if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
-                                                if (metadataResult.getStatus().isSuccess()) {
-                                                    DriveId mDriveId = metadataResult.getMetadata().getDriveId();
-                                                    Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
+                                                    if (metadataResult.getStatus().isSuccess()) {
+                                                        DriveId mDriveId = metadataResult.getMetadata().getDriveId();
+                                                        Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
 //                                                    if (backupDialog != null && backupDialog.isShowing())
 //                                                        backupDialog.dismiss();
-                                                    String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
-                                                    Log.d(getClass().getName(), error);
+                                                        String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
+                                                        Log.d(getClass().getName(), error);
 //                                                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
-                                                    if (dataBase) {
-                                                        if (backupDialog != null && backupDialog.isShowing())
-                                                            backupDialog.setContent(R.string.backup_settings);
-                                                        saveCheckDupl(
-                                                                Drive.DriveApi.getAppFolder(mGoogleApiClient)
-                                                                , PREF_DRIVE_FILE_NAME
-                                                                , "application/json"
-                                                                , null
-                                                                , false
-                                                        );
-                                                    }
-                                                    else {
-                                                        if (backupDialog != null && backupDialog.isShowing())
-                                                            backupDialog.dismiss();
-                                                        Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+                                                        if (dataBase) {
+//                                                        if (backupDialog != null && backupDialog.isShowing())
+//                                                            backupDialog.setContent(R.string.backup_settings);
+                                                            if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                                                SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").setContent(R.string.backup_settings);
+                                                            saveCheckDupl(
+                                                                    Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                                                    , PREF_DRIVE_FILE_NAME
+                                                                    , "application/json"
+                                                                    , null
+                                                                    , false
+                                                            );
+                                                        } else {
+//                                                        if (backupDialog != null && backupDialog.isShowing())
+//                                                            backupDialog.dismiss();
+                                                            if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                                                SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                                                            Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        });
-                                    }
-                                } else {
+                                            });
+                                        }
+                                    } else {
                                  /* report error */
-                                    if (backupDialog != null && backupDialog.isShowing())
-                                        backupDialog.dismiss();
-                                    String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
-                                    Log.e(getClass().getName(), error);
-                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-                                }
+//                                    if (backupDialog != null && backupDialog.isShowing())
+//                                        backupDialog.dismiss();
+                                        if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                            SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                                        String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
+                                        Log.e(getClass().getName(), error);
+                                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                                    }
 //                                else {
 //                                 /* report error */
 //                                    if (backupDialog != null && backupDialog.isShowing())
@@ -1066,26 +1120,29 @@ public class MainActivity extends ThemeableActivity
 //                                    Log.e(getClass().getName(), error);
 //                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
 //                                }
-                            }
-                        });
-                    }
-                    else {
+                                }
+                            });
+                        } else {
                         /* report error */
-                        if (backupDialog != null && backupDialog.isShowing())
-                            backupDialog.dismiss();
-                        String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
-                        Log.e(getClass().getName(), error);
-                        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+//                        if (backupDialog != null && backupDialog.isShowing())
+//                            backupDialog.dismiss();
+                            if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                                SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                            String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
+                            Log.e(getClass().getName(), error);
+                            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+                        }
                     }
-                }
-            });
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
-            if (backupDialog != null && backupDialog.isShowing())
-                backupDialog.dismiss();
-            String error = "error: "  + e.getLocalizedMessage();
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        }
+                });
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
+//            if (backupDialog != null && backupDialog.isShowing())
+//                backupDialog.dismiss();
+                if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
+                    SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
+                String error = "error: " + e.getLocalizedMessage();
+                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+            }
     }
 
     private File getDbPath() {
@@ -1117,7 +1174,6 @@ public class MainActivity extends ThemeableActivity
                     Log.d(getClass().getName(), "restoreDriveBackup - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
                     metadataBufferResult.getMetadataBuffer().release();
 
-
 //                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
                     DriveFile mFile = mDriveId.asDriveFile();
                     mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
@@ -1127,8 +1183,10 @@ public class MainActivity extends ThemeableActivity
                     })
                             .setResultCallback(restoreContentsCallback);
                 } else {
-                    if (restoreDialog != null && restoreDialog.isShowing())
-                        restoreDialog.dismiss();
+//                    if (restoreDialog != null && restoreDialog.isShowing())
+//                        restoreDialog.dismiss();
+                    if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                        SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                     Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -1141,10 +1199,12 @@ public class MainActivity extends ThemeableActivity
                 public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
 //                        mToast("Unable to open file, try again.");
-                        String error = "restoreContentsCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
+                        String error = "restoreContentsCallback - restore error: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
-                        if (restoreDialog != null && restoreDialog.isShowing())
-                            restoreDialog.dismiss();
+//                        if (restoreDialog != null && restoreDialog.isShowing())
+//                            restoreDialog.dismiss();
+                        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                            SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
@@ -1175,7 +1235,7 @@ public class MainActivity extends ThemeableActivity
 
                         //debug("before read " + in.available());
 
-                        while( ( n = in.read(buffer) ) > 0) {
+                        while ((n = in.read(buffer)) > 0) {
                             bos.write(buffer, 0, n);
                             cnt += n;
 //                            debug("buffer: " + buffer[0]);
@@ -1192,17 +1252,21 @@ public class MainActivity extends ThemeableActivity
                     } catch (FileNotFoundException e) {
                         Log.e(getClass().getName(), "restoreContentsCallback - Exception3: " + e.getLocalizedMessage(), e);
                         contents.discard(mGoogleApiClient);
-                        if (restoreDialog != null && restoreDialog.isShowing())
-                            restoreDialog.dismiss();
-                        String error = "error: "  + e.getLocalizedMessage();
+//                        if (restoreDialog != null && restoreDialog.isShowing())
+//                            restoreDialog.dismiss();
+                        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                            SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
+                        String error = "error: " + e.getLocalizedMessage();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     } catch (IOException e) {
                         Log.e(getClass().getName(), "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(), e);
                         contents.discard(mGoogleApiClient);
-                        if (restoreDialog != null && restoreDialog.isShowing())
-                            restoreDialog.dismiss();
-                        String error = "error: "  + e.getLocalizedMessage();
+//                        if (restoreDialog != null && restoreDialog.isShowing())
+//                            restoreDialog.dismiss();
+                        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                            SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
+                        String error = "error: " + e.getLocalizedMessage();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
@@ -1220,8 +1284,10 @@ public class MainActivity extends ThemeableActivity
 //                    utilsM.dbOpen();
                     contents.discard(mGoogleApiClient);
 
-                    if (restoreDialog != null && restoreDialog.isShowing())
-                        restoreDialog.setContent(R.string.restoring_settings);
+//                    if (restoreDialog != null && restoreDialog.isShowing())
+//                        restoreDialog.setContent(R.string.restoring_settings);
+                    if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                        SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").setContent(R.string.restoring_settings);
                     restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
 
                 }
@@ -1260,10 +1326,11 @@ public class MainActivity extends ThemeableActivity
                         }
                     })
                             .setResultCallback(restoreContentsPrefCallback);
-                }
-                else {
-                    if (restoreDialog != null && restoreDialog.isShowing())
-                        restoreDialog.dismiss();
+                } else {
+//                    if (restoreDialog != null && restoreDialog.isShowing())
+//                        restoreDialog.dismiss();
+                    if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                        SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                     Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -1275,10 +1342,12 @@ public class MainActivity extends ThemeableActivity
                 @Override
                 public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        String error = "restoreContentsPrefCallback - restore error: "  + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
+                        String error = "restoreContentsPrefCallback - restore error: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
-                        if (restoreDialog != null && restoreDialog.isShowing())
-                            restoreDialog.dismiss();
+//                        if (restoreDialog != null && restoreDialog.isShowing())
+//                            restoreDialog.dismiss();
+                        if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                            SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                         return;
                     }
@@ -1288,26 +1357,83 @@ public class MainActivity extends ThemeableActivity
                     loadSharedPreferencesFromFile(contents.getInputStream());
                     contents.discard(mGoogleApiClient);
 //                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
-                    if (restoreDialog != null && restoreDialog.isShowing())
-                        restoreDialog.dismiss();
-                    prevOrientation = getRequestedOrientation();
-                    Utility.blockOrientation(MainActivity.this);
-                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                    if (restoreDialog != null && restoreDialog.isShowing())
+//                        restoreDialog.dismiss();
+                    if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
+                        SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
+//                    prevOrient
+// ockOrientation(MainActivity.this);
+//                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+//                            .title(R.string.general_message)
+//                            .content(R.string.gdrive_restore_success)
+//                            .positiveText(R.string.dialog_chiudi)
+//                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                    setRequestedOrientation(prevOrientation);
+//                                    Intent i = getBaseContext().getPackageManager()
+//                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+//                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                    startActivity(i);
+//                                }
+//                            })
+//                            .show();
+//                    dialog.setCancelable(false);
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
                             .title(R.string.general_message)
                             .content(R.string.gdrive_restore_success)
-                            .positiveText(R.string.dialog_chiudi)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    setRequestedOrientation(prevOrientation);
-                                    Intent i = getBaseContext().getPackageManager()
-                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(i);
-                                }
-                            })
+                            .positiveButton(R.string.dialog_chiudi)
                             .show();
-                    dialog.setCancelable(false);
                 }
             };
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: TAG " + tag);
+        switch (tag) {
+            case "BACKUP_ASK":
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                        .title(R.string.backup_running)
+                        .content(R.string.backup_database)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                saveCheckDupl(
+                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                        , DatabaseCanti.getDbName()
+                        , "application/x-sqlite3"
+                        , getDbPath()
+                        , true
+                );
+                break;
+            case "RESTORE_ASK":
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                        .title(R.string.restore_running)
+                        .content(R.string.restoring_database)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                restoreDriveBackup();
+                break;
+            case "SIGNOUT":
+                signOut();
+                break;
+            case "REVOKE":
+                revokeAccess();
+                break;
+            case "RESTART":
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
+
 }

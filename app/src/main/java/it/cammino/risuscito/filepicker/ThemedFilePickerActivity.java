@@ -1,5 +1,7 @@
 package it.cammino.risuscito.filepicker;
 
+import android.os.Bundle;
+
 import com.nononsenseapps.filepicker.AbstractFilePickerActivity;
 import com.nononsenseapps.filepicker.AbstractFilePickerFragment;
 
@@ -17,14 +19,23 @@ public class ThemedFilePickerActivity extends AbstractFilePickerActivity<File> {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mThemeUtils = new ThemeUtils(ThemedFilePickerActivity.this);
+        setTheme(mThemeUtils.getFilePickerCurrent());
+        Utility.setupTransparentTints(ThemedFilePickerActivity.this, mThemeUtils.primaryColorDark(), false);
+    }
+
+    @Override
     protected AbstractFilePickerFragment<File> getFragment(
             final String startPath, final int mode, final boolean allowMultiple,
             final boolean allowCreateDir) {
         // Only the fragment in this line needs to be changed
-        Utility.blockOrientation(this);
-        mThemeUtils = new ThemeUtils(ThemedFilePickerActivity.this);
-        setTheme(mThemeUtils.getFilePickerCurrent());
-        Utility.setupTransparentTints(ThemedFilePickerActivity.this, mThemeUtils.primaryColorDark(), false);
+//        Utility.blockOrientation(this);
+//        mThemeUtils = new ThemeUtils(ThemedFilePickerActivity.this);
+//        setTheme(mThemeUtils.getFilePickerCurrent());
+//        Utility.setupTransparentTints(ThemedFilePickerActivity.this, mThemeUtils.primaryColorDark(), false);
         AbstractFilePickerFragment<File> fragment = new FilteredFilePickerFragment();
         fragment.setArgs(startPath, mode, allowMultiple, allowCreateDir);
         return fragment;
