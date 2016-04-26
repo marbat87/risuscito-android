@@ -54,7 +54,8 @@ public class SingleChoiceDialogFragment extends DialogFragment {
         if (getArguments() == null || !getArguments().containsKey("builder"))
             throw new IllegalStateException("SimpleDialogFragment should be created using its Builder interface.");
 
-        mCallback = getBuilder().mListener;
+        if (mCallback == null)
+            mCallback = getBuilder().mListener;
 
         MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(getActivity())
 //                .title(getBuilder().mTitle)

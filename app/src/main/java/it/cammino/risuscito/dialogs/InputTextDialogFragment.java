@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -51,7 +52,8 @@ public class InputTextDialogFragment extends DialogFragment {
         if (getArguments() == null || !getArguments().containsKey("builder"))
             throw new IllegalStateException("SimpleDialogFragment should be created using its Builder interface.");
 
-        mCallback = getBuilder().mListener;
+        if (mCallback == null)
+            mCallback = getBuilder().mListener;
 
         MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(getActivity())
 //                .title(getBuilder().mTitle)
@@ -71,6 +73,7 @@ public class InputTextDialogFragment extends DialogFragment {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Log.d(getClass().getName(), "onClick: mCallback " + mCallback);
                             mCallback.onPositive(getBuilder().mTag, dialog);
                         }
                     });
