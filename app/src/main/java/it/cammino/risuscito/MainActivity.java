@@ -78,6 +78,10 @@ public class MainActivity extends ThemeableActivity
     public DrawerLayout mDrawerLayout;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
+    private static final String DB_RESTORE_RUNNING = "db_restore_running";
+    private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
+    private static final String DB_BACKUP_RUNNING = "db_backup_running";
+    private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
     private int selectedItemIndex = 0;
 
 //    private int prevOrientation;
@@ -114,6 +118,11 @@ public class MainActivity extends ThemeableActivity
 
     //    private MaterialDialog backupDialog, restoreDialog;
     private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
+
+    private boolean dbRestoreRunning;
+    private boolean prefRestoreRunning;
+    private boolean dbBackupRunning;
+    private boolean prefBackupRunning;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,6 +187,12 @@ public class MainActivity extends ThemeableActivity
         mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
         mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
+        if (savedInstanceState != null) {
+            dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
+            dbBackupRunning = savedInstanceState.getBoolean(DB_BACKUP_RUNNING);
+            prefRestoreRunning = savedInstanceState.getBoolean(PREF_RESTORE_RUNNING);
+            prefBackupRunning = savedInstanceState.getBoolean(PREF_BACKUP_RUNNING);
+        }
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -221,6 +236,62 @@ public class MainActivity extends ThemeableActivity
             Log.d(getClass().getName(), "Got cached sign-in");
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
+            Log.d(getClass().getName(), "dbRestoreRunning: " + dbRestoreRunning);
+            Log.d(getClass().getName(), "prefRestoreRunning: " + prefRestoreRunning);
+            Log.d(getClass().getName(), "dbBackupRunning: " + dbBackupRunning);
+            Log.d(getClass().getName(), "prefBackupRunning: " + prefBackupRunning);
+            if (dbRestoreRunning) {
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                        .title(R.string.restore_running)
+                        .content(R.string.restoring_database)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                restoreDriveBackup();
+            }
+            if (prefRestoreRunning) {
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                        .title(R.string.restore_running)
+                        .content(R.string.restoring_settings)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
+            }
+            if (dbBackupRunning) {
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                        .title(R.string.backup_running)
+                        .content(R.string.backup_database)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                saveCheckDupl(
+                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                        , DatabaseCanti.getDbName()
+                        , "application/x-sqlite3"
+                        , getDbPath()
+                        , true
+                );
+            }
+            if (prefBackupRunning) {
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                        .title(R.string.backup_running)
+                        .content(R.string.backup_settings)
+                        .showProgress(true)
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show();
+                saveCheckDupl(
+                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                        , PREF_DRIVE_FILE_NAME
+                        , "application/json"
+                        , null
+                        , false
+                );
+            }
         } else {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
@@ -229,8 +300,65 @@ public class MainActivity extends ThemeableActivity
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    Log.d(getClass().getName(), "Reconnected");
                     hideProgressDialog();
                     handleSignInResult(googleSignInResult);
+                    Log.d(getClass().getName(), "dbRestoreRunning: " + dbRestoreRunning);
+                    Log.d(getClass().getName(), "prefRestoreRunning: " + prefRestoreRunning);
+                    Log.d(getClass().getName(), "dbBackupRunning: " + dbBackupRunning);
+                    Log.d(getClass().getName(), "prefBackupRunning: " + prefBackupRunning);
+                    if (dbRestoreRunning) {
+                        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                                .title(R.string.restore_running)
+                                .content(R.string.restoring_database)
+                                .showProgress(true)
+                                .progressIndeterminate(true)
+                                .progressMax(0)
+                                .show();
+                        restoreDriveBackup();
+                    }
+                    if (prefRestoreRunning) {
+                        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                                .title(R.string.restore_running)
+                                .content(R.string.restoring_settings)
+                                .showProgress(true)
+                                .progressIndeterminate(true)
+                                .progressMax(0)
+                                .show();
+                        restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
+                    }
+                    if (dbBackupRunning) {
+                        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                                .title(R.string.backup_running)
+                                .content(R.string.backup_database)
+                                .showProgress(true)
+                                .progressIndeterminate(true)
+                                .progressMax(0)
+                                .show();
+                        saveCheckDupl(
+                                Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                , DatabaseCanti.getDbName()
+                                , "application/x-sqlite3"
+                                , getDbPath()
+                                , true
+                        );
+                    }
+                    if (prefBackupRunning) {
+                        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                                .title(R.string.backup_running)
+                                .content(R.string.backup_settings)
+                                .showProgress(true)
+                                .progressIndeterminate(true)
+                                .progressMax(0)
+                                .show();
+                        saveCheckDupl(
+                                Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                                , PREF_DRIVE_FILE_NAME
+                                , "application/json"
+                                , null
+                                , false
+                        );
+                    }
                 }
             });
         }
@@ -254,6 +382,10 @@ public class MainActivity extends ThemeableActivity
         }
 
         savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
+        savedInstanceState.putBoolean(DB_RESTORE_RUNNING, dbRestoreRunning);
+        savedInstanceState.putBoolean(PREF_RESTORE_RUNNING, prefRestoreRunning);
+        savedInstanceState.putBoolean(DB_BACKUP_RUNNING, dbBackupRunning);
+        savedInstanceState.putBoolean(PREF_BACKUP_RUNNING, prefBackupRunning);
 //        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
 
         super.onSaveInstanceState(savedInstanceState);
@@ -935,6 +1067,10 @@ public class MainActivity extends ThemeableActivity
      */
     void saveCheckDupl(final DriveFolder pFldr, final String titl,
                        final String mime, final File file, final boolean dataBase) {
+        if (dataBase)
+            dbBackupRunning = true;
+        else
+            prefBackupRunning = true;
         if (mGoogleApiClient != null && pFldr != null && titl != null && mime != null && (!dataBase || file != null))
             try {
                 // create content from file
@@ -972,6 +1108,10 @@ public class MainActivity extends ThemeableActivity
                                         Log.e(getClass().getName(), "saveCheckDupl - " + errore);
 //                                    if (backupDialog != null && backupDialog.isShowing())
 //                                        backupDialog.dismiss();
+                                        if (dataBase)
+                                            dbBackupRunning = false;
+                                        else
+                                            prefBackupRunning = false;
                                         if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                             SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                                         Snackbar.make(findViewById(R.id.main_content), errore, Snackbar.LENGTH_SHORT).show();
@@ -988,6 +1128,10 @@ public class MainActivity extends ThemeableActivity
                 Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
 //            if (backupDialog != null && backupDialog.isShowing())
 //                backupDialog.dismiss();
+                if (dataBase)
+                    dbBackupRunning = false;
+                else
+                    prefBackupRunning = false;
                 if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                     SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                 String error = "error: " + e.getLocalizedMessage();
@@ -1037,6 +1181,7 @@ public class MainActivity extends ThemeableActivity
                                     Log.e(getClass().getName(), "saveToDrive - Exception1: " + e.getLocalizedMessage(), e);
 //                                if (backupDialog != null && backupDialog.isShowing())
 //                                    backupDialog.dismiss();
+                                    dbBackupRunning = false;
                                     if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                         SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                                     String error = "error: " + e.getLocalizedMessage();
@@ -1047,6 +1192,7 @@ public class MainActivity extends ThemeableActivity
                                 if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
 //                                if (backupDialog != null && backupDialog.isShowing())
 //                                    backupDialog.dismiss();
+                                    prefBackupRunning = false;
                                     if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                         SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                                     return;
@@ -1082,6 +1228,7 @@ public class MainActivity extends ThemeableActivity
                                                         if (dataBase) {
 //                                                        if (backupDialog != null && backupDialog.isShowing())
 //                                                            backupDialog.setContent(R.string.backup_settings);
+                                                            dbBackupRunning = false;
                                                             if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                                                 SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").setContent(R.string.backup_settings);
                                                             saveCheckDupl(
@@ -1094,6 +1241,7 @@ public class MainActivity extends ThemeableActivity
                                                         } else {
 //                                                        if (backupDialog != null && backupDialog.isShowing())
 //                                                            backupDialog.dismiss();
+                                                            prefBackupRunning = false;
                                                             if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                                                 SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                                                             Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
@@ -1106,6 +1254,10 @@ public class MainActivity extends ThemeableActivity
                                  /* report error */
 //                                    if (backupDialog != null && backupDialog.isShowing())
 //                                        backupDialog.dismiss();
+                                        if (dataBase)
+                                            dbBackupRunning = false;
+                                        else
+                                            prefBackupRunning = false;
                                         if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                             SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                                         String error = "saveToDrive - driveFile error: " + driveFileResult.getStatus().getStatusCode() + " - " + driveFileResult.getStatus().getStatusMessage();
@@ -1126,6 +1278,10 @@ public class MainActivity extends ThemeableActivity
                         /* report error */
 //                        if (backupDialog != null && backupDialog.isShowing())
 //                            backupDialog.dismiss();
+                            if (dataBase)
+                                dbBackupRunning = false;
+                            else
+                                prefBackupRunning = false;
                             if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                 SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                             String error = "saveToDrive - driveFile error: " + driveContentsResult.getStatus().getStatusCode() + " - " + driveContentsResult.getStatus().getStatusMessage();
@@ -1138,6 +1294,10 @@ public class MainActivity extends ThemeableActivity
                 Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
 //            if (backupDialog != null && backupDialog.isShowing())
 //                backupDialog.dismiss();
+                if (dataBase)
+                    dbBackupRunning = false;
+                else
+                    prefBackupRunning = false;
                 if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                     SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
                 String error = "error: " + e.getLocalizedMessage();
@@ -1151,6 +1311,7 @@ public class MainActivity extends ThemeableActivity
     }
 
     void restoreDriveBackup() {
+        dbRestoreRunning = true;
         Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
         Query query = new Query.Builder()
                 .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
@@ -1185,6 +1346,7 @@ public class MainActivity extends ThemeableActivity
                 } else {
 //                    if (restoreDialog != null && restoreDialog.isShowing())
 //                        restoreDialog.dismiss();
+                    dbRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                     Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
@@ -1203,6 +1365,7 @@ public class MainActivity extends ThemeableActivity
                         Log.e(getClass().getName(), error);
 //                        if (restoreDialog != null && restoreDialog.isShowing())
 //                            restoreDialog.dismiss();
+                        dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
@@ -1254,6 +1417,7 @@ public class MainActivity extends ThemeableActivity
                         contents.discard(mGoogleApiClient);
 //                        if (restoreDialog != null && restoreDialog.isShowing())
 //                            restoreDialog.dismiss();
+                        dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         String error = "error: " + e.getLocalizedMessage();
@@ -1264,6 +1428,7 @@ public class MainActivity extends ThemeableActivity
                         contents.discard(mGoogleApiClient);
 //                        if (restoreDialog != null && restoreDialog.isShowing())
 //                            restoreDialog.dismiss();
+                        dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         String error = "error: " + e.getLocalizedMessage();
@@ -1286,6 +1451,7 @@ public class MainActivity extends ThemeableActivity
 
 //                    if (restoreDialog != null && restoreDialog.isShowing())
 //                        restoreDialog.setContent(R.string.restoring_settings);
+                    dbRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").setContent(R.string.restoring_settings);
                     restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
@@ -1294,6 +1460,7 @@ public class MainActivity extends ThemeableActivity
             };
 
     void restoreDrivePrefBackup(String title) {
+        prefRestoreRunning = true;
         Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
         Query query = new Query.Builder()
                 .addFilter(Filters.eq(SearchableField.TITLE, title))
@@ -1329,6 +1496,7 @@ public class MainActivity extends ThemeableActivity
                 } else {
 //                    if (restoreDialog != null && restoreDialog.isShowing())
 //                        restoreDialog.dismiss();
+                    prefRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                     Snackbar.make(findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG).show();
@@ -1346,6 +1514,7 @@ public class MainActivity extends ThemeableActivity
                         Log.e(getClass().getName(), error);
 //                        if (restoreDialog != null && restoreDialog.isShowing())
 //                            restoreDialog.dismiss();
+                        prefRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
@@ -1359,6 +1528,7 @@ public class MainActivity extends ThemeableActivity
 //                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
 //                    if (restoreDialog != null && restoreDialog.isShowing())
 //                        restoreDialog.dismiss();
+                    prefRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
 //                    prevOrient

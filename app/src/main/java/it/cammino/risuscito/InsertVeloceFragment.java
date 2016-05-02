@@ -164,28 +164,34 @@ public class InsertVeloceFragment extends Fragment {
                     rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 
                     String titolo = Utility.duplicaApostrofi(s.toString());
+                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
+                    String titoloTemp;
+                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
 
                     // crea un manipolatore per il Database in modalità READ
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-                    // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-                    String query = "SELECT titolo, color, pagina, _id, source" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo like '%" + titolo + "%'" +
-                            "		ORDER BY titolo ASC";
+                    // lancia la ricerca di tutti i titoli presenti in DB e li
+                    // dispone in ordine alfabetico
+                    String query = "SELECT titolo, color, pagina, _id, source"
+//                            + "		FROM ELENCO" + "		WHERE titolo like '%"
+//                            + titolo + "%'" + "		ORDER BY titolo ASC";
+                            + "		FROM ELENCO ORDER BY titolo ASC";
                     Cursor lista = db.rawQuery(query, null);
 
-                    //recupera il numero di record trovati
+                    // recupera il numero di record trovati
                     int total = lista.getCount();
 
                     // crea un array e ci memorizza i titoli estratti
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-                        titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
-                                + lista.getString(1) + lista.getString(0)
-                                , lista.getInt(3)
-                                , lista.getString(4)));
+                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+                        if (titoloTemp.contains(stringa))
+                            titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
+                                    + lista.getString(1) + lista.getString(0)
+                                    , lista.getInt(3)
+                                    , lista.getString(4)));
                         lista.moveToNext();
                     }
 

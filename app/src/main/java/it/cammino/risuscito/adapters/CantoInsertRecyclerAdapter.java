@@ -68,29 +68,10 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
 
         Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
-//        drawable = ContextCompat.getDrawable(context,
-//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
-//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
-//        if (LUtils.hasJB())
-//            cantoHolder.cantoPage.setBackground(drawable);
-//        else
-//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
         cantoHolder.cantoPage.setBackgroundResource(
                 context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
                         , "drawable"
                         , context.getPackageName()));
-
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
     }
 

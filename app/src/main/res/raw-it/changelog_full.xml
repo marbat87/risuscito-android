@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="4.1.0" changeDate="XX Maggio 2015">
+        <changelogimprovement>Aggiunta compabilità con Android N</changelogimprovement>
+        <changelogimprovement>Migliorati i risultati della funziona di ricerca veloce</changelogimprovement>
+    </changelogversion>
+
     <changelogversion versionName="4.0.1" changeDate="23 Aprile 2015">
         <changelogimprovement>Inserito backup e ripristino delle impostazioni su Gdrive</changelogimprovement>
         <changelogimprovement>Riscritta la gestione della riproduzione brani, con notifica e controlli sul blocco schermo (se la propria versione di Android lo prevede) e controlli da Android Wear</changelogimprovement>

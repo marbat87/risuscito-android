@@ -47,9 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
@@ -69,7 +67,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     CantoRecyclerAdapter cantoAdapter;
     private ProgressBar progress;
 //    private int prevOrientation;
-    private static Map<Character, Character> MAP_NORM;
+//    private static Map<Character, Character> MAP_NORM;
 
     private String titoloDaAgg;
     private int idDaAgg;
@@ -226,7 +224,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreateView: RESTORING");
-            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
+//            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
             idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
             idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
@@ -248,7 +246,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("titoloDaAgg", titoloDaAgg);
+//        outState.putString("titoloDaAgg", titoloDaAgg);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
         outState.putInt("idListaClick", idListaClick);
@@ -317,6 +315,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -340,46 +339,47 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:
-                    addToFavorites(titoloDaAgg);
+//                    addToFavorites(titoloDaAgg);
+                    addToFavorites();
                     return true;
                 case R.id.add_to_p_iniziale:
-                    addToListaNoDup(1, 1, titoloDaAgg);
+                    addToListaNoDup(1, 1);
                     return true;
                 case R.id.add_to_p_prima:
-                    addToListaNoDup(1, 2, titoloDaAgg);
+                    addToListaNoDup(1, 2);
                     return true;
                 case R.id.add_to_p_seconda:
-                    addToListaNoDup(1, 3, titoloDaAgg);
+                    addToListaNoDup(1, 3);
                     return true;
                 case R.id.add_to_p_terza:
-                    addToListaNoDup(1, 4, titoloDaAgg);
+                    addToListaNoDup(1, 4);
                     return true;
                 case R.id.add_to_p_pace:
-                    addToListaNoDup(1, 6, titoloDaAgg);
+                    addToListaNoDup(1, 6);
                     return true;
                 case R.id.add_to_p_fine:
-                    addToListaNoDup(1, 5, titoloDaAgg);
+                    addToListaNoDup(1, 5);
                     return true;
                 case R.id.add_to_e_iniziale:
-                    addToListaNoDup(2, 1, titoloDaAgg);
+                    addToListaNoDup(2, 1);
                     return true;
                 case R.id.add_to_e_seconda:
-                    addToListaNoDup(2, 6, titoloDaAgg);
+                    addToListaNoDup(2, 6);
                     return true;
                 case R.id.add_to_e_pace:
-                    addToListaNoDup(2, 2, titoloDaAgg);
+                    addToListaNoDup(2, 2);
                     return true;
                 case R.id.add_to_e_santo:
-                    addToListaNoDup(2, 7, titoloDaAgg);
+                    addToListaNoDup(2, 7);
                     return true;
                 case R.id.add_to_e_pane:
-                    addToListaDup(2, 3, titoloDaAgg);
+                    addToListaDup(2, 3);
                     return true;
                 case R.id.add_to_e_vino:
-                    addToListaDup(2, 4, titoloDaAgg);
+                    addToListaDup(2, 4);
                     return true;
                 case R.id.add_to_e_fine:
-                    addToListaNoDup(2, 5, titoloDaAgg);
+                    addToListaNoDup(2, 5);
                     return true;
                 default:
                     idListaClick = item.getGroupId();
@@ -388,15 +388,15 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         idListaClick -= 100;
 
                         //recupero ID del canto cliccato
-                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
-                        String query = "SELECT _id" +
-                                "		FROM ELENCO" +
-                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                        Cursor cursor = db.rawQuery(query, null);
-                        cursor.moveToFirst();
-                        idDaAgg = cursor.getInt(0);
-                        cursor.close();
+//                        String query = "SELECT _id" +
+//                                "		FROM ELENCO" +
+//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                        Cursor cursor = db.rawQuery(query, null);
+//                        cursor.moveToFirst();
+//                        idDaAgg = cursor.getInt(0);
+//                        cursor.close();
 
                         if (listePers[idListaClick]
                                 .getCantoPosizione(idPosizioneClick).equals("")) {
@@ -419,11 +419,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //                                prevOrientation = getActivity().getRequestedOrientation();
 //                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
-                                query = "SELECT titolo" +
+                                String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
                                         "		WHERE _id = "
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
-                                cursor = db.rawQuery(query, null);
+                                Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
 //                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
 //                                        .title(R.string.dialog_replace_title)
@@ -491,12 +491,14 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     }
 
     //aggiunge il canto premuto ai preferiti
-    public void addToFavorites(String titolo) {
+//    public void addToFavorites(String titolo) {
+    public void addToFavorites() {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
         String sql = "UPDATE ELENCO" +
                 "  SET favourite = 1" +
-                "  WHERE titolo =  \'" + titoloNoApex + "\'";
+//                "  WHERE titolo =  \'" + titoloNoApex + "\'";
+                "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
@@ -505,17 +507,18 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
-    public void addToListaDup(int idLista, int listPosition, String titolo) {
+    public void addToListaDup(int idLista, int listPosition) {
 
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql+= "VALUES (" + idLista + ", "
                 + listPosition + ", "
-                + "(SELECT _id FROM ELENCO"
-                + " WHERE titolo = \'" + titoloNoApex + "\')"
+//                + "(SELECT _id FROM ELENCO"
+//                + " WHERE titolo = \'" + titoloNoApex + "\')"
+                + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
         try {
@@ -523,9 +526,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                     .show();
         } catch (SQLException e) {
-            Snackbar.make(rootView
-                    , R.string.present_yet
-                    , Snackbar.LENGTH_SHORT)
+            Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
                     .show();
         }
 
@@ -533,9 +534,9 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
-    public void addToListaNoDup(int idLista, int listPosition, String titolo) {
+    public void addToListaNoDup(int idLista, int listPosition) {
 
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -556,7 +557,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             lista.close();
             db.close();
 
-            if (titolo.equalsIgnoreCase(titoloPresente)) {
+            if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
                 Snackbar.make(rootView
                         , R.string.present_yet
                         , Snackbar.LENGTH_SHORT)
@@ -628,8 +629,9 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         String sql = "INSERT INTO CUST_LISTS "
                 + "VALUES (" + idLista + ", "
                 + listPosition + ", "
-                + "(SELECT _id FROM ELENCO"
-                + " WHERE titolo = \'" + titoloNoApex + "\')"
+//                + "(SELECT _id FROM ELENCO"
+//                + " WHERE titolo = \'" + titoloNoApex + "\')"
+                + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
         db.close();
@@ -680,7 +682,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                             text = pattern.matcher(nfdNormalizedString).replaceAll("");
                         } else
-                            text = removeAccents(text);
+                            text = Utility.removeAccents(text);
 
                         if (!aTexts[k][1].contains(text)) {
                             found = false;
@@ -735,82 +737,82 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     }
 
-    public static String removeAccents(String value)
-    {
-        if (MAP_NORM == null || MAP_NORM.size() == 0)
-        {
-            MAP_NORM = new HashMap<>();
-            MAP_NORM.put('À', 'A');
-            MAP_NORM.put('Á', 'A');
-            MAP_NORM.put('Â', 'A');
-            MAP_NORM.put('Ã', 'A');
-            MAP_NORM.put('Ä', 'A');
-            MAP_NORM.put('È', 'E');
-            MAP_NORM.put('É', 'E');
-            MAP_NORM.put('Ê', 'E');
-            MAP_NORM.put('Ë', 'E');
-            MAP_NORM.put('Í', 'I');
-            MAP_NORM.put('Ì', 'I');
-            MAP_NORM.put('Î', 'I');
-            MAP_NORM.put('Ï', 'I');
-            MAP_NORM.put('Ù', 'U');
-            MAP_NORM.put('Ú', 'U');
-            MAP_NORM.put('Û', 'U');
-            MAP_NORM.put('Ü', 'U');
-            MAP_NORM.put('Ò', 'O');
-            MAP_NORM.put('Ó', 'O');
-            MAP_NORM.put('Ô', 'O');
-            MAP_NORM.put('Õ', 'O');
-            MAP_NORM.put('Ö', 'O');
-            MAP_NORM.put('Ñ', 'N');
-            MAP_NORM.put('Ç', 'C');
-            MAP_NORM.put('ª', 'A');
-            MAP_NORM.put('º', 'O');
-            MAP_NORM.put('§', 'S');
-            MAP_NORM.put('³', '3');
-            MAP_NORM.put('²', '2');
-            MAP_NORM.put('¹', '1');
-            MAP_NORM.put('à', 'a');
-            MAP_NORM.put('á', 'a');
-            MAP_NORM.put('â', 'a');
-            MAP_NORM.put('ã', 'a');
-            MAP_NORM.put('ä', 'a');
-            MAP_NORM.put('è', 'e');
-            MAP_NORM.put('é', 'e');
-            MAP_NORM.put('ê', 'e');
-            MAP_NORM.put('ë', 'e');
-            MAP_NORM.put('í', 'i');
-            MAP_NORM.put('ì', 'i');
-            MAP_NORM.put('î', 'i');
-            MAP_NORM.put('ï', 'i');
-            MAP_NORM.put('ù', 'u');
-            MAP_NORM.put('ú', 'u');
-            MAP_NORM.put('û', 'u');
-            MAP_NORM.put('ü', 'u');
-            MAP_NORM.put('ò', 'o');
-            MAP_NORM.put('ó', 'o');
-            MAP_NORM.put('ô', 'o');
-            MAP_NORM.put('õ', 'o');
-            MAP_NORM.put('ö', 'o');
-            MAP_NORM.put('ñ', 'n');
-            MAP_NORM.put('ç', 'c');
-        }
-
-        if (value == null) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder(value);
-
-        for(int i = 0; i < value.length(); i++) {
-            Character c = MAP_NORM.get(sb.charAt(i));
-            if(c != null) {
-                sb.setCharAt(i, c);
-            }
-        }
-
-        return sb.toString();
-    }
+//    public static String removeAccents(String value)
+//    {
+//        if (MAP_NORM == null || MAP_NORM.size() == 0)
+//        {
+//            MAP_NORM = new HashMap<>();
+//            MAP_NORM.put('À', 'A');
+//            MAP_NORM.put('Á', 'A');
+//            MAP_NORM.put('Â', 'A');
+//            MAP_NORM.put('Ã', 'A');
+//            MAP_NORM.put('Ä', 'A');
+//            MAP_NORM.put('È', 'E');
+//            MAP_NORM.put('É', 'E');
+//            MAP_NORM.put('Ê', 'E');
+//            MAP_NORM.put('Ë', 'E');
+//            MAP_NORM.put('Í', 'I');
+//            MAP_NORM.put('Ì', 'I');
+//            MAP_NORM.put('Î', 'I');
+//            MAP_NORM.put('Ï', 'I');
+//            MAP_NORM.put('Ù', 'U');
+//            MAP_NORM.put('Ú', 'U');
+//            MAP_NORM.put('Û', 'U');
+//            MAP_NORM.put('Ü', 'U');
+//            MAP_NORM.put('Ò', 'O');
+//            MAP_NORM.put('Ó', 'O');
+//            MAP_NORM.put('Ô', 'O');
+//            MAP_NORM.put('Õ', 'O');
+//            MAP_NORM.put('Ö', 'O');
+//            MAP_NORM.put('Ñ', 'N');
+//            MAP_NORM.put('Ç', 'C');
+//            MAP_NORM.put('ª', 'A');
+//            MAP_NORM.put('º', 'O');
+//            MAP_NORM.put('§', 'S');
+//            MAP_NORM.put('³', '3');
+//            MAP_NORM.put('²', '2');
+//            MAP_NORM.put('¹', '1');
+//            MAP_NORM.put('à', 'a');
+//            MAP_NORM.put('á', 'a');
+//            MAP_NORM.put('â', 'a');
+//            MAP_NORM.put('ã', 'a');
+//            MAP_NORM.put('ä', 'a');
+//            MAP_NORM.put('è', 'e');
+//            MAP_NORM.put('é', 'e');
+//            MAP_NORM.put('ê', 'e');
+//            MAP_NORM.put('ë', 'e');
+//            MAP_NORM.put('í', 'i');
+//            MAP_NORM.put('ì', 'i');
+//            MAP_NORM.put('î', 'i');
+//            MAP_NORM.put('ï', 'i');
+//            MAP_NORM.put('ù', 'u');
+//            MAP_NORM.put('ú', 'u');
+//            MAP_NORM.put('û', 'u');
+//            MAP_NORM.put('ü', 'u');
+//            MAP_NORM.put('ò', 'o');
+//            MAP_NORM.put('ó', 'o');
+//            MAP_NORM.put('ô', 'o');
+//            MAP_NORM.put('õ', 'o');
+//            MAP_NORM.put('ö', 'o');
+//            MAP_NORM.put('ñ', 'n');
+//            MAP_NORM.put('ç', 'c');
+//        }
+//
+//        if (value == null) {
+//            return "";
+//        }
+//
+//        StringBuilder sb = new StringBuilder(value);
+//
+//        for(int i = 0; i < value.length(); i++) {
+//            Character c = MAP_NORM.get(sb.charAt(i));
+//            if(c != null) {
+//                sb.setCharAt(i, c);
+//            }
+//        }
+//
+//        return sb.toString();
+//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
@@ -833,10 +835,11 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 break;
             case "AVANZATA_REPLACE_2":
                 db = listaCanti.getReadableDatabase();
-                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                 String sql = "UPDATE CUST_LISTS "
-                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+//                        + "SET id_canto = (SELECT _id  FROM ELENCO"
+//                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+                        + " SET id_canto = " + idDaAgg
                         + "WHERE _id = " + idListaDaAgg
                         + "  AND position = " + posizioneDaAgg;
                 db.execSQL(sql);

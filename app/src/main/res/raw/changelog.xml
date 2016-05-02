@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.0.1" changeDate="23 April 2015">
-        <changelogimprovement>Backup/restore all your preferences and settings on GDrive</changelogimprovement>
-        <changelogimprovement>Refactored audio management, with notification and lockscreen controls (may depend on Android version) and Android Wear controls</changelogimprovement>
-        <changelogbug>Possible fix for crashes on Samsung and Wiko devices with Android 4.2.2</changelogbug>
-        <changelogtext>Various songs fixed</changelogtext>
-        <changelogtext>Expanded all songs, removing "2 times" or "repeat"</changelogtext>
+    <changelogversion versionName="4.1.0" changeDate="XX May 2015">
+        <changelogimprovement>Added Android N compability</changelogimprovement>
+        <changelogimprovement>Improved result of fast search function</changelogimprovement>
     </changelogversion>
 
 </changelog>

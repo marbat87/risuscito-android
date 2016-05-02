@@ -122,7 +122,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     rootView.findViewById(R.id.search_no_results)
                             .setVisibility(View.GONE);
 
-                    String titolo = Utility.duplicaApostrofi(s.toString());
+//                    String titolo = Utility.duplicaApostrofi(s.toString());
+                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
+                    String titoloTemp;
+                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
 
                     // crea un manipolatore per il Database in modalità READ
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -130,8 +133,9 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     // lancia la ricerca di tutti i titoli presenti in DB e li
                     // dispone in ordine alfabetico
                     String query = "SELECT titolo, color, pagina, _id, source"
-                            + "		FROM ELENCO" + "		WHERE titolo like '%"
-                            + titolo + "%'" + "		ORDER BY titolo ASC";
+//                            + "		FROM ELENCO" + "		WHERE titolo like '%"
+//                            + titolo + "%'" + "		ORDER BY titolo ASC";
+                            + "		FROM ELENCO ORDER BY titolo ASC";
                     Cursor lista = db.rawQuery(query, null);
 
                     // recupera il numero di record trovati
@@ -141,11 +145,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-                        titoli.add(new CantoRecycled(lista.getString(0)
-                                , lista.getInt(2)
-                                , lista.getString(1)
-                                , lista.getInt(3)
-                                , lista.getString(4)));
+                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+                        if (titoloTemp.contains(stringa))
+                            titoli.add(new CantoRecycled(lista.getString(0)
+                                    , lista.getInt(2)
+                                    , lista.getString(1)
+                                    , lista.getInt(3)
+                                    , lista.getString(4)));
                         lista.moveToNext();
                     }
 
@@ -223,7 +229,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreateView: RESTORING");
-            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
+//            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
             idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
             idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
@@ -245,7 +251,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("titoloDaAgg", titoloDaAgg);
+//        outState.putString("titoloDaAgg", titoloDaAgg);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
         outState.putInt("idListaClick", idListaClick);
@@ -295,8 +301,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
             //to hide soft keyboard
             if (searchPar != null)
-            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
         }
     }
 
@@ -311,8 +317,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title))
-                .getText().toString();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)) .getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)) .getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -337,46 +343,46 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:
-                    addToFavorites(titoloDaAgg);
+                    addToFavorites();
                     return true;
                 case R.id.add_to_p_iniziale:
-                    addToListaNoDup(1, 1, titoloDaAgg);
+                    addToListaNoDup(1, 1);
                     return true;
                 case R.id.add_to_p_prima:
-                    addToListaNoDup(1, 2, titoloDaAgg);
+                    addToListaNoDup(1, 2);
                     return true;
                 case R.id.add_to_p_seconda:
-                    addToListaNoDup(1, 3, titoloDaAgg);
+                    addToListaNoDup(1, 3);
                     return true;
                 case R.id.add_to_p_terza:
-                    addToListaNoDup(1, 4, titoloDaAgg);
+                    addToListaNoDup(1, 4);
                     return true;
                 case R.id.add_to_p_pace:
-                    addToListaNoDup(1, 6, titoloDaAgg);
+                    addToListaNoDup(1, 6);
                     return true;
                 case R.id.add_to_p_fine:
-                    addToListaNoDup(1, 5, titoloDaAgg);
+                    addToListaNoDup(1, 5);
                     return true;
                 case R.id.add_to_e_iniziale:
-                    addToListaNoDup(2, 1, titoloDaAgg);
+                    addToListaNoDup(2, 1);
                     return true;
                 case R.id.add_to_e_seconda:
-                    addToListaNoDup(2, 6, titoloDaAgg);
+                    addToListaNoDup(2, 6);
                     return true;
                 case R.id.add_to_e_pace:
-                    addToListaNoDup(2, 2, titoloDaAgg);
+                    addToListaNoDup(2, 2);
                     return true;
                 case R.id.add_to_e_santo:
-                    addToListaNoDup(2, 7, titoloDaAgg);
+                    addToListaNoDup(2, 7);
                     return true;
                 case R.id.add_to_e_pane:
-                    addToListaDup(2, 3, titoloDaAgg);
+                    addToListaDup(2, 3);
                     return true;
                 case R.id.add_to_e_vino:
-                    addToListaDup(2, 4, titoloDaAgg);
+                    addToListaDup(2, 4);
                     return true;
                 case R.id.add_to_e_fine:
-                    addToListaNoDup(2, 5, titoloDaAgg);
+                    addToListaNoDup(2, 5);
                     return true;
                 default:
                     idListaClick = item.getGroupId();
@@ -385,15 +391,15 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                         idListaClick -= 100;
 
                         //recupero ID del canto cliccato
-                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
-                        String query = "SELECT _id" +
-                                "		FROM ELENCO" +
-                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-                        Cursor cursor = db.rawQuery(query, null);
-                        cursor.moveToFirst();
-                        idDaAgg = cursor.getInt(0);
-                        cursor.close();
+//                        String query = "SELECT _id" +
+//                                "		FROM ELENCO" +
+//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
+//                        Cursor cursor = db.rawQuery(query, null);
+//                        cursor.moveToFirst();
+//                        idDaAgg = cursor.getInt(0);
+//                        cursor.close();
 
                         if (listePers[idListaClick]
                                 .getCantoPosizione(idPosizioneClick).equals("")) {
@@ -416,11 +422,11 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 //                                prevOrientation = getActivity().getRequestedOrientation();
 //                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
-                                query = "SELECT titolo" +
+                                String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
                                         "		WHERE _id = "
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
-                                cursor = db.rawQuery(query, null);
+                                Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
 //                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
 //                                        .title(R.string.dialog_replace_title)
@@ -467,7 +473,16 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 //                                    }
 //                                });
 //                                dialog.setCancelable(false);
-
+                                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), RicercaVeloceFragment.this, "VELOCE_REPLACE")
+                                        .title(R.string.dialog_replace_title)
+                                        .content(getString(R.string.dialog_present_yet) + " "
+                                                + cursor.getString(0)
+                                                + getString(R.string.dialog_wonna_replace))
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
+                                        .show();
+                                cursor.close();
+                                db.close();
                                 cursor.close();
                                 db.close();
                             }
@@ -482,11 +497,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     }
 
     // aggiunge il canto premuto ai preferiti
-    public void addToFavorites(String titolo) {
+    public void addToFavorites() {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-        String sql = "UPDATE ELENCO" + "  SET favourite = 1"
-                + "  WHERE titolo =  \'" + titoloNoApex + "\'";
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+        String sql = "UPDATE ELENCO"
+                + "  SET favourite = 1"
+//                + "  WHERE titolo =  \'" + titoloNoApex + "\'";
+                + "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
@@ -495,16 +512,18 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
     // aggiunge il canto premuto ad una lista e in una posizione che ammetta
     // duplicati
-    public void addToListaDup(int idLista, int listPosition, String titolo) {
+    public void addToListaDup(int idLista, int listPosition) {
 
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql += "VALUES (" + idLista + ", " + listPosition + ", "
-                + "(SELECT _id FROM ELENCO" + " WHERE titolo = \'"
-                + titoloNoApex + "\')" + ", CURRENT_TIMESTAMP)";
+//                + "(SELECT _id FROM ELENCO" + " WHERE titolo = \'"
+//                + titoloNoApex + "\')"
+                + idDaAgg
+                + ", CURRENT_TIMESTAMP)";
 
         try {
             db.execSQL(sql);
@@ -522,9 +541,9 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
     // aggiunge il canto premuto ad una lista e in una posizione che NON ammetta
     // duplicati
-    public void addToListaNoDup(int idLista, int listPosition, String titolo) {
+    public void addToListaNoDup(int idLista, int listPosition) {
 
-        String titoloNoApex = Utility.duplicaApostrofi(titolo);
+//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -543,7 +562,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             lista.close();
             db.close();
 
-            if (titolo.equalsIgnoreCase(titoloPresente)) {
+            if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
                 Snackbar.make(rootView
                         , R.string.present_yet
                         , Snackbar.LENGTH_SHORT)
@@ -613,8 +632,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         lista.close();
 
         String sql = "INSERT INTO CUST_LISTS " + "VALUES (" + idLista + ", "
-                + listPosition + ", " + "(SELECT _id FROM ELENCO"
-                + " WHERE titolo = \'" + titoloNoApex + "\')"
+                + listPosition + ", "
+//                + "(SELECT _id FROM ELENCO"
+//                + " WHERE titolo = \'" + titoloNoApex + "\')"
+                + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
         db.close();
@@ -647,12 +668,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 break;
             case "VELOCE_REPLACE_2":
                 db = listaCanti.getReadableDatabase();
-                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
+//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                 String sql = "UPDATE CUST_LISTS "
-                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-                        + "WHERE _id = " + idListaDaAgg + "  AND position = "
-                        + posizioneDaAgg;
+//                        + "SET id_canto = (SELECT _id  FROM ELENCO"
+//                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
+                        + " SET id_canto = " + idDaAgg
+                        + "WHERE _id = " + idListaDaAgg
+                        + "  AND position = " + posizioneDaAgg;
                 db.execSQL(sql);
                 db.close();
                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)

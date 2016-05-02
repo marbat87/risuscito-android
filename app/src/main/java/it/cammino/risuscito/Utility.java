@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Utility {
@@ -255,6 +257,84 @@ public class Utility {
 
     public static boolean isUpperCase(char ch) {
         return ch >= 'A' && ch <= 'Z';
+    }
+
+    private static Map<Character, Character> MAP_NORM;
+
+    public static String removeAccents(String value) {
+
+        if (MAP_NORM == null || MAP_NORM.size() == 0)
+        {
+            MAP_NORM = new HashMap<>();
+            MAP_NORM.put('\u00C1', 'A');
+            MAP_NORM.put('\u00C0', 'A');
+            MAP_NORM.put('\u00C2', 'A');
+            MAP_NORM.put('\u00C3', 'A');
+            MAP_NORM.put('\u00C4', 'A');
+            MAP_NORM.put('\u00C8', 'E');
+            MAP_NORM.put('\u00C9', 'E');
+            MAP_NORM.put('\u00CA', 'E');
+            MAP_NORM.put('\u00CB', 'E');
+            MAP_NORM.put('\u00CD', 'I');
+            MAP_NORM.put('\u00CC', 'I');
+            MAP_NORM.put('\u00CE', 'I');
+            MAP_NORM.put('\u00CF', 'I');
+            MAP_NORM.put('\u00D9', 'U');
+            MAP_NORM.put('\u00DA', 'U');
+            MAP_NORM.put('\u00DB', 'U');
+            MAP_NORM.put('\u00DC', 'U');
+            MAP_NORM.put('\u00D2', 'O');
+            MAP_NORM.put('\u00D3', 'O');
+            MAP_NORM.put('\u00D4', 'O');
+            MAP_NORM.put('\u00D5', 'O');
+            MAP_NORM.put('\u00D6', 'O');
+            MAP_NORM.put('\u00D1', 'N');
+            MAP_NORM.put('\u00C7', 'C');
+            MAP_NORM.put('\u00AA', 'A');
+            MAP_NORM.put('\u00BA', 'O');
+            MAP_NORM.put('\u00A7', 'S');
+            MAP_NORM.put('\u00B3', '3');
+            MAP_NORM.put('\u00B2', '2');
+            MAP_NORM.put('\u00B9', '1');
+            MAP_NORM.put('\u00E0', 'a');
+            MAP_NORM.put('\u00E1', 'a');
+            MAP_NORM.put('\u00E2', 'a');
+            MAP_NORM.put('\u00E3', 'a');
+            MAP_NORM.put('\u00E4', 'a');
+            MAP_NORM.put('\u00E8', 'e');
+            MAP_NORM.put('\u00E9', 'e');
+            MAP_NORM.put('\u00EA', 'e');
+            MAP_NORM.put('\u00EB', 'e');
+            MAP_NORM.put('\u00ED', 'i');
+            MAP_NORM.put('\u00EC', 'i');
+            MAP_NORM.put('\u00EE', 'i');
+            MAP_NORM.put('\u00EF', 'i');
+            MAP_NORM.put('\u00F9', 'u');
+            MAP_NORM.put('\u00FA', 'u');
+            MAP_NORM.put('\u00FB', 'u');
+            MAP_NORM.put('\u00FC', 'u');
+            MAP_NORM.put('\u00F2', 'o');
+            MAP_NORM.put('\u00F3', 'o');
+            MAP_NORM.put('\u00F4', 'o');
+            MAP_NORM.put('\u00F5', 'o');
+            MAP_NORM.put('\u00F6', 'o');
+            MAP_NORM.put('\u00F1', 'n');
+            MAP_NORM.put('\u00E7', 'c');
+        }
+
+        if (value == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder(value);
+
+        for(int i = 0; i < value.length(); i++) {
+            Character c = MAP_NORM.get(sb.charAt(i));
+            if(c != null)
+                sb.setCharAt(i, c);
+        }
+
+        return sb.toString();
     }
 
 }
