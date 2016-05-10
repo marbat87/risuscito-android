@@ -11,7 +11,7 @@
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:elevation="@dimen/toolbar_elevation">
+        android:elevation="@dimen/design_appbar_elevation">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
@@ -118,9 +118,7 @@
         android:layout_width="wrap_content"
         android:layout_marginEnd="@dimen/toolbar_fab_margin_lateral"
         android:layout_marginRight="@dimen/toolbar_fab_margin_lateral"
-        risuscito:elevation="@dimen/design_fab_elevation"
         risuscito:layout_anchor="@id/appbarlayout"
-        risuscito:layout_anchorGravity="bottom|right|end"
-        risuscito:pressedTranslationZ="@dimen/design_fab_translation_z_pressed" />
+        risuscito:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -41,7 +41,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.github.alexkolpa.fabtoolbar.FabToolbar;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import java.io.BufferedReader;
@@ -62,6 +61,7 @@ import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.slides.IntroPaginaRender;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback {
 

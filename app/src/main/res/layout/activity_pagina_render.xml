@@ -151,7 +151,7 @@
             tools:ignore="RtlSymmetry"
             android:elevation="@dimen/design_appbar_elevation" />
 
-        <com.github.alexkolpa.fabtoolbar.FabToolbar
+        <it.marbat.fabtoolbar.lib.FabToolbar
             android:id="@+id/fab_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
                 risuscito:srcCompat="@drawable/fab_add_to_favorites"
                 android:soundEffectsEnabled="true" />
 
-        </com.github.alexkolpa.fabtoolbar.FabToolbar>
+        </it.marbat.fabtoolbar.lib.FabToolbar>
 
         <View
             android:layout_width="match_parent"

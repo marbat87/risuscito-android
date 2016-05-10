@@ -10,7 +10,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/toolbar_elevation"
+        android:elevation="@dimen/design_appbar_elevation"
         android:theme="@style/ActionBarThemeOverlay">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
@@ -48,7 +48,7 @@
         tools:ignore="RtlSymmetry"
         android:elevation="@dimen/design_appbar_elevation" />
 
-    <com.github.alexkolpa.fabtoolbar.FabToolbar
+    <it.marbat.fabtoolbar.lib.FabToolbar
         android:id="@+id/fab_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,6 +123,6 @@
             risuscito:srcCompat="@drawable/ic_share_48dp"
             android:soundEffectsEnabled="true" />
 
-    </com.github.alexkolpa.fabtoolbar.FabToolbar>
+    </it.marbat.fabtoolbar.lib.FabToolbar>
 
 </android.support.design.widget.CoordinatorLayout>

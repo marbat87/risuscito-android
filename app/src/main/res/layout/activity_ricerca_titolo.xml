@@ -79,6 +79,8 @@
         android:textColor="@android:color/white"
         fontPath="fonts/Roboto-Medium.ttf"
         style="@style/Widget.AppCompat.Button.Colored"
+        risuscito:elevation="@dimen/raised_button_default_elevation"
+        risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
         tools:ignore="MissingPrefix" />
 
     <TextView

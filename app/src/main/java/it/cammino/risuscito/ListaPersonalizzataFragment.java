@@ -29,8 +29,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.alexkolpa.fabtoolbar.FabToolbar;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +38,7 @@ import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class ListaPersonalizzataFragment extends Fragment {
 

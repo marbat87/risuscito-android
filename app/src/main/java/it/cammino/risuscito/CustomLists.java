@@ -28,13 +28,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.alexkolpa.fabtoolbar.FabToolbar;
 
 import java.util.Locale;
 
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class CustomLists extends Fragment implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 

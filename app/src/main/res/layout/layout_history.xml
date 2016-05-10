@@ -55,7 +55,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/toolbar_elevation"
+        android:elevation="@dimen/design_appbar_elevation"
         android:theme="@style/ActionBarThemeOverlay">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
@@ -71,8 +71,6 @@
         android:layout_marginBottom="@dimen/fab_margin_bottom"
         android:layout_marginEnd="@dimen/fab_margin_end"
         android:layout_marginRight="@dimen/fab_margin_end"
-        risuscito:elevation="@dimen/design_fab_elevation"
-        risuscito:pressedTranslationZ="@dimen/design_fab_translation_z_pressed"
         risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

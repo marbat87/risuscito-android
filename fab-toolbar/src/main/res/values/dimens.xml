@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="toolbar_height">72dp</dimen>
-    <!--<dimen name="tb_button_margin_bottom">-11dp</dimen>-->
-    <dimen name="tb_button_margin_end">4dp</dimen>
-    <dimen name="tb_button_margin_top">-17dp</dimen>
-    <dimen name="elevation">16dp</dimen>
-</resources>

@@ -34,8 +34,8 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') { transitive = true }
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
-    compile project(':fab-toolbar')
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.0'
+    compile 'it.marbat.fabtoolbar.lib:lib:1.0.1'
     compile 'com.github.paolorotolo:appintro:3.1.0'
     compile 'com.turingtechnologies.materialscrollbar:lib:8.1.0'
     compile 'com.nononsenseapps:filepicker:2.5.2'
