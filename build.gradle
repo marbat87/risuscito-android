@@ -16,8 +16,11 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url "https://dl.bintray.com/marbat87/maven" }
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 
 // Load dependencies
