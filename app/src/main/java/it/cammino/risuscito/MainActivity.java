@@ -582,6 +582,22 @@ public class MainActivity extends ThemeableActivity
         });
     }
 
+    public void setupToolbar(View toolbar) {
+        Toolbar mActionToolbar = (Toolbar) toolbar;
+        setSupportActionBar(mActionToolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle("");
+        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         item.setChecked(true);
