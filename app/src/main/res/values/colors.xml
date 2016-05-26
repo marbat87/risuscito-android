@@ -83,4 +83,6 @@
     <color name="icon_ative_black">#8A000000</color>
     <color name="icon_inactive_black">#42000000</color>
 
+    <color name="intro_background">#00BCD4</color>
+
 </resources> 

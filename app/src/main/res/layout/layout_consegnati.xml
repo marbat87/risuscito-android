@@ -1,154 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
+<!--android:id="@+id/main_content"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/risuscito_toolbar" />
-
-    <io.codetail.widget.RevealFrameLayout
-        android:layout_gravity="top"
-        android:layout_marginTop="?actionBarSize"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/choose_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1.0">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/chooseRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="true"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:id="@+id/bottom_bar"
-            android:layout_width="match_parent"
-            android:background="@color/theme_primary"
-            android:divider="?attr/dividerVertical"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:gravity="center_vertical|end"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/select_none"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="center"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
-                android:soundEffectsEnabled="true"
-                tools:ignore="MissingPrefix" />
-
-            <ImageButton
-                android:id="@+id/select_all"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="center"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
-                android:soundEffectsEnabled="true"
-                tools:ignore="MissingPrefix" />
-
-            <ImageButton
-                android:id="@+id/cancel_change"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/ic_undo_24dp"
-                android:soundEffectsEnabled="true"
-                tools:ignore="MissingPrefix" />
-
-            <ImageButton
-                android:id="@+id/confirm_changes"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/ic_save_24dp"
-                android:soundEffectsEnabled="true"
-                tools:ignore="MissingPrefix" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/consegnati_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/cantiRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:fadeScrollbars="true" />
-
-            <RelativeLayout
-                android:layout_gravity="center"
-                android:id="@+id/no_consegnati"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/consegnati_image"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="120dip"
-                    android:layout_height="120dip"
-                    android:src="@drawable/sad_book"/>
-
-                <TextView
-                    android:id="@+id/consegnati_text"
-                    android:layout_below="@id/consegnati_image"
-                    android:layout_marginLeft="@dimen/text_min_margin"
-                    android:layout_marginRight="@dimen/text_min_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center_horizontal"
-                    android:textColor="?android:textColorSecondary"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_consegnati"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    tools:ignore="MissingPrefix"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-            </RelativeLayout>
-
-        </FrameLayout>
-
-    </io.codetail.widget.RevealFrameLayout>
+    <!--<include layout="@layout/risuscito_toolbar" />-->
 
     <View
-        android:layout_marginTop="?actionBarSize"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="?toolbar_shadow" />
 
-</FrameLayout>
+    <!--<io.codetail.widget.RevealFrameLayout-->
+    <!--android:layout_gravity="top"-->
+    <!--android:layout_marginTop="?actionBarSize"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <!--<LinearLayout-->
+    <!--android:id="@+id/choose_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--android:weightSum="1.0">-->
+
+    <android.support.v7.widget.RecyclerView
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/chooseRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"/>
+
+    <LinearLayout
+        risuscito:layout_behavior="it.cammino.risuscito.ui.QuickReturnFooterBehavior"
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:divider="?attr/dividerVertical"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/select_none"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
+            android:soundEffectsEnabled="true"
+            tools:ignore="MissingPrefix" />
+
+        <ImageButton
+            android:id="@+id/select_all"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
+            android:soundEffectsEnabled="true"
+            tools:ignore="MissingPrefix" />
+
+        <ImageButton
+            android:id="@+id/cancel_change"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitCenter"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            risuscito:srcCompat="@drawable/ic_undo_24dp"
+            android:soundEffectsEnabled="true"
+            tools:ignore="MissingPrefix" />
+
+        <ImageButton
+            android:id="@+id/confirm_changes"
+            android:layout_width="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:paddingLeft="@dimen/button_playbar_padding"
+            android:paddingRight="@dimen/button_playbar_padding"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitCenter"
+            android:theme="@style/ActionBarThemeOverlay"
+            android:background="?attr/customSelectorRound"
+            risuscito:srcCompat="@drawable/ic_save_24dp"
+            android:soundEffectsEnabled="true"
+            tools:ignore="MissingPrefix" />
+
+    </LinearLayout>
+
+    <!--</LinearLayout>-->
+
+    <!--<FrameLayout-->
+    <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!--android:id="@+id/consegnati_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cantiRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:id="@+id/no_consegnati"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/consegnati_image"
+            android:layout_centerHorizontal="true"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:src="@drawable/sad_book"/>
+
+        <TextView
+            android:id="@+id/consegnati_text"
+            android:layout_below="@id/consegnati_image"
+            android:layout_marginLeft="@dimen/text_min_margin"
+            android:layout_marginRight="@dimen/text_min_margin"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:textColor="?android:textColorSecondary"
+            android:layout_height="wrap_content"
+            android:text="@string/no_consegnati"
+            fontPath="fonts/Roboto-Light.ttf"
+            tools:ignore="MissingPrefix"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    </RelativeLayout>
+
+    <!--</FrameLayout>-->
+
+    <!--</io.codetail.widget.RevealFrameLayout>-->
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/design_appbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
+
+        <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_edit_lista"
+        risuscito:srcCompat="@drawable/ic_edit_white_24dp"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_end"
+        android:layout_marginRight="@dimen/fab_margin_end"
+        risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
+
+</android.support.design.widget.CoordinatorLayout>
+    <!--</FrameLayout>-->

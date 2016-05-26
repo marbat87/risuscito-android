@@ -3,14 +3,11 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -40,6 +37,7 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.util.ArrayList;
 
@@ -47,7 +45,7 @@ import it.cammino.risuscito.adapters.DraggableSwipeableAdapter;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.DraggableItem;
-import it.cammino.risuscito.slides.IntroCreaLista;
+import it.cammino.risuscito.slides.IntroCreaListaNew;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class CreaListaActivity extends ThemeableActivity implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -77,8 +75,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private EditText textfieldTitle;
 
     private int positionToRename;
+    private WelcomeScreenHelper mWelcomeScreen;
 
-    private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
+//    private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
 
     private final String TEMP_TITLE = "temp_title";
 
@@ -385,16 +384,18 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         if (elementi.size() > 0)
             findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
 
-        if(PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN, true)) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(CreaListaActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.apply();
-            showHelp();
-        }
+        mWelcomeScreen = new WelcomeScreenHelper(this, IntroCreaListaNew.class);
+        mWelcomeScreen.show(savedInstanceState);
+//        if(PreferenceManager
+//                .getDefaultSharedPreferences(this)
+//                .getBoolean(PREF_FIRST_OPEN, true)) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(CreaListaActivity.this)
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            editor.apply();
+//            showHelp();
+//        }
 
         findViewById(R.id.textTitleDescription).requestFocus();
 
@@ -464,7 +465,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
             case R.id.action_save_list:
                 if (saveList()) {
@@ -689,6 +691,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("positionToRename", positionToRename);
+        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     public static class RetainedFragment extends Fragment {
@@ -722,10 +725,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         }
     }
 
-    private void showHelp() {
-        Intent intent = new Intent(CreaListaActivity.this, IntroCreaLista.class);
-        startActivity(intent);
-    }
+//    private void showHelp() {
+//        Intent intent = new Intent(CreaListaActivity.this, IntroCreaLista.class);
+//        startActivity(intent);
+//    }
 
     @Override
     public void onPositive(@NonNull String tag, @NonNull MaterialDialog dialog) {

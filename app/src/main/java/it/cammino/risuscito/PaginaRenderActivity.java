@@ -42,6 +42,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.nononsenseapps.filepicker.FilePickerActivity;
+import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +60,7 @@ import it.cammino.risuscito.filepicker.ThemedFilePickerActivity;
 import it.cammino.risuscito.music.MusicService;
 import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
-import it.cammino.risuscito.slides.IntroPaginaRender;
+import it.cammino.risuscito.slides.IntroPaginaRenderNew;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.marbat.fabtoolbar.lib.FabToolbar;
 
@@ -89,6 +90,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String barreSalvato;
     private static String barreCambio;
     private String personalUrl, localUrl,  playUrl;
+    private WelcomeScreenHelper mWelcomeScreen;
 
     //    enum MP_State {
 //        Idle, Initialized, Prepared, Started, Paused,
@@ -105,7 +107,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private int defaultScrollX = 0;
     private int defaultScrollY = 0;
 
-    private static final String PREF_FIRST_OPEN_NEW = "prima_apertura_audio";
+//    private static final String PREF_FIRST_OPEN_NEW = "prima_apertura_audio";
 
     private Handler mHandler = new Handler();
     final Runnable mScrollDown = new Runnable() {
@@ -1431,18 +1433,20 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
 
-        boolean showHelp = PreferenceManager
-                .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                .getBoolean(PREF_FIRST_OPEN_NEW, true);
-
-        if(showHelp) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
-            editor.apply();
-            showHelp();
-        }
+        mWelcomeScreen = new WelcomeScreenHelper(this, IntroPaginaRenderNew.class);
+        mWelcomeScreen.show(savedInstanceState);
+//        boolean showHelp = PreferenceManager
+//                .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                .getBoolean(PREF_FIRST_OPEN_NEW, true);
+//
+//        if(showHelp) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN_NEW, false);
+//            editor.apply();
+//            showHelp();
+//        }
 
         if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
             SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").setmCallback(PaginaRenderActivity.this);
@@ -1554,7 +1558,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 startService(i);
                 return true;
             case R.id.action_help_canto:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
             case R.id.action_save_tab:
                 if (!notaSalvata.equalsIgnoreCase(notaCambio)) {
@@ -1941,6 +1946,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         outState.putSerializable("mediaPlayerState", mediaPlayerState);
         outState.putBoolean("playSelected", isPlaying());
         outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
+        mWelcomeScreen.onSaveInstanceState(outState);
 //        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
     }
 
@@ -2579,10 +2585,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
 
-    private void showHelp() {
-        Intent intent = new Intent(PaginaRenderActivity.this, IntroPaginaRender.class);
-        startActivity(intent);
-    }
+//    private void showHelp() {
+//        Intent intent = new Intent(PaginaRenderActivity.this, IntroPaginaRender.class);
+//        startActivity(intent);
+//    }
 
 //    private class DownloadTask extends AsyncTask<String, Integer, String> {
 //

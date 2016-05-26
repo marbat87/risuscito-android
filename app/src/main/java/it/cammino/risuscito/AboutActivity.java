@@ -1,13 +1,8 @@
 package it.cammino.risuscito;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +27,7 @@ public class AboutActivity extends Fragment {
 //		((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
 		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsingToolbarLayout);
-		collapsingToolbarLayout.setTitle(getResources().getString(R.string.title_activity_about));
+//		collapsingToolbarLayout.setTitle(getResources().getString(R.string.title_activity_about));
 		collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
 		return rootView;

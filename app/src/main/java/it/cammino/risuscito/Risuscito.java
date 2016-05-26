@@ -1,12 +1,10 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,16 +21,18 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.SignInButton;
+import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.slides.IntroMain;
+import it.cammino.risuscito.slides.IntroMainNew;
 
 public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
-    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
+//    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
 //    private int prevOrientation;
+    private WelcomeScreenHelper mWelcomeScreen;
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -119,16 +119,18 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 //                }
 //            });
 //            dialog.setCancelable(false);
-            if(PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .getBoolean(FIRST_OPEN_MENU, true)) {
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(getActivity())
-                        .edit();
-                editor.putBoolean(FIRST_OPEN_MENU, false);
-                editor.apply();
-                showHelp();
-            }
+            mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
+            mWelcomeScreen.show(savedInstanceState);
+//            if(PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .getBoolean(FIRST_OPEN_MENU, true)) {
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .edit();
+//                editor.putBoolean(FIRST_OPEN_MENU, false);
+//                editor.apply();
+//                showHelp();
+//            }
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
@@ -154,23 +156,26 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
             editor.apply();
         }
         else {
-            if(PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .getBoolean(FIRST_OPEN_MENU, true)) {
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(getActivity())
-                        .edit();
-                editor.putBoolean(FIRST_OPEN_MENU, false);
-                editor.apply();
-                final Runnable mMyRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        showHelp();
-                    }
-                };
-                Handler myHandler = new Handler();
-                myHandler.postDelayed(mMyRunnable, 1000);
-            }
+            mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
+            mWelcomeScreen.show(savedInstanceState);
+//            if(PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .getBoolean(FIRST_OPEN_MENU, true)) {
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .edit();
+//                editor.putBoolean(FIRST_OPEN_MENU, false);
+//                editor.apply();
+////                final Runnable mMyRunnable = new Runnable() {
+////                    @Override
+////                    public void run() {
+////                        showHelp();
+////                    }
+////                };
+////                Handler myHandler = new Handler();
+////                myHandler.postDelayed(mMyRunnable, 1000);
+//
+//            }
         }
 
         PaginaRenderActivity.notaCambio = null;
@@ -222,15 +227,24 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
         }
         return false;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mWelcomeScreen.onSaveInstanceState(outState);
+    }
+
     private void showHelp() {
-        Intent intent = new Intent(getActivity(), IntroMain.class);
-        startActivity(intent);
+//        Intent intent = new Intent(getActivity(), IntroMain.class);
+//        startActivity(intent);
+        WelcomeScreenHelper welcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
+        welcomeScreen.forceShow();
     }
 
     @Override

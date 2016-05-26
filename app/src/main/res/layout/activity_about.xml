@@ -14,9 +14,10 @@
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            risuscito:title="@string/title_activity_about"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
-            risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
+            risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
             <ImageView
                 android:id="@+id/image"
@@ -35,8 +36,10 @@
                 risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
                 risuscito:contentInsetStart="72dp"
                 android:layout_width="match_parent"
+                android:minHeight="?attr/actionBarSize"
                 android:background="@android:color/transparent"
-                risuscito:layout_collapseMode="pin" />
+                risuscito:layout_collapseMode="pin"
+                android:fitsSystemWindows="true"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

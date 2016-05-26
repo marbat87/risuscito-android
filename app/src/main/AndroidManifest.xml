@@ -44,10 +44,14 @@
             android:label="@string/app_name"
             android:theme="@style/FilePickerTheme">
         </activity>
-        <activity android:name="it.cammino.risuscito.slides.IntroPaginaRender" android:label=""/>
-        <activity android:name="it.cammino.risuscito.slides.IntroConsegnati" android:label=""/>
-        <activity android:name="it.cammino.risuscito.slides.IntroCreaLista" android:label=""/>
-        <activity android:name="it.cammino.risuscito.slides.IntroMain" android:label=""/>
+        <!--<activity android:name="it.cammino.risuscito.slides.IntroPaginaRender" android:label=""/>-->
+        <!--<activity android:name="it.cammino.risuscito.slides.IntroConsegnati" android:label=""/>-->
+        <!--<activity android:name="it.cammino.risuscito.slides.IntroCreaLista" android:label=""/>-->
+        <!--<activity android:name="it.cammino.risuscito.slides.IntroMain" android:label=""/>-->
+        <activity android:name="it.cammino.risuscito.slides.IntroMainNew" android:label="" android:theme="@style/WelcomeScreenTheme"/>
+        <activity android:name="it.cammino.risuscito.slides.IntroPaginaRenderNew" android:label="" android:theme="@style/WelcomeScreenTheme"/>
+        <activity android:name="it.cammino.risuscito.slides.IntroCreaListaNew" android:label="" android:theme="@style/WelcomeScreenTheme"/>
+        <activity android:name="it.cammino.risuscito.slides.IntroConsegnatiNew" android:label="" android:theme="@style/WelcomeScreenTheme"/>
 
         <service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">
             <intent-filter>

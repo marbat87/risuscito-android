@@ -6,16 +6,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.stephentuso.welcome.WelcomeScreenHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,8 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
-import it.cammino.risuscito.slides.IntroConsegnati;
+import it.cammino.risuscito.slides.IntroConsegnatiNew;
+import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
@@ -52,14 +55,15 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private View rootView;
     private CantoRecyclerAdapter cantoAdapter;
     private CantoSelezionabileAdapter selectableAdapter;
+    private FloatingActionButton mFab;
 
     private static final String EDIT_MODE = "editMode";
     public static final String TITOLI_CHOOSE = "titoliChoose";
 
-    public static final int CIRCLE_DURATION = 500;
+//    public static final int CIRCLE_DURATION = 500;
 
     private boolean editMode;
-//    private int prevOrientation;
+    //    private int prevOrientation;
 //    private MaterialDialog mProgressDialog;
     private int totalConsegnati;
 
@@ -68,6 +72,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
+    private WelcomeScreenHelper mWelcomeScreen;
 
     private BroadcastReceiver positionBRec = new BroadcastReceiver() {
         @Override
@@ -96,12 +101,18 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
                     SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
                 updateConsegnatiList(true);
-                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-                View myView = rootView.findViewById(R.id.consegnati_view);
-                if (LUtils.hasL())
-                    enterReveal(myView, 1);
-                else
-                    myView.setVisibility(View.VISIBLE);
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//                getFab().show();
+                showFab();
+//                View myView = rootView.findViewById(R.id.consegnati_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 1);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -135,13 +146,25 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         }
 
         if (editMode) {
-            rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
+//            getFab().hide();
+            hideFab();
+
             updateChooseList(false);
         }
         else {
-            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//            getFab().show();
+            showFab();
             updateConsegnatiList(true);
         }
 
@@ -173,13 +196,18 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             public void onClick(View view) {
                 editMode = false;
                 updateConsegnatiList(true);
-                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-                View myView = rootView.findViewById(R.id.consegnati_view);
-                if (LUtils.hasL())
-                    enterReveal(myView, 1);
-                else
-                    myView.setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//                getFab().show();
+                showFab();
+//                View myView = rootView.findViewById(R.id.consegnati_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 1);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
 //                myView.setVisibility(View.VISIBLE);
 //
 //                // get the center for the clipping circle
@@ -229,16 +257,33 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //                })
 //                .build();
 
-        if(PreferenceManager
-                .getDefaultSharedPreferences(getActivity())
-                .getBoolean(PREF_FIRST_OPEN, true)) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.apply();
-            showHelp();
-        }
+        rootView.findViewById(R.id.fab_edit_lista).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editMode = true;
+                updateChooseList(true);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+//                getFab().hide();
+                hideFab();
+            }
+        });
+
+        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroConsegnatiNew.class);
+        mWelcomeScreen.show(savedInstanceState);
+//        if(PreferenceManager
+//                .getDefaultSharedPreferences(getActivity())
+//                .getBoolean(PREF_FIRST_OPEN, true)) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            editor.apply();
+//            showHelp();
+//        }
         return rootView;
     }
 
@@ -264,6 +309,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(EDIT_MODE, editMode);
         super.onSaveInstanceState(savedInstanceState);
+        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -288,16 +334,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_edit_choose:
-                editMode = true;
-                updateChooseList(true);
-                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
-//                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-                View myView = rootView.findViewById(R.id.choose_view);
-                if (LUtils.hasL())
-                    enterReveal(myView, 2);
-                else
-                    myView.setVisibility(View.VISIBLE);
+//            case R.id.action_edit_choose:
+//                editMode = true;
+//                updateChooseList(true);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+////                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+//                View myView = rootView.findViewById(R.id.choose_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 2);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
 //                myView.setVisibility(View.VISIBLE);
 //
 //                // get the center for the clipping circle
@@ -312,9 +358,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //                animator.setInterpolator(new AccelerateDecelerateInterpolator());
 //                animator.setDuration(CIRCLE_DURATION);
 //                animator.start();
-                return true;
+//                return true;
             case R.id.action_help:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
         }
         return false;
@@ -554,10 +601,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //        }
 //    }
 
-    private void showHelp() {
-        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
-        startActivity(intent);
-    }
+//    private void showHelp() {
+//        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
+//        startActivity(intent);
+//    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     void enterReveal(View view, int mode) {
@@ -585,6 +632,28 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         // make the view visible and start the animation
         view.setVisibility(View.VISIBLE);
         anim.start();
+    }
+
+    private FloatingActionButton getFab() {
+        if (mFab == null)
+            mFab = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
+        return mFab;
+    }
+
+    private void hideFab() {
+        getFab().hide();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+        params.setBehavior(null);
+        getFab().requestLayout();
+//        fab2.setVisibility(View.GONE);
+    }
+
+    private void showFab() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
+        getFab().requestLayout();
+        getFab().show();
+//        fab2.setVisibility(View.VISIBLE);
     }
 
     @Override
