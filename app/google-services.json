@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "9545803189",
-    "project_id": "hypnotic-epoch-88716"
+    "firebase_url": "https://hypnotic-epoch-88716.firebaseio.com",
+    "project_id": "hypnotic-epoch-88716",
+    "storage_bucket": "hypnotic-epoch-88716.appspot.com"
   },
   "client": [
     {
@@ -43,6 +45,14 @@
             "package_name": "it.cammino.risuscito",
             "certificate_hash": "4BDD6B86301A0BA2D3F1069B61C5332B12645350"
           }
+        },
+        {
+          "client_id": "9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "9545803189-ikp32gbl3d8jf841nji3ssdqr0euaq2p.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -55,11 +65,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

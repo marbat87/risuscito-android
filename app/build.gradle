@@ -45,6 +45,10 @@ dependencies {
     compile supportDependencies.cardView
     compile playServices.auth
     compile playServices.drive
+    compile firebaseDependencies.core
+    compile firebaseDependencies.messaging
+    compile firebaseDependencies.auth
+    compile firebaseDependencies.database
 }
 
 apply plugin: 'com.google.gms.google-services'

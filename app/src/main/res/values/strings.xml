@@ -340,4 +340,5 @@
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="playback_completed">Riproduzione completata</string>
+    <string name="auth_failed">Authentication failed.</string>
 </resources>

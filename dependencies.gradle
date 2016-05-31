@@ -13,6 +13,23 @@ ext {
             palette          :    "com.android.support:palette-v7:${supportLibrary}"
     ]
 
+    //Version
+    firebase = '9.0.1'
+
+    //Firebase dependencies
+    firebaseDependencies = [
+            core           :    "com.google.firebase:firebase-core:${firebase}",
+            database       :    "com.google.firebase:firebase-database:${firebase}",
+            storage        :    "com.google.firebase:firebase-storage:${firebase}",
+            crash          :    "com.google.firebase:firebase-crash:${firebase}",
+            auth          :    "com.google.firebase:firebase-auth:${firebase}",
+            messaging      :    "com.google.firebase:firebase-messaging:${firebase}",
+            config         :    "com.google.firebase:firebase-config:${firebase}",
+            invites        :    "com.google.firebase:firebase-invites:${firebase}",
+            ads            :    "com.google.firebase:firebase-ads:${firebase}",
+            appindexing    :    "com.google.android.gms:play-services-appindexing:${firebase}",
+    ]
+
     genericDependencies = [
             CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar"
     ]

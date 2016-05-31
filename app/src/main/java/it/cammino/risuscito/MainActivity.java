@@ -52,6 +52,16 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Picasso;
 
@@ -67,6 +77,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.firebase.RisuscitoFirebaseUser;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
@@ -113,6 +124,10 @@ public class MainActivity extends ThemeableActivity
 //    private static final String DIALOG_ERROR = "dialog_error";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mFirebaseDatabaseReference;
+    private FirebaseAnalytics mFirebaseAnalytics;
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
 
@@ -123,6 +138,8 @@ public class MainActivity extends ThemeableActivity
     private boolean prefRestoreRunning;
     private boolean dbBackupRunning;
     private boolean prefBackupRunning;
+
+    private String TAG = getClass().getCanonicalName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,6 +215,7 @@ public class MainActivity extends ThemeableActivity
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
@@ -212,6 +230,13 @@ public class MainActivity extends ThemeableActivity
                 .addApi(Drive.API)
                 .build();
         // [END build_client]
+
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Initialize Firebase Measurement.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK") != null)
             SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK").setmCallback(MainActivity.this);
@@ -953,16 +978,17 @@ public class MainActivity extends ThemeableActivity
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             acct = result.getSignInAccount();
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(MainActivity.this)
-                    .edit();
-            editor.putBoolean(Utility.SIGNED_IN, true);
-            editor.apply();
-            if (showSnackbar) {
-                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
-                showSnackbar = false;
-            }
-            updateUI(true);
+            firebaseAuthWithGoogle();
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(MainActivity.this)
+//                    .edit();
+//            editor.putBoolean(Utility.SIGNED_IN, true);
+//            editor.apply();
+//            if (showSnackbar) {
+//                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
+//                showSnackbar = false;
+//            }
+//            updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             acct = null;
@@ -1051,6 +1077,43 @@ public class MainActivity extends ThemeableActivity
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             accountMenu.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void firebaseAuthWithGoogle() {
+        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the uel1user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "signInWithCredential", task.getException());
+                            hideProgressDialog();
+                            Snackbar.make(findViewById(R.id.main_content), R.string.auth_failed, Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            SharedPreferences.Editor editor = PreferenceManager
+                                    .getDefaultSharedPreferences(MainActivity.this)
+                                    .edit();
+                            editor.putBoolean(Utility.SIGNED_IN, true);
+                            editor.apply();
+                            if (showSnackbar) {
+                                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
+                                showSnackbar = false;
+                            }
+                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                            RisuscitoFirebaseUser registeredUser = new RisuscitoFirebaseUser(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
+                            mFirebaseDatabaseReference.child("utenti").push().setValue(registeredUser);
+                            mFirebaseAnalytics.logEvent("utente_registrato", null);
+                            updateUI(true);
+                        }
+                    }
+                });
     }
 
     private void showProgressDialog() {
