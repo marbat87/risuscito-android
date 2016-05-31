@@ -1107,8 +1107,11 @@ public class MainActivity extends ThemeableActivity
                                 showSnackbar = false;
                             }
                             mFirebaseUser = mFirebaseAuth.getCurrentUser();
+//                            Map<String, Object> registeredUser = new HashMap<String, Object>();
+//                            registeredUser.put(mFirebaseUser.getEmail(), mFirebaseUser.getDisplayName());
+//                            mFirebaseDatabaseReference.updateChildren(registeredUser);
                             RisuscitoFirebaseUser registeredUser = new RisuscitoFirebaseUser(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
-                            mFirebaseDatabaseReference.child("utenti").push().setValue(registeredUser);
+                            mFirebaseDatabaseReference.child("utenti").child(Utility.escapeEmail(registeredUser.getEmail())).setValue(registeredUser);
                             mFirebaseAnalytics.logEvent("utente_registrato", null);
                             updateUI(true);
                         }

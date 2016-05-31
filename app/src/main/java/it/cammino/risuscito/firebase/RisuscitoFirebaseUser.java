@@ -2,7 +2,7 @@ package it.cammino.risuscito.firebase;
 
 public class RisuscitoFirebaseUser {
 
-    private String id;
+//    private String id;
     private String username;
     private String email;
 
@@ -11,13 +11,13 @@ public class RisuscitoFirebaseUser {
         this.email = email;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public String getUsername() {
         return username;
