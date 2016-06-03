@@ -257,7 +257,7 @@
     <string name="new_hint_remove">Натисніть на елемент та тримайте для того, щоб видалити його</string>
     <string name="history_remove">Видалити з хронології?</string>
     <string name="history_empty">Хронологія пуста.</string>
-    <string name="last_open_date">ОСТАННЄ ВІДКРИТТЯ:</string>
+    <string name="last_open_date">ОСТАННЄ ВІДКРИТТЯ: %1$s</string>
     <string name="dialog_reset_history_title">Очистити хронологію</string>
     <string name="dialog_reset_history_desc">Бажаєш видалити хронологію продивлених пічень?</string>
     <string name="canto_title_activity">Пісня</string>

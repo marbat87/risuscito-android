@@ -60,6 +60,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -77,6 +80,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.firebase.FirebaseMessage;
 import it.cammino.risuscito.firebase.RisuscitoFirebaseUser;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -233,6 +237,7 @@ public class MainActivity extends ThemeableActivity
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         // Initialize Firebase Measurement.
@@ -1113,6 +1118,39 @@ public class MainActivity extends ThemeableActivity
                             RisuscitoFirebaseUser registeredUser = new RisuscitoFirebaseUser(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
                             mFirebaseDatabaseReference.child("utenti").child(Utility.escapeEmail(registeredUser.getEmail())).setValue(registeredUser);
                             mFirebaseAnalytics.logEvent("utente_registrato", null);
+//                            FirebaseMessage testMessage = new FirebaseMessage("ciao amico!", "fake_sender@gmail.com");
+//                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail())).push().setValue(testMessage);
+//                            mFirebaseAnalytics.logEvent("messaggo_inviato", null);
+                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail()))
+                                    .addChildEventListener(new ChildEventListener() {
+                                        // Retrieve new messagges as they are added to the database
+                                        @Override
+                                        public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
+                                            FirebaseMessage newMessage = snapshot.getValue(FirebaseMessage.class);
+                                            Log.d(TAG, "onChildAdded: newMessage sender: " + newMessage.getSender());
+                                            Log.d(TAG, "onChildAdded: newMessage content: " + newMessage.getContent());
+                                            Log.d(TAG, "onChildAdded: newMessage dateSent: " + newMessage.getDateSent());
+                                            Log.d(TAG, "onChildAdded: newMessage type: " + newMessage.getMessageType());
+                                            Log.d(TAG, "onChildAdded: previousChildKey: " + previousChildKey);
+                                            Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender(), Snackbar.LENGTH_LONG).show();
+                                            snapshot.getRef().removeValue();
+                                        }
+
+                                        @Override
+                                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+                                        @Override
+                                        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+                                        @Override
+                                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {}
+                                    });
+//                            FirebaseMessage testMessage = new FirebaseMessage("ciao amico!", "fake_sender@gmail.com", "03/06/2016");
+//                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail())).push().setValue(testMessage);
+//                            mFirebaseAnalytics.logEvent("messaggo_inviato", null);
                             updateUI(true);
                         }
                     }
