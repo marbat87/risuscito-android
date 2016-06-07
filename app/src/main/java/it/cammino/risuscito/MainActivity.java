@@ -237,7 +237,6 @@ public class MainActivity extends ThemeableActivity
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         // Initialize Firebase Measurement.
