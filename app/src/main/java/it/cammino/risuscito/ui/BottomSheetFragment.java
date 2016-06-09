@@ -11,6 +11,7 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.adapters.BottomSheetAdapter;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
-//    AlertDialogListener mListener;
+    //    AlertDialogListener mListener;
+    private String TAG  = getClass().getCanonicalName();
 
     public static BottomSheetFragment newInstance(Intent intent) {
         BottomSheetFragment frag = new BottomSheetFragment();
@@ -95,8 +98,14 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
 //        Log.i("BottomSheetHelper", "list size: " + list.size());
 
+        Intent risIntent = new Intent();
+        risIntent.setPackage("it.cammino.risuscito");
+        risIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        ResolveInfo risuscitoInfo = pm.resolveActivity(risIntent, 0);
+        list.add(0, risuscitoInfo);
+
         if (lastAppInfo != null)
-            list.add(0, lastAppInfo);
+            list.add(1, lastAppInfo);
 
 //        Log.i("BottomSheetHelper", "list size: " + list.size());
 
@@ -109,13 +118,28 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 editor.putString("ULTIMA_APP_USATA", ((TextView) v.findViewById(R.id.app_package)).getText().toString());
                 editor.apply();
 
-                ComponentName name = new ComponentName(((TextView) v.findViewById(R.id.app_package)).getText().toString(),
-                        ((TextView) v.findViewById(R.id.app_name)).getText().toString());
-                Intent newIntent = (Intent) intent.clone();
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                newIntent.setComponent(name);
-                getActivity().startActivity(newIntent);
+                String packageName = ((TextView) v.findViewById(R.id.app_package)).getText().toString();
+
+                if (packageName.equals("it.cammino.risuscito")) {
+                    Log.d(TAG, "Sending broadcast notification: " + Utility.GENERATE_XML);
+                    Intent intentBroadcast = new Intent(Utility.GENERATE_XML);
+                    getActivity().sendBroadcast(intentBroadcast);
+                }
+                else {
+//                    ComponentName name = new ComponentName(((TextView) v.findViewById(R.id.app_package)).getText().toString(),
+//                            ((TextView) v.findViewById(R.id.app_name)).getText().toString());
+                    ComponentName name = new ComponentName(packageName,
+                            ((TextView) v.findViewById(R.id.app_name)).getText().toString());
+                    Log.d(TAG, "onClick: app_package - " + packageName);
+                    Log.d(TAG, "onClick: app_name - " + ((TextView) v.findViewById(R.id.app_name)).getText().toString());
+                    Log.d(TAG, "onClick: name - " + name);
+                    Intent sendIntent = (Intent) intent.clone();
+//                sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+//                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    sendIntent.setComponent(name);
+//                sendIntent.setPackage("com.whatsapp");
+                    getActivity().startActivity(sendIntent);
+                }
                 getDialog().dismiss();
             }
         };

@@ -25,13 +25,31 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.io.StringWriter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
+
+    String TAG = getClass().getCanonicalName();
 
     protected Activity mActivity;
 
@@ -150,6 +168,53 @@ public class LUtils {
 
     public static boolean hasJB() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    public String listToXML(ListaPersonalizzata lista) {
+
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            // root elements
+            Document doc = docBuilder.newDocument();
+            Element rootElement = doc.createElement("lista");
+            rootElement.setAttribute("title", lista.getName());
+            doc.appendChild(rootElement);
+
+            for (int i = 0; i < lista.getNumPosizioni(); i++) {
+                Element position = doc.createElement("position");
+                position.setAttribute("name", lista.getNomePosizione(i));
+                if (!lista.getCantoPosizione(i).equals(""))
+                    position.appendChild(doc.createTextNode(lista.getCantoPosizione(i)));
+                else
+                    position.appendChild(doc.createTextNode("0"));
+                rootElement.appendChild(position);
+            }
+
+            DOMSource domSource = new DOMSource(doc);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+            Log.d(TAG, "listToXML: " + writer.toString());
+            return writer.toString();
+
+        }
+        catch (ParserConfigurationException e) {
+            Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
+            return "";
+        }
+        catch (TransformerConfigurationException e) {
+            Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
+            return "";
+        }
+        catch (TransformerException e) {
+            Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
+            return "";
+        }
+
     }
 
 }

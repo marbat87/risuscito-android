@@ -1,8 +1,11 @@
 package it.cammino.risuscito;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -55,6 +58,39 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
     private LUtils mLUtils;
+
+    private String TAG  = getClass().getCanonicalName();
+
+    private BroadcastReceiver createXmlBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(TAG, Utility.GENERATE_XML);
+                int idDaCond = idListe[mViewPager.getCurrentItem() - 2];
+                Log.d(TAG, "onReceive: idDaCond " + idDaCond);
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+                String query = "SELECT titolo_lista, lista"
+                        + "  FROM LISTE_PERS"
+                        + "  WHERE _id = " + idDaCond;
+                Cursor cursor = db.rawQuery(query, null);
+
+                cursor.moveToFirst();
+                String titoloLista = cursor.getString(0);
+                ListaPersonalizzata listaDaCond = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
+                cursor.close();
+                db.close();
+                String xml = mLUtils.listToXML(listaDaCond);
+                if (xml.equals(""))
+                    Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.xml_error, Snackbar.LENGTH_LONG)
+                            .show();
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(TAG, e.getLocalizedMessage(), e);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -355,7 +391,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         });
 
         if (savedInstanceState != null) {
-            Log.d(getClass().getName(), "onCreateView: RESTORING");
+            Log.d(TAG, "onCreateView: RESTORING");
             idDaCanc = savedInstanceState.getInt("idDaCanc", 0);
             titoloDaCanc = savedInstanceState.getString("titoloDaCanc");
             listaDaCanc = savedInstanceState.getInt("listaDaCanc", 0);
@@ -367,6 +403,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST") != null)
                 SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST").setmCallback(CustomLists.this);
         }
+
+        getActivity().registerReceiver(createXmlBRec, new IntentFilter(
+                Utility.GENERATE_XML));
 
         return rootView;
     }
@@ -389,12 +428,13 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
+        getActivity().unregisterReceiver(createXmlBRec);
         super.onDestroy();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.i(getClass().getName(), "requestCode: " + requestCode);
+//        Log.i(TAG, "requestCode: " + requestCode);
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
@@ -542,7 +582,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     @Override
     public void onPositive(@NonNull String tag, @NonNull MaterialDialog dialog) {
-        Log.d(getClass().getName(), "onPositive: " + tag);
+        Log.d(TAG, "onPositive: " + tag);
         switch (tag) {
             case "NEW_LIST":
                 Bundle bundle = new Bundle();
@@ -561,7 +601,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     @Override
     public void onPositive(@NonNull String tag) {
-        Log.d(getClass().getName(), "onPositive: " + tag);
+        Log.d(TAG, "onPositive: " + tag);
         switch (tag) {
             case "RESET_LIST":
                 mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())

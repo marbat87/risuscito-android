@@ -238,6 +238,36 @@ public class MainActivity extends ThemeableActivity
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+//        mFirebaseDatabaseReference.child("messaggi")
+//                .addChildEventListener(new ChildEventListener() {
+//                    // Retrieve new messagges as they are added to the database
+//                    @Override
+//                    public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
+//                        FirebaseMessage newMessage = snapshot.getValue(FirebaseMessage.class);
+//                        Log.d(TAG, "onChildAdded: newMessage sender: " + newMessage.getSender());
+//                        Log.d(TAG, "onChildAdded: newMessage content: " + newMessage.getContent());
+//                        Log.d(TAG, "onChildAdded: newMessage dateSent: " + newMessage.getDateSent());
+//                        Log.d(TAG, "onChildAdded: newMessage read? " + newMessage.isRead());
+//                        if (!newMessage.isRead())) {
+//                            Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender() + "a: " + newMessage.getReceiver(), Snackbar.LENGTH_LONG).show();
+//                            newMessage.setRead(true);
+//                            snapshot.getRef().setValue(newMessage);
+//                        }
+////                        snapshot.getRef().removeValue();
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+//
+//                    @Override
+//                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+//
+//                    @Override
+//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {}
+//                });
 
         // Initialize Firebase Measurement.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -1129,10 +1159,12 @@ public class MainActivity extends ThemeableActivity
                                             Log.d(TAG, "onChildAdded: newMessage sender: " + newMessage.getSender());
                                             Log.d(TAG, "onChildAdded: newMessage content: " + newMessage.getContent());
                                             Log.d(TAG, "onChildAdded: newMessage dateSent: " + newMessage.getDateSent());
-                                            Log.d(TAG, "onChildAdded: newMessage type: " + newMessage.getMessageType());
-                                            Log.d(TAG, "onChildAdded: previousChildKey: " + previousChildKey);
-                                            Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender(), Snackbar.LENGTH_LONG).show();
-                                            snapshot.getRef().removeValue();
+                                            Log.d(TAG, "onChildAdded: newMessage read? " + newMessage.isRead());
+                                            if (!newMessage.isRead()) {
+                                                Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender() + " a: " + newMessage.getReceiver(), Snackbar.LENGTH_LONG).show();
+                                                newMessage.setRead(true);
+                                                snapshot.getRef().setValue(newMessage);
+                                            }
                                         }
 
                                         @Override

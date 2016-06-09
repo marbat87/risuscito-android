@@ -341,4 +341,5 @@
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="playback_completed">Riproduzione completata</string>
     <string name="auth_failed">Authentication failed.</string>
+    <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
 </resources>
