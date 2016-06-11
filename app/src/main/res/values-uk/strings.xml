@@ -332,6 +332,6 @@
     <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
     <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
     <string name="playback_completed">Програвання завершено</string>
-    <string name="auth_failed">Authentication failed.</string>
     <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="action_share_file">Condividi come file</string>
 </resources>

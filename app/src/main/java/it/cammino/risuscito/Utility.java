@@ -339,11 +339,11 @@ public class Utility {
         return sb.toString();
     }
 
-    public static String escapeEmail(String email) {
-        String result = email.substring(0, email.indexOf("@"));
-//        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
-//        Log.d("UTILITY", "escapeEmail: result " + result);
-        return result.replaceAll("\\.", "_");
-    }
+//    public static String escapeEmail(String email) {
+//        String result = email.substring(0, email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: result " + result);
+//        return result.replaceAll("\\.", "_");
+//    }
 
 }

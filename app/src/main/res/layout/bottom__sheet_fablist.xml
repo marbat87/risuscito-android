@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/fab_pulisci"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/fab_condividi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/fab_condividi_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/fab_add_lista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/fab_edit_lista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/fab_delete_lista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            layout="@layout/bottom_item" />
+
+    </LinearLayout>
+</LinearLayout>

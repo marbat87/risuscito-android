@@ -81,22 +81,6 @@
         <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.ConsegnatiSaverService"/>
         <service android:enabled="true" android:exported="false" android:name="it.cammino.risuscito.services.PdfExportService"/>
 
-        <service
-            android:name="it.cammino.risuscito.firebase.MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="it.cammino.risuscito.firebase.MyFirebaseInstanceIdService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>

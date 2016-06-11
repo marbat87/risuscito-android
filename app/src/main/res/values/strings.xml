@@ -11,7 +11,7 @@
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
     <string name="action_favourites">Preferiti</string>
-    <string name="action_share">Condividi</string>
+    <string name="action_share">Condividi come testo</string>
     <string name="letter_order_text">Indice alfabetico</string>
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
@@ -340,6 +340,6 @@
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="playback_completed">Riproduzione completata</string>
-    <string name="auth_failed">Authentication failed.</string>
     <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="action_share_file">Condividi come file</string>
 </resources>

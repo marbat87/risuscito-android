@@ -58,13 +58,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Picasso;
 
@@ -80,8 +74,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.firebase.FirebaseMessage;
-import it.cammino.risuscito.firebase.RisuscitoFirebaseUser;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
@@ -129,8 +121,6 @@ public class MainActivity extends ThemeableActivity
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseAnalytics mFirebaseAnalytics;
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
@@ -237,37 +227,6 @@ public class MainActivity extends ThemeableActivity
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-//        mFirebaseDatabaseReference.child("messaggi")
-//                .addChildEventListener(new ChildEventListener() {
-//                    // Retrieve new messagges as they are added to the database
-//                    @Override
-//                    public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
-//                        FirebaseMessage newMessage = snapshot.getValue(FirebaseMessage.class);
-//                        Log.d(TAG, "onChildAdded: newMessage sender: " + newMessage.getSender());
-//                        Log.d(TAG, "onChildAdded: newMessage content: " + newMessage.getContent());
-//                        Log.d(TAG, "onChildAdded: newMessage dateSent: " + newMessage.getDateSent());
-//                        Log.d(TAG, "onChildAdded: newMessage read? " + newMessage.isRead());
-//                        if (!newMessage.isRead())) {
-//                            Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender() + "a: " + newMessage.getReceiver(), Snackbar.LENGTH_LONG).show();
-//                            newMessage.setRead(true);
-//                            snapshot.getRef().setValue(newMessage);
-//                        }
-////                        snapshot.getRef().removeValue();
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-//
-//                    @Override
-//                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
-//
-//                    @Override
-//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {}
-//                });
 
         // Initialize Firebase Measurement.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -1012,17 +971,17 @@ public class MainActivity extends ThemeableActivity
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             acct = result.getSignInAccount();
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(MainActivity.this)
+                    .edit();
+            editor.putBoolean(Utility.SIGNED_IN, true);
+            editor.apply();
+            if (showSnackbar) {
+                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
+                showSnackbar = false;
+            }
+            updateUI(true);
             firebaseAuthWithGoogle();
-//            SharedPreferences.Editor editor = PreferenceManager
-//                    .getDefaultSharedPreferences(MainActivity.this)
-//                    .edit();
-//            editor.putBoolean(Utility.SIGNED_IN, true);
-//            editor.apply();
-//            if (showSnackbar) {
-//                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
-//                showSnackbar = false;
-//            }
-//            updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             acct = null;
@@ -1034,19 +993,6 @@ public class MainActivity extends ThemeableActivity
     @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-//            Log.d(getClass().getName(), "currentPerson: " + Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
-//            if (mGoogleApiClient.isConnected() && Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-//
-//                String personCoverUrl = currentPerson.getCover().getCoverPhoto().getUrl();
-//                Picasso.with(this)
-//                        .load(personCoverUrl)
-//                        .error(R.drawable.copertina_about)
-//                        .into(profileBackground);
-//            Picasso.with(this)
-//                    .load(R.drawable.gplus_default_cover)
-//                    .error(R.drawable.copertina_about)
-//                    .into(profileBackground);
             if (LUtils.hasJB())
                 copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
             else
@@ -1081,7 +1027,6 @@ public class MainActivity extends ThemeableActivity
             usernameTextView.setText(personName);
             usernameTextView.setVisibility(View.VISIBLE);
 
-//                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
             String email = acct.getEmail();
 //                Log.d(getClass().getName(), "email: " + email);
             emailTextView.setText(email);
@@ -1125,64 +1070,12 @@ public class MainActivity extends ThemeableActivity
                         // If sign in fails, display a message to the uel1user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "signInWithCredential", task.getException());
-                            hideProgressDialog();
-                            Snackbar.make(findViewById(R.id.main_content), R.string.auth_failed, Snackbar.LENGTH_SHORT).show();
-                        }
+                        if (task.isSuccessful())
+                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
                         else {
-                            SharedPreferences.Editor editor = PreferenceManager
-                                    .getDefaultSharedPreferences(MainActivity.this)
-                                    .edit();
-                            editor.putBoolean(Utility.SIGNED_IN, true);
-                            editor.apply();
-                            if (showSnackbar) {
-                                Snackbar.make(findViewById(R.id.main_content), getString(R.string.connected_as, acct.getDisplayName()), Snackbar.LENGTH_SHORT).show();
-                                showSnackbar = false;
-                            }
-                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-//                            Map<String, Object> registeredUser = new HashMap<String, Object>();
-//                            registeredUser.put(mFirebaseUser.getEmail(), mFirebaseUser.getDisplayName());
-//                            mFirebaseDatabaseReference.updateChildren(registeredUser);
-                            RisuscitoFirebaseUser registeredUser = new RisuscitoFirebaseUser(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail());
-                            mFirebaseDatabaseReference.child("utenti").child(Utility.escapeEmail(registeredUser.getEmail())).setValue(registeredUser);
-                            mFirebaseAnalytics.logEvent("utente_registrato", null);
-//                            FirebaseMessage testMessage = new FirebaseMessage("ciao amico!", "fake_sender@gmail.com");
-//                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail())).push().setValue(testMessage);
-//                            mFirebaseAnalytics.logEvent("messaggo_inviato", null);
-                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail()))
-                                    .addChildEventListener(new ChildEventListener() {
-                                        // Retrieve new messagges as they are added to the database
-                                        @Override
-                                        public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
-                                            FirebaseMessage newMessage = snapshot.getValue(FirebaseMessage.class);
-                                            Log.d(TAG, "onChildAdded: newMessage sender: " + newMessage.getSender());
-                                            Log.d(TAG, "onChildAdded: newMessage content: " + newMessage.getContent());
-                                            Log.d(TAG, "onChildAdded: newMessage dateSent: " + newMessage.getDateSent());
-                                            Log.d(TAG, "onChildAdded: newMessage read? " + newMessage.isRead());
-                                            if (!newMessage.isRead()) {
-                                                Snackbar.make(findViewById(R.id.main_content), "nuovo messaggio da: " + newMessage.getSender() + " a: " + newMessage.getReceiver(), Snackbar.LENGTH_LONG).show();
-                                                newMessage.setRead(true);
-                                                snapshot.getRef().setValue(newMessage);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-
-                                        @Override
-                                        public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-                                        @Override
-                                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {}
-                                    });
-//                            FirebaseMessage testMessage = new FirebaseMessage("ciao amico!", "fake_sender@gmail.com", "03/06/2016");
-//                            mFirebaseDatabaseReference.child("messaggi").child(Utility.escapeEmail(registeredUser.getEmail())).push().setValue(testMessage);
-//                            mFirebaseAnalytics.logEvent("messaggo_inviato", null);
-                            updateUI(true);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.VALUE, task.getException().toString());
+                            mFirebaseAnalytics.logEvent("login_fallito", bundle);
                         }
                     }
                 });
