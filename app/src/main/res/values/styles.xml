@@ -83,8 +83,13 @@
 
     <style name="BottomSheet.GridItem">
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+    </style>
+
+    <style name="GridItemLarge" parent="BottomSheet.GridItem">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
     </style>
 
     <style name="Text"/>

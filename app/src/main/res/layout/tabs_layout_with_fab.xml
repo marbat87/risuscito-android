@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -39,90 +38,101 @@
 
     </FrameLayout>
 
-    <View
-        android:id="@+id/outerFrame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@android:color/transparent"
-        tools:ignore="RtlSymmetry"
-        android:elevation="@dimen/design_appbar_elevation" />
+    <!--<View-->
+        <!--android:id="@+id/outerFrame"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:visibility="gone"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--tools:ignore="RtlSymmetry"-->
+        <!--android:elevation="@dimen/design_appbar_elevation" />-->
 
-    <it.marbat.fabtoolbar.lib.FabToolbar
+    <!--<it.marbat.fabtoolbar.lib.FabToolbar-->
+        <!--android:id="@+id/fab_pager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--risuscito:tb_anim_duration="500"-->
+        <!--risuscito:tb_button_gravity="end"-->
+        <!--risuscito:tb_container_gravity="center"-->
+        <!--android:elevation="@dimen/design_fab_elevation">-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/fab_pulisci"-->
+            <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+            <!--android:paddingRight="@dimen/button_playbar_padding"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:theme="@style/ActionBarThemeOverlay"-->
+            <!--android:background="?attr/customSelectorRound"-->
+            <!--risuscito:srcCompat="@drawable/ic_eraser_white_48dp"-->
+            <!--android:soundEffectsEnabled="true" />-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/fab_delete_lista"-->
+            <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+            <!--android:paddingRight="@dimen/button_playbar_padding"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:theme="@style/ActionBarThemeOverlay"-->
+            <!--android:background="?attr/customSelectorRound"-->
+            <!--risuscito:srcCompat="@drawable/ic_delete_48dp"-->
+            <!--android:soundEffectsEnabled="true" />-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/fab_add_lista"-->
+            <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+            <!--android:paddingRight="@dimen/button_playbar_padding"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:theme="@style/ActionBarThemeOverlay"-->
+            <!--android:background="?attr/customSelectorRound"-->
+            <!--risuscito:srcCompat="@drawable/ic_add_48dp"-->
+            <!--android:soundEffectsEnabled="true" />-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/fab_edit_lista"-->
+            <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+            <!--android:paddingRight="@dimen/button_playbar_padding"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:theme="@style/ActionBarThemeOverlay"-->
+            <!--android:background="?attr/customSelectorRound"-->
+            <!--risuscito:srcCompat="@drawable/ic_edit_48dp"-->
+            <!--android:soundEffectsEnabled="true" />-->
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/fab_condividi"-->
+            <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+            <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+            <!--android:paddingRight="@dimen/button_playbar_padding"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:theme="@style/ActionBarThemeOverlay"-->
+            <!--android:background="?attr/customSelectorRound"-->
+            <!--risuscito:srcCompat="@drawable/ic_share_48dp"-->
+            <!--android:soundEffectsEnabled="true" />-->
+
+    <!--</it.marbat.fabtoolbar.lib.FabToolbar>-->
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_pager"
-        android:layout_width="match_parent"
+        risuscito:srcCompat="@drawable/ic_add_24dp"
+        android:layout_gravity="bottom|end"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        risuscito:tb_anim_duration="500"
-        risuscito:tb_button_gravity="end"
-        risuscito:tb_container_gravity="center"
-        android:elevation="@dimen/design_fab_elevation">
-
-        <ImageButton
-            android:id="@+id/fab_pulisci"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:paddingLeft="@dimen/button_playbar_padding"
-            android:paddingRight="@dimen/button_playbar_padding"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:theme="@style/ActionBarThemeOverlay"
-            android:background="?attr/customSelectorRound"
-            risuscito:srcCompat="@drawable/ic_eraser_white_48dp"
-            android:soundEffectsEnabled="true" />
-
-        <ImageButton
-            android:id="@+id/fab_delete_lista"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:paddingLeft="@dimen/button_playbar_padding"
-            android:paddingRight="@dimen/button_playbar_padding"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:theme="@style/ActionBarThemeOverlay"
-            android:background="?attr/customSelectorRound"
-            risuscito:srcCompat="@drawable/ic_delete_48dp"
-            android:soundEffectsEnabled="true" />
-
-        <ImageButton
-            android:id="@+id/fab_add_lista"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:paddingLeft="@dimen/button_playbar_padding"
-            android:paddingRight="@dimen/button_playbar_padding"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:theme="@style/ActionBarThemeOverlay"
-            android:background="?attr/customSelectorRound"
-            risuscito:srcCompat="@drawable/ic_add_48dp"
-            android:soundEffectsEnabled="true" />
-
-        <ImageButton
-            android:id="@+id/fab_edit_lista"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:paddingLeft="@dimen/button_playbar_padding"
-            android:paddingRight="@dimen/button_playbar_padding"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:theme="@style/ActionBarThemeOverlay"
-            android:background="?attr/customSelectorRound"
-            risuscito:srcCompat="@drawable/ic_edit_48dp"
-            android:soundEffectsEnabled="true" />
-
-        <ImageButton
-            android:id="@+id/fab_condividi"
-            android:layout_width="@dimen/abc_action_bar_default_height_material"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:paddingLeft="@dimen/button_playbar_padding"
-            android:paddingRight="@dimen/button_playbar_padding"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitCenter"
-            android:theme="@style/ActionBarThemeOverlay"
-            android:background="?attr/customSelectorRound"
-            risuscito:srcCompat="@drawable/ic_share_48dp"
-            android:soundEffectsEnabled="true" />
-
-    </it.marbat.fabtoolbar.lib.FabToolbar>
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_end"
+        android:layout_marginRight="@dimen/fab_margin_end"
+        risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -38,7 +39,6 @@ import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class ListaPersonalizzataFragment extends Fragment {
 
@@ -182,11 +182,13 @@ public class ListaPersonalizzataFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
-            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
-            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
-                fab1.scrollUp();
+//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
+//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
+//            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+//            if (!fab1.isShowing())
+//                fab1.scrollUp();
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
         }
     }
 
