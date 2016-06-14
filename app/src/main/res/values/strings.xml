@@ -11,7 +11,7 @@
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_about">About</string>
     <string name="action_favourites">Preferiti</string>
-    <string name="action_share">Condividi come testo</string>
+    <string name="action_share">Condividi</string>
     <string name="letter_order_text">Indice alfabetico</string>
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
@@ -297,7 +297,7 @@
     <string name="focus_not_allowed">AudioFocus non consentito</string>
     <string name="download_error">Errore nel download:</string>
     <string name="dialog_back">INDIETRO</string>
-    <string name="share_by">CONDIVIDI CON&#8230;</string>
+    <string name="share_by">Condividi con&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
@@ -341,5 +341,9 @@
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="playback_completed">Riproduzione completata</string>
     <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
-    <string name="action_share_file">Condividi come file</string>
+    <string name="action_share_file">Invia file</string>
+    <string name="title_activity_import">ImportActivity</string>
+    <string name="import_error">Importazione lista fallita!</string>
+    <string name="import_done">Importazione lista completata!</string>
+    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
 </resources>

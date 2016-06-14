@@ -22,8 +22,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -31,9 +34,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,7 +58,9 @@ import javax.xml.transform.stream.StreamResult;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
 
-    String TAG = getClass().getCanonicalName();
+    final String TAG = getClass().getCanonicalName();
+
+    final static String FILE_FORMAT = ".risuscito";
 
     protected Activity mActivity;
 
@@ -170,7 +181,7 @@ public class LUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-    public String listToXML(ListaPersonalizzata lista) {
+    public Uri listToXML(@NonNull ListaPersonalizzata lista) {
 
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -178,7 +189,7 @@ public class LUtils {
 
             // root elements
             Document doc = docBuilder.newDocument();
-            Element rootElement = doc.createElement("lista");
+            Element rootElement = doc.createElement("list");
             rootElement.setAttribute("title", lista.getName());
             doc.appendChild(rootElement);
 
@@ -199,20 +210,42 @@ public class LUtils {
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
             Log.d(TAG, "listToXML: " + writer.toString());
-            return writer.toString();
+            writer.toString();
+
+            File exportFile = new File(mActivity.getCacheDir().getAbsolutePath() + "/" + lista.getName() + FILE_FORMAT);
+            Log.d(TAG, "listToXML: exportFile = " + exportFile.getAbsolutePath());
+            FileOutputStream fos = new FileOutputStream(exportFile);
+            String dataWrite = writer.toString();
+            fos.write(dataWrite.getBytes());
+            fos.close();
+
+            return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile);
 
         }
         catch (ParserConfigurationException e) {
             Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
-            return "";
+            FirebaseCrash.log(e.getMessage());
+            return null;
         }
         catch (TransformerConfigurationException e) {
             Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
-            return "";
+            FirebaseCrash.log(e.getMessage());
+            return null;
         }
         catch (TransformerException e) {
             Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
-            return "";
+            FirebaseCrash.log(e.getMessage());
+            return null;
+        }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
+            FirebaseCrash.log(e.getMessage());
+            return null;
+        }
+        catch (IOException e) {
+            Log.e(TAG, "listToXML: " + e.getLocalizedMessage(), e);
+            FirebaseCrash.log(e.getMessage());
+            return null;
         }
 
     }

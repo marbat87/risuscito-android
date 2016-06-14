@@ -28,7 +28,6 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,7 +38,6 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class CustomLists extends Fragment implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
@@ -120,24 +118,27 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                             .show();
                     break;
                 case BottomSheetFabListe.SHARE_FILE:
-                    int idDaCond = idListe[mViewPager.getCurrentItem() - 2];
-                    Log.d(TAG, "onReceive: idDaCond " + idDaCond);
-                    db = listaCanti.getReadableDatabase();
-
-                    query = "SELECT titolo_lista, lista"
-                            + "  FROM LISTE_PERS"
-                            + "  WHERE _id = " + idDaCond;
-                    cursor = db.rawQuery(query, null);
-
-                    cursor.moveToFirst();
-                    String titoloLista = cursor.getString(0);
-                    ListaPersonalizzata listaDaCond = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
-                    cursor.close();
-                    db.close();
-                    String xml = mLUtils.listToXML(listaDaCond);
-                    if (xml.equals(""))
-                        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.xml_error, Snackbar.LENGTH_LONG)
-                                .show();
+                    mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+                            .getView().findViewById(R.id.button_invia_file).performClick();
+                    break;
+//                    int idDaCond = idListe[mViewPager.getCurrentItem() - 2];
+//                    Log.d(TAG, "onReceive: idDaCond " + idDaCond);
+//                    db = listaCanti.getReadableDatabase();
+//
+//                    query = "SELECT titolo_lista, lista"
+//                            + "  FROM LISTE_PERS"
+//                            + "  WHERE _id = " + idDaCond;
+//                    cursor = db.rawQuery(query, null);
+//
+//                    cursor.moveToFirst();
+//                    String titoloLista = cursor.getString(0);
+//                    ListaPersonalizzata listaDaCond = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
+//                    cursor.close();
+//                    db.close();
+//                    String xml = mLUtils.listToXML(listaDaCond);
+//                    if (xml.equals(""))
+//                        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.xml_error, Snackbar.LENGTH_LONG)
+//                                .show();
                 default:
                     break;
             }

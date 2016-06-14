@@ -97,14 +97,6 @@
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse" />
 
-                <!--<com.rey.material.widget.Slider-->
-                    <!--style="@style/Material.Widget.Slider"-->
-                    <!--android:id="@+id/speed_seekbar"-->
-                    <!--android:layout_width="0dip"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:padding="16dp" />-->
                 <SeekBar
                     android:id="@+id/speed_seekbar"
                     android:layout_width="0dip"

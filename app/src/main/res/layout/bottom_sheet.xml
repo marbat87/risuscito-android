@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/sheet_title"
-        style="@style/BottomSheet.Title" />
+    <RelativeLayout
+        android:id="@+id/sheet_title_area"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <View
+            android:id="@+id/bs_divider"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/list_divider"/>
+
+        <TextView
+            android:layout_above="@id/bs_divider"
+            android:id="@+id/sheet_title"
+            style="@style/BottomSheet.Title" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/shareList"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"

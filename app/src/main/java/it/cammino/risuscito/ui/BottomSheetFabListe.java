@@ -3,6 +3,7 @@ package it.cammino.risuscito.ui;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -40,10 +41,10 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
         return frag;
     }
 
-    public static BottomSheetFabListe newInstance(String title, boolean customList) {
+    public static BottomSheetFabListe newInstance(@StringRes int title, boolean customList) {
         BottomSheetFabListe frag = new BottomSheetFabListe();
         Bundle args = new Bundle();
-        args.putString("title", title);
+        args.putInt("title", title);
         args.putBoolean("showTitle", true);
         args.putBoolean("customList", customList);
         frag.setArguments(args);
@@ -58,17 +59,17 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bottom__sheet_fablist, container, false);
+        View view = inflater.inflate(R.layout.bottom_sheet_fablist, container, false);
 
         Boolean showTitle = getArguments().getBoolean("showTitle");
         TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
         if (showTitle) {
-            String title = getArguments().getString("title");
-            titleView.setText(title);
-            titleView.setVisibility(View.VISIBLE);
+//            int title = getArguments().getInt("title");
+            titleView.setText(getArguments().getInt("title"));
+            view.findViewById(R.id.sheet_title_area).setVisibility(View.VISIBLE);
         }
         else {
-            titleView.setVisibility(View.GONE);
+            view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
         }
 
         View mView = view.findViewById(R.id.fab_pulisci);
@@ -135,7 +136,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_condividi_file);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp);
+            drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp);
             DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
             mImage.setImageDrawable(drawable);
             mTextView = (TextView) mView.findViewById(R.id.app_label);

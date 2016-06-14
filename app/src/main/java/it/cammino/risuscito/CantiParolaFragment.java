@@ -91,7 +91,7 @@ public class CantiParolaFragment extends Fragment {
 //                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
 //                        .title(R.string.share_by)
 //                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
                 bottomSheetDialog.show(getFragmentManager(), null);
             }
         });

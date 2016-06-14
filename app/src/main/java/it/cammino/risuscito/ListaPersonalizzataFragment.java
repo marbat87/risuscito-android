@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +43,8 @@ import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ListaPersonalizzataFragment extends Fragment {
+
+    final String TAG = getClass().getCanonicalName();
 
     private int posizioneDaCanc;
     private View rootView;
@@ -170,8 +174,23 @@ public class ListaPersonalizzataFragment extends Fragment {
 //                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
 //                        .title(R.string.share_by)
 //                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getShareIntent());
                 bottomSheetDialog.show(getFragmentManager(), null);
+            }
+        });
+
+        rootView.findViewById(R.id.button_invia_file).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri exportUri = mLUtils.listToXML(listaPersonalizzata);
+                Log.d(TAG, "onClick: exportUri = " + exportUri);
+                if (exportUri != null) {
+                    BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri));
+                    bottomSheetDialog.show(getFragmentManager(), null);
+                }
+                else
+                    Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.xml_error, Snackbar.LENGTH_LONG)
+                            .show();
             }
         });
 
@@ -231,11 +250,19 @@ public class ListaPersonalizzataFragment extends Fragment {
         super.onDestroy();
     }
 
-    private Intent getDefaultIntent() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, getTitlesList());
-        intent.setType("text/plain");
-        return intent;
+    private Intent getShareIntent() {
+        return new Intent(Intent.ACTION_SEND)
+        .putExtra(Intent.EXTRA_TEXT, getTitlesList())
+        .setType("text/plain");
+//        return intent;
+    }
+
+    private Intent getSendIntent(Uri exportUri) {
+        return new Intent(Intent.ACTION_SEND)
+        .putExtra(Intent.EXTRA_STREAM, exportUri)
+//        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        .setType("text/xml");
+//        return intent;
     }
 
     private void openPagina(View v) {

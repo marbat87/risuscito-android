@@ -289,7 +289,7 @@
     <string name="focus_not_allowed">AudioFocus не дозволений</string>
     <string name="download_error">Помилка в завантаженні:</string>
     <string name="dialog_back">НАЗАД</string>
-    <string name="share_by">ПОДІЛИТИСЯ З&#8230;</string>
+    <string name="share_by">Поділитися з&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
@@ -333,5 +333,8 @@
     <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
     <string name="playback_completed">Програвання завершено</string>
     <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
-    <string name="action_share_file">Condividi come file</string>
+    <string name="action_share_file">Invia file</string>
+    <string name="import_error">Importazione lista fallita</string>
+    <string name="import_done">Importazione lista completata!</string>
+    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
 </resources>
