@@ -28,6 +28,7 @@ import it.cammino.risuscito.R;
 public class XmlImportService extends IntentService {
 
     public static final String ACTION_URL = "it.cammino.risuscito.import.action.URL";
+    public static final String ACTION_FINISH = "it.cammino.risuscito.import.action.URL";
     final int NOTIFICATION_ID = 2;
 
     final String TAG = getClass().getCanonicalName();
@@ -69,6 +70,16 @@ public class XmlImportService extends IntentService {
         mNotificationManager.cancelAll();
         Notification mNotification;
 
+        mNotification = new NotificationCompat.Builder(this)
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentTitle(getString(R.string.app_name))
+                .setProgress(0,0, true)
+                .setContentText(getString(R.string.import_running))
+                .build();
+
+        mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
         if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
             try {
                 InputStream fis = getContentResolver().openInputStream(data);
@@ -87,13 +98,8 @@ public class XmlImportService extends IntentService {
 
                     db.close();
 
-                    Intent i = getBaseContext().getPackageManager()
-                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-
-                     mNotification = new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_action_done)
+                    mNotification = new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_stat_action_done)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
                             .setContentText(getString(R.string.import_done))
@@ -101,15 +107,31 @@ public class XmlImportService extends IntentService {
 
                     mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
+                    Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
+                    Intent intentBroadcast = new Intent(ACTION_FINISH);
+                    sendBroadcast(intentBroadcast);
+
+                    Intent i = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    stopSelf();
                 }
                 else {
                     mNotification = new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_stat_alert_error)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
+                            .setTicker(getString(R.string.import_error))
                             .setContentText(getString(R.string.import_error))
                             .build();
                     mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+                    Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
+                    Intent intentBroadcast = new Intent(ACTION_FINISH);
+                    sendBroadcast(intentBroadcast);
+
+                    stopSelf();
                 }
             }
             catch (XmlPullParserException e) {
@@ -119,9 +141,16 @@ public class XmlImportService extends IntentService {
                         .setSmallIcon(R.drawable.ic_stat_alert_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setContentTitle(getString(R.string.app_name))
+                        .setTicker(getString(R.string.import_error))
                         .setContentText(getString(R.string.import_error))
                         .build();
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
+                Intent intentBroadcast = new Intent(ACTION_FINISH);
+                sendBroadcast(intentBroadcast);
+
+                stopSelf();
             }
             catch (IOException e) {
                 Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
@@ -130,9 +159,34 @@ public class XmlImportService extends IntentService {
                         .setSmallIcon(R.drawable.ic_stat_alert_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setContentTitle(getString(R.string.app_name))
+                        .setTicker(getString(R.string.import_error))
                         .setContentText(getString(R.string.import_error))
                         .build();
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
+                Intent intentBroadcast = new Intent(ACTION_FINISH);
+                sendBroadcast(intentBroadcast);
+
+                stopSelf();
+            }
+            catch (SecurityException e) {
+                Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
+                FirebaseCrash.log("importData: " + e.getMessage());
+                mNotification = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_stat_alert_error)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setTicker(getString(R.string.import_error))
+                        .setContentText(getString(R.string.import_error))
+                        .build();
+                mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+
+                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
+                Intent intentBroadcast = new Intent(ACTION_FINISH);
+                sendBroadcast(intentBroadcast);
+
+                stopSelf();
             }
         }
     }

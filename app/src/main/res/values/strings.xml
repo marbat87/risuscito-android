@@ -62,7 +62,7 @@
     <string name="fast_forward">avanti veloce</string>
     <string name="rewind">indietro veloce</string>
     <string name="delete">elimina file locale</string>
-    <string name="save_file">salva in locale</string>
+    <string name="save_file">Salva in locale</string>
     <string name="stop_song">ferma</string>
     <string name="pause_song">pausa</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
@@ -344,6 +344,12 @@
     <string name="action_share_file">Invia file</string>
     <string name="title_activity_import">ImportActivity</string>
     <string name="import_error">Importazione lista fallita!</string>
+    <string name="import_running">Importazione lista in corso</string>
     <string name="import_done">Importazione lista completata!</string>
     <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
+    <string name="audio_on">Mostra audio</string>
+    <string name="audio_off">Nascondi audio</string>
+    <string name="fab_delete_unlink">Elimina file</string>
+    <string name="favorite_on">Aggiungi preferito</string>
+    <string name="favorite_off">Rimuovi preferito</string>
 </resources>

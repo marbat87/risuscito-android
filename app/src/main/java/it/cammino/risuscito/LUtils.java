@@ -84,8 +84,8 @@ public class LUtils {
 //                    mActivity, clickedView, transitionName);
 //            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
 //        } else {
-            mActivity.startActivity(intent);
-            mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+        mActivity.startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
 //        }
 
         //aggiorno la cronologia
@@ -114,7 +114,7 @@ public class LUtils {
         lista.close();
         db.close();
 
-        }
+    }
 
     public void startActivityWithFadeIn(Intent intent, final View clickedView,
                                         final String transitionName) {
@@ -124,17 +124,22 @@ public class LUtils {
 //                    mActivity, clickedView, transitionName);
 //            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
 //        } else {
-            mActivity.startActivity(intent);
-            mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
+        mActivity.startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
 //        }
+    }
+
+    public void startActivityWithFadeIn(Intent intent) {
+        mActivity.startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
     }
 
     public void closeActivityWithTransition() {
 //        if (hasL())
 //            mActivity.finishAfterTransition();
 //        else {
-            mActivity.finish();
-            mActivity.overridePendingTransition(0, R.anim.slide_out_right);
+        mActivity.finish();
+        mActivity.overridePendingTransition(0, R.anim.slide_out_right);
 //        }
     }
 
@@ -142,8 +147,8 @@ public class LUtils {
 //        if (hasL())
 //            mActivity.finishAfterTransition();
 //        else {
-            mActivity.finish();
-            mActivity.overridePendingTransition(0, R.anim.image_fade_out);
+        mActivity.finish();
+        mActivity.overridePendingTransition(0, R.anim.image_fade_out);
 //        }
     }
 

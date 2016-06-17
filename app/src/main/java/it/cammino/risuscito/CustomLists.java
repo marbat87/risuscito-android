@@ -121,24 +121,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                     mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
                             .getView().findViewById(R.id.button_invia_file).performClick();
                     break;
-//                    int idDaCond = idListe[mViewPager.getCurrentItem() - 2];
-//                    Log.d(TAG, "onReceive: idDaCond " + idDaCond);
-//                    db = listaCanti.getReadableDatabase();
-//
-//                    query = "SELECT titolo_lista, lista"
-//                            + "  FROM LISTE_PERS"
-//                            + "  WHERE _id = " + idDaCond;
-//                    cursor = db.rawQuery(query, null);
-//
-//                    cursor.moveToFirst();
-//                    String titoloLista = cursor.getString(0);
-//                    ListaPersonalizzata listaDaCond = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
-//                    cursor.close();
-//                    db.close();
-//                    String xml = mLUtils.listToXML(listaDaCond);
-//                    if (xml.equals(""))
-//                        Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.xml_error, Snackbar.LENGTH_LONG)
-//                                .show();
                 default:
                     break;
             }

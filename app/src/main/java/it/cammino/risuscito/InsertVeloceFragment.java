@@ -33,6 +33,9 @@ import it.cammino.risuscito.objects.CantoInsert;
 
 public class InsertVeloceFragment extends Fragment {
 
+    // create boolean for fetching data
+    private boolean isViewShown = true;
+
     private DatabaseCanti listaCanti;
     private List<CantoInsert> titoli;
     private EditText searchPar;

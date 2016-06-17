@@ -1,6 +1,6 @@
 ext {
     //Version
-    supportLibrary = '23.4.0'
+    supportLibrary = '24.0.0'
 
     //Support Libraries dependencies
     supportDependencies = [
@@ -14,7 +14,7 @@ ext {
     ]
 
     //Version
-    firebase = '9.0.1'
+    firebase = '9.0.2'
 
     //Firebase dependencies
     firebaseDependencies = [
@@ -34,7 +34,7 @@ ext {
             CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar"
     ]
 
-    servicesLibrary = '9.0.0'
+    servicesLibrary = '9.0.2'
 
     playServices = [
             auth             :    "com.google.android.gms:play-services-auth:${servicesLibrary}",

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.1.0" changeDate="XX May 2015">
+    <changelogversion versionName="4.1.0" changeDate="June 2016">
+        <changelogimprovement>Added funcionality to export and import personal custom lists</changelogimprovement>
         <changelogimprovement>Added Android N compability</changelogimprovement>
         <changelogimprovement>Improved result of fast search function</changelogimprovement>
+        <changelogimprovement>New style for addition options of Floating Action Buttons</changelogimprovement>
     </changelogversion>
 
 </changelog>

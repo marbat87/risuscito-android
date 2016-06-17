@@ -39,6 +39,9 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class NumericSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
+    // create boolean for fetching data
+    private boolean isViewShown = true;
+
     private List<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
     private String titoloDaAgg;
@@ -92,7 +95,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
         // chiude il cursore
         lista.close();
-        db.close();
+//        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -147,6 +150,26 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                 SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2").setmCallback(NumericSectionFragment.this);
         }
 
+        if (!isViewShown) {
+            query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+        }
 
         return rootView;
     }
@@ -182,28 +205,33 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            Log.d(getClass().getName(), "VISIBLE");
-            if (listaCanti == null)
-                listaCanti = new DatabaseCanti(getActivity());
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            String query = "SELECT _id, lista" +
-                    "		FROM LISTE_PERS" +
-                    "		ORDER BY _id ASC";
-            Cursor lista = db.rawQuery(query, null);
+            if (getView() != null) {
+                isViewShown = true;
+                Log.d(getClass().getName(), "VISIBLE");
+                if (listaCanti == null)
+                    listaCanti = new DatabaseCanti(getActivity());
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                String query = "SELECT _id, lista" +
+                        "		FROM LISTE_PERS" +
+                        "		ORDER BY _id ASC";
+                Cursor lista = db.rawQuery(query, null);
 
-            listePers = new ListaPersonalizzata[lista.getCount()];
-            idListe = new int[lista.getCount()];
+                listePers = new ListaPersonalizzata[lista.getCount()];
+                idListe = new int[lista.getCount()];
 
-            lista.moveToFirst();
-            for (int i = 0; i < lista.getCount(); i++) {
-                idListe[i] = lista.getInt(0);
-                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-                        deserializeObject(lista.getBlob(1));
-                lista.moveToNext();
+                lista.moveToFirst();
+                for (int i = 0; i < lista.getCount(); i++) {
+                    idListe[i] = lista.getInt(0);
+                    listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                            deserializeObject(lista.getBlob(1));
+                    lista.moveToNext();
+                }
+
+                lista.close();
+                db.close();
             }
-
-            lista.close();
-            db.close();
+            else
+                isViewShown = false;
         }
     }
 

@@ -132,81 +132,93 @@
                 android:layout_height="match_parent"
                 android:layout_above="@id/bottom_bar"/>
 
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_canti"
+                risuscito:srcCompat="@drawable/ic_add_24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="@dimen/fab_margin_bottom"
+                android:layout_marginEnd="@dimen/fab_margin_end"
+                android:layout_marginRight="@dimen/fab_margin_end"
+                android:layout_above="@id/bottom_bar" />
+
         </RelativeLayout>
 
-        <View
-            android:id="@+id/outerFrame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"
-            android:background="@android:color/transparent"
-            tools:ignore="RtlSymmetry"
-            android:elevation="@dimen/design_appbar_elevation" />
+        <!--<View-->
+            <!--android:id="@+id/outerFrame"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:visibility="invisible"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--tools:ignore="RtlSymmetry"-->
+            <!--android:elevation="@dimen/design_appbar_elevation" />-->
 
-        <it.marbat.fabtoolbar.lib.FabToolbar
-            android:id="@+id/fab_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"
-            risuscito:tb_anim_duration="500"
-            risuscito:tb_button_gravity="end"
-            risuscito:tb_container_gravity="center"
-            android:elevation="@dimen/design_fab_elevation" >
+        <!--<it.marbat.fabtoolbar.lib.FabToolbar-->
+            <!--android:id="@+id/fab_toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom"-->
+            <!--android:layout_marginBottom="@dimen/abc_action_bar_default_height_material"-->
+            <!--risuscito:tb_anim_duration="500"-->
+            <!--risuscito:tb_button_gravity="end"-->
+            <!--risuscito:tb_container_gravity="center"-->
+            <!--android:elevation="@dimen/design_fab_elevation" >-->
 
-            <ImageButton
-                android:id="@+id/fab_fullscreen_on"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/ic_fullscreen_48dp"
-                android:soundEffectsEnabled="true" />
+            <!--<ImageButton-->
+                <!--android:id="@+id/fab_fullscreen_on"-->
+                <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:theme="@style/ActionBarThemeOverlay"-->
+                <!--android:background="?attr/customSelectorRound"-->
+                <!--risuscito:srcCompat="@drawable/ic_fullscreen_48dp"-->
+                <!--android:soundEffectsEnabled="true" />-->
 
-            <ImageButton
-                android:id="@+id/fab_sound_off"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/hide_music_background"
-                android:soundEffectsEnabled="true" />
+            <!--<ImageButton-->
+                <!--android:id="@+id/fab_sound_off"-->
+                <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:theme="@style/ActionBarThemeOverlay"-->
+                <!--android:background="?attr/customSelectorRound"-->
+                <!--risuscito:srcCompat="@drawable/hide_music_background"-->
+                <!--android:soundEffectsEnabled="true" />-->
 
-            <ImageButton
-                android:id="@+id/save_file"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/download_delete_button_drawable"
-                android:soundEffectsEnabled="true" />
+            <!--<ImageButton-->
+                <!--android:id="@+id/save_file"-->
+                <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:theme="@style/ActionBarThemeOverlay"-->
+                <!--android:background="?attr/customSelectorRound"-->
+                <!--risuscito:srcCompat="@drawable/download_delete_button_drawable"-->
+                <!--android:soundEffectsEnabled="true" />-->
 
-            <ImageButton
-                android:id="@+id/fab_favorite"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitCenter"
-                android:theme="@style/ActionBarThemeOverlay"
-                android:background="?attr/customSelectorRound"
-                risuscito:srcCompat="@drawable/fab_add_to_favorites"
-                android:soundEffectsEnabled="true" />
+            <!--<ImageButton-->
+                <!--android:id="@+id/fab_favorite"-->
+                <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:theme="@style/ActionBarThemeOverlay"-->
+                <!--android:background="?attr/customSelectorRound"-->
+                <!--risuscito:srcCompat="@drawable/fab_add_to_favorites"-->
+                <!--android:soundEffectsEnabled="true" />-->
 
-        </it.marbat.fabtoolbar.lib.FabToolbar>
+        <!--</it.marbat.fabtoolbar.lib.FabToolbar>-->
 
         <View
             android:layout_width="match_parent"

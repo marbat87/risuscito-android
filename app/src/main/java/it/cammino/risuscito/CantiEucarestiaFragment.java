@@ -41,6 +41,9 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
 
+    // create boolean for fetching data
+    private boolean isViewShown = true;
+
     private int posizioneDaCanc;
     private int idDaCanc;
     private String timestampDaCanc;
@@ -159,6 +162,12 @@ public class CantiEucarestiaFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (!isViewShown) {
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
+        }
+
+
         return rootView;
     }
 
@@ -166,13 +175,18 @@ public class CantiEucarestiaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (getView() != null) {
+                isViewShown = true;
 //            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
 //            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
 //            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
 //            if (!fab1.isShowing())
 //                fab1.scrollUp();
-            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-            fab1.show();
+                FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+                fab1.show();
+            }
+            else
+                isViewShown = false;
         }
     }
 

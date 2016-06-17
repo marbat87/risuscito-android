@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -61,8 +62,9 @@ import it.cammino.risuscito.music.MusicService;
 import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.slides.IntroPaginaRenderNew;
+import it.cammino.risuscito.ui.BottomSheetFabCanto;
+import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback {
 
@@ -74,7 +76,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private ImageButton play_scroll, play_button, save_file, fab_favorite, fab_sound_off;
     private TextView no_records_text;
     private View music_buttons;
-    public FabToolbar mFab; // the floating blue add/paste button
+    public FloatingActionButton mFab; // the floating blue add/paste button
     SeekBar scroll_speed_bar, scroll_song_bar;
     //    private MaterialDialog mProgressDialog, mp3Dialog, exportDialog;
     //    private PhoneStateListener phoneStateListener;
@@ -82,7 +84,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //    private static AudioManager mAudioManager;
 //    private BroadcastReceiver mNoisyReveiver;
     private String url;
-//    private int prevOrientation;
+    //    private int prevOrientation;
     private String primaNota;
     private String notaSalvata;
     public static String notaCambio;
@@ -150,6 +152,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     public static String mostraAudio;
     public boolean mostraAudioBool;
+    public boolean mDownload;
 
 //    public boolean audioRequested = false;
 
@@ -281,7 +284,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 checkExternalFilePermissions();
                 localFile = true;
                 playUrl = localUrl;
-                save_file.setSelected(true);
+//                save_file.setSelected(true);
+                mDownload = true;
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -354,6 +358,93 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     };
 
+    private BroadcastReceiver fabBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            int clickedId = intent.getIntExtra(BottomSheetFabListe.DATA_ITEM_ID, 0);
+            switch (clickedId) {
+                case BottomSheetFabCanto.FULLSCREEN:
+                    mHandler.removeCallbacks(mScrollDown);
+                    saveZoom();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
+                    bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
+                    bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
+                    bundle.putInt(Utility.ID_CANTO, idCanto);
+
+                    Intent intent2 = new Intent(PaginaRenderActivity.this, PaginaRenderFullScreen.class);
+                    intent2.putExtras(bundle);
+                    mLUtils.startActivityWithFadeIn(intent2);
+                    break;
+                case BottomSheetFabCanto.SOUND:
+                    findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.GONE : View.VISIBLE);
+                    mostraAudioBool = !mostraAudioBool;
+                    mostraAudio = String.valueOf(mostraAudioBool);
+                    break;
+                case BottomSheetFabCanto.SAVE_FILE:
+                    if (!url.equalsIgnoreCase("")) {
+                        if (mDownload) {
+                            if (personalUrl.equalsIgnoreCase("")) {
+                                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
+                                        .title(R.string.dialog_delete_mp3_title)
+                                        .content(R.string.dialog_delete_mp3)
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
+                                        .show();
+                            }
+                            else {
+                                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
+                                        .title(R.string.dialog_delete_link_title)
+                                        .content(R.string.dialog_delete_link)
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
+                                        .show();
+                            }
+                        }
+                        else {
+                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLINK_CHOOSE")
+                                    .title(R.string.download_link_title)
+                                    .content(R.string.downlink_message)
+                                    .positiveButton(R.string.downlink_download)
+                                    .negativeButton(R.string.downlink_choose)
+                                    .neutralButton(R.string.cancel)
+                                    .show();
+                        }
+                    }
+                    else {
+                        if (mDownload) {
+                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
+                                    .title(R.string.dialog_delete_link_title)
+                                    .content(R.string.dialog_delete_link)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                        }
+                        else {
+                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "ONLY_LINK")
+                                    .title(R.string.only_link_title)
+                                    .content(R.string.only_link)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                        }
+                    }
+                    break;
+                case BottomSheetFabCanto.FAVORITE:
+                    boolean favoriteYet = selectFavouriteFromSource() == 1;
+                    updateFavouriteFlag(favoriteYet? 0: 1);
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , !favoriteYet ? R.string.favorite_added : R.string.favorite_removed
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -367,6 +458,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+
+        mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
 
 //        if (savedInstanceState != null)
 //            audioRequested = savedInstanceState.getBoolean(Utility.AUDIO_REQUESTED, false);
@@ -416,9 +509,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //        pause_button.setImageDrawable(drawable);
         no_records_text = (TextView) findViewById(R.id.no_record);
         music_buttons = findViewById(R.id.music_buttons);
-        save_file = (ImageButton) findViewById(R.id.save_file);
-        drawable = DrawableCompat.wrap(save_file.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//        save_file = (ImageButton) findViewById(R.id.save_file);
+//        drawable = DrawableCompat.wrap(save_file.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
         drawable = DrawableCompat.wrap(play_scroll.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
@@ -512,9 +605,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
             if (localUrl.equalsIgnoreCase("") &&
                     personalUrl.equalsIgnoreCase(""))
-                save_file.setSelected(false);
+//                save_file.setSelected(false);
+                mDownload = false;
             else
-                save_file.setSelected(true);
+//                save_file.setSelected(true);
+                mDownload = true;
 
             //mostra i pulsanti per il lettore musicale
             music_buttons.setVisibility(View.VISIBLE);
@@ -761,233 +856,233 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //                public void onStopTrackingTouch(SeekBar seekBar) {}
 //            });
 
-            save_file.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getFab().hide();
-                    hideOuterFrame();
-                    if (v.isSelected()) {
-                        if (personalUrl.equalsIgnoreCase("")) {
-//                            prevOrientation = getRequestedOrientation();
-//                            Utility.blockOrientation(PaginaRenderActivity.this);
-//                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//            save_file.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    getFab().hide();
+//                    hideOuterFrame();
+//                    if (v.isSelected()) {
+//                        if (personalUrl.equalsIgnoreCase("")) {
+////                            prevOrientation = getRequestedOrientation();
+////                            Utility.blockOrientation(PaginaRenderActivity.this);
+////                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+////                                    .title(R.string.dialog_delete_mp3_title)
+////                                    .content(R.string.dialog_delete_mp3)
+////                                    .positiveText(R.string.confirm)
+////                                    .negativeText(R.string.dismiss)
+////                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+////                                        @Override
+////                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                            File fileToDelete = new File(localUrl);
+////                                            fileToDelete.delete();
+////                                            if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+////                                                // initiate media scan and put the new things into the path array to
+////                                                // make the scanner aware of the location and the files you want to see
+////                                                MediaScannerConnection.scanFile(getApplicationContext()
+////                                                        , new String[] {fileToDelete.getAbsolutePath()}
+////                                                        , null
+////                                                        , null);
+////                                            }
+////                                            Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+////                                                    .show();
+////
+////                                            scroll_song_bar.setProgress(0);
+////                                            scroll_song_bar.setEnabled(false);
+////                                            showPlaying(false);
+////                                            mediaPlayerState = MP_State.Stopped;
+////                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
+////                                            i.setAction(MusicService.ACTION_STOP);
+////                                            startService(i);
+////
+//////                                            if (mediaPlayerState == MP_State.Started
+//////                                                    || mediaPlayerState == MP_State.Paused)
+//////                                                cmdStop();
+//////
+//////                                            mediaPlayer = new MediaPlayer();
+//////                                            mediaPlayerState = MP_State.Idle;
+//////                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+////
+////                                            localFile = false;
+////                                            playUrl = url;
+//////                                            cmdSetDataSource(url);
+////                                            // Send an intent with the URL of the song to play. This is expected by
+////                                            // MusicService.
+//////                                            i = new Intent(getApplicationContext(),MusicService.class);
+//////                                            i.setAction(MusicService.ACTION_URL);
+//////                                            Uri uri = Uri.parse(url);
+//////                                            i.setData(uri);
+//////                                            startService(i);
+////                                            save_file.setSelected(false);
+////                                            setRequestedOrientation(prevOrientation);
+////                                        }
+////                                    })
+////                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+////                                        @Override
+////                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                            setRequestedOrientation(prevOrientation);
+////                                        }
+////                                    })
+////                                    .show();
+////                            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                                @Override
+////                                public boolean onKey(DialogInterface arg0, int keyCode,
+////                                                     KeyEvent event) {
+////                                    if (keyCode == KeyEvent.KEYCODE_BACK
+////                                            && event.getAction() == KeyEvent.ACTION_UP) {
+////                                        arg0.dismiss();
+////                                        setRequestedOrientation(prevOrientation);
+////                                        return true;
+////                                    }
+////                                    return false;
+////                                }
+////                            });
+////                            dialog.setCancelable(false);
+//                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
 //                                    .title(R.string.dialog_delete_mp3_title)
 //                                    .content(R.string.dialog_delete_mp3)
-//                                    .positiveText(R.string.confirm)
-//                                    .negativeText(R.string.dismiss)
-//                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                        @Override
-//                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                            File fileToDelete = new File(localUrl);
-//                                            fileToDelete.delete();
-//                                            if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
-//                                                // initiate media scan and put the new things into the path array to
-//                                                // make the scanner aware of the location and the files you want to see
-//                                                MediaScannerConnection.scanFile(getApplicationContext()
-//                                                        , new String[] {fileToDelete.getAbsolutePath()}
-//                                                        , null
-//                                                        , null);
-//                                            }
-//                                            Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-//                                                    .show();
-//
-//                                            scroll_song_bar.setProgress(0);
-//                                            scroll_song_bar.setEnabled(false);
-//                                            showPlaying(false);
-//                                            mediaPlayerState = MP_State.Stopped;
-//                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
-//                                            i.setAction(MusicService.ACTION_STOP);
-//                                            startService(i);
-//
-////                                            if (mediaPlayerState == MP_State.Started
-////                                                    || mediaPlayerState == MP_State.Paused)
-////                                                cmdStop();
-////
-////                                            mediaPlayer = new MediaPlayer();
-////                                            mediaPlayerState = MP_State.Idle;
-////                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                                            localFile = false;
-//                                            playUrl = url;
-////                                            cmdSetDataSource(url);
-//                                            // Send an intent with the URL of the song to play. This is expected by
-//                                            // MusicService.
-////                                            i = new Intent(getApplicationContext(),MusicService.class);
-////                                            i.setAction(MusicService.ACTION_URL);
-////                                            Uri uri = Uri.parse(url);
-////                                            i.setData(uri);
-////                                            startService(i);
-//                                            save_file.setSelected(false);
-//                                            setRequestedOrientation(prevOrientation);
-//                                        }
-//                                    })
-//                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                        @Override
-//                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                            setRequestedOrientation(prevOrientation);
-//                                        }
-//                                    })
+//                                    .positiveButton(R.string.confirm)
+//                                    .negativeButton(R.string.dismiss)
 //                                    .show();
-//                            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                                @Override
-//                                public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                     KeyEvent event) {
-//                                    if (keyCode == KeyEvent.KEYCODE_BACK
-//                                            && event.getAction() == KeyEvent.ACTION_UP) {
-//                                        arg0.dismiss();
-//                                        setRequestedOrientation(prevOrientation);
-//                                        return true;
-//                                    }
-//                                    return false;
-//                                }
-//                            });
-//                            dialog.setCancelable(false);
-                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
-                                    .title(R.string.dialog_delete_mp3_title)
-                                    .content(R.string.dialog_delete_mp3)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
-                                    .show();
-                        }
-                        else {
-//                            prevOrientation = getRequestedOrientation();
-//                            Utility.blockOrientation(PaginaRenderActivity.this);
-//                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//                        }
+//                        else {
+////                            prevOrientation = getRequestedOrientation();
+////                            Utility.blockOrientation(PaginaRenderActivity.this);
+////                            MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+////                                    .title(R.string.dialog_delete_link_title)
+////                                    .content(R.string.dialog_delete_link)
+////                                    .positiveText(R.string.confirm)
+////                                    .negativeText(R.string.dismiss)
+////                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+////                                        @Override
+////                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                            Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+////                                                    .show();
+////
+////                                            scroll_song_bar.setProgress(0);
+////                                            scroll_song_bar.setEnabled(false);
+////                                            showPlaying(false);
+////                                            mediaPlayerState = MP_State.Stopped;
+////                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
+////                                            i.setAction(MusicService.ACTION_STOP);
+////                                            startService(i);
+////
+//////                                            if (mediaPlayerState == MP_State.Started
+//////                                                    || mediaPlayerState == MP_State.Paused)
+//////                                                cmdStop();
+//////
+//////                                            mediaPlayer = new MediaPlayer();
+//////                                            mediaPlayerState = MP_State.Idle;
+//////                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+////
+////                                            localFile = false;
+////                                            personalUrl = "";
+////                                            playUrl = url;
+////
+////                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
+////                                            String sql = "DELETE FROM LOCAL_LINKS" +
+////                                                    "  WHERE _id =  " + idCanto;
+////                                            db.execSQL(sql);
+////                                            db.close();
+////
+////                                            save_file.setSelected(false);
+////
+////                                            setRequestedOrientation(prevOrientation);
+////                                        }
+////                                    })
+////                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+////                                        @Override
+////                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                            setRequestedOrientation(prevOrientation);
+////                                        }
+////                                    })
+////                                    .show();
+////                            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                                @Override
+////                                public boolean onKey(DialogInterface arg0, int keyCode,
+////                                                     KeyEvent event) {
+////                                    if (keyCode == KeyEvent.KEYCODE_BACK
+////                                            && event.getAction() == KeyEvent.ACTION_UP) {
+////                                        arg0.dismiss();
+////                                        setRequestedOrientation(prevOrientation);
+////                                        return true;
+////                                    }
+////                                    return false;
+////                                }
+////                            });
+////                            dialog.setCancelable(false);
+//                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
 //                                    .title(R.string.dialog_delete_link_title)
 //                                    .content(R.string.dialog_delete_link)
-//                                    .positiveText(R.string.confirm)
-//                                    .negativeText(R.string.dismiss)
-//                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                        @Override
-//                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                            Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
-//                                                    .show();
-//
-//                                            scroll_song_bar.setProgress(0);
-//                                            scroll_song_bar.setEnabled(false);
-//                                            showPlaying(false);
-//                                            mediaPlayerState = MP_State.Stopped;
-//                                            Intent i = new Intent(getApplicationContext(),MusicService.class);
-//                                            i.setAction(MusicService.ACTION_STOP);
-//                                            startService(i);
-//
-////                                            if (mediaPlayerState == MP_State.Started
-////                                                    || mediaPlayerState == MP_State.Paused)
-////                                                cmdStop();
-////
-////                                            mediaPlayer = new MediaPlayer();
-////                                            mediaPlayerState = MP_State.Idle;
-////                                            mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                                            localFile = false;
-//                                            personalUrl = "";
-//                                            playUrl = url;
-//
-//                                            SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                            String sql = "DELETE FROM LOCAL_LINKS" +
-//                                                    "  WHERE _id =  " + idCanto;
-//                                            db.execSQL(sql);
-//                                            db.close();
-//
-//                                            save_file.setSelected(false);
-//
-//                                            setRequestedOrientation(prevOrientation);
-//                                        }
-//                                    })
-//                                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                        @Override
-//                                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                            setRequestedOrientation(prevOrientation);
-//                                        }
-//                                    })
+//                                    .positiveButton(R.string.confirm)
+//                                    .negativeButton(R.string.dismiss)
 //                                    .show();
-//                            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                                @Override
-//                                public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                     KeyEvent event) {
-//                                    if (keyCode == KeyEvent.KEYCODE_BACK
-//                                            && event.getAction() == KeyEvent.ACTION_UP) {
-//                                        arg0.dismiss();
-//                                        setRequestedOrientation(prevOrientation);
-//                                        return true;
-//                                    }
-//                                    return false;
-//                                }
-//                            });
-//                            dialog.setCancelable(false);
-                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
-                                    .title(R.string.dialog_delete_link_title)
-                                    .content(R.string.dialog_delete_link)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
-                                    .show();
-                        }
-                    }
-                    else {
-//                        prevOrientation = getRequestedOrientation();
-//                        Utility.blockOrientation(PaginaRenderActivity.this);
-//                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//                        }
+//                    }
+//                    else {
+////                        prevOrientation = getRequestedOrientation();
+////                        Utility.blockOrientation(PaginaRenderActivity.this);
+////                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+////                                .title(R.string.download_link_title)
+////                                .content(R.string.downlink_message)
+////                                .positiveText(R.string.downlink_download)
+////                                .negativeText(R.string.downlink_choose)
+////                                .neutralText(R.string.cancel)
+////                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+////                                        int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+////                                        if (saveLocation == 1)
+//////                                            PaginaRenderActivityPermissionsDispatcher.startExternalDownloadWithCheck(PaginaRenderActivity.this);
+////                                            checkStoragePermissions();
+////                                        else
+////                                            startInternalDownload();
+////                                    }
+////                                })
+////                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//////                                        setRequestedOrientation(prevOrientation);
+////                                        // This always works
+////                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+//////                                        // Set these depending on your use case. These are the defaults.
+////                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+////                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+////                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+////                                        startActivityForResult(i, REQUEST_CODE);
+////                                    }
+////                                })
+////                                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        setRequestedOrientation(prevOrientation);
+////                                    }
+////                                })
+////                                .show();
+////                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                            @Override
+////                            public boolean onKey(DialogInterface arg0, int keyCode,
+////                                                 KeyEvent event) {
+////                                if (keyCode == KeyEvent.KEYCODE_BACK
+////                                        && event.getAction() == KeyEvent.ACTION_UP) {
+////                                    arg0.dismiss();
+////                                    setRequestedOrientation(prevOrientation);
+////                                    return true;
+////                                }
+////                                return false;
+////                            }
+////                        });
+////                        dialog.setCancelable(false);
+//                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLINK_CHOOSE")
 //                                .title(R.string.download_link_title)
 //                                .content(R.string.downlink_message)
-//                                .positiveText(R.string.downlink_download)
-//                                .negativeText(R.string.downlink_choose)
-//                                .neutralText(R.string.cancel)
-//                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-//                                        int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-//                                        if (saveLocation == 1)
-////                                            PaginaRenderActivityPermissionsDispatcher.startExternalDownloadWithCheck(PaginaRenderActivity.this);
-//                                            checkStoragePermissions();
-//                                        else
-//                                            startInternalDownload();
-//                                    }
-//                                })
-//                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                        setRequestedOrientation(prevOrientation);
-//                                        // This always works
-//                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-////                                        // Set these depending on your use case. These are the defaults.
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                                        startActivityForResult(i, REQUEST_CODE);
-//                                    }
-//                                })
-//                                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        setRequestedOrientation(prevOrientation);
-//                                    }
-//                                })
+//                                .positiveButton(R.string.downlink_download)
+//                                .negativeButton(R.string.downlink_choose)
+//                                .neutralButton(R.string.cancel)
 //                                .show();
-//                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                            @Override
-//                            public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                 KeyEvent event) {
-//                                if (keyCode == KeyEvent.KEYCODE_BACK
-//                                        && event.getAction() == KeyEvent.ACTION_UP) {
-//                                    arg0.dismiss();
-//                                    setRequestedOrientation(prevOrientation);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        dialog.setCancelable(false);
-                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLINK_CHOOSE")
-                                .title(R.string.download_link_title)
-                                .content(R.string.downlink_message)
-                                .positiveButton(R.string.downlink_download)
-                                .negativeButton(R.string.downlink_choose)
-                                .neutralButton(R.string.cancel)
-                                .show();
-                    }
-                }
-            });
+//                    }
+//                }
+//            });
 
         }
         else {
@@ -1066,139 +1161,139 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //                }
 //            });
 
-            save_file.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getFab().hide();
-                    hideOuterFrame();
-                    if (v.isSelected()) {
-//                        prevOrientation = getRequestedOrientation();
-//                        Utility.blockOrientation(PaginaRenderActivity.this);
-//                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//            save_file.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    getFab().hide();
+//                    hideOuterFrame();
+//                    if (v.isSelected()) {
+////                        prevOrientation = getRequestedOrientation();
+////                        Utility.blockOrientation(PaginaRenderActivity.this);
+////                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+////                                .title(R.string.dialog_delete_link_title)
+////                                .content(R.string.dialog_delete_link)
+////                                .positiveText(R.string.confirm)
+////                                .negativeText(R.string.dismiss)
+////                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+////                                                .show();
+////
+////
+////
+//////                                        if (mediaPlayerState == MP_State.Started
+//////                                                || mediaPlayerState == MP_State.Paused)
+//////                                            cmdStop();
+////                                        scroll_song_bar.setProgress(0);
+////                                        scroll_song_bar.setEnabled(false);
+////                                        showPlaying(false);
+////                                        mediaPlayerState = MP_State.Stopped;
+////                                        Intent i = new Intent(getApplicationContext(),MusicService.class);
+////                                        i.setAction(MusicService.ACTION_STOP);
+////                                        startService(i);
+////
+//////                                        mediaPlayer = new MediaPlayer();
+//////                                        mediaPlayerState = MP_State.Idle;
+//////                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
+////
+////                                        localFile = false;
+////                                        personalUrl = "";
+////                                        playUrl = url;
+////
+////                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+////                                        String sql = "DELETE FROM LOCAL_LINKS" +
+////                                                "  WHERE _id =  " + idCanto;
+////                                        db.execSQL(sql);
+////                                        db.close();
+////
+////                                        save_file.setSelected(false);
+////
+////                                        music_buttons.setVisibility(View.INVISIBLE);
+////                                        no_records_text.setVisibility(View.VISIBLE);
+////
+////                                        setRequestedOrientation(prevOrientation);
+////                                    }
+////                                })
+////                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        setRequestedOrientation(prevOrientation);
+////                                    }
+////                                })
+////                                .show();
+////                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                            @Override
+////                            public boolean onKey(DialogInterface arg0, int keyCode,
+////                                                 KeyEvent event) {
+////                                if (keyCode == KeyEvent.KEYCODE_BACK
+////                                        && event.getAction() == KeyEvent.ACTION_UP) {
+////                                    arg0.dismiss();
+////                                    setRequestedOrientation(prevOrientation);
+////                                    return true;
+////                                }
+////                                return false;
+////                            }
+////                        });
+////                        dialog.setCancelable(false);
+//                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
 //                                .title(R.string.dialog_delete_link_title)
 //                                .content(R.string.dialog_delete_link)
-//                                .positiveText(R.string.confirm)
-//                                .negativeText(R.string.dismiss)
-//                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
-//                                                .show();
-//
-//
-//
-////                                        if (mediaPlayerState == MP_State.Started
-////                                                || mediaPlayerState == MP_State.Paused)
-////                                            cmdStop();
-//                                        scroll_song_bar.setProgress(0);
-//                                        scroll_song_bar.setEnabled(false);
-//                                        showPlaying(false);
-//                                        mediaPlayerState = MP_State.Stopped;
-//                                        Intent i = new Intent(getApplicationContext(),MusicService.class);
-//                                        i.setAction(MusicService.ACTION_STOP);
-//                                        startService(i);
-//
-////                                        mediaPlayer = new MediaPlayer();
-////                                        mediaPlayerState = MP_State.Idle;
-////                                        mediaPlayer.setOnErrorListener(mediaPlayerOnErrorListener);
-//
-//                                        localFile = false;
-//                                        personalUrl = "";
-//                                        playUrl = url;
-//
-//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                        String sql = "DELETE FROM LOCAL_LINKS" +
-//                                                "  WHERE _id =  " + idCanto;
-//                                        db.execSQL(sql);
-//                                        db.close();
-//
-//                                        save_file.setSelected(false);
-//
-//                                        music_buttons.setVisibility(View.INVISIBLE);
-//                                        no_records_text.setVisibility(View.VISIBLE);
-//
-//                                        setRequestedOrientation(prevOrientation);
-//                                    }
-//                                })
-//                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        setRequestedOrientation(prevOrientation);
-//                                    }
-//                                })
+//                                .positiveButton(R.string.confirm)
+//                                .negativeButton(R.string.dismiss)
 //                                .show();
-//                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                            @Override
-//                            public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                 KeyEvent event) {
-//                                if (keyCode == KeyEvent.KEYCODE_BACK
-//                                        && event.getAction() == KeyEvent.ACTION_UP) {
-//                                    arg0.dismiss();
-//                                    setRequestedOrientation(prevOrientation);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        dialog.setCancelable(false);
-                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
-                                .title(R.string.dialog_delete_link_title)
-                                .content(R.string.dialog_delete_link)
-                                .positiveButton(R.string.confirm)
-                                .negativeButton(R.string.dismiss)
-                                .show();
-                    }
-                    else {
-//                        prevOrientation = getRequestedOrientation();
-//                        Utility.blockOrientation(PaginaRenderActivity.this);
-//                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+//                    }
+//                    else {
+////                        prevOrientation = getRequestedOrientation();
+////                        Utility.blockOrientation(PaginaRenderActivity.this);
+////                        MaterialDialog dialog = new MaterialDialog.Builder(PaginaRenderActivity.this)
+////                                .title(R.string.only_link_title)
+////                                .content(R.string.only_link)
+////                                .positiveText(R.string.confirm)
+////                                .negativeText(R.string.dismiss)
+////                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        setRequestedOrientation(prevOrientation);
+////                                        // This always works
+////                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+////                                        // Set these depending on your use case. These are the defaults.
+////                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+////                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+////                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+////                                        startActivityForResult(i, REQUEST_CODE);
+////                                    }
+////                                })
+////                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+////                                    @Override
+////                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+////                                        setRequestedOrientation(prevOrientation);
+////                                    }
+////                                })
+////                                .show();
+////                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+////                            @Override
+////                            public boolean onKey(DialogInterface arg0, int keyCode,
+////                                                 KeyEvent event) {
+////                                if (keyCode == KeyEvent.KEYCODE_BACK
+////                                        && event.getAction() == KeyEvent.ACTION_UP) {
+////                                    arg0.dismiss();
+////                                    setRequestedOrientation(prevOrientation);
+////                                    return true;
+////                                }
+////                                return false;
+////                            }
+////                        });
+////                        dialog.setCancelable(false);
+//                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "ONLY_LINK")
 //                                .title(R.string.only_link_title)
 //                                .content(R.string.only_link)
-//                                .positiveText(R.string.confirm)
-//                                .negativeText(R.string.dismiss)
-//                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        setRequestedOrientation(prevOrientation);
-//                                        // This always works
-//                                        Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-//                                        // Set these depending on your use case. These are the defaults.
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                                        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                                        startActivityForResult(i, REQUEST_CODE);
-//                                    }
-//                                })
-//                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                        setRequestedOrientation(prevOrientation);
-//                                    }
-//                                })
+//                                .positiveButton(R.string.confirm)
+//                                .negativeButton(R.string.dismiss)
 //                                .show();
-//                        dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                            @Override
-//                            public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                 KeyEvent event) {
-//                                if (keyCode == KeyEvent.KEYCODE_BACK
-//                                        && event.getAction() == KeyEvent.ACTION_UP) {
-//                                    arg0.dismiss();
-//                                    setRequestedOrientation(prevOrientation);
-//                                    return true;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        dialog.setCancelable(false);
-                        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "ONLY_LINK")
-                                .title(R.string.only_link_title)
-                                .content(R.string.only_link)
-                                .positiveButton(R.string.confirm)
-                                .negativeButton(R.string.dismiss)
-                                .show();
-                    }
-                }
-            });
+//                    }
+//                }
+//            });
 
 //            if (mediaPlayer == null) {
 //                mediaPlayer = new MediaPlayer();
@@ -1220,7 +1315,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //            }
 
             if (!personalUrl.equalsIgnoreCase("")) {
-                save_file.setSelected(true);
+//                save_file.setSelected(true);
+                mDownload = true;
 
                 //mostra i pulsanti per il lettore musicale
                 music_buttons.setVisibility(View.VISIBLE);
@@ -1228,7 +1324,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             }
             else {
                 // nasconde i pulsanti
-                save_file.setSelected(false);
+//                save_file.setSelected(false);
+                mDownload = false;
                 music_buttons.setVisibility(View.INVISIBLE);
                 no_records_text.setVisibility(View.VISIBLE);
             }
@@ -1364,66 +1461,73 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
 //        initializeLoadingDialogs();
 
-        mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
-        ImageButton fab_fullscreen_on = (ImageButton) findViewById(R.id.fab_fullscreen_on);
-        drawable = DrawableCompat.wrap(fab_fullscreen_on.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
-        fab_fullscreen_on.setOnClickListener(new OnClickListener() {
+//        mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
+//        ImageButton fab_fullscreen_on = (ImageButton) findViewById(R.id.fab_fullscreen_on);
+//        drawable = DrawableCompat.wrap(fab_fullscreen_on.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//        fab_fullscreen_on.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getFab().hide();
+//                hideOuterFrame();
+//                mHandler.removeCallbacks(mScrollDown);
+//                saveZoom();
+//                Bundle bundle = new Bundle();
+//                bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
+//                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
+//                bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
+//                bundle.putInt(Utility.ID_CANTO, idCanto);
+//
+//                Intent intent = new Intent(PaginaRenderActivity.this, PaginaRenderFullScreen.class);
+//                intent.putExtras(bundle);
+//
+//                mLUtils.startActivityWithFadeIn(intent, paginaView, Utility.TAG_TRANSIZIONE);
+//            }
+//        });
+
+//        fab_sound_off = (ImageButton) findViewById(R.id.fab_sound_off);
+//        drawable = DrawableCompat.wrap(fab_sound_off.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//        fab_sound_off.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                v.setSelected(!v.isSelected());
+//                getFab().hide();
+//                hideOuterFrame();
+//                findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.GONE : View.VISIBLE);
+//                mostraAudioBool = !v.isSelected();
+//                mostraAudio = String.valueOf(mostraAudioBool);
+//            }
+//        });
+
+//        fab_favorite = (ImageButton) findViewById(R.id.fab_favorite);
+//        drawable = DrawableCompat.wrap(fab_favorite.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//        fab_favorite.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                v.setSelected(!v.isSelected());
+//                updateFavouriteFlag(v.isSelected() ? 1 : 0);
+//                getFab().hide();
+//                hideOuterFrame();
+//                Snackbar.make(findViewById(android.R.id.content)
+//                        , v.isSelected() ? R.string.favorite_added : R.string.favorite_removed
+//                        , Snackbar.LENGTH_SHORT)
+//                        .show();
+//            }
+//        });
+
+//        getFab().setButtonOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showOuterFrame();
+//            }
+//        });
+        getFab().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFab().hide();
-                hideOuterFrame();
-                mHandler.removeCallbacks(mScrollDown);
-                saveZoom();
-                Bundle bundle = new Bundle();
-                bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
-                bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
-                bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
-                bundle.putInt(Utility.ID_CANTO, idCanto);
-
-                Intent intent = new Intent(PaginaRenderActivity.this, PaginaRenderFullScreen.class);
-                intent.putExtras(bundle);
-
-                mLUtils.startActivityWithFadeIn(intent, paginaView, Utility.TAG_TRANSIZIONE);
-            }
-        });
-
-        fab_sound_off = (ImageButton) findViewById(R.id.fab_sound_off);
-        drawable = DrawableCompat.wrap(fab_sound_off.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
-        fab_sound_off.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setSelected(!v.isSelected());
-                getFab().hide();
-                hideOuterFrame();
-                findViewById(R.id.music_controls).setVisibility(v.isSelected() ? View.GONE : View.VISIBLE);
-                mostraAudioBool = !v.isSelected();
-                mostraAudio = String.valueOf(mostraAudioBool);
-            }
-        });
-
-        fab_favorite = (ImageButton) findViewById(R.id.fab_favorite);
-        drawable = DrawableCompat.wrap(fab_favorite.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
-        fab_favorite.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setSelected(!v.isSelected());
-                updateFavouriteFlag(v.isSelected() ? 1 : 0);
-                getFab().hide();
-                hideOuterFrame();
-                Snackbar.make(findViewById(android.R.id.content)
-                        , v.isSelected() ? R.string.favorite_added : R.string.favorite_removed
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        });
-
-        getFab().setButtonOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOuterFrame();
+                BottomSheetFabCanto bottomSheetDialog = BottomSheetFabCanto.newInstance(mostraAudioBool, mDownload, selectFavouriteFromSource() == 1);
+                bottomSheetDialog.show(getSupportFragmentManager(), null);
             }
         });
 
@@ -1861,11 +1965,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
 
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
-        fab_sound_off.setSelected(!mostraAudioBool);
-        fab_favorite.setSelected(selectFavouriteFromSource() == 1);
-        if (getFab().isVisible()) {
-            showOuterFrame();
-        }
+//        fab_sound_off.setSelected(!mostraAudioBool);
+//        fab_favorite.setSelected(selectFavouriteFromSource() == 1);
+//        if (getFab().isVisible()) {
+//            showOuterFrame();
+//        }
 
         //registra un receiver per ricevere la notifica di preparazione della registrazione
         registerReceiver(gpsBRec, new IntentFilter(
@@ -1888,6 +1992,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 PdfExportService.BROADCAST_EXPORT_COMPLETED));
         registerReceiver(exportError, new IntentFilter(
                 PdfExportService.BROADCAST_EXPORT_ERROR));
+        registerReceiver(fabBRec, new IntentFilter(
+                BottomSheetFabCanto.CHOOSE_DONE));
     }
 
 //    @Override
@@ -1919,6 +2025,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             unregisterReceiver(downloadErrorBRec);
             unregisterReceiver(exportCompleted);
             unregisterReceiver(exportError);
+            unregisterReceiver(fabBRec);
         } catch (IllegalArgumentException e) {
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
         }
@@ -1950,31 +2057,32 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //        outState.putBoolean(Utility.AUDIO_REQUESTED, audioRequested);
     }
 
-    public FabToolbar getFab() {
+    public FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = (FabToolbar) findViewById(R.id.fab_toolbar);
-            mFab.setColor(getThemeUtils().accentColor());
+            mFab = (FloatingActionButton) findViewById(R.id.fab_canti);
+            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         }
         return mFab;
     }
 
-    private void showOuterFrame() {
-        View outerFrame = findViewById(R.id.outerFrame);
-        outerFrame.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFab().hide();
-                hideOuterFrame();
-            }
-        });
-        outerFrame.setVisibility(View.VISIBLE);
-    }
-
-    private void hideOuterFrame() {
-        final View outerFrame = findViewById(R.id.outerFrame);
-        outerFrame.setOnClickListener(null);
-        outerFrame.setVisibility(View.GONE);
-    }
+//    private void showOuterFrame() {
+//        View outerFrame = findViewById(R.id.outerFrame);
+//        outerFrame.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getFab().hide();
+//                hideOuterFrame();
+//            }
+//        });
+//        outerFrame.setVisibility(View.VISIBLE);
+//    }
+//
+//    private void hideOuterFrame() {
+//        final View outerFrame = findViewById(R.id.outerFrame);
+//        outerFrame.setOnClickListener(null);
+//        outerFrame.setVisibility(View.GONE);
+//    }
 
     public void pulisciVars() {
         saveZoom();
@@ -2412,7 +2520,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 localFile = true;
                 personalUrl = path;
 
-                save_file.setSelected(true);
+//                save_file.setSelected(true);
+                mDownload = true;
 
                 //mostra i pulsanti per il lettore musicale
                 music_buttons.setVisibility(View.VISIBLE);
@@ -3371,7 +3480,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 db.execSQL(sql);
                 db.close();
 
-                save_file.setSelected(false);
+//                save_file.setSelected(false);
+                mDownload = false;
                 break;
             case "DELETE_MP3":
                 File fileToDelete = new File(localUrl);
@@ -3399,7 +3509,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
                 localFile = false;
                 playUrl = url;
-                save_file.setSelected(false);
+//                save_file.setSelected(false);
+                mDownload = false;
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
@@ -3433,7 +3544,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 db.execSQL(sql);
                 db.close();
 
-                save_file.setSelected(false);
+//                save_file.setSelected(false);
+                mDownload = false;
 
                 music_buttons.setVisibility(View.INVISIBLE);
                 no_records_text.setVisibility(View.VISIBLE);

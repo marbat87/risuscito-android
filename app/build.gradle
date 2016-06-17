@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '24.0.0 rc4'
+    compileSdkVersion 24
+    buildToolsVersion '24.0.0'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 112
         versionName '4.1.0'
     }
@@ -35,7 +35,6 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar') { transitive = true }
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.1'
-    compile 'it.marbat.fabtoolbar.lib:lib:1.0.5'
     compile 'com.turingtechnologies.materialscrollbar:lib:8.1.0'
     compile 'com.nononsenseapps:filepicker:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.0.0'
@@ -43,6 +42,7 @@ dependencies {
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     compile 'com.stephentuso:welcome:0.7.2'
     compile supportDependencies.cardView
+    compile supportDependencies.design
     compile playServices.auth
     compile playServices.drive
     compile firebaseDependencies.core

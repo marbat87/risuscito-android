@@ -46,6 +46,9 @@ public class ListaPersonalizzataFragment extends Fragment {
 
     final String TAG = getClass().getCanonicalName();
 
+    // create boolean for fetching data
+    private boolean isViewShown = true;
+
     private int posizioneDaCanc;
     private View rootView;
     private DatabaseCanti listaCanti;
@@ -194,6 +197,11 @@ public class ListaPersonalizzataFragment extends Fragment {
             }
         });
 
+        if (!isViewShown) {
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
+        }
+
         return rootView;
     }
 
@@ -201,13 +209,18 @@ public class ListaPersonalizzataFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.VISIBLE);
-//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.VISIBLE);
+            if (getView() != null) {
+                isViewShown = true;
+//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
+//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
 //            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
 //            if (!fab1.isShowing())
 //                fab1.scrollUp();
-            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-            fab1.show();
+                FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+                fab1.show();
+            }
+            else
+                isViewShown = false;
         }
     }
 
@@ -252,16 +265,16 @@ public class ListaPersonalizzataFragment extends Fragment {
 
     private Intent getShareIntent() {
         return new Intent(Intent.ACTION_SEND)
-        .putExtra(Intent.EXTRA_TEXT, getTitlesList())
-        .setType("text/plain");
+                .putExtra(Intent.EXTRA_TEXT, getTitlesList())
+                .setType("text/plain");
 //        return intent;
     }
 
     private Intent getSendIntent(Uri exportUri) {
         return new Intent(Intent.ACTION_SEND)
-        .putExtra(Intent.EXTRA_STREAM, exportUri)
+                .putExtra(Intent.EXTRA_STREAM, exportUri)
 //        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        .setType("text/xml");
+                .setType("text/xml");
 //        return intent;
     }
 
