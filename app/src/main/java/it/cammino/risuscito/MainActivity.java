@@ -1606,30 +1606,46 @@ public class MainActivity extends ThemeableActivity
         Log.d(getClass().getName(), "onPositive: TAG " + tag);
         switch (tag) {
             case "BACKUP_ASK":
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-                        .title(R.string.backup_running)
-                        .content(R.string.backup_database)
-                        .showProgress(true)
-                        .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show();
-                saveCheckDupl(
-                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
-                        , DatabaseCanti.getDbName()
-                        , "application/x-sqlite3"
-                        , getDbPath()
-                        , true
-                );
+                if (mGoogleApiClient.isConnected()) {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                            .title(R.string.backup_running)
+                            .content(R.string.backup_database)
+                            .showProgress(true)
+                            .progressIndeterminate(true)
+                            .progressMax(0)
+                            .show();
+                    saveCheckDupl(
+                            Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                            , DatabaseCanti.getDbName()
+                            , "application/x-sqlite3"
+                            , getDbPath()
+                            , true
+                    );
+                }
+                else {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
+                            .content(R.string.no_connection)
+                            .positiveButton(R.string.dialog_chiudi)
+                            .show();
+                }
                 break;
             case "RESTORE_ASK":
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-                        .title(R.string.restore_running)
-                        .content(R.string.restoring_database)
-                        .showProgress(true)
-                        .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show();
-                restoreDriveBackup();
+                if (mGoogleApiClient.isConnected()) {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                            .title(R.string.restore_running)
+                            .content(R.string.restoring_database)
+                            .showProgress(true)
+                            .progressIndeterminate(true)
+                            .progressMax(0)
+                            .show();
+                    restoreDriveBackup();
+                }
+                else {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
+                            .content(R.string.no_connection)
+                            .positiveButton(R.string.dialog_chiudi)
+                            .show();
+                }
                 break;
             case "SIGNOUT":
                 signOut();

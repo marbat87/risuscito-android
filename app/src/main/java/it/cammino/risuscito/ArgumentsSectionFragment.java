@@ -134,7 +134,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         }
 
         arguments.close();
-        db.close();
+//        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -215,7 +215,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             }
 
             lista.close();
-//            db.close();
+            db.close();
         }
 
         return rootView;
