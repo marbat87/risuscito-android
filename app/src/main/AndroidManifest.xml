@@ -29,6 +29,8 @@
             android:theme="@style/WelcomeScreenTheme" />
         <activity android:name="it.cammino.risuscito.slides.IntroConsegnatiNew" android:label=""
             android:theme="@style/WelcomeScreenTheme" />
+        <activity android:name="it.cammino.risuscito.slides.IntroListePers" android:label=""
+            android:theme="@style/WelcomeScreenTheme" />
 
         <service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">
             <intent-filter>

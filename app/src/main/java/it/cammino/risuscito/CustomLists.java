@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -26,20 +27,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.util.Locale;
 
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.slides.IntroListePers;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+
+    private String TAG  = getClass().getCanonicalName();
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private String[] titoliListe;
@@ -59,7 +67,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private TabLayout tabs;
     private LUtils mLUtils;
 
-    private String TAG  = getClass().getCanonicalName();
+    private WelcomeScreenHelper mWelcomeScreen;
 
     private BroadcastReceiver fabBRec = new BroadcastReceiver() {
         @Override
@@ -451,7 +459,32 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         getActivity().registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabListe.CHOOSE_DONE));
 
+        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroListePers.class);
+        mWelcomeScreen.show(savedInstanceState);
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_help:
+                mWelcomeScreen.forceShow();
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -466,6 +499,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         outState.putInt("idDaCanc", idDaCanc);
         outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
         outState.putInt("listaDaCanc", listaDaCanc);
+        mWelcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override

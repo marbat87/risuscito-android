@@ -328,7 +328,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.consegnati_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
     }
 
     @Override

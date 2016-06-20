@@ -352,4 +352,8 @@
     <string name="fab_delete_unlink">Elimina file</string>
     <string name="favorite_on">Aggiungi preferito</string>
     <string name="favorite_off">Rimuovi preferito</string>
+    <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
+    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
 </resources>
