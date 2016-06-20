@@ -342,7 +342,6 @@
     <string name="playback_completed">Riproduzione completata</string>
     <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
     <string name="action_share_file">Invia file</string>
-    <string name="title_activity_import">ImportActivity</string>
     <string name="import_error">Importazione lista fallita!</string>
     <string name="import_running">Importazione lista in corso</string>
     <string name="import_done">Importazione lista completata!</string>
