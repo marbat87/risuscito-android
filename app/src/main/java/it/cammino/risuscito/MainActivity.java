@@ -52,13 +52,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Picasso;
 
@@ -120,7 +114,7 @@ public class MainActivity extends ThemeableActivity
 //    private static final String DIALOG_ERROR = "dialog_error";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
-    private FirebaseAuth mFirebaseAuth;
+//    private FirebaseAuth mFirebaseAuth;
     private FirebaseAnalytics mFirebaseAnalytics;
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
@@ -226,7 +220,7 @@ public class MainActivity extends ThemeableActivity
         // [END build_client]
 
         // Initialize FirebaseAuth
-        mFirebaseAuth = FirebaseAuth.getInstance();
+//        mFirebaseAuth = FirebaseAuth.getInstance();
 
         // Initialize Firebase Measurement.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -981,7 +975,7 @@ public class MainActivity extends ThemeableActivity
                 showSnackbar = false;
             }
             updateUI(true);
-            firebaseAuthWithGoogle();
+//            firebaseAuthWithGoogle();
         } else {
             // Signed out, show unauthenticated UI.
             acct = null;
@@ -1058,28 +1052,28 @@ public class MainActivity extends ThemeableActivity
         }
     }
 
-    private void firebaseAuthWithGoogle() {
-        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the uel1user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (task.isSuccessful())
-                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
-                        else {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(FirebaseAnalytics.Param.VALUE, task.getException().toString());
-                            mFirebaseAnalytics.logEvent("login_fallito", bundle);
-                        }
-                    }
-                });
-    }
+//    private void firebaseAuthWithGoogle() {
+//        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+//        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+//        mFirebaseAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+//
+//                        // If sign in fails, display a message to the uel1user. If sign in succeeds
+//                        // the auth state listener will be notified and logic to handle the
+//                        // signed in user can be handled in the listener.
+//                        if (task.isSuccessful())
+//                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
+//                        else {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString(FirebaseAnalytics.Param.VALUE, task.getException().toString());
+//                            mFirebaseAnalytics.logEvent("login_fallito", bundle);
+//                        }
+//                    }
+//                });
+//    }
 
     private void showProgressDialog() {
 //        if (mProgressDialog != null && !mProgressDialog.isShowing())
