@@ -46,7 +46,7 @@
         risuscito:layout_behavior="it.cammino.risuscito.ui.QuickReturnFooterBehavior"
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:background="@android:color/black"
+        android:background="?colorPrimary"
         android:divider="?attr/dividerVertical"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
         android:layout_gravity="bottom"

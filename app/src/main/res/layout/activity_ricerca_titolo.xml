@@ -75,8 +75,6 @@
         android:layout_margin="@dimen/min_button_margin"
         android:layout_height="wrap_content"
         android:text="@string/button_pulisci"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@android:color/white"
         fontPath="fonts/Roboto-Medium.ttf"
         style="@style/Widget.AppCompat.Button.Colored"
         risuscito:elevation="@dimen/raised_button_default_elevation"
