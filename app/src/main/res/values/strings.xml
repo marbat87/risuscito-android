@@ -62,7 +62,7 @@
     <string name="fast_forward">avanti veloce</string>
     <string name="rewind">indietro veloce</string>
     <string name="delete">elimina file locale</string>
-    <string name="save_file">salva in locale</string>
+    <string name="save_file">Salva in locale</string>
     <string name="stop_song">ferma</string>
     <string name="pause_song">pausa</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
@@ -297,7 +297,7 @@
     <string name="focus_not_allowed">AudioFocus non consentito</string>
     <string name="download_error">Errore nel download:</string>
     <string name="dialog_back">INDIETRO</string>
-    <string name="share_by">CONDIVIDI CON&#8230;</string>
+    <string name="share_by">Condividi con&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
@@ -340,4 +340,19 @@
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="playback_completed">Riproduzione completata</string>
+    <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="action_share_file">Invia file</string>
+    <string name="import_error">Importazione lista fallita!</string>
+    <string name="import_running">Importazione lista in corso</string>
+    <string name="import_done">Importazione lista completata!</string>
+    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
+    <string name="audio_on">Mostra audio</string>
+    <string name="audio_off">Nascondi audio</string>
+    <string name="fab_delete_unlink">Elimina file</string>
+    <string name="favorite_on">Aggiungi preferito</string>
+    <string name="favorite_off">Rimuovi preferito</string>
+    <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
+    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
 </resources>

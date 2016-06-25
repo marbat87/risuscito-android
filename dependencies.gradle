@@ -1,6 +1,6 @@
 ext {
     //Version
-    supportLibrary = '23.4.0'
+    supportLibrary = '24.0.0'
 
     //Support Libraries dependencies
     supportDependencies = [
@@ -13,11 +13,28 @@ ext {
             palette          :    "com.android.support:palette-v7:${supportLibrary}"
     ]
 
+    //Version
+    firebase = '9.0.2'
+
+    //Firebase dependencies
+    firebaseDependencies = [
+            core           :    "com.google.firebase:firebase-core:${firebase}",
+            database       :    "com.google.firebase:firebase-database:${firebase}",
+            storage        :    "com.google.firebase:firebase-storage:${firebase}",
+            crash          :    "com.google.firebase:firebase-crash:${firebase}",
+            auth          :    "com.google.firebase:firebase-auth:${firebase}",
+            messaging      :    "com.google.firebase:firebase-messaging:${firebase}",
+            config         :    "com.google.firebase:firebase-config:${firebase}",
+            invites        :    "com.google.firebase:firebase-invites:${firebase}",
+            ads            :    "com.google.firebase:firebase-ads:${firebase}",
+            appindexing    :    "com.google.android.gms:play-services-appindexing:${firebase}",
+    ]
+
     genericDependencies = [
             CircularReveal   :    "com.github.ozodrukh:CircularReveal:1.1.1@aar"
     ]
 
-    servicesLibrary = '9.0.0'
+    servicesLibrary = '9.0.2'
 
     playServices = [
             auth             :    "com.google.android.gms:play-services-auth:${servicesLibrary}",

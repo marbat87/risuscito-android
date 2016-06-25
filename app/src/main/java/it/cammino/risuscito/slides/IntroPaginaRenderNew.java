@@ -12,7 +12,7 @@ public class IntroPaginaRenderNew extends WelcomeActivity{
         return new WelcomeScreenBuilder(this)
                 .theme(R.style.WelcomeScreenTheme_SolidNavigation)
                 .defaultTitleTypefacePath("fonts/Roboto-Medium.ttf")
-                .defaultTitleTypefacePath("fonts/Roboto-Regular.ttf")
+                .defaultDescriptionTypefacePath("fonts/Roboto-Regular.ttf")
                 .basicPage(R.drawable.intro_paginarender_0, getString(R.string.sc_pagina_render_title), getString(R.string.sc_pagina_render_desc), R.color.intro_background)
                 .basicPage(R.drawable.intro_paginarender_1, getString(R.string.action_tonalita), getString(R.string.sc_tonalita_desc), R.color.intro_background)
                 .basicPage(R.drawable.intro_paginarender_2, getString(R.string.action_barre), getString(R.string.sc_barre_desc), R.color.intro_background)

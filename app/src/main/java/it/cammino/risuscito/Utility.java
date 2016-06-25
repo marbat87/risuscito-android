@@ -37,6 +37,8 @@ public class Utility {
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
 
+    public static final String GENERATE_XML = "generate_xml";
+
     public static final int HIDE_DELAY = 1500;
 
     public static final long CLICK_DELAY = 1000;
@@ -336,5 +338,12 @@ public class Utility {
 
         return sb.toString();
     }
+
+//    public static String escapeEmail(String email) {
+//        String result = email.substring(0, email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: result " + result);
+//        return result.replaceAll("\\.", "_");
+//    }
 
 }

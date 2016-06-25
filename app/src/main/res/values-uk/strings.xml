@@ -257,7 +257,7 @@
     <string name="new_hint_remove">Натисніть на елемент та тримайте для того, щоб видалити його</string>
     <string name="history_remove">Видалити з хронології?</string>
     <string name="history_empty">Хронологія пуста.</string>
-    <string name="last_open_date">ОСТАННЄ ВІДКРИТТЯ:</string>
+    <string name="last_open_date">ОСТАННЄ ВІДКРИТТЯ: %1$s</string>
     <string name="dialog_reset_history_title">Очистити хронологію</string>
     <string name="dialog_reset_history_desc">Бажаєш видалити хронологію продивлених пічень?</string>
     <string name="canto_title_activity">Пісня</string>
@@ -289,7 +289,7 @@
     <string name="focus_not_allowed">AudioFocus не дозволений</string>
     <string name="download_error">Помилка в завантаженні:</string>
     <string name="dialog_back">НАЗАД</string>
-    <string name="share_by">ПОДІЛИТИСЯ З&#8230;</string>
+    <string name="share_by">Поділитися з&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
@@ -332,4 +332,19 @@
     <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
     <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
     <string name="playback_completed">Програвання завершено</string>
+    <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="action_share_file">Invia file</string>
+    <string name="import_error">Importazione lista fallita</string>
+    <string name="import_running">Importazione lista in corso</string>
+    <string name="import_done">Importazione lista completata!</string>
+    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
+    <string name="audio_on">Показувати аудіо</string>
+    <string name="audio_off">Сховати аудіо</string>
+    <string name="fab_delete_unlink">Видалити файл</string>
+    <string name="favorite_on">Додати с закладок</string>
+    <string name="favorite_off">Видалити с закладок</string>
+    <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti sccelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
+    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
 </resources>

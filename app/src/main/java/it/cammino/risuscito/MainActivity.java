@@ -52,6 +52,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Picasso;
 
@@ -113,6 +114,8 @@ public class MainActivity extends ThemeableActivity
 //    private static final String DIALOG_ERROR = "dialog_error";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+//    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAnalytics mFirebaseAnalytics;
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
 
@@ -123,6 +126,8 @@ public class MainActivity extends ThemeableActivity
     private boolean prefRestoreRunning;
     private boolean dbBackupRunning;
     private boolean prefBackupRunning;
+
+    private String TAG = getClass().getCanonicalName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,6 +203,7 @@ public class MainActivity extends ThemeableActivity
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
@@ -212,6 +218,12 @@ public class MainActivity extends ThemeableActivity
                 .addApi(Drive.API)
                 .build();
         // [END build_client]
+
+        // Initialize FirebaseAuth
+//        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        // Initialize Firebase Measurement.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK") != null)
             SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK").setmCallback(MainActivity.this);
@@ -963,6 +975,7 @@ public class MainActivity extends ThemeableActivity
                 showSnackbar = false;
             }
             updateUI(true);
+//            firebaseAuthWithGoogle();
         } else {
             // Signed out, show unauthenticated UI.
             acct = null;
@@ -974,19 +987,6 @@ public class MainActivity extends ThemeableActivity
     @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-//            Log.d(getClass().getName(), "currentPerson: " + Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
-//            if (mGoogleApiClient.isConnected() && Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
-//                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-//
-//                String personCoverUrl = currentPerson.getCover().getCoverPhoto().getUrl();
-//                Picasso.with(this)
-//                        .load(personCoverUrl)
-//                        .error(R.drawable.copertina_about)
-//                        .into(profileBackground);
-//            Picasso.with(this)
-//                    .load(R.drawable.gplus_default_cover)
-//                    .error(R.drawable.copertina_about)
-//                    .into(profileBackground);
             if (LUtils.hasJB())
                 copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
             else
@@ -1021,7 +1021,6 @@ public class MainActivity extends ThemeableActivity
             usernameTextView.setText(personName);
             usernameTextView.setVisibility(View.VISIBLE);
 
-//                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
             String email = acct.getEmail();
 //                Log.d(getClass().getName(), "email: " + email);
             emailTextView.setText(email);
@@ -1052,6 +1051,29 @@ public class MainActivity extends ThemeableActivity
             accountMenu.setVisibility(View.INVISIBLE);
         }
     }
+
+//    private void firebaseAuthWithGoogle() {
+//        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+//        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+//        mFirebaseAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+//
+//                        // If sign in fails, display a message to the uel1user. If sign in succeeds
+//                        // the auth state listener will be notified and logic to handle the
+//                        // signed in user can be handled in the listener.
+//                        if (task.isSuccessful())
+//                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
+//                        else {
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString(FirebaseAnalytics.Param.VALUE, task.getException().toString());
+//                            mFirebaseAnalytics.logEvent("login_fallito", bundle);
+//                        }
+//                    }
+//                });
+//    }
 
     private void showProgressDialog() {
 //        if (mProgressDialog != null && !mProgressDialog.isShowing())
@@ -1578,30 +1600,46 @@ public class MainActivity extends ThemeableActivity
         Log.d(getClass().getName(), "onPositive: TAG " + tag);
         switch (tag) {
             case "BACKUP_ASK":
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-                        .title(R.string.backup_running)
-                        .content(R.string.backup_database)
-                        .showProgress(true)
-                        .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show();
-                saveCheckDupl(
-                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
-                        , DatabaseCanti.getDbName()
-                        , "application/x-sqlite3"
-                        , getDbPath()
-                        , true
-                );
+                if (mGoogleApiClient.isConnected()) {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+                            .title(R.string.backup_running)
+                            .content(R.string.backup_database)
+                            .showProgress(true)
+                            .progressIndeterminate(true)
+                            .progressMax(0)
+                            .show();
+                    saveCheckDupl(
+                            Drive.DriveApi.getAppFolder(mGoogleApiClient)
+                            , DatabaseCanti.getDbName()
+                            , "application/x-sqlite3"
+                            , getDbPath()
+                            , true
+                    );
+                }
+                else {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
+                            .content(R.string.no_connection)
+                            .positiveButton(R.string.dialog_chiudi)
+                            .show();
+                }
                 break;
             case "RESTORE_ASK":
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-                        .title(R.string.restore_running)
-                        .content(R.string.restoring_database)
-                        .showProgress(true)
-                        .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show();
-                restoreDriveBackup();
+                if (mGoogleApiClient.isConnected()) {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+                            .title(R.string.restore_running)
+                            .content(R.string.restoring_database)
+                            .showProgress(true)
+                            .progressIndeterminate(true)
+                            .progressMax(0)
+                            .show();
+                    restoreDriveBackup();
+                }
+                else {
+                    new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
+                            .content(R.string.no_connection)
+                            .positiveButton(R.string.dialog_chiudi)
+                            .show();
+                }
                 break;
             case "SIGNOUT":
                 signOut();

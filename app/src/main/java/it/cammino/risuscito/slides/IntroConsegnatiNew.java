@@ -12,7 +12,7 @@ public class IntroConsegnatiNew extends WelcomeActivity {
         return new WelcomeScreenBuilder(this)
                 .theme(R.style.WelcomeScreenTheme_SolidNavigation)
                 .defaultTitleTypefacePath("fonts/Roboto-Medium.ttf")
-                .defaultTitleTypefacePath("fonts/Roboto-Regular.ttf")
+                .defaultDescriptionTypefacePath("fonts/Roboto-Regular.ttf")
                 .basicPage(R.drawable.intro_consegnati_0, getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_desc), R.color.intro_background)
                 .basicPage(R.drawable.intro_consegnati_1, getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_howto), R.color.intro_background)
                 .basicPage(R.drawable.intro_consegnati_2, getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_confirm), R.color.intro_background)

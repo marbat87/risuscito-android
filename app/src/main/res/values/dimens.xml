@@ -73,5 +73,9 @@
 
     <dimen name="raised_button_default_elevation">2dp</dimen>
     <dimen name="raised_button_pressed_elevation">8dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

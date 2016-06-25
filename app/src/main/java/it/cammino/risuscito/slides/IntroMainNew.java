@@ -12,7 +12,7 @@ public class IntroMainNew extends WelcomeActivity {
         return new WelcomeScreenBuilder(this)
                 .theme(R.style.WelcomeScreenTheme_SolidNavigation)
                 .defaultTitleTypefacePath("fonts/Roboto-Medium.ttf")
-                .defaultTitleTypefacePath("fonts/Roboto-Regular.ttf")
+                .defaultDescriptionTypefacePath("fonts/Roboto-Regular.ttf")
                 .basicPage(R.drawable.intro_login_0, getString(R.string.login_intro_title), getString(R.string.login_intro_desc_0), R.color.intro_background)
                 .basicPage(R.drawable.intro_login_1, getString(R.string.login_intro_title), getString(R.string.login_intro_desc_1), R.color.intro_background)
                 .basicPage(R.drawable.intro_login_2, getString(R.string.login_intro_title), getString(R.string.login_intro_desc_2), R.color.intro_background)

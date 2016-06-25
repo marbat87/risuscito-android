@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -38,9 +39,11 @@ import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
-import it.marbat.fabtoolbar.lib.FabToolbar;
 
 public class CantiParolaFragment extends Fragment {
+
+    // create boolean for fetching data
+    private boolean isViewShown = true;
 
     private int posizioneDaCanc;
     private int idDaCanc;
@@ -91,7 +94,7 @@ public class CantiParolaFragment extends Fragment {
 //                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
 //                        .title(R.string.share_by)
 //                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
                 bottomSheetDialog.show(getFragmentManager(), null);
             }
         });
@@ -160,6 +163,11 @@ public class CantiParolaFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (!isViewShown) {
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
+        }
+
         return rootView;
     }
 
@@ -167,11 +175,18 @@ public class CantiParolaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
-            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
-                fab1.scrollUp();
+            if (getView() != null) {
+                isViewShown = true;
+//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
+//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
+//            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+//            if (!fab1.isShowing())
+//                fab1.scrollUp();
+                FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+                fab1.show();
+            }
+            else
+                isViewShown = false;
         }
     }
 
