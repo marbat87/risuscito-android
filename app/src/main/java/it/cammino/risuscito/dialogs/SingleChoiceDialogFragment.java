@@ -1,8 +1,8 @@
 package it.cammino.risuscito.dialogs;
 
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.ArrayRes;
@@ -12,6 +12,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -21,17 +22,26 @@ import java.io.Serializable;
 
 public class SingleChoiceDialogFragment extends DialogFragment {
 
+    private final String TAG = getClass().getCanonicalName();
+    
     protected SingleChoiceCallback mCallback;
     protected AppCompatActivity mContext;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-//        if (!(activity instanceof SingleChoiceCallback))
-//            throw new IllegalStateException("SingleChoiceDialogFragment needs to be shown from an Activity implementing SingleChoiceCallback.");
-//        mCallback = (SingleChoiceCallback) activity;
-        mContext = (AppCompatActivity) activity;
+    public void onAttach(Context context) {
+        Log.d(TAG, "onAttach: context - " + context);
+        super.onAttach(context);
+        mContext = (AppCompatActivity) context;
     }
+
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+////        if (!(activity instanceof SingleChoiceCallback))
+////            throw new IllegalStateException("SingleChoiceDialogFragment needs to be shown from an Activity implementing SingleChoiceCallback.");
+////        mCallback = (SingleChoiceCallback) activity;
+//        mContext = (AppCompatActivity) activity;
+//    }
 
     @Override
     public void onDestroyView() {
