@@ -267,7 +267,7 @@
     <string name="login_intro_desc_1">Вам слід обрати аккаунт до якого хочете підключитися.</string>
     <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
     <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
-    <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="xml_error">Errore nella generazione del file da condividere!</string>
     <string name="action_share_file">Invia file</string>
     <string name="import_error">Importazione lista fallita</string>
     <string name="import_running">Importazione lista in corso</string>

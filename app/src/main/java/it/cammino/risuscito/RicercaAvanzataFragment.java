@@ -58,6 +58,8 @@ import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
+    private final String TAG = getClass().getCanonicalName();
+    
     // create boolean for fetching data
     private boolean isViewShown = true;
 
@@ -333,6 +335,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy");
         if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
             searchTask.cancel(true);
         if (listaCanti != null)
@@ -418,18 +421,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         idListaClick -= 100;
 
                         //recupero ID del canto cliccato
-//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                        String query = "SELECT _id" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//                        cursor.moveToFirst();
-//                        idDaAgg = cursor.getInt(0);
-//                        cursor.close();
-
+//                        SQLiteDatabase db = listaCanti.getReadableDatabase();
                         if (listePers[idListaClick]
                                 .getCantoPosizione(idPosizioneClick).equals("")) {
+                            SQLiteDatabase db = listaCanti.getReadableDatabase();
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
                             ContentValues  values = new  ContentValues( );
                             values.put("lista" , ListaPersonalizzata.serializeObject(listePers[idListaClick]));
@@ -449,6 +444,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 //                                prevOrientation = getActivity().getRequestedOrientation();
 //                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
+                                SQLiteDatabase db = listaCanti.getReadableDatabase();
                                 String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
                                         "		WHERE _id = "
@@ -521,33 +517,25 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     }
 
     //aggiunge il canto premuto ai preferiti
-//    public void addToFavorites(String titolo) {
     public void addToFavorites() {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
         String sql = "UPDATE ELENCO" +
                 "  SET favourite = 1" +
-//                "  WHERE titolo =  \'" + titoloNoApex + "\'";
                 "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
         Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT)
                 .show();
-
     }
 
     //aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
     public void addToListaDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql+= "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
@@ -565,8 +553,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     //aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
     public void addToListaNoDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -659,8 +645,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         String sql = "INSERT INTO CUST_LISTS "
                 + "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
@@ -678,31 +662,35 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
+        SQLiteDatabase db;
+
         @SuppressLint("NewApi")
         @Override
         protected String doInBackground(String... sSearchText) {
 
             // crea un manipolatore per il Database in modalità READ
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//            db = listaCanti.getReadableDatabase();
             Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
 
             String[] words = sSearchText[0].split("\\W");
 
-//			for (int j = 0; j < words.length; j++)
-//				if (words[j].trim().length() > 2)
-//					Log.i("PAROLA[" + j + "]:", words[j].trim());
-
-//            String text = "";
             String text;
             titoli.clear();
 
-            for (int k = 0; k < aTexts.length; k++) {
+            for (String[] aText : aTexts) {
 
-                if (aTexts[k][0] == null || aTexts[k][0].equalsIgnoreCase(""))
+                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
+
+                if (isCancelled())
+                    break;
+
+                if (aText[0] == null || aText[0].equalsIgnoreCase(""))
                     break;
 
                 boolean found = true;
                 for (String word : words) {
+                    if (isCancelled())
+                        break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
                         text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
@@ -711,20 +699,24 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
                             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                             text = pattern.matcher(nfdNormalizedString).replaceAll("");
-                        } else
+                        }
+                        else
                             text = Utility.removeAccents(text);
 
-                        if (!aTexts[k][1].contains(text)) {
+                        if (!aText[1].contains(text))
                             found = false;
-                        }
                     }
                 }
 
-                if (found) {
+                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
+
+                if (found && !isCancelled()) {
+                    // crea un manipolatore per il Database in modalità READ
+                    db = listaCanti.getReadableDatabase();
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
                     String query = "SELECT titolo, color, pagina, _id, source"
-                            +		"		FROM ELENCO"
-                            +		"		WHERE source = '" + aTexts[k][0] + "'";
+                            + "		FROM ELENCO"
+                            + "		WHERE source = '" + aText[0] + "'";
 
                     Cursor lista = db.rawQuery(query, null);
 
@@ -740,6 +732,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     }
                     // chiude il cursore
                     lista.close();
+                    db.close();
                 }
             }
 
@@ -751,98 +744,19 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
-//            progress.start();
         }
 
         @Override
         protected void onPostExecute(String result) {
+            super.onPostExecute(result);
             cantoAdapter.notifyDataSetChanged();
             progress.setVisibility(View.INVISIBLE);
-//            progress.stop();
             if (titoli.size() == 0)
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
             else
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
         }
-
     }
-
-//    public static String removeAccents(String value)
-//    {
-//        if (MAP_NORM == null || MAP_NORM.size() == 0)
-//        {
-//            MAP_NORM = new HashMap<>();
-//            MAP_NORM.put('À', 'A');
-//            MAP_NORM.put('Á', 'A');
-//            MAP_NORM.put('Â', 'A');
-//            MAP_NORM.put('Ã', 'A');
-//            MAP_NORM.put('Ä', 'A');
-//            MAP_NORM.put('È', 'E');
-//            MAP_NORM.put('É', 'E');
-//            MAP_NORM.put('Ê', 'E');
-//            MAP_NORM.put('Ë', 'E');
-//            MAP_NORM.put('Í', 'I');
-//            MAP_NORM.put('Ì', 'I');
-//            MAP_NORM.put('Î', 'I');
-//            MAP_NORM.put('Ï', 'I');
-//            MAP_NORM.put('Ù', 'U');
-//            MAP_NORM.put('Ú', 'U');
-//            MAP_NORM.put('Û', 'U');
-//            MAP_NORM.put('Ü', 'U');
-//            MAP_NORM.put('Ò', 'O');
-//            MAP_NORM.put('Ó', 'O');
-//            MAP_NORM.put('Ô', 'O');
-//            MAP_NORM.put('Õ', 'O');
-//            MAP_NORM.put('Ö', 'O');
-//            MAP_NORM.put('Ñ', 'N');
-//            MAP_NORM.put('Ç', 'C');
-//            MAP_NORM.put('ª', 'A');
-//            MAP_NORM.put('º', 'O');
-//            MAP_NORM.put('§', 'S');
-//            MAP_NORM.put('³', '3');
-//            MAP_NORM.put('²', '2');
-//            MAP_NORM.put('¹', '1');
-//            MAP_NORM.put('à', 'a');
-//            MAP_NORM.put('á', 'a');
-//            MAP_NORM.put('â', 'a');
-//            MAP_NORM.put('ã', 'a');
-//            MAP_NORM.put('ä', 'a');
-//            MAP_NORM.put('è', 'e');
-//            MAP_NORM.put('é', 'e');
-//            MAP_NORM.put('ê', 'e');
-//            MAP_NORM.put('ë', 'e');
-//            MAP_NORM.put('í', 'i');
-//            MAP_NORM.put('ì', 'i');
-//            MAP_NORM.put('î', 'i');
-//            MAP_NORM.put('ï', 'i');
-//            MAP_NORM.put('ù', 'u');
-//            MAP_NORM.put('ú', 'u');
-//            MAP_NORM.put('û', 'u');
-//            MAP_NORM.put('ü', 'u');
-//            MAP_NORM.put('ò', 'o');
-//            MAP_NORM.put('ó', 'o');
-//            MAP_NORM.put('ô', 'o');
-//            MAP_NORM.put('õ', 'o');
-//            MAP_NORM.put('ö', 'o');
-//            MAP_NORM.put('ñ', 'n');
-//            MAP_NORM.put('ç', 'c');
-//        }
-//
-//        if (value == null) {
-//            return "";
-//        }
-//
-//        StringBuilder sb = new StringBuilder(value);
-//
-//        for(int i = 0; i < value.length(); i++) {
-//            Character c = MAP_NORM.get(sb.charAt(i));
-//            if(c != null) {
-//                sb.setCharAt(i, c);
-//            }
-//        }
-//
-//        return sb.toString();
-//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
@@ -867,8 +781,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 db = listaCanti.getReadableDatabase();
 //                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                 String sql = "UPDATE CUST_LISTS "
-//                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
                         + " SET id_canto = " + idDaAgg
                         + "WHERE _id = " + idListaDaAgg
                         + "  AND position = " + posizioneDaAgg;

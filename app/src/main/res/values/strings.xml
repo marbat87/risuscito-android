@@ -275,7 +275,7 @@
     <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
-    <string name="xml_error">Errore nella generazione messaggio da condividere!</string>
+    <string name="xml_error">Errore nella generazione del file da condividere!</string>
     <string name="action_share_file">Invia file</string>
     <string name="import_error">Importazione lista fallita!</string>
     <string name="import_running">Importazione lista in corso</string>
