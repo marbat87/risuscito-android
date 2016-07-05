@@ -1,40 +1,104 @@
 package it.cammino.risuscito;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
 
-public class AboutActivity extends Fragment {
+public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnOffsetChangedListener {
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+    private LUtils mLUtils;
+    private boolean appBarIsExpanded = true;
+    private AppBarLayout mAppBarLayout;
+    private Toolbar mToolbar;
 
-		View rootView = inflater.inflate(R.layout.activity_about, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar));
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_about);
 
-//		Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.risuscito_toolbar);
-//		toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-//		Drawable drawable = DrawableCompat.wrap(toolbar.getNavigationIcon());
-//		DrawableCompat.setTint(drawable, ContextCompat.getColor(getContext(), android.R.color.white));
-////		toolbar.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.transparent));
-//		((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+//        mToolbar.setTitle("");
+//        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsingToolbarLayout);
-//		collapsingToolbarLayout.setTitle(getResources().getString(R.string.title_activity_about));
-		collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+        collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
-		return rootView;
-	}
+        if (savedInstanceState != null)
+            appBarIsExpanded = savedInstanceState.getBoolean("appBarIsExpanded", true);
 
-	private ThemeUtils getThemeUtils() {
-		return ((MainActivity)getActivity()).getThemeUtils();
-	}
+        if (appBarIsExpanded)
+            Utility.setupTransparentTints(AboutActivity.this, ContextCompat.getColor(AboutActivity.this, android.R.color.transparent), false);
+        else
+            Utility.setupTransparentTints(AboutActivity.this, getThemeUtils().primaryColorDark(), false);
 
+        mLUtils = LUtils.getInstance(AboutActivity.this);
+
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            mLUtils.closeActivityWithTransition();
+            return true;
+        }
+        return  super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mLUtils.closeActivityWithTransition();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putBoolean("appBarIsExpanded", appBarIsExpanded);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAppBarLayout.addOnOffsetChangedListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAppBarLayout.removeOnOffsetChangedListener(this);
+    }
+
+    /**
+     * Called when the {@link AppBarLayout}'s layout offset has been changed. This allows
+     * child views to implement custom behavior based on the offset (for instance pinning a
+     * view at a certain y value).
+     *
+     * @param appBarLayout   the {@link AppBarLayout} which offset has changed
+     * @param verticalOffset the vertical offset for the parent {@link AppBarLayout}, in px
+     */
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        appBarIsExpanded = (verticalOffset >= -300);
+        if (appBarIsExpanded)
+            Utility.setupTransparentTints(AboutActivity.this, ContextCompat.getColor(AboutActivity.this, android.R.color.transparent), false);
+        else
+            Utility.setupTransparentTints(AboutActivity.this, getThemeUtils().primaryColorDark(), false);
+    }
 }

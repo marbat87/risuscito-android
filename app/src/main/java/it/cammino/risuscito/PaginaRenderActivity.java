@@ -452,11 +452,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         setContentView(R.layout.activity_pagina_render);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        toolbar.setTitle("");
+//        toolbar.setTitle("");
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);

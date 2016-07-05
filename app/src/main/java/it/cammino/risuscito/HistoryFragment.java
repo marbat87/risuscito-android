@@ -47,7 +47,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     private View rootView;
     private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
-    private int prevOrientation;
+//    private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
     private boolean actionModeOk;
@@ -63,7 +63,10 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_history, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_history);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_history);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_history);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -71,7 +74,10 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_history);
+        ((MainActivity) getActivity()).enableFab(true);
+
+        fabClear = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

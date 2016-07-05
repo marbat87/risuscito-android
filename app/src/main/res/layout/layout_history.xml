@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:id="@+id/main_content"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/no_history"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/no_history"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/no_history_image"
-                android:layout_centerHorizontal="true"
-                android:layout_width="120dip"
-                android:layout_height="120dip"
-                android:src="@drawable/sad_history"/>
+        <ImageView
+            android:id="@+id/no_history_image"
+            android:layout_centerHorizontal="true"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:src="@drawable/sad_history"/>
 
-            <TextView
-                android:id="@+id/no_history_text"
-                android:layout_below="@id/no_history_image"
-                android:layout_marginLeft="@dimen/text_min_margin"
-                android:layout_marginRight="@dimen/text_min_margin"
-                android:layout_width="match_parent"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_horizontal"
-                android:textColor="?android:textColorSecondary"
-                android:layout_height="wrap_content"
-                android:text="@string/history_empty"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                fontPath="fonts/Roboto-Light.ttf"
-                tools:ignore="MissingPrefix" />
+        <TextView
+            android:id="@+id/no_history_text"
+            android:layout_below="@id/no_history_image"
+            android:layout_marginLeft="@dimen/text_min_margin"
+            android:layout_marginRight="@dimen/text_min_margin"
+            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:textColor="?android:textColorSecondary"
+            android:layout_height="wrap_content"
+            android:text="@string/history_empty"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            fontPath="fonts/Roboto-Light.ttf"
+            tools:ignore="MissingPrefix" />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
     <View
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -51,26 +58,28 @@
         android:scrollbars="vertical"
         android:fadeScrollbars="true" />
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/toolbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/design_appbar_elevation"
-        android:theme="@style/ActionBarThemeOverlay">
+</FrameLayout>
 
-        <include layout="@layout/risuscito_toolbar_noelevation" />
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:id="@+id/toolbar_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:elevation="@dimen/design_appbar_elevation"-->
+    <!--android:theme="@style/ActionBarThemeOverlay">-->
 
-    </android.support.design.widget.AppBarLayout>
+    <!--<include layout="@layout/risuscito_toolbar_noelevation" />-->
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_clear_history"
-        risuscito:srcCompat="@drawable/ic_eraser_white_24dp"
-        android:layout_gravity="bottom|end"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="@dimen/fab_margin_bottom"
-        android:layout_marginEnd="@dimen/fab_margin_end"
-        android:layout_marginRight="@dimen/fab_margin_end"
-        risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
+    <!--</android.support.design.widget.AppBarLayout>-->
 
-</android.support.design.widget.CoordinatorLayout>
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/fab_clear_history"-->
+    <!--risuscito:srcCompat="@drawable/ic_eraser_white_24dp"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/fab_margin_bottom"-->
+    <!--android:layout_marginEnd="@dimen/fab_margin_end"-->
+    <!--android:layout_marginRight="@dimen/fab_margin_end"-->
+    <!--risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />-->
+
+    <!--</android.support.design.widget.CoordinatorLayout>-->

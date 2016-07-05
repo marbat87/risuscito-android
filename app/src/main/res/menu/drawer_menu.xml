@@ -34,14 +34,27 @@
                     android:id="@+id/navigation_settings"
                     android:icon="@drawable/ic_settings_48dp"
                     android:title="@string/title_activity_settings"/>
-                <item
-                    android:id="@+id/navigation_changelog"
-                    android:icon="@drawable/ic_info_outline_48dp"
-                    android:title="@string/title_activity_about"/>
-                <item
-                    android:id="@+id/navigation_donate"
-                    android:icon="@drawable/ic_thumb_up_48dp"
-                    android:title="@string/title_activity_donate"/>
+                <!--<item-->
+                    <!--android:id="@+id/navigation_changelog"-->
+                    <!--android:icon="@drawable/ic_info_outline_48dp"-->
+                    <!--android:title="@string/title_activity_about"/>-->
+                <!--<item-->
+                    <!--android:id="@+id/navigation_donate"-->
+                    <!--android:icon="@drawable/ic_thumb_up_48dp"-->
+                    <!--android:title="@string/title_activity_donate"/>-->
     </group>
+
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/navigation_changelog"
+                android:icon="@drawable/ic_info_outline_48dp"
+                android:title="@string/title_activity_about" />
+            <item
+                android:id="@+id/navigation_donate"
+                android:icon="@drawable/ic_thumb_up_48dp"
+                android:title="@string/title_activity_donate"/>
+        </menu>
+    </item>
 
 </menu>

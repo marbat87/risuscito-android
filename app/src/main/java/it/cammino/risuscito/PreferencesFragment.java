@@ -49,7 +49,11 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.preference_screen, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_settings);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_settings);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_settings);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        ((MainActivity) getActivity()).enableFab(false);
 
         screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 

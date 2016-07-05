@@ -206,7 +206,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mPhoneStateHelper = new PhoneStateHelper(getApplicationContext(), this);
 //        else
 //            mAudioFocus = AudioFocus.Focused; // no focus feature, so we always "have" audio focus
-        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.copertina_border);
+        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.main_cover);
         ComponentName mMediaButtonReceiverComponent = new ComponentName(this, MusicIntentReceiver.class);
 //        ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 //                MediaButtonReceiver.class.getName());
@@ -623,7 +623,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mSongTitle)
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayer.getDuration())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                        BitmapFactory.decodeResource(getResources(), R.drawable.copertina_border))
+                        BitmapFactory.decodeResource(getResources(), R.drawable.main_cover))
                 .build());
 
 //        mSession.setActive(true);

@@ -63,7 +63,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.activity_favourites, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_favourites);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -71,7 +74,9 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
+        ((MainActivity) getActivity()).enableFab(true);
+        fabClear = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

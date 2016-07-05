@@ -74,7 +74,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         View mView = view.findViewById(R.id.fab_pulisci);
         ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_eraser_white_48dp);
+        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_eraser_white_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -93,7 +93,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_condividi);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp);
+        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -112,7 +112,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_add_lista);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_add_48dp);
+        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_add_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -136,7 +136,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_condividi_file);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp);
+            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp));
             DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
             mImage.setImageDrawable(drawable);
             mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -155,7 +155,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_edit_lista);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_edit_48dp);
+            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_edit_48dp));
             DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
             mImage.setImageDrawable(drawable);
             mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -174,7 +174,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_delete_lista);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_48dp);
+            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_48dp));
             DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
             mImage.setImageDrawable(drawable);
             mTextView = (TextView) mView.findViewById(R.id.app_label);

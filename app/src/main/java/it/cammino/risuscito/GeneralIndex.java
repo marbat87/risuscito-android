@@ -28,14 +28,17 @@ public class GeneralIndex extends Fragment {
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_general_index);
 
         mLUtils = LUtils.getInstance(getActivity());
 
         mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        final TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
+        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        tabs.setVisibility(View.VISIBLE);
+        ((MainActivity) getActivity()).enableFab(false);
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
             mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
@@ -45,40 +48,6 @@ public class GeneralIndex extends Fragment {
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    tabs.setupWithViewPager(mViewPager);
-//                    mLUtils.applyFontedTab(mViewPager, tabs);
-//                }
-//        });
-
-//        final Bundle bundle = savedInstanceState;
-//        final Runnable mMyRunnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                if (bundle == null) {
-//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-//                    mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
-//                }
-//                else
-//                    tabs.getTabAt(bundle.getInt(PAGE_VIEWED, 0)).select();
-//            }
-//        };
-//        Handler myHandler = new Handler();
-//        myHandler.postDelayed(mMyRunnable, 200);
-//        final Runnable mMyRunnable2 = new Runnable() {
-//            @Override
-//            public void run() {
-//                if (bundle == null) {
-//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-//                    mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
-//                }
-//                else
-//                    tabs.getTabAt(bundle.getInt(PAGE_VIEWED, 0)).select();
-//            }
-//        };
-//        myHandler.postDelayed(mMyRunnable2, 400);
 
         return rootView;
 

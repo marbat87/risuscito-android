@@ -7,6 +7,9 @@
     <string name="percent_progress" translatable="false">%1$d%%</string>
     <string name="test_name" translatable="false">Test</string>
     <string name="test_email" translatable="false">Test@gmail.com</string>
+    <string name="navigation_drawer_open" translatable="false">Open Navdrawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close Navdrawer</string>
+
 
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_favourites">Preferiti</string>

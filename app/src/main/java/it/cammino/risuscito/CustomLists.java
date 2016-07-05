@@ -140,7 +140,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_custom_lists);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -159,7 +160,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         else
             indDaModif = 0;
 
-        tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
+        ((MainActivity) getActivity()).enableFab(true);
+
+        tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        tabs.setVisibility(View.VISIBLE);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
@@ -545,7 +549,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     public FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = (FloatingActionButton) rootView.findViewById(R.id.fab_pager);
+            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab.setVisibility(View.VISIBLE);
+            mFab.setImageResource(R.drawable.ic_add_24dp);
             Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
             DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         }

@@ -42,6 +42,7 @@ dependencies {
     compile 'com.stephentuso:welcome:0.7.2'
     compile supportDependencies.cardView
     compile supportDependencies.design
+    compile supportDependencies.palette
     compile playServices.auth
     compile playServices.drive
     compile firebaseDependencies.core

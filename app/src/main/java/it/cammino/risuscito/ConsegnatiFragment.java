@@ -125,7 +125,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        ((MainActivity) getActivity()).enableFab(true);
 
         //crea un istanza dell'oggetto DatabaseCanti
 //        listaCanti = new DatabaseCanti(getActivity());
@@ -257,7 +261,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //                })
 //                .build();
 
-        rootView.findViewById(R.id.fab_edit_lista).setOnClickListener(new View.OnClickListener() {
+        getFab().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editMode = true;
@@ -635,8 +639,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     }
 
     private FloatingActionButton getFab() {
-        if (mFab == null)
-            mFab = (FloatingActionButton) rootView.findViewById(R.id.fab_edit_lista);
+        if (mFab == null) {
+            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab.setVisibility(View.VISIBLE);
+            mFab.setImageResource(R.drawable.ic_edit_white_24dp);
+        }
         return mFab;
     }
 

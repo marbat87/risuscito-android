@@ -116,6 +116,12 @@ public class LUtils {
 
     }
 
+    public void startActivityWithTransition(Intent intent) {
+        mActivity.startActivity(intent);
+        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+    }
+
+
     public void startActivityWithFadeIn(Intent intent, final View clickedView,
                                         final String transitionName) {
 //        ActivityOptions options = null;

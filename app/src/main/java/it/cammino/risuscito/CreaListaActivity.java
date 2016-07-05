@@ -89,9 +89,12 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         setContentView(R.layout.activity_crea_lista);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//        Drawable drawable = DrawableCompat.wrap(toolbar.getNavigationIcon());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);

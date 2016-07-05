@@ -6,7 +6,7 @@
     android:weightSum="1"
     android:orientation="vertical">
 
-    <include layout="@layout/risuscito_toolbar" />
+    <!--<include layout="@layout/risuscito_toolbar" />-->
 
     <FrameLayout
         android:layout_weight="1"
@@ -20,7 +20,7 @@
             android:contentDescription="@string/copertina"
             android:layout_margin="@dimen/activity_min_margin"
             android:layout_gravity="center"
-            android:src="@drawable/copertina_border" />
+            android:src="@drawable/main_cover" />
 
         <View
             android:layout_gravity="top"

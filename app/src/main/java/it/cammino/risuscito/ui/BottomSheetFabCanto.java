@@ -80,7 +80,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         View mView = view.findViewById(R.id.fab_fullscreen_on);
         ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp);
+        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -99,7 +99,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_sound_off);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = ContextCompat.getDrawable(getContext(), mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp);
+        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -118,7 +118,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.save_file);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = ContextCompat.getDrawable(getContext(), mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp);
+        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
@@ -137,7 +137,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_favorite);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = ContextCompat.getDrawable(getContext(), mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp);
+        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
         mImage.setImageDrawable(drawable);
         mTextView = (TextView) mView.findViewById(R.id.app_label);

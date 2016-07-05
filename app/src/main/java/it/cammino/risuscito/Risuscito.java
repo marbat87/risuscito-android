@@ -30,7 +30,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
-//    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
+    //    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
 //    private int prevOrientation;
     private WelcomeScreenHelper mWelcomeScreen;
 
@@ -42,7 +42,10 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.activity_homepage);
+        ((MainActivity) getActivity()).enableFab(false);
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         rootView.findViewById(R.id.imageView1)
                 .setOnClickListener(new OnClickListener() {

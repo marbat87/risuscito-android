@@ -9,10 +9,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -68,6 +74,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
@@ -76,7 +83,10 @@ public class MainActivity extends ThemeableActivity
         , GoogleApiClient.OnConnectionFailedListener
         , SimpleDialogFragment.SimpleCallback {
 
+    private LUtils mLUtils;
+
     public DrawerLayout mDrawerLayout;
+    private Toolbar mToolbar;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
@@ -107,15 +117,8 @@ public class MainActivity extends ThemeableActivity
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
-    //    private static final String STATE_RESOLVING_ERROR = "resolving_error";
-//    // Request code to use when launching the resolution activity
-//    private static final int REQUEST_RESOLVE_ERROR = 1001;
-//    // Unique tag for the error dialog fragment
-//    private static final String DIALOG_ERROR = "dialog_error";
-    /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
-//    private FirebaseAuth mFirebaseAuth;
-    private FirebaseAnalytics mFirebaseAnalytics;
+//    private FirebaseAnalytics mFirebaseAnalytics;
     // Bool to track whether the app is already resolving an error
 //    private boolean mResolvingError = false;
 
@@ -127,17 +130,25 @@ public class MainActivity extends ThemeableActivity
     private boolean dbBackupRunning;
     private boolean prefBackupRunning;
 
-    private String TAG = getClass().getCanonicalName();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        if (getSupportActionBar() != null)
+//            getSupportActionBar().setTitle("");
+
         if (getIntent().getBooleanExtra(Utility.DB_RESET, false)) {
             (new TranslationTask()).execute();
         }
+
+        mLUtils = LUtils.getInstance(MainActivity.this);
 
         setupNavDrawer();
 
@@ -166,9 +177,6 @@ public class MainActivity extends ThemeableActivity
             }
         });
 
-//        mResolvingError = savedInstanceState != null
-//                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
-
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
 
@@ -179,16 +187,13 @@ public class MainActivity extends ThemeableActivity
             if (savedInstanceState != null) {
                 selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
                 mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-            } else
+            } else {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-//            if (savedInstanceState == null)
-//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+                AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+                appBarLayout.setExpanded(true, true);
+            }
         }
 
-//        mProgressDialog = new MaterialDialog.Builder(this)
-//                .content(R.string.connection_running)
-//                .progress(true, 0)
-//                .build();
         mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
         mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
@@ -223,7 +228,8 @@ public class MainActivity extends ThemeableActivity
 //        mFirebaseAuth = FirebaseAuth.getInstance();
 
         // Initialize Firebase Measurement.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        FirebaseAnalytics.getInstance(this);
 
         if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK") != null)
             SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_ASK").setmCallback(MainActivity.this);
@@ -378,12 +384,6 @@ public class MainActivity extends ThemeableActivity
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-//        for (int i = 0; mNavigationView.getMenu().getItem(i) != null; i++) {
-//            if (mNavigationView.getMenu().getItem(i).isChecked()) {
-//                savedInstanceState.putInt(SELECTED_ITEM, i);
-//                break;
-//            }
-//        }
         savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
         ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment) getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
@@ -398,7 +398,6 @@ public class MainActivity extends ThemeableActivity
         savedInstanceState.putBoolean(PREF_RESTORE_RUNNING, prefRestoreRunning);
         savedInstanceState.putBoolean(DB_BACKUP_RUNNING, dbBackupRunning);
         savedInstanceState.putBoolean(PREF_BACKUP_RUNNING, prefBackupRunning);
-//        savedInstanceState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -411,6 +410,11 @@ public class MainActivity extends ThemeableActivity
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(this);
@@ -459,6 +463,8 @@ public class MainActivity extends ThemeableActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+            appBarLayout.setExpanded(true, true);
             mNavigationView.getMenu().getItem(0).setChecked(true);
             return true;
         }
@@ -521,9 +527,6 @@ public class MainActivity extends ThemeableActivity
         public TranslationTask() {
         }
 
-        //        private MaterialDialog translationDialog;
-//        private SimpleDialogFragment mTranslationDialog;
-
         @Override
         protected String doInBackground(String... sUrl) {
             getIntent().removeExtra(Utility.DB_RESET);
@@ -542,18 +545,6 @@ public class MainActivity extends ThemeableActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            prevOrientation = getRequestedOrientation();
-//            Utility.blockOrientation(MainActivity.this);
-//            translationDialog = new MaterialDialog.Builder(MainActivity.this)
-//                    .content(R.string.translation_running)
-//                    .progress(true, 0)
-//                    .dismissListener(new DialogInterface.OnDismissListener() {
-//                        @Override
-//                        public void onDismiss(DialogInterface dialog) {
-//                            setRequestedOrientation(prevOrientation);
-//                        }
-//                    })
-//                    .show();
             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "TRANSLATION")
                     .content(R.string.translation_running)
                     .showProgress(true)
@@ -566,8 +557,6 @@ public class MainActivity extends ThemeableActivity
         protected void onPostExecute(String result) {
             getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
             try {
-//                if (translationDialog != null && translationDialog.isShowing())
-//                    translationDialog.dismiss();
                 if (SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION") != null)
                     SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION").dismiss();
             } catch (IllegalArgumentException e) {
@@ -576,197 +565,153 @@ public class MainActivity extends ThemeableActivity
         }
     }
 
-    public void setupToolbar(View toolbar, int titleResId) {
-        Toolbar mActionToolbar = (Toolbar) toolbar;
-        setSupportActionBar(mActionToolbar);
-        mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle("");
-        ((TextView) toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
-        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+    public void setupToolbarTitle(int titleResId) {
+        ((TextView) mToolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
     }
 
-    public void setupToolbar(View toolbar) {
-        Toolbar mActionToolbar = (Toolbar) toolbar;
-        setSupportActionBar(mActionToolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle("");
-        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+    public void enableFab(boolean enable) {
+        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
+        if (enable)
+            mFab.show();
+        else
+            mFab.hide();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
+        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
+        mFab.requestLayout();
     }
+
+//    public void setupToolbar(View toolbar, int titleResId) {
+//        Toolbar mActionToolbar = (Toolbar) toolbar;
+//        setSupportActionBar(mActionToolbar);
+//        mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//        if (getSupportActionBar() != null)
+//            getSupportActionBar().setTitle("");
+//        ((TextView) toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
+//        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+//        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+//        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mDrawerLayout.openDrawer(GravityCompat.START);
+//            }
+//        });
+//    }
+//
+//    public void setupToolbar(View toolbar) {
+//        Toolbar mActionToolbar = (Toolbar) toolbar;
+//        setSupportActionBar(mActionToolbar);
+//        if (getSupportActionBar() != null)
+//            getSupportActionBar().setTitle("");
+//        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+//        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+//        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mDrawerLayout.openDrawer(GravityCompat.START);
+//            }
+//        });
+//    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        item.setChecked(true);
+//        item.setChecked(true);
         Fragment fragment;
 
         switch (item.getItemId()) {
             case R.id.navigation_home:
+                item.setChecked(true);
                 selectedItemIndex = 0;
                 fragment = new Risuscito();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+                    appBarLayout.setExpanded(true, true);
+                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                }
                 break;
             case R.id.navigation_search:
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(0);
+                }
                 selectedItemIndex = 1;
                 fragment = new GeneralSearch();
                 break;
             case R.id.navigation_indexes:
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(0);
+                }
                 selectedItemIndex = 2;
                 fragment = new GeneralIndex();
                 break;
             case R.id.navitagion_lists:
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(0);
+                }
                 selectedItemIndex = 3;
                 fragment = new CustomLists();
                 break;
             case R.id.navigation_favorites:
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                }
                 selectedItemIndex = 4;
                 fragment = new FavouritesActivity();
                 break;
             case R.id.navigation_settings:
                 selectedItemIndex = 5;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                }
                 fragment = new PreferencesFragment();
                 break;
             case R.id.navigation_changelog:
-                selectedItemIndex = 6;
-                fragment = new AboutActivity();
-                break;
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
+                return true;
+//                selectedItemIndex = 6;
+//                fragment = new AboutActivity();
+//                break;
             case R.id.navigation_donate:
-                selectedItemIndex = 7;
-                fragment = new DonateActivity();
-                break;
+//                selectedItemIndex = 7;
+//                fragment = new DonateActivity();
+//                break;
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
+                return true;
             case R.id.navigation_consegnati:
-                selectedItemIndex = 8;
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                }
+                selectedItemIndex = 6;
                 fragment = new ConsegnatiFragment();
                 break;
             case R.id.navigation_history:
-                selectedItemIndex = 9;
+                item.setChecked(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                }
+                selectedItemIndex = 7;
                 fragment = new HistoryFragment();
                 break;
             case R.id.gdrive_backup:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-//                prevOrientation = getRequestedOrientation();
-//                Utility.blockOrientation(MainActivity.this);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                         .title(R.string.gdrive_backup)
                         .content(R.string.gdrive_backup_content)
                         .positiveButton(R.string.confirm)
                         .negativeButton(R.string.dismiss)
                         .show();
-//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-//                        .title(R.string.gdrive_backup)
-//                        .content(R.string.gdrive_backup_content)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                backupDialog = new MaterialDialog.Builder(MainActivity.this)
-//                                        .title(R.string.backup_running)
-//                                        .content(R.string.backup_database)
-//                                        .progress(true, 0)
-//                                        .dismissListener(new DialogInterface.OnDismissListener() {
-//                                            @Override
-//                                            public void onDismiss(DialogInterface dialog) {
-//                                                setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
-//                                        .show();
-//                                backupDialog.setCancelable(false);
-//                                saveCheckDupl(
-//                                        Drive.DriveApi.getAppFolder(mGoogleApiClient)
-//                                        , DatabaseCanti.getDbName()
-//                                        , "application/x-sqlite3"
-//                                        , getDbPath()
-//                                        , true
-//                                );
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 return true;
             case R.id.gdrive_restore:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-//                prevOrientation = getRequestedOrientation();
-//                Utility.blockOrientation(MainActivity.this);
-//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-//                        .title(R.string.gdrive_restore)
-//                        .content(R.string.gdrive_restore_content)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                restoreDialog = new MaterialDialog.Builder(MainActivity.this)
-//                                        .title(R.string.restore_running)
-//                                        .content(R.string.restoring_database)
-//                                        .progress(true, 0)
-//                                        .dismissListener(new DialogInterface.OnDismissListener() {
-//                                            @Override
-//                                            public void onDismiss(DialogInterface dialog) {
-//                                                setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
-//                                        .show();
-//                                restoreDialog.setCancelable(false);
-//                                restoreDriveBackup();
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                         .title(R.string.gdrive_restore)
                         .content(R.string.gdrive_restore_content)
@@ -777,41 +722,6 @@ public class MainActivity extends ThemeableActivity
             case R.id.gplus_signout:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-//                prevOrientation = getRequestedOrientation();
-//                Utility.blockOrientation(MainActivity.this);
-//                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-//                        .title(R.string.gplus_signout)
-//                        .content(R.string.dialog_acc_disconn_text)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                signOut();
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                         .title(R.string.gplus_signout)
                         .content(R.string.dialog_acc_disconn_text)
@@ -822,41 +732,6 @@ public class MainActivity extends ThemeableActivity
             case R.id.gplus_revoke:
                 accountMenu.performClick();
                 mDrawerLayout.closeDrawer(GravityCompat.START);
-//                prevOrientation = getRequestedOrientation();
-//                Utility.blockOrientation(MainActivity.this);
-//                dialog = new MaterialDialog.Builder(MainActivity.this)
-//                        .title(R.string.gplus_revoke)
-//                        .content(R.string.dialog_acc_revoke_text)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                revokeAccess();
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                         .title(R.string.gplus_revoke)
                         .content(R.string.dialog_acc_revoke_text)
@@ -877,7 +752,7 @@ public class MainActivity extends ThemeableActivity
             transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
             transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
 
-            android.os.Handler mHandler = new android.os.Handler();
+            Handler mHandler = new Handler();
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1043,8 +918,8 @@ public class MainActivity extends ThemeableActivity
             profileBackground.setVisibility(View.VISIBLE);
 //            profileBackground.setImageResource(R.drawable.copertina_about);
             Picasso.with(this)
-                    .load(R.drawable.copertina_about)
-                    .error(R.drawable.copertina_about)
+                    .load(R.drawable.about_cover)
+                    .error(R.drawable.about_cover)
                     .into(profileBackground);
             if (findViewById(R.id.sign_in_button) != null)
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
