@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -83,10 +84,13 @@ public class MainActivity extends ThemeableActivity
         , GoogleApiClient.OnConnectionFailedListener
         , SimpleDialogFragment.SimpleCallback {
 
+    private final String TAG = getClass().getCanonicalName();
+
     private LUtils mLUtils;
 
     public DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
+    private boolean isOnTablet;
     protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
@@ -149,6 +153,8 @@ public class MainActivity extends ThemeableActivity
         }
 
         mLUtils = LUtils.getInstance(MainActivity.this);
+        isOnTablet = mLUtils.isOnTablet();
+        Log.d(TAG, "onCreate: isOnTablet = " + isOnTablet);
 
         setupNavDrawer();
 
@@ -383,6 +389,20 @@ public class MainActivity extends ThemeableActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(isOnTablet) {
+            //tablet mode
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
+            mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        }
+//        else
+//            //normal mode
+//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
@@ -449,7 +469,7 @@ public class MainActivity extends ThemeableActivity
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) && !isOnTablet) {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -478,7 +498,7 @@ public class MainActivity extends ThemeableActivity
         else
             getThemeUtils().primaryColor(color);
 
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 11) {
             recreate();
         } else {
             Intent i = getBaseContext().getPackageManager()
@@ -580,40 +600,6 @@ public class MainActivity extends ThemeableActivity
         mFab.requestLayout();
     }
 
-//    public void setupToolbar(View toolbar, int titleResId) {
-//        Toolbar mActionToolbar = (Toolbar) toolbar;
-//        setSupportActionBar(mActionToolbar);
-//        mActionToolbar.setBackgroundColor(getThemeUtils().primaryColor());
-//        if (getSupportActionBar() != null)
-//            getSupportActionBar().setTitle("");
-//        ((TextView) toolbar.findViewById(R.id.main_toolbarTitle)).setText(titleResId);
-//        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-//        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-//        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mDrawerLayout.openDrawer(GravityCompat.START);
-//            }
-//        });
-//    }
-//
-//    public void setupToolbar(View toolbar) {
-//        Toolbar mActionToolbar = (Toolbar) toolbar;
-//        setSupportActionBar(mActionToolbar);
-//        if (getSupportActionBar() != null)
-//            getSupportActionBar().setTitle("");
-//        mActionToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-//        Drawable drawable = DrawableCompat.wrap(mActionToolbar.getNavigationIcon());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-//        mActionToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mDrawerLayout.openDrawer(GravityCompat.START);
-//            }
-//        });
-//    }
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 //        item.setChecked(true);
@@ -670,7 +656,8 @@ public class MainActivity extends ThemeableActivity
                 fragment = new PreferencesFragment();
                 break;
             case R.id.navigation_changelog:
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                if (!isOnTablet)
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
                 return true;
 //                selectedItemIndex = 6;
@@ -680,6 +667,7 @@ public class MainActivity extends ThemeableActivity
 //                selectedItemIndex = 7;
 //                fragment = new DonateActivity();
 //                break;
+                if (!isOnTablet)
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
                 return true;
@@ -701,6 +689,7 @@ public class MainActivity extends ThemeableActivity
                 break;
             case R.id.gdrive_backup:
                 accountMenu.performClick();
+                if (!isOnTablet)
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                         .title(R.string.gdrive_backup)
@@ -711,6 +700,7 @@ public class MainActivity extends ThemeableActivity
                 return true;
             case R.id.gdrive_restore:
                 accountMenu.performClick();
+                if (!isOnTablet)
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                         .title(R.string.gdrive_restore)
@@ -721,6 +711,7 @@ public class MainActivity extends ThemeableActivity
                 return true;
             case R.id.gplus_signout:
                 accountMenu.performClick();
+                if (!isOnTablet)
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                         .title(R.string.gplus_signout)
@@ -731,6 +722,7 @@ public class MainActivity extends ThemeableActivity
                 return true;
             case R.id.gplus_revoke:
                 accountMenu.performClick();
+                if (!isOnTablet)
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                         .title(R.string.gplus_revoke)
@@ -756,6 +748,7 @@ public class MainActivity extends ThemeableActivity
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (!isOnTablet)
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 }
             }, 250);

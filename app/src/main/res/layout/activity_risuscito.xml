@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/main_content"
-    android:weightSum="1"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!--<include layout="@layout/risuscito_toolbar" />-->
 
-    <FrameLayout
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
+    <!--<FrameLayout-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp">-->
 
         <ImageView
             android:id="@+id/imageView1"
@@ -22,20 +19,20 @@
             android:layout_gravity="center"
             android:src="@drawable/main_cover" />
 
-        <View
-            android:layout_gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
+        <!--<View-->
+            <!--android:layout_gravity="top"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="5dp"-->
+            <!--android:background="?toolbar_shadow" />-->
 
-    </FrameLayout>
+    <!--</FrameLayout>-->
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/activity_min_margin"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="@dimen/activity_min_margin"
         android:layout_width="wrap_content"
         android:visibility="invisible"
         android:layout_height="wrap_content" />
 
-</LinearLayout>
+</FrameLayout>

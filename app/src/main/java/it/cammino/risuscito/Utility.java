@@ -3,17 +3,12 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Display;
-import android.view.Surface;
-import android.view.WindowManager;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -221,29 +216,29 @@ public class Utility {
             context.getWindow().setStatusBarColor(color);
     }
 
-    @SuppressWarnings("ResourceType")
-    public static void blockOrientation(Activity activity) {
-        // Copied from Android docs, since we don't have these values in Froyo 2.2
-        int SCREEN_ORIENTATION_REVERSE_LANDSCAPE = 8;
-        int SCREEN_ORIENTATION_REVERSE_PORTRAIT = 9;
-
-        Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int rotation = display.getRotation();
-        switch(activity.getResources().getConfiguration().orientation)
-        {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                else
-                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                break;
-            case Configuration.ORIENTATION_PORTRAIT:
-                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                else
-                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-        }
-    }
+//    @SuppressWarnings("ResourceType")
+//    public static void blockOrientation(Activity activity) {
+//        // Copied from Android docs, since we don't have these values in Froyo 2.2
+//        int SCREEN_ORIENTATION_REVERSE_LANDSCAPE = 8;
+//        int SCREEN_ORIENTATION_REVERSE_PORTRAIT = 9;
+//
+//        Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//        int rotation = display.getRotation();
+//        switch(activity.getResources().getConfiguration().orientation)
+//        {
+//            case Configuration.ORIENTATION_LANDSCAPE:
+//                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
+//                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                else
+//                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+//                break;
+//            case Configuration.ORIENTATION_PORTRAIT:
+//                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
+//                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                else
+//                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+//        }
+//    }
 
     public static int random(int start, int end) {
         return ((new Random()).nextInt(end - start + 1) + start);

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +28,8 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
 
 public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
@@ -206,6 +209,9 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 //        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
 //            MainActivity activity = (MainActivity) getActivity();
 //            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
+        Log.d(TAG, "onCreateView: signed in = " + PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SIGNED_IN, false));
         rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);

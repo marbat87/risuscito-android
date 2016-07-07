@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -259,6 +260,28 @@ public class LUtils {
             return null;
         }
 
+    }
+
+    public boolean isOnTablet() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+
+        float scaleFactor = metrics.density;
+
+        float widthDp = widthPixels / scaleFactor;
+        float heightDp = heightPixels / scaleFactor;
+
+        float smallestWidth = Math.min(widthDp, heightDp);
+
+        Log.d(TAG, "isOnTablet: smallestWidth = " + smallestWidth);
+
+        if (smallestWidth > 600)
+            return true;
+        else
+            return false;
     }
 
 }
