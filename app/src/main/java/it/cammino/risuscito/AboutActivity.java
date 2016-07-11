@@ -95,7 +95,7 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
      */
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        appBarIsExpanded = (verticalOffset >= -300);
+        appBarIsExpanded = (verticalOffset >= -100);
         if (appBarIsExpanded)
             Utility.setupTransparentTints(AboutActivity.this, ContextCompat.getColor(AboutActivity.this, android.R.color.transparent), false);
         else

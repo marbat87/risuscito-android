@@ -155,6 +155,8 @@ public class MainActivity extends ThemeableActivity
         mLUtils = LUtils.getInstance(MainActivity.this);
         isOnTablet = mLUtils.isOnTablet();
         Log.d(TAG, "onCreate: isOnTablet = " + isOnTablet);
+        if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
         setupNavDrawer();
 
@@ -397,6 +399,11 @@ public class MainActivity extends ThemeableActivity
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
             mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         }
+        else {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
+            mDrawerLayout.setScrimColor(0x99000000);
+            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        }
 //        else
 //            //normal mode
 //            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -429,7 +436,7 @@ public class MainActivity extends ThemeableActivity
             return;
         }
         mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -668,7 +675,7 @@ public class MainActivity extends ThemeableActivity
 //                fragment = new DonateActivity();
 //                break;
                 if (!isOnTablet)
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
                 return true;
             case R.id.navigation_consegnati:
@@ -690,7 +697,7 @@ public class MainActivity extends ThemeableActivity
             case R.id.gdrive_backup:
                 accountMenu.performClick();
                 if (!isOnTablet)
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                         .title(R.string.gdrive_backup)
                         .content(R.string.gdrive_backup_content)
@@ -701,7 +708,7 @@ public class MainActivity extends ThemeableActivity
             case R.id.gdrive_restore:
                 accountMenu.performClick();
                 if (!isOnTablet)
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                         .title(R.string.gdrive_restore)
                         .content(R.string.gdrive_restore_content)
@@ -712,7 +719,7 @@ public class MainActivity extends ThemeableActivity
             case R.id.gplus_signout:
                 accountMenu.performClick();
                 if (!isOnTablet)
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                         .title(R.string.gplus_signout)
                         .content(R.string.dialog_acc_disconn_text)
@@ -723,7 +730,7 @@ public class MainActivity extends ThemeableActivity
             case R.id.gplus_revoke:
                 accountMenu.performClick();
                 if (!isOnTablet)
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                         .title(R.string.gplus_revoke)
                         .content(R.string.dialog_acc_revoke_text)
@@ -749,7 +756,7 @@ public class MainActivity extends ThemeableActivity
                 @Override
                 public void run() {
                     if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                 }
             }, 250);
         }

@@ -8,18 +8,10 @@
         android:id="@+id/my_drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="false">
 
         <!-- Drawer items -->
-        <android.support.design.widget.NavigationView
-            android:theme="@style/Widget.Design.NavigationView.Risuscito"
-            android:id="@+id/navigation_view"
-            android:layout_width="@dimen/navdrawer_width"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            android:layout_gravity="start"
-            risuscito:headerLayout="@layout/navdrawer_header"
-            risuscito:menu="@menu/drawer_menu"/>
+        <include layout="@layout/common_navigation_view"/>
 
     </android.support.v4.widget.DrawerLayout>
 
@@ -49,18 +41,9 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
-            android:id="@+id/loadingBar"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_marginTop="?actionBarSize"
-            android:visibility="invisible"
-            risuscito:mlpb_progress_stoke_width="3dp"
-            risuscito:layout_anchor="@id/toolbar_layout"
-            risuscito:layout_anchorGravity="bottom|center_horizontal"
-            risuscito:mlpb_progress_text_visibility="invisible"
-            android:elevation="1dp"
-            android:layout_width="48dp"
-            android:layout_height="48dp"/>
+        <include layout="@layout/common_circle_progress"/>
+
+        <include layout="@layout/common_shadow"/>
 
         <FrameLayout
             android:id="@+id/content_frame"
@@ -68,18 +51,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_pager"
-            risuscito:srcCompat="@drawable/ic_add_24dp"
-            android:layout_gravity="bottom|end"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="@dimen/fab_margin_bottom"
-            android:layout_marginEnd="@dimen/fab_margin_end"
-            android:layout_marginRight="@dimen/fab_margin_end"
-            risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />
+        <include layout="@layout/common_bottom_bar"/>
+
+        <include layout="@layout/common_fab"/>
 
     </android.support.design.widget.CoordinatorLayout>
+
+    <View
+        android:id="@+id/tablet_mode"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>
 

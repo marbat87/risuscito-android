@@ -5,545 +5,545 @@
 <!--android:layout_width="match_parent"-->
 <!--android:layout_height="match_parent">-->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:overScrollMode="never"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:overScrollMode="never"
-        android:orientation="vertical"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            risuscito:cardUseCompatPadding="true"
+            risuscito:cardCornerRadius="4dp"
+            risuscito:cardElevation = "4dp">
 
-            <android.support.v7.widget.CardView
-                android:layout_gravity="center"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                risuscito:cardUseCompatPadding="true"
-                risuscito:cardCornerRadius="4dp"
-                risuscito:cardElevation = "4dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/theme"
+                    style="@style/TitoloSezione" />
+
+                <RelativeLayout
+                    android:id="@+id/primary_color_selection"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
 
-                    <TextView
+                    <ImageView
+                        android:id="@+id/primaryCircle"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:scaleType="fitXY" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/theme"
-                        style="@style/TitoloSezione" />
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/primaryCircle"
+                        android:layout_toStartOf="@id/primaryCircle"
+                        android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:id="@+id/primary_color_selection"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <ImageView
-                            android:id="@+id/primaryCircle"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:scaleType="fitXY" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/primaryCircle"
-                            android:layout_toStartOf="@id/primaryCircle"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent"
+                            android:text="@string/primary_color"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/primary_color"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/primary_color_desc"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <RelativeLayout
-                        android:id="@+id/accent_color_selection"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <ImageView
-                            android:id="@+id/accentCircle"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:scaleType="fitXY" />
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/accentCircle"
-                            android:layout_toStartOf="@id/accentCircle"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent"
+                            android:text="@string/primary_color_desc"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/accent_color"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                </RelativeLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/accent_color_desc"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
+                <include layout="@layout/preferences_separator" />
 
-                    </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/accent_color_selection"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
 
-                </LinearLayout>
+                    <ImageView
+                        android:id="@+id/accentCircle"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:scaleType="fitXY" />
 
-            </android.support.v7.widget.CardView>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/accentCircle"
+                        android:layout_toStartOf="@id/accentCircle"
+                        android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
-                android:layout_gravity="center"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/accent_color"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/accent_color_desc"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            risuscito:cardUseCompatPadding="true"
+            risuscito:cardCornerRadius="4dp"
+            risuscito:cardElevation = "4dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                risuscito:cardUseCompatPadding="true"
-                risuscito:cardCornerRadius="4dp"
-                risuscito:cardElevation = "4dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/lists_pref"
+                    style="@style/TitoloSezione" />
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:id="@+id/show_seconda_eucarestia_layout"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
 
-                    <TextView
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/show_seconda_eucarestia"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/lists_pref"
-                        style="@style/TitoloSezione" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:id="@+id/show_seconda_eucarestia_layout"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/show_seconda_eucarestia"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:background="@android:color/transparent" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/show_seconda_eucarestia"
-                            android:layout_toStartOf="@id/show_seconda_eucarestia"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_seconda_title"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_seconda_summary"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:id="@+id/show_santo_layout"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/show_santo"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:background="@android:color/transparent" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/show_santo"
-                            android:layout_toStartOf="@id/show_santo"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_santo_title"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_santo_summary"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:id="@+id/show_pace_parola_layout"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/show_pace_parola"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:background="@android:color/transparent" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/show_pace_parola"
-                            android:layout_toStartOf="@id/show_pace_parola"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_pace_title"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_pace_summary"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:background="@android:color/transparent" />
 
                     <LinearLayout
-                        android:id="@+id/default_index_layout"
-                        android:layout_gravity="start"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:clickable="true"
-                        android:orientation="vertical"
-                        android:background="?attr/customSelector">
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/show_seconda_eucarestia"
+                        android:layout_toStartOf="@id/show_seconda_eucarestia"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="@string/default_index_title"
+                            android:text="@string/show_seconda_title"
                             android:textColor="@color/primary_text_default_material_light"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="@string/default_index_summary"
+                            android:text="@string/show_seconda_summary"
                             android:textColor="@color/secondary_text_default_material_light"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small" />
                     </LinearLayout>
 
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:id="@+id/show_santo_layout"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/show_santo"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:background="@android:color/transparent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/show_santo"
+                        android:layout_toStartOf="@id/show_santo"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_santo_title"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_santo_summary"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:id="@+id/show_pace_parola_layout"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/show_pace_parola"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:background="@android:color/transparent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/show_pace_parola"
+                        android:layout_toStartOf="@id/show_pace_parola"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_pace_title"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_pace_summary"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
+
+                <LinearLayout
+                    android:id="@+id/default_index_layout"
+                    android:layout_gravity="start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:clickable="true"
+                    android:orientation="vertical"
+                    android:background="?attr/customSelector">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/default_index_title"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/default_index_summary"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                android:layout_gravity="center"
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            risuscito:cardUseCompatPadding="true"
+            risuscito:cardCornerRadius="4dp"
+            risuscito:cardElevation = "4dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                risuscito:cardUseCompatPadding="true"
-                risuscito:cardCornerRadius="4dp"
-                risuscito:cardElevation = "4dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/system"
+                    style="@style/TitoloSezione" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:id="@+id/screen_on_layout"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/screen_on"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:background="@android:color/transparent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/screen_on"
+                        android:layout_toStartOf="@id/screen_on"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/always_on"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/always_on_summary"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:id="@+id/show_audio_layout"
+                    android:clickable="true"
+                    android:background="?attr/customSelector">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/show_audio"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
+                        android:background="@android:color/transparent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_toLeftOf="@id/show_audio"
+                        android:layout_toStartOf="@id/show_audio"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_audio_title"
+                            android:textColor="@color/primary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/show_audio_summary"
+                            android:textColor="@color/secondary_text_default_material_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <include layout="@layout/preferences_separator" />
 
                 <LinearLayout
+                    android:id="@+id/save_location_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_gravity="start"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:clickable="true"
+                    android:orientation="vertical"
+                    android:background="?attr/customSelector">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/system"
-                        style="@style/TitoloSezione" />
+                        android:text="@string/save_location_title"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:id="@+id/screen_on_layout"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/screen_on"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:background="@android:color/transparent" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/screen_on"
-                            android:layout_toStartOf="@id/screen_on"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/always_on"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/always_on_summary"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:id="@+id/show_audio_layout"
-                        android:clickable="true"
-                        android:background="?attr/customSelector">
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/show_audio"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginStart="30dp"
-                            android:background="@android:color/transparent" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_toLeftOf="@id/show_audio"
-                            android:layout_toStartOf="@id/show_audio"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_audio_title"
-                                android:textColor="@color/primary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/show_audio_summary"
-                                android:textColor="@color/secondary_text_default_material_light"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <LinearLayout
-                        android:id="@+id/save_location_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:clickable="true"
-                        android:orientation="vertical"
-                        android:background="?attr/customSelector">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/save_location_title"
-                            android:textColor="@color/primary_text_default_material_light"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/save_location_summary"
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                    </LinearLayout>
-
-                    <include layout="@layout/preferences_separator" />
-
-                    <LinearLayout
-                        android:id="@+id/language_selection"
-                        android:layout_gravity="start"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
-                        android:clickable="true"
-                        android:orientation="vertical"
-                        android:background="?attr/customSelector">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/language_title"
-                            android:textColor="@color/primary_text_default_material_light"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/language_summary"
-                            android:textColor="@color/secondary_text_default_material_light"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                    </LinearLayout>
-
+                        android:text="@string/save_location_summary"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+                <include layout="@layout/preferences_separator" />
 
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/language_selection"
+                    android:layout_gravity="start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:clickable="true"
+                    android:orientation="vertical"
+                    android:background="?attr/customSelector">
 
-    </android.support.v4.widget.NestedScrollView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/language_title"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-    <View
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="?toolbar_shadow" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/language_summary"
+                        android:textColor="@color/secondary_text_default_material_light"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                </LinearLayout>
 
-</FrameLayout>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
+
+    <!--<View-->
+    <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="5dp"-->
+    <!--android:background="?toolbar_shadow" />-->
+
+    <!--</FrameLayout>-->
 
     <!--<android.support.design.widget.AppBarLayout-->
     <!--android:id="@+id/toolbar_layout"-->

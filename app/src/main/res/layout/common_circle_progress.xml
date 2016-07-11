@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:id="@+id/loadingBar"
+    android:layout_gravity="center_horizontal|top"
+    android:visibility="invisible"
+    risuscito:mlpb_progress_stoke_width="3dp"
+    risuscito:mlpb_progress_text_visibility="invisible"
+    android:elevation="1dp"
+    android:layout_width="48dp"
+    android:layout_height="48dp"/>

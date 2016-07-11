@@ -103,7 +103,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 updateConsegnatiList(true);
 //                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
                 rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-                rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+                getActivity().findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
 //                getFab().show();
@@ -136,7 +136,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+        getActivity().findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         if (savedInstanceState == null)
             editMode = false;
@@ -152,7 +152,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         if (editMode) {
 //            rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
 //            rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
             rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
             rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
@@ -164,7 +164,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         else {
 //            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
             rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-            rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
 //            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
 //            getFab().show();
@@ -172,7 +172,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             updateConsegnatiList(true);
         }
 
-        (rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
+        (getActivity().findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -182,7 +182,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        (rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
+        (getActivity().findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -192,7 +192,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        ImageButton cancel_change = (ImageButton) rootView.findViewById(R.id.cancel_change);
+        ImageButton cancel_change = (ImageButton) getActivity().findViewById(R.id.cancel_change);
         Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         cancel_change.setOnClickListener(new View.OnClickListener() {
@@ -202,7 +202,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 updateConsegnatiList(true);
 //                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
                 rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-                rootView.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+                getActivity().findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
 //                getFab().show();
@@ -229,7 +229,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        ImageButton confirm_changes = (ImageButton) rootView.findViewById(R.id.confirm_changes);
+        ImageButton confirm_changes = (ImageButton) getActivity().findViewById(R.id.confirm_changes);
         drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         confirm_changes.setOnClickListener(new View.OnClickListener() {
@@ -270,7 +270,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
                 rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
                 rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
 //                getFab().hide();
                 hideFab();
             }
@@ -321,6 +321,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+        getActivity().findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
     }
 
     @Override

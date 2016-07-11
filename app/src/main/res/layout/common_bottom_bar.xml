@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    risuscito:layout_behavior="it.cammino.risuscito.ui.QuickReturnFooterBehavior"
+    android:id="@+id/bottom_bar"
+    android:layout_width="match_parent"
+    android:background="?colorPrimary"
+    android:divider="?attr/dividerVertical"
+    android:layout_height="@dimen/abc_action_bar_default_height_material"
+    android:layout_gravity="bottom"
+    android:gravity="center"
+    android:visibility="invisible"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/select_none"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="center"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/select_all"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="center"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/cancel_change"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:srcCompat="@drawable/ic_undo_24dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/confirm_changes"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:srcCompat="@drawable/ic_save_24dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+</LinearLayout>

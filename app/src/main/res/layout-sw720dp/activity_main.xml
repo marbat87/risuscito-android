@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/my_drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/my_drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false">
+
+        <!-- Drawer items -->
+        <include layout="@layout/common_navigation_view"/>
+
+    </android.support.v4.widget.DrawerLayout>
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:risuscito="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_content"
+        android:layout_marginStart="@dimen/drawer_content_padding"
+        android:layout_marginLeft="@dimen/drawer_content_padding"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -35,8 +46,8 @@
         <include layout="@layout/common_shadow"/>
 
         <FrameLayout
-            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/content_frame"
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -46,8 +57,11 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <!-- Drawer items -->
-    <include layout="@layout/common_navigation_view"/>
+    <View
+        android:id="@+id/tablet_mode"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-</android.support.v4.widget.DrawerLayout>
+</FrameLayout>
 

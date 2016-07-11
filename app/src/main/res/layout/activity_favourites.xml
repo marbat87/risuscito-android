@@ -43,11 +43,11 @@
 
     </RelativeLayout>
 
-    <View
-        android:layout_gravity="top"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="?toolbar_shadow" />
+    <!--<View-->
+        <!--android:layout_gravity="top"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="5dp"-->
+        <!--android:background="?toolbar_shadow" />-->
 
     <android.support.v7.widget.RecyclerView
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
