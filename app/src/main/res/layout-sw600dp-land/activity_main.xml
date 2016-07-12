@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/risuscito_toolbar_noelevation" />
+
     <android.support.v4.widget.DrawerLayout
+        android:layout_marginTop="?actionBarSize"
         android:id="@+id/my_drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,6 +21,7 @@
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:risuscito="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_content"
+        android:layout_marginTop="?actionBarSize"
         android:layout_marginStart="@dimen/drawer_content_padding"
         android:layout_marginLeft="@dimen/drawer_content_padding"
         android:layout_width="match_parent"
@@ -30,7 +34,7 @@
             android:elevation="@dimen/design_appbar_elevation"
             android:theme="@style/ActionBarThemeOverlay">
 
-            <include layout="@layout/risuscito_toolbar_noelevation" />
+
 
             <android.support.design.widget.TabLayout
                 android:layout_height="48dp"

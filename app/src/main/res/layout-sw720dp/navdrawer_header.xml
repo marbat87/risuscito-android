@@ -58,13 +58,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/test_name"
                 fontPath="fonts/Roboto-Medium.ttf"
-                android:textAppearance="@style/TextAppearance.AppCompat"
                 android:gravity="start"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:id="@+id/username"
                 tools:ignore="MissingPrefix" />
 
@@ -80,7 +80,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="6dp"
-                android:textAppearance="@style/TextAppearance.AppCompat" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+                android:textColor="?android:textColorSecondaryInverse" />
 
         </LinearLayout>
 
@@ -100,6 +101,12 @@
         android:visibility="invisible"
         android:soundEffectsEnabled="true"
         tools:ignore="MissingPrefix" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="#26000000" />
 
 </FrameLayout>
 

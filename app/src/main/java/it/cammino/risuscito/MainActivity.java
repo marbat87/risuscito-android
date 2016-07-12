@@ -171,8 +171,8 @@ public class MainActivity extends ThemeableActivity
         profileBackground = (ImageView) header.findViewById(R.id.copertina);
         copertinaAccount = header.findViewById(R.id.copertina_account);
         accountMenu = (ImageView) header.findViewById(R.id.account_menu);
-        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+//        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
         accountMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -398,11 +398,15 @@ public class MainActivity extends ThemeableActivity
             //tablet mode
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
             mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, R.color.icon_ative_black));
         }
         else {
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
             mDrawerLayout.setScrimColor(0x99000000);
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
         }
 //        else
 //            //normal mode
@@ -862,10 +866,18 @@ public class MainActivity extends ThemeableActivity
     @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
         if (signedIn) {
-            if (LUtils.hasJB())
-                copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
-            else
-                copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+            if (LUtils.hasJB()) {
+                if (isOnTablet)
+                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
+                else
+                    copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+            }
+            else {
+                if (isOnTablet)
+                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
+                else
+                    copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+            }
 //            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
             profileBackground.setVisibility(View.INVISIBLE);
 
