@@ -3556,6 +3556,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 // Set these depending on your use case. These are the defaults.
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                i.putExtra(FilePickerActivity.EXTRA_SINGLE_CLICK, true);
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
                 startActivityForResult(i, REQUEST_CODE);
                 break;

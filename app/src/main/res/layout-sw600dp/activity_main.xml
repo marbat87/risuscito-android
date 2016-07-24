@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_marginTop="?actionBarSize"
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:id="@+id/toolbar_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:elevation="@dimen/design_appbar_elevation"-->
+        <!--android:theme="@style/ActionBarThemeOverlay">-->
+
+        <!--<android.support.design.widget.TabLayout-->
+        <!--android:layout_height="48dp"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:id="@+id/material_tabs"-->
+        <!--style="@style/Widget.Design.TabLayout.Risuscito" />-->
+
+        <!--</android.support.design.widget.AppBarLayout>-->
+
+        <include layout="@layout/common_circle_progress"/>
+
+        <include layout="@layout/common_shadow"/>
+
+        <FrameLayout
+            android:id="@+id/main_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/design_appbar_elevation"
+                android:theme="@style/ActionBarThemeOverlay">
+
+                <android.support.design.widget.TabLayout
+                    android:layout_height="48dp"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:id="@+id/material_tabs"
+                    style="@style/Widget.Design.TabLayout.Risuscito" />
+
+            </android.support.design.widget.AppBarLayout>
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <include layout="@layout/common_fab"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <View
+        android:id="@+id/tablet_mode"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</FrameLayout>

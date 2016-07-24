@@ -5,7 +5,14 @@
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="android:textColorPrimary">@color/icon_ative_black</item>
+
     </style>
+
+    <!-- AppTheme ActionBar Style -->
+    <!--<style name="AppTheme.ActionBar" parent="">-->
+        <!--<item name="android:titleTextStyle">@style/AppTheme.ActionBar.TextAppearance</item>-->
+        <!--<item name="android:subtitleTextStyle">@style/AppTheme.ActionBar.TextAppearance.SubTitle</item>-->
+    <!--</style>-->
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

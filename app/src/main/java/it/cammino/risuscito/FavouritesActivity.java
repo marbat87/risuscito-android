@@ -341,7 +341,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                         String message = removedItems.size() > 1 ?
                                 getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
                                 : getString(R.string.favorite_removed);
-                        Snackbar.make(rootView.findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+                        Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.cancel, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

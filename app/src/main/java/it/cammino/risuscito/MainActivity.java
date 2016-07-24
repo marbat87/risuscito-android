@@ -2,38 +2,28 @@ package it.cammino.risuscito;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
@@ -61,7 +51,22 @@ import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
-import com.squareup.picasso.Picasso;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.crossfader.Crossfader;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.MiniDrawer;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialize.util.UIUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -75,33 +80,37 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MainActivity extends ThemeableActivity
         implements ColorChooserDialog.ColorCallback
-        , NavigationView.OnNavigationItemSelectedListener
         , GoogleApiClient.OnConnectionFailedListener
         , SimpleDialogFragment.SimpleCallback {
 
     private final String TAG = getClass().getCanonicalName();
+    Bundle mSavedInstance;
 
     private LUtils mLUtils;
 
-    public DrawerLayout mDrawerLayout;
+    //    public DrawerLayout mDrawerLayout;
+    private Drawer mDrawer;
+    private Crossfader crossFader;
+    private AccountHeader mAccountHeader;
     private Toolbar mToolbar;
     private boolean isOnTablet;
-    protected static final String SELECTED_ITEM = "oggetto_selezionato";
+    //    protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
     private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
     private static final String DB_BACKUP_RUNNING = "db_backup_running";
     private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
-    private int selectedItemIndex = 0;
+//    private int selectedItemIndex = 0;
 
 //    private int prevOrientation;
 
-    private NavigationView mNavigationView;
+//    private NavigationView mNavigationView;
 
 //    private static final int TALBLET_DP = 600;
 //    private static final int WIDTH_320 = 320;
@@ -112,12 +121,12 @@ public class MainActivity extends ThemeableActivity
 
     private boolean showSnackbar;
     private GoogleSignInAccount acct;
-    private ImageView profileImage;
-    private ImageView profileBackground;
-    private View copertinaAccount;
-    private ImageView accountMenu;
-    private TextView usernameTextView;
-    private TextView emailTextView;
+//    private ImageView profileImage;
+//    private ImageView profileBackground;
+//    private View copertinaAccount;
+//    private ImageView accountMenu;
+//    private TextView usernameTextView;
+//    private TextView emailTextView;
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
@@ -140,10 +149,18 @@ public class MainActivity extends ThemeableActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mSavedInstance = savedInstanceState;
+
+        IconicsDrawable icon = new IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon.cmd_menu)
+                .color(Color.WHITE)
+                .sizeDp(24);
+
         mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        mToolbar.setNavigationIcon(icon);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 //        if (getSupportActionBar() != null)
 //            getSupportActionBar().setTitle("");
@@ -155,35 +172,36 @@ public class MainActivity extends ThemeableActivity
         mLUtils = LUtils.getInstance(MainActivity.this);
         isOnTablet = mLUtils.isOnTablet();
         Log.d(TAG, "onCreate: isOnTablet = " + isOnTablet);
+
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
-        setupNavDrawer();
+        setupNavDrawer(savedInstanceState);
 
-        View header = mNavigationView.getHeaderView(0);
-
-        profileImage = (ImageView) header.findViewById(R.id.profile_image);
-        profileImage.setVisibility(View.INVISIBLE);
-        usernameTextView = (TextView) header.findViewById(R.id.username);
-        usernameTextView.setVisibility(View.INVISIBLE);
-        emailTextView = (TextView) header.findViewById(R.id.email);
-        emailTextView.setVisibility(View.INVISIBLE);
-        profileBackground = (ImageView) header.findViewById(R.id.copertina);
-        copertinaAccount = header.findViewById(R.id.copertina_account);
-        accountMenu = (ImageView) header.findViewById(R.id.account_menu);
-//        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-        accountMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                accountMenu.setSelected(!accountMenu.isSelected());
-                mNavigationView.getMenu().clear();
-                mNavigationView.inflateMenu(accountMenu.isSelected()
-                        ? R.menu.drawer_account_menu : R.menu.drawer_menu);
-                if (!accountMenu.isSelected())
-                    mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-            }
-        });
+//        View header = mNavigationView.getHeaderView(0);
+//
+//        profileImage = (ImageView) header.findViewById(R.id.profile_image);
+//        profileImage.setVisibility(View.INVISIBLE);
+//        usernameTextView = (TextView) header.findViewById(R.id.username);
+//        usernameTextView.setVisibility(View.INVISIBLE);
+//        emailTextView = (TextView) header.findViewById(R.id.email);
+//        emailTextView.setVisibility(View.INVISIBLE);
+//        profileBackground = (ImageView) header.findViewById(R.id.copertina);
+//        copertinaAccount = header.findViewById(R.id.copertina_account);
+//        accountMenu = (ImageView) header.findViewById(R.id.account_menu);
+////        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+////        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+//        accountMenu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                accountMenu.setSelected(!accountMenu.isSelected());
+//                mNavigationView.getMenu().clear();
+//                mNavigationView.inflateMenu(accountMenu.isSelected()
+//                        ? R.menu.drawer_account_menu : R.menu.drawer_menu);
+//                if (!accountMenu.isSelected())
+//                    mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
+//            }
+//        });
 
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
@@ -192,10 +210,11 @@ public class MainActivity extends ThemeableActivity
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
-                mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-            } else {
+//            if (savedInstanceState != null) {
+//                selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
+//                mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
+//            } else {
+            if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
                 AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
                 appBarLayout.setExpanded(true, true);
@@ -390,32 +409,35 @@ public class MainActivity extends ThemeableActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
 
-        if(isOnTablet) {
-            //tablet mode
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
-            mDrawerLayout.setScrimColor(Color.TRANSPARENT);
-            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, R.color.icon_ative_black));
-        }
-        else {
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
-            mDrawerLayout.setScrimColor(0x99000000);
-            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-        }
+
+//        if(isOnTablet) {
+//            //tablet mode
+//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
+//            mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+//            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, R.color.icon_ative_black));
+//        }
+//        else {
+//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
+//            mDrawerLayout.setScrimColor(0x99000000);
+//            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+//            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
+//        }
 //        else
 //            //normal mode
 //            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-    }
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
+//        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
+        //add the values which need to be saved from the drawer to the bundle
+        savedInstanceState = mDrawer.saveInstanceState(savedInstanceState);
         //questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si ruota lo schermo
         ConsegnatiFragment consegnatiFragment = (ConsegnatiFragment) getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
         if (consegnatiFragment != null && consegnatiFragment.isVisible() && consegnatiFragment.getTitoliChoose() != null) {
@@ -433,56 +455,275 @@ public class MainActivity extends ThemeableActivity
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private void setupNavDrawer() {
+    private void setupNavDrawer(@Nullable Bundle savedInstanceState) {
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
-        if (mDrawerLayout == null) {
-            return;
+        IProfile profile = new ProfileDrawerItem().withName("").withEmail("");
+
+        // Create the AccountHeader
+        mAccountHeader = new AccountHeaderBuilder()
+                .withActivity(MainActivity.this)
+                .withTranslucentStatusBar(!isOnTablet)
+//                .withSelectionListEnabled(false)
+                .withHeaderBackground(R.drawable.about_cover)
+                .withSavedInstance(savedInstanceState)
+                .addProfiles(profile)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+                        //sample usage of the onProfileChanged listener
+                        //if the clicked item has the identifier 1 add a new profile ;)
+                        if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_backup) {
+//                            mDrawer.closeDrawer();
+                            new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
+                                    .title(R.string.gdrive_backup)
+                                    .content(R.string.gdrive_backup_content)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                            return true;
+                        }
+                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_restore) {
+//                            mDrawer.closeDrawer();
+                            new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
+                                    .title(R.string.gdrive_restore)
+                                    .content(R.string.gdrive_restore_content)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                            return true;
+                        }
+                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_signout) {
+//                            mDrawer.closeDrawer();
+                            new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
+                                    .title(R.string.gplus_signout)
+                                    .content(R.string.dialog_acc_disconn_text)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                            return true;
+                        }
+                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_revoke) {
+//                            mDrawer.closeDrawer();
+                            new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
+                                    .title(R.string.gplus_revoke)
+                                    .content(R.string.dialog_acc_revoke_text)
+                                    .positiveButton(R.string.confirm)
+                                    .negativeButton(R.string.dismiss)
+                                    .show();
+                            return true;
+                        }
+
+                        //false if you have not consumed the event and it should close the drawer
+                        return false;
+                    }
+                })
+                .build();
+
+        DrawerBuilder mDrawerBuilder = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(mToolbar)
+                .withHasStableIds(true)
+                .withAccountHeader(mAccountHeader)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(R.string.activity_homepage).withIcon(CommunityMaterial.Icon.cmd_home).withIdentifier(R.id.navigation_home)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.search_name_text).withIcon(CommunityMaterial.Icon.cmd_magnify).withIdentifier(R.id.navigation_search)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.title_activity_general_index).withIcon(CommunityMaterial.Icon.cmd_view_list).withIdentifier(R.id.navigation_indexes)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.title_activity_custom_lists).withIcon(CommunityMaterial.Icon.cmd_view_carousel).withIdentifier(R.id.navitagion_lists)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.action_favourites).withIcon(CommunityMaterial.Icon.cmd_heart).withIdentifier(R.id.navigation_favorites)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.title_activity_consegnati).withIcon(CommunityMaterial.Icon.cmd_clipboard_check).withIdentifier(R.id.navigation_consegnati)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.title_activity_history).withIcon(CommunityMaterial.Icon.cmd_history).withIdentifier(R.id.navigation_history)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new PrimaryDrawerItem().withName(R.string.title_activity_settings).withIcon(CommunityMaterial.Icon.cmd_settings).withIdentifier(R.id.navigation_settings)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                        new DividerDrawerItem(),
+                        new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color),
+                        new SecondaryDrawerItem().withName(R.string.title_activity_donate).withIcon(CommunityMaterial.Icon.cmd_thumb_up).withIdentifier(R.id.navigation_donate).withSelectable(false)
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        //check if the drawerItem is set.
+                        //there are different reasons for the drawerItem to be null
+                        //--> click on the header
+                        //--> click on the footer
+                        //those items don't contain a drawerItem
+
+                        if (drawerItem != null) {
+                            Fragment fragment;
+                            if (drawerItem.getIdentifier() == R.id.navigation_home) {
+                                fragment = new Risuscito();
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.toolbar_layout);
+                                    appBarLayout.setExpanded(true, true);
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                }
+                            }
+                            else if (drawerItem.getIdentifier() == R.id.navigation_search) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(0);
+                                }
+                                fragment = new GeneralSearch();
+                            }
+                            else if (drawerItem.getIdentifier() == R.id.navigation_indexes) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(0);
+                                }
+                                fragment = new GeneralIndex();
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navitagion_lists) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(0);
+                                }
+                                fragment = new CustomLists();
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_favorites) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                }
+                                fragment = new FavouritesActivity();
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                }
+                                fragment = new PreferencesFragment();
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
+                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
+                                return true;
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_donate) {
+                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
+                                return true;
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                }
+                                fragment = new ConsegnatiFragment();
+                                ((ConsegnatiFragment) fragment).setOnTablet(isOnTablet);
+                            }
+                            else if (drawerItem.getIdentifier() ==  R.id.navigation_history) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                }
+                                fragment = new HistoryFragment();
+                            }
+                            else return true;
+
+                            //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+                            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(drawerItem.getIdentifier()));
+                            if (myFragment == null || !myFragment.isVisible()) {
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                                transaction.replace(R.id.content_frame, fragment, String.valueOf(drawerItem.getIdentifier())).commit();
+                            }
+                        }
+                        return false;
+
+                    }
+                })
+                .withGenerateMiniDrawer(isOnTablet)
+                .withSavedInstance(savedInstanceState)
+                .withTranslucentStatusBar(!isOnTablet);
+
+        if (isOnTablet) {
+            mDrawer = mDrawerBuilder.buildView();
+            //the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
+            MiniDrawer miniResult = mDrawer.getMiniDrawer();
+
+            //get the widths in px for the first and second panel
+            int firstWidth = (int) UIUtils.convertDpToPixel(302, this);
+            int secondWidth = (int) UIUtils.convertDpToPixel(72, this);
+
+            //create and build our crossfader (see the MiniDrawer is also builded in here, as the build method returns the view to be used in the crossfader)
+            crossFader = new Crossfader()
+                    .withContent(findViewById(R.id.main_frame))
+                    .withFirst(mDrawer.getSlider(), firstWidth)
+                    .withSecond(miniResult.build(this), secondWidth)
+                    .withSavedInstance(savedInstanceState)
+                    .withGmailStyleSwiping()
+                    .build();
+
+            //define the crossfader to be used with the miniDrawer. This is required to be able to automatically toggle open / close
+            miniResult.withCrossFader(new CrossfadeWrapper(crossFader));
+
+            //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
+            crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left);
         }
-        mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
-//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        else {
+            mDrawer = mDrawerBuilder.build();
+            mDrawer.getDrawerLayout().setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
+        }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-        ColorStateList mIconStateList = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_checked}, //1
-                        new int[]{} //2
-                },
-                new int[]{
-                        getThemeUtils().primaryColor(), //1
-                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
-                }
-        );
-
-        ColorStateList mTextStateList = new ColorStateList(
-                new int[][]{
-                        new int[]{android.R.attr.state_checked}, //1
-                        new int[]{} //2
-                },
-                new int[]{
-                        getThemeUtils().primaryColor(), //1
-                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
-                }
-        );
-
-        mNavigationView.setItemIconTintList(mIconStateList);
-        mNavigationView.setItemTextColor(mTextStateList);
+//        mDrawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
+//        if (mDrawerLayout == null) {
+//            return;
+//        }
+//        mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
+////        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+//
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        mDrawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+//        mNavigationView.setNavigationItemSelectedListener(this);
+//
+//        ColorStateList mIconStateList = new ColorStateList(
+//                new int[][]{
+//                        new int[]{android.R.attr.state_checked}, //1
+//                        new int[]{} //2
+//                },
+//                new int[]{
+//                        getThemeUtils().primaryColor(), //1
+//                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
+//                }
+//        );
+//
+//        ColorStateList mTextStateList = new ColorStateList(
+//                new int[][]{
+//                        new int[]{android.R.attr.state_checked}, //1
+//                        new int[]{} //2
+//                },
+//                new int[]{
+//                        getThemeUtils().primaryColor(), //1
+//                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
+//                }
+//        );
+//
+//        mNavigationView.setItemIconTintList(mIconStateList);
+//        mNavigationView.setItemTextColor(mTextStateList);
 
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) && !isOnTablet) {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-                return true;
+//            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) && !isOnTablet) {
+//                mDrawerLayout.closeDrawer(GravityCompat.START);
+//                return true;
+//            }
+            if (isOnTablet) {
+                if (crossFader != null && crossFader.isCrossFaded()) {
+                    crossFader.crossFade();
+                    return true;
+                }
+            }
+            else {
+                if (mDrawer != null && mDrawer.isDrawerOpen()) {
+                    mDrawer.closeDrawer();
+                    return true;
+                }
             }
 
             Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
@@ -496,7 +737,7 @@ public class MainActivity extends ThemeableActivity
             transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
             AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
-            mNavigationView.getMenu().getItem(0).setChecked(true);
+//            mNavigationView.getMenu().getItem(0).setChecked(true);
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -611,161 +852,161 @@ public class MainActivity extends ThemeableActivity
         mFab.requestLayout();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-//        item.setChecked(true);
-        Fragment fragment;
-
-        switch (item.getItemId()) {
-            case R.id.navigation_home:
-                item.setChecked(true);
-                selectedItemIndex = 0;
-                fragment = new Risuscito();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-                    appBarLayout.setExpanded(true, true);
-                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                }
-                break;
-            case R.id.navigation_search:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(0);
-                }
-                selectedItemIndex = 1;
-                fragment = new GeneralSearch();
-                break;
-            case R.id.navigation_indexes:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(0);
-                }
-                selectedItemIndex = 2;
-                fragment = new GeneralIndex();
-                break;
-            case R.id.navitagion_lists:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(0);
-                }
-                selectedItemIndex = 3;
-                fragment = new CustomLists();
-                break;
-            case R.id.navigation_favorites:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                }
-                selectedItemIndex = 4;
-                fragment = new FavouritesActivity();
-                break;
-            case R.id.navigation_settings:
-                selectedItemIndex = 5;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                }
-                fragment = new PreferencesFragment();
-                break;
-            case R.id.navigation_changelog:
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
-                return true;
+//    @Override
+//    public boolean onNavigationItemSelected(MenuItem item) {
+////        item.setChecked(true);
+//        Fragment fragment;
+//
+//        switch (item.getItemId()) {
+//            case R.id.navigation_home:
+//                item.setChecked(true);
+//                selectedItemIndex = 0;
+//                fragment = new Risuscito();
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+//                    appBarLayout.setExpanded(true, true);
+//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                }
+//                break;
+//            case R.id.navigation_search:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(0);
+//                }
+//                selectedItemIndex = 1;
+//                fragment = new GeneralSearch();
+//                break;
+//            case R.id.navigation_indexes:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(0);
+//                }
+//                selectedItemIndex = 2;
+//                fragment = new GeneralIndex();
+//                break;
+//            case R.id.navitagion_lists:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(0);
+//                }
+//                selectedItemIndex = 3;
+//                fragment = new CustomLists();
+//                break;
+//            case R.id.navigation_favorites:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                }
+//                selectedItemIndex = 4;
+//                fragment = new FavouritesActivity();
+//                break;
+//            case R.id.navigation_settings:
+//                selectedItemIndex = 5;
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                }
+//                fragment = new PreferencesFragment();
+//                break;
+//            case R.id.navigation_changelog:
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
+//                return true;
+////                selectedItemIndex = 6;
+////                fragment = new AboutActivity();
+////                break;
+//            case R.id.navigation_donate:
+////                selectedItemIndex = 7;
+////                fragment = new DonateActivity();
+////                break;
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
+//                return true;
+//            case R.id.navigation_consegnati:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                }
 //                selectedItemIndex = 6;
-//                fragment = new AboutActivity();
+//                fragment = new ConsegnatiFragment();
 //                break;
-            case R.id.navigation_donate:
+//            case R.id.navigation_history:
+//                item.setChecked(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                }
 //                selectedItemIndex = 7;
-//                fragment = new DonateActivity();
+//                fragment = new HistoryFragment();
 //                break;
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
-                return true;
-            case R.id.navigation_consegnati:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                }
-                selectedItemIndex = 6;
-                fragment = new ConsegnatiFragment();
-                break;
-            case R.id.navigation_history:
-                item.setChecked(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                }
-                selectedItemIndex = 7;
-                fragment = new HistoryFragment();
-                break;
-            case R.id.gdrive_backup:
-                accountMenu.performClick();
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
-                        .title(R.string.gdrive_backup)
-                        .content(R.string.gdrive_backup_content)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .show();
-                return true;
-            case R.id.gdrive_restore:
-                accountMenu.performClick();
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
-                        .title(R.string.gdrive_restore)
-                        .content(R.string.gdrive_restore_content)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .show();
-                return true;
-            case R.id.gplus_signout:
-                accountMenu.performClick();
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
-                        .title(R.string.gplus_signout)
-                        .content(R.string.dialog_acc_disconn_text)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .show();
-                return true;
-            case R.id.gplus_revoke:
-                accountMenu.performClick();
-                if (!isOnTablet)
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
-                        .title(R.string.gplus_revoke)
-                        .content(R.string.dialog_acc_revoke_text)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .show();
-                return true;
-            default:
-                selectedItemIndex = 0;
-                fragment = new Risuscito();
-                break;
-        }
-
-        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item.getItemId()));
-        if (myFragment == null || !myFragment.isVisible()) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-            transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
-
-            Handler mHandler = new Handler();
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isOnTablet)
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                }
-            }, 250);
-        }
-        return true;
-    }
+//            case R.id.gdrive_backup:
+//                accountMenu.performClick();
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
+//                        .title(R.string.gdrive_backup)
+//                        .content(R.string.gdrive_backup_content)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .show();
+//                return true;
+//            case R.id.gdrive_restore:
+//                accountMenu.performClick();
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
+//                        .title(R.string.gdrive_restore)
+//                        .content(R.string.gdrive_restore_content)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .show();
+//                return true;
+//            case R.id.gplus_signout:
+//                accountMenu.performClick();
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
+//                        .title(R.string.gplus_signout)
+//                        .content(R.string.dialog_acc_disconn_text)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .show();
+//                return true;
+//            case R.id.gplus_revoke:
+//                accountMenu.performClick();
+//                if (!isOnTablet)
+//                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
+//                        .title(R.string.gplus_revoke)
+//                        .content(R.string.dialog_acc_revoke_text)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .show();
+//                return true;
+//            default:
+//                selectedItemIndex = 0;
+//                fragment = new Risuscito();
+//                break;
+//        }
+//
+//        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+//        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item.getItemId()));
+//        if (myFragment == null || !myFragment.isVisible()) {
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+//            transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
+//
+//            Handler mHandler = new Handler();
+//            mHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (!isOnTablet)
+//                        mDrawerLayout.closeDrawer(GravityCompat.START);
+//                }
+//            }, 250);
+//        }
+//        return true;
+//    }
 
     // [START signIn]
     public void signIn() {
@@ -865,78 +1106,181 @@ public class MainActivity extends ThemeableActivity
 
     @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            if (LUtils.hasJB()) {
-                if (isOnTablet)
-                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
-                else
-                    copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
-            }
-            else {
-                if (isOnTablet)
-                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
-                else
-                    copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
-            }
-//            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
-            profileBackground.setVisibility(View.INVISIBLE);
+//        if (signedIn) {
+//            if (LUtils.hasJB()) {
+//                if (isOnTablet)
+//                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
+//                else
+//                    copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+//            }
+//            else {
+//                if (isOnTablet)
+//                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
+//                else
+//                    copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
+//            }
+////            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
+//            profileBackground.setVisibility(View.INVISIBLE);
+//
+////            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
+//            Uri profilePhoto = acct.getPhotoUrl();
+//            if (profilePhoto != null) {
+//                String personPhotoUrl = profilePhoto.toString();
+//                // by default the profile url gives 50x50 px image only
+//                // we can replace the value with whatever dimension we want by
+//                // replacing sz=X
+//                personPhotoUrl = personPhotoUrl.substring(0,
+//                        personPhotoUrl.length() - 2)
+//                        + 400;
+//                Picasso.with(this)
+//                        .load(personPhotoUrl)
+//                        .error(R.drawable.gplus_default_avatar)
+//                        .into(profileImage);
+//            } else {
+//                Picasso.with(this)
+//                        .load(R.drawable.gplus_default_avatar)
+//                        .into(profileImage);
+//            }
+//
+//            profileImage.setVisibility(View.VISIBLE);
+//
+//            String personName = acct.getDisplayName();
+////                Log.d(getClass().getName(), "personName: " + personName);
+//            usernameTextView.setText(personName);
+//            usernameTextView.setVisibility(View.VISIBLE);
+//
+//            String email = acct.getEmail();
+////                Log.d(getClass().getName(), "email: " + email);
+//            emailTextView.setText(email);
+//            emailTextView.setVisibility(View.VISIBLE);
+//
+//            if (findViewById(R.id.sign_in_button) != null)
+//                findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
+//
+//            accountMenu.setVisibility(View.VISIBLE);
+////            }
+//        } else {
+//            profileImage.setVisibility(View.INVISIBLE);
+//            usernameTextView.setVisibility(View.INVISIBLE);
+//            emailTextView.setVisibility(View.INVISIBLE);
+//            if (LUtils.hasJB())
+//                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+//            else
+//                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
+////            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
+//            profileBackground.setVisibility(View.VISIBLE);
+////            profileBackground.setImageResource(R.drawable.copertina_about);
+//            Picasso.with(this)
+//                    .load(R.drawable.about_cover)
+//                    .error(R.drawable.about_cover)
+//                    .into(profileBackground);
+//            if (findViewById(R.id.sign_in_button) != null)
+//                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+//            accountMenu.setVisibility(View.INVISIBLE);
+//        }
 
-//            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
+        AccountHeader headerResult;
+        if (signedIn) {
+            IProfile profile;
             Uri profilePhoto = acct.getPhotoUrl();
             if (profilePhoto != null) {
                 String personPhotoUrl = profilePhoto.toString();
-                // by default the profile url gives 50x50 px image only
-                // we can replace the value with whatever dimension we want by
-                // replacing sz=X
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + 400;
-                Picasso.with(this)
-                        .load(personPhotoUrl)
-                        .error(R.drawable.gplus_default_avatar)
-                        .into(profileImage);
-            } else {
-                Picasso.with(this)
-                        .load(R.drawable.gplus_default_avatar)
-                        .into(profileImage);
+                profile = new ProfileDrawerItem().withName(acct.getDisplayName()).withEmail(acct.getEmail()).withIcon(personPhotoUrl);
             }
-
-            profileImage.setVisibility(View.VISIBLE);
-
-            String personName = acct.getDisplayName();
-//                Log.d(getClass().getName(), "personName: " + personName);
-            usernameTextView.setText(personName);
-            usernameTextView.setVisibility(View.VISIBLE);
-
-            String email = acct.getEmail();
-//                Log.d(getClass().getName(), "email: " + email);
-            emailTextView.setText(email);
-            emailTextView.setVisibility(View.VISIBLE);
-
-            if (findViewById(R.id.sign_in_button) != null)
-                findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
-
-            accountMenu.setVisibility(View.VISIBLE);
-//            }
-        } else {
-            profileImage.setVisibility(View.INVISIBLE);
-            usernameTextView.setVisibility(View.INVISIBLE);
-            emailTextView.setVisibility(View.INVISIBLE);
-            if (LUtils.hasJB())
-                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
             else
-                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-//            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
-            profileBackground.setVisibility(View.VISIBLE);
-//            profileBackground.setImageResource(R.drawable.copertina_about);
-            Picasso.with(this)
-                    .load(R.drawable.about_cover)
-                    .error(R.drawable.about_cover)
-                    .into(profileBackground);
-            if (findViewById(R.id.sign_in_button) != null)
-                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            accountMenu.setVisibility(View.INVISIBLE);
+                profile = new ProfileDrawerItem().withName(acct.getDisplayName()).withEmail(acct.getEmail()).withIcon(R.drawable.gplus_default_avatar);
+            // Create the AccountHeader
+            if (isOnTablet)
+                mAccountHeader.setBackground(new ColorDrawable(Color.WHITE));
+            else
+                mAccountHeader.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+//            mAccountHeader.addProfile(profile,0);
+            mAccountHeader.clear();
+            mAccountHeader.addProfiles(profile,
+                    new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(CommunityMaterial.Icon.cmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
+                    new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_restore)).withIcon(CommunityMaterial.Icon.cmd_cloud_download).withIdentifier(R.id.gdrive_restore),
+                    new ProfileSettingDrawerItem().withName(getString(R.string.gplus_signout)).withIcon(CommunityMaterial.Icon.cmd_account_remove).withIdentifier(R.id.gplus_signout),
+                    new ProfileSettingDrawerItem().withName(getString(R.string.gplus_revoke)).withIcon(CommunityMaterial.Icon.cmd_account_key).withIdentifier(R.id.gplus_revoke));
+//            mAccountHeader = new AccountHeaderBuilder()
+//                    .withActivity(this)
+//                    .withTranslucentStatusBar(true)
+//                    .withHeaderBackground(new ColorDrawable(getThemeUtils().primaryColor()))
+//                    .addProfiles(profile,
+//                            new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(GoogleMaterial.Icon.gmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
+//                            new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_restore)).withIcon(GoogleMaterial.Icon.gmd_cloud_download).withIdentifier(R.id.gdrive_restore),
+//                            new ProfileSettingDrawerItem().withName(getString(R.string.gplus_signout)).withIcon(GoogleMaterial.Icon.gmd_exit_to_app).withIdentifier(R.id.gplus_signout),
+//                            new ProfileSettingDrawerItem().withName(getString(R.string.gplus_revoke)).withIcon(GoogleMaterial.Icon.gmd_vpn_key).withIdentifier(R.id.gplus_revoke))
+//                    .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+//                        @Override
+//                        public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+//                            //sample usage of the onProfileChanged listener
+//                            //if the clicked item has the identifier 1 add a new profile ;)
+//                            if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_backup) {
+//                                mDrawer.closeDrawer();
+//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
+//                                        .title(R.string.gdrive_backup)
+//                                        .content(R.string.gdrive_backup_content)
+//                                        .positiveButton(R.string.confirm)
+//                                        .negativeButton(R.string.dismiss)
+//                                        .show();
+//                                return true;
+//                            }
+//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_restore) {
+//                                mDrawer.closeDrawer();
+//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
+//                                        .title(R.string.gdrive_restore)
+//                                        .content(R.string.gdrive_restore_content)
+//                                        .positiveButton(R.string.confirm)
+//                                        .negativeButton(R.string.dismiss)
+//                                        .show();
+//                                return true;
+//                            }
+//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_signout) {
+//                                mDrawer.closeDrawer();
+//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
+//                                        .title(R.string.gplus_signout)
+//                                        .content(R.string.dialog_acc_disconn_text)
+//                                        .positiveButton(R.string.confirm)
+//                                        .negativeButton(R.string.dismiss)
+//                                        .show();
+//                                return true;
+//                            }
+//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_revoke) {
+//                                mDrawer.closeDrawer();
+//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
+//                                        .title(R.string.gplus_revoke)
+//                                        .content(R.string.dialog_acc_revoke_text)
+//                                        .positiveButton(R.string.confirm)
+//                                        .negativeButton(R.string.dismiss)
+//                                        .show();
+//                                return true;
+//                            }
+//
+//                            //false if you have not consumed the event and it should close the drawer
+//                            return false;
+//                        }
+//                    })
+//                    .build();
         }
+        else {
+//            mAccountHeader = new AccountHeaderBuilder()
+//                    .withActivity(this)
+//                    .withTranslucentStatusBar(true)
+//                    .withHeaderBackground(R.drawable.about_cover)
+//                    .build();
+            mAccountHeader.setBackgroundRes(R.drawable.about_cover);
+            IProfile profile = new ProfileDrawerItem().withName("").withEmail("");
+            mAccountHeader.clear();
+            mAccountHeader.addProfile(profile, 0);
+        }
+
+//        mAccountHeader.setDrawer(mDrawer);
+//        mDrawer.closeDrawer();
+//        setupNavDrawer(mSavedInstance);
+
     }
 
 //    private void firebaseAuthWithGoogle() {
@@ -1547,4 +1891,11 @@ public class MainActivity extends ThemeableActivity
     @Override
     public void onNeutral(@NonNull String tag) {}
 
+    public Drawer getDrawer() {
+        return mDrawer;
+    }
+
+    public boolean isOnTablet() {
+        return isOnTablet;
+    }
 }

@@ -139,7 +139,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
+        rootView = inflater.inflate(R.layout.tabs_layout, container, false);
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
         ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_custom_lists);
 
