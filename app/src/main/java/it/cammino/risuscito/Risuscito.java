@@ -1,6 +1,10 @@
 package it.cammino.risuscito;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,6 +27,7 @@ import com.google.android.gms.common.SignInButton;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
+import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.slides.IntroMainNew;
 
 public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
@@ -31,9 +36,28 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
     private static final String VERSION_KEY = "PREFS_VERSION_KEY";
     private static final String NO_VERSION = "";
+    public static final String BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE";
+    public static final String DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE";
     //    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
 //    private int prevOrientation;
     private WelcomeScreenHelper mWelcomeScreen;
+
+    private SignInButton mSignInButton;
+
+    private BroadcastReceiver signInVisibility = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_SIGNIN_VISIBLE");
+                Log.d(getClass().getName(), "DATA_VISIBLE: " + intent.getBooleanExtra(DATA_VISIBLE, false));
+                mSignInButton.setVisibility(intent.getBooleanExtra(DATA_VISIBLE, false) ? View.VISIBLE : View.INVISIBLE);
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
@@ -194,10 +218,10 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         db.close();
         listaCanti.close();
 
-        SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_WIDE);
+        mSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+        mSignInButton.setSize(SignInButton.SIZE_WIDE);
 //        signInButton.setScopes(gso.getScopeArray());
-        signInButton.setOnClickListener(new OnClickListener() {
+        mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity)getActivity()).setShowSnackbar(true);
@@ -217,6 +241,19 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 //        }
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(signInVisibility, new IntentFilter(
+                BROADCAST_SIGNIN_VISIBLE));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(signInVisibility);
     }
 
     @Override

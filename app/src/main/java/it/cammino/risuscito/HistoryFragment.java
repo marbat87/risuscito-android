@@ -47,12 +47,14 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     private View rootView;
     private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
-//    private int prevOrientation;
+    //    private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
     private boolean actionModeOk;
 
     private String HISTORY_OPEN = "history_open";
+
+    private MainActivity mMainActivity;
 
     private LUtils mLUtils;
 
@@ -64,7 +66,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
         rootView = inflater.inflate(R.layout.layout_history, container, false);
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_history);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_history);
+        mMainActivity = (MainActivity) getActivity();
+        mMainActivity.setupToolbarTitle(R.string.title_activity_history);
 
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
@@ -74,9 +77,10 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        ((MainActivity) getActivity()).enableFab(true);
-
-        fabClear = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+        if (mMainActivity.isOnTablet())
+            mMainActivity.enableFab(false);
+        fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+                (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
         fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,14 +285,22 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
         rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (titoli.size() == 0)
-            fabClear.hide();
-        else
-            fabClear.show();
+        if (titoli.size() == 0) {
+            if (mMainActivity.isOnTablet())
+                fabClear.hide();
+            else
+                mMainActivity.enableFab(false);
+        }
+        else {
+            if (mMainActivity.isOnTablet())
+                fabClear.show();
+            else
+                mMainActivity.enableFab(true);
+        }
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
     private final class ModeCallback implements ActionMode.Callback {
@@ -342,8 +354,12 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                     }
                     db.close();
                     rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    if (titoli.size() == 0)
-                        fabClear.hide();
+                    if (titoli.size() == 0) {
+                        if (mMainActivity.isOnTablet())
+                            fabClear.hide();
+                        else
+                            mMainActivity.enableFab(false);
+                    }
                     actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {

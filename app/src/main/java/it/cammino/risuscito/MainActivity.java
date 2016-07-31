@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,6 +60,7 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.MiniDrawer;
+import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
@@ -90,12 +92,14 @@ public class MainActivity extends ThemeableActivity
         , SimpleDialogFragment.SimpleCallback {
 
     private final String TAG = getClass().getCanonicalName();
+    private final long PROF_ID = 5428471L;
     Bundle mSavedInstance;
 
     private LUtils mLUtils;
 
     //    public DrawerLayout mDrawerLayout;
     private Drawer mDrawer;
+    private MiniDrawer mMiniDrawer;
     private Crossfader crossFader;
     private AccountHeader mAccountHeader;
     private Toolbar mToolbar;
@@ -457,16 +461,21 @@ public class MainActivity extends ThemeableActivity
 
     private void setupNavDrawer(@Nullable Bundle savedInstanceState) {
 
-        IProfile profile = new ProfileDrawerItem().withName("").withEmail("");
+        IProfile profile = new ProfileDrawerItem().withName("")
+                .withEmail("")
+                .withIcon(R.drawable.gplus_default_avatar)
+                .withIdentifier(PROF_ID);
 
         // Create the AccountHeader
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(MainActivity.this)
                 .withTranslucentStatusBar(!isOnTablet)
-//                .withSelectionListEnabled(false)
-                .withHeaderBackground(R.drawable.about_cover)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
+                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+                .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
@@ -526,26 +535,36 @@ public class MainActivity extends ThemeableActivity
                 .withAccountHeader(mAccountHeader)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.activity_homepage).withIcon(CommunityMaterial.Icon.cmd_home).withIdentifier(R.id.navigation_home)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                        .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.search_name_text).withIcon(CommunityMaterial.Icon.cmd_magnify).withIdentifier(R.id.navigation_search)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_general_index).withIcon(CommunityMaterial.Icon.cmd_view_list).withIdentifier(R.id.navigation_indexes)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_custom_lists).withIcon(CommunityMaterial.Icon.cmd_view_carousel).withIdentifier(R.id.navitagion_lists)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.action_favourites).withIcon(CommunityMaterial.Icon.cmd_heart).withIdentifier(R.id.navigation_favorites)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_consegnati).withIcon(CommunityMaterial.Icon.cmd_clipboard_check).withIdentifier(R.id.navigation_consegnati)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_history).withIcon(CommunityMaterial.Icon.cmd_history).withIdentifier(R.id.navigation_history)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_settings).withIcon(CommunityMaterial.Icon.cmd_settings).withIdentifier(R.id.navigation_settings)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor()),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color),
+                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color)
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new SecondaryDrawerItem().withName(R.string.title_activity_donate).withIcon(CommunityMaterial.Icon.cmd_thumb_up).withIdentifier(R.id.navigation_donate).withSelectable(false)
                                 .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color)
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -560,40 +579,35 @@ public class MainActivity extends ThemeableActivity
                             Fragment fragment;
                             if (drawerItem.getIdentifier() == R.id.navigation_home) {
                                 fragment = new Risuscito();
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL()) {
                                     AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.toolbar_layout);
                                     appBarLayout.setExpanded(true, true);
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 }
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_search) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(0);
-                                }
                                 fragment = new GeneralSearch();
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_indexes) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(0);
-                                }
                                 fragment = new GeneralIndex();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navitagion_lists) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(0);
-                                }
                                 fragment = new CustomLists();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_favorites) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
                                 fragment = new FavouritesActivity();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
                                 fragment = new PreferencesFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
@@ -605,16 +619,14 @@ public class MainActivity extends ThemeableActivity
                                 return true;
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
                                 fragment = new ConsegnatiFragment();
-                                ((ConsegnatiFragment) fragment).setOnTablet(isOnTablet);
+//                                ((ConsegnatiFragment) fragment).setOnTablet(isOnTablet);
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_history) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
                                 fragment = new HistoryFragment();
                             }
                             else return true;
@@ -638,7 +650,7 @@ public class MainActivity extends ThemeableActivity
         if (isOnTablet) {
             mDrawer = mDrawerBuilder.buildView();
             //the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-            MiniDrawer miniResult = mDrawer.getMiniDrawer();
+            mMiniDrawer = mDrawer.getMiniDrawer();
 
             //get the widths in px for the first and second panel
             int firstWidth = (int) UIUtils.convertDpToPixel(302, this);
@@ -648,13 +660,13 @@ public class MainActivity extends ThemeableActivity
             crossFader = new Crossfader()
                     .withContent(findViewById(R.id.main_frame))
                     .withFirst(mDrawer.getSlider(), firstWidth)
-                    .withSecond(miniResult.build(this), secondWidth)
+                    .withSecond(mMiniDrawer.build(this), secondWidth)
                     .withSavedInstance(savedInstanceState)
                     .withGmailStyleSwiping()
                     .build();
 
             //define the crossfader to be used with the miniDrawer. This is required to be able to automatically toggle open / close
-            miniResult.withCrossFader(new CrossfadeWrapper(crossFader));
+            mMiniDrawer.withCrossFader(new CrossfadeWrapper(crossFader));
 
             //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
             crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left);
@@ -850,6 +862,8 @@ public class MainActivity extends ThemeableActivity
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
         params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
         mFab.requestLayout();
+//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && !enable)
+//            mFab.hide();
     }
 
 //    @Override
@@ -1179,7 +1193,11 @@ public class MainActivity extends ThemeableActivity
 //            accountMenu.setVisibility(View.INVISIBLE);
 //        }
 
-        AccountHeader headerResult;
+//        AccountHeader headerResult;
+        Intent intentBroadcast = new Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE);
+        Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn);
+        intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn);
+        sendBroadcast(intentBroadcast);
         if (signedIn) {
             IProfile profile;
             Uri profilePhoto = acct.getPhotoUrl();
@@ -1188,22 +1206,37 @@ public class MainActivity extends ThemeableActivity
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + 400;
-                profile = new ProfileDrawerItem().withName(acct.getDisplayName()).withEmail(acct.getEmail()).withIcon(personPhotoUrl);
+                profile = new ProfileDrawerItem()
+                        .withName(acct.getDisplayName())
+                        .withEmail(acct.getEmail())
+                        .withIcon(personPhotoUrl)
+                        .withIdentifier(PROF_ID);
             }
-            else
-                profile = new ProfileDrawerItem().withName(acct.getDisplayName()).withEmail(acct.getEmail()).withIcon(R.drawable.gplus_default_avatar);
+            else {
+                profile = new ProfileDrawerItem()
+                        .withName(acct.getDisplayName())
+                        .withEmail(acct.getEmail())
+                        .withIcon(R.drawable.gplus_default_avatar)
+                        .withIdentifier(PROF_ID);
+            }
             // Create the AccountHeader
-            if (isOnTablet)
-                mAccountHeader.setBackground(new ColorDrawable(Color.WHITE));
-            else
-                mAccountHeader.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
+//            if (isOnTablet)
+//                mAccountHeader.setBackground(new ColorDrawable(Color.WHITE));
+//            else
+//                mAccountHeader.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
 //            mAccountHeader.addProfile(profile,0);
-            mAccountHeader.clear();
-            mAccountHeader.addProfiles(profile,
-                    new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(CommunityMaterial.Icon.cmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
-                    new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_restore)).withIcon(CommunityMaterial.Icon.cmd_cloud_download).withIdentifier(R.id.gdrive_restore),
-                    new ProfileSettingDrawerItem().withName(getString(R.string.gplus_signout)).withIcon(CommunityMaterial.Icon.cmd_account_remove).withIdentifier(R.id.gplus_signout),
-                    new ProfileSettingDrawerItem().withName(getString(R.string.gplus_revoke)).withIcon(CommunityMaterial.Icon.cmd_account_key).withIdentifier(R.id.gplus_revoke));
+            mAccountHeader.updateProfile(profile);
+//            mAccountHeader.clear();
+//            mAccountHeader.addProfiles(profile,
+            if (mAccountHeader.getProfiles().size() == 1) {
+                mAccountHeader.addProfiles(
+                        new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(CommunityMaterial.Icon.cmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
+                        new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_restore)).withIcon(CommunityMaterial.Icon.cmd_cloud_download).withIdentifier(R.id.gdrive_restore),
+                        new ProfileSettingDrawerItem().withName(getString(R.string.gplus_signout)).withIcon(CommunityMaterial.Icon.cmd_account_remove).withIdentifier(R.id.gplus_signout),
+                        new ProfileSettingDrawerItem().withName(getString(R.string.gplus_revoke)).withIcon(CommunityMaterial.Icon.cmd_account_key).withIdentifier(R.id.gplus_revoke));
+            }
+            if (isOnTablet)
+                mMiniDrawer.onProfileClick();
 //            mAccountHeader = new AccountHeaderBuilder()
 //                    .withActivity(this)
 //                    .withTranslucentStatusBar(true)
@@ -1271,10 +1304,23 @@ public class MainActivity extends ThemeableActivity
 //                    .withTranslucentStatusBar(true)
 //                    .withHeaderBackground(R.drawable.about_cover)
 //                    .build();
-            mAccountHeader.setBackgroundRes(R.drawable.about_cover);
-            IProfile profile = new ProfileDrawerItem().withName("").withEmail("");
-            mAccountHeader.clear();
-            mAccountHeader.addProfile(profile, 0);
+//            mAccountHeader.setBackgroundRes(R.drawable.about_cover);
+            IProfile profile = new ProfileDrawerItem().withName("")
+                    .withEmail("")
+                    .withIcon(R.drawable.gplus_default_avatar)
+                    .withIdentifier(PROF_ID);
+            if (mAccountHeader.getProfiles().size() > 1) {
+                mAccountHeader.removeProfile(1);
+                mAccountHeader.removeProfile(1);
+                mAccountHeader.removeProfile(1);
+                mAccountHeader.removeProfile(1);
+            }
+//            mAccountHeader.clear();
+//            mAccountHeader.addProfile(profile, 0);
+            mAccountHeader.updateProfile(profile);
+            if (isOnTablet)
+                mMiniDrawer.onProfileClick();
+
         }
 
 //        mAccountHeader.setDrawer(mDrawer);

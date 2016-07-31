@@ -59,10 +59,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private CantoSelezionabileAdapter selectableAdapter;
     private FloatingActionButton mFab;
     private View mBottomBar;
-    private boolean isOnTablet;
 
     private static final String EDIT_MODE = "editMode";
     public static final String TITOLI_CHOOSE = "titoliChoose";
+
+    private MainActivity mMainActivity;
 //    public static final String TABLET = "tablet_Mode";
 
 //    public static final int CIRCLE_DURATION = 500;
@@ -131,18 +132,19 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
+        mMainActivity = (MainActivity) getActivity();
+
         ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
 
-        isOnTablet = ((MainActivity) getActivity()).isOnTablet();
+//        Log.d(TAG, "onCreateView: isOnTablet " + isOnTablet);
 
-        Log.d(TAG, "onCreateView: isOnTablet " + isOnTablet);
-
-        mBottomBar = isOnTablet ?
+        mBottomBar = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.bottom_bar):
                 getActivity().findViewById(R.id.bottom_bar);
+//        mBottomBar = getActivity().findViewById(R.id.bottom_bar);
 
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
-        ((MainActivity) getActivity()).enableFab(true);
+        mMainActivity.enableFab(!mMainActivity.isOnTablet());
 
         //crea un istanza dell'oggetto DatabaseCanti
 //        listaCanti = new DatabaseCanti(getActivity());
@@ -184,9 +186,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             showFab();
             updateConsegnatiList(true);
         }
-        View mSelectNone = isOnTablet ?
+        View mSelectNone = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.select_none):
                 getActivity().findViewById(R.id.select_none);
+//        View mSelectNone = getActivity().findViewById(R.id.select_none);
         mSelectNone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,9 +200,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        View mSelectAll = isOnTablet ?
-                rootView.findViewById(R.id.select_none):
-                getActivity().findViewById(R.id.select_none);
+        View mSelectAll = mMainActivity.isOnTablet() ?
+                rootView.findViewById(R.id.select_all):
+                getActivity().findViewById(R.id.select_all);
+//        View mSelectAll = getActivity().findViewById(R.id.select_all);
         mSelectAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,9 +214,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        ImageButton cancel_change = isOnTablet ?
+        ImageButton cancel_change = mMainActivity.isOnTablet() ?
                 (ImageButton) rootView.findViewById(R.id.cancel_change):
                 (ImageButton) getActivity().findViewById(R.id.cancel_change);
+//        ImageButton cancel_change = (ImageButton) getActivity().findViewById(R.id.cancel_change);
         Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         cancel_change.setOnClickListener(new View.OnClickListener() {
@@ -249,9 +254,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        ImageButton confirm_changes = isOnTablet ?
+        ImageButton confirm_changes = mMainActivity.isOnTablet() ?
                 (ImageButton) rootView.findViewById(R.id.confirm_changes):
                 (ImageButton) getActivity().findViewById(R.id.confirm_changes);
+//        ImageButton confirm_changes = (ImageButton) getActivity().findViewById(R.id.confirm_changes);
         drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         confirm_changes.setOnClickListener(new View.OnClickListener() {
@@ -663,7 +669,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
     private FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             mFab.setImageResource(R.drawable.ic_edit_white_24dp);
         }
@@ -684,10 +691,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         getFab().requestLayout();
         getFab().show();
 //        fab2.setVisibility(View.VISIBLE);
-    }
-
-    public void setOnTablet(boolean onTablet) {
-        isOnTablet = onTablet;
     }
 
     @Override

@@ -186,6 +186,7 @@
     <!--android:layout_marginEnd="@dimen/fab_margin_end"-->
     <!--android:layout_marginRight="@dimen/fab_margin_end"-->
     <!--risuscito:layout_behavior="it.cammino.risuscito.ui.ScrollAwareFABBehavior" />-->
+    <include layout="@layout/common_fab"/>
 
 </android.support.design.widget.CoordinatorLayout>
     <!--</FrameLayout>-->

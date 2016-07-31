@@ -8,16 +8,8 @@
 
     </style>
 
-    <!-- AppTheme ActionBar Style -->
-    <!--<style name="AppTheme.ActionBar" parent="">-->
-        <!--<item name="android:titleTextStyle">@style/AppTheme.ActionBar.TextAppearance</item>-->
-        <!--<item name="android:subtitleTextStyle">@style/AppTheme.ActionBar.TextAppearance.SubTitle</item>-->
-    <!--</style>-->
-
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">#fff</item>
+    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <!--<item name="android:textColor">#fff</item>-->
     </style>
 
     <style name="TitoloSezione">
@@ -123,9 +115,5 @@
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
     </style>
-
-    <style name="RisuscitoTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="RisuscitoTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
