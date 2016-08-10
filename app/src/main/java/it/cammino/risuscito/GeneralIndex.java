@@ -23,13 +23,17 @@ public class GeneralIndex extends Fragment {
     private static final String PAGE_VIEWED = "pageViewed";
     private LUtils mLUtils;
 
+    private MainActivity mMainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
+
+        mMainActivity = (MainActivity) getActivity();
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_general_index);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -38,7 +42,8 @@ public class GeneralIndex extends Fragment {
 
         final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs.setVisibility(View.VISIBLE);
-        ((MainActivity) getActivity()).enableFab(false);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(false);
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
             mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
@@ -108,7 +113,7 @@ public class GeneralIndex extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
 }

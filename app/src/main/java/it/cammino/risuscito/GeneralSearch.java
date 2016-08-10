@@ -18,13 +18,18 @@ public class GeneralSearch extends Fragment {
 
     private LUtils mLUtils;
 
+    private MainActivity mMainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
+
+        mMainActivity = (MainActivity) getActivity();
+
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_search);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -33,7 +38,8 @@ public class GeneralSearch extends Fragment {
 
         final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs.setVisibility(View.VISIBLE);
-        ((MainActivity) getActivity()).enableFab(false);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(false);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
@@ -79,7 +85,7 @@ public class GeneralSearch extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
 }

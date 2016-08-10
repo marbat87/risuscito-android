@@ -69,6 +69,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     private WelcomeScreenHelper mWelcomeScreen;
 
+    private MainActivity mMainActivity;
+
     private BroadcastReceiver fabBRec = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -139,9 +141,12 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.tabs_layout, container, false);
+        rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
+
+        mMainActivity = (MainActivity) getActivity();
+
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_custom_lists);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -160,7 +165,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         else
             indDaModif = 0;
 
-        ((MainActivity) getActivity()).enableFab(true);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(true);
+//        ((MainActivity) getActivity()).enableFab(true);
 
         tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs.setVisibility(View.VISIBLE);
@@ -549,7 +556,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     public FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             mFab.setImageResource(R.drawable.ic_add_24dp);
             Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());

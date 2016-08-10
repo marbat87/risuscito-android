@@ -144,7 +144,9 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //        mBottomBar = getActivity().findViewById(R.id.bottom_bar);
 
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
-        mMainActivity.enableFab(!mMainActivity.isOnTablet());
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(true);
+//        mMainActivity.enableFab(!mMainActivity.isOnTablet());
 
         //crea un istanza dell'oggetto DatabaseCanti
 //        listaCanti = new DatabaseCanti(getActivity());

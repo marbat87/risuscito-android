@@ -27,7 +27,6 @@ import com.google.android.gms.common.SignInButton;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.slides.IntroMainNew;
 
 public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
@@ -43,6 +42,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     private WelcomeScreenHelper mWelcomeScreen;
 
     private SignInButton mSignInButton;
+
+    private MainActivity mMainActivity;
 
     private BroadcastReceiver signInVisibility = new BroadcastReceiver() {
         @Override
@@ -67,9 +68,12 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
 
+        mMainActivity = (MainActivity) getActivity();
+
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.activity_homepage);
-        ((MainActivity) getActivity()).enableFab(false);
+        mMainActivity.setupToolbarTitle(R.string.activity_homepage);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(false);
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         rootView.findViewById(R.id.imageView1)
@@ -78,7 +82,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
                     public void onClick(View v) {
 //                        DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.my_drawer_layout);
 //                        drawerLayout.openDrawer(GravityCompat.START);
-                        ((MainActivity)getActivity()).getDrawer().openDrawer();
+                        mMainActivity.getDrawer().openDrawer();
                     }
                 });
 
@@ -224,8 +228,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).setShowSnackbar(true);
-                ((MainActivity)getActivity()).signIn();
+                mMainActivity.setShowSnackbar(true);
+                mMainActivity.signIn();
             }
         });
 

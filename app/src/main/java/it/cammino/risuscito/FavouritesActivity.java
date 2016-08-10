@@ -82,8 +82,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        if (mMainActivity.isOnTablet())
-            mMainActivity.enableFab(false);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(true);
         fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
         fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);

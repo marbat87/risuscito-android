@@ -39,21 +39,25 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class PreferencesFragment extends Fragment implements SingleChoiceDialogFragment.SingleChoiceCallback, SimpleDialogFragment.SimpleCallback {
 
-//    private int prevOrientation;
+    //    private int prevOrientation;
     private SwitchCompat screenSwitch, secondaSwitch, paceSwitch, santoSwitch, audioSwitch;
     private int saveEntries;
 
+    private MainActivity mMainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.preference_screen, container, false);
+
+        mMainActivity = (MainActivity) getActivity();
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_settings);
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_settings);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
 
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
-        ((MainActivity) getActivity()).enableFab(false);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(false);
 
         screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 
@@ -82,7 +86,7 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
                 else
                     screenSwitch.setChecked(true);
 
-                ((MainActivity) getActivity()).checkScreenAwake();
+                mMainActivity.checkScreenAwake();
             }
         });
 
@@ -288,7 +292,7 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
 
             @Override
             public void onClick(View v) {
-                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.primary_color)
+                new ColorChooserDialog.Builder(mMainActivity, R.string.primary_color)
                         .allowUserColorInput(false)
                         .customColors(ColorPalette.PRIMARY_COLORS, ColorPalette.PRIMARY_COLORS_SUB)
                         .doneButton(R.string.single_choice_ok)  // changes label of the done button
@@ -304,7 +308,7 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
 
             @Override
             public void onClick(View v) {
-                new ColorChooserDialog.Builder((MainActivity) getActivity(), R.string.accent_color)
+                new ColorChooserDialog.Builder(mMainActivity, R.string.accent_color)
                         .allowUserColorInput(false)
                         .customColors(ColorPalette.ACCENT_COLORS, ColorPalette.ACCENT_COLORS_SUB)
                         .accentMode(true)  // optional boolean, true shows accent palette
@@ -465,7 +469,7 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity) getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
     private void checkStoragePermissions() {

@@ -63,7 +63,7 @@
 
         <include layout="@layout/common_bottom_bar"/>
 
-        <include layout="@layout/common_fab"/>
+        <!--<include layout="@layout/common_fab"/>-->
 
     </android.support.design.widget.CoordinatorLayout>
 
