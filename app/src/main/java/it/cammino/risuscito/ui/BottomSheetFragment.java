@@ -130,6 +130,17 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Resize bottom sheet dialog so it doesn't span the entire width past a particular measurement
+        boolean mLimited = getActivity().getResources().getBoolean(R.bool.is_bottom_sheet_limited);
+        if (mLimited) {
+            int mMaxWidth = (int) getActivity().getResources().getDimension(R.dimen.max_bottomsheet_width);
+            getDialog().getWindow().setLayout(mMaxWidth, -1);
+        }
+    }
+
 //    public interface AlertDialogListener {
 //        public void onAlertDialogPositiveClick(int dialogType, String id);
 //        public void onAlertDialogNegativeClick(int dialogType, String id);

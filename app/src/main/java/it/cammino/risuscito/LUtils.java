@@ -281,7 +281,8 @@ public class LUtils {
 //            return true;
 //        else
 //            return false;
-        return (mActivity.findViewById(R.id.tablet_mode) != null);
+        return (mActivity.getResources().getBoolean(R.bool.is_tablet));
+//        return (mActivity.findViewById(R.id.tablet_mode) != null);
 
     }
 
