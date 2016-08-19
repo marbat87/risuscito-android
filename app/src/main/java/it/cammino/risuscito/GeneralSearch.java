@@ -38,8 +38,10 @@ public class GeneralSearch extends Fragment {
 
         final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs.setVisibility(View.VISIBLE);
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);
+            mMainActivity.enableBottombar(false);
+        }
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);

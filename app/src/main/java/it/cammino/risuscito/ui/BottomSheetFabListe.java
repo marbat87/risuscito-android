@@ -1,19 +1,19 @@
 package it.cammino.risuscito.ui;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import it.cammino.risuscito.R;
 
@@ -74,9 +74,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         View mView = view.findViewById(R.id.fab_pulisci);
         ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_eraser_white_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_eraser_white_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        IconicsDrawable icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_eraser)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.button_clean_list);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -93,9 +99,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_condividi);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_share_variant)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.action_share);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -112,9 +124,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_add_lista);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_add_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_add_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_plus)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.action_add_list);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +154,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_condividi_file);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp));
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            mImage.setImageDrawable(drawable);
+//            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp));
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            mImage.setImageDrawable(drawable);
+            icon = new IconicsDrawable(getActivity())
+                    .icon(CommunityMaterial.Icon.cmd_attachment)
+                    .colorRes(R.color.icon_ative_black)
+                    .sizeDp(48)
+                    .paddingDp(4);
+            mImage.setImageDrawable(icon);
             mTextView = (TextView) mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_share_file);
             mView.setOnClickListener(new View.OnClickListener() {
@@ -155,9 +179,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_edit_lista);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_edit_48dp));
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            mImage.setImageDrawable(drawable);
+//            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_edit_48dp));
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            mImage.setImageDrawable(drawable);
+            icon = new IconicsDrawable(getActivity())
+                    .icon(CommunityMaterial.Icon.cmd_pencil)
+                    .colorRes(R.color.icon_ative_black)
+                    .sizeDp(48)
+                    .paddingDp(4);
+            mImage.setImageDrawable(icon);
             mTextView = (TextView) mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_edit_list);
             mView.setOnClickListener(new View.OnClickListener() {
@@ -174,9 +204,15 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
             mView = view.findViewById(R.id.fab_delete_lista);
             mImage = (ImageView) mView.findViewById(R.id.app_icon);
-            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_48dp));
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            mImage.setImageDrawable(drawable);
+//            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_48dp));
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            mImage.setImageDrawable(drawable);
+            icon = new IconicsDrawable(getActivity())
+                    .icon(CommunityMaterial.Icon.cmd_delete)
+                    .colorRes(R.color.icon_ative_black)
+                    .sizeDp(48)
+                    .paddingDp(4);
+            mImage.setImageDrawable(icon);
             mTextView = (TextView) mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_remove_list);
             mView.setOnClickListener(new View.OnClickListener() {

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -24,6 +25,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.SignInButton;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
@@ -72,8 +75,10 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
         mMainActivity.setupToolbarTitle(R.string.activity_homepage);
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);
+            mMainActivity.enableBottombar(false);
+        }
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         rootView.findViewById(R.id.imageView1)
@@ -270,6 +275,11 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
     }
 
     @Override

@@ -13,7 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -27,7 +27,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,6 +41,8 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
@@ -73,7 +74,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private int idCanto;
     private String titoloCanto;
     //    private static MediaPlayer mediaPlayer;
-    private ImageButton play_scroll, play_button, save_file, fab_favorite, fab_sound_off;
+    private ImageButton play_scroll, play_button; //save_file, fab_favorite, fab_sound_off;
     private TextView no_records_text;
     private View music_buttons;
     public FloatingActionButton mFab; // the floating blue add/paste button
@@ -501,9 +502,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         //recupera i pulsanti
         play_button = (ImageButton) findViewById(R.id.play_song);
-        Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
-        play_button.setImageDrawable(drawable);
+        showPlaying(false);
+//        Drawable drawable = DrawableCompat.wrap(play_button.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
+//        play_button.setImageDrawable(drawable);
 //        pause_button = (ImageButton) findViewById(R.id.pause_song);
 //        drawable = DrawableCompat.wrap(pause_button.getDrawable());
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
@@ -514,8 +516,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //        drawable = DrawableCompat.wrap(save_file.getDrawable());
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         play_scroll = (ImageButton) findViewById(R.id.play_scroll);
-        drawable = DrawableCompat.wrap(play_scroll.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//        drawable = DrawableCompat.wrap(play_scroll.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
         scroll_speed_bar = (SeekBar) findViewById(R.id.speed_seekbar);
         scroll_song_bar = (SeekBar) findViewById(R.id.music_seekbar);
 
@@ -1442,18 +1444,21 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        play_scroll.setSelected(false);
+//        play_scroll.setSelected(false);
+        showScrolling(false);
 
         play_scroll.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (v.isSelected()) {
-                    play_scroll.setSelected(false);
+//                    play_scroll.setSelected(false);
+                    showScrolling(false);
                     scrollPlaying = false;
                     mHandler.removeCallbacks(mScrollDown);
                 } else {
-                    play_scroll.setSelected(true);
+//                    play_scroll.setSelected(true);
+                    showScrolling(true);
                     scrollPlaying = true;
                     mScrollDown.run();
                 }
@@ -1578,6 +1583,56 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.canto, menu);
+        menu.findItem(R.id.tonalita).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+        menu.findItem(R.id.action_trasporta).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.action_save_tab).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.action_reset_tab).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.barre).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+        menu.findItem(R.id.action_trasporta_barre).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.action_save_barre).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.action_reset_barre).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(R.color.icon_ative_black));
+        menu.findItem(R.id.action_exp_pdf).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_file_pdf_box)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+        menu.findItem(R.id.action_help_canto).setIcon(
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
         return true;
     }
 
@@ -1961,7 +2016,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
 //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
         if (scrollPlaying) {
-            play_scroll.setSelected(true);
+//            play_scroll.setSelected(true);
+            showScrolling(true);
             mScrollDown.run();
         }
 
@@ -2061,8 +2117,14 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public FloatingActionButton getFab() {
         if (mFab == null) {
             mFab = (FloatingActionButton) findViewById(R.id.fab_canti);
-            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+//            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderActivity.this, android.R.color.white));
+            IconicsDrawable icon = new IconicsDrawable(this)
+                    .icon(CommunityMaterial.Icon.cmd_plus)
+                    .color(Color.WHITE)
+                    .sizeDp(24)
+                    .paddingDp(4);
+            mFab.setImageDrawable(icon);
         }
         return mFab;
     }
@@ -2117,7 +2179,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         SaveSpeed();
         if (scrollPlaying) {
-            play_scroll.setSelected(false);
+//            play_scroll.setSelected(false);
+            showScrolling(false);
             scrollPlaying = false;
             mHandler.removeCallbacks(mScrollDown);
         }
@@ -3439,9 +3502,24 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     private void showPlaying(boolean started) {
         play_button.setSelected(started);
-//        play_button.setVisibility(started ? View.INVISIBLE : View.VISIBLE);
-//        pause_button.setVisibility(started ? View.VISIBLE : View.INVISIBLE);
+        IconicsDrawable icon = new IconicsDrawable(PaginaRenderActivity.this)
+                .icon(started ? CommunityMaterial.Icon.cmd_pause : CommunityMaterial.Icon.cmd_play)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(24)
+                .paddingDp(4);
+        play_button.setImageDrawable(icon);
     }
+
+    private void showScrolling(boolean scrolling) {
+        play_scroll.setSelected(scrolling);
+        IconicsDrawable icon = new IconicsDrawable(PaginaRenderActivity.this)
+                .icon(scrolling ? CommunityMaterial.Icon.cmd_pause_circle_outline : CommunityMaterial.Icon.cmd_play_circle_outline)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2);
+        play_scroll.setImageDrawable(icon);
+    }
+
 
     private boolean isPlaying() {
         return play_button.isSelected();

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pagina_render_view"
     android:layout_width="match_parent"
@@ -70,7 +69,6 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
-                        risuscito:srcCompat="@drawable/play_button_drawable"
                         android:soundEffectsEnabled="true"
                         tools:ignore="MissingPrefix" />
 
@@ -118,7 +116,6 @@
                     android:scaleType="fitCenter"
                     android:theme="@style/ActionBarThemeOverlay"
                     android:background="?attr/customSelectorRound"
-                    risuscito:srcCompat="@drawable/play_scroll_button_drawable"
                     android:soundEffectsEnabled="true"
                     tools:ignore="MissingPrefix" />
 
@@ -134,14 +131,13 @@
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_canti"
-                risuscito:srcCompat="@drawable/ic_add_24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginBottom="@dimen/fab_margin_bottom"
-                android:layout_marginEnd="@dimen/fab_margin_end"
-                android:layout_marginRight="@dimen/fab_margin_end"
+                android:layout_marginBottom="@dimen/fab_margin_frame"
+                android:layout_marginEnd="@dimen/fab_margin_frame"
+                android:layout_marginRight="@dimen/fab_margin_frame"
                 android:layout_above="@id/bottom_bar" />
 
         </RelativeLayout>

@@ -12,6 +12,7 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
         <item name="colorAccent">@color/theme_accent</item>
+        <item name="colorButtonNormal">?colorAccent</item>
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
         <!--<item name="colorControlActivated">#12000000</item>-->

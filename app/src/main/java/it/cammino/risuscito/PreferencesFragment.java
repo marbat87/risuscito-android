@@ -56,8 +56,10 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
         mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
 
         getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);
+            mMainActivity.enableBottombar(false);
+        }
 
         screenSwitch = (SwitchCompat) rootView.findViewById(R.id.screen_on);
 

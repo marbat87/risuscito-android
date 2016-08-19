@@ -22,27 +22,24 @@
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
-            <FrameLayout
+
+            <ImageView
+                risuscito:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                android:background="@android:color/white"
+                android:src="@drawable/about_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/app_name"/>
+
+            <View
+                android:elevation="1dp"
                 risuscito:layout_collapseMode="parallax"
                 android:fitsSystemWindows="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/image"
-                    android:background="@android:color/white"
-                    android:src="@drawable/about_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    android:contentDescription="@string/app_name"/>
-
-                <LinearLayout
-                    android:background="@drawable/cover_shadow"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </FrameLayout>
+                android:layout_height="match_parent"
+                android:background="@drawable/cover_shadow" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/risuscito_toolbar"
@@ -51,6 +48,7 @@
                 risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
+                android:elevation="1dp"
                 android:background="@android:color/transparent"
                 risuscito:layout_collapseMode="pin"/>
 

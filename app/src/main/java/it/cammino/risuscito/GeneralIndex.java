@@ -42,8 +42,10 @@ public class GeneralIndex extends Fragment {
 
         final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs.setVisibility(View.VISIBLE);
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);
+            mMainActivity.enableBottombar(false);
+        }
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
             mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));

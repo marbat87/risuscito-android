@@ -1,9 +1,6 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +11,8 @@ import android.widget.TextView;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.List;
 
@@ -105,18 +104,29 @@ public class CantoExpandableAdapter
         if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
 //            int bgResId;
 //            MorphButton.MorphState indicatorState;
-            Drawable drawable;
+//            Drawable drawable;
+            IconicsDrawable drawable;
             if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
 //                bgResId = R.drawable.bg_group_item_expanded_state;
 //                indicatorState = MorphButton.MorphState.END;
-                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_24dp);
+//                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_less_24dp);
+                drawable = new IconicsDrawable(activity)
+                        .icon(CommunityMaterial.Icon.cmd_chevron_up)
+                        .colorRes(R.color.icon_ative_black)
+                        .sizeDp(24)
+                        .paddingDp(5);
             } else {
 //                bgResId = R.drawable.bg_group_item_normal_state;
 //                indicatorState = MorphButton.MorphState.START;
-                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_24dp);
+//                drawable = activity.getResources().getDrawable(R.drawable.ic_expand_more_24dp);
+                drawable = new IconicsDrawable(activity)
+                        .icon(CommunityMaterial.Icon.cmd_chevron_down)
+                        .colorRes(R.color.icon_ative_black)
+                        .sizeDp(24)
+                        .paddingDp(5);
             }
-            drawable = DrawableCompat.wrap(drawable);
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
+//            drawable = DrawableCompat.wrap(drawable);
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
             holder.indicator.setBackgroundDrawable(drawable);
 
 //            holder.mContainer.setBackgroundResource(bgResId);
@@ -204,7 +214,7 @@ public class CantoExpandableAdapter
 
         public TextView groupTitle;
         public TextView groupId;
-//        public MorphButtonCompat mMorphButton;
+        //        public MorphButtonCompat mMorphButton;
         public ImageView indicator;
         public ViewGroup mContainer;
 

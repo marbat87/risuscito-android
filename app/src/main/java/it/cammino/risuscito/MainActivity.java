@@ -60,7 +60,6 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.MiniDrawer;
-import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
@@ -83,6 +82,7 @@ import java.util.HashMap;
 
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
+import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
 import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -158,7 +158,8 @@ public class MainActivity extends ThemeableActivity
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_menu)
                 .color(Color.WHITE)
-                .sizeDp(24);
+                .sizeDp(24)
+                .paddingDp(2);
 
         mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
@@ -535,35 +536,41 @@ public class MainActivity extends ThemeableActivity
                 .withAccountHeader(mAccountHeader)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(R.string.activity_homepage).withIcon(CommunityMaterial.Icon.cmd_home).withIdentifier(R.id.navigation_home)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
-                        .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.search_name_text).withIcon(CommunityMaterial.Icon.cmd_magnify).withIdentifier(R.id.navigation_search)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_general_index).withIcon(CommunityMaterial.Icon.cmd_view_list).withIdentifier(R.id.navigation_indexes)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_custom_lists).withIcon(CommunityMaterial.Icon.cmd_view_carousel).withIdentifier(R.id.navitagion_lists)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.action_favourites).withIcon(CommunityMaterial.Icon.cmd_heart).withIdentifier(R.id.navigation_favorites)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_consegnati).withIcon(CommunityMaterial.Icon.cmd_clipboard_check).withIdentifier(R.id.navigation_consegnati)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_history).withIcon(CommunityMaterial.Icon.cmd_history).withIdentifier(R.id.navigation_history)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new PrimaryDrawerItem().withName(R.string.title_activity_settings).withIcon(CommunityMaterial.Icon.cmd_settings).withIdentifier(R.id.navigation_settings)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withSelectedIconColor(getThemeUtils().primaryColor()).withTextColorRes(R.color.navdrawer_text_color).withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color)
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new SecondaryDrawerItem().withName(R.string.title_activity_donate).withIcon(CommunityMaterial.Icon.cmd_thumb_up).withIdentifier(R.id.navigation_donate).withSelectable(false)
-                                .withIconColorRes(R.color.navdrawer_icon_tint).withTextColorRes(R.color.navdrawer_text_color)
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -864,6 +871,14 @@ public class MainActivity extends ThemeableActivity
         mFab.requestLayout();
 //        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && !enable)
 //            mFab.hide();
+    }
+
+    public void enableBottombar(boolean enabled) {
+        View mBottomBar = findViewById(R.id.bottom_bar);
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
+        mBottomBar.requestLayout();
     }
 
 //    @Override

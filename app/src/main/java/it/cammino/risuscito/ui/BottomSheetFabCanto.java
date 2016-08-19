@@ -1,19 +1,19 @@
 package it.cammino.risuscito.ui;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import it.cammino.risuscito.R;
 
@@ -80,9 +80,15 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         View mView = view.findViewById(R.id.fab_fullscreen_on);
         ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        IconicsDrawable icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_fullscreen)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.fullscreen);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +105,15 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_sound_off);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        icon = new IconicsDrawable(getActivity())
+                .icon(mSound ? CommunityMaterial.Icon.cmd_headset_off : CommunityMaterial.Icon.cmd_headset)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(mSound ? R.string.audio_off: R.string.audio_on);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -118,9 +130,15 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.save_file);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        icon = new IconicsDrawable(getActivity())
+                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
         mView.setOnClickListener(new View.OnClickListener() {
@@ -137,9 +155,15 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_favorite);
         mImage = (ImageView) mView.findViewById(R.id.app_icon);
-        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-        mImage.setImageDrawable(drawable);
+//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//        mImage.setImageDrawable(drawable);
+        icon = new IconicsDrawable(getActivity())
+                .icon(mFavorite ? CommunityMaterial.Icon.cmd_heart : CommunityMaterial.Icon.cmd_heart_outline)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(48)
+                .paddingDp(4);
+        mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
         mTextView.setText(mFavorite? R.string.favorite_off: R.string.favorite_on);
         mView.setOnClickListener(new View.OnClickListener() {

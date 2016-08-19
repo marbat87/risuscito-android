@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,8 +13,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +35,8 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.util.ArrayList;
@@ -318,8 +318,14 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
         FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-        Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
+//        Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
+        IconicsDrawable icon = new IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon.cmd_plus)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(4);
+        fabAdd.setImageDrawable(icon);
         fabAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -461,6 +467,16 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.crea_lista_menu, menu);
+        menu.findItem(R.id.action_save_list).setIcon(
+                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_content_save)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
         return true;
     }
 

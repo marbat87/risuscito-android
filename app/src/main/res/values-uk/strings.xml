@@ -241,7 +241,6 @@
     <string name="connected_as">Ви ввійшли як %1$s</string>
     <string name="gplus_signout">Вийти з аккаунту</string>
     <string name="gplus_revoke">Відізвати права</string>
-    <string name="menu_account_section">Здійснити Бекап та Обнулити Налаштування</string>
     <string name="dialog_acc_disconn_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google?
 \nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
     <string name="dialog_acc_revoke_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google та відізвати усі раніше надані права Google?

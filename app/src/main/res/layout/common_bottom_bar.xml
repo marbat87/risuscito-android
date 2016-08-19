@@ -23,7 +23,9 @@
         android:scaleType="center"
         android:theme="@style/ActionBarThemeOverlay"
         android:background="?attr/customSelectorRound"
-        risuscito:srcCompat="@drawable/ic_unselectall_white_30dp"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-checkbox-multiple-blank-outline"
+        risuscito:ico_size="24dp"
         android:soundEffectsEnabled="true"
         tools:ignore="MissingPrefix" />
 
@@ -37,7 +39,9 @@
         android:scaleType="center"
         android:theme="@style/ActionBarThemeOverlay"
         android:background="?attr/customSelectorRound"
-        risuscito:srcCompat="@drawable/ic_selectall_white_30dp"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-checkbox-multiple-marked-outline"
+        risuscito:ico_size="24dp"
         android:soundEffectsEnabled="true"
         tools:ignore="MissingPrefix" />
 
@@ -51,7 +55,10 @@
         android:scaleType="fitCenter"
         android:theme="@style/ActionBarThemeOverlay"
         android:background="?attr/customSelectorRound"
-        risuscito:srcCompat="@drawable/ic_undo_24dp"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-undo"
+        risuscito:ico_size="24dp"
+        risuscito:ico_padding="2dp"
         android:soundEffectsEnabled="true"
         tools:ignore="MissingPrefix" />
 
@@ -65,8 +72,11 @@
         android:scaleType="fitCenter"
         android:theme="@style/ActionBarThemeOverlay"
         android:background="?attr/customSelectorRound"
-        risuscito:srcCompat="@drawable/ic_save_24dp"
         android:soundEffectsEnabled="true"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-content-save"
+        risuscito:ico_size="24dp"
+        risuscito:ico_padding="2dp"
         tools:ignore="MissingPrefix" />
 
 </LinearLayout>

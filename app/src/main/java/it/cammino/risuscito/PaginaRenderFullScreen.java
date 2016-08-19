@@ -2,18 +2,19 @@ package it.cammino.risuscito;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import it.cammino.risuscito.ui.ThemeableActivity;
 
@@ -81,8 +82,14 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
 //        ViewCompat.setTransitionName(pageView, Utility.TAG_TRANSIZIONE);
 
         FloatingActionButton fabFullscreen = (FloatingActionButton) findViewById(R.id.fab_fullscreen_off);
-        Drawable drawable = DrawableCompat.wrap(fabFullscreen.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderFullScreen.this, android.R.color.white));
+//        Drawable drawable = DrawableCompat.wrap(fabFullscreen.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(PaginaRenderFullScreen.this, android.R.color.white));
+        IconicsDrawable icon = new IconicsDrawable(PaginaRenderFullScreen.this)
+                .icon(CommunityMaterial.Icon.cmd_fullscreen_exit)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2);
+        fabFullscreen.setImageDrawable(icon);
         fabFullscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

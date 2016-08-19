@@ -25,6 +25,8 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.List;
 
@@ -106,7 +108,13 @@ public class DraggableSwipeableAdapter
 
 //        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
-        holder.mDragImage.setImageResource(R.drawable.ic_reorder_24dp);
+//        holder.mDragImage.setImageResource(R.drawable.ic_reorder_24dp);
+        IconicsDrawable icon = new IconicsDrawable(activity)
+                .icon(GoogleMaterial.Icon.gmd_reorder)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(24)
+                .paddingDp(2);
+        holder.mDragImage.setImageDrawable(icon);
         holder.mDragImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         // set text

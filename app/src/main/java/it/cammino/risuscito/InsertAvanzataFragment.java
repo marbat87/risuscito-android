@@ -27,10 +27,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.internal.MDTintHelper;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -44,7 +43,6 @@ import java.util.regex.Pattern;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 import it.cammino.risuscito.utils.ThemeUtils;
-import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -57,7 +55,8 @@ public class InsertAvanzataFragment extends Fragment {
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
-    private ProgressBar progress;
+//    private ProgressBar progress;
+    private CircleProgressBar progress;
 //    private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
@@ -168,15 +167,17 @@ public class InsertAvanzataFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
-        if (LUtils.hasICS()) {
-            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
-            d.setTint(getThemeUtils().accentColor());
-            progress.setProgressDrawable(d);
-            progress.setIndeterminateDrawable(d);
-        }
-        else
-            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
+        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
+        progress.setColorSchemeColors(getThemeUtils().accentColor());
+//        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
+//        if (LUtils.hasICS()) {
+//            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
+//            d.setTint(getThemeUtils().accentColor());
+//            progress.setProgressDrawable(d);
+//            progress.setIndeterminateDrawable(d);
+//        }
+//        else
+//            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
 
         searchPar.setText("");
 

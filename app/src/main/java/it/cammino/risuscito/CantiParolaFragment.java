@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -29,6 +26,9 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -453,12 +453,22 @@ public class CantiParolaFragment extends Fragment {
             posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
             cantoAdapter.notifyItemChanged(longclickedPos);
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
-            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_remove_item).setIcon(drawable);
-            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_switch_item).setIcon(drawable);
+            menu.findItem(R.id.action_switch_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_shuffle)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+            menu.findItem(R.id.action_remove_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+//            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_switch_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }

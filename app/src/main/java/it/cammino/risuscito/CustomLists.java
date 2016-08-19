@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -19,8 +19,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +33,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.util.Locale;
@@ -56,7 +56,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private int listaDaCanc, idDaCanc, indDaModif;
     private ListaPersonalizzata celebrazioneDaCanc;
     private String titoloDaCanc;
-//    private int prevOrientation;
+    //    private int prevOrientation;
     private ViewPager mViewPager;
     private FloatingActionButton mFab;
     public ImageView fabEdit, fabDelete;
@@ -165,8 +165,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         else
             indDaModif = 0;
 
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(true);
+            mMainActivity.enableBottombar(false);
+        }
 //        ((MainActivity) getActivity()).enableFab(true);
 
         tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
@@ -486,6 +488,11 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
     }
 
     @Override
@@ -559,9 +566,17 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                     (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
-            mFab.setImageResource(R.drawable.ic_add_24dp);
-            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
+
+//            mFab.setImageResource(R.drawable.ic_add_24dp);
+//            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
+            IconicsDrawable icon = new IconicsDrawable(getActivity())
+                    .icon(CommunityMaterial.Icon.cmd_plus)
+                    .color(Color.WHITE)
+                    .sizeDp(24)
+                    .paddingDp(4);
+            mFab.setImageDrawable(icon);
+
         }
         return mFab;
     }

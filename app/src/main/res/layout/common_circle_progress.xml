@@ -4,6 +4,7 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:id="@+id/loadingBar"
+    android:layout_marginTop="10dp"
     android:layout_gravity="center_horizontal|top"
     android:visibility="invisible"
     risuscito:mlpb_progress_stoke_width="3dp"

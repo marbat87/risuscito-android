@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -14,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,11 +83,19 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        if (!mMainActivity.isOnTablet())
+        if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(true);
+            mMainActivity.enableBottombar(false);
+        }
         fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
-        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
+//        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
+        IconicsDrawable icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_eraser)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2);
+        fabClear.setImageDrawable(icon);
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +181,11 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
     }
 
     @Override
@@ -305,9 +319,14 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             titoli.get(posizDaCanc).setmSelected(true);
             cantoAdapter.notifyItemChanged(posizDaCanc);
             removedItems = new ArrayList<>();
-            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            menu.findItem(R.id.action_remove_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }

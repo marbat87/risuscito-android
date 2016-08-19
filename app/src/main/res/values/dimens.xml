@@ -16,10 +16,10 @@
     <!--<dimen name="percent_padding">15dip</dimen>-->
 
     <!--<dimen name="navdrawer_chosen_account_height">100dp</dimen>-->
-    <dimen name="nav_header_height">170dp</dimen>
-    <dimen name="navdrawer_width">302dp</dimen>
+    <!--<dimen name="nav_header_height">170dp</dimen>-->
+    <!--<dimen name="navdrawer_width">302dp</dimen>-->
     <dimen name="max_bottomsheet_width">380dp</dimen>
-    <dimen name="drawer_content_padding">0dp</dimen>
+    <!--<dimen name="drawer_content_padding">0dp</dimen>-->
 
     <!--<dimen name="action_bar_text_field_margin">15dip</dimen>-->
     <dimen name="min_button_margin">10dip</dimen>
@@ -39,8 +39,8 @@
     <!--<dimen name="button_icon_drawable">26dp</dimen>-->
     <dimen name="button_playbar_padding">14dp</dimen>
     <!--<dimen name="floating_margin_lateral">8dp</dimen>-->
-    <dimen name="fab_margin_end">16dp</dimen>
-    <dimen name="fab_margin_bottom">16dp</dimen>
+    <dimen name="fab_margin_coord">16dp</dimen>
+    <dimen name="fab_margin_frame">8dp</dimen>
     <!--<dimen name="fab_translation_z">10dp</dimen>-->
     <!--<dimen name="floating_margin_lateral_menu">11dp</dimen>-->
 

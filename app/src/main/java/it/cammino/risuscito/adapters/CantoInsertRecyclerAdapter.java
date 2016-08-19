@@ -1,14 +1,10 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -66,8 +62,8 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.idCanto.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.sourceCanto.setText(dataItem.getSource());
 
-        Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
+//        Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
         cantoHolder.cantoPage.setBackgroundResource(
                 context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
                         , "drawable"
@@ -86,7 +82,7 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         public TextView cantoPage;
         public TextView idCanto;
         public TextView sourceCanto;
-        public ImageView seeCanto;
+//        public ImageView seeCanto;
 
         public CantoViewHolder(View itemView
                 , View.OnClickListener onClickListener
@@ -96,7 +92,7 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
             cantoPage = (TextView) itemView.findViewById(R.id.text_page);
             idCanto = (TextView) itemView.findViewById(R.id.text_id_canto);
             sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
-            seeCanto = (ImageView) itemView.findViewById(R.id.see_canto);
+//            seeCanto = (ImageView) itemView.findViewById(R.id.see_canto);
 
             if (onClickListener != null)
                 itemView.setOnClickListener(onClickListener);

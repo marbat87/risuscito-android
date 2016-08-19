@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -39,7 +40,7 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
             appBarIsExpanded = savedInstanceState.getBoolean("appBarIsExpanded", true);
 
         if (appBarIsExpanded)
-            Utility.setupTransparentTints(AboutActivity.this, ContextCompat.getColor(AboutActivity.this, android.R.color.transparent), false);
+            Utility.setupTransparentTints(AboutActivity.this, Color.TRANSPARENT, false);
         else
             Utility.setupTransparentTints(AboutActivity.this, getThemeUtils().primaryColorDark(), false);
 

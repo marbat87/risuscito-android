@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.cammino.risuscito" android:installLocation="auto">
 
+	<!-- Some Chromebooks don't support touch. Although not essential,
+         it's a good idea to explicitly include this declaration. -->
+    <uses-feature android:name="android.hardware.touchscreen"
+                  android:required="false" />
+	
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="20" />
