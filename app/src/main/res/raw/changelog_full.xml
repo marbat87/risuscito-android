@@ -8,7 +8,7 @@
         <changelogimprovement>Added Android 7 Nougat compability</changelogimprovement>
         <changelogimprovement>Improved result of fast search function</changelogimprovement>
         <changelogimprovement>New style for addition options of Floating Action Buttons</changelogimprovement>
-        <changelogtext>[b]NEXT RELEASE[/b] Planned dropping compatibility for Android 2.3 Gingerbread (check your version in Settings -> Devices info), because it is an outdated version</changelogtext>
+        <changelogtext>[b]NEXT RELEASE[/b] Planned dropping compatibility for Android 2.3 Gingerbread (check your version in Settings -> Device/Phone Info), because it is an outdated version</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="4.0.1" changeDate="23 April 2016">

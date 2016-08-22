@@ -8,7 +8,7 @@
         <changelogimprovement>Aggiunta compabilità con Android 7 Nougat</changelogimprovement>
         <changelogimprovement>Migliorati i risultati della funzione di ricerca veloce</changelogimprovement>
         <changelogimprovement>Nuovo stile per le opzioni aggiuntive dei pulsanti flottanti</changelogimprovement>
-        <changelogtext>[b]PROSSIMO AGGIORNAMENTO[/b] Pianificata la fine della compatibilità con Android 2.3 Gingerbread (controlla la tua versione in Impostazioni -> Info telefono), perchè ormai si tratta di una versione molto datata</changelogtext>
+        <changelogtext>[b]PROSSIMO AGGIORNAMENTO[/b] Pianificata la fine della compatibilità con Android 2.3 Gingerbread (controlla la tua versione in Impostazioni -> Info Telefono/Dispositivo), perchè ormai si tratta di una versione molto datata</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="4.0.1" changeDate="23 Aprile 2016">
