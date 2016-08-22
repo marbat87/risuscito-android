@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.1.0" changeDate="June 2016">
+    <changelogversion versionName="4.1.0" changeDate="August 2016">
+        <changelogimprovement>Updated some icons</changelogimprovement>
+        <changelogimprovement>New lateral drawer with a gmail-style on tables</changelogimprovement>
         <changelogimprovement>Added funcionality to export and import personal custom lists</changelogimprovement>
-        <changelogimprovement>Added Android N compability</changelogimprovement>
+        <changelogimprovement>Added Android 7 Nougat compability</changelogimprovement>
         <changelogimprovement>Improved result of fast search function</changelogimprovement>
         <changelogimprovement>New style for addition options of Floating Action Buttons</changelogimprovement>
+        <changelogtext>[b]NEXT RELEASE[/b] Planned dropping compatibility for Android 2.3 Gingerbread (check you version!), because it is a very old version by now</changelogtext>
     </changelogversion>
 
 </changelog>
