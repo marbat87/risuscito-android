@@ -606,13 +606,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //            localUrl = Utility.retrieveMediaFileLink(this, url);
             checkExternalFilePermissions();
 
-            if (localUrl.equalsIgnoreCase("") &&
-                    personalUrl.equalsIgnoreCase(""))
-//                save_file.setSelected(false);
-                mDownload = false;
-            else
-//                save_file.setSelected(true);
-                mDownload = true;
+            mDownload = !(localUrl.equalsIgnoreCase("") &&
+                    personalUrl.equalsIgnoreCase(""));
 
             //mostra i pulsanti per il lettore musicale
             music_buttons.setVisibility(View.VISIBLE);

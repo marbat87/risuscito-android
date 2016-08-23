@@ -482,7 +482,7 @@ public class MainActivity extends ThemeableActivity
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
                         //sample usage of the onProfileChanged listener
                         //if the clicked item has the identifier 1 add a new profile ;)
-                        if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_backup) {
+                        if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gdrive_backup) {
 //                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                                     .title(R.string.gdrive_backup)
@@ -492,7 +492,7 @@ public class MainActivity extends ThemeableActivity
                                     .show();
                             return true;
                         }
-                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_restore) {
+                        else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gdrive_restore) {
 //                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                                     .title(R.string.gdrive_restore)
@@ -502,7 +502,7 @@ public class MainActivity extends ThemeableActivity
                                     .show();
                             return true;
                         }
-                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_signout) {
+                        else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_signout) {
 //                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                                     .title(R.string.gplus_signout)
@@ -512,7 +512,7 @@ public class MainActivity extends ThemeableActivity
                                     .show();
                             return true;
                         }
-                        else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_revoke) {
+                        else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_revoke) {
 //                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                                     .title(R.string.gplus_revoke)
