@@ -23,19 +23,29 @@ public class GeneralIndex extends Fragment {
     private static final String PAGE_VIEWED = "pageViewed";
     private LUtils mLUtils;
 
+    private MainActivity mMainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
+
+        mMainActivity = (MainActivity) getActivity();
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
         mLUtils = LUtils.getInstance(getActivity());
 
         mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        final TabLayout tabs = (TabLayout) rootView.findViewById(R.id.material_tabs);
+        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        tabs.setVisibility(View.VISIBLE);
+        if (!mMainActivity.isOnTablet()) {
+            mMainActivity.enableFab(false);
+            mMainActivity.enableBottombar(false);
+        }
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
             mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
@@ -45,40 +55,6 @@ public class GeneralIndex extends Fragment {
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    tabs.setupWithViewPager(mViewPager);
-//                    mLUtils.applyFontedTab(mViewPager, tabs);
-//                }
-//        });
-
-//        final Bundle bundle = savedInstanceState;
-//        final Runnable mMyRunnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                if (bundle == null) {
-//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-//                    mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
-//                }
-//                else
-//                    tabs.getTabAt(bundle.getInt(PAGE_VIEWED, 0)).select();
-//            }
-//        };
-//        Handler myHandler = new Handler();
-//        myHandler.postDelayed(mMyRunnable, 200);
-//        final Runnable mMyRunnable2 = new Runnable() {
-//            @Override
-//            public void run() {
-//                if (bundle == null) {
-//                    SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-//                    mViewPager.setCurrentItem(pref.getInt(Utility.DEFAULT_INDEX, 0));
-//                }
-//                else
-//                    tabs.getTabAt(bundle.getInt(PAGE_VIEWED, 0)).select();
-//            }
-//        };
-//        myHandler.postDelayed(mMyRunnable2, 400);
 
         return rootView;
 
@@ -139,7 +115,7 @@ public class GeneralIndex extends Fragment {
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
 }

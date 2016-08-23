@@ -55,7 +55,6 @@
                 android:visibility="gone" />
 
             <ImageView
-                android:id="@+id/imageViewGenerica"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/cardListPreferredItemMargin"
                 android:layout_marginStart="@dimen/cardListPreferredItemMargin"
@@ -63,7 +62,9 @@
                 android:layout_height="40dp"
                 android:scaleType="center"
                 android:contentDescription="@string/select_canto"
-                risuscito:srcCompat="@drawable/ic_add_circle_24dp"
+                risuscito:ico_color="@color/icon_ative_black"
+                risuscito:ico_icon="cmd-plus-circle-outline"
+                risuscito:ico_size="24dp"
                 tools:ignore="MissingPrefix" />
 
             <TextView

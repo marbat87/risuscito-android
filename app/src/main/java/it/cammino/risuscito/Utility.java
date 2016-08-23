@@ -3,21 +3,18 @@ package it.cammino.risuscito;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Display;
-import android.view.Surface;
-import android.view.WindowManager;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Utility {
@@ -34,6 +31,8 @@ public class Utility {
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
+
+    public static final String GENERATE_XML = "generate_xml";
 
     public static final int HIDE_DELAY = 1500;
 
@@ -217,29 +216,29 @@ public class Utility {
             context.getWindow().setStatusBarColor(color);
     }
 
-    @SuppressWarnings("ResourceType")
-    public static void blockOrientation(Activity activity) {
-        // Copied from Android docs, since we don't have these values in Froyo 2.2
-        int SCREEN_ORIENTATION_REVERSE_LANDSCAPE = 8;
-        int SCREEN_ORIENTATION_REVERSE_PORTRAIT = 9;
-
-        Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int rotation = display.getRotation();
-        switch(activity.getResources().getConfiguration().orientation)
-        {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                else
-                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                break;
-            case Configuration.ORIENTATION_PORTRAIT:
-                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                else
-                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-        }
-    }
+//    @SuppressWarnings("ResourceType")
+//    public static void blockOrientation(Activity activity) {
+//        // Copied from Android docs, since we don't have these values in Froyo 2.2
+//        int SCREEN_ORIENTATION_REVERSE_LANDSCAPE = 8;
+//        int SCREEN_ORIENTATION_REVERSE_PORTRAIT = 9;
+//
+//        Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//        int rotation = display.getRotation();
+//        switch(activity.getResources().getConfiguration().orientation)
+//        {
+//            case Configuration.ORIENTATION_LANDSCAPE:
+//                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
+//                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                else
+//                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+//                break;
+//            case Configuration.ORIENTATION_PORTRAIT:
+//                if(rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
+//                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                else
+//                    activity.setRequestedOrientation(SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+//        }
+//    }
 
     public static int random(int start, int end) {
         return ((new Random()).nextInt(end - start + 1) + start);
@@ -256,5 +255,90 @@ public class Utility {
     public static boolean isUpperCase(char ch) {
         return ch >= 'A' && ch <= 'Z';
     }
+
+    private static Map<Character, Character> MAP_NORM;
+
+    public static String removeAccents(String value) {
+
+        if (MAP_NORM == null || MAP_NORM.size() == 0)
+        {
+            MAP_NORM = new HashMap<>();
+            MAP_NORM.put('\u00C1', 'A');
+            MAP_NORM.put('\u00C0', 'A');
+            MAP_NORM.put('\u00C2', 'A');
+            MAP_NORM.put('\u00C3', 'A');
+            MAP_NORM.put('\u00C4', 'A');
+            MAP_NORM.put('\u00C8', 'E');
+            MAP_NORM.put('\u00C9', 'E');
+            MAP_NORM.put('\u00CA', 'E');
+            MAP_NORM.put('\u00CB', 'E');
+            MAP_NORM.put('\u00CD', 'I');
+            MAP_NORM.put('\u00CC', 'I');
+            MAP_NORM.put('\u00CE', 'I');
+            MAP_NORM.put('\u00CF', 'I');
+            MAP_NORM.put('\u00D9', 'U');
+            MAP_NORM.put('\u00DA', 'U');
+            MAP_NORM.put('\u00DB', 'U');
+            MAP_NORM.put('\u00DC', 'U');
+            MAP_NORM.put('\u00D2', 'O');
+            MAP_NORM.put('\u00D3', 'O');
+            MAP_NORM.put('\u00D4', 'O');
+            MAP_NORM.put('\u00D5', 'O');
+            MAP_NORM.put('\u00D6', 'O');
+            MAP_NORM.put('\u00D1', 'N');
+            MAP_NORM.put('\u00C7', 'C');
+            MAP_NORM.put('\u00AA', 'A');
+            MAP_NORM.put('\u00BA', 'O');
+            MAP_NORM.put('\u00A7', 'S');
+            MAP_NORM.put('\u00B3', '3');
+            MAP_NORM.put('\u00B2', '2');
+            MAP_NORM.put('\u00B9', '1');
+            MAP_NORM.put('\u00E0', 'a');
+            MAP_NORM.put('\u00E1', 'a');
+            MAP_NORM.put('\u00E2', 'a');
+            MAP_NORM.put('\u00E3', 'a');
+            MAP_NORM.put('\u00E4', 'a');
+            MAP_NORM.put('\u00E8', 'e');
+            MAP_NORM.put('\u00E9', 'e');
+            MAP_NORM.put('\u00EA', 'e');
+            MAP_NORM.put('\u00EB', 'e');
+            MAP_NORM.put('\u00ED', 'i');
+            MAP_NORM.put('\u00EC', 'i');
+            MAP_NORM.put('\u00EE', 'i');
+            MAP_NORM.put('\u00EF', 'i');
+            MAP_NORM.put('\u00F9', 'u');
+            MAP_NORM.put('\u00FA', 'u');
+            MAP_NORM.put('\u00FB', 'u');
+            MAP_NORM.put('\u00FC', 'u');
+            MAP_NORM.put('\u00F2', 'o');
+            MAP_NORM.put('\u00F3', 'o');
+            MAP_NORM.put('\u00F4', 'o');
+            MAP_NORM.put('\u00F5', 'o');
+            MAP_NORM.put('\u00F6', 'o');
+            MAP_NORM.put('\u00F1', 'n');
+            MAP_NORM.put('\u00E7', 'c');
+        }
+
+        if (value == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder(value);
+
+        for(int i = 0; i < value.length(); i++) {
+            Character c = MAP_NORM.get(sb.charAt(i));
+            if(c != null)
+                sb.setCharAt(i, c);
+        }
+
+        return sb.toString();
+    }
+
+//    public static String escapeEmail(String email) {
+//        String result = email.substring(0, email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
+////        Log.d("UTILITY", "escapeEmail: result " + result);
+//        return result.replaceAll("\\.", "_");
+//    }
 
 }

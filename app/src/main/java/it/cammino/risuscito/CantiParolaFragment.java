@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -29,7 +27,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.alexkolpa.fabtoolbar.FabToolbar;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +41,9 @@ import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiParolaFragment extends Fragment {
+
+    // create boolean for fetching data
+    private boolean isViewShown = true;
 
     private int posizioneDaCanc;
     private int idDaCanc;
@@ -92,7 +94,7 @@ public class CantiParolaFragment extends Fragment {
 //                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
 //                        .title(R.string.share_by)
 //                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
                 bottomSheetDialog.show(getFragmentManager(), null);
             }
         });
@@ -161,6 +163,11 @@ public class CantiParolaFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        if (!isViewShown) {
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
+        }
+
         return rootView;
     }
 
@@ -168,11 +175,18 @@ public class CantiParolaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
-            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
-                fab1.scrollUp();
+            if (getView() != null) {
+                isViewShown = true;
+//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
+//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
+//            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
+//            if (!fab1.isShowing())
+//                fab1.scrollUp();
+                FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+                fab1.show();
+            }
+            else
+                isViewShown = false;
         }
     }
 
@@ -439,12 +453,22 @@ public class CantiParolaFragment extends Fragment {
             posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
             cantoAdapter.notifyItemChanged(longclickedPos);
             getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
-            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_remove_item).setIcon(drawable);
-            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_switch_item).setIcon(drawable);
+            menu.findItem(R.id.action_switch_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_shuffle)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+            menu.findItem(R.id.action_remove_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+//            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_switch_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }

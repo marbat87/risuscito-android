@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,12 +12,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,19 +27,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
-import com.turingtechnologies.materialscrollbar.TouchScrollBar;
 
 import java.util.ArrayList;
 
 import it.cammino.risuscito.adapters.CantoAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class SalmiSectionFragment extends Fragment implements View.OnCreateContextMenuListener {
+public class SalmiSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+
+    // create boolean for fetching data
+    private boolean isViewShown = true;
 
     private ArrayList<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
@@ -53,7 +52,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     private int[] idListe;
     private int idListaClick;
     private int idPosizioneClick;
-    private int prevOrientation;
+//    private int prevOrientation;
     private View rootView;
 
     private long mLastClickTime = 0;
@@ -101,7 +100,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 
         // chiude il cursore
         lista.close();
-        db.close();
+//        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -132,13 +131,6 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-//        TouchScrollBar mDragScrollbar =
-//                new TouchScrollBar(getActivity(), recyclerView, true);
-//        mDragScrollbar.setHideDuration(Utility.HIDE_DELAY);
-//        mDragScrollbar.addIndicator(new CustomIndicator(getActivity()), true);
-//        mDragScrollbar.setAutoHide(true);
-//        mDragScrollbar.setHandleColour(String.format("#%06X", 0xFFFFFF & getThemeUtils().accentColor()));
-
         new DragScrollBar(getActivity(), recyclerView, true)
                 .addIndicator(new CustomIndicator(getActivity()), true)
                 .setHandleColour(getThemeUtils().accentColor())
@@ -146,7 +138,55 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 
         mLUtils = LUtils.getInstance(getActivity());
 
+        if (savedInstanceState != null) {
+            Log.d(getClass().getName(), "onCreateView: RESTORING");
+            idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
+            idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
+            idListaClick = savedInstanceState.getInt("idListaClick", 0);
+            idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
+            posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE").setmCallback(SalmiSectionFragment.this);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE_2") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE_2").setmCallback(SalmiSectionFragment.this);
+        }
+
+        if (!isViewShown) {
+            query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+        }
+
         return rootView;
+    }
+
+    /**
+     *
+     * @param outState Bundle in which to place your saved state.
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("idDaAgg", idDaAgg);
+        outState.putInt("idPosizioneClick", idPosizioneClick);
+        outState.putInt("idListaClick", idListaClick);
+        outState.putInt("idListaDaAgg", idListaDaAgg);
+        outState.putInt("posizioneDaAgg", posizioneDaAgg);
     }
 
     /**
@@ -166,28 +206,33 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            Log.d(getClass().getName(), "VISIBLE");
-            if (listaCanti == null)
-                listaCanti = new DatabaseCanti(getActivity());
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            String query = "SELECT _id, lista" +
-                    "		FROM LISTE_PERS" +
-                    "		ORDER BY _id ASC";
-            Cursor lista = db.rawQuery(query, null);
+            if (getView() != null) {
+                isViewShown = true;
+                Log.d(getClass().getName(), "VISIBLE");
+                if (listaCanti == null)
+                    listaCanti = new DatabaseCanti(getActivity());
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                String query = "SELECT _id, lista" +
+                        "		FROM LISTE_PERS" +
+                        "		ORDER BY _id ASC";
+                Cursor lista = db.rawQuery(query, null);
 
-            listePers = new ListaPersonalizzata[lista.getCount()];
-            idListe = new int[lista.getCount()];
+                listePers = new ListaPersonalizzata[lista.getCount()];
+                idListe = new int[lista.getCount()];
 
-            lista.moveToFirst();
-            for (int i = 0; i < lista.getCount(); i++) {
-                idListe[i] = lista.getInt(0);
-                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-                        deserializeObject(lista.getBlob(1));
-                lista.moveToNext();
+                lista.moveToFirst();
+                for (int i = 0; i < lista.getCount(); i++) {
+                    idListe[i] = lista.getInt(0);
+                    listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                            deserializeObject(lista.getBlob(1));
+                    lista.moveToNext();
+                }
+
+                lista.close();
+                db.close();
             }
-
-            lista.close();
-            db.close();
+            else
+                isViewShown = false;
         }
     }
 
@@ -298,8 +343,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                                         .show();
                             }
                             else {
-                                prevOrientation = getActivity().getRequestedOrientation();
-                                Utility.blockOrientation(getActivity());
+//                                prevOrientation = getActivity().getRequestedOrientation();
+//                                Utility.blockOrientation(getActivity());
                                 Log.d(getClass().getName(), "id presente: " + idPosizioneClick);
                                 //recupero titolo del canto presente
                                 String query = "SELECT titolo" +
@@ -308,49 +353,57 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                                        .title(R.string.dialog_replace_title)
+//                                        .content(getString(R.string.dialog_present_yet) + " "
+//                                                + cursor.getString(0)
+//                                                + getString(R.string.dialog_wonna_replace))
+//                                        .positiveText(R.string.confirm)
+//                                        .negativeText(R.string.dismiss)
+//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                            @Override
+//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+//
+//                                                ContentValues values = new ContentValues( );
+//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+//                                                db.close();
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                                        .show();
+//                                            }
+//                                        })
+//                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                                            @Override
+//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                                getActivity().setRequestedOrientation(prevOrientation);
+//                                            }
+//                                        })
+//                                        .show();
+//                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                                    @Override
+//                                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                                         KeyEvent event) {
+//                                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                                            arg0.dismiss();
+//                                            getActivity().setRequestedOrientation(prevOrientation);
+//                                            return true;
+//                                        }
+//                                        return false;
+//                                    }
+//                                });
+//                                dialog.setCancelable(false);
+                                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), SalmiSectionFragment.this, "SALMI_REPLACE")
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveText(R.string.confirm)
-                                        .negativeText(R.string.dismiss)
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-
-                                                ContentValues values = new ContentValues( );
-                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-                                                db.close();
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                        .show();
-                                            }
-                                        })
-                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                            }
-                                        })
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
                                         .show();
-                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                                    @Override
-                                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                                         KeyEvent event) {
-                                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                                && event.getAction() == KeyEvent.ACTION_UP) {
-                                            arg0.dismiss();
-                                            getActivity().setRequestedOrientation(prevOrientation);
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                dialog.setCancelable(false);
                                 cursor.close();
                             }
                         }
@@ -433,49 +486,56 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
 
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_replace_title)
+//                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
+//                                + getString(R.string.dialog_wonna_replace))
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                String sql = "UPDATE CUST_LISTS "
+//                                        + "    SET id_canto = " + idDaAgg
+//                                        + "    WHERE _id = " + idListaDaAgg
+//                                        + "    AND position = " + posizioneDaAgg;
+//                                db.execSQL(sql);
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+//                                        .show();
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+//                                getActivity().setRequestedOrientation(prevOrientation);
+//                            }
+//                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), SalmiSectionFragment.this, "SALMI_REPLACE_2")
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                String sql = "UPDATE CUST_LISTS "
-                                        + "    SET id_canto = " + idDaAgg
-                                        + "    WHERE _id = " + idListaDaAgg
-                                        + "    AND position = " + posizioneDaAgg;
-                                db.execSQL(sql);
-                                getActivity().setRequestedOrientation(prevOrientation);
-                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                        .show();
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
             }
             return;
         }
@@ -497,5 +557,37 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "SALMI_REPLACE":
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+
+                ContentValues values = new ContentValues( );
+                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+                db.close();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case "SALMI_REPLACE_2":
+                db = listaCanti.getReadableDatabase();
+                String sql = "UPDATE CUST_LISTS "
+                        + "    SET id_canto = " + idDaAgg
+                        + "    WHERE _id = " + idListaDaAgg
+                        + "    AND position = " + posizioneDaAgg;
+                db.execSQL(sql);
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

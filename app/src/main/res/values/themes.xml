@@ -12,6 +12,7 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
         <item name="colorAccent">@color/theme_accent</item>
+        <item name="colorButtonNormal">?colorAccent</item>
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
         <!--<item name="colorControlActivated">#12000000</item>-->
@@ -36,6 +37,15 @@
 
     <style name="RisuscitoTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+    <style name="RisuscitoTheme.Invisibile">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="RisuscitoTheme.Red1">

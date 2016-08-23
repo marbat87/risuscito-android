@@ -3,34 +3,29 @@
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
-    <string name="lang_pt" translatable="false">Portugu&#234;s</string>
+    <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
-    <string name="test_name" translatable="false">Test</string>
-    <string name="test_email" translatable="false">Test@gmail.com</string>
+    <!--<string name="test_name" translatable="false">Test</string>-->
+    <!--<string name="test_email" translatable="false">Test@gmail.com</string>-->
+    <!--<string name="navigation_drawer_open" translatable="false">Open Navdrawer</string>-->
+    <!--<string name="navigation_drawer_close" translatable="false">Close Navdrawer</string>-->
+
 
     <string name="app_name">Risuscit&#242;</string>
-    <string name="action_about">About</string>
     <string name="action_favourites">Preferiti</string>
     <string name="action_share">Condividi</string>
     <string name="letter_order_text">Indice alfabetico</string>
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
     <string name="arg_search_text">Indice per argomento</string>
-    <string name="list_result_title">Risultati della ricerca:</string>
-    <string name="args_result_title">Elenco degli argomenti</string>
     <string name="button_pulisci">PULISCI</string>
     <string name="button_clean_list">Pulisci lista</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">Impedisce allo schermo di andare in standby all\'interno dell\'applicazione.</string>
     <string name="title_activity_favourites">Preferiti</string>
-    <string name="no_favourites">Non è presente nessun preferito. Per aggiungere un canto alla lista dei preferiti, clicca sul cuore presente nella pagina del canto stesso.</string>
-    <string name="title_activity_ricerca_titolo">Ricerca per titolo</string>
     <string name="search_hint">Digita almeno 3 caratteri&#8230;</string>
     <string name="search_no_results">Nessun risultato corrispondente ai criteri di ricerca digitati.</string>
     <string name="title_activity_settings">Impostazioni</string>
-    <string name="favourite_remove">Rimuovi dai preferiti</string>
-    <string name="list_remove">Rimuovere dalla lista?</string>
-    <string name="hint_remove">Tieni premuto su un elemento per rimuoverlo dalla lista</string>
     <string name="title_activity_general_index">Indici dei canti</string>
     <string name="default_index_title">Indice predefinito</string>
     <string name="default_index_summary">Indica quale indice deve aprirsi per default alla selezione della pagina degli indici.</string>
@@ -48,29 +43,13 @@
     <string name="canto_vino">Al vino</string>
     <string name="title_activity_custom_lists">Liste personalizzate</string>
     <string name="copertina">copertina</string>
-    <string name="add_inizio">Aggiungi canto iniziale</string>
-    <string name="add_prima">Aggiungi canto alla prima lettura</string>
-    <string name="add_seconda">Aggiungi canto alla seconda lettura</string>
-    <string name="add_terza">Aggiungi canto alla terza lettura</string>
-    <string name="add_fine">Aggiungi canto finale</string>
-    <string name="add_pace">Aggiungi canto alla pace</string>
-    <string name="add_pane">Aggiungi canto alla frazione del pane</string>
-    <string name="add_vino">Aggiungi canto al vino</string>
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
     <string name="title_activity_about">Changelog</string>
-    <string name="play_song">riproduci</string>
-    <string name="fast_forward">avanti veloce</string>
-    <string name="rewind">indietro veloce</string>
-    <string name="delete">elimina file locale</string>
-    <string name="save_file">salva in locale</string>
-    <string name="stop_song">ferma</string>
-    <string name="pause_song">pausa</string>
+    <string name="save_file">Salva in locale</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
     <string name="no_record">Registrazione non presente</string>
     <string name="about_subtitle">Versione per smartphone/tablet Android</string>
-    <string name="search_text_also">cerca anche nel testo</string>
-    <string name="dialog_download_mp3">Vuoi salvare il brano nel dispositivo? Potrai riascoltarlo da qui senza connessione internet!</string>
     <string name="dialog_delete_mp3">Sei sicuro di voler cancellare il brano dalla memoria del dispositivo?</string>
     <string name="confirm">SI</string>
     <string name="dismiss">NO</string>
@@ -82,15 +61,12 @@
     <string name="file_delete">File cancellato</string>
     <string name="download_completed">File salvato</string>
     <string name="download_running">Download in corso&#8230;</string>
-    <string name="download_cancelled">Download annullato</string>
     <string name="present_yet">Canto già presente</string>
     <string name="dialog_present_yet">&#200; già presente il canto: </string>
     <string name="dialog_wonna_replace">. Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
     <string name="title_activity_search">Ricerca canto</string>
-    <string name="button_search">CERCA</string>
-    <string name="search_running">Ricerca in corso&#8230;</string>
     <string name="advanced_search_subtitle">CERCA NEL TITOLO E NEL TESTO</string>
     <string name="fast_search_subtitle">CERCA PER TITOLO</string>
     <string name="show_seconda_title">Eucarestia - 2^ lettura</string>
@@ -104,16 +80,13 @@
     <string name="content_drag">trascina elemento</string>
     <string name="aggiungi_confirm">AGGIUNGI</string>
     <string name="aggiungi_dismiss">ANNULLA</string>
-    <string name="titolo_pos_vuoto">Nessun titolo inserito</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
     <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
-    <string name="aggiungi_lista_crea">CREA</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>
     <string name="save_list_question">Stai per uscire dalla creazione della lista personalizzata. Vuoi salvare le modifiche?</string>
     <string name="action_help">Aiuto</string>
     <string name="dialog_chiudi">OK</string>
-    <string name="dialog_help_title">Aiuto</string>
     <string name="dialog_change_title">Novit&#224;</string>
     <string name="action_tonalita">Tonalit&#224;</string>
     <string name="action_trasporta">Cambia</string>
@@ -132,10 +105,6 @@
     <string name="action_trasporta_sib">Sib / Sib-</string>
     <string name="action_trasporta_si">Si / Si-</string>
     <string name="dialog_save_tab">Vuoi salvare la tonalit&#224; e il barr&#232; usati?</string>
-    <string name="showcase_chtab_desc">Trasporta gli accordi del canto nella tonalit&#224; desiderata.</string>
-    <string name="showcase_savetab_desc">Salva la tonalit&#224; impostata, in modo da averla sempre ad ogni apertura del canto.</string>
-    <string name="showcase_restab_desc">Fa tornare il canto alla tonalit&#224; predefinita nel Risuscit&#242;.</string>
-    <string name="showcase_button_next">AVANTI</string>
     <string name="showcase_help_general">Puoi rivedere questi suggerimenti scegliendo la voce di menù \"Aiuto\".</string>
     <string name="tab_saved">Tonalit&#224; salvata</string>
     <string name="barre_saved">Posizione del barr&#232; salvata</string>
@@ -163,22 +132,6 @@
     <string name="action_trabar_V">al V° tasto</string>
     <string name="action_trabar_VI">al VI° tasto</string>
     <string name="action_trabar_VII">al VII° tasto</string>
-    <string name="showcase_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni:</string>
-    <string name="showcase_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le seguenti funzioni:</string>
-    <string name="showcase_chbarre_desc">Imposta il barr&#232; al tasto desiderato.</string>
-    <string name="showcase_savebarre_desc">Salva il tasto a cui hai impostato il barr&#232;, in modo da averlo sempre ad ogni apertura del canto.</string>
-    <string name="showcase_resbarre_desc">Fa tornare il barr&#232; al tasto predefinito nel Risuscit&#242;.</string>
-    <string name="play_scroll">Avvia scroll</string>
-    <string name="stop_scroll">Ferma scroll</string>
-    <string name="showcase_scroll_desc">Con questo nuovo pulsante puoi far scorrere il testo automaticamente. \nCONSIGLIO: Aumenta lo zoom per
-         ottenere un effetto migliore.</string>
-    <string name="scroll_seekbar">Velocit&#224; di scorrimento</string>
-    <string name="showcase_seekbar_desc">Puoi regolare in qualsiasi momento la velocit&#224; di scorrimento (anche a riproduzione avviata).
-        L\'ultima velocit&#224; impostata verr&#224; poi salvata all\'uscita dal canto.</string>
-    <string name="insert_position_name">Inserisci nome</string>
-    <string name="applicatgion_theme_title">Tema</string>
-    <string name="applicatgion_theme_summary">Cambia il tema dell\'applicazione. Attenzione: L\'applicazione sar&#224; riavviata.</string>
-    <string name="favorite_remove">Rimuovere dai preferiti?</string>
     <string name="action_exp_pdf">Esporta PDF</string>
     <string name="no_pdf_reader">Nessun PDF Reader trovato</string>
     <string name="export_running">Esportazione in corso&#8230;</string>
@@ -186,7 +139,6 @@
     <string name="content_donate">Dona</string>
     <string name="title_activity_donate">Ringrazia</string>
     <string name="activity_homepage">Home page</string>
-    <string name="button_note_cantore">Note per il cantore</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
     <string name="salmi_musica_index">Indice salmi musicati</string>
     <string name="downlink_message">Desideri utilizzare la funzione di donwload della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
@@ -199,15 +151,10 @@
     <string name="list_title_modif">Modifica il titolo&#8230;</string>
     <string name="list_elements">ELEMENTI DELLA LISTA:</string>
     <string name="no_title_edited">Il titolo non è stato modificato in quanto vuoto</string>
-    <string name="title_activity_settings_capital">IMPOSTAZIONI</string>
-    <string name="title_activity_about_capital">CHANGELOG</string>
-    <string name="title_activity_donate_capital">RINGRAZIA</string>
     <string name="no_elements_added">Non hai ancora aggiunto nessun elemento.</string>
-    <string name="snackbar_remove">RIMUOVI</string>
     <string name="single_choice_ok">CONFERMA</string>
     <string name="dialog_replace_title">Sostituisci canto</string>
     <string name="dialog_reset_list_title">Resetta lista</string>
-    <string name="snackbar_list_delete">Rimuovere la lista \'</string>
     <string name="aggiungi_rename">RINOMINA</string>
     <string name="save_list_title">Salva lista</string>
     <string name="download_link_title">Scarica o associa file locale</string>
@@ -215,15 +162,12 @@
     <string name="dialog_delete_link_title">Scollega file locale</string>
     <string name="only_link_title">Associa file locale</string>
     <string name="dialog_save_tab_title">Salva modifiche</string>
-    <string name="example_title">CANTO DI ESEMPIO</string>
     <string name="show_pace_title">Parola - Canto alla pace</string>
     <string name="show_pace_summary">Abilita il canto alla pace per la celebrazione della Parola</string>
     <string name="santo">Santo</string>
-    <string name="add_santo">Aggiungi il Santo</string>
     <string name="show_santo_title">Eucarestia - Santo</string>
     <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
     <string name="fullscreen">Schermo intero</string>
-    <string name="audio_on_off">Mostra/Nascondi audio</string>
     <string name="file_selected">File selezionato</string>
     <string name="primary_color">Colore principale</string>
     <string name="primary_color_desc">Il colore usato maggiormente nell\'interfaccia</string>
@@ -255,7 +199,6 @@
     <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
     <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
-    <string name="favorite_on_off">Aggiungi/Rimuovi preferito</string>
     <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
@@ -263,7 +206,6 @@
     <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
     <string name="title_activity_history">Cronologia</string>
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
-    <string name="history_remove">Rimuovere dalla cronologia?</string>
     <string name="history_empty">La cronologia è vuota.</string>
     <string name="last_open_date">ULTIMA APERTURA: %1$s</string>
     <string name="dialog_reset_history_title">Svuota cronologia</string>
@@ -293,11 +235,9 @@
     <string name="sc_scroll_title">Scroll automatico del testo</string>
     <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
         \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
-    <string name="player_state">Stato del lettore:</string>
-    <string name="focus_not_allowed">AudioFocus non consentito</string>
     <string name="download_error">Errore nel download:</string>
     <string name="dialog_back">INDIETRO</string>
-    <string name="share_by">CONDIVIDI CON&#8230;</string>
+    <string name="share_by">Condividi con&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
@@ -312,13 +252,11 @@
     <string name="connected_as">Sei connesso come %1$s</string>
     <string name="gplus_signout">Disconnetti account</string>
     <string name="gplus_revoke">Revoca permessi</string>
-    <string name="menu_account_section">Backup e Ripristino Impostazioni</string>
     <string name="dialog_acc_disconn_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google?
     \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
     <string name="dialog_acc_revoke_text">Sei sicuro di voler disconnettere Risuscit&#242; dal tuo account Google e di volerle revocare tutti i permessi Google concessi?
     \nLa connessione &#232; necessaria se si intende usufruire del backup/ripristino online delle impostazioni dell\'applicazione</string>
     <string name="disconnected">Disconnesso da Google</string>
-    <string name="connection_running">Connessione in corso&#8230;</string>
     <string name="gdrive_backup">Backup su account</string>
     <string name="gdrive_backup_content">Verrà ora effettuato un backup delle impostazioni sul tuo account. Il precedente backup (se presente) sarà sovrascritto. Vuoi procedere?</string>
     <string name="gdrive_restore_content">Risuscit&#242; verrà ora ripristinata dalle impostazioni presenti sul tuo account. Vuoi procedere?</string>
@@ -339,5 +277,19 @@
     <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>
     <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
     <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
-    <string name="playback_completed">Riproduzione completata</string>
+    <string name="xml_error">Errore nella generazione del file da condividere!</string>
+    <string name="action_share_file">Invia file</string>
+    <string name="import_error">Importazione lista fallita!</string>
+    <string name="import_running">Importazione lista in corso</string>
+    <string name="import_done">Importazione lista completata!</string>
+    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
+    <string name="audio_on">Mostra audio</string>
+    <string name="audio_off">Nascondi audio</string>
+    <string name="fab_delete_unlink">Elimina file</string>
+    <string name="favorite_on">Aggiungi preferito</string>
+    <string name="favorite_off">Rimuovi preferito</string>
+    <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
+    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
 </resources>

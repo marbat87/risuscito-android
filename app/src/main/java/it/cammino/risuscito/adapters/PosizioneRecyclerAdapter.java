@@ -2,16 +2,12 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -77,8 +73,8 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         if (listItems.size() > 0) {
             if (dataItem.isMultiple()) {
                 titleHolder.addCanto.setVisibility(View.VISIBLE);
-                Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
-                DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
+//                Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
+//                DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
                 if (clickListener != null)
                     titleHolder.addCanto.setOnClickListener(clickListener);
             }
@@ -144,8 +140,8 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         }
         else {
             titleHolder.addCanto.setVisibility(View.VISIBLE);
-            Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
+//            Drawable drawable = DrawableCompat.wrap(titleHolder.plusImage.getDrawable());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
 //            titleHolder.canto.setVisibility(View.GONE);
             if (clickListener != null)
                 titleHolder.addCanto.setOnClickListener(clickListener);
@@ -173,7 +169,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         public View cardView;
         public TextView tag;
         public LinearLayout list;
-        public ImageView plusImage;
+//        public ImageView plusImage;
 
         public TitleViewHolder(View itemView) {
             super(itemView);
@@ -184,7 +180,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
             cardView = itemView.findViewById(R.id.cardView);
             tag = (TextView) itemView.findViewById(R.id.tag);
             list = (LinearLayout) itemView.findViewById(R.id.list);
-            plusImage = (ImageView) itemView.findViewById(R.id.imageViewGenerica);
+//            plusImage = (ImageView) itemView.findViewById(R.id.imageViewGenerica);
         }
 
     }

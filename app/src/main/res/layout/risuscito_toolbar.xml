@@ -5,12 +5,11 @@
     android:id="@+id/risuscito_toolbar"
     android:layout_height="?attr/actionBarSize"
     android:theme="@style/ActionBarThemeOverlay"
-    risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
-    risuscito:contentInsetStart="72dp"
+    risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:layout_width="match_parent"
     android:background="?attr/colorPrimary"
     risuscito:layout_scrollFlags="scroll|enterAlways"
-    android:elevation="@dimen/toolbar_elevation">
+    android:elevation="@dimen/design_appbar_elevation">
 
     <TextView
         android:layout_width="wrap_content"

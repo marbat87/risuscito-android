@@ -7,11 +7,12 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
-/**
- * Created by marcello.battain on 20/07/2015.
- */
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
+        super();
+    }
+
+    public ScrollAwareFABBehavior() {
         super();
     }
 

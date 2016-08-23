@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    risuscito:layout_behavior="it.cammino.risuscito.ui.QuickReturnFooterBehavior"
+    android:id="@+id/bottom_bar"
+    android:layout_width="match_parent"
+    android:background="?colorPrimary"
+    android:divider="?attr/dividerVertical"
+    android:layout_height="@dimen/abc_action_bar_default_height_material"
+    android:layout_gravity="bottom"
+    android:gravity="center"
+    android:visibility="invisible"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/select_none"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="center"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-checkbox-multiple-blank-outline"
+        risuscito:ico_size="24dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/select_all"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="center"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-checkbox-multiple-marked-outline"
+        risuscito:ico_size="24dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/cancel_change"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-undo"
+        risuscito:ico_size="24dp"
+        risuscito:ico_padding="2dp"
+        android:soundEffectsEnabled="true"
+        tools:ignore="MissingPrefix" />
+
+    <ImageButton
+        android:id="@+id/confirm_changes"
+        android:layout_width="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:paddingLeft="@dimen/button_playbar_padding"
+        android:paddingRight="@dimen/button_playbar_padding"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        android:theme="@style/ActionBarThemeOverlay"
+        android:background="?attr/customSelectorRound"
+        android:soundEffectsEnabled="true"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-content-save"
+        risuscito:ico_size="24dp"
+        risuscito:ico_padding="2dp"
+        tools:ignore="MissingPrefix" />
+
+</LinearLayout>

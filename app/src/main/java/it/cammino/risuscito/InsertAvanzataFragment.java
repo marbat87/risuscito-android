@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
@@ -26,10 +27,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.internal.MDTintHelper;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -37,17 +37,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 import it.cammino.risuscito.utils.ThemeUtils;
-import me.zhanghai.android.materialprogressbar.IndeterminateProgressDrawable;
 
 public class InsertAvanzataFragment extends Fragment {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
     private List<CantoInsert> titoli;
@@ -56,8 +55,9 @@ public class InsertAvanzataFragment extends Fragment {
     private static String[][] aTexts;
     RecyclerView recyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
-    private ProgressBar progress;
-    private static Map<Character, Character> MAP_NORM;
+//    private ProgressBar progress;
+    private CircleProgressBar progress;
+//    private static Map<Character, Character> MAP_NORM;
 
     private int fromAdd;
     private int idLista;
@@ -167,15 +167,17 @@ public class InsertAvanzataFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
-        if (LUtils.hasICS()) {
-            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
-            d.setTint(getThemeUtils().accentColor());
-            progress.setProgressDrawable(d);
-            progress.setIndeterminateDrawable(d);
-        }
-        else
-            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
+        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
+        progress.setColorSchemeColors(getThemeUtils().accentColor());
+//        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
+//        if (LUtils.hasICS()) {
+//            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
+//            d.setTint(getThemeUtils().accentColor());
+//            progress.setProgressDrawable(d);
+//            progress.setIndeterminateDrawable(d);
+//        }
+//        else
+//            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
 
         searchPar.setText("");
 
@@ -300,6 +302,7 @@ public class InsertAvanzataFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy");
         if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
             searchTask.cancel(true);
         if (listaCanti != null)
@@ -309,60 +312,72 @@ public class InsertAvanzataFragment extends Fragment {
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
+        SQLiteDatabase db;
+
         @SuppressLint("NewApi")
         @Override
         protected String doInBackground(String... sSearchText) {
 
             // crea un manipolatore per il Database in modalità READ
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
 
             String[] words = sSearchText[0].split("\\W");
 
             String text;
             titoli.clear();
 
-            for (int k = 0; k < aTexts.length; k++) {
+            for (String[] aText : aTexts) {
 
-                if (aTexts[k][0] == null || aTexts[k][0].equalsIgnoreCase(""))
+                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
+
+                if (isCancelled())
+                    break;
+
+                if (aText[0] == null || aText[0].equalsIgnoreCase(""))
                     break;
 
                 boolean found = true;
-                for (int j = 0; j < words.length; j++) {
-                    if (words[j].trim().length() > 1) {
-                        text = words[j].trim();
+                for (String word : words) {
+                    if (isCancelled())
+                        break;
+                    if (word.trim().length() > 1) {
+                        text = word.trim();
                         text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
 
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
                             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-                            text =  pattern.matcher(nfdNormalizedString).replaceAll("");
+                            text = pattern.matcher(nfdNormalizedString).replaceAll("");
                         }
                         else
-                            text = removeAccents(text);
+                            text = Utility.removeAccents(text);
 
-                        if (!aTexts[k][1].contains(text)) {
+                        if (!aText[1].contains(text))
                             found = false;
-                        }
                     }
                 }
 
-                if (found) {
+                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
 
+                if (found && !isCancelled()) {
+                    db = listaCanti.getReadableDatabase();
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
                     String query = "SELECT titolo, color, pagina, _id, source"
-                            +		"		FROM ELENCO"
-                            +		"		WHERE source = '" + aTexts[k][0] + "'";
+                            + "		FROM ELENCO"
+                            + "		WHERE source = '" + aText[0] + "'";
 
                     Cursor lista = db.rawQuery(query, null);
 
                     if (lista.getCount() > 0) {
                         lista.moveToFirst();
                         titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
-                                                , lista.getInt(3)
-                                                , lista.getString(4)));
+                                , lista.getInt(3)
+                                , lista.getString(4)));
                     }
                     // chiude il cursore
                     lista.close();
+                    db.close();
                 }
             }
 
@@ -371,101 +386,22 @@ public class InsertAvanzataFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(String result) {
-
+            super.onPostExecute(result);
             cantoAdapter.notifyDataSetChanged();
-
             progress.setVisibility(View.INVISIBLE);
-
-            if (titoli.size() == 0) {
+            if (titoli.size() == 0)
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-            }
-            else {
+            else
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-            }
         }
 
-    }
-
-    public static String removeAccents(String value)
-    {
-        if (MAP_NORM == null || MAP_NORM.size() == 0)
-        {
-            MAP_NORM = new HashMap<>();
-            MAP_NORM.put('À', 'A');
-            MAP_NORM.put('Á', 'A');
-            MAP_NORM.put('Â', 'A');
-            MAP_NORM.put('Ã', 'A');
-            MAP_NORM.put('Ä', 'A');
-            MAP_NORM.put('È', 'E');
-            MAP_NORM.put('É', 'E');
-            MAP_NORM.put('Ê', 'E');
-            MAP_NORM.put('Ë', 'E');
-            MAP_NORM.put('Í', 'I');
-            MAP_NORM.put('Ì', 'I');
-            MAP_NORM.put('Î', 'I');
-            MAP_NORM.put('Ï', 'I');
-            MAP_NORM.put('Ù', 'U');
-            MAP_NORM.put('Ú', 'U');
-            MAP_NORM.put('Û', 'U');
-            MAP_NORM.put('Ü', 'U');
-            MAP_NORM.put('Ò', 'O');
-            MAP_NORM.put('Ó', 'O');
-            MAP_NORM.put('Ô', 'O');
-            MAP_NORM.put('Õ', 'O');
-            MAP_NORM.put('Ö', 'O');
-            MAP_NORM.put('Ñ', 'N');
-            MAP_NORM.put('Ç', 'C');
-            MAP_NORM.put('ª', 'A');
-            MAP_NORM.put('º', 'O');
-            MAP_NORM.put('§', 'S');
-            MAP_NORM.put('³', '3');
-            MAP_NORM.put('²', '2');
-            MAP_NORM.put('¹', '1');
-            MAP_NORM.put('à', 'a');
-            MAP_NORM.put('á', 'a');
-            MAP_NORM.put('â', 'a');
-            MAP_NORM.put('ã', 'a');
-            MAP_NORM.put('ä', 'a');
-            MAP_NORM.put('è', 'e');
-            MAP_NORM.put('é', 'e');
-            MAP_NORM.put('ê', 'e');
-            MAP_NORM.put('ë', 'e');
-            MAP_NORM.put('í', 'i');
-            MAP_NORM.put('ì', 'i');
-            MAP_NORM.put('î', 'i');
-            MAP_NORM.put('ï', 'i');
-            MAP_NORM.put('ù', 'u');
-            MAP_NORM.put('ú', 'u');
-            MAP_NORM.put('û', 'u');
-            MAP_NORM.put('ü', 'u');
-            MAP_NORM.put('ò', 'o');
-            MAP_NORM.put('ó', 'o');
-            MAP_NORM.put('ô', 'o');
-            MAP_NORM.put('õ', 'o');
-            MAP_NORM.put('ö', 'o');
-            MAP_NORM.put('ñ', 'n');
-            MAP_NORM.put('ç', 'c');
-        }
-
-        if (value == null) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder(value);
-
-        for(int i = 0; i < value.length(); i++) {
-            Character c = MAP_NORM.get(sb.charAt(i));
-            if(c != null)
-                sb.setCharAt(i, c);
-        }
-
-        return sb.toString();
     }
 
     private void startSubActivity(Bundle bundle, View view) {

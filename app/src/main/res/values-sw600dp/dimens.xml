@@ -3,7 +3,8 @@
 
     <dimen name="activity_min_margin">10dip</dimen>
     <dimen name="settings_min_margin">20dip</dimen>
-    <dimen name="about_image_width">200dip</dimen>
+    <!--<dimen name="about_image_width">200dip</dimen>-->
+    <!--<dimen name="drawer_content_padding">302dp</dimen>-->
 
     <!--<dimen name="action_bar_text_field_margin">20dip</dimen>-->
     <dimen name="min_button_margin">15dip</dimen>

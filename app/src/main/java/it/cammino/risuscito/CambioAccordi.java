@@ -1,6 +1,6 @@
 package it.cammino.risuscito;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -21,9 +21,9 @@ public class CambioAccordi {
     public static final String[] accordi_uk_lower =
             {"c", "cis", "d","eb", "e", "f", "fis", "g", "gis", "a", "b","h"};
 
-    private Activity context;
+    private Context context;
 
-    public CambioAccordi(Activity context) {
+    public CambioAccordi(Context context) {
         this.context = context;
     }
 
@@ -160,6 +160,7 @@ public class CambioAccordi {
             return null;
 
         String language = context.getResources().getConfiguration().locale.getLanguage();
+        Log.d(getClass().getName(), "diffSemiToni: language " + language);
 
         String primoAccordo = primaNota;
         String cambioAccordo = notaCambio;

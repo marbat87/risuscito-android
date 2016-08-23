@@ -6,15 +6,13 @@
         android:id="@+id/tonalita"
         android:orderInCategory="88"
         risuscito:showAsAction="always"
-        android:icon="@drawable/ic_audiotrack_white_24dp"
         android:title="@string/action_tonalita">
 
         <menu>
             <item
                 android:id="@+id/action_trasporta"
                 android:title="@string/action_trasporta"
-                android:orderInCategory="89"
-                android:icon="@drawable/ic_import_export_24dp">
+                android:orderInCategory="89">
 
                 <menu>
                     <group android:id="@+id/menu_gruppo_note">
@@ -36,13 +34,11 @@
 
             <item
                 android:id="@+id/action_save_tab"
-                android:icon="@drawable/ic_save_24dp"
                 android:orderInCategory="90"
                 android:title="@string/action_salva_tonalita" />
 
             <item
                 android:id="@+id/action_reset_tab"
-                android:icon="@drawable/ic_refresh_24dp"
                 android:orderInCategory="91"
                 android:title="@string/action_reset_tonalita" />
 
@@ -54,7 +50,6 @@
         android:id="@+id/barre"
         android:orderInCategory="92"
         risuscito:showAsAction="always"
-        android:icon="@drawable/ic_change_barre"
         android:title="@string/action_barre" >
 
         <menu>
@@ -62,8 +57,7 @@
             <item
                 android:id="@+id/action_trasporta_barre"
                 android:title="@string/action_trasporta"
-                android:orderInCategory="93"
-                android:icon="@drawable/ic_import_export_24dp">
+                android:orderInCategory="93">
 
                 <menu>
                     <group android:id="@+id/menu_gruppo_barre">
@@ -81,13 +75,11 @@
 
             <item
                 android:id="@+id/action_save_barre"
-                android:icon="@drawable/ic_save_24dp"
                 android:orderInCategory="94"
                 android:title="@string/action_salva_tonalita" />
 
             <item
                 android:id="@+id/action_reset_barre"
-                android:icon="@drawable/ic_refresh_24dp"
                 android:orderInCategory="95"
                 android:title="@string/action_reset_barre" />
 
@@ -98,14 +90,12 @@
     <item
         android:id="@+id/action_exp_pdf"
         android:orderInCategory="96"
-        android:icon="@drawable/ic_picture_as_pdf_white_24px"
         risuscito:showAsAction="ifRoom"
         android:title="@string/action_exp_pdf" />
 
     <item
         android:id="@+id/action_help_canto"
         android:orderInCategory="98"
-        android:icon="@drawable/ic_help_white_24dp"
         risuscito:showAsAction="ifRoom"
         android:title="@string/action_help" />
 

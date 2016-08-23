@@ -29,11 +29,12 @@ public class GeneralInsertSearch extends ThemeableActivity {
         setContentView(R.layout.activity_insert_search);
 
         Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
-        toolbar.setTitle("");
+//        toolbar.setTitle("");
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_inserisci_titolo);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
 

@@ -2,22 +2,22 @@ package it.cammino.risuscito;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.IntentFilter;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,55 +31,138 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.stephentuso.welcome.WelcomeScreenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.slides.IntroConsegnati;
+import it.cammino.risuscito.services.ConsegnatiSaverService;
+import it.cammino.risuscito.slides.IntroConsegnatiNew;
+import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
+import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class ConsegnatiFragment extends Fragment {
+public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
     private List<Canto> titoliChoose;
     private View rootView;
     private CantoRecyclerAdapter cantoAdapter;
     private CantoSelezionabileAdapter selectableAdapter;
+    private FloatingActionButton mFab;
+    private View mBottomBar;
 
     private static final String EDIT_MODE = "editMode";
     public static final String TITOLI_CHOOSE = "titoliChoose";
 
-    public static final int CIRCLE_DURATION = 500;
+    private MainActivity mMainActivity;
+//    public static final String TABLET = "tablet_Mode";
+
+//    public static final int CIRCLE_DURATION = 500;
 
     private boolean editMode;
-    private int prevOrientation;
-    private MaterialDialog mProgressDialog;
+    //    private int prevOrientation;
+//    private MaterialDialog mProgressDialog;
     private int totalConsegnati;
 
-    private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
+//    private static final String PREF_FIRST_OPEN = "prima_apertura_consegnati";
 
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
+    private WelcomeScreenHelper mWelcomeScreen;
+
+    private BroadcastReceiver positionBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_SINGLE_COMPLETED");
+                Log.d(getClass().getName(), "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
+                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null) {
+                    SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "CONSEGNATI_SAVING")
+                            .setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
+                }
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
+
+    private BroadcastReceiver completedBRec = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Implement UI change code here once notification is received
+            try {
+                Log.d(getClass().getName(), "BROADCAST_SAVING_COMPLETED");
+                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
+                    SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
+                updateConsegnatiList(true);
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+//                mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+                if (mMainActivity.isOnTablet())
+                    enableBottombar(false);
+                else
+                    mMainActivity.enableBottombar(false);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//                getFab().show();
+                if (mMainActivity.isOnTablet())
+                    showFab();
+                else
+                    mMainActivity.enableFab(true);
+//                showFab();
+//                View myView = rootView.findViewById(R.id.consegnati_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 1);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_consegnati);
+        mMainActivity = (MainActivity) getActivity();
+
+        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
+
+//        Log.d(TAG, "onCreateView: isOnTablet " + isOnTablet);
+
+        mBottomBar = mMainActivity.isOnTablet() ?
+                rootView.findViewById(R.id.bottom_bar):
+                getActivity().findViewById(R.id.bottom_bar);
+//        mBottomBar = getActivity().findViewById(R.id.bottom_bar);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(true);
+//        mMainActivity.enableFab(!mMainActivity.isOnTablet());
 
         //crea un istanza dell'oggetto DatabaseCanti
-        listaCanti = new DatabaseCanti(getActivity());
+//        listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        rootView.findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+        mBottomBar.setBackgroundColor(getThemeUtils().primaryColor());
 
         if (savedInstanceState == null)
             editMode = false;
@@ -93,17 +176,48 @@ public class ConsegnatiFragment extends Fragment {
         }
 
         if (editMode) {
-            rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
+//            mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+            if (mMainActivity.isOnTablet())
+                enableBottombar(true);
+            else
+                mMainActivity.enableBottombar(true);
+//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
+//            getFab().hide();
+            if (mMainActivity.isOnTablet())
+                hideFab();
+            else
+                mMainActivity.enableFab(false);
+//            hideFab();
+
             updateChooseList(false);
         }
         else {
-            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+//            mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+            if (mMainActivity.isOnTablet())
+                enableBottombar(false);
+            else
+                mMainActivity.enableBottombar(false);
+//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//            getFab().show();
+            if (mMainActivity.isOnTablet())
+                showFab();
+            else
+                mMainActivity.enableFab(true);
+//            showFab();
             updateConsegnatiList(true);
         }
-
-        (rootView.findViewById(R.id.select_none)).setOnClickListener(new View.OnClickListener() {
+        View mSelectNone = mMainActivity.isOnTablet() ?
+                rootView.findViewById(R.id.select_none):
+                getActivity().findViewById(R.id.select_none);
+//        View mSelectNone = getActivity().findViewById(R.id.select_none);
+        mSelectNone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -113,7 +227,11 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        (rootView.findViewById(R.id.select_all)).setOnClickListener(new View.OnClickListener() {
+        View mSelectAll = mMainActivity.isOnTablet() ?
+                rootView.findViewById(R.id.select_all):
+                getActivity().findViewById(R.id.select_all);
+//        View mSelectAll = getActivity().findViewById(R.id.select_all);
+        mSelectAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (Canto canto: titoliChoose) {
@@ -123,21 +241,37 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ImageButton cancel_change = (ImageButton) rootView.findViewById(R.id.cancel_change);
-        Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
+        ImageButton cancel_change = mMainActivity.isOnTablet() ?
+                (ImageButton) rootView.findViewById(R.id.cancel_change):
+                (ImageButton) getActivity().findViewById(R.id.cancel_change);
+//        ImageButton cancel_change = (ImageButton) getActivity().findViewById(R.id.cancel_change);
+//        Drawable drawable = DrawableCompat.wrap(cancel_change.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         cancel_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editMode = false;
                 updateConsegnatiList(true);
-                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-                View myView = rootView.findViewById(R.id.consegnati_view);
-                if (LUtils.hasL())
-                    enterReveal(myView, 1);
+//                rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+//                mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+                if (mMainActivity.isOnTablet())
+                    enableBottombar(false);
                 else
-                    myView.setVisibility(View.VISIBLE);
+                    mMainActivity.enableBottombar(false);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+//                getFab().show();
+                if (mMainActivity.isOnTablet())
+                    showFab();
+                else
+                    mMainActivity.enableFab(true);
+//                showFab();
+//                View myView = rootView.findViewById(R.id.consegnati_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 1);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
 //                myView.setVisibility(View.VISIBLE);
 //
 //                // get the center for the clipping circle
@@ -155,45 +289,102 @@ public class ConsegnatiFragment extends Fragment {
             }
         });
 
-        ImageButton confirm_changes = (ImageButton) rootView.findViewById(R.id.confirm_changes);
-        drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
+        ImageButton confirm_changes = mMainActivity.isOnTablet() ?
+                (ImageButton) rootView.findViewById(R.id.confirm_changes):
+                (ImageButton) getActivity().findViewById(R.id.confirm_changes);
+//        ImageButton confirm_changes = (ImageButton) getActivity().findViewById(R.id.confirm_changes);
+//        drawable = DrawableCompat.wrap(confirm_changes.getDrawable());
+//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
         confirm_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                (new ConsegnatiSaveTask()).execute();
+//                (new ConsegnatiSaveTask()).execute();
+                editMode = false;
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ConsegnatiFragment.this, "CONSEGNATI_SAVING")
+                        .content(R.string.save_consegnati_running)
+                        .showProgress(true)
+                        .progressIndeterminate(false)
+                        .progressMax(selectableAdapter.getItemCount())
+                        .show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), ConsegnatiSaverService.class);
+//                intent.putExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                getActivity().getApplicationContext().startService(intent);
             }
         });
 
-        mProgressDialog = new MaterialDialog.Builder(getActivity())
-                .content(R.string.save_consegnati_running)
-                .progress(true, 0)
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        getActivity().setRequestedOrientation(prevOrientation);
-                    }
-                })
-                .build();
+//        mProgressDialog = new MaterialDialog.Builder(getActivity())
+//                .content(R.string.save_consegnati_running)
+//                .progress(true, 0)
+//                .dismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        getActivity().setRequestedOrientation(prevOrientation);
+//                    }
+//                })
+//                .build();
 
-        if(PreferenceManager
-                .getDefaultSharedPreferences(getActivity())
-                .getBoolean(PREF_FIRST_OPEN, true)) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.apply();
-            showHelp();
-        }
+        getFab().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editMode = true;
+                updateChooseList(true);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
+                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
+//                mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+                if (mMainActivity.isOnTablet())
+                    enableBottombar(true);
+                else
+                    mMainActivity.enableBottombar(true);
+//                getFab().hide();
+                if (mMainActivity.isOnTablet())
+                    hideFab();
+                else
+                    mMainActivity.enableFab(false);
+//                hideFab();
+            }
+        });
 
+        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroConsegnatiNew.class);
+        mWelcomeScreen.show(savedInstanceState);
+//        if(PreferenceManager
+//                .getDefaultSharedPreferences(getActivity())
+//                .getBoolean(PREF_FIRST_OPEN, true)) {
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(getActivity())
+//                    .edit();
+//            editor.putBoolean(PREF_FIRST_OPEN, false);
+//            editor.apply();
+//            showHelp();
+//        }
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(getClass().getName(), "onResume: ");
+        getActivity().registerReceiver(positionBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
+        getActivity().registerReceiver(completedBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(getClass().getName(), "onPause: ");
+        getActivity().unregisterReceiver(positionBRec);
+        getActivity().unregisterReceiver(completedBRec);
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(EDIT_MODE, editMode);
         super.onSaveInstanceState(savedInstanceState);
+        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -201,6 +392,11 @@ public class ConsegnatiFragment extends Fragment {
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+//        mBottomBar.findViewById(R.id.bottom_bar).setVisibility(View.INVISIBLE);
+        if (mMainActivity.isOnTablet())
+            enableBottombar(false);
+        else
+            mMainActivity.enableBottombar(false);
     }
 
     @Override
@@ -212,22 +408,27 @@ public class ConsegnatiFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.consegnati_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_edit_choose:
-                editMode = true;
-                updateChooseList(true);
-                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
-//                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
-                View myView = rootView.findViewById(R.id.choose_view);
-                if (LUtils.hasL())
-                    enterReveal(myView, 2);
-                else
-                    myView.setVisibility(View.VISIBLE);
+//            case R.id.action_edit_choose:
+//                editMode = true;
+//                updateChooseList(true);
+//                rootView.findViewById(R.id.consegnati_view).setVisibility(View.INVISIBLE);
+////                rootView.findViewById(R.id.choose_view).setVisibility(View.VISIBLE);
+//                View myView = rootView.findViewById(R.id.choose_view);
+//                if (LUtils.hasL())
+//                    enterReveal(myView, 2);
+//                else
+//                    myView.setVisibility(View.VISIBLE);
 //                myView.setVisibility(View.VISIBLE);
 //
 //                // get the center for the clipping circle
@@ -242,9 +443,10 @@ public class ConsegnatiFragment extends Fragment {
 //                animator.setInterpolator(new AccelerateDecelerateInterpolator());
 //                animator.setDuration(CIRCLE_DURATION);
 //                animator.start();
-                return true;
+//                return true;
             case R.id.action_help:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
         }
         return false;
@@ -259,6 +461,7 @@ public class ConsegnatiFragment extends Fragment {
     private void updateConsegnatiList(boolean updateView) {
 
         // crea un manipolatore per il Database in modalità READ
+        listaCanti = new DatabaseCanti(getActivity());
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         // lancia la ricerca dei preferiti
@@ -290,6 +493,9 @@ public class ConsegnatiFragment extends Fragment {
 
         // chiude il cursore
         lista.close();
+        db.close();
+        if (listaCanti != null)
+            listaCanti.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -326,6 +532,7 @@ public class ConsegnatiFragment extends Fragment {
 
         if (reload) {
             // crea un manipolatore per il Database
+            listaCanti = new DatabaseCanti(getActivity());
             SQLiteDatabase db = listaCanti.getReadableDatabase();
 
             // lancia la ricerca dei canti
@@ -350,6 +557,9 @@ public class ConsegnatiFragment extends Fragment {
 
             // chiude il cursore
             lista.close();
+            db.close();
+            if (listaCanti != null)
+                listaCanti.close();
         }
 
         RecyclerView chooseRecycler = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
@@ -395,79 +605,91 @@ public class ConsegnatiFragment extends Fragment {
         return titoliChoose;
     }
 
-    private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
-
-        public ConsegnatiSaveTask() {}
-
-        @Override
-        protected String doInBackground(String... sUrl) {
-            //aggiorno la lista dei consegnati
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            db.delete("CANTI_CONSEGNATI", "", null);
-
-            List<Canto> choosedList = selectableAdapter.getCantiChoose();
-            for (int i = 0; i < choosedList.size(); i++) {
-                Canto singoloCanto = choosedList.get(i);
-                if (singoloCanto.isSelected()) {
-                    String sql = "INSERT INTO CANTI_CONSEGNATI" +
-                            "       (_id, id_canto)" +
-                            "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
-                            "             FROM CANTI_CONSEGNATI";
-
-                    try {
-                        db.execSQL(sql);
-                    } catch (SQLException e) {
-                        Log.e(getClass().toString(), "ERRORE INSERT:");
-                        e.printStackTrace();
-                    }
-                }
-            }
-            db.close();
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            editMode = false;
-            prevOrientation = getActivity().getRequestedOrientation();
-            Utility.blockOrientation(getActivity());
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (mProgressDialog.isShowing())
-                mProgressDialog.dismiss();
-            updateConsegnatiList(true);
-            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
-//            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
-            View myView = rootView.findViewById(R.id.consegnati_view);
-            if (LUtils.hasL())
-                enterReveal(myView, 1);
-            else
-                myView.setVisibility(View.VISIBLE);
-//            myView.setVisibility(View.VISIBLE);
+//    private class ConsegnatiSaveTask extends AsyncTask<String, Integer, String> {
 //
-//            // get the center for the clipping circle
-//            int cx = myView.getRight();
-//            int cy = myView.getBottom();
+//        public ConsegnatiSaveTask() {}
 //
-//            // get the final radius for the clipping circle
-//            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+//        @Override
+//        protected String doInBackground(String... sUrl) {
+//            //aggiorno la lista dei consegnati
 //
-//            SupportAnimator animator =
-//                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-//            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-//            animator.setDuration(CIRCLE_DURATION);
-//            animator.start();
-        }
-    }
+//            DatabaseCanti privateListaCanti = new DatabaseCanti(getActivity().getApplicationContext());
+//            SQLiteDatabase db = privateListaCanti.getReadableDatabase();
+//            db.delete("CANTI_CONSEGNATI", "", null);
+//
+//            List<Canto> choosedList = selectableAdapter.getCantiChoose();
+//            for (int i = 0; i < choosedList.size(); i++) {
+//                Canto singoloCanto = choosedList.get(i);
+//                if (singoloCanto.isSelected()) {
+//                    String sql = "INSERT INTO CANTI_CONSEGNATI" +
+//                            "       (_id, id_canto)" +
+//                            "   SELECT COALESCE(MAX(_id) + 1,1), " + singoloCanto.getIdCanto() +
+//                            "             FROM CANTI_CONSEGNATI";
+//
+//                    try {
+//                        db.execSQL(sql);
+//                    } catch (SQLException e) {
+//                        Log.e(getClass().toString(), "ERRORE INSERT:");
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            db.close();
+//            if (privateListaCanti != null)
+//                privateListaCanti.close();
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            editMode = false;
+////            prevOrientation = getActivity().getRequestedOrientation();
+////            Utility.blockOrientation(getActivity());
+////            mProgressDialog.show();
+//            new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING")
+//                    .content(R.string.save_consegnati_running)
+//                    .showProgress(true)
+//                    .progressIndeterminate(true)
+//                    .progressMax(0)
+//                    .show();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+////            if (mProgressDialog.isShowing())
+////                mProgressDialog.dismiss();
+//            if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
+//                SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
+//            updateConsegnatiList(true);
+//            rootView.findViewById(R.id.choose_view).setVisibility(View.INVISIBLE);
+////            rootView.findViewById(R.id.consegnati_view).setVisibility(View.VISIBLE);
+//            View myView = rootView.findViewById(R.id.consegnati_view);
+//            if (LUtils.hasL())
+//                enterReveal(myView, 1);
+//            else
+//                myView.setVisibility(View.VISIBLE);
+////            myView.setVisibility(View.VISIBLE);
+////
+////            // get the center for the clipping circle
+////            int cx = myView.getRight();
+////            int cy = myView.getBottom();
+////
+////            // get the final radius for the clipping circle
+////            int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+////
+////            SupportAnimator animator =
+////                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+////            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+////            animator.setDuration(CIRCLE_DURATION);
+////            animator.start();
+//        }
+//    }
 
-    private void showHelp() {
-        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
-        startActivity(intent);
-    }
+//    private void showHelp() {
+//        Intent intent = new Intent(getActivity(), IntroConsegnati.class);
+//        startActivity(intent);
+//    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     void enterReveal(View view, int mode) {
@@ -496,5 +718,51 @@ public class ConsegnatiFragment extends Fragment {
         view.setVisibility(View.VISIBLE);
         anim.start();
     }
+
+    private FloatingActionButton getFab() {
+        if (mFab == null) {
+            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab.setVisibility(View.VISIBLE);
+//            mFab.setImageResource(R.drawable.ic_edit_white_24dp);
+            IconicsDrawable icon = new IconicsDrawable(getActivity())
+                    .icon(CommunityMaterial.Icon.cmd_pencil)
+                    .color(Color.WHITE)
+                    .sizeDp(24)
+                    .paddingDp(2);
+            mFab.setImageDrawable(icon);
+        }
+        return mFab;
+    }
+
+    private void hideFab() {
+        getFab().hide();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+        params.setBehavior(null);
+        getFab().requestLayout();
+//        fab2.setVisibility(View.GONE);
+    }
+
+    private void showFab() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
+        getFab().requestLayout();
+        getFab().show();
+//        fab2.setVisibility(View.VISIBLE);
+    }
+
+    private void enableBottombar(boolean enabled) {
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
+        mBottomBar.requestLayout();
+    }
+
+    @Override
+    public void onPositive(@NonNull String tag) {}
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

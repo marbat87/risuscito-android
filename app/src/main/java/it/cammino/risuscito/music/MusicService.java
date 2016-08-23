@@ -206,7 +206,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mPhoneStateHelper = new PhoneStateHelper(getApplicationContext(), this);
 //        else
 //            mAudioFocus = AudioFocus.Focused; // no focus feature, so we always "have" audio focus
-        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.copertina_border);
+        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.main_cover);
         ComponentName mMediaButtonReceiverComponent = new ComponentName(this, MusicIntentReceiver.class);
 //        ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
 //                MediaButtonReceiver.class.getName());
@@ -309,8 +309,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYER_STARTED);
-        Intent intentBroadcast = new Intent(BROADCAST_PLAYER_STARTED);
-        sendBroadcast(intentBroadcast);
+//        Intent intentBroadcast = new Intent(BROADCAST_PLAYER_STARTED);
+//        sendBroadcast(intentBroadcast);
+        sendBroadcast(new Intent(BROADCAST_PLAYER_STARTED));
     }
 
     void processPauseRequest() {
@@ -344,8 +345,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_PAUSED);
-        Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_PAUSED);
-        sendBroadcast(intentBroadcast);
+//        Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_PAUSED);
+//        sendBroadcast(intentBroadcast);
+        sendBroadcast(new Intent(BROADCAST_PLAYBACK_PAUSED));
     }
 
     void processRewindRequest() {
@@ -384,8 +386,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                        .setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
 //            }
             Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_COMPLETED);
-            Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_COMPLETED);
-            sendBroadcast(intentBroadcast);
+//            Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_COMPLETED);
+//            sendBroadcast(intentBroadcast);
+            sendBroadcast(new Intent(BROADCAST_PLAYBACK_COMPLETED));
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
         }
@@ -620,7 +623,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mSongTitle)
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayer.getDuration())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                        BitmapFactory.decodeResource(getResources(), R.drawable.copertina_border))
+                        BitmapFactory.decodeResource(getResources(), R.drawable.main_cover))
                 .build());
 
 //        mSession.setActive(true);

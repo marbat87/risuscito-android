@@ -1,13 +1,11 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -16,14 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,17 +28,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class FavouritesActivity extends Fragment {
+public class FavouritesActivity extends Fragment implements SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
     private List<CantoRecycled> titoli;
@@ -52,12 +50,14 @@ public class FavouritesActivity extends Fragment {
     private View rootView;
     private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
-    private int prevOrientation;
+    //    private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
     private boolean actionModeOk;
 
     private String PREFERITI_OPEN = "preferiti_open";
+
+    private MainActivity mMainActivity;
 
     private LUtils mLUtils;
 
@@ -68,7 +68,14 @@ public class FavouritesActivity extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.activity_favourites, container, false);
-        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
+
+        mMainActivity = (MainActivity) getActivity();
+        Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity.isOnTablet());
+
+//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_favourites);
+
+        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -76,67 +83,68 @@ public class FavouritesActivity extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-        fabClear = (FloatingActionButton) rootView.findViewById(R.id.fab_clear_favorites);
+        if (!mMainActivity.isOnTablet()) {
+            mMainActivity.enableFab(true);
+            mMainActivity.enableBottombar(false);
+        }
+        fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+                (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+//        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
+        IconicsDrawable icon = new IconicsDrawable(getActivity())
+                .icon(CommunityMaterial.Icon.cmd_eraser)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2);
+        fabClear.setImageDrawable(icon);
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.dialog_reset_favorites_title)
-                        .content(R.string.dialog_reset_favorites_desc)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                ContentValues  values = new  ContentValues();
-                                values.put("favourite" , 0);
-                                db.update("ELENCO", values,  null, null);
-                                db.close();
-                                updateFavouritesList();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-//                        .callback(new MaterialDialog.ButtonCallback() {
+//                prevOrientation = getActivity().getRequestedOrientation();
+//                Utility.blockOrientation(getActivity());
+//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                        .title(R.string.dialog_reset_favorites_title)
+//                        .content(R.string.dialog_reset_favorites_desc)
+//                        .positiveText(R.string.confirm)
+//                        .negativeText(R.string.dismiss)
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
 //                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
 //                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                ContentValues values = new ContentValues();
-//                                values.put("favourite", 0);
-//                                db.update("ELENCO", values, null, null);
+//                                ContentValues  values = new  ContentValues();
+//                                values.put("favourite" , 0);
+//                                db.update("ELENCO", values,  null, null);
 //                                db.close();
 //                                updateFavouritesList();
 //                                getActivity().setRequestedOrientation(prevOrientation);
 //                            }
-//
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
 //                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
+//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
 //                                getActivity().setRequestedOrientation(prevOrientation);
 //                            }
 //                        })
+//                        .show();
+//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+//                    @Override
+//                    public boolean onKey(DialogInterface arg0, int keyCode,
+//                                         KeyEvent event) {
+//                        if (keyCode == KeyEvent.KEYCODE_BACK
+//                                && event.getAction() == KeyEvent.ACTION_UP) {
+//                            arg0.dismiss();
+//                            getActivity().setRequestedOrientation(prevOrientation);
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//                dialog.setCancelable(false);
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), FavouritesActivity.this, "FAVORITES_RESET")
+                        .title(R.string.dialog_reset_favorites_title)
+                        .content(R.string.dialog_reset_favorites_desc)
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
             }
         });
 
@@ -157,6 +165,9 @@ public class FavouritesActivity extends Fragment {
             }, 250);
         }
 
+        if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET") != null)
+            SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET").setmCallback(FavouritesActivity.this);
+
         return rootView;
     }
 
@@ -170,6 +181,11 @@ public class FavouritesActivity extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
     }
 
     @Override
@@ -276,14 +292,22 @@ public class FavouritesActivity extends Fragment {
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
         rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (titoli.size() == 0)
-            fabClear.hide();
-        else
-            fabClear.show();
+        if (titoli.size() == 0) {
+            if (mMainActivity.isOnTablet())
+                fabClear.hide();
+            else
+                mMainActivity.enableFab(false);
+        }
+        else {
+            if (mMainActivity.isOnTablet())
+                fabClear.show();
+            else
+                mMainActivity.enableFab(true);
+        }
     }
 
     private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
+        return mMainActivity.getThemeUtils();
     }
 
     private final class ModeCallback implements ActionMode.Callback {
@@ -295,9 +319,14 @@ public class FavouritesActivity extends Fragment {
             titoli.get(posizDaCanc).setmSelected(true);
             cantoAdapter.notifyItemChanged(posizDaCanc);
             removedItems = new ArrayList<>();
-            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_remove_item).setIcon(drawable);
+            menu.findItem(R.id.action_remove_item).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorRes(R.color.icon_ative_black));
+//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
+//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
+//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }
@@ -341,15 +370,19 @@ public class FavouritesActivity extends Fragment {
                     }
                     db.close();
                     rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    if (titoli.size() == 0)
-                        fabClear.hide();
+                    if (titoli.size() == 0) {
+                        if (mMainActivity.isOnTablet())
+                            fabClear.hide();
+                        else
+                            mMainActivity.enableFab(false);
+                    }
                     actionModeOk = true;
                     mode.finish();
                     if (removedItems.size() > 0) {
                         String message = removedItems.size() > 1 ?
                                 getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
                                 : getString(R.string.favorite_removed);
-                        Snackbar.make(rootView.findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+                        Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.cancel, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -372,4 +405,23 @@ public class FavouritesActivity extends Fragment {
             }
         }
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "FAVORITES_RESET":
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                ContentValues  values = new  ContentValues();
+                values.put("favourite" , 0);
+                db.update("ELENCO", values,  null, null);
+                db.close();
+                updateFavouritesList();
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 }

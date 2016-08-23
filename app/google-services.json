@@ -1,1 +1,83 @@
-{"project_info":{"project_id":"hypnotic-epoch-88716","project_number":"9545803189","name":"RisuscitoApp"},"client":[{"client_info":{"client_id":"android:it.cammino.risuscito","client_type":1,"android_client_info":{"package_name":"it.cammino.risuscito"}},"oauth_client":[{"client_id":"9545803189-3m1opr9gmf6bt7gaseglqmvjl6tql8q3.apps.googleusercontent.com","client_type":1,"android_info":{"package_name":"it.cammino.risuscito","certificate_hash":"4bdd6b86301a0ba2d3f1069b61c5332b12645350"}},{"client_id":"9545803189-6gm7sc7blqo3nnoi947agoepjdsulfta.apps.googleusercontent.com","client_type":1,"android_info":{"package_name":"it.cammino.risuscito","certificate_hash":""}}],"services":{"analytics_service":{"status":1},"cloud_messaging_service":{"status":1,"apns_config":[]},"appinvite_service":{"status":1,"other_platform_oauth_client":[]},"google_signin_service":{"status":2},"ads_service":{"status":1}}}],"ARTIFACT_VERSION":"1"}
+{
+  "project_info": {
+    "project_number": "9545803189",
+    "firebase_url": "https://hypnotic-epoch-88716.firebaseio.com",
+    "project_id": "hypnotic-epoch-88716",
+    "storage_bucket": "hypnotic-epoch-88716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9545803189:android:b8ed38e12b0cd642",
+        "android_client_info": {
+          "package_name": "it.cammino.risuscito"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "9545803189-prrndus2vti2nvtgf78134p64lnoet83.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.cammino.risuscito",
+            "certificate_hash": "C229967D4F7086A860FBA151E64747A5D35DD953"
+          }
+        },
+        {
+          "client_id": "9545803189-q4qaianbidsl32k42v6gdbu2c7bq5t4e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.cammino.risuscito",
+            "certificate_hash": "10CFA995710E17641C231B7B645816643EAE4507"
+          }
+        },
+        {
+          "client_id": "9545803189-6gm7sc7blqo3nnoi947agoepjdsulfta.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.cammino.risuscito",
+            "certificate_hash": "E4608FF8DB073F89681E96D8CDAACD7EBC9FFAB7"
+          }
+        },
+        {
+          "client_id": "9545803189-3m1opr9gmf6bt7gaseglqmvjl6tql8q3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.cammino.risuscito",
+            "certificate_hash": "4BDD6B86301A0BA2D3F1069B61C5332B12645350"
+          }
+        },
+        {
+          "client_id": "9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "9545803189-ikp32gbl3d8jf841nji3ssdqr0euaq2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsRG7COzs_hnZBr6S3Ald7NBnP6hSTIGw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

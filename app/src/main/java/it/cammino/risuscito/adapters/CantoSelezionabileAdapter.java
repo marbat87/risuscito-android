@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.R;
@@ -108,7 +109,15 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
     }
 
     // method to access in activity after updating selection
-    public List<Canto> getCantiChoose() {
-        return dataItems;
+    public ArrayList<Integer> getChoosedIds() {
+        ArrayList<Integer> result = new ArrayList<>();
+//        int[] result = new int[dataItems.size()];
+        int i = 0;
+        for (Canto item: dataItems) {
+            if (item.isSelected())
+                result.add(item.getIdCanto());
+        }
+        return result;
     }
+
 }

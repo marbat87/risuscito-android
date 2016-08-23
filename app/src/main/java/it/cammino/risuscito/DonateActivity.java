@@ -1,94 +1,89 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.TextView;
 
-public class DonateActivity extends Fragment {
+import it.cammino.risuscito.ui.ThemeableActivity;
 
-	private final int TEXTZOOM = 90;
+public class DonateActivity extends ThemeableActivity {
 
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+    private final int TEXTZOOM = 90;
 
-		View rootView = inflater.inflate(R.layout.activity_donate, container, false);
-//		((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_activity_donate);
-//		((TextView)((MainActivity) getActivity()).findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
-//		((MainActivity) getActivity()).getSupportActionBar()
-//				.setElevation(dpToPx(getResources().getInteger(R.integer.toolbar_elevation)));
-		((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_donate);
+    private LUtils mLUtils;
 
-		WebView donateView = (WebView) rootView.findViewById(R.id.donate_text);
-		donateView.setBackgroundColor(0);
-//		String text;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_donate);
 
-		String text = "<html><head>"
-				+ "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
-				+ "</style></head>"
-				+ "<body>"
-				+ getString(R.string.donate_long_text)
-				+ "</body></html>";
+        Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+//		toolbar.setTitle("");
+        ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
+//		toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        if (Utility.getChoosedTheme(getActivity()) == 1
-//        		|| Utility.getChoosedTheme(getActivity()) == 3
-//        		|| Utility.getChoosedTheme(getActivity()) == 5
-//        		|| Utility.getChoosedTheme(getActivity()) == 7
-//        		|| Utility.getChoosedTheme(getActivity()) == 9
-//        		|| Utility.getChoosedTheme(getActivity()) == 11) {
-//        	text = "<html><head>"
-//		          + "<style type=\"text/css\">body{color: #FFFFFF;}"
-//		          + "</style></head>"
-//		          + "<body>"                          
-//		          + getString(R.string.donate_long_text)
-//		          + "</body></html>";
-//        }
-//        else {
-//        	text = "<html><head>"
-//  		          + "<style type=\"text/css\">body{color: #000000;}"
-//  		          + "</style></head>"
-//  		          + "<body>"                          
-//  		          + getString(R.string.donate_long_text)
-//  		          + "</body></html>";
-//        }
+        WebView donateView = (WebView) findViewById(R.id.donate_text);
+        donateView.setBackgroundColor(0);
 
-		donateView.loadData(text, "text/html; charset=utf-8", "UTF-8");
+        String text = "<html><head>"
+                + "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
+                + "</style></head>"
+                + "<body>"
+                + getString(R.string.donate_long_text)
+                + "</body></html>";
 
-		WebSettings wSettings = donateView.getSettings();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-			wSettings.setTextZoom(TEXTZOOM);
-		else
-			wSettings.setTextSize(WebSettings.TextSize.SMALLER);
+        donateView.loadData(text, "text/html; charset=utf-8", "UTF-8");
 
-		(rootView.findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
+        WebSettings wSettings = donateView.getSettings();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            wSettings.setTextZoom(TEXTZOOM);
+        else
+            wSettings.setTextSize(WebSettings.TextSize.SMALLER);
 
-			@Override
-			public void onClick(View v) {
-				String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
+        (findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
 
-				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-				startActivity(browserIntent);
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
 
-		return rootView;
-	}
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
+        });
 
-//	public int dpToPx(int dp) {
-//		DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-//		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-//		return px;
-//	}
+        mLUtils = LUtils.getInstance(DonateActivity.this);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            mLUtils.closeActivityWithTransition();
+            return true;
+        }
+        return  super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mLUtils.closeActivityWithTransition();
+                return true;
+            default:
+                return false;
+        }
+    }
 
 }
