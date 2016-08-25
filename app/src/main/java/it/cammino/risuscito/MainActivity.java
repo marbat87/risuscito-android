@@ -19,6 +19,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -80,6 +81,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
@@ -97,49 +100,29 @@ public class MainActivity extends ThemeableActivity
 
     private LUtils mLUtils;
 
-    //    public DrawerLayout mDrawerLayout;
     private Drawer mDrawer;
     private MiniDrawer mMiniDrawer;
     private Crossfader crossFader;
     private AccountHeader mAccountHeader;
-    private Toolbar mToolbar;
+    @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.loadingBar) CircleProgressBar mCircleProgressBar;
+    @BindView(R.id.toolbar_layout) AppBarLayout appBarLayout;
+    @BindView(R.id.material_tabs) TabLayout mTabLayout;
     private boolean isOnTablet;
-    //    protected static final String SELECTED_ITEM = "oggetto_selezionato";
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
     private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
     private static final String DB_BACKUP_RUNNING = "db_backup_running";
     private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
-//    private int selectedItemIndex = 0;
-
-//    private int prevOrientation;
-
-//    private NavigationView mNavigationView;
-
-//    private static final int TALBLET_DP = 600;
-//    private static final int WIDTH_320 = 320;
-//    private static final int WIDTH_400 = 400;
-
-    //    MaterialDialog mProgressDialog;
-    CircleProgressBar mCircleProgressBar;
 
     private boolean showSnackbar;
     private GoogleSignInAccount acct;
-//    private ImageView profileImage;
-//    private ImageView profileBackground;
-//    private View copertinaAccount;
-//    private ImageView accountMenu;
-//    private TextView usernameTextView;
-//    private TextView emailTextView;
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
 //    private FirebaseAnalytics mFirebaseAnalytics;
-    // Bool to track whether the app is already resolving an error
-//    private boolean mResolvingError = false;
 
-    //    private MaterialDialog backupDialog, restoreDialog;
     private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
 
     private boolean dbRestoreRunning;
@@ -152,6 +135,7 @@ public class MainActivity extends ThemeableActivity
         super.hasNavDrawer = true;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         mSavedInstance = savedInstanceState;
 
@@ -161,14 +145,11 @@ public class MainActivity extends ThemeableActivity
                 .sizeDp(24)
                 .paddingDp(2);
 
-        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+//        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         mToolbar.setNavigationIcon(icon);
         setSupportActionBar(mToolbar);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        if (getSupportActionBar() != null)
-//            getSupportActionBar().setTitle("");
 
         if (getIntent().getBooleanExtra(Utility.DB_RESET, false)) {
             (new TranslationTask()).execute();
@@ -183,50 +164,16 @@ public class MainActivity extends ThemeableActivity
 
         setupNavDrawer(savedInstanceState);
 
-//        View header = mNavigationView.getHeaderView(0);
-//
-//        profileImage = (ImageView) header.findViewById(R.id.profile_image);
-//        profileImage.setVisibility(View.INVISIBLE);
-//        usernameTextView = (TextView) header.findViewById(R.id.username);
-//        usernameTextView.setVisibility(View.INVISIBLE);
-//        emailTextView = (TextView) header.findViewById(R.id.email);
-//        emailTextView.setVisibility(View.INVISIBLE);
-//        profileBackground = (ImageView) header.findViewById(R.id.copertina);
-//        copertinaAccount = header.findViewById(R.id.copertina_account);
-//        accountMenu = (ImageView) header.findViewById(R.id.account_menu);
-////        Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-////        DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-//        accountMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                accountMenu.setSelected(!accountMenu.isSelected());
-//                mNavigationView.getMenu().clear();
-//                mNavigationView.inflateMenu(accountMenu.isSelected()
-//                        ? R.menu.drawer_account_menu : R.menu.drawer_menu);
-//                if (!accountMenu.isSelected())
-//                    mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-//            }
-//        });
-
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
 
-        if (findViewById(R.id.content_frame) != null) {
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-//            if (savedInstanceState != null) {
-//                selectedItemIndex = savedInstanceState.getInt(SELECTED_ITEM, 0);
-//                mNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true);
-//            } else {
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-                AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-                appBarLayout.setExpanded(true, true);
-            }
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+//            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+            appBarLayout.setExpanded(true, true);
         }
 
-        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
+//        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
         mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
         if (savedInstanceState != null) {
@@ -414,30 +361,6 @@ public class MainActivity extends ThemeableActivity
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-
-
-//        if(isOnTablet) {
-//            //tablet mode
-//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, GravityCompat.START);
-//            mDrawerLayout.setScrimColor(Color.TRANSPARENT);
-//            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, R.color.icon_ative_black));
-//        }
-//        else {
-//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
-//            mDrawerLayout.setScrimColor(0x99000000);
-//            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-//            Drawable drawable = DrawableCompat.wrap(accountMenu.getDrawable());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(MainActivity.this, android.R.color.white));
-//        }
-//        else
-//            //normal mode
-//            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-//    }
-
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 //        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
@@ -483,7 +406,6 @@ public class MainActivity extends ThemeableActivity
                         //sample usage of the onProfileChanged listener
                         //if the clicked item has the identifier 1 add a new profile ;)
                         if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gdrive_backup) {
-//                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                                     .title(R.string.gdrive_backup)
                                     .content(R.string.gdrive_backup_content)
@@ -493,7 +415,6 @@ public class MainActivity extends ThemeableActivity
                             return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gdrive_restore) {
-//                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                                     .title(R.string.gdrive_restore)
                                     .content(R.string.gdrive_restore_content)
@@ -503,7 +424,6 @@ public class MainActivity extends ThemeableActivity
                             return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_signout) {
-//                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                                     .title(R.string.gplus_signout)
                                     .content(R.string.dialog_acc_disconn_text)
@@ -513,7 +433,6 @@ public class MainActivity extends ThemeableActivity
                             return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_revoke) {
-//                            mDrawer.closeDrawer();
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                                     .title(R.string.gplus_revoke)
                                     .content(R.string.dialog_acc_revoke_text)
@@ -587,7 +506,7 @@ public class MainActivity extends ThemeableActivity
                             if (drawerItem.getIdentifier() == R.id.navigation_home) {
                                 fragment = new Risuscito();
                                 if (LUtils.hasL()) {
-                                    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.toolbar_layout);
+//                                    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.toolbar_layout);
                                     appBarLayout.setExpanded(true, true);
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 }
@@ -683,55 +602,11 @@ public class MainActivity extends ThemeableActivity
             mDrawer.getDrawerLayout().setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
         }
 
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
-//        if (mDrawerLayout == null) {
-//            return;
-//        }
-//        mDrawerLayout.setStatusBarBackgroundColor(getThemeUtils().primaryColorDark());
-////        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-//
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        mDrawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
-//
-//        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-//        mNavigationView.setNavigationItemSelectedListener(this);
-//
-//        ColorStateList mIconStateList = new ColorStateList(
-//                new int[][]{
-//                        new int[]{android.R.attr.state_checked}, //1
-//                        new int[]{} //2
-//                },
-//                new int[]{
-//                        getThemeUtils().primaryColor(), //1
-//                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_icon_tint) // 2
-//                }
-//        );
-//
-//        ColorStateList mTextStateList = new ColorStateList(
-//                new int[][]{
-//                        new int[]{android.R.attr.state_checked}, //1
-//                        new int[]{} //2
-//                },
-//                new int[]{
-//                        getThemeUtils().primaryColor(), //1
-//                        ContextCompat.getColor(MainActivity.this, R.color.navdrawer_text_color) //2
-//                }
-//        );
-//
-//        mNavigationView.setItemIconTintList(mIconStateList);
-//        mNavigationView.setItemTextColor(mTextStateList);
-
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) && !isOnTablet) {
-//                mDrawerLayout.closeDrawer(GravityCompat.START);
-//                return true;
-//            }
             if (isOnTablet) {
                 if (crossFader != null && crossFader.isCrossFaded()) {
                     crossFader.crossFade();
@@ -754,9 +629,8 @@ public class MainActivity extends ThemeableActivity
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
+//            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
-//            mNavigationView.getMenu().getItem(0).setChecked(true);
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -881,162 +755,6 @@ public class MainActivity extends ThemeableActivity
         mBottomBar.requestLayout();
     }
 
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem item) {
-////        item.setChecked(true);
-//        Fragment fragment;
-//
-//        switch (item.getItemId()) {
-//            case R.id.navigation_home:
-//                item.setChecked(true);
-//                selectedItemIndex = 0;
-//                fragment = new Risuscito();
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-//                    appBarLayout.setExpanded(true, true);
-//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-//                }
-//                break;
-//            case R.id.navigation_search:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(0);
-//                }
-//                selectedItemIndex = 1;
-//                fragment = new GeneralSearch();
-//                break;
-//            case R.id.navigation_indexes:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(0);
-//                }
-//                selectedItemIndex = 2;
-//                fragment = new GeneralIndex();
-//                break;
-//            case R.id.navitagion_lists:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(0);
-//                }
-//                selectedItemIndex = 3;
-//                fragment = new CustomLists();
-//                break;
-//            case R.id.navigation_favorites:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-//                }
-//                selectedItemIndex = 4;
-//                fragment = new FavouritesActivity();
-//                break;
-//            case R.id.navigation_settings:
-//                selectedItemIndex = 5;
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-//                }
-//                fragment = new PreferencesFragment();
-//                break;
-//            case R.id.navigation_changelog:
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
-//                return true;
-////                selectedItemIndex = 6;
-////                fragment = new AboutActivity();
-////                break;
-//            case R.id.navigation_donate:
-////                selectedItemIndex = 7;
-////                fragment = new DonateActivity();
-////                break;
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
-//                return true;
-//            case R.id.navigation_consegnati:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-//                }
-//                selectedItemIndex = 6;
-//                fragment = new ConsegnatiFragment();
-//                break;
-//            case R.id.navigation_history:
-//                item.setChecked(true);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-//                }
-//                selectedItemIndex = 7;
-//                fragment = new HistoryFragment();
-//                break;
-//            case R.id.gdrive_backup:
-//                accountMenu.performClick();
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
-//                        .title(R.string.gdrive_backup)
-//                        .content(R.string.gdrive_backup_content)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//                return true;
-//            case R.id.gdrive_restore:
-//                accountMenu.performClick();
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
-//                        .title(R.string.gdrive_restore)
-//                        .content(R.string.gdrive_restore_content)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//                return true;
-//            case R.id.gplus_signout:
-//                accountMenu.performClick();
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
-//                        .title(R.string.gplus_signout)
-//                        .content(R.string.dialog_acc_disconn_text)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//                return true;
-//            case R.id.gplus_revoke:
-//                accountMenu.performClick();
-//                if (!isOnTablet)
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
-//                        .title(R.string.gplus_revoke)
-//                        .content(R.string.dialog_acc_revoke_text)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//                return true;
-//            default:
-//                selectedItemIndex = 0;
-//                fragment = new Risuscito();
-//                break;
-//        }
-//
-//        //creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-//        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(item.getItemId()));
-//        if (myFragment == null || !myFragment.isVisible()) {
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-//            transaction.replace(R.id.content_frame, fragment, String.valueOf(item.getItemId())).commit();
-//
-//            Handler mHandler = new Handler();
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (!isOnTablet)
-//                        mDrawerLayout.closeDrawer(GravityCompat.START);
-//                }
-//            }, 250);
-//        }
-//        return true;
-//    }
-
     // [START signIn]
     public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -1135,79 +853,6 @@ public class MainActivity extends ThemeableActivity
 
     @SuppressWarnings("deprecation")
     private void updateUI(boolean signedIn) {
-//        if (signedIn) {
-//            if (LUtils.hasJB()) {
-//                if (isOnTablet)
-//                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
-//                else
-//                    copertinaAccount.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
-//            }
-//            else {
-//                if (isOnTablet)
-//                    copertinaAccount.setBackground(new ColorDrawable(Color.WHITE));
-//                else
-//                    copertinaAccount.setBackgroundDrawable(new ColorDrawable(getThemeUtils().primaryColor()));
-//            }
-////            copertinaAccount.setBackgroundColor(getThemeUtils().primaryColor());
-//            profileBackground.setVisibility(View.INVISIBLE);
-//
-////            Log.d(getClass().getName(), "acct.getPhotoUrl().toString():" + acct.getPhotoUrl().toString());
-//            Uri profilePhoto = acct.getPhotoUrl();
-//            if (profilePhoto != null) {
-//                String personPhotoUrl = profilePhoto.toString();
-//                // by default the profile url gives 50x50 px image only
-//                // we can replace the value with whatever dimension we want by
-//                // replacing sz=X
-//                personPhotoUrl = personPhotoUrl.substring(0,
-//                        personPhotoUrl.length() - 2)
-//                        + 400;
-//                Picasso.with(this)
-//                        .load(personPhotoUrl)
-//                        .error(R.drawable.gplus_default_avatar)
-//                        .into(profileImage);
-//            } else {
-//                Picasso.with(this)
-//                        .load(R.drawable.gplus_default_avatar)
-//                        .into(profileImage);
-//            }
-//
-//            profileImage.setVisibility(View.VISIBLE);
-//
-//            String personName = acct.getDisplayName();
-////                Log.d(getClass().getName(), "personName: " + personName);
-//            usernameTextView.setText(personName);
-//            usernameTextView.setVisibility(View.VISIBLE);
-//
-//            String email = acct.getEmail();
-////                Log.d(getClass().getName(), "email: " + email);
-//            emailTextView.setText(email);
-//            emailTextView.setVisibility(View.VISIBLE);
-//
-//            if (findViewById(R.id.sign_in_button) != null)
-//                findViewById(R.id.sign_in_button).setVisibility(View.INVISIBLE);
-//
-//            accountMenu.setVisibility(View.VISIBLE);
-////            }
-//        } else {
-//            profileImage.setVisibility(View.INVISIBLE);
-//            usernameTextView.setVisibility(View.INVISIBLE);
-//            emailTextView.setVisibility(View.INVISIBLE);
-//            if (LUtils.hasJB())
-//                copertinaAccount.setBackground(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-//            else
-//                copertinaAccount.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(MainActivity.this, android.R.color.transparent)));
-////            copertinaAccount.setBackgroundColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
-//            profileBackground.setVisibility(View.VISIBLE);
-////            profileBackground.setImageResource(R.drawable.copertina_about);
-//            Picasso.with(this)
-//                    .load(R.drawable.about_cover)
-//                    .error(R.drawable.about_cover)
-//                    .into(profileBackground);
-//            if (findViewById(R.id.sign_in_button) != null)
-//                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-//            accountMenu.setVisibility(View.INVISIBLE);
-//        }
-
 //        AccountHeader headerResult;
         Intent intentBroadcast = new Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE);
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn);
@@ -1235,14 +880,7 @@ public class MainActivity extends ThemeableActivity
                         .withIdentifier(PROF_ID);
             }
             // Create the AccountHeader
-//            if (isOnTablet)
-//                mAccountHeader.setBackground(new ColorDrawable(Color.WHITE));
-//            else
-//                mAccountHeader.setBackground(new ColorDrawable(getThemeUtils().primaryColor()));
-//            mAccountHeader.addProfile(profile,0);
             mAccountHeader.updateProfile(profile);
-//            mAccountHeader.clear();
-//            mAccountHeader.addProfiles(profile,
             if (mAccountHeader.getProfiles().size() == 1) {
                 mAccountHeader.addProfiles(
                         new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(CommunityMaterial.Icon.cmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
@@ -1252,74 +890,8 @@ public class MainActivity extends ThemeableActivity
             }
             if (isOnTablet)
                 mMiniDrawer.onProfileClick();
-//            mAccountHeader = new AccountHeaderBuilder()
-//                    .withActivity(this)
-//                    .withTranslucentStatusBar(true)
-//                    .withHeaderBackground(new ColorDrawable(getThemeUtils().primaryColor()))
-//                    .addProfiles(profile,
-//                            new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_backup)).withIcon(GoogleMaterial.Icon.gmd_cloud_upload).withIdentifier(R.id.gdrive_backup),
-//                            new ProfileSettingDrawerItem().withName(getString(R.string.gdrive_restore)).withIcon(GoogleMaterial.Icon.gmd_cloud_download).withIdentifier(R.id.gdrive_restore),
-//                            new ProfileSettingDrawerItem().withName(getString(R.string.gplus_signout)).withIcon(GoogleMaterial.Icon.gmd_exit_to_app).withIdentifier(R.id.gplus_signout),
-//                            new ProfileSettingDrawerItem().withName(getString(R.string.gplus_revoke)).withIcon(GoogleMaterial.Icon.gmd_vpn_key).withIdentifier(R.id.gplus_revoke))
-//                    .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-//                        @Override
-//                        public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-//                            //sample usage of the onProfileChanged listener
-//                            //if the clicked item has the identifier 1 add a new profile ;)
-//                            if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_backup) {
-//                                mDrawer.closeDrawer();
-//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
-//                                        .title(R.string.gdrive_backup)
-//                                        .content(R.string.gdrive_backup_content)
-//                                        .positiveButton(R.string.confirm)
-//                                        .negativeButton(R.string.dismiss)
-//                                        .show();
-//                                return true;
-//                            }
-//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gdrive_restore) {
-//                                mDrawer.closeDrawer();
-//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
-//                                        .title(R.string.gdrive_restore)
-//                                        .content(R.string.gdrive_restore_content)
-//                                        .positiveButton(R.string.confirm)
-//                                        .negativeButton(R.string.dismiss)
-//                                        .show();
-//                                return true;
-//                            }
-//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_signout) {
-//                                mDrawer.closeDrawer();
-//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
-//                                        .title(R.string.gplus_signout)
-//                                        .content(R.string.dialog_acc_disconn_text)
-//                                        .positiveButton(R.string.confirm)
-//                                        .negativeButton(R.string.dismiss)
-//                                        .show();
-//                                return true;
-//                            }
-//                            else if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == R.id.gplus_revoke) {
-//                                mDrawer.closeDrawer();
-//                                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
-//                                        .title(R.string.gplus_revoke)
-//                                        .content(R.string.dialog_acc_revoke_text)
-//                                        .positiveButton(R.string.confirm)
-//                                        .negativeButton(R.string.dismiss)
-//                                        .show();
-//                                return true;
-//                            }
-//
-//                            //false if you have not consumed the event and it should close the drawer
-//                            return false;
-//                        }
-//                    })
-//                    .build();
         }
         else {
-//            mAccountHeader = new AccountHeaderBuilder()
-//                    .withActivity(this)
-//                    .withTranslucentStatusBar(true)
-//                    .withHeaderBackground(R.drawable.about_cover)
-//                    .build();
-//            mAccountHeader.setBackgroundRes(R.drawable.about_cover);
             IProfile profile = new ProfileDrawerItem().withName("")
                     .withEmail("")
                     .withIcon(R.drawable.gplus_default_avatar)
@@ -1330,17 +902,11 @@ public class MainActivity extends ThemeableActivity
                 mAccountHeader.removeProfile(1);
                 mAccountHeader.removeProfile(1);
             }
-//            mAccountHeader.clear();
-//            mAccountHeader.addProfile(profile, 0);
             mAccountHeader.updateProfile(profile);
             if (isOnTablet)
                 mMiniDrawer.onProfileClick();
 
         }
-
-//        mAccountHeader.setDrawer(mDrawer);
-//        mDrawer.closeDrawer();
-//        setupNavDrawer(mSavedInstance);
 
     }
 
@@ -1368,8 +934,6 @@ public class MainActivity extends ThemeableActivity
 //    }
 
     private void showProgressDialog() {
-//        if (mProgressDialog != null && !mProgressDialog.isShowing())
-//            mProgressDialog.show();
         mCircleProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -1383,9 +947,9 @@ public class MainActivity extends ThemeableActivity
         this.showSnackbar = showSnackbar;
     }
 
-    public GoogleApiClient getmGoogleApiClient() {
-        return mGoogleApiClient;
-    }
+//    public GoogleApiClient getmGoogleApiClient() {
+//        return mGoogleApiClient;
+//    }
 
     /******************************************************************
      * controlla se il file è già esistente; se esiste lo cancella e poi lo ricrea
@@ -1422,7 +986,6 @@ public class MainActivity extends ThemeableActivity
                             Log.d(getClass().getName(), "saveCheckDupl - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
                             metadataBufferResult.getMetadataBuffer().release();
 
-//                        DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
                             DriveFile mFile = mDriveId.asDriveFile();
                             mFile.delete(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                                 @Override
@@ -1436,8 +999,6 @@ public class MainActivity extends ThemeableActivity
                                     } else {
                                         String errore = "ERRORE CANCELLAZIONE: " + status.getStatusCode() + "-" + status.getStatusMessage();
                                         Log.e(getClass().getName(), "saveCheckDupl - " + errore);
-//                                    if (backupDialog != null && backupDialog.isShowing())
-//                                        backupDialog.dismiss();
                                         if (dataBase)
                                             dbBackupRunning = false;
                                         else
@@ -1456,8 +1017,6 @@ public class MainActivity extends ThemeableActivity
                 });
             } catch (Exception e) {
                 Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
-//            if (backupDialog != null && backupDialog.isShowing())
-//                backupDialog.dismiss();
                 if (dataBase)
                     dbBackupRunning = false;
                 else
@@ -1486,11 +1045,7 @@ public class MainActivity extends ThemeableActivity
                 Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
                     @Override
                     public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
-//                    DriveContents cont = driveContentsResult != null && driveContentsResult.getStatus().isSuccess() ?
-//                            driveContentsResult.getDriveContents() : null;
-
                         // write file to content, chunk by chunk
-//                    if (cont != null) {
                         if (driveContentsResult.getStatus().isSuccess()) {
                             DriveContents cont = driveContentsResult.getDriveContents();
                             if (dataBase) {
@@ -1509,8 +1064,6 @@ public class MainActivity extends ThemeableActivity
                                     }
                                 } catch (Exception e) {
                                     Log.e(getClass().getName(), "saveToDrive - Exception1: " + e.getLocalizedMessage(), e);
-//                                if (backupDialog != null && backupDialog.isShowing())
-//                                    backupDialog.dismiss();
                                     dbBackupRunning = false;
                                     if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                         SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
@@ -1520,8 +1073,6 @@ public class MainActivity extends ThemeableActivity
                                 }
                             } else {
                                 if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
-//                                if (backupDialog != null && backupDialog.isShowing())
-//                                    backupDialog.dismiss();
                                     prefBackupRunning = false;
                                     if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                         SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
@@ -1536,28 +1087,19 @@ public class MainActivity extends ThemeableActivity
                             pFldr.createFile(mGoogleApiClient, meta, cont).setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
                                 @Override
                                 public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
-//                                if (driveFileResult != null)
                                     if (driveFileResult.getStatus().isSuccess()) {
-//                                    DriveFile dFil = driveFileResult != null && driveFileResult.getStatus().isSuccess() ?
-//                                            driveFileResult.getDriveFile() : null;
                                         DriveFile dFil = driveFileResult.getDriveFile();
                                         if (dFil != null) {
                                             // BINGO , file uploaded
                                             dFil.getMetadata(mGoogleApiClient).setResultCallback(new ResultCallback<DriveResource.MetadataResult>() {
                                                 @Override
                                                 public void onResult(@NonNull DriveResource.MetadataResult metadataResult) {
-//                                                if (metadataResult != null && metadataResult.getStatus().isSuccess()) {
                                                     if (metadataResult.getStatus().isSuccess()) {
                                                         DriveId mDriveId = metadataResult.getMetadata().getDriveId();
                                                         Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
-//                                                    if (backupDialog != null && backupDialog.isShowing())
-//                                                        backupDialog.dismiss();
                                                         String error = "saveToDrive - FILE CARICATO - CODE: " + metadataResult.getStatus().getStatusCode();
                                                         Log.d(getClass().getName(), error);
-//                                                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_backup_success, Snackbar.LENGTH_LONG).show();
                                                         if (dataBase) {
-//                                                        if (backupDialog != null && backupDialog.isShowing())
-//                                                            backupDialog.setContent(R.string.backup_settings);
                                                             dbBackupRunning = false;
                                                             if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                                                 SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").setContent(R.string.backup_settings);
@@ -1569,8 +1111,6 @@ public class MainActivity extends ThemeableActivity
                                                                     , false
                                                             );
                                                         } else {
-//                                                        if (backupDialog != null && backupDialog.isShowing())
-//                                                            backupDialog.dismiss();
                                                             prefBackupRunning = false;
                                                             if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") != null)
                                                                 SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING").dismiss();
@@ -1582,8 +1122,6 @@ public class MainActivity extends ThemeableActivity
                                         }
                                     } else {
                                  /* report error */
-//                                    if (backupDialog != null && backupDialog.isShowing())
-//                                        backupDialog.dismiss();
                                         if (dataBase)
                                             dbBackupRunning = false;
                                         else
@@ -1594,20 +1132,10 @@ public class MainActivity extends ThemeableActivity
                                         Log.e(getClass().getName(), error);
                                         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
                                     }
-//                                else {
-//                                 /* report error */
-//                                    if (backupDialog != null && backupDialog.isShowing())
-//                                        backupDialog.dismiss();
-//                                    String error = "saveToDrive - driveFileResult null";
-//                                    Log.e(getClass().getName(), error);
-//                                    Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-//                                }
                                 }
                             });
                         } else {
                         /* report error */
-//                        if (backupDialog != null && backupDialog.isShowing())
-//                            backupDialog.dismiss();
                             if (dataBase)
                                 dbBackupRunning = false;
                             else
@@ -1622,8 +1150,6 @@ public class MainActivity extends ThemeableActivity
                 });
             } catch (Exception e) {
                 Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
-//            if (backupDialog != null && backupDialog.isShowing())
-//                backupDialog.dismiss();
                 if (dataBase)
                     dbBackupRunning = false;
                 else
@@ -1650,13 +1176,6 @@ public class MainActivity extends ThemeableActivity
         Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
             @Override
             public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
-
-            /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
-                debug("got index "+i);
-                debug("filesize in cloud "+ metadataBufferResult.getMetadataBuffer().get(i).getFileSize());
-                debug("driveId(1): "+ metadataBufferResult.getMetadataBuffer().get(i).getDriveId());
-            }*/
-
                 int count = metadataBufferResult.getMetadataBuffer().getCount();
                 Log.d(getClass().getName(), "restoreDriveBackup - Count files backup: " + count);
                 if (count > 0) {
@@ -1665,7 +1184,6 @@ public class MainActivity extends ThemeableActivity
                     Log.d(getClass().getName(), "restoreDriveBackup - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
                     metadataBufferResult.getMetadataBuffer().release();
 
-//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
                     DriveFile mFile = mDriveId.asDriveFile();
                     mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
                         @Override
@@ -1674,8 +1192,6 @@ public class MainActivity extends ThemeableActivity
                     })
                             .setResultCallback(restoreContentsCallback);
                 } else {
-//                    if (restoreDialog != null && restoreDialog.isShowing())
-//                        restoreDialog.dismiss();
                     dbRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1690,11 +1206,8 @@ public class MainActivity extends ThemeableActivity
                 @Override
                 public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
-//                        mToast("Unable to open file, try again.");
                         String error = "restoreContentsCallback - restore error: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
-//                        if (restoreDialog != null && restoreDialog.isShowing())
-//                            restoreDialog.dismiss();
                         dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1704,7 +1217,6 @@ public class MainActivity extends ThemeableActivity
 
                     DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
                     listaCanti.close();
-//                    utilsM.dbClose();
 
                     File db_file = getDbPath();
                     String path = db_file.getPath();
@@ -1723,14 +1235,15 @@ public class MainActivity extends ThemeableActivity
                         BufferedInputStream in = new BufferedInputStream(contents.getInputStream());
 
                         byte[] buffer = new byte[1024];
-                        int n, cnt = 0;
+                        int n;
+//                        cnt = 0;
 
 
                         //debug("before read " + in.available());
 
                         while ((n = in.read(buffer)) > 0) {
                             bos.write(buffer, 0, n);
-                            cnt += n;
+//                            cnt += n;
 //                            debug("buffer: " + buffer[0]);
 //                            debug("buffer: " + buffer[1]);
 //                            debug("buffer: " + buffer[2]);
@@ -1745,8 +1258,6 @@ public class MainActivity extends ThemeableActivity
                     } catch (FileNotFoundException e) {
                         Log.e(getClass().getName(), "restoreContentsCallback - Exception3: " + e.getLocalizedMessage(), e);
                         contents.discard(mGoogleApiClient);
-//                        if (restoreDialog != null && restoreDialog.isShowing())
-//                            restoreDialog.dismiss();
                         dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1756,8 +1267,6 @@ public class MainActivity extends ThemeableActivity
                     } catch (IOException e) {
                         Log.e(getClass().getName(), "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(), e);
                         contents.discard(mGoogleApiClient);
-//                        if (restoreDialog != null && restoreDialog.isShowing())
-//                            restoreDialog.dismiss();
                         dbRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1766,21 +1275,12 @@ public class MainActivity extends ThemeableActivity
                         return;
                     }
 
-//                    mToast(act.getResources().getString(R.string.restoreComplete));
-//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
-//                    DialogFragment_Sync.dismissDialog();
-//                    if (restoreDialog != null && restoreDialog.isShowing())
-//                        restoreDialog.dismiss();
-
                     listaCanti = new DatabaseCanti(MainActivity.this);
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
                     db.close();
                     listaCanti.close();
-//                    utilsM.dbOpen();
                     contents.discard(mGoogleApiClient);
 
-//                    if (restoreDialog != null && restoreDialog.isShowing())
-//                        restoreDialog.setContent(R.string.restoring_settings);
                     dbRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").setContent(R.string.restoring_settings);
@@ -1800,12 +1300,6 @@ public class MainActivity extends ThemeableActivity
             @Override
             public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
 
-            /*for(int i = 0 ;i < metadataBufferResult.getMetadataBuffer().getCount() ;i++) {
-                debug("got index "+i);
-                debug("filesize in cloud "+ metadataBufferResult.getMetadataBuffer().get(i).getFileSize());
-                debug("driveId(1): "+ metadataBufferResult.getMetadataBuffer().get(i).getDriveId());
-            }*/
-
                 int count = metadataBufferResult.getMetadataBuffer().getCount();
                 Log.d(getClass().getName(), "restoreDrivePrefBackup - Count files backup: " + count);
                 if (count > 0) {
@@ -1814,8 +1308,6 @@ public class MainActivity extends ThemeableActivity
                     Log.d(getClass().getName(), "restoreDrivePrefBackup - filesize in cloud " + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
                     metadataBufferResult.getMetadataBuffer().release();
 
-
-//                    DriveFile mfile = Drive.DriveApi.getFile(mGoogleApiClient, mDriveId);
                     DriveFile mFile = mDriveId.asDriveFile();
                     mFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, new DriveFile.DownloadProgressListener() {
                         @Override
@@ -1824,8 +1316,6 @@ public class MainActivity extends ThemeableActivity
                     })
                             .setResultCallback(restoreContentsPrefCallback);
                 } else {
-//                    if (restoreDialog != null && restoreDialog.isShowing())
-//                        restoreDialog.dismiss();
                     prefRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1842,8 +1332,6 @@ public class MainActivity extends ThemeableActivity
                     if (!result.getStatus().isSuccess()) {
                         String error = "restoreContentsPrefCallback - restore error: " + result.getStatus().getStatusCode() + " - " + result.getStatus().getStatusMessage();
                         Log.e(getClass().getName(), error);
-//                        if (restoreDialog != null && restoreDialog.isShowing())
-//                            restoreDialog.dismiss();
                         prefRestoreRunning = false;
                         if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                             SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
@@ -1855,30 +1343,9 @@ public class MainActivity extends ThemeableActivity
 
                     loadSharedPreferencesFromFile(contents.getInputStream());
                     contents.discard(mGoogleApiClient);
-//                    Snackbar.make(findViewById(R.id.main_content), R.string.gdrive_restore_success, Snackbar.LENGTH_LONG).show();
-//                    if (restoreDialog != null && restoreDialog.isShowing())
-//                        restoreDialog.dismiss();
                     prefRestoreRunning = false;
                     if (SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING") != null)
                         SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING").dismiss();
-//                    prevOrient
-// ockOrientation(MainActivity.this);
-//                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-//                            .title(R.string.general_message)
-//                            .content(R.string.gdrive_restore_success)
-//                            .positiveText(R.string.dialog_chiudi)
-//                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                @Override
-//                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                    setRequestedOrientation(prevOrientation);
-//                                    Intent i = getBaseContext().getPackageManager()
-//                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
-//                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                    startActivity(i);
-//                                }
-//                            })
-//                            .show();
-//                    dialog.setCancelable(false);
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
                             .title(R.string.general_message)
                             .content(R.string.gdrive_restore_success)

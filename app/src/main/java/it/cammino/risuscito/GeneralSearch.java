@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
@@ -20,23 +22,25 @@ public class GeneralSearch extends Fragment {
 
     private MainActivity mMainActivity;
 
+    @BindView(R.id.view_pager) ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
+        ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_search);
         mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+//        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+//        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
         if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);

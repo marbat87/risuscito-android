@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
@@ -63,40 +66,57 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.recycler_list) RecyclerView mRecyclerView;
+
+    @OnClick(R.id.button_pulisci)
+    public void pulisciLista() {
+        db = listaCanti.getReadableDatabase();
+        String sql = "DELETE FROM CUST_LISTS" +
+                " WHERE _id =  2 ";
+        db.execSQL(sql);
+        db.close();
+        updateLista();
+        cantoAdapter.notifyDataSetChanged();
+    }
+
+    @OnClick(R.id.button_condividi)
+    public void condividiLista() {
+//                Log.i(getClass().toString(), "cantieucarestia");
+        BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+        bottomSheetDialog.show(getFragmentManager(), null);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.activity_lista_personalizzata, container, false);
+        rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
+        ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
-        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantieucarestia");
-                db = listaCanti.getReadableDatabase();
-                String sql = "DELETE FROM CUST_LISTS" +
-                        " WHERE _id =  2 ";
-                db.execSQL(sql);
-                db.close();
-                updateLista();
-                cantoAdapter.notifyDataSetChanged();
-            }
-        });
+//        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantieucarestia");
+//                db = listaCanti.getReadableDatabase();
+//                String sql = "DELETE FROM CUST_LISTS" +
+//                        " WHERE _id =  2 ";
+//                db.execSQL(sql);
+//                db.close();
+//                updateLista();
+//                cantoAdapter.notifyDataSetChanged();
+//            }
+//        });
 
-        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantieucarestia");
-//                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
-//                        .title(R.string.share_by)
-//                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
-                bottomSheetDialog.show(getFragmentManager(), null);
-            }
-        });
+//        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantieucarestia");
+//                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+//                bottomSheetDialog.show(getFragmentManager(), null);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
@@ -153,14 +173,14 @@ public class CantiEucarestiaFragment extends Fragment {
             }
         };
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
+//        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
         cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (!isViewShown) {
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
@@ -177,11 +197,6 @@ public class CantiEucarestiaFragment extends Fragment {
         if (isVisibleToUser) {
             if (getView() != null) {
                 isViewShown = true;
-//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
-//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-//            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-//            if (!fab1.isShowing())
-//                fab1.scrollUp();
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
                 fab1.show();
             }
@@ -635,12 +650,6 @@ public class CantiEucarestiaFragment extends Fragment {
                             .sizeDp(24)
                             .paddingDp(2)
                             .colorRes(R.color.icon_ative_black));
-//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
-//            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_switch_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }
@@ -687,7 +696,6 @@ public class CantiEucarestiaFragment extends Fragment {
                                     db.close();
                                     updateLista();
                                     cantoAdapter.notifyItemChanged(longclickedPos);
-//                                    mShareActionProvider.setShareIntent(getDefaultIntent());
                                 }
                             })
                             .setActionTextColor(getThemeUtils().accentColor())

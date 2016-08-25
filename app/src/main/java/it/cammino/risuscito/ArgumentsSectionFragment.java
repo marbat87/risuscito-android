@@ -37,6 +37,8 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoExpandableAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
@@ -58,7 +60,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     private int[] idListe;
     private int idListaClick;
     private int idPosizioneClick;
-    //    private int prevOrientation;
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
@@ -66,18 +67,20 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
     private LUtils mLUtils;
 
-    private RecyclerView mRecyclerView;
+//    private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.layout_recycler, container, false);
+        rootView = inflater.inflate(R.layout.layout_recycler, container, false);
+        ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -134,7 +137,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         }
 
         arguments.close();
-//        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -159,7 +161,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         };
 
         //noinspection ConstantConditions
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
 
         final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
@@ -416,8 +418,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                                         .show();
                             }
                             else {
-//                                prevOrientation = getActivity().getRequestedOrientation();
-//                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
                                 String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
@@ -425,49 +425,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-//                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                                        .title(R.string.dialog_replace_title)
-//                                        .content(getString(R.string.dialog_present_yet) + " "
-//                                                + cursor.getString(0)
-//                                                + getString(R.string.dialog_wonna_replace))
-//                                        .positiveText(R.string.confirm)
-//                                        .negativeText(R.string.dismiss)
-//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                            @Override
-//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues  values = new  ContentValues( );
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//                                        })
-//                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                            @Override
-//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
-//                                        .show();
-//                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                                    @Override
-//                                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                         KeyEvent event) {
-//                                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                                            arg0.dismiss();
-//                                            getActivity().setRequestedOrientation(prevOrientation);
-//                                            return true;
-//                                        }
-//                                        return false;
-//                                    }
-//                                });
-//                                dialog.setCancelable(false);
                                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ArgumentsSectionFragment.this, "ARGUMENT_REPLACE")
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
@@ -556,50 +513,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             else {
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_replace_title)
-//                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//                                + getString(R.string.dialog_wonna_replace))
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String sql = "UPDATE CUST_LISTS "
-//                                        + "     SET id_canto = " + idDaAgg
-//                                        + "     WHERE _id = " + idListaDaAgg
-//                                        + "     AND position = " + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ArgumentsSectionFragment.this, "ARGUMENT_REPLACE_2")
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente

@@ -1,6 +1,5 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
@@ -40,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -50,14 +51,12 @@ public class InsertAvanzataFragment extends Fragment {
 
     private DatabaseCanti listaCanti;
     private List<CantoInsert> titoli;
-    private EditText searchPar;
+//    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-    RecyclerView recyclerView;
+//    RecyclerView recyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
-//    private ProgressBar progress;
-    private CircleProgressBar progress;
-//    private static Map<Character, Character> MAP_NORM;
+//    private CircleProgressBar progress;
 
     private int fromAdd;
     private int idLista;
@@ -69,16 +68,26 @@ public class InsertAvanzataFragment extends Fragment {
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.matchedList) RecyclerView recyclerView;
+    @BindView(R.id.textfieldRicerca) EditText searchPar;
+    @BindView(R.id.search_progress) CircleProgressBar progress;
+    @BindView(R.id.search_no_results) View mNoResults;
+
+    @OnClick(R.id.pulisci_ripple)
+    public void pulisciRisultati() {
+        searchPar.setText("");
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.activity_ricerca_avanzata, container, false);
+        rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
+        ButterKnife.bind(this, rootView);
 
-        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
+//        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
+//        recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -167,17 +176,8 @@ public class InsertAvanzataFragment extends Fragment {
         // Setting the layoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
+//        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
         progress.setColorSchemeColors(getThemeUtils().accentColor());
-//        progress = (ProgressBar) rootView.findViewById(R.id.search_progress);
-//        if (LUtils.hasICS()) {
-//            IndeterminateProgressDrawable d = new IndeterminateProgressDrawable(getActivity());
-//            d.setTint(getThemeUtils().accentColor());
-//            progress.setProgressDrawable(d);
-//            progress.setIndeterminateDrawable(d);
-//        }
-//        else
-//            MDTintHelper.setTint(progress, getThemeUtils().accentColor());
 
         searchPar.setText("");
 
@@ -215,10 +215,10 @@ public class InsertAvanzataFragment extends Fragment {
                 }
                 else {
                     if (s.length() == 0) {
-                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        mNoResults.setVisibility(View.GONE);
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-//                        progress.stop();
                         progress.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -263,12 +263,12 @@ public class InsertAvanzataFragment extends Fragment {
 
         });
 
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchPar.setText("");
-            }
-        });
+//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                searchPar.setText("");
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -314,7 +314,6 @@ public class InsertAvanzataFragment extends Fragment {
 
         SQLiteDatabase db;
 
-        @SuppressLint("NewApi")
         @Override
         protected String doInBackground(String... sSearchText) {
 
@@ -345,13 +344,13 @@ public class InsertAvanzataFragment extends Fragment {
                         text = word.trim();
                         text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                            String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
-                            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-                            text = pattern.matcher(nfdNormalizedString).replaceAll("");
-                        }
-                        else
-                            text = Utility.removeAccents(text);
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                        String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
+                        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+                        text = pattern.matcher(nfdNormalizedString).replaceAll("");
+//                        }
+//                        else
+//                            text = Utility.removeAccents(text);
 
                         if (!aText[1].contains(text))
                             found = false;
@@ -387,7 +386,8 @@ public class InsertAvanzataFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//            rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+            mNoResults.setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
         }
 
@@ -397,9 +397,11 @@ public class InsertAvanzataFragment extends Fragment {
             cantoAdapter.notifyDataSetChanged();
             progress.setVisibility(View.INVISIBLE);
             if (titoli.size() == 0)
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+                mNoResults.setVisibility(View.VISIBLE);
             else
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                mNoResults.setVisibility(View.GONE);
         }
 
     }

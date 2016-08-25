@@ -1,6 +1,5 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,8 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeScreenHelper;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
 
@@ -40,8 +41,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     private static final String NO_VERSION = "";
     public static final String BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE";
     public static final String DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE";
-    //    private static final String FIRST_OPEN_MENU = "FIRST_OPEN_LOGIN";
-//    private int prevOrientation;
     private WelcomeScreenHelper mWelcomeScreen;
 
     private SignInButton mSignInButton;
@@ -63,13 +62,16 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         }
     };
 
-    @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
+    @OnClick(R.id.imageView1)
+    public void closeDrawer() {
+        mMainActivity.getDrawer().openDrawer();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
+        ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -79,17 +81,16 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
             mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
-        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        mMainActivity.mTabLayout.setVisibility(View.GONE);
 
-        rootView.findViewById(R.id.imageView1)
-                .setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.my_drawer_layout);
-//                        drawerLayout.openDrawer(GravityCompat.START);
-                        mMainActivity.getDrawer().openDrawer();
-                    }
-                });
+//        rootView.findViewById(R.id.imageView1)
+//                .setOnClickListener(new OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mMainActivity.getDrawer().openDrawer();
+//                    }
+//                });
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
@@ -109,86 +110,13 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 //        Log.i("Changelog", "appVersion: " + thisVersion);
 
         if (!thisVersion.equals(lastVersion)) {
-//            prevOrientation = getActivity().getRequestedOrientation();
-//            Utility.blockOrientation(getActivity());
-//            MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                    .title(R.string.dialog_change_title)
-//                    .customView(R.layout.dialog_changelogview, false)
-//                    .positiveText(R.string.dialog_chiudi)
-//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            if(PreferenceManager
-//                                    .getDefaultSharedPreferences(getActivity())
-//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                                SharedPreferences.Editor editor = PreferenceManager
-//                                        .getDefaultSharedPreferences(getActivity())
-//                                        .edit();
-//                                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                                editor.apply();
-//                                showHelp();
-//                            }
-//                        }
-//                    })
-//                    .show();
-//
-//            dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                @Override
-//                public boolean onKey(DialogInterface arg0, int keyCode,
-//                                     KeyEvent event) {
-//                    if (keyCode == KeyEvent.KEYCODE_BACK
-//                            && event.getAction() == KeyEvent.ACTION_UP) {
-//                        arg0.dismiss();
-//                        getActivity().setRequestedOrientation(prevOrientation);
-//                        if(PreferenceManager
-//                                .getDefaultSharedPreferences(getActivity())
-//                                .getBoolean(FIRST_OPEN_MENU, true)) {
-//                            SharedPreferences.Editor editor = PreferenceManager
-//                                    .getDefaultSharedPreferences(getActivity())
-//                                    .edit();
-//                            editor.putBoolean(FIRST_OPEN_MENU, false);
-//                            editor.apply();
-//                            showHelp();
-//                        }
-//                        return true;
-//                    }
-//                    return false;
-//                }
-//            });
-//            dialog.setCancelable(false);
             mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
             mWelcomeScreen.show(savedInstanceState);
-//            if(PreferenceManager
-//                    .getDefaultSharedPreferences(getActivity())
-//                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .edit();
-//                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                editor.apply();
-//                showHelp();
-//            }
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
                     .positiveButton(R.string.dialog_chiudi)
                     .show();
-//                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                        @Override
-//                        public void onCancel(DialogInterface dialog) {
-//                            if(PreferenceManager
-//                                    .getDefaultSharedPreferences(getActivity())
-//                                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                                SharedPreferences.Editor editor = PreferenceManager
-//                                        .getDefaultSharedPreferences(getActivity())
-//                                        .edit();
-//                                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                                editor.apply();
-//                                showHelp();
-//                            }
-//                        }
-//                    });
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(VERSION_KEY, thisVersion);
             editor.apply();
@@ -196,24 +124,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         else {
             mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
             mWelcomeScreen.show(savedInstanceState);
-//            if(PreferenceManager
-//                    .getDefaultSharedPreferences(getActivity())
-//                    .getBoolean(FIRST_OPEN_MENU, true)) {
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .edit();
-//                editor.putBoolean(FIRST_OPEN_MENU, false);
-//                editor.apply();
-////                final Runnable mMyRunnable = new Runnable() {
-////                    @Override
-////                    public void run() {
-////                        showHelp();
-////                    }
-////                };
-////                Handler myHandler = new Handler();
-////                myHandler.postDelayed(mMyRunnable, 1000);
-//
-//            }
         }
 
         PaginaRenderActivity.notaCambio = null;
@@ -229,7 +139,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
         mSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
-//        signInButton.setScopes(gso.getScopeArray());
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,16 +147,12 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
             }
         });
 
-//        if (getActivity() != null && getActivity() instanceof ThemeableActivity) {
-//            MainActivity activity = (MainActivity) getActivity();
-//            rootView.findViewById(R.id.sign_in_button).setVisibility(activity.getmGoogleApiClient().isConnected() ? View.INVISIBLE : View.VISIBLE);
         Log.d(TAG, "onCreateView: signed in = " + PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(Utility.SIGNED_IN, false));
         rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
-//        }
 
         return rootView;
     }
@@ -286,7 +191,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-//                showHelp();
                 mWelcomeScreen.forceShow();
                 return true;
         }
@@ -299,30 +203,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         mWelcomeScreen.onSaveInstanceState(outState);
     }
 
-    private void showHelp() {
-//        Intent intent = new Intent(getActivity(), IntroMain.class);
-//        startActivity(intent);
-        WelcomeScreenHelper welcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
-        welcomeScreen.forceShow();
-    }
-
     @Override
-    public void onPositive(@NonNull String tag) {
-//        switch (tag) {
-//            case "CHANGELOG":
-//                if(PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .getBoolean(FIRST_OPEN_MENU, true)) {
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(getActivity())
-//                            .edit();
-//                    editor.putBoolean(FIRST_OPEN_MENU, false);
-//                    editor.apply();
-//                    showHelp();
-//                }
-//                break;
-//        }
-    }
+    public void onPositive(@NonNull String tag) {}
     @Override
     public void onNegative(@NonNull String tag) {}
     @Override

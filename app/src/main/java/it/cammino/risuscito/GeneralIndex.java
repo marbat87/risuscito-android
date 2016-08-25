@@ -14,33 +14,37 @@ import android.view.ViewGroup;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
 
-    private ViewPager mViewPager;
+//    private ViewPager mViewPager;
 
     private static final String PAGE_VIEWED = "pageViewed";
     private LUtils mLUtils;
 
     private MainActivity mMainActivity;
 
+    @BindView(R.id.view_pager) ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
+        ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_general_index);
         mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
         mLUtils = LUtils.getInstance(getActivity());
 
-        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+//        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+//        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
         if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(false);

@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 
@@ -18,21 +20,20 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
 
     private LUtils mLUtils;
     private boolean appBarIsExpanded = true;
-    private AppBarLayout mAppBarLayout;
-    private Toolbar mToolbar;
+    @BindView(R.id.appbarlayout) AppBarLayout mAppBarLayout;
+    @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        ButterKnife.bind(this);
 
-        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-//        mToolbar.setTitle("");
-//        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
+//        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
