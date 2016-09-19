@@ -214,7 +214,6 @@ public class DraggableSwipeableAdapter
 
     @Override
     public void onSetSwipeBackground(MyViewHolder holder, int position, int type) {
-        int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
                 TypedValue typedValue = new TypedValue();

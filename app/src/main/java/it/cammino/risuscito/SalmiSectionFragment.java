@@ -134,7 +134,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         new DragScrollBar(getActivity(), mRecyclerView, true)
-                .addIndicator(new CustomIndicator(getActivity()), true)
+                .setIndicator(new CustomIndicator(getActivity()), true)
                 .setHandleColour(getThemeUtils().accentColor())
                 .setHandleOffColour(getThemeUtils().accentColor());
 

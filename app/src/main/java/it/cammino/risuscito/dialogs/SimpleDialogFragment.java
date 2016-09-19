@@ -160,7 +160,6 @@ public class SimpleDialogFragment extends DialogFragment {
         protected int mTitle = 0;
         protected boolean mShowProgress = false;
         protected boolean mProgressIndeterminate;
-        @Nullable
         protected int mProgressMax;
         @Nullable
         protected CharSequence mContent;

@@ -787,7 +787,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         .paddingDp(2)
                         .colorRes(R.color.icon_ative_black));
         menu.findItem(R.id.barre).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar)
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar_electric)
                         .sizeDp(24)
                         .paddingDp(2)
                         .color(Color.WHITE));

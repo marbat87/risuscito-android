@@ -1,8 +1,5 @@
 package it.cammino.risuscito.objects;
 
-/**
- * Created by marcello.battain on 08/04/2015.
- */
 public class ExpandableGroup {
 
     private String titolo;

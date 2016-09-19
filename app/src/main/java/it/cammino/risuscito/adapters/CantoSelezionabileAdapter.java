@@ -112,7 +112,6 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
     public ArrayList<Integer> getChoosedIds() {
         ArrayList<Integer> result = new ArrayList<>();
 //        int[] result = new int[dataItems.size()];
-        int i = 0;
         for (Canto item: dataItems) {
             if (item.isSelected())
                 result.add(item.getIdCanto());

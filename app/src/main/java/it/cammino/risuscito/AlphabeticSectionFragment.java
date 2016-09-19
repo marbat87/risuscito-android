@@ -134,7 +134,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         new DragScrollBar(getActivity(), mRecyclerView, true)
-                .addIndicator(new CustomIndicator(getActivity()), true)
+                .setIndicator(new CustomIndicator(getActivity()), true)
                 .setHandleColour(getThemeUtils().accentColor())
                 .setHandleOffColour(getThemeUtils().accentColor());
 

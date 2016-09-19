@@ -7,9 +7,6 @@ import com.nononsenseapps.filepicker.FilePickerFragment;
 
 import java.io.File;
 
-/**
- * Created by marcello.battain on 01/10/2015.
- */
 public class FilteredFilePickerFragment extends FilePickerFragment {
 
     // File extension to filter on

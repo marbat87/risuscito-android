@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -252,6 +253,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
         // Setting the layoutManager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
 //        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);

@@ -130,7 +130,6 @@ public class SingleChoiceDialogFragment extends DialogFragment {
         protected boolean mCanceable = false;
         @ArrayRes
         protected int mItems;
-        @NonNull
         protected int mDefaultIndex;
         @NonNull
         protected transient SingleChoiceCallback mListener;
