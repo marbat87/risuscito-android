@@ -18,8 +18,6 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
 
-    private LUtils mLUtils;
-
     private MainActivity mMainActivity;
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
@@ -34,7 +32,7 @@ public class GeneralSearch extends Fragment {
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
-        mLUtils = LUtils.getInstance(getActivity());
+        LUtils mLUtils = LUtils.getInstance(getActivity());
 
 //        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));

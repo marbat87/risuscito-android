@@ -149,11 +149,8 @@ public class InputTextDialogFragment extends DialogFragment {
         protected int mTitle = 0;
         @NonNull
         protected final String mTag;
-        @StringRes
         protected CharSequence mPositiveButton;
-        @StringRes
         protected CharSequence mNegativeButton;
-        @StringRes
         protected CharSequence mNeutralButton;
         protected boolean mCanceable = false;
         protected boolean mAutoDismiss = true;

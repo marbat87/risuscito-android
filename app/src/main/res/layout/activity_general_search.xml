@@ -1,43 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--xmlns:risuscito="http://schemas.android.com/apk/res-auto"-->
-<!--android:id="@+id/main_content"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent">-->
-
-<!--<android.support.design.widget.AppBarLayout-->
-<!--android:id="@+id/toolbar_layout"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:elevation="@dimen/design_appbar_elevation"-->
-<!--android:theme="@style/ActionBarThemeOverlay">-->
-
-<!--<include layout="@layout/risuscito_toolbar_noelevation" />-->
-
-<!--<android.support.design.widget.TabLayout-->
-<!--android:layout_height="48dp"-->
-<!--android:layout_width="match_parent"-->
-<!--android:id="@+id/material_tabs"-->
-<!--style="@style/Widget.Design.TabLayout.Risuscito" />-->
-
-<!--</android.support.design.widget.AppBarLayout>-->
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<android.support.v4.view.ViewPager-->
-        <!--android:id="@+id/view_pager"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
     <include layout="@layout/tabs_layout"/>
-
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="5dp"-->
-        <!--android:background="?toolbar_shadow" />-->
 
     <EditText
         android:id="@+id/tempTextField"
@@ -47,5 +15,3 @@
         android:hint="" />
 
 </FrameLayout>
-
-    <!--</android.support.design.widget.CoordinatorLayout>-->

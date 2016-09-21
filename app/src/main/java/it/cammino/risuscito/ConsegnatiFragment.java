@@ -54,7 +54,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private DatabaseCanti listaCanti;
     private List<Canto> titoliChoose;
     private View rootView;
-    private CantoRecyclerAdapter cantoAdapter;
     private CantoSelezionabileAdapter selectableAdapter;
     private FloatingActionButton mFab;
     private View mBottomBar;
@@ -65,7 +64,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private MainActivity mMainActivity;
 
     private boolean editMode;
-    private int totalConsegnati;
 
     private LUtils mLUtils;
 
@@ -369,7 +367,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         Cursor lista = db.rawQuery(query, null);
 
         //recupera il numero di record trovati
-        totalConsegnati = lista.getCount();
+        int totalConsegnati = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
         if (updateView)
@@ -415,7 +413,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiRecycler);
 
         // Creating new adapter object
-        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
+        CantoRecyclerAdapter cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
         mRecyclerView.setAdapter(cantoAdapter);
 
         mRecyclerView.setHasFixedSize(true);

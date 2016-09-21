@@ -23,7 +23,6 @@ public class GeneralIndex extends Fragment {
 //    private ViewPager mViewPager;
 
     private static final String PAGE_VIEWED = "pageViewed";
-    private LUtils mLUtils;
 
     private MainActivity mMainActivity;
 
@@ -38,7 +37,7 @@ public class GeneralIndex extends Fragment {
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
-        mLUtils = LUtils.getInstance(getActivity());
+        LUtils mLUtils = LUtils.getInstance(getActivity());
 
 //        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));

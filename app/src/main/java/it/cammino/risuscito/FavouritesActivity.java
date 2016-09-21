@@ -50,8 +50,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     private List<CantoRecycled> titoli;
     private int posizDaCanc;
     private List<CantoRecycled> removedItems;
-    private View rootView;
-//    private RecyclerView recyclerView;
+    //    private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
@@ -71,7 +70,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_favourites, container, false);
+        View rootView = inflater.inflate(R.layout.activity_favourites, container, false);
         ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();

@@ -54,7 +54,7 @@ public class ThemeUtils {
     }
 
     public void primaryColor(int newColor) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).commit();
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).apply();
     }
 
     public int primaryColorDark() {
@@ -77,7 +77,7 @@ public class ThemeUtils {
     }
 
     public void accentColor(int newColor) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).commit();
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).apply();
     }
 
     public boolean isColoredNavBar() {

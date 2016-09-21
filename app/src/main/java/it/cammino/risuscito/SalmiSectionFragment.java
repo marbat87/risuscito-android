@@ -44,7 +44,6 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     // create boolean for fetching data
     private boolean isViewShown = true;
 
-    private ArrayList<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
     private String titoloDaAgg;
     private int idDaAgg;
@@ -89,7 +88,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
         int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
-        titoli = new ArrayList<>();
+        ArrayList<CantoRecycled> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
             titoli.add(new CantoRecycled(lista.getString(1)

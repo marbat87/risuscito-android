@@ -46,7 +46,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     // create boolean for fetching data
     private boolean isViewShown = true;
 
-    private List<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
     private String titoloDaAgg;
     private int idDaAgg;
@@ -89,7 +88,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
-        titoli = new ArrayList<>();
+        List<CantoRecycled> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
             titoli.add(new CantoRecycled(lista.getString(1)

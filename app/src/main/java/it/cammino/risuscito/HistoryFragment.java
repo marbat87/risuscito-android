@@ -48,8 +48,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     private List<CantoHistory> titoli;
     private int posizDaCanc;
     private List<CantoHistory> removedItems;
-    private View rootView;
-//    private RecyclerView recyclerView;
+    //    private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
@@ -69,7 +68,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.layout_history, container, false);
+        View rootView = inflater.inflate(R.layout.layout_history, container, false);
         ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();

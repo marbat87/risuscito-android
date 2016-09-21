@@ -10,22 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:id="@+id/toolbar_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:elevation="@dimen/design_appbar_elevation"-->
-        <!--android:theme="@style/ActionBarThemeOverlay">-->
-
-        <!--<android.support.design.widget.TabLayout-->
-        <!--android:layout_height="48dp"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:id="@+id/material_tabs"-->
-        <!--style="@style/Widget.Design.TabLayout.Risuscito" />-->
-
-        <!--</android.support.design.widget.AppBarLayout>-->
-
         <include layout="@layout/common_circle_progress"/>
 
         <include layout="@layout/common_shadow"/>
@@ -61,14 +45,6 @@
 
         <include layout="@layout/common_bottom_bar"/>
 
-        <!--<include layout="@layout/common_fab"/>-->
-
     </android.support.design.widget.CoordinatorLayout>
-
-    <!--<View-->
-        <!--android:id="@+id/tablet_mode"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"/>-->
 
 </merge>

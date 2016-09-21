@@ -23,7 +23,6 @@ public class GeneralInsertSearch extends ThemeableActivity {
     private int fromAdd;
     private int idLista;
     private int listPosition;
-    private LUtils mLUtils;
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.view_pager) ViewPager mViewPager;
@@ -41,7 +40,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
+        LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
 
         Bundle bundle = GeneralInsertSearch.this.getIntent().getExtras();
         fromAdd = bundle.getInt("fromAdd");

@@ -44,7 +44,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     // create boolean for fetching data
     private boolean isViewShown = true;
 
-    private List<CantoRecycled> titoli;
     private DatabaseCanti listaCanti;
     private String titoloDaAgg;
     private int idDaAgg;
@@ -85,7 +84,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
-        titoli = new ArrayList<>();
+        List<CantoRecycled> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
             titoli.add(new CantoRecycled(lista.getString(1)

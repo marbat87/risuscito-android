@@ -212,6 +212,7 @@ public class DraggableSwipeableAdapter
         return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
+    @SuppressLint("SwitchIntDef")
     @Override
     public void onSetSwipeBackground(MyViewHolder holder, int position, int type) {
         switch (type) {
@@ -231,6 +232,7 @@ public class DraggableSwipeableAdapter
 
     }
 
+    @SuppressLint("SwitchIntDef")
     @Override
     public SwipeResultAction onSwipeItem(MyViewHolder holder, int position, int result) {
         Log.d(TAG, "onSwipeItem(result = " + result + ")");

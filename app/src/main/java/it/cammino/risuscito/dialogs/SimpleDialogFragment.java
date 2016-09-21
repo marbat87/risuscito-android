@@ -165,11 +165,8 @@ public class SimpleDialogFragment extends DialogFragment {
         protected CharSequence mContent;
         @NonNull
         protected final String mTag;
-        @StringRes
         protected CharSequence mPositiveButton;
-        @StringRes
         protected CharSequence mNegativeButton;
-        @StringRes
         protected CharSequence mNeutralButton;
         protected boolean mCanceable = false;
         protected boolean mAutoDismiss = true;
