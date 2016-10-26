@@ -596,8 +596,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 db = listaCanti.getReadableDatabase();
                 String sql = "UPDATE CUST_LISTS "
                         + " SET id_canto = " + idDaAgg
-                        + "WHERE _id = " + idListaDaAgg
-                        + "  AND position = " + posizioneDaAgg;
+                        + " WHERE _id = " + idListaDaAgg
+                        + " AND position = " + posizioneDaAgg;
                 db.execSQL(sql);
                 db.close();
                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)

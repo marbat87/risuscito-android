@@ -39,7 +39,7 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.3'
     compile 'com.turingtechnologies.materialscrollbar:lib:10.1.4'
-    compile 'com.nononsenseapps:filepicker:3.0.0'
+    compile 'com.nononsenseapps:filepicker:4.0.0-beta1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
     compile 'com.stephentuso:welcome:0.7.2'
