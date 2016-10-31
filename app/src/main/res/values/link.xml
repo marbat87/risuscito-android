@@ -234,4 +234,5 @@
     <string formatted="false" name="ecco_il_mio_servo_link">http://www.resuscicanti.com/ecco%20il%20mio%20servo.mp3</string>
     <string formatted="false" name="ave_maria_colomba_link">http://www.resuscicanti.com/aveomariacolomba.mp3</string>
     <string formatted="false" name="messia_leone_vincere_link">http://www.resuscicanti.com/Il%20Messia%20Italiano.mp3</string>
+    <string formatted="false" name="come_pecora_che_vede_link"></string>
 </resources>
