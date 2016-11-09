@@ -1,7 +1,6 @@
 package it.cammino.risuscito;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -39,10 +38,10 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +58,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.filepicker.ThemedFilePickerActivity;
 import it.cammino.risuscito.music.MusicService;
 import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
@@ -68,7 +66,7 @@ import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback {
+public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback {
 
     private DatabaseCanti listaCanti;
     private String pagina;
@@ -87,7 +85,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String barreSalvato;
     private static String barreCambio;
     private String personalUrl, localUrl,  playUrl;
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     enum MP_State {Started, Stopped}
 
@@ -738,7 +736,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
 
-        mWelcomeScreen = new WelcomeScreenHelper(this, IntroPaginaRenderNew.class);
+        mWelcomeScreen = new WelcomeHelper(this, IntroPaginaRenderNew.class);
         mWelcomeScreen.show(savedInstanceState);
 
         if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
@@ -1296,51 +1294,51 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         db.close();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // If the file selection was successful
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                // Get the URI of the selected file
-                final Uri uri = data.getData();
-//                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
-//                        try {
-                // Get the file path from the URI
-                String path = uri.getPath();
-                Snackbar.make(findViewById(android.R.id.content),
-                        getString(R.string.file_selected) + ": " + path
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-
-                scroll_song_bar.setProgress(0);
-                scroll_song_bar.setEnabled(false);
-                showPlaying(false);
-                if (mediaPlayerState != MP_State.Stopped) {
-                    mediaPlayerState = MP_State.Stopped;
-                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_STOP);
-                    startService(i);
-                }
-
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("_id", idCanto);
-                values.put("local_path", path);
-                db.insert("LOCAL_LINKS", null, values);
-                db.close();
-
-                localFile = true;
-                personalUrl = path;
-
-                mDownload = true;
-
-                //mostra i pulsanti per il lettore musicale
-                music_buttons.setVisibility(View.VISIBLE);
-                no_records_text.setVisibility(View.INVISIBLE);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // If the file selection was successful
+//        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//            if (data != null) {
+//                // Get the URI of the selected file
+//                final Uri uri = data.getData();
+////                        Log.i(FILE_CHOOSER_TAG, "Uri = " + uri.toString());
+////                        try {
+//                // Get the file path from the URI
+//                String path = uri.getPath();
+//                Snackbar.make(findViewById(android.R.id.content),
+//                        getString(R.string.file_selected) + ": " + path
+//                        , Snackbar.LENGTH_SHORT)
+//                        .show();
+//
+//                scroll_song_bar.setProgress(0);
+//                scroll_song_bar.setEnabled(false);
+//                showPlaying(false);
+//                if (mediaPlayerState != MP_State.Stopped) {
+//                    mediaPlayerState = MP_State.Stopped;
+//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    startService(i);
+//                }
+//
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                ContentValues values = new ContentValues();
+//                values.put("_id", idCanto);
+//                values.put("local_path", path);
+//                db.insert("LOCAL_LINKS", null, values);
+//                db.close();
+//
+//                localFile = true;
+//                personalUrl = path;
+//
+//                mDownload = true;
+//
+//                //mostra i pulsanti per il lettore musicale
+//                music_buttons.setVisibility(View.VISIBLE);
+//                no_records_text.setVisibility(View.INVISIBLE);
+//            }
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     private class MyWebViewClient extends WebViewClient {
         @Override
@@ -1803,13 +1801,20 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 no_records_text.setVisibility(View.VISIBLE);
                 break;
             case "ONLY_LINK":
-                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-                // Set these depending on your use case. These are the defaults.
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-                i.putExtra(FilePickerActivity.EXTRA_SINGLE_CLICK, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                startActivityForResult(i, REQUEST_CODE);
+//                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+//                // Set these depending on your use case. These are the defaults.
+//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+//                i.putExtra(FilePickerActivity.EXTRA_SINGLE_CLICK, true);
+//                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+//                startActivityForResult(i, REQUEST_CODE);
+                new FileChooserDialog.Builder(PaginaRenderActivity.this)
+//                        .initialPath("/sdcard/Download")  // changes initial path, defaults to external storage directory
+                        .mimeType("audio/*") // Optional MIME type filter
+//                        .extensionsFilter(".mp3") // Optional extension filter, will override mimeType()
+                        .tag("optional-identifier")
+                        .goUpLabel("Up") // custom go up label, default label is "..."
+                        .show();
                 break;
             case "SAVE_TAB":
                 db = listaCanti.getReadableDatabase();
@@ -1839,11 +1844,18 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         Log.d(getClass().getName(), "onNegative: " + tag);
         switch (tag) {
             case "DOWNLINK_CHOOSE":
-                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                startActivityForResult(i, REQUEST_CODE);
+//                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
+//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+//                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+//                startActivityForResult(i, REQUEST_CODE);
+                new FileChooserDialog.Builder(PaginaRenderActivity.this)
+//                        .initialPath("/sdcard/Download")  // changes initial path, defaults to external storage directory
+                        .mimeType("audio/*") // Optional MIME type filter
+//                        .extensionsFilter(".mp3") // Optional extension filter, will override mimeType()
+                        .tag("optional-identifier")
+                        .goUpLabel("Up") // custom go up label, default label is "..."
+                        .show();
                 break;
             case "SAVE_TAB":
                 pulisciVars();
@@ -1854,4 +1866,42 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    @Override
+    public void onFileSelection(@NonNull FileChooserDialog dialog, @NonNull File file) {
+        final String tag = dialog.getTag(); // gets tag set from Builder, if you use multiple dialogs
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            Snackbar.make(findViewById(android.R.id.content),
+                    getString(R.string.file_selected) + ": " + path
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
+
+            scroll_song_bar.setProgress(0);
+            scroll_song_bar.setEnabled(false);
+            showPlaying(false);
+            if (mediaPlayerState != MP_State.Stopped) {
+                mediaPlayerState = MP_State.Stopped;
+                Intent i = new Intent(getApplicationContext(), MusicService.class);
+                i.setAction(MusicService.ACTION_STOP);
+                startService(i);
+            }
+
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("_id", idCanto);
+            values.put("local_path", path);
+            db.insert("LOCAL_LINKS", null, values);
+            db.close();
+
+            localFile = true;
+            personalUrl = path;
+
+            mDownload = true;
+
+            //mostra i pulsanti per il lettore musicale
+            music_buttons.setVisibility(View.VISIBLE);
+            no_records_text.setVisibility(View.INVISIBLE);
+        }
+    }
 }

@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.Locale;
 
@@ -66,7 +66,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private TabLayout tabs;
     private LUtils mLUtils;
 
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     private MainActivity mMainActivity;
 
@@ -204,7 +204,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         getActivity().registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabListe.CHOOSE_DONE));
 
-        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroListePers.class);
+        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroListePers.class);
         mWelcomeScreen.show(savedInstanceState);
 
         return rootView;

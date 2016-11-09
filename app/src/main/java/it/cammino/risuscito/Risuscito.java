@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.common.SignInButton;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,7 +41,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     private static final String NO_VERSION = "";
     public static final String BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE";
     public static final String DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE";
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     private SignInButton mSignInButton;
 
@@ -110,7 +110,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 //        Log.i("Changelog", "appVersion: " + thisVersion);
 
         if (!thisVersion.equals(lastVersion)) {
-            mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
+            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
             mWelcomeScreen.show(savedInstanceState);
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
@@ -122,7 +122,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
             editor.apply();
         }
         else {
-            mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroMainNew.class);
+            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
             mWelcomeScreen.show(savedInstanceState);
         }
 

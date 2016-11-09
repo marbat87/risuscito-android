@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +68,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     private BroadcastReceiver positionBRec = new BroadcastReceiver() {
         @Override
@@ -279,7 +279,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroConsegnatiNew.class);
+        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroConsegnatiNew.class);
         mWelcomeScreen.show(savedInstanceState);
         return rootView;
     }

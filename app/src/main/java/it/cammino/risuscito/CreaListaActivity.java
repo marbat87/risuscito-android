@@ -35,7 +35,7 @@ import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.ArrayList;
 
@@ -73,7 +73,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private EditText textfieldTitle;
 
     private int positionToRename;
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     private final String TEMP_TITLE = "temp_title";
 
@@ -289,7 +289,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         if (elementi.size() > 0)
             findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
 
-        mWelcomeScreen = new WelcomeScreenHelper(this, IntroCreaListaNew.class);
+        mWelcomeScreen = new WelcomeHelper(this, IntroCreaListaNew.class);
         mWelcomeScreen.show(savedInstanceState);
         findViewById(R.id.textTitleDescription).requestFocus();
 

@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 115
         versionName '4.1.0'
     }
@@ -35,29 +34,21 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.9'
-    compile 'com.afollestad.material-dialogs:commons:0.9.0.2'
+    compile 'com.afollestad.material-dialogs:commons:0.9.1.0'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.3'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.0'
     compile 'com.turingtechnologies.materialscrollbar:lib:10.1.4'
-    compile 'com.nononsenseapps:filepicker:4.0.0-beta1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE'
-    compile 'com.stephentuso:welcome:0.7.2'
-    compile('com.mikepenz:materialdrawer:5.6.0@aar') {
-        transitive = true
-        exclude module: 'appcompat-v7'
-        exclude module: 'recyclerview-v7'
-        exclude module: 'design'
-    }
+    compile 'com.stephentuso:welcome:1.0.0'
+    compile('com.mikepenz:materialdrawer:5.7.0@aar') { transitive = true }
     compile 'com.mikepenz:crossfader:1.5.0@aar'
     compile 'com.mikepenz:community-material-typeface:1.5.54.2@aar'
     compile 'com.mikepenz:google-material-typeface:2.2.0.3.original@aar'
-    compile 'com.jakewharton:butterknife:8.3.0'
-    compile "com.mikepenz:itemanimators:0.5.0@aar"
-    apt 'com.jakewharton:butterknife-compiler:8.3.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.mikepenz:itemanimators:0.5.0@aar'
+    annotationProcessor  'com.jakewharton:butterknife-compiler:8.4.0'
     compile supportDependencies.cardView
-    compile supportDependencies.appCompat
-    compile supportDependencies.design
     compile supportDependencies.fragment
     compile playServices.auth
     compile playServices.drive
