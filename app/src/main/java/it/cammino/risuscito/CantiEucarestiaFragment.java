@@ -255,38 +255,25 @@ public class CantiEucarestiaFragment extends Fragment {
         else
             posizioniList.clear();
 
-        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, 0));
-
+        int progressiveTag = 0;
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
-            posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 6, 1));
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, 2));
-            if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
-                posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 5));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 6));
-            }
-            else {
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
-            }
-        }
-        else {
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, 1));
-            if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
-                posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, 2));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
-            }
-            else {
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 2));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 4));
-            }
-        }
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 6, progressiveTag++));
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.canto_offertorio), 8, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_SANTO, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, progressiveTag++));
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, progressiveTag++));
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, progressiveTag++));
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, progressiveTag++));
 
     }
 
@@ -343,6 +330,8 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private String getTitlesList() {
 
+        int progressivePos = 0;
+
         Locale l = getActivity().getResources().getConfiguration().locale;
         String result = "";
         String temp;
@@ -351,7 +340,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result +=  "-- " + getString(R.string.title_activity_canti_eucarestia).toUpperCase(l) + " --\n";
 
         //canto iniziale
-        temp = getTitoloToSendFromPosition(0);
+        temp = getTitoloToSendFromPosition(progressivePos++);
 
         result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
         result += "\n";
@@ -365,11 +354,11 @@ public class CantiEucarestiaFragment extends Fragment {
 
         //deve essere messa anche la seconda lettura? legge le impostazioni
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean showSeconda = pref.getBoolean(Utility.SHOW_SECONDA, false);
+//        boolean showSeconda = pref.getBoolean(Utility.SHOW_SECONDA, false);
 
-        if (showSeconda) {
-            //canto alla seconda lettura
-            temp = getTitoloToSendFromPosition(1);
+        //canto alla seconda lettura
+        if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
 
             result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
             result += "\n";
@@ -380,11 +369,27 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
+        }
 
-            //canto alla pace
-            temp = getTitoloToSendFromPosition(2);
+        //canto alla pace
+        temp = getTitoloToSendFromPosition(progressivePos++);
 
-            result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+        result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+//            boolean showOffertorio = pref.getBoolean(Utility.SHOW_OFFERTORIO, false);
+        //offertorio
+        if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
+
+            result += getResources().getString(R.string.canto_offertorio).toUpperCase(l);
             result += "\n";
 
             if (temp.equalsIgnoreCase(""))
@@ -393,105 +398,14 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
-
-            boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
-
-            if (showSanto) {
-                //santo
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.santo).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al pane
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(6);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-            }
-            else {
-                //canti al pane
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-            }
         }
-        else {
-            //canto alla pace
-            temp = getTitoloToSendFromPosition(1);
 
-            result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+//                boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
+        //santo
+        if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
+
+            result += getResources().getString(R.string.santo).toUpperCase(l);
             result += "\n";
 
             if (temp.equalsIgnoreCase(""))
@@ -500,103 +414,44 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
-
-            boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
-
-            if (showSanto) {
-                //santo
-                temp = getTitoloToSendFromPosition(2);
-
-                result += getResources().getString(R.string.santo).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al pane
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-            }
-            else {
-                //canti al pane
-                temp = getTitoloToSendFromPosition(2);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-            }
-
         }
-//		else
-//			Log.i("SANTO", "IGNORATO");
+
+        //canti al pane
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_pane).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+        //canti al vino
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_vino).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+        //canto finale
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
 
         return result;
 

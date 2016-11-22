@@ -55,6 +55,8 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
     @BindView(R.id.show_audio) SwitchCompat audioSwitch;
     @BindView(R.id.primaryCircle) View mPrimaryCircle;
     @BindView(R.id.accentCircle) View mAccentCircle;
+    @BindView(R.id.show_offert_eucarestia) SwitchCompat offerorioSwitch;
+
 
     @OnClick(R.id.screen_on_layout)
     public void switchScreeon() {
@@ -78,6 +80,11 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
     @OnClick(R.id.show_pace_parola_layout)
     public void switchSPaceParolaCheked() {
         paceSwitch.setChecked(!paceSwitch.isChecked());
+    }
+
+    @OnClick(R.id.show_offert_eucarestia_layout)
+    public void switchOffertorioCheked() {
+        offerorioSwitch.setChecked(!offerorioSwitch.isChecked());
     }
 
     @OnClick(R.id.save_location_layout)
@@ -194,6 +201,22 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
 //                secondaSwitch.setChecked(!secondaSwitch.isChecked());
 //            }
 //        });
+
+        offerorioSwitch.setChecked(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Utility.SHOW_OFFERTORIO, false));
+
+        offerorioSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity())
+                        .edit();
+                editor.putBoolean(Utility.SHOW_OFFERTORIO, isChecked);
+                editor.apply();
+            }
+        });
+
 
 //        santoSwitch = (SwitchCompat) rootView.findViewById(R.id.show_santo);
 

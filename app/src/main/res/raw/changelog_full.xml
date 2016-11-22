@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="4.2.0" changeDate="December 2016">
+        <changelogimprovement>Now requires Android 4.0 or upper (API 14)</changelogimprovement>
+        <changelogimprovement>Adde new song "Come pecora che vede"</changelogimprovement>
+        <changelogimprovement>Added the option to enable offertory song</changelogimprovement>
+    </changelogversion>
+
     <changelogversion versionName="4.1.0" changeDate="August 2016">
         <changelogimprovement>Updated some icons</changelogimprovement>
         <changelogimprovement>New lateral drawer with a gmail-style on tables</changelogimprovement>
