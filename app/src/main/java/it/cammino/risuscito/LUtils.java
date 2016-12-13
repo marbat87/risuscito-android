@@ -221,7 +221,7 @@ public class LUtils {
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
             Log.d(TAG, "listToXML: " + writer.toString());
-            writer.toString();
+//            writer.toString();
 
             File exportFile = new File(mActivity.getCacheDir().getAbsolutePath() + "/" + lista.getName() + FILE_FORMAT);
             Log.d(TAG, "listToXML: exportFile = " + exportFile.getAbsolutePath());

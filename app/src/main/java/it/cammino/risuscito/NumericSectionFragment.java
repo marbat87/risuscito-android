@@ -60,12 +60,13 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
     private LUtils mLUtils;
 
-    @BindView(R.id.cantiList) RecyclerView mRecyclerView;
+    @BindView(R.id.cantiList_numeric) RecyclerView mRecyclerView;
+    @BindView(R.id.dragScrollBar_numeric) DragScrollBar mDragScrollBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_alphanum_index, container, false);
+        rootView = inflater.inflate(R.layout.fragment_numeric_index, container, false);
         ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
@@ -124,10 +125,11 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        new DragScrollBar(getActivity(), mRecyclerView, true)
-                .setIndicator(new CustomIndicator(getActivity()), true)
-                .setHandleColour(getThemeUtils().accentColor())
-                .setHandleOffColour(getThemeUtils().accentColor());
+//        new DragScrollBar(getActivity(), mRecyclerView, true)
+        mDragScrollBar
+                .setIndicator(new CustomIndicator(getActivity()), true);
+//                .setHandleColour(getThemeUtils().accentColor())
+//                .setHandleOffColour(getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 

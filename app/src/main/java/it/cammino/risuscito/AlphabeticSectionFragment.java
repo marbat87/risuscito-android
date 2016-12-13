@@ -65,6 +65,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private long mLastClickTime = 0;
 
     @BindView(R.id.cantiList) RecyclerView mRecyclerView;
+    @BindView(R.id.dragScrollBar) DragScrollBar mDragScrollBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,10 +133,11 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         // Setting the layoutManager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        new DragScrollBar(getActivity(), mRecyclerView, true)
-                .setIndicator(new CustomIndicator(getActivity()), true)
-                .setHandleColour(getThemeUtils().accentColor())
-                .setHandleOffColour(getThemeUtils().accentColor());
+//        new DragScrollBar(getActivity(), mRecyclerView, true)
+        mDragScrollBar
+                .setIndicator(new CustomIndicator(getActivity()), true);
+//                .setHandleColour(getThemeUtils().accentColor())
+//                .setHandleOffColour(getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 
