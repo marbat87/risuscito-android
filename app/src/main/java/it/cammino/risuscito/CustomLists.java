@@ -30,15 +30,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeScreenHelper;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroListePers;
@@ -56,10 +57,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private int listaDaCanc, idDaCanc, indDaModif;
     private ListaPersonalizzata celebrazioneDaCanc;
     private String titoloDaCanc;
-    //    private int prevOrientation;
-    private ViewPager mViewPager;
+//    private ViewPager mViewPager;
     private FloatingActionButton mFab;
-    public ImageView fabEdit, fabDelete;
     private View rootView;
     private static final String PAGE_EDITED = "pageEdited";
     public static final int TAG_CREA_LISTA = 111;
@@ -67,7 +66,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private TabLayout tabs;
     private LUtils mLUtils;
 
-    private WelcomeScreenHelper mWelcomeScreen;
+    private WelcomeHelper mWelcomeScreen;
 
     private MainActivity mMainActivity;
 
@@ -137,15 +136,17 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         }
     };
 
+    @BindView(R.id.view_pager) ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
+        ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_custom_lists);
         mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists);
 
         mLUtils = LUtils.getInstance(getActivity());
@@ -156,7 +157,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         updateLista();
 
         // Create the adapter that will return a fragment for each of the three
-        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
+//        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -169,282 +170,13 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             mMainActivity.enableFab(true);
             mMainActivity.enableBottombar(false);
         }
-//        ((MainActivity) getActivity()).enableFab(true);
 
-        tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+//        tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
+        tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
         mLUtils.applyFontedTab(mViewPager, tabs);
-
-//        ImageButton buttonAddLista = (ImageButton) rootView.findViewById(R.id.fab_add_lista);
-//        Drawable drawable = DrawableCompat.wrap(buttonAddLista.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
-//        buttonAddLista.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-////                prevOrientation = getActivity().getRequestedOrientation();
-////                Utility.blockOrientation(getActivity());
-////                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-////                        .title(R.string.lista_add_desc)
-////                        .positiveText(R.string.dialog_chiudi)
-////                        .negativeText(R.string.cancel)
-////                        .input("", "", false, new MaterialDialog.InputCallback() {
-////                            @Override
-////                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-////                            }
-////                        })
-////                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                //to hide soft keyboard
-//////                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//////                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                                Bundle bundle = new Bundle();
-////                                bundle.putString("titolo", materialDialog.getInputEditText().getText().toString());
-////                                bundle.putBoolean("modifica", false);
-////                                indDaModif = 2 + idListe.length;
-////                                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
-////                                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-////                            }
-////                        })
-////                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                //to hide soft keyboard
-//////                                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//////                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-////                        .show();
-////                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-////                    @Override
-////                    public boolean onKey(DialogInterface arg0, int keyCode,
-////                                         KeyEvent event) {
-////                        if (keyCode == KeyEvent.KEYCODE_BACK
-////                                && event.getAction() == KeyEvent.ACTION_UP) {
-////                            arg0.dismiss();
-////                            getActivity().setRequestedOrientation(prevOrientation);
-////                            return true;
-////                        }
-////                        return false;
-////                    }
-////                });
-////                dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-////                dialog.setCancelable(false);
-//                new InputTextDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "NEW_LIST")
-//                        .title(R.string.lista_add_desc)
-//                        .positiveButton(R.string.dialog_chiudi)
-//                        .negativeButton(R.string.cancel)
-//                        .show();
-//                //to show soft keyboard
-////                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-////                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//            }
-//        });
-
-//        rootView.findViewById(R.id.fab_pulisci).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-////                prevOrientation = getActivity().getRequestedOrientation();
-////                Utility.blockOrientation(getActivity());
-////                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-////                        .title(R.string.dialog_reset_list_title)
-////                        .content(R.string.reset_list_question)
-////                        .positiveText(R.string.confirm)
-////                        .negativeText(R.string.dismiss)
-////                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-////                                        .getView().findViewById(R.id.button_pulisci).performClick();
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-////                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-////                        .show();
-////                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-////                    @Override
-////                    public boolean onKey(DialogInterface arg0, int keyCode,
-////                                         KeyEvent event) {
-////                        if (keyCode == KeyEvent.KEYCODE_BACK
-////                                && event.getAction() == KeyEvent.ACTION_UP) {
-////                            arg0.dismiss();
-////                            getActivity().setRequestedOrientation(prevOrientation);
-////                            return true;
-////                        }
-////                        return false;
-////                    }
-////                });
-////                dialog.setCancelable(false);
-//                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "RESET_LIST")
-//                        .title(R.string.dialog_reset_list_title)
-//                        .content(R.string.reset_list_question)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//            }
-//        });
-
-//        ImageButton fab_share = (ImageButton) rootView.findViewById(R.id.fab_condividi);
-//        drawable = DrawableCompat.wrap(fab_share.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
-//        fab_share.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-//                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-//                        .getView().findViewById(R.id.button_condividi).performClick();
-//            }
-//        });
-
-//        fabEdit = (ImageButton) rootView.findViewById(R.id.fab_edit_lista);
-//        drawable = DrawableCompat.wrap(fabEdit.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
-//        fabEdit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
-//                bundle.putBoolean("modifica", true);
-//                indDaModif = mViewPager.getCurrentItem();
-//                startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_MODIFICA_LISTA);
-//                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
-//            }
-//        });
-
-//        fabDelete = (ImageButton) rootView.findViewById(R.id.fab_delete_lista);
-//        drawable = DrawableCompat.wrap(fabDelete.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
-//        fabDelete.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-////                prevOrientation = getActivity().getRequestedOrientation();
-////                Utility.blockOrientation(getActivity());
-//
-//                listaDaCanc = mViewPager.getCurrentItem() - 2;
-//                idDaCanc = idListe[listaDaCanc];
-//                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                String query = "SELECT titolo_lista, lista"
-//                        + "  FROM LISTE_PERS"
-//                        + "  WHERE _id = " + idDaCanc;
-//                Cursor cursor = db.rawQuery(query, null);
-//
-//                cursor.moveToFirst();
-//                titoloDaCanc = cursor.getString(0);
-//                celebrazioneDaCanc = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
-//                cursor.close();
-//                db.close();
-//
-////                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-////                        .title(R.string.action_remove_list)
-////                        .content(R.string.delete_list_dialog)
-////                        .positiveText(R.string.confirm)
-////                        .negativeText(R.string.dismiss)
-////                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                                db.delete("LISTE_PERS", "_id = " + idDaCanc, null);
-////                                db.close();
-////
-////                                updateLista();
-////                                mSectionsPagerAdapter.notifyDataSetChanged();
-////                                tabs.setupWithViewPager(mViewPager);
-////                                mLUtils.applyFontedTab(mViewPager, tabs);
-////                                Handler myHandler = new Handler();
-////                                final Runnable mMyRunnable2 = new Runnable() {
-////                                    @Override
-////                                    public void run() {
-////                                        tabs.getTabAt(0).select();
-////                                    }
-////                                };
-////                                myHandler.postDelayed(mMyRunnable2, 200);
-////                                Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.list_removed) + titoloDaCanc + "'!", Snackbar.LENGTH_LONG)
-////                                        .setAction(R.string.cancel, new View.OnClickListener() {
-////                                            @Override
-////                                            public void onClick(View view) {
-//////					    	Log.i("INDICE DA CANC", listaDaCanc+" ");
-////                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                                                ContentValues values = new ContentValues();
-////                                                values.put("_id", idDaCanc);
-////                                                values.put("titolo_lista", titoloDaCanc);
-////                                                values.put("lista", ListaPersonalizzata.serializeObject(celebrazioneDaCanc));
-////                                                db.insert("LISTE_PERS", "", values);
-////                                                db.close();
-////
-////                                                updateLista();
-////                                                mSectionsPagerAdapter.notifyDataSetChanged();
-////                                                tabs.setupWithViewPager(mViewPager);
-////                                                mLUtils.applyFontedTab(mViewPager, tabs);
-////                                                Handler myHandler = new Handler();
-////                                                final Runnable mMyRunnable2 = new Runnable() {
-////                                                    @Override
-////                                                    public void run() {
-////                                                        mViewPager.setCurrentItem(listaDaCanc + 2, false);
-////                                                    }
-////                                                };
-////                                                myHandler.postDelayed(mMyRunnable2, 200);
-////                                            }
-////                                        })
-////                                        .setActionTextColor(getThemeUtils().accentColor())
-////                                        .show();
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-////                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-////                            @Override
-////                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-////                        .show();
-////                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-////                    @Override
-////                    public boolean onKey(DialogInterface arg0, int keyCode,
-////                                         KeyEvent event) {
-////                        if (keyCode == KeyEvent.KEYCODE_BACK
-////                                && event.getAction() == KeyEvent.ACTION_UP) {
-////                            arg0.dismiss();
-////                            getActivity().setRequestedOrientation(prevOrientation);
-////                            return true;
-////                        }
-////                        return false;
-////                    }
-////                });
-////                dialog.setCancelable(false);
-//                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "DELETE_LIST")
-//                        .title(R.string.action_remove_list)
-//                        .content(R.string.delete_list_dialog)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//            }
-//        });
-
-//        getFab().setButtonOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showOuterFrame();
-//            }
-//        });
 
         getFab().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -472,7 +204,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         getActivity().registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabListe.CHOOSE_DONE));
 
-        mWelcomeScreen = new WelcomeScreenHelper(getActivity(), IntroListePers.class);
+        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroListePers.class);
         mWelcomeScreen.show(savedInstanceState);
 
         return rootView;
@@ -553,23 +285,11 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    public FabToolbar getFab() {
-//        if (mFab == null) {
-//            mFab = (FabToolbar) rootView.findViewById(R.id.fab_pager);
-//            mFab.setColor(getThemeUtils().accentColor());
-//        }
-//        return mFab;
-//    }
-
     public FloatingActionButton getFab() {
         if (mFab == null) {
             mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                     (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
-
-//            mFab.setImageResource(R.drawable.ic_add_24dp);
-//            Drawable drawable = DrawableCompat.wrap(mFab.getDrawable());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), android.R.color.white));
             IconicsDrawable icon = new IconicsDrawable(getActivity())
                     .icon(CommunityMaterial.Icon.cmd_plus)
                     .color(Color.WHITE)
@@ -580,24 +300,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         }
         return mFab;
     }
-
-//    private void showOuterFrame() {
-//        View outerFrame = rootView.findViewById(R.id.outerFrame);
-//        outerFrame.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getFab().hide();
-//                hideOuterFrame();
-//            }
-//        });
-//        outerFrame.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void hideOuterFrame() {
-//        final View outerFrame = rootView.findViewById(R.id.outerFrame);
-//        outerFrame.setOnClickListener(null);
-//        outerFrame.setVisibility(View.GONE);
-//    }
 
     private void updateLista() {
 

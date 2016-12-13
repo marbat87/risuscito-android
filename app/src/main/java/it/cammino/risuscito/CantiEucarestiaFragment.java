@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
@@ -63,40 +66,57 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.recycler_list) RecyclerView mRecyclerView;
+
+    @OnClick(R.id.button_pulisci)
+    public void pulisciLista() {
+        db = listaCanti.getReadableDatabase();
+        String sql = "DELETE FROM CUST_LISTS" +
+                " WHERE _id =  2 ";
+        db.execSQL(sql);
+        db.close();
+        updateLista();
+        cantoAdapter.notifyDataSetChanged();
+    }
+
+    @OnClick(R.id.button_condividi)
+    public void condividiLista() {
+//                Log.i(getClass().toString(), "cantieucarestia");
+        BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+        bottomSheetDialog.show(getFragmentManager(), null);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.activity_lista_personalizzata, container, false);
+        rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
+        ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
-        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantieucarestia");
-                db = listaCanti.getReadableDatabase();
-                String sql = "DELETE FROM CUST_LISTS" +
-                        " WHERE _id =  2 ";
-                db.execSQL(sql);
-                db.close();
-                updateLista();
-                cantoAdapter.notifyDataSetChanged();
-            }
-        });
+//        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantieucarestia");
+//                db = listaCanti.getReadableDatabase();
+//                String sql = "DELETE FROM CUST_LISTS" +
+//                        " WHERE _id =  2 ";
+//                db.execSQL(sql);
+//                db.close();
+//                updateLista();
+//                cantoAdapter.notifyDataSetChanged();
+//            }
+//        });
 
-        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantieucarestia");
-//                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
-//                        .title(R.string.share_by)
-//                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
-                bottomSheetDialog.show(getFragmentManager(), null);
-            }
-        });
+//        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantieucarestia");
+//                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+//                bottomSheetDialog.show(getFragmentManager(), null);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
@@ -153,14 +173,14 @@ public class CantiEucarestiaFragment extends Fragment {
             }
         };
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
+//        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
         cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (!isViewShown) {
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
@@ -177,11 +197,6 @@ public class CantiEucarestiaFragment extends Fragment {
         if (isVisibleToUser) {
             if (getView() != null) {
                 isViewShown = true;
-//            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
-//            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-//            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-//            if (!fab1.isShowing())
-//                fab1.scrollUp();
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
                 fab1.show();
             }
@@ -240,38 +255,25 @@ public class CantiEucarestiaFragment extends Fragment {
         else
             posizioniList.clear();
 
-        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, 0));
-
+        int progressiveTag = 0;
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
-            posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 6, 1));
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, 2));
-            if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
-                posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 5));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 6));
-            }
-            else {
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
-            }
-        }
-        else {
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, 1));
-            if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
-                posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, 2));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 4));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
-            }
-            else {
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, 2));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, 3));
-                posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 4));
-            }
-        }
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 6, progressiveTag++));
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 2, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.canto_offertorio), 8, progressiveTag++));
+
+        if (pref.getBoolean(Utility.SHOW_SANTO, false))
+            posizioniList.add(getCantofromPosition(getString(R.string.santo), 7, progressiveTag++));
+
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, progressiveTag++));
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, progressiveTag++));
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, progressiveTag++));
 
     }
 
@@ -328,6 +330,8 @@ public class CantiEucarestiaFragment extends Fragment {
 
     private String getTitlesList() {
 
+        int progressivePos = 0;
+
         Locale l = getActivity().getResources().getConfiguration().locale;
         String result = "";
         String temp;
@@ -336,7 +340,7 @@ public class CantiEucarestiaFragment extends Fragment {
         result +=  "-- " + getString(R.string.title_activity_canti_eucarestia).toUpperCase(l) + " --\n";
 
         //canto iniziale
-        temp = getTitoloToSendFromPosition(0);
+        temp = getTitoloToSendFromPosition(progressivePos++);
 
         result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
         result += "\n";
@@ -350,11 +354,11 @@ public class CantiEucarestiaFragment extends Fragment {
 
         //deve essere messa anche la seconda lettura? legge le impostazioni
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean showSeconda = pref.getBoolean(Utility.SHOW_SECONDA, false);
+//        boolean showSeconda = pref.getBoolean(Utility.SHOW_SECONDA, false);
 
-        if (showSeconda) {
-            //canto alla seconda lettura
-            temp = getTitoloToSendFromPosition(1);
+        //canto alla seconda lettura
+        if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
 
             result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
             result += "\n";
@@ -365,11 +369,27 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
+        }
 
-            //canto alla pace
-            temp = getTitoloToSendFromPosition(2);
+        //canto alla pace
+        temp = getTitoloToSendFromPosition(progressivePos++);
 
-            result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+        result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+//            boolean showOffertorio = pref.getBoolean(Utility.SHOW_OFFERTORIO, false);
+        //offertorio
+        if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
+
+            result += getResources().getString(R.string.canto_offertorio).toUpperCase(l);
             result += "\n";
 
             if (temp.equalsIgnoreCase(""))
@@ -378,105 +398,14 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
-
-            boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
-
-            if (showSanto) {
-                //santo
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.santo).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al pane
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(6);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-            }
-            else {
-                //canti al pane
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-            }
         }
-        else {
-            //canto alla pace
-            temp = getTitoloToSendFromPosition(1);
 
-            result += getResources().getString(R.string.canto_pace).toUpperCase(l);
+//                boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
+        //santo
+        if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
+            temp = getTitoloToSendFromPosition(progressivePos++);
+
+            result += getResources().getString(R.string.santo).toUpperCase(l);
             result += "\n";
 
             if (temp.equalsIgnoreCase(""))
@@ -485,103 +414,44 @@ public class CantiEucarestiaFragment extends Fragment {
                 result += temp;
 
             result += "\n";
-
-            boolean showSanto = pref.getBoolean(Utility.SHOW_SANTO, false);
-
-            if (showSanto) {
-                //santo
-                temp = getTitoloToSendFromPosition(2);
-
-                result += getResources().getString(R.string.santo).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al pane
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(5);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-            }
-            else {
-                //canti al pane
-                temp = getTitoloToSendFromPosition(2);
-
-                result += getResources().getString(R.string.canto_pane).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canti al vino
-                temp = getTitoloToSendFromPosition(3);
-
-                result += getResources().getString(R.string.canto_vino).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase("")) {
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                } else
-                    result += temp;
-
-                result += "\n";
-
-                //canto finale
-                temp = getTitoloToSendFromPosition(4);
-
-                result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-                result += "\n";
-
-                if (temp.equalsIgnoreCase(""))
-                    result += ">> " + getString(R.string.to_be_chosen) + " <<";
-                else
-                    result += temp;
-
-            }
-
         }
-//		else
-//			Log.i("SANTO", "IGNORATO");
+
+        //canti al pane
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_pane).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+        //canti al vino
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_vino).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
+
+        result += "\n";
+
+        //canto finale
+        temp = getTitoloToSendFromPosition(progressivePos++);
+
+        result += getResources().getString(R.string.canto_fine).toUpperCase(l);
+        result += "\n";
+
+        if (temp.equalsIgnoreCase(""))
+            result += ">> " + getString(R.string.to_be_chosen) + " <<";
+        else
+            result += temp;
 
         return result;
 
@@ -635,12 +505,6 @@ public class CantiEucarestiaFragment extends Fragment {
                             .sizeDp(24)
                             .paddingDp(2)
                             .colorRes(R.color.icon_ative_black));
-//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
-//            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_switch_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }
@@ -687,7 +551,6 @@ public class CantiEucarestiaFragment extends Fragment {
                                     db.close();
                                     updateLista();
                                     cantoAdapter.notifyItemChanged(longclickedPos);
-//                                    mShareActionProvider.setShareIntent(getDefaultIntent());
                                 }
                             })
                             .setActionTextColor(getThemeUtils().accentColor())

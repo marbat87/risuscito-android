@@ -22,10 +22,10 @@
         android:scrollHorizontally="true"
         android:layout_marginLeft="@dimen/activity_min_margin"
         android:layout_marginRight="@dimen/activity_min_margin"
-        android:singleLine="true"
         android:textColorHighlight="@color/ripple_color_light"
         android:imeOptions="actionDone"
-        android:hint="@string/search_hint" />
+        android:hint="@string/search_hint"
+        android:maxLines="1" />
 
     <Button
         android:id="@+id/pulisci_ripple"

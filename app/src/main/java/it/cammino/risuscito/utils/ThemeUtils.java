@@ -54,7 +54,7 @@ public class ThemeUtils {
     }
 
     public void primaryColor(int newColor) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).commit();
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).apply();
     }
 
     public int primaryColorDark() {
@@ -77,7 +77,7 @@ public class ThemeUtils {
     }
 
     public void accentColor(int newColor) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).commit();
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).apply();
     }
 
     public boolean isColoredNavBar() {
@@ -347,153 +347,153 @@ public class ThemeUtils {
 //        }
     }
 
-    public int getFilePickerCurrent() {
-        if (accentColor() == Color.parseColor("#FF8A80"))
-            return R.style.FilePickerTheme_Red1;
-        if (accentColor() == Color.parseColor("#FF5252"))
-            return R.style.FilePickerTheme_Red2;
-        if (accentColor() == Color.parseColor("#FF1744"))
-            return R.style.FilePickerTheme_Red3;
-        if (accentColor() == Color.parseColor("#D50000"))
-            return R.style.FilePickerTheme_Red4;
-
-        if (accentColor() == Color.parseColor("#FF80AB"))
-            return R.style.FilePickerTheme_Pink1;
-        if (accentColor() == Color.parseColor("#FF4081"))
-            return R.style.FilePickerTheme_Pink2;
-        if (accentColor() == Color.parseColor("#F50057"))
-            return R.style.FilePickerTheme_Pink3;
-        if (accentColor() == Color.parseColor("#C51162"))
-            return R.style.FilePickerTheme_Pink4;
-
-        if (accentColor() == Color.parseColor("#EA80FC"))
-            return R.style.FilePickerTheme_Purple1;
-        if (accentColor() == Color.parseColor("#E040FB"))
-            return R.style.FilePickerTheme_Purple2;
-        if (accentColor() == Color.parseColor("#D500F9"))
-            return R.style.FilePickerTheme_Purple3;
-        if (accentColor() == Color.parseColor("#AA00FF"))
-            return R.style.FilePickerTheme_Purple4;
-
-        if (accentColor() == Color.parseColor("#B388FF"))
-            return R.style.FilePickerTheme_Violet1;
-        if (accentColor() == Color.parseColor("#7C4DFF"))
-            return R.style.FilePickerTheme_Violet2;
-        if (accentColor() == Color.parseColor("#651FFF"))
-            return R.style.FilePickerTheme_Violet3;
-        if (accentColor() == Color.parseColor("#6200EA"))
-            return R.style.FilePickerTheme_Violet4;
-
-        if (accentColor() == Color.parseColor("#8C9EFF"))
-            return R.style.FilePickerTheme_Blue1;
-        if (accentColor() == Color.parseColor("#536DFE"))
-            return R.style.FilePickerTheme_Blue2;
-        if (accentColor() == Color.parseColor("#3D5AFE"))
-            return R.style.FilePickerTheme_Blue3;
-        if (accentColor() == Color.parseColor("#304FFE"))
-            return R.style.FilePickerTheme_Blue4;
-
-        if (accentColor() == Color.parseColor("#82B1FF"))
-            return R.style.FilePickerTheme_Azure1;
-        if (accentColor() == Color.parseColor("#448AFF"))
-            return R.style.FilePickerTheme_Azure2;
-        if (accentColor() == Color.parseColor("#2979FF"))
-            return R.style.FilePickerTheme_Azure3;
-        if (accentColor() == Color.parseColor("#2962FF"))
-            return R.style.FilePickerTheme_Azure4;
-
-        if (accentColor() == Color.parseColor("#80D8FF"))
-            return R.style.FilePickerTheme_Turqouise1;
-        if (accentColor() == Color.parseColor("#40C4FF"))
-            return R.style.FilePickerTheme_Turqouise2;
-        if (accentColor() == Color.parseColor("#00B0FF"))
-            return R.style.FilePickerTheme_Turqouise3;
-        if (accentColor() == Color.parseColor("#0091EA"))
-            return R.style.FilePickerTheme_Turqouise4;
-
-        if (accentColor() == Color.parseColor("#84FFFF"))
-            return R.style.FilePickerTheme_BlueLight1;
-        if (accentColor() == Color.parseColor("#18FFFF"))
-            return R.style.FilePickerTheme_BlueLight2;
-        if (accentColor() == Color.parseColor("#00E5FF"))
-            return R.style.FilePickerTheme_BlueLight3;
-        if (accentColor() == Color.parseColor("#00B8D4"))
-            return R.style.FilePickerTheme_BlueLight4;
-
-        if (accentColor() == Color.parseColor("#A7FFEB"))
-            return R.style.FilePickerTheme_GreenWater1;
-        if (accentColor() == Color.parseColor("#64FFDA"))
-            return R.style.FilePickerTheme_GreenWater2;
-        if (accentColor() == Color.parseColor("#1DE9B6"))
-            return R.style.FilePickerTheme_GreenWater3;
-        if (accentColor() == Color.parseColor("#00BFA5"))
-            return R.style.FilePickerTheme_GreenWater4;
-
-        if (accentColor() == Color.parseColor("#B9F6CA"))
-            return R.style.FilePickerTheme_Green1;
-        if (accentColor() == Color.parseColor("#69F0AE"))
-            return R.style.FilePickerTheme_Green2;
-        if (accentColor() == Color.parseColor("#00E676"))
-            return R.style.FilePickerTheme_Green3;
-        if (accentColor() == Color.parseColor("#00C853"))
-            return R.style.FilePickerTheme_Green4;
-
-        if (accentColor() == Color.parseColor("#CCFF90"))
-            return R.style.FilePickerTheme_GreenLight1;
-        if (accentColor() == Color.parseColor("#B2FF59"))
-            return R.style.FilePickerTheme_GreenLight2;
-        if (accentColor() == Color.parseColor("#76FF03"))
-            return R.style.FilePickerTheme_GreenLight3;
-        if (accentColor() == Color.parseColor("#64DD17"))
-            return R.style.FilePickerTheme_GreenLight4;
-
-        if (accentColor() == Color.parseColor("#F4FF81"))
-            return R.style.FilePickerTheme_Lime1;
-        if (accentColor() == Color.parseColor("#EEFF41"))
-            return R.style.FilePickerTheme_Lime2;
-        if (accentColor() == Color.parseColor("#C6FF00"))
-            return R.style.FilePickerTheme_Lime3;
-        if (accentColor() == Color.parseColor("#AEEA00"))
-            return R.style.FilePickerTheme_Lime4;
-
-        if (accentColor() == Color.parseColor("#FFFF8D"))
-            return R.style.FilePickerTheme_Yellow1;
-        if (accentColor() == Color.parseColor("#FFFF00"))
-            return R.style.FilePickerTheme_Yellow2;
-        if (accentColor() == Color.parseColor("#FFEA00"))
-            return R.style.FilePickerTheme_Yellow3;
-        if (accentColor() == Color.parseColor("#FFD600"))
-            return R.style.FilePickerTheme_Yellow4;
-
-        if (accentColor() == Color.parseColor("#FFE57F"))
-            return R.style.FilePickerTheme_OrangeLight1;
-        if (accentColor() == Color.parseColor("#FFD740"))
-            return R.style.FilePickerTheme_OrangeLight2;
-        if (accentColor() == Color.parseColor("#FFC400"))
-            return R.style.FilePickerTheme_OrangeLight3;
-        if (accentColor() == Color.parseColor("#FFAB00"))
-            return R.style.FilePickerTheme_OrangeLight4;
-
-        if (accentColor() == Color.parseColor("#FFD180"))
-            return R.style.FilePickerTheme_Orange1;
-        if (accentColor() == Color.parseColor("#FFAB40"))
-            return R.style.FilePickerTheme_Orange2;
-        if (accentColor() == Color.parseColor("#FF9100"))
-            return R.style.FilePickerTheme_Orange3;
-        if (accentColor() == Color.parseColor("#FF6D00"))
-            return R.style.FilePickerTheme_Orange4;
-
-        if (accentColor() == Color.parseColor("#FF9E80"))
-            return R.style.FilePickerTheme_OrangeDark1;
-        if (accentColor() == Color.parseColor("#FF6E40"))
-            return R.style.FilePickerTheme_OrangeDark2;
-        if (accentColor() == Color.parseColor("#FF3D00"))
-            return R.style.FilePickerTheme_OrangeDark3;
-        if (accentColor() == Color.parseColor("#DD2C00"))
-            return R.style.FilePickerTheme_OrangeDark4;
-        else
-            return R.style.FilePickerTheme;
-    }
+//    public int getFilePickerCurrent() {
+//        if (accentColor() == Color.parseColor("#FF8A80"))
+//            return R.style.FilePickerTheme_Red1;
+//        if (accentColor() == Color.parseColor("#FF5252"))
+//            return R.style.FilePickerTheme_Red2;
+//        if (accentColor() == Color.parseColor("#FF1744"))
+//            return R.style.FilePickerTheme_Red3;
+//        if (accentColor() == Color.parseColor("#D50000"))
+//            return R.style.FilePickerTheme_Red4;
+//
+//        if (accentColor() == Color.parseColor("#FF80AB"))
+//            return R.style.FilePickerTheme_Pink1;
+//        if (accentColor() == Color.parseColor("#FF4081"))
+//            return R.style.FilePickerTheme_Pink2;
+//        if (accentColor() == Color.parseColor("#F50057"))
+//            return R.style.FilePickerTheme_Pink3;
+//        if (accentColor() == Color.parseColor("#C51162"))
+//            return R.style.FilePickerTheme_Pink4;
+//
+//        if (accentColor() == Color.parseColor("#EA80FC"))
+//            return R.style.FilePickerTheme_Purple1;
+//        if (accentColor() == Color.parseColor("#E040FB"))
+//            return R.style.FilePickerTheme_Purple2;
+//        if (accentColor() == Color.parseColor("#D500F9"))
+//            return R.style.FilePickerTheme_Purple3;
+//        if (accentColor() == Color.parseColor("#AA00FF"))
+//            return R.style.FilePickerTheme_Purple4;
+//
+//        if (accentColor() == Color.parseColor("#B388FF"))
+//            return R.style.FilePickerTheme_Violet1;
+//        if (accentColor() == Color.parseColor("#7C4DFF"))
+//            return R.style.FilePickerTheme_Violet2;
+//        if (accentColor() == Color.parseColor("#651FFF"))
+//            return R.style.FilePickerTheme_Violet3;
+//        if (accentColor() == Color.parseColor("#6200EA"))
+//            return R.style.FilePickerTheme_Violet4;
+//
+//        if (accentColor() == Color.parseColor("#8C9EFF"))
+//            return R.style.FilePickerTheme_Blue1;
+//        if (accentColor() == Color.parseColor("#536DFE"))
+//            return R.style.FilePickerTheme_Blue2;
+//        if (accentColor() == Color.parseColor("#3D5AFE"))
+//            return R.style.FilePickerTheme_Blue3;
+//        if (accentColor() == Color.parseColor("#304FFE"))
+//            return R.style.FilePickerTheme_Blue4;
+//
+//        if (accentColor() == Color.parseColor("#82B1FF"))
+//            return R.style.FilePickerTheme_Azure1;
+//        if (accentColor() == Color.parseColor("#448AFF"))
+//            return R.style.FilePickerTheme_Azure2;
+//        if (accentColor() == Color.parseColor("#2979FF"))
+//            return R.style.FilePickerTheme_Azure3;
+//        if (accentColor() == Color.parseColor("#2962FF"))
+//            return R.style.FilePickerTheme_Azure4;
+//
+//        if (accentColor() == Color.parseColor("#80D8FF"))
+//            return R.style.FilePickerTheme_Turqouise1;
+//        if (accentColor() == Color.parseColor("#40C4FF"))
+//            return R.style.FilePickerTheme_Turqouise2;
+//        if (accentColor() == Color.parseColor("#00B0FF"))
+//            return R.style.FilePickerTheme_Turqouise3;
+//        if (accentColor() == Color.parseColor("#0091EA"))
+//            return R.style.FilePickerTheme_Turqouise4;
+//
+//        if (accentColor() == Color.parseColor("#84FFFF"))
+//            return R.style.FilePickerTheme_BlueLight1;
+//        if (accentColor() == Color.parseColor("#18FFFF"))
+//            return R.style.FilePickerTheme_BlueLight2;
+//        if (accentColor() == Color.parseColor("#00E5FF"))
+//            return R.style.FilePickerTheme_BlueLight3;
+//        if (accentColor() == Color.parseColor("#00B8D4"))
+//            return R.style.FilePickerTheme_BlueLight4;
+//
+//        if (accentColor() == Color.parseColor("#A7FFEB"))
+//            return R.style.FilePickerTheme_GreenWater1;
+//        if (accentColor() == Color.parseColor("#64FFDA"))
+//            return R.style.FilePickerTheme_GreenWater2;
+//        if (accentColor() == Color.parseColor("#1DE9B6"))
+//            return R.style.FilePickerTheme_GreenWater3;
+//        if (accentColor() == Color.parseColor("#00BFA5"))
+//            return R.style.FilePickerTheme_GreenWater4;
+//
+//        if (accentColor() == Color.parseColor("#B9F6CA"))
+//            return R.style.FilePickerTheme_Green1;
+//        if (accentColor() == Color.parseColor("#69F0AE"))
+//            return R.style.FilePickerTheme_Green2;
+//        if (accentColor() == Color.parseColor("#00E676"))
+//            return R.style.FilePickerTheme_Green3;
+//        if (accentColor() == Color.parseColor("#00C853"))
+//            return R.style.FilePickerTheme_Green4;
+//
+//        if (accentColor() == Color.parseColor("#CCFF90"))
+//            return R.style.FilePickerTheme_GreenLight1;
+//        if (accentColor() == Color.parseColor("#B2FF59"))
+//            return R.style.FilePickerTheme_GreenLight2;
+//        if (accentColor() == Color.parseColor("#76FF03"))
+//            return R.style.FilePickerTheme_GreenLight3;
+//        if (accentColor() == Color.parseColor("#64DD17"))
+//            return R.style.FilePickerTheme_GreenLight4;
+//
+//        if (accentColor() == Color.parseColor("#F4FF81"))
+//            return R.style.FilePickerTheme_Lime1;
+//        if (accentColor() == Color.parseColor("#EEFF41"))
+//            return R.style.FilePickerTheme_Lime2;
+//        if (accentColor() == Color.parseColor("#C6FF00"))
+//            return R.style.FilePickerTheme_Lime3;
+//        if (accentColor() == Color.parseColor("#AEEA00"))
+//            return R.style.FilePickerTheme_Lime4;
+//
+//        if (accentColor() == Color.parseColor("#FFFF8D"))
+//            return R.style.FilePickerTheme_Yellow1;
+//        if (accentColor() == Color.parseColor("#FFFF00"))
+//            return R.style.FilePickerTheme_Yellow2;
+//        if (accentColor() == Color.parseColor("#FFEA00"))
+//            return R.style.FilePickerTheme_Yellow3;
+//        if (accentColor() == Color.parseColor("#FFD600"))
+//            return R.style.FilePickerTheme_Yellow4;
+//
+//        if (accentColor() == Color.parseColor("#FFE57F"))
+//            return R.style.FilePickerTheme_OrangeLight1;
+//        if (accentColor() == Color.parseColor("#FFD740"))
+//            return R.style.FilePickerTheme_OrangeLight2;
+//        if (accentColor() == Color.parseColor("#FFC400"))
+//            return R.style.FilePickerTheme_OrangeLight3;
+//        if (accentColor() == Color.parseColor("#FFAB00"))
+//            return R.style.FilePickerTheme_OrangeLight4;
+//
+//        if (accentColor() == Color.parseColor("#FFD180"))
+//            return R.style.FilePickerTheme_Orange1;
+//        if (accentColor() == Color.parseColor("#FFAB40"))
+//            return R.style.FilePickerTheme_Orange2;
+//        if (accentColor() == Color.parseColor("#FF9100"))
+//            return R.style.FilePickerTheme_Orange3;
+//        if (accentColor() == Color.parseColor("#FF6D00"))
+//            return R.style.FilePickerTheme_Orange4;
+//
+//        if (accentColor() == Color.parseColor("#FF9E80"))
+//            return R.style.FilePickerTheme_OrangeDark1;
+//        if (accentColor() == Color.parseColor("#FF6E40"))
+//            return R.style.FilePickerTheme_OrangeDark2;
+//        if (accentColor() == Color.parseColor("#FF3D00"))
+//            return R.style.FilePickerTheme_OrangeDark3;
+//        if (accentColor() == Color.parseColor("#DD2C00"))
+//            return R.style.FilePickerTheme_OrangeDark4;
+//        else
+//            return R.style.FilePickerTheme;
+//    }
 
     public static int shiftColorDown(int color) {
         float[] hsv = new float[3];

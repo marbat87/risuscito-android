@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.1.0" changeDate="Agosto 2016">
-        <changelogimprovement>Aggiornate alcune icone</changelogimprovement>
-        <changelogimprovement>Nuovo drawer laterale con layout stile gmail su tablet</changelogimprovement>
-        <changelogimprovement>Aggiunta possibilità di inviare e importare le liste personalizzate!</changelogimprovement>
-        <changelogimprovement>Aggiunta compabilità con Android 7 Nougat</changelogimprovement>
-        <changelogimprovement>Migliorati i risultati della funzione di ricerca veloce</changelogimprovement>
-        <changelogimprovement>Nuovo stile per le opzioni aggiuntive dei pulsanti flottanti</changelogimprovement>
-        <changelogtext>[b]PROSSIMO AGGIORNAMENTO[/b] Pianificata la fine della compatibilità con Android 2.3 Gingerbread (controlla la tua versione in Impostazioni -> Info Telefono/Dispositivo), perchè ormai si tratta di una versione molto datata</changelogtext>
+    <changelogversion versionName="4.2.0" changeDate="Dicembre 2016">
+        <changelogimprovement>Compatibilità minima Android 4.0 (API 14)</changelogimprovement>
+        <changelogimprovement>Aggiunto il nuovo canto "Come pecora che vede"</changelogimprovement>
+        <changelogimprovement>Aggiunto l'opzione per il canto all'offertorio</changelogimprovement>
     </changelogversion>
 
 </changelog>

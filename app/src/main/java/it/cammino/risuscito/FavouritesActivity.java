@@ -30,10 +30,13 @@ import android.widget.Toast;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
@@ -47,10 +50,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     private List<CantoRecycled> titoli;
     private int posizDaCanc;
     private List<CantoRecycled> removedItems;
-    private View rootView;
-    private RecyclerView recyclerView;
+    //    private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
-    //    private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
     private boolean actionModeOk;
@@ -63,19 +64,22 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.favouritesList) RecyclerView mRecyclerView;
+    @BindView(R.id.no_favourites) View mNoFavorites;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.activity_favourites, container, false);
+        View rootView = inflater.inflate(R.layout.activity_favourites, container, false);
+        ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
         Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity.isOnTablet());
 
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_favourites);
         mMainActivity.setupToolbarTitle(R.string.title_activity_favourites);
 
-        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        mMainActivity.mTabLayout.setVisibility(View.GONE);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -89,7 +93,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         }
         fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
-//        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser)
                 .color(Color.WHITE)
@@ -99,46 +102,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_favorites_title)
-//                        .content(R.string.dialog_reset_favorites_desc)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                ContentValues  values = new  ContentValues();
-//                                values.put("favourite" , 0);
-//                                db.update("ELENCO", values,  null, null);
-//                                db.close();
-//                                updateFavouritesList();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), FavouritesActivity.this, "FAVORITES_RESET")
                         .title(R.string.dialog_reset_favorites_title)
                         .content(R.string.dialog_reset_favorites_desc)
@@ -260,7 +223,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                     startSubActivity(bundle, v);
                 }
                 else {
-                    int tempPos = recyclerView.getChildAdapterPosition(v);
+                    int tempPos = mRecyclerView.getChildAdapterPosition(v);
                     titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
                     cantoAdapter.notifyItemChanged(tempPos);
                 }
@@ -270,7 +233,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         View.OnLongClickListener longClickListener  = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                posizDaCanc = recyclerView.getChildAdapterPosition(v);
+                posizDaCanc = mRecyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
                 else {
@@ -281,17 +244,19 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }
         };
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.favouritesList);
 
         // Creating new adapter object
         cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+        mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
         if (titoli.size() == 0) {
             if (mMainActivity.isOnTablet())
                 fabClear.hide();
@@ -324,9 +289,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                             .sizeDp(24)
                             .paddingDp(2)
                             .colorRes(R.color.icon_ative_black));
-//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }
@@ -369,7 +331,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                         }
                     }
                     db.close();
-                    rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                    rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                    mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                     if (titoli.size() == 0) {
                         if (mMainActivity.isOnTablet())
                             fabClear.hide();

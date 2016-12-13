@@ -2,17 +2,17 @@ package it.cammino.risuscito;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class DonateActivity extends ThemeableActivity {
@@ -20,21 +20,29 @@ public class DonateActivity extends ThemeableActivity {
     private final int TEXTZOOM = 90;
 
     private LUtils mLUtils;
+    @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.donate_text) WebView donateView;
+
+    @OnClick(R.id.donateButton)
+    public void donate() {
+        String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donate);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-//		toolbar.setTitle("");
+//        Toolbar mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
-//		toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        setSupportActionBar(toolbar);
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        WebView donateView = (WebView) findViewById(R.id.donate_text);
+//        WebView donateView = (WebView) findViewById(R.id.donate_text);
         donateView.setBackgroundColor(0);
 
         String text = "<html><head>"
@@ -47,21 +55,21 @@ public class DonateActivity extends ThemeableActivity {
         donateView.loadData(text, "text/html; charset=utf-8", "UTF-8");
 
         WebSettings wSettings = donateView.getSettings();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            wSettings.setTextZoom(TEXTZOOM);
-        else
-            wSettings.setTextSize(WebSettings.TextSize.SMALLER);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        wSettings.setTextZoom(TEXTZOOM);
+//        else
+//            wSettings.setTextSize(WebSettings.TextSize.SMALLER);
 
-        (findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
-
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(browserIntent);
-            }
-        });
+//        (findViewById(R.id.donateButton)).setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                String url = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ENA7HP2LQKQ3G";
+//
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                startActivity(browserIntent);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(DonateActivity.this);
     }

@@ -30,10 +30,13 @@ import android.widget.Toast;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoHistoryRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoHistory;
@@ -45,10 +48,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     private List<CantoHistory> titoli;
     private int posizDaCanc;
     private List<CantoHistory> removedItems;
-    private View rootView;
-    private RecyclerView recyclerView;
+    //    private RecyclerView recyclerView;
     private CantoHistoryRecyclerAdapter cantoAdapter;
-    //    private int prevOrientation;
     private FloatingActionButton fabClear;
     private ActionMode mMode;
     private boolean actionModeOk;
@@ -61,16 +62,20 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.history_recycler) RecyclerView mRecyclerView;
+    @BindView(R.id.no_history) View mNoHistory;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.layout_history, container, false);
+        ButterKnife.bind(this, rootView);
 
-        rootView = inflater.inflate(R.layout.layout_history, container, false);
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.title_activity_history);
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_history);
 
-        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
+        mMainActivity.mTabLayout.setVisibility(View.GONE);
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -78,15 +83,12 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mLUtils = LUtils.getInstance(getActivity());
         mMode = null;
 
-//        if (mMainActivity.isOnTablet())
-//            mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(true);
             mMainActivity.enableBottombar(false);
         }
         fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
-//        fabClear.setImageResource(R.drawable.ic_eraser_white_24dp);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser)
                 .color(Color.WHITE)
@@ -96,61 +98,6 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         fabClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_reset_history_title)
-//                        .content(R.string.dialog_reset_history_desc)
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                db.delete("CRONOLOGIA", null, null);
-//                                db.close();
-//                                updateHistoryList();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-////                        .callback(new MaterialDialog.ButtonCallback() {
-////                            @Override
-////                            public void onPositive(MaterialDialog dialog) {
-////                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                                db.delete("CRONOLOGIA", null, null);
-////                                db.close();
-////                                updateHistoryList();
-//////                                if (titoli.size() == 0)
-//////                                    fabClear.hide();
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////
-////                            @Override
-////                            public void onNegative(MaterialDialog dialog) {
-////                                getActivity().setRequestedOrientation(prevOrientation);
-////                            }
-////                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), HistoryFragment.this, "RESET_HISTORY")
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
@@ -269,7 +216,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                     startSubActivity(bundle, v);
                 }
                 else {
-                    int tempPos = recyclerView.getChildAdapterPosition(v);
+                    int tempPos = mRecyclerView.getChildAdapterPosition(v);
                     titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
                     cantoAdapter.notifyItemChanged(tempPos);
                 }
@@ -279,7 +226,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                posizDaCanc = recyclerView.getChildAdapterPosition(v);
+                posizDaCanc = mRecyclerView.getChildAdapterPosition(v);
                 if (mMode == null)
                     mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
                 else {
@@ -290,17 +237,19 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
             }
         };
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.history_recycler);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.history_recycler);
 
         // Creating new adapter object
         cantoAdapter = new CantoHistoryRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
-        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+        mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
         if (titoli.size() == 0) {
             if (mMainActivity.isOnTablet())
                 fabClear.hide();
@@ -333,9 +282,6 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                             .sizeDp(24)
                             .paddingDp(2)
                             .colorRes(R.color.icon_ative_black));
-//            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-//            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//            menu.findItem(R.id.action_remove_item).setIcon(drawable);
             actionModeOk = false;
             return true;
         }
@@ -374,7 +320,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                         }
                     }
                     db.close();
-                    rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                    rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                    mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
                     if (titoli.size() == 0) {
                         if (mMainActivity.isOnTablet())
                             fabClear.hide();

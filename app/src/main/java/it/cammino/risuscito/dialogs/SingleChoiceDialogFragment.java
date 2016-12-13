@@ -125,12 +125,10 @@ public class SingleChoiceDialogFragment extends DialogFragment {
         protected int mTitle = 0;
         @NonNull
         protected final String mTag;
-        @StringRes
         protected CharSequence mNegativeButton;
         protected boolean mCanceable = false;
         @ArrayRes
         protected int mItems;
-        @NonNull
         protected int mDefaultIndex;
         @NonNull
         protected transient SingleChoiceCallback mListener;

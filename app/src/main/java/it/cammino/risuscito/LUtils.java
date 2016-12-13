@@ -184,9 +184,9 @@ public class LUtils {
         }
     }
 
-    public static boolean hasICS() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    }
+//    public static boolean hasICS() {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+//    }
 
     public static boolean hasJB() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
@@ -221,7 +221,7 @@ public class LUtils {
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, result);
             Log.d(TAG, "listToXML: " + writer.toString());
-            writer.toString();
+//            writer.toString();
 
             File exportFile = new File(mActivity.getCacheDir().getAbsolutePath() + "/" + lista.getName() + FILE_FORMAT);
             Log.d(TAG, "listToXML: exportFile = " + exportFile.getAbsolutePath());

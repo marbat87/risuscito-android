@@ -3,9 +3,6 @@ package it.cammino.risuscito.ui;
 import com.mikepenz.crossfader.Crossfader;
 import com.mikepenz.materialdrawer.interfaces.ICrossfader;
 
-/**
- * Created by mikepenz on 18.07.15.
- */
 public class CrossfadeWrapper implements ICrossfader {
     private Crossfader mCrossfader;
 

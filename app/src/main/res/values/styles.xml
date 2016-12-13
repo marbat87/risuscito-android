@@ -9,7 +9,6 @@
     </style>
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-        <!--<item name="android:textColor">#fff</item>-->
     </style>
 
     <style name="TitoloSezione">

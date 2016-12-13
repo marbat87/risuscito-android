@@ -37,6 +37,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
@@ -48,9 +51,9 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
     private DatabaseCanti listaCanti;
     private List<CantoRecycled> titoli;
-    private EditText searchPar;
+//    private EditText searchPar;
     private View rootView;
-    RecyclerView recyclerView;
+//    RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
 
     private String titoloDaAgg;
@@ -61,7 +64,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private int[] idListe;
     private int idListaClick;
     private int idPosizioneClick;
-//    private int prevOrientation;
 
     private final int ID_FITTIZIO = 99999999;
     private final int ID_BASE = 100;
@@ -70,16 +72,26 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.matchedList) RecyclerView mRecyclerView;
+    @BindView(R.id.textfieldRicerca) EditText searchPar;
+    @BindView(R.id.search_no_results) View mNoResults;
+
+    @OnClick(R.id.pulisci_ripple)
+    public void pulisciRisultati() {
+        searchPar.setText("");
+        mNoResults.setVisibility(View.GONE);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_ricerca_titolo,
-                container, false);
+        rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
+        ButterKnife.bind(this, rootView);
 
         if (listaCanti == null)
             listaCanti = new DatabaseCanti(getActivity());
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -103,12 +115,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         // Creating new adapter object
         titoli = new ArrayList<>();
         cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
+//        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         searchPar.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -122,8 +134,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
                 if (s.length() >= 3) {
 
-                    rootView.findViewById(R.id.search_no_results)
-                            .setVisibility(View.GONE);
+//                    rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                    mNoResults.setVisibility(View.GONE);
 
 //                    String titolo = Utility.duplicaApostrofi(s.toString());
                     String stringa = Utility.removeAccents(s.toString()).toLowerCase();
@@ -136,8 +148,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     // lancia la ricerca di tutti i titoli presenti in DB e li
                     // dispone in ordine alfabetico
                     String query = "SELECT titolo, color, pagina, _id, source"
-//                            + "		FROM ELENCO" + "		WHERE titolo like '%"
-//                            + titolo + "%'" + "		ORDER BY titolo ASC";
                             + "		FROM ELENCO ORDER BY titolo ASC";
                     Cursor lista = db.rawQuery(query, null);
 
@@ -164,14 +174,14 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     cantoAdapter.notifyDataSetChanged();
 
                     if (total == 0)
-                        rootView.findViewById(R.id.search_no_results)
-                                .setVisibility(View.VISIBLE);
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+                        mNoResults.setVisibility(View.VISIBLE);
                 } else {
                     if (s.length() == 0) {
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-                        rootView.findViewById(R.id.search_no_results)
-                                .setVisibility(View.GONE);
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        mNoResults.setVisibility(View.GONE);
                     }
                 }
 
@@ -219,20 +229,19 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         });
 
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(
-                        View.GONE);
-            }
-        });
+//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                searchPar.setText("");
+//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                mNoResults.setVisibility(View.GONE);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreateView: RESTORING");
-//            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
             idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
             idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
@@ -421,16 +430,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                         idListaClick -= 100;
 
                         //recupero ID del canto cliccato
-//                        String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                         SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                        String query = "SELECT _id" +
-//                                "		FROM ELENCO" +
-//                                "		WHERE titolo = '" + cantoCliccatoNoApex + "'";
-//                        Cursor cursor = db.rawQuery(query, null);
-//                        cursor.moveToFirst();
-//                        idDaAgg = cursor.getInt(0);
-//                        cursor.close();
-
                         if (listePers[idListaClick]
                                 .getCantoPosizione(idPosizioneClick).equals("")) {
                             listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
@@ -449,8 +449,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                         , Snackbar.LENGTH_SHORT)
                                         .show();
                             else {
-//                                prevOrientation = getActivity().getRequestedOrientation();
-//                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
                                 String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
@@ -458,51 +456,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-//                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                                        .title(R.string.dialog_replace_title)
-//                                        .content(getString(R.string.dialog_present_yet) + " "
-////                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-////                                                .substring(10)
-//                                                + cursor.getString(0)
-//                                                + getString(R.string.dialog_wonna_replace))
-//                                        .positiveText(R.string.confirm)
-//                                        .negativeText(R.string.dismiss)
-//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                            @Override
-//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//                                        })
-//                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                                            @Override
-//                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
-//                                        .show();
-//                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                                    @Override
-//                                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                                         KeyEvent event) {
-//                                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                                            arg0.dismiss();
-//                                            getActivity().setRequestedOrientation(prevOrientation);
-//                                            return true;
-//                                        }
-//                                        return false;
-//                                    }
-//                                });
-//                                dialog.setCancelable(false);
                                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), RicercaVeloceFragment.this, "VELOCE_REPLACE")
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
@@ -529,10 +482,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     // aggiunge il canto premuto ai preferiti
     public void addToFavorites() {
         SQLiteDatabase db = listaCanti.getReadableDatabase();
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
         String sql = "UPDATE ELENCO"
                 + "  SET favourite = 1"
-//                + "  WHERE titolo =  \'" + titoloNoApex + "\'";
                 + "  WHERE _id =  " + idDaAgg;
         db.execSQL(sql);
         db.close();
@@ -544,14 +495,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     // duplicati
     public void addToListaDup(int idLista, int listPosition) {
 
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
-
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
         String sql = "INSERT INTO CUST_LISTS ";
         sql += "VALUES (" + idLista + ", " + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO" + " WHERE titolo = \'"
-//                + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
 
@@ -572,8 +519,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     // aggiunge il canto premuto ad una lista e in una posizione che NON ammetta
     // duplicati
     public void addToListaNoDup(int idLista, int listPosition) {
-
-//        String titoloNoApex = Utility.duplicaApostrofi(titolo);
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
@@ -600,53 +545,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             } else {
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
-
-//                prevOrientation = getActivity().getRequestedOrientation();
-//                Utility.blockOrientation(getActivity());
-//                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                        .title(R.string.dialog_replace_title)
-//                        .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
-//                                + getString(R.string.dialog_wonna_replace))
-//                        .positiveText(R.string.confirm)
-//                        .negativeText(R.string.dismiss)
-//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                                String sql = "UPDATE CUST_LISTS "
-//                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                                        + "WHERE _id = " + idListaDaAgg + "  AND position = "
-//                                        + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
-//                        .show();
-//                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-//                    @Override
-//                    public boolean onKey(DialogInterface arg0, int keyCode,
-//                                         KeyEvent event) {
-//                        if (keyCode == KeyEvent.KEYCODE_BACK
-//                                && event.getAction() == KeyEvent.ACTION_UP) {
-//                            arg0.dismiss();
-//                            getActivity().setRequestedOrientation(prevOrientation);
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//                dialog.setCancelable(false);
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), RicercaVeloceFragment.this, "VELOCE_REPLACE_2")
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
@@ -663,8 +561,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         String sql = "INSERT INTO CUST_LISTS " + "VALUES (" + idLista + ", "
                 + listPosition + ", "
-//                + "(SELECT _id FROM ELENCO"
-//                + " WHERE titolo = \'" + titoloNoApex + "\')"
                 + idDaAgg
                 + ", CURRENT_TIMESTAMP)";
         db.execSQL(sql);
@@ -698,13 +594,10 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                 break;
             case "VELOCE_REPLACE_2":
                 db = listaCanti.getReadableDatabase();
-//                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
                 String sql = "UPDATE CUST_LISTS "
-//                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-//                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
                         + " SET id_canto = " + idDaAgg
-                        + "WHERE _id = " + idListaDaAgg
-                        + "  AND position = " + posizioneDaAgg;
+                        + " WHERE _id = " + idListaDaAgg
+                        + " AND position = " + posizioneDaAgg;
                 db.execSQL(sql);
                 db.close();
                 Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)

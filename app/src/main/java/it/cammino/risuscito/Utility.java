@@ -31,6 +31,7 @@ public class Utility {
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
+    public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
 
     public static final String GENERATE_XML = "generate_xml";
 

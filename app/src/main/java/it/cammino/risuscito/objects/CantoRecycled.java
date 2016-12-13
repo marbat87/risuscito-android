@@ -2,9 +2,6 @@ package it.cammino.risuscito.objects;
 
 import android.util.Log;
 
-/**
- * Created by marcello.battain on 17/05/2015.
- */
 public class CantoRecycled {
 
     private int pagina;

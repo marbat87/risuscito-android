@@ -56,23 +56,11 @@
 
     </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_marginTop="0dp"-->
-        <!--android:layout_marginBottom="24dp"-->
-        <!--android:id="@+id/custom_list_option"-->
-        <!--android:visibility="gone"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:baselineAligned="false">-->
-
         <include
             android:id="@+id/fab_favorite"
             android:layout_width="match_parent"
             android:layout_marginBottom="24dp"
             android:layout_height="wrap_content"
             layout="@layout/bottom_item" />
-
-        <!--</LinearLayout>-->
 
 </LinearLayout>

@@ -10,8 +10,7 @@
     <string formatted="false" name="santo_palme_link">http://www.resuscicanti.com/25Santotempopasquale%203,47.mp3</string>
     <string formatted="false" name="santo_1988_link">http://www.resuscicanti.com/21SantoSantoSanto%20(1988)%205,22.mp3</string>
     <string formatted="false" name="santo_1983_link">http://www.resuscicanti.com/Santo%20(1983).mp3</string>
-<string formatted="false" name="preghiera_eucarestica_II_link">
-</string>
+<string formatted="false" name="preghiera_eucarestica_II_link">http://www.resuscicanti.com/16PreghieraucaristicaIIprefazio%204,36.mp3</string>
 <string formatted="false" name="preghiera_eucaristica_II_parte2_link">
 </string>
     <string formatted="false" name="benedizione_acqua_fonte_link">http://www.resuscicanti.com/05Benedizionedell\'\'acquadelfontebattesimale%208,30.mp3</string>
@@ -28,7 +27,7 @@
 <string formatted="false" name="inno_lodi_pentecoste_link">
 </string>
     <string formatted="false" name="sequenza_di_pentecoste_link">http://www.resuscicanti.com/27%20sequenzadipentecoste.mp3</string>
-    <string formatted="false" name="preghiera_eucaristia_II_2_prefazio_link">http://www.resuscicanti.com/16PreghieraucaristicaIIprefazio%204,36.mp3</string>
+    <string formatted="false" name="preghiera_eucaristia_II_2_prefazio_link"></string>
     <string formatted="false" name="preghiera_eucaristica_II_2_consacrazione_link">http://www.resuscicanti.com/18PreghieraeucaristicaII(Consagrazi0ne)4,58.mp3</string>
     <string formatted="false" name="preghiera_eucaristica_II_2_offerta_link">http://www.resuscicanti.com/17PreghieraeucaristicaII(offerta)4,13.mp3</string>
     <string formatted="false" name="alleluja_pasquale_link">http://www.resuscicanti.com/03Alleluiapasquale1,17.mp3</string>
@@ -235,4 +234,5 @@
     <string formatted="false" name="ecco_il_mio_servo_link">http://www.resuscicanti.com/ecco%20il%20mio%20servo.mp3</string>
     <string formatted="false" name="ave_maria_colomba_link">http://www.resuscicanti.com/aveomariacolomba.mp3</string>
     <string formatted="false" name="messia_leone_vincere_link">http://www.resuscicanti.com/Il%20Messia%20Italiano.mp3</string>
+    <string formatted="false" name="come_pecora_che_vede_link"></string>
 </resources>

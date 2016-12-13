@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+    <!---->
     <string name="app_name">Христос Воскрес</string>
     <string name="action_favourites">Закладки</string>
     <string name="action_share">Поділитися</string>
@@ -266,19 +271,22 @@
     <string name="login_intro_desc_1">Вам слід обрати аккаунт до якого хочете підключитися.</string>
     <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
     <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
-    <string name="xml_error">Errore nella generazione del file da condividere!</string>
-    <string name="action_share_file">Invia file</string>
-    <string name="import_error">Importazione lista fallita</string>
-    <string name="import_running">Importazione lista in corso</string>
-    <string name="import_done">Importazione lista completata!</string>
-    <string name="dialog_import">Stai per importare la lista personalizzata contenuta nel file.\nvuoi proseguire?</string>
+    <string name="xml_error">Помилка в генерації файлу для обміну!</string>
+    <string name="action_share_file">Відправити файл</string>
+    <string name="import_error">Не вдалося імпортувати список!</string>
+    <string name="import_running">Імпортація списку</string>
+    <string name="import_done">Імпортація списку вдало завершена!</string>
+    <string name="dialog_import">Ти хочеш імпортувати особистий список з файлу.\nпродовжити?</string>
     <string name="audio_on">Показувати аудіо</string>
     <string name="audio_off">Сховати аудіо</string>
     <string name="fab_delete_unlink">Видалити файл</string>
     <string name="favorite_on">Додати с закладок</string>
     <string name="favorite_off">Видалити с закладок</string>
-    <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
-    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti sccelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
-    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
-    <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
+    <string name="showcase_listepers_title">Експортувати/Імпортувати списки</string>
+    <string name="showcase_listepers_desc1">В цій версії можна експортувати та імпортувати скелет та обрані пісні зі створених тобою списків (не дефолтних). Натисни кнопку для додаткових налаштувань&#8230;</string>
+    <string name="showcase_listepers_desc2">&#8230;та обери нову опцію Відправити файл для того, щоб обрати як і кому відправити список</string>
+    <string name="showcase_listepers_desc3">Щоб імпортувати список, відкрий файл в форматі \".risuscito\", який ти отримав, прямо з програми, через яку ти отримав або з файл менеджеру.</string>
+    <string name="show_offertorio_title">Євхаристія - принесення дарів</string>
+    <string name="show_offertorio_summary">Включити пісню на принесення дарів для Євхаристії</string>
+    <string name="canto_offertorio">На принесення дарів</string>
 </resources>

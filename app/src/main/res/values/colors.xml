@@ -6,8 +6,6 @@
     <color name="BlueGreyDark">#455a64</color>
 
     <color name="navdrawer_background">#ffffffff</color>
-    <!--<color name="navdrawer_text_color">#DE000000</color>-->
-    <!--<color name="navdrawer_icon_tint">@color/icon_ative_black</color>-->
 
     <color name="theme_primary">@color/BlueGrey</color>
     <color name="theme_accent">@color/Teal</color>
@@ -22,8 +20,5 @@
     <color name="intro_background">#00BCD4</color>
 
     <color name="material_drawer_header_selection_text">#FFFFFF</color>
-    <!--<color name="material_drawer_primary_icon">@color/navdrawer_icon_tint</color>-->
-    <!--<color name="material_drawer_primary_text">@color/navdrawer_text_color</color>-->
-    <!--<color name="material_drawer_secondary_text">@color/navdrawer_text_color</color>-->
 
 </resources> 

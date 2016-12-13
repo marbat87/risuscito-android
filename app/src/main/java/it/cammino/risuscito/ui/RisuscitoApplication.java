@@ -12,9 +12,6 @@ import com.squareup.picasso.Picasso;
 import it.cammino.risuscito.R;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-/**
- * Created by marcello.battain on 08/05/2015.
- */
 public class RisuscitoApplication extends Application {
 
     @Override
