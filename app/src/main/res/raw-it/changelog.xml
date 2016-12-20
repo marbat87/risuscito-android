@@ -4,7 +4,8 @@
     <changelogversion versionName="4.2.0" changeDate="Dicembre 2016">
         <changelogimprovement>Compatibilità minima Android 4.0 (API 14)</changelogimprovement>
         <changelogimprovement>Aggiunto il nuovo canto "Come pecora che vede"</changelogimprovement>
-        <changelogimprovement>Aggiunto l'opzione per il canto all'offertorio</changelogimprovement>
+        <changelogimprovement>Aggiunta l'opzione per il canto all'offertorio</changelogimprovement>
+        <changelogimprovement>Migiliorarte le performance nello scroll delle liste degli indici</changelogimprovement>
     </changelogversion>
 
 </changelog>

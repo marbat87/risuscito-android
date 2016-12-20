@@ -534,7 +534,7 @@ public class MainActivity extends ThemeableActivity
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
                                 if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                fragment = new PreferencesFragment();
+                                fragment = new SettingsFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
                                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
@@ -643,14 +643,14 @@ public class MainActivity extends ThemeableActivity
         else
             getThemeUtils().primaryColor(color);
 
-        if (Build.VERSION.SDK_INT >= 11) {
+//        if (Build.VERSION.SDK_INT >= 11) {
             recreate();
-        } else {
-            Intent i = getBaseContext().getPackageManager()
-                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        }
+//        } else {
+//            Intent i = getBaseContext().getPackageManager()
+//                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
+//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(i);
+//        }
     }
 
     //converte gli accordi salvati dalla lingua vecchia alla nuova

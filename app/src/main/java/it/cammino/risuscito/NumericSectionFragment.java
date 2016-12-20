@@ -121,9 +121,11 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
 
         CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
+        adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
 
 //        new DragScrollBar(getActivity(), mRecyclerView, true)
         mDragScrollBar

@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
@@ -30,11 +32,37 @@ import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public abstract class ThemeableActivity extends AppCompatActivity {
+public abstract class ThemeableActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ThemeUtils mThemeUtils;
     protected boolean hasNavDrawer = false;
 
+    final String TAG = getClass().getCanonicalName();
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        Log.d(TAG, "onSharedPreferenceChanged: " + s);
+        if (s.equals(Utility.SYSTEM_LANGUAGE)) {
+            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + getResources().getConfiguration().locale.getLanguage());
+            Log.d(TAG, "onSharedPreferenceChanged: cur set" + sharedPreferences.getString(s, ""));
+            if (sharedPreferences.getString(s, "it").equals("it") && !getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                return;
+            if (!getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.putExtra(Utility.DB_RESET, true);
+                String currentLang = "it";
+                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    currentLang = "uk";
+                i.putExtra(Utility.CHANGE_LANGUAGE,
+                        currentLang + "-" + sharedPreferences.getString(s, ""));
+                startActivity(i);
+            }
+        }
+        if (s.equals(Utility.SCREEN_ON))
+            ThemeableActivity.this.checkScreenAwake();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,6 +121,16 @@ public abstract class ThemeableActivity extends AppCompatActivity {
         super.onResume();
 
         checkScreenAwake();
+
+        PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this)
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this)
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override

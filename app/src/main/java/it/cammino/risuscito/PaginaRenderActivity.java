@@ -68,6 +68,8 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback {
 
+    final String TAG = getClass().getCanonicalName();
+
     private DatabaseCanti listaCanti;
     private String pagina;
     private int idCanto;
@@ -224,7 +226,21 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
                     SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").dismiss();
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-                int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+//                int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+                int saveLocation = 0;
+                try {
+                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
+                }
+                catch (ClassCastException e) {
+                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
+                    editor.apply();
+                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+                }
                 if (saveLocation == 1) {
                     // initiate media scan and put the new things into the path array to
                     // make the scanner aware of the location and the files you want to see
@@ -1603,13 +1619,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     void searchExternalFile(boolean recreate) {
         localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
         if (recreate) {
-            if (Build.VERSION.SDK_INT >= 11) {
+//            if (Build.VERSION.SDK_INT >= 11) {
                 recreate();
-            } else {
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+//            } else {
+//                Intent intent = getIntent();
+//                finish();
+//                startActivity(intent);
+//            }
         }
     }
 
@@ -1629,7 +1645,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(PaginaRenderActivity.this)
                 .edit();
-        editor.putInt(Utility.SAVE_LOCATION, 0);
+//        editor.putInt(Utility.SAVE_LOCATION, 0);
+        editor.putString(Utility.SAVE_LOCATION, "0");
         editor.apply();
         Snackbar.make(findViewById(android.R.id.content)
                 , getString(R.string.external_storage_denied)
@@ -1653,7 +1670,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(PaginaRenderActivity.this)
                             .edit();
-                    editor.putInt(Utility.SAVE_LOCATION, 0);
+//                    editor.putInt(Utility.SAVE_LOCATION, 0);
+                    editor.putString(Utility.SAVE_LOCATION, "0");
                     editor.apply();
                     Snackbar.make(findViewById(android.R.id.content)
                             , R.string.forced_private
@@ -1765,7 +1783,20 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-                int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
+                int saveLocation = 0;
+                try {
+                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
+                }
+                catch (ClassCastException e) {
+                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
+                    editor.apply();
+                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+                }
                 if (saveLocation == 1)
                     checkStoragePermissions();
                 else

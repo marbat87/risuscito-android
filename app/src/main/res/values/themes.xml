@@ -29,6 +29,7 @@
         <item name="actionModeCloseDrawable">@drawable/ic_clear_active_24dp</item>
         <item name="actionModeBackground">@color/background_material_light</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >

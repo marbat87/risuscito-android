@@ -128,10 +128,12 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 //        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
 
         CantoAdapter adapter = new CantoAdapter(getActivity(), 0, titoli, clickListener, this);
+        adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
 
         // Setting the layoutManager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
 
 //        new DragScrollBar(getActivity(), mRecyclerView, true)
         mDragScrollBar
