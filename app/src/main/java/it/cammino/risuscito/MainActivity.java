@@ -52,7 +52,6 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.crossfader.Crossfader;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -88,6 +87,7 @@ import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
 import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends ThemeableActivity
         implements ColorChooserDialog.ColorCallback
@@ -105,7 +105,7 @@ public class MainActivity extends ThemeableActivity
     private Crossfader crossFader;
     private AccountHeader mAccountHeader;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
-    @BindView(R.id.loadingBar) CircleProgressBar mCircleProgressBar;
+    @BindView(R.id.loadingBar) MaterialProgressBar mCircleProgressBar;
     @BindView(R.id.toolbar_layout) AppBarLayout appBarLayout;
     @BindView(R.id.material_tabs) TabLayout mTabLayout;
     private boolean isOnTablet;
@@ -174,7 +174,7 @@ public class MainActivity extends ThemeableActivity
         }
 
 //        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
-        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
+//        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
         if (savedInstanceState != null) {
             dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
@@ -735,6 +735,7 @@ public class MainActivity extends ThemeableActivity
     }
 
     public void enableFab(boolean enable) {
+        Log.d(TAG, "enableFab: " + enable);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
         if (enable)
             mFab.show();
@@ -743,8 +744,6 @@ public class MainActivity extends ThemeableActivity
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
         params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
         mFab.requestLayout();
-//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && !enable)
-//            mFab.hide();
     }
 
     public void enableBottombar(boolean enabled) {

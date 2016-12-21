@@ -72,8 +72,6 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-        <!--<include layout="@layout/risuscito_toolbar_noelevation" />-->
-
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout

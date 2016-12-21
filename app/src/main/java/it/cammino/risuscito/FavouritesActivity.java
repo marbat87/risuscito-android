@@ -94,7 +94,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
-                .icon(CommunityMaterial.Icon.cmd_eraser)
+                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2);

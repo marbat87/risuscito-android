@@ -36,8 +36,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
-
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -54,6 +52,7 @@ import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -91,7 +90,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     @BindView(R.id.matchedList) RecyclerView mRecyclerView;
     @BindView(R.id.textfieldRicerca) EditText searchPar;
-    @BindView(R.id.search_progress) CircleProgressBar progress;
+    @BindView(R.id.search_progress) MaterialProgressBar progress;
 
     @OnClick(R.id.pulisci_ripple)
     public void pulisciRisultati() {
@@ -135,7 +134,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
 
 //        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
-        progress.setColorSchemeColors(getThemeUtils().accentColor());
+//        progress.setColorSchemeColors(getThemeUtils().accentColor());
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
