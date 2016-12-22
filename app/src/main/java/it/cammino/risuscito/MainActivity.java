@@ -626,6 +626,8 @@ public class MainActivity extends ThemeableActivity
                 return true;
             }
 
+            if (isOnTablet)
+                mMiniDrawer.setSelection(R.id.navigation_home);
             mDrawer.setSelection(R.id.navigation_home);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -645,7 +647,7 @@ public class MainActivity extends ThemeableActivity
             getThemeUtils().primaryColor(color);
 
 //        if (Build.VERSION.SDK_INT >= 11) {
-            recreate();
+        recreate();
 //        } else {
 //            Intent i = getBaseContext().getPackageManager()
 //                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
