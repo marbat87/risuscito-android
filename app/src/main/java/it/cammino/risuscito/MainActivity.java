@@ -626,9 +626,10 @@ public class MainActivity extends ThemeableActivity
                 return true;
             }
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            mDrawer.setSelection(R.id.navigation_home);
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+//            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
 //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
             return true;
