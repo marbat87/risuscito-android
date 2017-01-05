@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Map;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -70,9 +71,13 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             forceOverflowMenu();
         }
         mThemeUtils = new ThemeUtils(this);
+        LUtils mLUtils = LUtils.getInstance(this);
+        mLUtils.convertIntPreferences();
         setTheme(mThemeUtils.getCurrent());
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
+
+
 
         //lingua
         SharedPreferences sp = PreferenceManager

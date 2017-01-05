@@ -226,21 +226,22 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
                     SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").dismiss();
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+                int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
 //                int saveLocation = pref.getInt(Utility.SAVE_LOCATION, 0);
-                int saveLocation = 0;
-                try {
-                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
-                }
-                catch (ClassCastException e) {
-                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
-                    editor.apply();
-                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-                }
+//                int saveLocation = 0;
+//                try {
+//                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+//                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
+//                }
+//                catch (ClassCastException e) {
+//                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                            .edit();
+//                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
+//                    editor.apply();
+//                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+//                }
                 if (saveLocation == 1) {
                     // initiate media scan and put the new things into the path array to
                     // make the scanner aware of the location and the files you want to see
@@ -1783,20 +1784,21 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-                int saveLocation = 0;
-                try {
-                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
-                }
-                catch (ClassCastException e) {
-                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
-                    editor.apply();
-                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-                }
+                int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+//                int saveLocation = 0;
+//                try {
+//                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+//                    Log.d(TAG, "onCreateView: SAVE_LOCATION STRING");
+//                }
+//                catch (ClassCastException e) {
+//                    Log.d(TAG, "onCreateView: SAVE_LOCATION INTEGER >> CONVERTO");
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                            .edit();
+//                    editor.putString(Utility.SAVE_LOCATION, String.valueOf(pref.getInt(Utility.SAVE_LOCATION, 0)));
+//                    editor.apply();
+//                    saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+//                }
                 if (saveLocation == 1)
                     checkStoragePermissions();
                 else

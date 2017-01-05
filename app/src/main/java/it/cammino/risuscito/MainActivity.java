@@ -744,17 +744,17 @@ public class MainActivity extends ThemeableActivity
             mFab.show();
         else
             mFab.hide();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
-        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
-        mFab.requestLayout();
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
+//        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
+//        mFab.requestLayout();
     }
 
     public void enableBottombar(boolean enabled) {
         View mBottomBar = findViewById(R.id.bottom_bar);
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
-        mBottomBar.requestLayout();
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
+//        mBottomBar.requestLayout();
     }
 
     // [START signIn]

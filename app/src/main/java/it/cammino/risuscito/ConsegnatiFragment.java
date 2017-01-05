@@ -106,7 +106,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 if (mMainActivity.isOnTablet())
-                    showFab();
+//                    showFab();
+                    getFab().show();
                 else
                     mMainActivity.enableFab(true);
             }
@@ -168,7 +169,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
             mNoConsegnati.setVisibility(View.INVISIBLE);
             if (mMainActivity.isOnTablet())
-                hideFab();
+//                hideFab();
+                getFab().hide();
             else
                 mMainActivity.enableFab(false);
 
@@ -184,7 +186,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
             if (mMainActivity.isOnTablet())
-                showFab();
+//                showFab();
+                getFab().show();
             else
                 mMainActivity.enableFab(true);
             updateConsegnatiList(true);
@@ -232,7 +235,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 if (mMainActivity.isOnTablet())
-                    showFab();
+//                    showFab();
+                    getFab().show();
                 else
                     mMainActivity.enableFab(true);
             }
@@ -273,7 +277,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 else
                     mMainActivity.enableBottombar(true);
                 if (mMainActivity.isOnTablet())
-                    hideFab();
+//                    hideFab();
+                    getFab().hide();
                 else
                     mMainActivity.enableFab(false);
             }
@@ -515,19 +520,19 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         return mFab;
     }
 
-    private void hideFab() {
-        getFab().hide();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-        params.setBehavior(null);
-        getFab().requestLayout();
-    }
-
-    private void showFab() {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
-        getFab().requestLayout();
-        getFab().show();
-    }
+//    private void hideFab() {
+//        getFab().hide();
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+//        params.setBehavior(null);
+//        getFab().requestLayout();
+//    }
+//
+//    private void showFab() {
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
+//        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
+//        getFab().requestLayout();
+//        getFab().show();
+//    }
 
     private void enableBottombar(boolean enabled) {
         mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);

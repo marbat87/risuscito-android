@@ -20,18 +20,25 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Interpolator;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -55,10 +62,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
+
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
 
     final String TAG = getClass().getCanonicalName();
+
+    private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
 
     final static String FILE_FORMAT = ".risuscito";
 
@@ -262,28 +273,41 @@ public class LUtils {
     }
 
     public boolean isOnTablet() {
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//
-//        int widthPixels = metrics.widthPixels;
-//        int heightPixels = metrics.heightPixels;
-//
-//        float scaleFactor = metrics.density;
-//
-//        float widthDp = widthPixels / scaleFactor;
-//        float heightDp = heightPixels / scaleFactor;
-//
-//        float smallestWidth = Math.min(widthDp, heightDp);
-//
-//        Log.d(TAG, "isOnTablet: smallestWidth = " + smallestWidth);
-//
-//        if (smallestWidth > 600)
-//            return true;
-//        else
-//            return false;
         return (mActivity.getResources().getBoolean(R.bool.is_tablet));
-//        return (mActivity.findViewById(R.id.tablet_mode) != null);
 
+    }
+
+    public void convertIntPreferences() {
+        convert(Utility.DEFAULT_INDEX);
+        convert(Utility.SAVE_LOCATION);
+    }
+
+    private void convert(String prefName) {
+        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(mActivity);
+        try {
+            pref.getString(prefName, "0");
+            Log.d(TAG, "onCreateView: " + prefName + " STRING");
+        }
+        catch (ClassCastException e) {
+            Log.d(TAG, "onCreateView: " + prefName + " INTEGER >> CONVERTO");
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(mActivity)
+                    .edit();
+            editor.putString(prefName, String.valueOf(pref.getInt(prefName, 0)));
+            editor.apply();
+        }
+    }
+
+    // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
+    public void animateIn(FloatingActionButton button) {
+        if (button.getVisibility() == View.INVISIBLE) {
+            button.setVisibility(View.VISIBLE);
+            ViewCompat.animate(button)
+                    .setDuration(200)
+                    .translationY(0)
+                    .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
+                    .start();
+        }
     }
 
 }

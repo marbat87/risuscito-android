@@ -13,6 +13,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +42,7 @@ import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
+import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment {
@@ -184,7 +187,8 @@ public class CantiEucarestiaFragment extends Fragment {
 
         if (!isViewShown) {
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-            fab1.show();
+//            fab1.show();
+            mLUtils.animateIn(fab1);
         }
 
 
@@ -198,7 +202,8 @@ public class CantiEucarestiaFragment extends Fragment {
             if (getView() != null) {
                 isViewShown = true;
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-                fab1.show();
+//                fab1.show();
+                mLUtils.animateIn(fab1);
             }
             else
                 isViewShown = false;

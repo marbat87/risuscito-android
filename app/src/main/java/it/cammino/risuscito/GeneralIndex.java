@@ -54,19 +54,20 @@ public class GeneralIndex extends Fragment {
         }
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-            try {
-                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-                Log.d(TAG, "onCreateView: DEFAULT_INDEX STRING");
-            }
-            catch (ClassCastException e) {
-                Log.d(TAG, "onCreateView: DEFAULT_INDEX INTEGER >> CONVERTO");
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(getActivity())
-                        .edit();
-                editor.putString(Utility.DEFAULT_INDEX, String.valueOf(pref.getInt(Utility.DEFAULT_INDEX, 0)));
-                editor.apply();
-                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-            }
+            mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
+//            try {
+//                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
+//                Log.d(TAG, "onCreateView: DEFAULT_INDEX STRING");
+//            }
+//            catch (ClassCastException e) {
+//                Log.d(TAG, "onCreateView: DEFAULT_INDEX INTEGER >> CONVERTO");
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(getActivity())
+//                        .edit();
+//                editor.putString(Utility.DEFAULT_INDEX, String.valueOf(pref.getInt(Utility.DEFAULT_INDEX, 0)));
+//                editor.apply();
+//                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
+//            }
         }
         else
             mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));

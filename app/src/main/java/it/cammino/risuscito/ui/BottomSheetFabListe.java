@@ -78,7 +78,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
-                .icon(CommunityMaterial.Icon.cmd_eraser)
+                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .colorRes(R.color.icon_ative_black)
                 .sizeDp(48)
                 .paddingDp(4);
