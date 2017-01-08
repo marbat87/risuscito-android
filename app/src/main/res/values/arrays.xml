@@ -9,7 +9,7 @@
         <item>@string/indice_liturgico_index</item>
     </string-array>
 
-    <string-array name="pref_default_index_values">
+    <string-array name="pref_default_index_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -25,14 +25,13 @@
         <item>Memoria privata</item>
     </string-array>
 
-    <string-array name="save_location_sd_values">
+    <string-array name="save_location_sd_values" translatable="false">
         <item>0</item>
         <item>1</item>
     </string-array>
 
-    <string-array name="save_location_nosd_values">
+    <string-array name="save_location_nosd_values" translatable="false">
         <item>0</item>
-        <item>1</item>
     </string-array>
 
     <!--<array name="colors_primary">-->
@@ -90,7 +89,7 @@
         <item>@string/lang_uk</item>
     </string-array>
 
-    <string-array name="pref_languages_values">
+    <string-array name="pref_languages_values" translatable="false">
         <item>it</item>
         <item>uk</item>
     </string-array>
