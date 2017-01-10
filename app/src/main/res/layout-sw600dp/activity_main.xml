@@ -55,7 +55,7 @@
 
         </FrameLayout>
 
-        <include layout="@layout/common_bottom_bar"/>
+        <!--<include layout="@layout/common_bottom_bar"/>-->
 
     </android.support.design.widget.CoordinatorLayout>
 

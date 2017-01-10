@@ -191,6 +191,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (!isViewShown) {
+            if (mMainActivity.getMaterialCab().isActive())
+                mMainActivity.getMaterialCab().finish();
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
 //            fab1.show();
             mLUtils.animateIn(fab1);
@@ -204,10 +206,10 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (mMainActivity.getMaterialCab().isActive())
-                mMainActivity.getMaterialCab().finish();
             if (getView() != null) {
                 isViewShown = true;
+                if (mMainActivity.getMaterialCab().isActive())
+                    mMainActivity.getMaterialCab().finish();
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
 //                fab1.show();
                 mLUtils.animateIn(fab1);

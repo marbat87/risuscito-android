@@ -534,10 +534,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //    }
 
     private void enableBottombar(boolean enabled) {
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
-        mBottomBar.requestLayout();
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
+//        mBottomBar.requestLayout();
     }
 
     @Override
