@@ -32,7 +32,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.View;
@@ -61,8 +60,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {

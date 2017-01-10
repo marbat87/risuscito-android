@@ -287,7 +287,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
         posizioniList.add(getCantofromPosition(getString(R.string.canto_pane), 3, progressiveTag++));
         posizioniList.add(getCantofromPosition(getString(R.string.canto_vino), 4, progressiveTag++));
-        posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, progressiveTag++));
+        posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, progressiveTag));
 
     }
 
@@ -457,7 +457,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         result += "\n";
 
         //canto finale
-        temp = getTitoloToSendFromPosition(progressivePos++);
+        temp = getTitoloToSendFromPosition(progressivePos);
 
         result += getResources().getString(R.string.canto_fine).toUpperCase(l);
         result += "\n";

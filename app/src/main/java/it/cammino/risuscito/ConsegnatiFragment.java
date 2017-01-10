@@ -44,7 +44,6 @@ import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.slides.IntroConsegnatiNew;
 import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
-import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {

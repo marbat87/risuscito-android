@@ -179,7 +179,7 @@ public class InsertVeloceFragment extends Fragment {
 //                    rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                     mNoResults.setVisibility(View.GONE);
 
-                    String titolo = Utility.duplicaApostrofi(s.toString());
+//                    String titolo = Utility.duplicaApostrofi(s.toString());
                     String stringa = Utility.removeAccents(s.toString()).toLowerCase();
                     String titoloTemp;
                     Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
