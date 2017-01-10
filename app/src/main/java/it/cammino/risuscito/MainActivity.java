@@ -52,7 +52,6 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.crossfader.Crossfader;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -88,6 +87,7 @@ import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
 import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends ThemeableActivity
         implements ColorChooserDialog.ColorCallback
@@ -105,7 +105,7 @@ public class MainActivity extends ThemeableActivity
     private Crossfader crossFader;
     private AccountHeader mAccountHeader;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
-    @BindView(R.id.loadingBar) CircleProgressBar mCircleProgressBar;
+    @BindView(R.id.loadingBar) MaterialProgressBar mCircleProgressBar;
     @BindView(R.id.toolbar_layout) AppBarLayout appBarLayout;
     @BindView(R.id.material_tabs) TabLayout mTabLayout;
     private boolean isOnTablet;
@@ -174,7 +174,7 @@ public class MainActivity extends ThemeableActivity
         }
 
 //        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
-        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
+//        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
         if (savedInstanceState != null) {
             dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
@@ -534,7 +534,7 @@ public class MainActivity extends ThemeableActivity
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
                                 if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                fragment = new PreferencesFragment();
+                                fragment = new SettingsFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
                                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
@@ -626,9 +626,12 @@ public class MainActivity extends ThemeableActivity
                 return true;
             }
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
+            if (isOnTablet)
+                mMiniDrawer.setSelection(R.id.navigation_home);
+            mDrawer.setSelection(R.id.navigation_home);
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+//            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
 //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
             return true;
@@ -643,14 +646,14 @@ public class MainActivity extends ThemeableActivity
         else
             getThemeUtils().primaryColor(color);
 
-        if (Build.VERSION.SDK_INT >= 11) {
-            recreate();
-        } else {
-            Intent i = getBaseContext().getPackageManager()
-                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        }
+//        if (Build.VERSION.SDK_INT >= 11) {
+        recreate();
+//        } else {
+//            Intent i = getBaseContext().getPackageManager()
+//                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
+//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(i);
+//        }
     }
 
     //converte gli accordi salvati dalla lingua vecchia alla nuova
@@ -735,24 +738,23 @@ public class MainActivity extends ThemeableActivity
     }
 
     public void enableFab(boolean enable) {
+        Log.d(TAG, "enableFab: " + enable);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
         if (enable)
             mFab.show();
         else
             mFab.hide();
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
-        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
-        mFab.requestLayout();
-//        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && !enable)
-//            mFab.hide();
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
+//        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
+//        mFab.requestLayout();
     }
 
     public void enableBottombar(boolean enabled) {
         View mBottomBar = findViewById(R.id.bottom_bar);
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
-        mBottomBar.requestLayout();
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
+//        mBottomBar.requestLayout();
     }
 
     // [START signIn]

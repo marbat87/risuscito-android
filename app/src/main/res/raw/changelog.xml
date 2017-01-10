@@ -5,6 +5,7 @@
         <changelogimprovement>Now requires Android 4.0 or upper (API 14)</changelogimprovement>
         <changelogimprovement>Adde new song "Come pecora che vede"</changelogimprovement>
         <changelogimprovement>Added the option to enable offertory song</changelogimprovement>
+        <changelogimprovement>Improved scrolling performances on indexes lists</changelogimprovement>
     </changelogversion>
 
 </changelog>

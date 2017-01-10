@@ -40,6 +40,7 @@ import it.cammino.risuscito.dialogs.SingleChoiceDialogFragment;
 import it.cammino.risuscito.utils.ColorPalette;
 import it.cammino.risuscito.utils.ThemeUtils;
 
+@Deprecated
 public class PreferencesFragment extends Fragment implements SingleChoiceDialogFragment.SingleChoiceCallback, SimpleDialogFragment.SimpleCallback {
 
     //    private int prevOrientation;
@@ -379,7 +380,7 @@ public class PreferencesFragment extends Fragment implements SingleChoiceDialogF
                     checkedItem = 1;
                 new SingleChoiceDialogFragment.Builder((AppCompatActivity)getActivity(), PreferencesFragment.this, "LANGUAGE")
                         .title(R.string.language_title)
-                        .items(R.array.pref_languages)
+                        .items(R.array.pref_languages_entries)
                         .defaultIndex(checkedItem)
                         .negativeButton(R.string.cancel)
                         .show();

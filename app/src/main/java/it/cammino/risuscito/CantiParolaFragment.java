@@ -186,7 +186,8 @@ public class CantiParolaFragment extends Fragment {
 
         if (!isViewShown) {
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-            fab1.show();
+//            fab1.show();
+            mLUtils.animateIn(fab1);
         }
 
         return rootView;
@@ -199,7 +200,8 @@ public class CantiParolaFragment extends Fragment {
             if (getView() != null) {
                 isViewShown = true;
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-                fab1.show();
+//                fab1.show();
+                mLUtils.animateIn(fab1);
             }
             else
                 isViewShown = false;

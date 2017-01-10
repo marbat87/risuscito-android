@@ -16,6 +16,7 @@ ext {
 			core_ui           :    "com.android.support:support-core-ui:${supportLibrary}",
 			media_compat      :    "com.android.support:support-media-compat:${supportLibrary}",
 			fragment          :    "com.android.support:support-fragment:${supportLibrary}",
+            preferences       :    "com.android.support:preference-v14:${supportLibrary}"
     ]
 
     //Version

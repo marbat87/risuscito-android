@@ -129,9 +129,11 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
 
         CantoAdapter adapter = new CantoAdapter(getActivity(), 2, titoli, clickListener, this);
+        adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
 
 //        new DragScrollBar(getActivity(), mRecyclerView, true)
         mDragScrollBar

@@ -11,6 +11,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -120,14 +121,14 @@ public class SimpleDialogFragment extends DialogFragment {
             }
         });
 
-        if (getBuilder().mCanceListener) {
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    mCallback.onPositive(getBuilder().mTag);
-                }
-            });
-        }
+//        if (getBuilder().mCanceListener) {
+//            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                @Override
+//                public void onCancel(DialogInterface dialog) {
+//                    mCallback.onPositive(getBuilder().mTag);
+//                }
+//            });
+//        }
 //        dialog.setCancelable(false);
 
         return dialog;
@@ -151,6 +152,13 @@ public class SimpleDialogFragment extends DialogFragment {
 
     public void setOnCancelListener(DialogInterface.OnCancelListener listener) {
         getDialog().setOnCancelListener(listener);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if(getBuilder().mCanceListener)
+            mCallback.onPositive(getBuilder().mTag);
     }
 
     public static class Builder implements Serializable {

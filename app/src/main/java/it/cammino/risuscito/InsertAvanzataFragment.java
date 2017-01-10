@@ -27,8 +27,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
-
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -44,6 +42,7 @@ import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 import it.cammino.risuscito.utils.ThemeUtils;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class InsertAvanzataFragment extends Fragment {
 
@@ -70,7 +69,7 @@ public class InsertAvanzataFragment extends Fragment {
 
     @BindView(R.id.matchedList) RecyclerView recyclerView;
     @BindView(R.id.textfieldRicerca) EditText searchPar;
-    @BindView(R.id.search_progress) CircleProgressBar progress;
+    @BindView(R.id.search_progress) MaterialProgressBar progress;
     @BindView(R.id.search_no_results) View mNoResults;
 
     @OnClick(R.id.pulisci_ripple)
@@ -177,7 +176,7 @@ public class InsertAvanzataFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 //        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
-        progress.setColorSchemeColors(getThemeUtils().accentColor());
+//        progress.setColorSchemeColors(getThemeUtils().accentColor());
 
         searchPar.setText("");
 

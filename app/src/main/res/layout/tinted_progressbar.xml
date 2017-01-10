@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+<me.zhanghai.android.materialprogressbar.MaterialProgressBar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_progress"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal|top"
-    risuscito:mlpb_enable_circle_background="false"
+    android:indeterminate="true"
+    risuscito:mpb_progressStyle="circular"
     android:visibility="invisible"
-    risuscito:mlpb_progress_stoke_width="3dp"
-    risuscito:mlpb_progress_text_visibility="invisible"
     android:elevation="1dp"
-    android:layout_width="48dp"
-    android:layout_height="48dp"/>
+    risuscito:mpb_progressTint="?colorAccent"
+    risuscito:mpb_progressBackgroundTint="@android:color/white"
+    style="@style/Widget.MaterialProgressBar.ProgressBar" />
