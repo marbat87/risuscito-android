@@ -15,7 +15,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
@@ -42,7 +42,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class FavouritesActivity extends Fragment implements SimpleDialogFragment.SimpleCallback {
+public class FavouritesActivity extends Fragment implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
 
@@ -53,7 +53,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     //    private RecyclerView recyclerView;
     private CantoRecyclerAdapter cantoAdapter;
     private FloatingActionButton fabClear;
-    private ActionMode mMode;
+//    private ActionMode mMode;
     private boolean actionModeOk;
 
     private String PREFERITI_OPEN = "preferiti_open";
@@ -85,7 +85,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
-        mMode = null;
+//        mMode = null;
 
         if (!mMainActivity.isOnTablet()) {
             mMainActivity.enableFab(true);
@@ -210,7 +210,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMode == null) {
+//                if (mMode == null) {
+                if (!mMainActivity.getMaterialCab().isActive()) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                         return;
                     mLastClickTime = SystemClock.elapsedRealtime();
@@ -234,12 +235,21 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             @Override
             public boolean onLongClick(View v) {
                 posizDaCanc = mRecyclerView.getChildAdapterPosition(v);
-                if (mMode == null)
-                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-                else {
-                    mMode.finish();
-                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+//                if (mMode == null)
+//                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+//                else {
+//                    mMode.finish();
+//                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+//                }
+                Log.d(TAG, "onLongClick: mMainActivity.getMaterialCab().isActive()" + mMainActivity.getMaterialCab().isActive());
+                if (mMainActivity.getMaterialCab().isActive()) {
+                    mMainActivity.getMaterialCab().finish();
+                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+                    mMainActivity.getMaterialCab().start(FavouritesActivity.this);
                 }
+                else
+                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+                    mMainActivity.getMaterialCab().start(FavouritesActivity.this);
                 return true;
             }
         };
@@ -275,99 +285,99 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         return mMainActivity.getThemeUtils();
     }
 
-    private final class ModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Create the menu from the xml file
-            getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
-            titoli.get(posizDaCanc).setmSelected(true);
-            cantoAdapter.notifyItemChanged(posizDaCanc);
-            removedItems = new ArrayList<>();
-            menu.findItem(R.id.action_remove_item).setIcon(
-                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .colorRes(R.color.icon_ative_black));
-            actionModeOk = false;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // Here, you can checked selected items to adapt available actions
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            if (mode == mMode)
-                mMode = null;
-            Log.i(getClass().getName(), "actionModeOk: " + actionModeOk);
-            if (!actionModeOk) {
-                for (CantoRecycled canto : titoli) {
-                    canto.setmSelected(false);
-                    cantoAdapter.notifyDataSetChanged();
-                }
-            }
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch(item.getItemId()) {
-                case R.id.action_remove_item:
-                    Log.i(getClass().getName(), "CLICKED");
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("favourite", 0);
-                    for(int i = 0; i < titoli.size(); i++) {
-                        Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
-                        if (titoli.get(i).ismSelected()) {
-                            db.update("ELENCO", values, "_id =  " + titoli.get(i).getIdCanto(), null);
-                            titoli.get(i).setmSelected(false);
-                            removedItems.add(titoli.remove(i));
-                            cantoAdapter.notifyItemRemoved(i);
-                            i--;
-                        }
-                    }
-                    db.close();
-//                    rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                    if (titoli.size() == 0) {
-                        if (mMainActivity.isOnTablet())
-                            fabClear.hide();
-                        else
-                            mMainActivity.enableFab(false);
-                    }
-                    actionModeOk = true;
-                    mode.finish();
-                    if (removedItems.size() > 0) {
-                        String message = removedItems.size() > 1 ?
-                                getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
-                                : getString(R.string.favorite_removed);
-                        Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.cancel, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                        ContentValues values = new ContentValues();
-                                        values.put("favourite", 1);
-                                        for (CantoRecycled cantoRemoved: removedItems) {
-                                            db.update("ELENCO", values, "_id =  " + cantoRemoved.getIdCanto(), null);
-                                        }
-                                        db.close();
-                                        updateFavouritesList();
-                                    }
-                                })
-                                .setActionTextColor(getThemeUtils().accentColor())
-                                .show();
-                    }
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    }
+//    private final class ModeCallback implements ActionMode.Callback {
+//
+//        @Override
+//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            // Create the menu from the xml file
+//            getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+//            titoli.get(posizDaCanc).setmSelected(true);
+//            cantoAdapter.notifyItemChanged(posizDaCanc);
+//            removedItems = new ArrayList<>();
+//            menu.findItem(R.id.action_remove_item).setIcon(
+//                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+//                            .sizeDp(24)
+//                            .paddingDp(2)
+//                            .colorRes(R.color.icon_ative_black));
+//            actionModeOk = false;
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//            // Here, you can checked selected items to adapt available actions
+//            return false;
+//        }
+//
+//        @Override
+//        public void onDestroyActionMode(ActionMode mode) {
+//            if (mode == mMode)
+//                mMode = null;
+//            Log.i(getClass().getName(), "actionModeOk: " + actionModeOk);
+//            if (!actionModeOk) {
+//                for (CantoRecycled canto : titoli) {
+//                    canto.setmSelected(false);
+//                    cantoAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//            switch(item.getItemId()) {
+//                case R.id.action_remove_item:
+//                    Log.i(getClass().getName(), "CLICKED");
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                    ContentValues values = new ContentValues();
+//                    values.put("favourite", 0);
+//                    for(int i = 0; i < titoli.size(); i++) {
+//                        Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
+//                        if (titoli.get(i).ismSelected()) {
+//                            db.update("ELENCO", values, "_id =  " + titoli.get(i).getIdCanto(), null);
+//                            titoli.get(i).setmSelected(false);
+//                            removedItems.add(titoli.remove(i));
+//                            cantoAdapter.notifyItemRemoved(i);
+//                            i--;
+//                        }
+//                    }
+//                    db.close();
+////                    rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                    mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                    if (titoli.size() == 0) {
+//                        if (mMainActivity.isOnTablet())
+//                            fabClear.hide();
+//                        else
+//                            mMainActivity.enableFab(false);
+//                    }
+//                    actionModeOk = true;
+//                    mode.finish();
+//                    if (removedItems.size() > 0) {
+//                        String message = removedItems.size() > 1 ?
+//                                getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
+//                                : getString(R.string.favorite_removed);
+//                        Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+//                                .setAction(R.string.cancel, new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                        ContentValues values = new ContentValues();
+//                                        values.put("favourite", 1);
+//                                        for (CantoRecycled cantoRemoved: removedItems) {
+//                                            db.update("ELENCO", values, "_id =  " + cantoRemoved.getIdCanto(), null);
+//                                        }
+//                                        db.close();
+//                                        updateFavouritesList();
+//                                    }
+//                                })
+//                                .setActionTextColor(getThemeUtils().accentColor())
+//                                .show();
+//                    }
+//                    return true;
+//                default:
+//                    return false;
+//            }
+//        }
+//    }
 
     @Override
     public void onPositive(@NonNull String tag) {
@@ -387,4 +397,93 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    @Override
+    public boolean onCabCreated(MaterialCab cab, Menu menu) {
+        Log.d(TAG, "onCabCreated: ");
+        cab.setMenu(R.menu.menu_delete);
+        cab.setTitle("");
+        titoli.get(posizDaCanc).setmSelected(true);
+        cantoAdapter.notifyItemChanged(posizDaCanc);
+        removedItems = new ArrayList<>();
+        menu.findItem(R.id.action_remove_item).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(android.R.color.white));
+        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_close_circle_outline)
+                .sizeDp(24)
+                .paddingDp(2)
+                .colorRes(android.R.color.white));
+        actionModeOk = false;
+        return true;
+    }
+
+    @Override
+    public boolean onCabItemClicked(MenuItem item) {
+        Log.d(TAG, "onCabCreated: ");
+        switch(item.getItemId()) {
+            case R.id.action_remove_item:
+                Log.d(TAG, "onCabItemClicked: CLICKED");
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("favourite", 0);
+                for (int i = 0; i < titoli.size(); i++) {
+                    Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
+                    if (titoli.get(i).ismSelected()) {
+                        db.update("ELENCO", values, "_id =  " + titoli.get(i).getIdCanto(), null);
+                        titoli.get(i).setmSelected(false);
+                        removedItems.add(titoli.remove(i));
+                        cantoAdapter.notifyItemRemoved(i);
+                        i--;
+                    }
+                }
+                db.close();
+                mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                if (titoli.size() == 0) {
+                    if (mMainActivity.isOnTablet())
+                        fabClear.hide();
+                    else
+                        mMainActivity.enableFab(false);
+                }
+                actionModeOk = true;
+                mMainActivity.getMaterialCab().finish();
+                if (removedItems.size() > 0) {
+                    String message = removedItems.size() > 1 ?
+                            getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
+                            : getString(R.string.favorite_removed);
+                    Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+                                    ContentValues values = new ContentValues();
+                                    values.put("favourite", 1);
+                                    for (CantoRecycled cantoRemoved : removedItems) {
+                                        db.update("ELENCO", values, "_id =  " + cantoRemoved.getIdCanto(), null);
+                                    }
+                                    db.close();
+                                    updateFavouritesList();
+                                }
+                            })
+                            .setActionTextColor(getThemeUtils().accentColor())
+                            .show();
+                }
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCabFinished(MaterialCab cab) {
+        Log.d(TAG, "onCabFinished: " + actionModeOk);
+        if (!actionModeOk) {
+            for (CantoRecycled canto : titoli) {
+                canto.setmSelected(false);
+                cantoAdapter.notifyDataSetChanged();
+            }
+        }
+        return true;
+    }
+
 }

@@ -22,12 +22,14 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -100,6 +102,7 @@ public class MainActivity extends ThemeableActivity
 
     private LUtils mLUtils;
 
+    private MaterialCab materialCab;
     private Drawer mDrawer;
     private MiniDrawer mMiniDrawer;
     private Crossfader crossFader;
@@ -163,6 +166,13 @@ public class MainActivity extends ThemeableActivity
             getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
         setupNavDrawer(savedInstanceState);
+
+        materialCab = new MaterialCab(this, R.id.cab_stub)
+//                .setMenu(R.menu.menu_delete)
+                .setBackgroundColor(getThemeUtils().primaryColorDark())
+                .setPopupMenuTheme(R.style.ThemeOverlay_AppCompat_Light)
+                .setContentInsetStartRes(R.dimen.mcab_default_content_inset);
+//                .setCloseDrawableRes(android.R.drawable.ic_menu_close_clear_cancel);
 
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
@@ -1427,5 +1437,13 @@ public class MainActivity extends ThemeableActivity
 
     public boolean isOnTablet() {
         return isOnTablet;
+    }
+
+    public MaterialCab getMaterialCab() {
+        return materialCab;
+    }
+
+    public AppBarLayout getAppBarLayout() {
+        return appBarLayout;
     }
 }
