@@ -746,8 +746,10 @@ public class MainActivity extends ThemeableActivity
     public void enableFab(boolean enable) {
         Log.d(TAG, "enableFab: " + enable);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
-        if (enable)
+        if (enable) {
             mFab.show();
+            mLUtils.animateIn(mFab);
+        }
         else
             mFab.hide();
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
@@ -757,7 +759,10 @@ public class MainActivity extends ThemeableActivity
 
     public void enableBottombar(boolean enabled) {
         View mBottomBar = findViewById(R.id.bottom_bar);
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (enabled)
+            mLUtils.animateIn(mBottomBar);
+        else
+            mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
 //        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
 //        mBottomBar.requestLayout();

@@ -296,15 +296,15 @@ public class LUtils {
     }
 
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
-    public void animateIn(FloatingActionButton button) {
-        if (button.getVisibility() == View.INVISIBLE) {
-            button.setVisibility(View.VISIBLE);
-            ViewCompat.animate(button)
+    public void animateIn(View view) {
+//        if (view.getVisibility() == View.INVISIBLE) {
+            view.setVisibility(View.VISIBLE);
+            ViewCompat.animate(view)
                     .setDuration(200)
                     .translationY(0)
                     .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
                     .start();
-        }
+//        }
     }
 
 }
