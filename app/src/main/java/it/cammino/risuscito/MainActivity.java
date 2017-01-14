@@ -16,6 +16,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -84,6 +85,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
+import it.cammino.risuscito.ui.FABAwareScrollingViewBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -748,13 +750,14 @@ public class MainActivity extends ThemeableActivity
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
         if (enable) {
             mFab.show();
-            mLUtils.animateIn(mFab);
+//            mLUtils.animateIn(mFab);
         }
         else
             mFab.hide();
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
-//        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
-//        mFab.requestLayout();
+        View mScrolling = findViewById(R.id.content_frame);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
+        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());
+        mFab.requestLayout();
     }
 
     public void enableBottombar(boolean enabled) {

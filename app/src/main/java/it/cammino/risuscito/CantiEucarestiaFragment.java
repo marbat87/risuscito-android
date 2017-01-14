@@ -194,8 +194,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
             if (mMainActivity.getMaterialCab().isActive())
                 mMainActivity.getMaterialCab().finish();
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-//            fab1.show();
-            mLUtils.animateIn(fab1);
+            fab1.show();
+//            mLUtils.animateIn(fab1);
         }
 
 
@@ -211,8 +211,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                 if (mMainActivity.getMaterialCab().isActive())
                     mMainActivity.getMaterialCab().finish();
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
-//                fab1.show();
-                mLUtils.animateIn(fab1);
+                fab1.show();
+//                mLUtils.animateIn(fab1);
             }
             else
                 isViewShown = false;

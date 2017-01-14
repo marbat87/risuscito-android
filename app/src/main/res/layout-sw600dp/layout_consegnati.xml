@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:fadeScrollbars="true"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
     <RelativeLayout
         android:layout_gravity="center"

@@ -40,7 +40,7 @@
     <include layout="@layout/common_shadow"/>
 
     <FrameLayout
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior"
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -95,7 +95,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                     SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
                 updateConsegnatiList(true);
 //                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-                mChoosedRecyclerView.setVisibility(View.INVISIBLE);
+                mChoosedRecyclerView.setVisibility(View.GONE);
                 if (mMainActivity.isOnTablet())
                     enableBottombar(false);
                 else
@@ -162,7 +162,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             else
                 mMainActivity.enableBottombar(true);
 //            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
 //            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
             mNoConsegnati.setVisibility(View.INVISIBLE);
             if (mMainActivity.isOnTablet())
@@ -175,7 +175,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         }
         else {
 //            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-            mChoosedRecyclerView.setVisibility(View.INVISIBLE);
+            mChoosedRecyclerView.setVisibility(View.GONE);
             if (mMainActivity.isOnTablet())
                 enableBottombar(false);
             else
@@ -264,7 +264,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 editMode = true;
                 updateChooseList(true);
 //                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-                mRecyclerView.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
 //                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
