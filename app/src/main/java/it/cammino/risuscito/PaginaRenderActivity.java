@@ -1902,7 +1902,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onFileSelection(@NonNull FileChooserDialog dialog, @NonNull File file) {
-        final String tag = dialog.getTag(); // gets tag set from Builder, if you use multiple dialogs
         if (file != null) {
             String path = file.getAbsolutePath();
             Snackbar.make(findViewById(android.R.id.content),

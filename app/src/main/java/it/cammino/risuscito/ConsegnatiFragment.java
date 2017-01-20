@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -43,8 +42,6 @@ import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.slides.IntroConsegnatiNew;
-import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
-import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
@@ -98,7 +95,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                     SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
                 updateConsegnatiList(true);
 //                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-                mChoosedRecyclerView.setVisibility(View.INVISIBLE);
+                mChoosedRecyclerView.setVisibility(View.GONE);
                 if (mMainActivity.isOnTablet())
                     enableBottombar(false);
                 else
@@ -165,7 +162,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             else
                 mMainActivity.enableBottombar(true);
 //            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
 //            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
             mNoConsegnati.setVisibility(View.INVISIBLE);
             if (mMainActivity.isOnTablet())
@@ -178,7 +175,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         }
         else {
 //            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-            mChoosedRecyclerView.setVisibility(View.INVISIBLE);
+            mChoosedRecyclerView.setVisibility(View.GONE);
             if (mMainActivity.isOnTablet())
                 enableBottombar(false);
             else
@@ -267,7 +264,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 editMode = true;
                 updateChooseList(true);
 //                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-                mRecyclerView.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
 //                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
 //                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
@@ -535,10 +532,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //    }
 
     private void enableBottombar(boolean enabled) {
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
-        mBottomBar.requestLayout();
+        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
+//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
+//        mBottomBar.requestLayout();
     }
 
     @Override

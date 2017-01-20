@@ -7,7 +7,7 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 4203
+        versionCode 4205
         versionName '4.2.0'
     }
     lintOptions {
@@ -35,7 +35,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.9'
-    compile 'com.afollestad.material-dialogs:commons:0.9.2.2'
+    compile 'com.afollestad.material-dialogs:commons:0.9.2.3'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.2'
     compile 'com.github.turing-tech:MaterialScrollBar:12.2.0'
@@ -55,6 +55,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-drive:10.0.1'
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.afollestad:material-cab:0.1.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

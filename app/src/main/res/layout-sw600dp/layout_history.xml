@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,6 +36,7 @@
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
+        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior"
         android:layout_width= "match_parent"
         android:layout_height = "match_parent"
         android:id="@+id/history_recycler"

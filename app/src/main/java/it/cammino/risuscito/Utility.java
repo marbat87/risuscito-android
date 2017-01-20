@@ -33,9 +33,9 @@ public class Utility {
     public static final String SIGNED_IN = "signed_id";
     public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
 
-    public static final String GENERATE_XML = "generate_xml";
+//    public static final String GENERATE_XML = "generate_xml";
 
-    public static final int HIDE_DELAY = 1500;
+//    public static final int HIDE_DELAY = 1500;
 
     public static final long CLICK_DELAY = 1000;
 
@@ -44,7 +44,7 @@ public class Utility {
     public static final String SPEED_VALUE = "speedValue";
     public static final String SCROLL_PLAYING = "scrollPlaying";
     public static final String ID_CANTO = "idCanto";
-    public static final String TAG_TRANSIZIONE = "fullscreen";
+//    public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
 
 //    public static final String GIALLO = "#EBD0A5";

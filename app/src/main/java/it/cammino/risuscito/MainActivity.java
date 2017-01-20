@@ -28,6 +28,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -84,8 +85,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
-import it.cammino.risuscito.ui.QuickReturnFooterBehavior;
-import it.cammino.risuscito.ui.ScrollAwareFABBehavior;
+import it.cammino.risuscito.ui.FABAwareScrollingViewBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -96,10 +96,11 @@ public class MainActivity extends ThemeableActivity
 
     private final String TAG = getClass().getCanonicalName();
     private final long PROF_ID = 5428471L;
-    Bundle mSavedInstance;
+//    Bundle mSavedInstance;
 
     private LUtils mLUtils;
 
+    private MaterialCab materialCab;
     private Drawer mDrawer;
     private MiniDrawer mMiniDrawer;
     private Crossfader crossFader;
@@ -137,7 +138,7 @@ public class MainActivity extends ThemeableActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mSavedInstance = savedInstanceState;
+//        mSavedInstance = savedInstanceState;
 
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_menu)
@@ -163,6 +164,13 @@ public class MainActivity extends ThemeableActivity
             getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
         setupNavDrawer(savedInstanceState);
+
+        materialCab = new MaterialCab(this, R.id.cab_stub)
+//                .setMenu(R.menu.menu_delete)
+                .setBackgroundColor(getThemeUtils().primaryColorDark())
+                .setPopupMenuTheme(R.style.ThemeOverlay_AppCompat_Light)
+                .setContentInsetStartRes(R.dimen.mcab_default_content_inset);
+//                .setCloseDrawableRes(android.R.drawable.ic_menu_close_clear_cancel);
 
         showSnackbar = savedInstanceState == null
                 || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
@@ -740,18 +748,24 @@ public class MainActivity extends ThemeableActivity
     public void enableFab(boolean enable) {
         Log.d(TAG, "enableFab: " + enable);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
-        if (enable)
+        if (enable) {
             mFab.show();
+//            mLUtils.animateIn(mFab);
+        }
         else
             mFab.hide();
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFab.getLayoutParams();
-//        params.setBehavior(enable? new ScrollAwareFABBehavior() : null);
-//        mFab.requestLayout();
+        View mScrolling = findViewById(R.id.content_frame);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
+        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());
+        mFab.requestLayout();
     }
 
     public void enableBottombar(boolean enabled) {
         View mBottomBar = findViewById(R.id.bottom_bar);
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (enabled)
+            mLUtils.animateIn(mBottomBar);
+        else
+            mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
 //        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
 //        mBottomBar.requestLayout();
@@ -1427,5 +1441,13 @@ public class MainActivity extends ThemeableActivity
 
     public boolean isOnTablet() {
         return isOnTablet;
+    }
+
+    public MaterialCab getMaterialCab() {
+        return materialCab;
+    }
+
+    public AppBarLayout getAppBarLayout() {
+        return appBarLayout;
     }
 }

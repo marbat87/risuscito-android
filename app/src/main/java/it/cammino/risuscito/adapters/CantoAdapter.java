@@ -151,15 +151,20 @@ public class CantoAdapter extends RecyclerView.Adapter implements ICustomAdapter
         }
     }
 
-    private int getResId(String resName, Class<?> c) {
-        try {
-            Field idField = c.getDeclaredField(resName);
-            return idField.getInt(idField);
-        }
-        catch (Exception e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-            return -1;
-        }
+//    private int getResId(String resName, Class<?> c) {
+//        try {
+//            Field idField = c.getDeclaredField(resName);
+//            return idField.getInt(idField);
+//        }
+//        catch (Exception e) {
+//            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+//            return -1;
+//        }
+//    }
+
+    @Override
+    public long getItemId(int position) {
+        return dataItems.get(position).getIdCanto();
     }
 
 }
