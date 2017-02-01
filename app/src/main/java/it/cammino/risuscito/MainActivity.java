@@ -496,8 +496,6 @@ public class MainActivity extends ThemeableActivity
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
-                        new SecondaryDrawerItem().withName(R.string.title_activity_donate).withIcon(CommunityMaterial.Icon.cmd_thumb_up).withIdentifier(R.id.navigation_donate).withSelectable(false)
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -546,10 +544,6 @@ public class MainActivity extends ThemeableActivity
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
                                 mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
-                                return true;
-                            }
-                            else if (drawerItem.getIdentifier() ==  R.id.navigation_donate) {
-                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, DonateActivity.class));
                                 return true;
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
