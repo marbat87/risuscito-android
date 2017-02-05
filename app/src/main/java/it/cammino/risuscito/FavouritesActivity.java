@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
@@ -478,9 +479,14 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     public boolean onCabFinished(MaterialCab cab) {
         Log.d(TAG, "onCabFinished: " + actionModeOk);
         if (!actionModeOk) {
-            for (CantoRecycled canto : titoli) {
-                canto.setmSelected(false);
-                cantoAdapter.notifyDataSetChanged();
+            try {
+                for (CantoRecycled canto : titoli) {
+                    canto.setmSelected(false);
+                    cantoAdapter.notifyDataSetChanged();
+                }
+            }
+            catch (Exception e){
+                FirebaseCrash.log("Possibile crash");
             }
         }
         return true;

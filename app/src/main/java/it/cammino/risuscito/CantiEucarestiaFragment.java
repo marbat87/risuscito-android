@@ -26,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.google.firebase.FirebaseApiNotAvailableException;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -731,8 +734,13 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         Log.d(TAG, "onCabFinished: ");
         mSwhitchMode = false;
         if (!actionModeOk) {
-            posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
-            cantoAdapter.notifyItemChanged(longclickedPos);
+            try {
+                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
+                cantoAdapter.notifyItemChanged(longclickedPos);
+            }
+            catch (Exception e){
+                FirebaseCrash.log("Possibile crash - longclickedPos: " + longclickedPos);
+            }
         }
         return true;
     }

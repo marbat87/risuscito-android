@@ -41,7 +41,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
-            android:key="mostra_santo"
+            android:key="mostra_canto_pace"
             android:title="@string/show_pace_title"
             android:summary="@string/show_pace_summary"/>
 

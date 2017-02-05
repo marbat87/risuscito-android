@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.2.0" changeDate="Febbraio 2017">
+    <changelogversion versionName="4.2.1" changeDate="Febbraio 2017">
         <changelogimprovement>Compatibilità minima Android 4.0 (API 14)</changelogimprovement>
         <changelogimprovement>Aggiunto il nuovo canto "Come pecora che vede"</changelogimprovement>
         <changelogimprovement>Aggiunta l'opzione per il canto all'offertorio</changelogimprovement>
-        <changelogtext>Rimosse la pagina e il link per le donazioni a causa delle polocy di Google. Potete comunque donare manualmente, tramite Paypal, a marbat87@outlook.it</changelogtext>
+        <changelogtext>Rimosse la pagina e il link per le donazioni a causa delle policy di Google. Potete comunque donare manualmente, tramite Paypal, a marbat87@outlook.it</changelogtext>
     </changelogversion>
 
 </changelog>

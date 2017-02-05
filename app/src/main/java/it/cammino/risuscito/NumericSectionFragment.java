@@ -267,6 +267,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
         menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
         menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
+        menu.findItem(R.id.add_to_e_offertorio).setVisible(pref.getBoolean(Utility.SHOW_OFFERTORIO, false));
         menu.findItem(R.id.add_to_e_santo).setVisible(pref.getBoolean(Utility.SHOW_SANTO, false));
     }
 
@@ -303,6 +304,9 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                     return true;
                 case R.id.add_to_e_pace:
                     addToListaNoDup(2, 2);
+                    return true;
+                case R.id.add_to_e_offertorio:
+                    addToListaNoDup(2, 8);
                     return true;
                 case R.id.add_to_e_santo:
                     addToListaNoDup(2, 7);
