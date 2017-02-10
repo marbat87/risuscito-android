@@ -136,8 +136,6 @@
     <string name="no_pdf_reader">Nessun PDF Reader trovato</string>
     <string name="export_running">Esportazione in corso&#8230;</string>
     <string name="open_pdf">Apri PDF</string>
-    <string name="content_donate">Dona</string>
-    <string name="title_activity_donate">Ringrazia</string>
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
     <string name="salmi_musica_index">Indice salmi musicati</string>

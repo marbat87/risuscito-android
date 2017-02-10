@@ -55,6 +55,11 @@
                 android:title="@string/canto_pace" />
 
             <item
+                android:id="@+id/add_to_e_offertorio"
+                android:title="@string/canto_offertorio"
+                android:visible="false"/>
+
+            <item
                 android:id="@+id/add_to_e_santo"
                 android:title="@string/santo"
                 android:visible="false"/>

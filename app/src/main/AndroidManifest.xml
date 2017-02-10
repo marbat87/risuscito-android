@@ -25,7 +25,6 @@
         <activity android:name="it.cammino.risuscito.GeneralInsertSearch" android:label=""></activity>
         <activity android:name="it.cammino.risuscito.CreaListaActivity" android:label=""></activity>
         <activity android:name="it.cammino.risuscito.AboutActivity" android:label=""></activity>
-        <activity android:name="it.cammino.risuscito.DonateActivity" android:label=""></activity>
         <activity android:name="it.cammino.risuscito.slides.IntroMainNew" android:label=""
             android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
         <activity android:name="it.cammino.risuscito.slides.IntroPaginaRenderNew" android:label=""
