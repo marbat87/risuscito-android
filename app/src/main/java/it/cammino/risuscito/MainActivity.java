@@ -96,7 +96,6 @@ public class MainActivity extends ThemeableActivity
 
     private final String TAG = getClass().getCanonicalName();
     private final long PROF_ID = 5428471L;
-//    Bundle mSavedInstance;
 
     private LUtils mLUtils;
 
@@ -550,7 +549,6 @@ public class MainActivity extends ThemeableActivity
                                 if (LUtils.hasL())
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new ConsegnatiFragment();
-//                                ((ConsegnatiFragment) fragment).setOnTablet(isOnTablet);
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_history) {
                                 if (LUtils.hasL())
@@ -631,10 +629,6 @@ public class MainActivity extends ThemeableActivity
             if (isOnTablet)
                 mMiniDrawer.setSelection(R.id.navigation_home);
             mDrawer.setSelection(R.id.navigation_home);
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-//            transaction.replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
-//            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
             return true;
         }
@@ -648,15 +642,11 @@ public class MainActivity extends ThemeableActivity
         else
             getThemeUtils().primaryColor(color);
 
-//        if (Build.VERSION.SDK_INT >= 11) {
         recreate();
-//        } else {
-//            Intent i = getBaseContext().getPackageManager()
-//                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
-//            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(i);
-//        }
     }
+
+    @Override
+    public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {}
 
     //converte gli accordi salvati dalla lingua vecchia alla nuova
     private void convertTabs(SQLiteDatabase db, String conversion) {
@@ -760,9 +750,6 @@ public class MainActivity extends ThemeableActivity
             mLUtils.animateIn(mBottomBar);
         else
             mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(MainActivity.this, null) : null);
-//        mBottomBar.requestLayout();
     }
 
     // [START signIn]
@@ -948,8 +935,6 @@ public class MainActivity extends ThemeableActivity
     }
 
     private void hideProgressDialog() {
-//        if (mProgressDialog != null && mProgressDialog.isShowing())
-//            mProgressDialog.hide();
         mCircleProgressBar.setVisibility(View.GONE);
     }
 
