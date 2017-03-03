@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 
-public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnOffsetChangedListener {
+public class ChangelogActivity extends ThemeableActivity implements AppBarLayout.OnOffsetChangedListener {
 
     private LUtils mLUtils;
     private boolean appBarIsExpanded = true;
@@ -26,14 +26,12 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        setContentView(R.layout.changelog_layout);
         ButterKnife.bind(this);
 
-//        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbarlayout);
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
@@ -41,11 +39,11 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
             appBarIsExpanded = savedInstanceState.getBoolean("appBarIsExpanded", true);
 
         if (appBarIsExpanded)
-            Utility.setupTransparentTints(AboutActivity.this, Color.TRANSPARENT, false);
+            Utility.setupTransparentTints(ChangelogActivity.this, Color.TRANSPARENT, false);
         else
-            Utility.setupTransparentTints(AboutActivity.this, getThemeUtils().primaryColorDark(), false);
+            Utility.setupTransparentTints(ChangelogActivity.this, getThemeUtils().primaryColorDark(), false);
 
-        mLUtils = LUtils.getInstance(AboutActivity.this);
+        mLUtils = LUtils.getInstance(ChangelogActivity.this);
 
     }
 
@@ -99,8 +97,8 @@ public class AboutActivity extends ThemeableActivity implements AppBarLayout.OnO
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
         appBarIsExpanded = (verticalOffset >= -100);
         if (appBarIsExpanded)
-            Utility.setupTransparentTints(AboutActivity.this, ContextCompat.getColor(AboutActivity.this, android.R.color.transparent), false);
+            Utility.setupTransparentTints(ChangelogActivity.this, ContextCompat.getColor(ChangelogActivity.this, android.R.color.transparent), false);
         else
-            Utility.setupTransparentTints(AboutActivity.this, getThemeUtils().primaryColorDark(), false);
+            Utility.setupTransparentTints(ChangelogActivity.this, getThemeUtils().primaryColorDark(), false);
     }
 }

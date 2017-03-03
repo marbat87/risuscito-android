@@ -494,8 +494,13 @@ public class MainActivity extends ThemeableActivity
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
                                 .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+//                        new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")
+                        new PrimaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog)
+                                .withSelectedIconColor(getThemeUtils().primaryColor())
+                                .withSelectedTextColor(getThemeUtils().primaryColor())
+                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")
+                                )
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -542,8 +547,11 @@ public class MainActivity extends ThemeableActivity
                                 fragment = new SettingsFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
-                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, AboutActivity.class));
-                                return true;
+//                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, ChangelogActivity.class));
+//                                return true;
+                                if (LUtils.hasL())
+                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+                                fragment = new AboutFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
                                 if (LUtils.hasL())
