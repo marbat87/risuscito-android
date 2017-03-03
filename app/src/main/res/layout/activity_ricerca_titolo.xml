@@ -20,53 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollHorizontally="true"
-        android:singleLine="true"
         android:layout_marginLeft="@dimen/activity_min_margin"
         android:layout_marginRight="@dimen/activity_min_margin"
         android:textColorHighlight="@color/ripple_color_light"
         android:imeOptions="actionDone"
-        android:hint="@string/search_hint" />
-
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:id="@+id/pulisci_ripple"-->
-        <!--android:stateListAnimator="@anim/raise"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="end"-->
-        <!--android:layout_margin="@dimen/min_button_margin"-->
-        <!--android:clickable="true"-->
-        <!--android:soundEffectsEnabled="true"-->
-        <!--android:foreground="?attr/selectableItemBackground"-->
-        <!--risuscito:cardBackgroundColor="#d9d9d9"-->
-        <!--risuscito:cardPreventCornerOverlap="false"-->
-        <!--risuscito:cardCornerRadius="2dp"-->
-        <!--risuscito:cardUseCompatPadding="true"-->
-        <!--risuscito:cardElevation="3dp">-->
-
-        <!--<RelativeLayout-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/textView"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:gravity="center"-->
-                <!--android:minHeight="36dp"-->
-                <!--android:minWidth="88dp"-->
-                <!--android:paddingLeft="@dimen/button_text_padding"-->
-                <!--android:paddingRight="@dimen/button_text_padding"-->
-                <!--fontPath="fonts/Roboto-Medium.ttf"-->
-                <!--android:textColor="#FF000000"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Button"-->
-                <!--android:singleLine="true"-->
-                <!--android:text="@string/button_pulisci"-->
-                <!--tools:ignore="MissingPrefix" />-->
-        <!--</RelativeLayout>-->
-
-    <!--</android.support.v7.widget.CardView>-->
+        android:hint="@string/search_hint"
+        android:maxLines="1" />
 
     <Button
         android:id="@+id/pulisci_ripple"
@@ -75,10 +34,10 @@
         android:layout_margin="@dimen/min_button_margin"
         android:layout_height="wrap_content"
         android:text="@string/button_pulisci"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@android:color/white"
         fontPath="fonts/Roboto-Medium.ttf"
         style="@style/Widget.AppCompat.Button.Colored"
+        risuscito:elevation="@dimen/raised_button_default_elevation"
+        risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
         tools:ignore="MissingPrefix" />
 
     <TextView

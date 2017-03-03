@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 45;
+    private static final int DB_VERSION = 48;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -1907,6 +1907,13 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         sql += "VALUES (233, " + appContext.getResources().getString(R.string.messia_leone_vincere_page) + ", '" + appContext.getResources().getString(R.string.messia_leone_vincere_title) + "', '"
                 + appContext.getResources().getString(R.string.messia_leone_vincere_source) + "', 0, '"
                 + BIANCO + "', '" + appContext.getResources().getString(R.string.messia_leone_vincere_link) + "', "
+                + "0, 0, 0, NULL, NULL, 2)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO ELENCO ";
+        sql += "VALUES (234, " + appContext.getResources().getString(R.string.come_pecora_che_vede_page) + ", '" + appContext.getResources().getString(R.string.come_pecora_che_vede_title) + "', '"
+                + appContext.getResources().getString(R.string.come_pecora_che_vede_source) + "', 0, '"
+                + BIANCO + "', '" + appContext.getResources().getString(R.string.come_pecora_che_vede_link) + "', "
                 + "0, 0, 0, NULL, NULL, 2)";
         db.execSQL(sql);
         // FINE CANTI
@@ -4184,6 +4191,10 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
         sql = "INSERT INTO INDICE_LIT ";
         sql += "VALUES (11, 147)";
+        db.execSQL(sql);
+
+        sql = "INSERT INTO INDICE_LIT ";
+        sql += "VALUES (11, 59)";
         db.execSQL(sql);
 
         sql = "INSERT INTO INDICE_LIT ";

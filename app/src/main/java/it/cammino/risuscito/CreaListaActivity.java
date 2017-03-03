@@ -1,42 +1,30 @@
 package it.cammino.risuscito;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
@@ -45,21 +33,28 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.DraggableSwipeableAdapter;
+import it.cammino.risuscito.dialogs.InputTextDialogFragment;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.DraggableItem;
-import it.cammino.risuscito.slides.IntroCreaLista;
+import it.cammino.risuscito.slides.IntroCreaListaNew;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class CreaListaActivity extends ThemeableActivity {
+public class CreaListaActivity extends ThemeableActivity implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
     private ListaPersonalizzata celebrazione;
     private DatabaseCanti listaCanti;
     private ArrayList<DraggableItem> elementi;
     private String titoloLista;
-    private int prevOrientation;
     private boolean modifica;
     private int idModifica;
     private RetainedFragment dataFragment;
@@ -68,7 +63,6 @@ public class CreaListaActivity extends ThemeableActivity {
     private ArrayList<String> nomiCanti;
     private Bundle tempArgs;
 
-    private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mWrappedAdapter;
@@ -76,29 +70,41 @@ public class CreaListaActivity extends ThemeableActivity {
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
-    private CollapsingToolbarLayout collapsingToolbarLayout;
     private EditText textfieldTitle;
 
-    private static final String PREF_FIRST_OPEN = "prima_apertura_crealista_v2";
+    private int positionToRename;
+    private WelcomeHelper mWelcomeScreen;
 
     private final String TEMP_TITLE = "temp_title";
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
+    @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+
+    @OnClick(R.id.fab_crea_lista)
+    public void aggiuntiPosizione() {
+        new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "ADD_POSITION")
+                .title(R.string.posizione_add_desc)
+                .positiveButton(R.string.aggiungi_confirm)
+                .negativeButton(R.string.aggiungi_dismiss)
+                .show();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crea_lista);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        setSupportActionBar(toolbar);
+//        Toolbar mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+//        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         textfieldTitle = (EditText)findViewById(R.id.textfieldTitle);
 
         textfieldTitle.addTextChangedListener(new TextWatcher() {
@@ -178,7 +184,7 @@ public class CreaListaActivity extends ThemeableActivity {
         }
 
         //noinspection ConstantConditions
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+//        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(CreaListaActivity.this);
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
@@ -222,60 +228,13 @@ public class CreaListaActivity extends ThemeableActivity {
 
             @Override
             public void onItemViewLongClicked(View v) {
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(CreaListaActivity.this);
-                final int positionToRename = mRecyclerView.getChildAdapterPosition(v);
-                MaterialDialog dialog = new MaterialDialog.Builder(CreaListaActivity.this)
+                positionToRename = mRecyclerView.getChildAdapterPosition(v);
+                new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "RENAME")
                         .title(R.string.posizione_rename)
-                        .positiveText(R.string.aggiungi_rename)
-                        .negativeText(R.string.aggiungi_dismiss)
-                        .input("", "", false, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                            }
-                        })
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                elementi.set(positionToRename, new DraggableItem(materialDialog.getInputEditText().getText().toString()
-                                        , elementi.get(positionToRename).getIdPosizione()));
-                                mAdapter.notifyDataSetChanged();
-                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .prefill(elementi.get(positionToRename).getTitolo())
+                        .positiveButton(R.string.aggiungi_rename)
+                        .negativeButton(R.string.aggiungi_dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                dialog.getInputEditText().setText(elementi.get(positionToRename).getTitolo());
-                dialog.getInputEditText().selectAll();
-                dialog.setCancelable(false);
-                //to show soft keyboard
-//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
 
         });
@@ -310,82 +269,40 @@ public class CreaListaActivity extends ThemeableActivity {
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
         FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
-        Drawable drawable = DrawableCompat.wrap(fabAdd.getDrawable());
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(CreaListaActivity.this, android.R.color.white));
-        fabAdd.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(CreaListaActivity.this);
-                MaterialDialog dialogAdd = new MaterialDialog.Builder(CreaListaActivity.this)
-                        .title(R.string.posizione_add_desc)
-                        .positiveText(R.string.aggiungi_confirm)
-                        .negativeText(R.string.aggiungi_dismiss)
-                        .input("", "", false, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                            }
-                        })
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-                                elementi.add(new DraggableItem(materialDialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
-                                if (modifica)
-                                    nomiCanti.add("");
-                                mAdapter.notifyItemInserted(elementi.size() - 1);
-                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                //to hide soft keyboard
-//                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                                        .hideSoftInputFromWindow(materialDialog.getInputEditText().getWindowToken(), 0);
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
-                        .show();
-                dialogAdd.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialogAdd.getInputEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                dialogAdd.setCancelable(false);
-                //to show soft keyboard
-//                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            }
-        });
+        IconicsDrawable icon = new IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon.cmd_plus)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(4);
+        fabAdd.setImageDrawable(icon);
+//        fabAdd.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "ADD_POSITION")
+//                        .title(R.string.posizione_add_desc)
+//                        .positiveButton(R.string.aggiungi_confirm)
+//                        .negativeButton(R.string.aggiungi_dismiss)
+//                        .show();
+//            }
+//        });
 
         if (elementi.size() > 0)
             findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
 
-        if(PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getBoolean(PREF_FIRST_OPEN, true)) {
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(CreaListaActivity.this)
-                    .edit();
-            editor.putBoolean(PREF_FIRST_OPEN, false);
-            editor.apply();
-            showHelp();
-        }
-
+        mWelcomeScreen = new WelcomeHelper(this, IntroCreaListaNew.class);
+        mWelcomeScreen.show(savedInstanceState);
         findViewById(R.id.textTitleDescription).requestFocus();
+
+        if (savedInstanceState != null) {
+            Log.d(getClass().getName(), "onCreate: RESTORING");
+            positionToRename = savedInstanceState.getInt("positionToRename", 0);
+            if (InputTextDialogFragment.findVisible(CreaListaActivity.this, "RENAME") != null)
+                InputTextDialogFragment.findVisible(CreaListaActivity.this, "RENAME").setmCallback(CreaListaActivity.this);
+            if (InputTextDialogFragment.findVisible(CreaListaActivity.this, "ADD_POSITION") != null)
+                InputTextDialogFragment.findVisible(CreaListaActivity.this, "ADD_POSITION").setmCallback(CreaListaActivity.this);
+            if (SimpleDialogFragment.findVisible(CreaListaActivity.this, "SAVE_LIST") != null)
+                SimpleDialogFragment.findVisible(CreaListaActivity.this, "SAVE_LIST").setmCallback(CreaListaActivity.this);
+        }
 
     }
 
@@ -435,6 +352,16 @@ public class CreaListaActivity extends ThemeableActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.crea_lista_menu, menu);
+        menu.findItem(R.id.action_save_list).setIcon(
+                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_content_save)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
         return true;
     }
 
@@ -442,7 +369,8 @@ public class CreaListaActivity extends ThemeableActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-                showHelp();
+//                showHelp();
+                mWelcomeScreen.forceShow();
                 return true;
             case R.id.action_save_list:
                 if (saveList()) {
@@ -453,55 +381,13 @@ public class CreaListaActivity extends ThemeableActivity {
                 return true;
             case android.R.id.home:
                 if (elementi.size() > 0) {
-                    prevOrientation = getRequestedOrientation();
-                    Utility.blockOrientation(CreaListaActivity.this);
-                    MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    new SimpleDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "SAVE_LIST")
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
-                            .positiveText(R.string.confirm)
-                            .negativeText(R.string.dismiss)
-                            .neutralText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    setRequestedOrientation(prevOrientation);
-                                    if (saveList()) {
-                                        setResult(Activity.RESULT_OK);
-                                        finish();
-                                        overridePendingTransition(0, R.anim.slide_out_bottom);
-                                    }
-                                }
-                            })
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    setRequestedOrientation(prevOrientation);
-                                    setResult(Activity.RESULT_CANCELED);
-                                    finish();
-                                    overridePendingTransition(0, R.anim.slide_out_bottom);
-                                }
-                            })
-                            .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    setRequestedOrientation(prevOrientation);
-                                }
-                            })
+                            .positiveButton(R.string.confirm)
+                            .negativeButton(R.string.dismiss)
+                            .neutralButton(R.string.cancel)
                             .show();
-                    dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface arg0, int keyCode,
-                                             KeyEvent event) {
-                            if (keyCode == KeyEvent.KEYCODE_BACK
-                                    && event.getAction() == KeyEvent.ACTION_UP) {
-                                arg0.dismiss();
-                                setRequestedOrientation(prevOrientation);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                    dialog.setCancelable(false);
                     return true;
                 }
                 else {
@@ -518,55 +404,13 @@ public class CreaListaActivity extends ThemeableActivity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (elementi.size() > 0) {
-                prevOrientation = getRequestedOrientation();
-                Utility.blockOrientation(CreaListaActivity.this);
-                MaterialDialog dialog = new MaterialDialog.Builder(this)
+                new SimpleDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "SAVE_LIST")
                         .title(R.string.save_list_title)
                         .content(R.string.save_list_question)
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .neutralText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                setRequestedOrientation(prevOrientation);
-                                if (saveList()) {
-                                    setResult(Activity.RESULT_OK);
-                                    finish();
-                                    overridePendingTransition(0, R.anim.slide_out_bottom);
-                                }
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                setRequestedOrientation(prevOrientation);
-                                setResult(Activity.RESULT_CANCELED);
-                                finish();
-                                overridePendingTransition(0, R.anim.slide_out_bottom);
-                            }
-                        })
-                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                setRequestedOrientation(prevOrientation);
-                            }
-                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
+                        .neutralButton(R.string.cancel)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
                 return true;
             }
             else {
@@ -652,6 +496,8 @@ public class CreaListaActivity extends ThemeableActivity {
         getSupportFragmentManager().beginTransaction().add(dataFragment3, TEMP_TITLE).commit();
 
         super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("positionToRename", positionToRename);
+        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     public static class RetainedFragment extends Fragment {
@@ -685,8 +531,53 @@ public class CreaListaActivity extends ThemeableActivity {
         }
     }
 
-    private void showHelp() {
-        Intent intent = new Intent(CreaListaActivity.this, IntroCreaLista.class);
-        startActivity(intent);
+    @Override
+    public void onPositive(@NonNull String tag, @NonNull MaterialDialog dialog) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "RENAME":
+                elementi.set(positionToRename, new DraggableItem(dialog.getInputEditText().getText().toString()
+                        , elementi.get(positionToRename).getIdPosizione()));
+                mAdapter.notifyDataSetChanged();
+                break;
+            case "ADD_POSITION":
+                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
+                if (modifica)
+                    nomiCanti.add("");
+                mAdapter.notifyItemInserted(elementi.size() - 1);
+                break;
+        }
     }
+    @Override
+    public void onNegative(@NonNull String tag, @NonNull MaterialDialog dialog) {}
+    @Override
+    public void onNeutral(@NonNull String tag, @NonNull MaterialDialog dialog) {}
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "SAVE_LIST":
+                if (saveList()) {
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                    overridePendingTransition(0, R.anim.slide_out_bottom);
+                }
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {
+        Log.d(getClass().getName(), "onNegative: " + tag);
+        switch (tag) {
+            case "SAVE_LIST":
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+                overridePendingTransition(0, R.anim.slide_out_bottom);
+                break;
+        }
+    }
+    @Override
+    public void onNeutral(@NonNull String tag) { }
 }

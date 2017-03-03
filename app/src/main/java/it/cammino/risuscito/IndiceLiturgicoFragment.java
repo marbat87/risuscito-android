@@ -1,8 +1,6 @@
 package it.cammino.risuscito;
 
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,12 +14,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,8 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
@@ -41,13 +37,19 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoExpandableAdapter;
+import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.objects.ExpandableGroup;
 
-public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener {
+public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
+
+    // create boolean for fetching data
+    private boolean isViewShown = true;
 
     private DatabaseCanti listaCanti;
     private String titoloDaAgg;
@@ -58,7 +60,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     private int[] idListe;
     private int idListaClick;
     private int idPosizioneClick;
-    private int prevOrientation;
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
@@ -68,16 +69,18 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     private long mLastClickTime = 0;
 
-    private RecyclerView mRecyclerView;
+//    private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mWrappedAdapter;
     private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
 
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.layout_recycler, container, false);
+        rootView = inflater.inflate(R.layout.layout_recycler, container, false);
+        ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -132,7 +135,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         }
 
         arguments.close();
-        db.close();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -154,8 +156,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             }
         };
 
-        //noinspection ConstantConditions
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
 
         final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
@@ -177,26 +178,41 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
         mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
 
-//        query = "SELECT _id, lista" +
-//                "		FROM LISTE_PERS" +
-//                "		ORDER BY _id ASC";
-//        Cursor lista = db.rawQuery(query, null);
-//
-//        listePers = new ListaPersonalizzata[lista.getCount()];
-//        idListe = new int[lista.getCount()];
-//
-//        lista.moveToFirst();
-//        for (int i = 0; i < lista.getCount(); i++) {
-//            idListe[i] = lista.getInt(0);
-//            listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-//                    deserializeObject(lista.getBlob(1));
-//            lista.moveToNext();
-//        }
-//
-//        lista.close();
-//        db.close();
-
         mLUtils = LUtils.getInstance(getActivity());
+
+        if (savedInstanceState != null) {
+            Log.d(getClass().getName(), "onCreateView: RESTORING");
+            idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
+            idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
+            idListaClick = savedInstanceState.getInt("idListaClick", 0);
+            idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
+            posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE").setmCallback(IndiceLiturgicoFragment.this);
+            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE_2") != null)
+                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE_2").setmCallback(IndiceLiturgicoFragment.this);
+        }
+
+        if (!isViewShown) {
+            query = "SELECT _id, lista" +
+                    "		FROM LISTE_PERS" +
+                    "		ORDER BY _id ASC";
+            Cursor lista = db.rawQuery(query, null);
+
+            listePers = new ListaPersonalizzata[lista.getCount()];
+            idListe = new int[lista.getCount()];
+
+            lista.moveToFirst();
+            for (int i = 0; i < lista.getCount(); i++) {
+                idListe[i] = lista.getInt(0);
+                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                        deserializeObject(lista.getBlob(1));
+                lista.moveToNext();
+            }
+
+            lista.close();
+            db.close();
+        }
 
         return rootView;
     }
@@ -218,34 +234,45 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            Log.d(getClass().getName(), "VISIBLE");
-            if (listaCanti == null)
-                listaCanti = new DatabaseCanti(getActivity());
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            String query = "SELECT _id, lista" +
-                    "		FROM LISTE_PERS" +
-                    "		ORDER BY _id ASC";
-            Cursor lista = db.rawQuery(query, null);
+            if (getView() != null) {
+                isViewShown = true;
+                Log.d(getClass().getName(), "VISIBLE");
+                if (listaCanti == null)
+                    listaCanti = new DatabaseCanti(getActivity());
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                String query = "SELECT _id, lista" +
+                        "		FROM LISTE_PERS" +
+                        "		ORDER BY _id ASC";
+                Cursor lista = db.rawQuery(query, null);
 
-            listePers = new ListaPersonalizzata[lista.getCount()];
-            idListe = new int[lista.getCount()];
+                listePers = new ListaPersonalizzata[lista.getCount()];
+                idListe = new int[lista.getCount()];
 
-            lista.moveToFirst();
-            for (int i = 0; i < lista.getCount(); i++) {
-                idListe[i] = lista.getInt(0);
-                listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
-                        deserializeObject(lista.getBlob(1));
-                lista.moveToNext();
+                lista.moveToFirst();
+                for (int i = 0; i < lista.getCount(); i++) {
+                    idListe[i] = lista.getInt(0);
+                    listePers[i] = (ListaPersonalizzata) ListaPersonalizzata.
+                            deserializeObject(lista.getBlob(1));
+                    lista.moveToNext();
+                }
+
+                lista.close();
+                db.close();
             }
-
-            lista.close();
-            db.close();
+            else
+                isViewShown = false;
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        outState.putInt("idDaAgg", idDaAgg);
+        outState.putInt("idPosizioneClick", idPosizioneClick);
+        outState.putInt("idListaClick", idListaClick);
+        outState.putInt("idListaDaAgg", idListaDaAgg);
+        outState.putInt("posizioneDaAgg", posizioneDaAgg);
 
         // save current state to support screen rotation, etc...
         if (mRecyclerViewExpandableItemManager != null) {
@@ -311,6 +338,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
         menu.findItem(R.id.add_to_p_pace).setVisible(pref.getBoolean(Utility.SHOW_PACE, false));
         menu.findItem(R.id.add_to_e_seconda).setVisible(pref.getBoolean(Utility.SHOW_SECONDA, false));
+        menu.findItem(R.id.add_to_e_offertorio).setVisible(pref.getBoolean(Utility.SHOW_OFFERTORIO, false));
         menu.findItem(R.id.add_to_e_santo).setVisible(pref.getBoolean(Utility.SHOW_SANTO, false));
     }
 
@@ -348,6 +376,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                 case R.id.add_to_e_pace:
                     addToListaNoDup(2, 2);
                     return true;
+                case R.id.add_to_e_offertorio:
+                    addToListaNoDup(2, 8);
+                    return true;
                 case R.id.add_to_e_santo:
                     addToListaNoDup(2, 7);
                     return true;
@@ -383,8 +414,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                         .show();
                             }
                             else {
-                                prevOrientation = getActivity().getRequestedOrientation();
-                                Utility.blockOrientation(getActivity());
                                 //recupero titolo del canto presente
                                 String query = "SELECT titolo" +
                                         "		FROM ELENCO" +
@@ -392,71 +421,14 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                                         + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
                                 Cursor cursor = db.rawQuery(query, null);
                                 cursor.moveToFirst();
-                                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), IndiceLiturgicoFragment.this, "LITURGICO_REPLACE")
                                         .title(R.string.dialog_replace_title)
                                         .content(getString(R.string.dialog_present_yet) + " "
-//                                                + listePers[idListaClick].getCantoPosizione(idPosizioneClick)
-//                                                .substring(10)
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveText(R.string.confirm)
-                                        .negativeText(R.string.dismiss)
-                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-
-                                                ContentValues values = new ContentValues();
-                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-                                                db.close();
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                        .show();
-                                            }
-                                        })
-                                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                            @Override
-                                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                                getActivity().setRequestedOrientation(prevOrientation);
-                                            }
-                                        })
-//                                        .callback(new MaterialDialog.ButtonCallback() {
-//                                            @Override
-//                                            public void onPositive(MaterialDialog dialog) {
-//                                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-//                                                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-//
-//                                                ContentValues values = new ContentValues();
-//                                                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-//                                                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-//                                                db.close();
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                                        .show();
-//                                            }
-//
-//                                            @Override
-//                                            public void onNegative(MaterialDialog dialog) {
-//                                                getActivity().setRequestedOrientation(prevOrientation);
-//                                            }
-//                                        })
+                                        .positiveButton(R.string.confirm)
+                                        .negativeButton(R.string.dismiss)
                                         .show();
-                                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                                    @Override
-                                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                                         KeyEvent event) {
-                                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                                && event.getAction() == KeyEvent.ACTION_UP) {
-                                            arg0.dismiss();
-                                            getActivity().setRequestedOrientation(prevOrientation);
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                dialog.setCancelable(false);
                                 cursor.close();
                             }
                         }
@@ -535,75 +507,13 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             else {
                 idListaDaAgg = idLista;
                 posizioneDaAgg = listPosition;
-                prevOrientation = getActivity().getRequestedOrientation();
-                Utility.blockOrientation(getActivity());
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), IndiceLiturgicoFragment.this, "LITURGICO_REPLACE_2")
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveText(R.string.confirm)
-                        .negativeText(R.string.dismiss)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                String sql = "UPDATE CUST_LISTS "
-                                        + "     SET id_canto = " + idDaAgg
-                                        + "     WHERE _id = " + idListaDaAgg
-                                        + "     AND position = " + posizioneDaAgg;
-                                db.execSQL(sql);
-                                db.close();
-                                getActivity().setRequestedOrientation(prevOrientation);
-                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                        .show();
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                getActivity().setRequestedOrientation(prevOrientation);
-                            }
-                        })
-//                        .callback(new MaterialDialog.ButtonCallback() {
-//                            @Override
-//                            public void onPositive(MaterialDialog dialog) {
-//                                SQLiteDatabase db = listaCanti.getReadableDatabase();
-////                                String cantoCliccatoNoApex = Utility.duplicaApostrofi(titoloDaAgg);
-//                                String sql = "UPDATE CUST_LISTS "
-////                                        + "SET id_canto = (SELECT _id  FROM ELENCO"
-////                                        + " WHERE titolo = \'" + cantoCliccatoNoApex + "\')"
-//                                        + "     SET id_canto = " + idDaAgg
-//                                        + "     WHERE _id = " + idListaDaAgg
-//                                        + "     AND position = " + posizioneDaAgg;
-//                                db.execSQL(sql);
-//                                db.close();
-//                                getActivity().setRequestedOrientation(prevOrientation);
-////                                Toast.makeText(getActivity()
-////                                        , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
-//                                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
-//                                        .show();
-//                            }
-//
-//                            @Override
-//                            public void onNegative(MaterialDialog dialog) {
-//                                getActivity().setRequestedOrientation(prevOrientation);
-//                            }
-//                        })
+                        .positiveButton(R.string.confirm)
+                        .negativeButton(R.string.dismiss)
                         .show();
-                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface arg0, int keyCode,
-                                         KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_BACK
-                                && event.getAction() == KeyEvent.ACTION_UP) {
-                            arg0.dismiss();
-                            getActivity().setRequestedOrientation(prevOrientation);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                dialog.setCancelable(false);
             }
             return;
         }
@@ -618,10 +528,41 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         db.execSQL(sql);
         db.close();
 
-//        Toast.makeText(getActivity()
-//                , getString(R.string.list_added), Toast.LENGTH_SHORT).show();
         Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                 .show();
     }
+
+    @Override
+    public void onPositive(@NonNull String tag) {
+        Log.d(getClass().getName(), "onPositive: " + tag);
+        switch (tag) {
+            case "LITURGICO_REPLACE":
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+
+                ContentValues values = new ContentValues();
+                values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+                db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+                db.close();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case "LITURGICO_REPLACE_2":
+                db = listaCanti.getReadableDatabase();
+                String sql = "UPDATE CUST_LISTS "
+                        + "     SET id_canto = " + idDaAgg
+                        + "     WHERE _id = " + idListaDaAgg
+                        + "     AND position = " + posizioneDaAgg;
+                db.execSQL(sql);
+                db.close();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+        }
+    }
+    @Override
+    public void onNegative(@NonNull String tag) {}
+    @Override
+    public void onNeutral(@NonNull String tag) {}
 
 }

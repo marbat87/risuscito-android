@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.0.0" changeDate="16 April 2015">
+    <changelogversion versionName="4.2.1" changeDate="February 2017">
+        <changelogimprovement>Now requires Android 4.0 or upper (API 14)</changelogimprovement>
+        <changelogimprovement>Adde new song "Come pecora che vede"</changelogimprovement>
+        <changelogimprovement>Added the option to enable offertory song</changelogimprovement>
+        <changelogtext>Removed donations page and link due to Google policy. You can still manually donate to marbat87@outlook.it through Paypal</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="4.1.0" changeDate="August 2016">
+        <changelogimprovement>Updated some icons</changelogimprovement>
+        <changelogimprovement>New lateral drawer with a gmail-style on tables</changelogimprovement>
+        <changelogimprovement>Added funcionality to export and import personal custom lists</changelogimprovement>
+        <changelogimprovement>Added Android 7 Nougat compability</changelogimprovement>
+        <changelogimprovement>Improved result of fast search function</changelogimprovement>
+        <changelogimprovement>New style for addition options of Floating Action Buttons</changelogimprovement>
+        <changelogtext>[b]NEXT RELEASE[/b] Planned dropping compatibility for Android 2.3 Gingerbread (check your version in Settings -> Device/Phone Info), because it is an outdated version</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="4.0.1" changeDate="23 April 2016">
         <changelogimprovement>Backup/restore all your preferences and settings on GDrive</changelogimprovement>
         <changelogimprovement>Refactored audio management, with notification and lockscreen controls (may depend on Android version) and Android Wear controls</changelogimprovement>
         <changelogbug>Possible fix for crashes on Samsung and Wiko devices with Android 4.2.2</changelogbug>

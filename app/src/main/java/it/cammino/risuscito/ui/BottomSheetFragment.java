@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,10 +35,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         return frag;
     }
 
-    public static BottomSheetFragment newInstance(String title, Intent intent) {
+    public static BottomSheetFragment newInstance(@StringRes int title, Intent intent) {
         BottomSheetFragment frag = new BottomSheetFragment();
         Bundle args = new Bundle();
-        args.putString("title", title);
+        args.putInt("title", title);
         args.putBoolean("showTitle", true);
         args.putParcelable("intent", intent);
         frag.setArguments(args);
@@ -67,12 +68,12 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         Boolean showTitle = getArguments().getBoolean("showTitle");
         TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
         if (showTitle) {
-            String title = getArguments().getString("title");
-            titleView.setText(title);
-            titleView.setVisibility(View.VISIBLE);
+//            int title = getArguments().getInt("title");
+            titleView.setText(getArguments().getInt("title"));
+            view.findViewById(R.id.sheet_title_area).setVisibility(View.VISIBLE);
         }
         else {
-            titleView.setVisibility(View.GONE);
+            view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
         }
 
         final Intent intent = getArguments().getParcelable("intent");
@@ -112,9 +113,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 ComponentName name = new ComponentName(((TextView) v.findViewById(R.id.app_package)).getText().toString(),
                         ((TextView) v.findViewById(R.id.app_name)).getText().toString());
                 Intent newIntent = (Intent) intent.clone();
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+//                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                 newIntent.setComponent(name);
+//                sendIntent.setPackage("com.whatsapp");
                 getActivity().startActivity(newIntent);
                 getDialog().dismiss();
             }
@@ -126,6 +128,17 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Resize bottom sheet dialog so it doesn't span the entire width past a particular measurement
+        boolean mLimited = getActivity().getResources().getBoolean(R.bool.is_bottom_sheet_limited);
+        if (mLimited) {
+            int mMaxWidth = (int) getActivity().getResources().getDimension(R.dimen.max_bottomsheet_width);
+            getDialog().getWindow().setLayout(mMaxWidth, -1);
+        }
     }
 
 //    public interface AlertDialogListener {

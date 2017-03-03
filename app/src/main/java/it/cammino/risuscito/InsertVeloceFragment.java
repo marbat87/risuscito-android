@@ -28,16 +28,21 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 
 public class InsertVeloceFragment extends Fragment {
 
+    // create boolean for fetching data
+
     private DatabaseCanti listaCanti;
     private List<CantoInsert> titoli;
-    private EditText searchPar;
+//    private EditText searchPar;
     private View rootView;
-    RecyclerView recyclerView;
+//    RecyclerView mRecyclerView;
     CantoInsertRecyclerAdapter cantoAdapter;
 
     private int fromAdd;
@@ -48,16 +53,26 @@ public class InsertVeloceFragment extends Fragment {
 
     private long mLastClickTime = 0;
 
+    @BindView(R.id.matchedList) RecyclerView mRecyclerView;
+    @BindView(R.id.search_no_results) View mNoResults;
+    @BindView(R.id.textfieldRicerca) EditText searchPar;
+
+    @OnClick(R.id.pulisci_ripple)
+    public void pulisciRisultati() {
+        searchPar.setText("");
+        mNoResults.setVisibility(View.GONE);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.activity_ricerca_titolo, container, false);
+        rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
+        ButterKnife.bind(this, rootView);
 
-        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
+//        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
+//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -140,10 +155,10 @@ public class InsertVeloceFragment extends Fragment {
         // Creating new adapter object
         titoli = new ArrayList<>();
         cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         Bundle bundle = getArguments();
         fromAdd = bundle.getInt("fromAdd");
@@ -161,31 +176,38 @@ public class InsertVeloceFragment extends Fragment {
 
                 if (s.length() >= 3) {
 
-                    rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                    rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                    mNoResults.setVisibility(View.GONE);
 
-                    String titolo = Utility.duplicaApostrofi(s.toString());
+//                    String titolo = Utility.duplicaApostrofi(s.toString());
+                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
+                    String titoloTemp;
+                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
 
                     // crea un manipolatore per il Database in modalità READ
                     SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-                    // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-                    String query = "SELECT titolo, color, pagina, _id, source" +
-                            "		FROM ELENCO" +
-                            "		WHERE titolo like '%" + titolo + "%'" +
-                            "		ORDER BY titolo ASC";
+                    // lancia la ricerca di tutti i titoli presenti in DB e li
+                    // dispone in ordine alfabetico
+                    String query = "SELECT titolo, color, pagina, _id, source"
+//                            + "		FROM ELENCO" + "		WHERE titolo like '%"
+//                            + titolo + "%'" + "		ORDER BY titolo ASC";
+                            + "		FROM ELENCO ORDER BY titolo ASC";
                     Cursor lista = db.rawQuery(query, null);
 
-                    //recupera il numero di record trovati
+                    // recupera il numero di record trovati
                     int total = lista.getCount();
 
                     // crea un array e ci memorizza i titoli estratti
                     titoli.clear();
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
-                        titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
-                                + lista.getString(1) + lista.getString(0)
-                                , lista.getInt(3)
-                                , lista.getString(4)));
+                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+                        if (titoloTemp.contains(stringa))
+                            titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
+                                    + lista.getString(1) + lista.getString(0)
+                                    , lista.getInt(3)
+                                    , lista.getString(4)));
                         lista.moveToNext();
                     }
 
@@ -195,13 +217,15 @@ public class InsertVeloceFragment extends Fragment {
 
 
                     if (total == 0)
-                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+                        mNoResults.setVisibility(View.VISIBLE);
                 }
                 else {
                     if (s.length() == 0) {
                         titoli.clear();
                         cantoAdapter.notifyDataSetChanged();
-                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                        mNoResults.setVisibility(View.GONE);
                     }
                 }
 
@@ -246,13 +270,14 @@ public class InsertVeloceFragment extends Fragment {
 
         });
 
-        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchPar.setText("");
-                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-            }
-        });
+//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                searchPar.setText("");
+////                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                mNoResults.setVisibility(View.GONE);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
 

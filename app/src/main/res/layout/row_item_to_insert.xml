@@ -36,10 +36,12 @@
         android:background="?attr/customSelectorRoundAccent" >
 
         <ImageView
-            android:id="@+id/see_canto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            risuscito:srcCompat="@drawable/ic_visibility_24dp"
+            risuscito:ico_color="@color/icon_ative_black"
+            risuscito:ico_icon="cmd-eye"
+            risuscito:ico_size="24dp"
+            risuscito:ico_padding="2dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             tools:ignore="MissingPrefix" />

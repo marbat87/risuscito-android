@@ -8,12 +8,30 @@
         <item>@string/salmi_musica_index</item>
         <item>@string/indice_liturgico_index</item>
     </string-array>
+
+    <string-array name="pref_default_index_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
     <string-array name="save_location_sd_entries">
         <item>Memoria privata</item>
         <item>Memoria pubblica</item>
     </string-array>
     <string-array name="save_location_nosd_entries">
         <item>Memoria privata</item>
+    </string-array>
+
+    <string-array name="save_location_sd_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="save_location_nosd_values" translatable="false">
+        <item>0</item>
     </string-array>
 
     <!--<array name="colors_primary">-->
@@ -66,9 +84,14 @@
         <!--<item>#F4511E</item>-->
     <!--</array>-->
 
-    <string-array name="pref_languages">
+    <string-array name="pref_languages_entries">
         <item>@string/lang_it</item>
         <item>@string/lang_uk</item>
+    </string-array>
+
+    <string-array name="pref_languages_values" translatable="false">
+        <item>it</item>
+        <item>uk</item>
     </string-array>
 
 </resources>

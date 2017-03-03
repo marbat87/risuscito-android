@@ -5,12 +5,10 @@
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="android:textColorPrimary">@color/icon_ative_black</item>
+
     </style>
 
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">#fff</item>
+    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
     </style>
 
     <style name="TitoloSezione">
@@ -60,8 +58,8 @@
         <item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
         <item name="android:singleLine">true</item>
         <item name="android:minHeight">56dp</item>
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">24dp</item>
+        <item name="android:layout_marginRight">24dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">@style/Text.Headline</item>
@@ -76,6 +74,7 @@
     </style>
 
     <style name="BottomSheet.GridItemTitle">
+        <item name="android:height">16dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAppearance">@style/Text.Hint</item>
         <item name="android:padding">0dp</item>
@@ -83,15 +82,20 @@
 
     <style name="BottomSheet.GridItem">
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
     </style>
 
-    <style name="Text"/>
+    <style name="GridItemLarge" parent="BottomSheet.GridItem">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+    </style>
+
+    <style name="Text" />
 
     <style name="Text.Headline">
         <item name="android:textSize">16sp</item>
-        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
@@ -103,13 +107,11 @@
         <item name="fontPath">fonts/Roboto-Regular.ttf</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
     </style>
 

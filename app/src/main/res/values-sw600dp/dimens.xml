@@ -3,18 +3,13 @@
 
     <dimen name="activity_min_margin">10dip</dimen>
     <dimen name="settings_min_margin">20dip</dimen>
-    <dimen name="about_image_width">200dip</dimen>
-
-    <!--<dimen name="action_bar_text_field_margin">20dip</dimen>-->
     <dimen name="min_button_margin">15dip</dimen>
 
     <dimen name="button_playbar_padding">18dp</dimen>
-    <!--<dimen name="floating_margin_lateral">16dp</dimen>-->
-    <!--<dimen name="floating_margin_lateral_menu">20dp</dimen>-->
-
-    <!--<dimen name="floating_margin_lateral_minus_shadow">12dp</dimen>-->
 
     <dimen name="product_logo_bottom">24dp</dimen>
     <dimen name="brand_name_bottom">56dp</dimen>
+
+    <dimen name="about_appbarlayout_height">350dp</dimen>
 
 </resources>

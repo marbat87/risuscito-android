@@ -5,22 +5,21 @@
     android:id="@+id/risuscito_toolbar"
     android:layout_height="?attr/actionBarSize"
     android:theme="@style/ActionBarThemeOverlay"
-    risuscito:popupTheme="@style/ActionBarPopupThemeOverlay"
-    risuscito:contentInsetStart="72dp"
+    risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:layout_width="match_parent"
     android:background="?attr/colorPrimary"
     risuscito:layout_scrollFlags="scroll|enterAlways"
-    android:elevation="@dimen/toolbar_elevation">
+    android:elevation="@dimen/design_appbar_elevation">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/main_toolbarTitle"
         android:textAppearance="@style/ActionBar.TitleText"
-        android:singleLine="true"
         android:ellipsize="end"
         fontPath="fonts/Roboto-Medium.ttf"
         android:gravity="start"
-        tools:ignore="MissingPrefix" />
+        tools:ignore="MissingPrefix"
+        android:maxLines="1" />
 
 </android.support.v7.widget.Toolbar>

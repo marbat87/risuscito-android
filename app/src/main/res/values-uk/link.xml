@@ -15,7 +15,6 @@
 <string formatted="false" name="preghiera_eucaristica_II_parte2_link">
 </string>
 <string formatted="false" name="benedizione_acqua_fonte_link"></string>
-<string formatted="false" name="benedizione_acqua_fonte_2_link"></string>
 <string formatted="false" name="preconio_pasquale_link"></string>
 <string formatted="false" name="prefazio_eucarestia_veglia_pasquale_link"></string>
 <string formatted="false" name="inno_lodi_avvento_fino16_link"></string>
@@ -236,4 +235,5 @@
 <string formatted="false" name="ecco_il_mio_servo_link"></string>
 <string formatted="false" name="ave_maria_colomba_link"></string>
 <string formatted="false" name="messia_leone_vincere_link"></string>
+<string formatted="false" name="come_pecora_che_vede_link"></string>
 </resources>

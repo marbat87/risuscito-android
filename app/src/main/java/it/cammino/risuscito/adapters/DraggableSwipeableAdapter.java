@@ -25,6 +25,8 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.List;
 
@@ -106,7 +108,13 @@ public class DraggableSwipeableAdapter
 
 //        Drawable drawable = DrawableCompat.wrap(holder.mDragImage.getBackground());
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(activity, R.color.icon_ative_black));
-        holder.mDragImage.setImageResource(R.drawable.ic_reorder_24dp);
+//        holder.mDragImage.setImageResource(R.drawable.ic_reorder_24dp);
+        IconicsDrawable icon = new IconicsDrawable(activity)
+                .icon(GoogleMaterial.Icon.gmd_reorder)
+                .colorRes(R.color.icon_ative_black)
+                .sizeDp(24)
+                .paddingDp(2);
+        holder.mDragImage.setImageDrawable(icon);
         holder.mDragImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         // set text
@@ -167,6 +175,20 @@ public class DraggableSwipeableAdapter
         }
     }
 
+    /**
+     * Called while dragging in order to check whether the dragging item can be dropped to the specified position.
+     * <p/>
+     * NOTE: This method will be called when the checkCanDrop option is enabled by {@link RecyclerViewDragDropManager#setCheckCanDropEnabled(boolean)}.
+     *
+     * @param draggingPosition The position of the currently dragging item.
+     * @param dropPosition     The position to check whether the dragging item can be dropped or not.
+     * @return Whether can be dropped to the specified position.
+     */
+    @Override
+    public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
+        return false;
+    }
+
     @Override
     public boolean onCheckCanStartDrag(MyViewHolder holder, int position, int x, int y) {
         // x, y --- relative from the itemView's top-left
@@ -190,9 +212,9 @@ public class DraggableSwipeableAdapter
         return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
+    @SuppressLint("SwitchIntDef")
     @Override
     public void onSetSwipeBackground(MyViewHolder holder, int position, int type) {
-        int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
                 TypedValue typedValue = new TypedValue();
@@ -210,6 +232,7 @@ public class DraggableSwipeableAdapter
 
     }
 
+    @SuppressLint("SwitchIntDef")
     @Override
     public SwipeResultAction onSwipeItem(MyViewHolder holder, int position, int result) {
         Log.d(TAG, "onSwipeItem(result = " + result + ")");

@@ -1,8 +1,5 @@
 package it.cammino.risuscito.objects;
 
-/**
- * Created by marcello.battain on 26/05/2015.
- */
 public class DraggableItem {
 
     private String titolo;

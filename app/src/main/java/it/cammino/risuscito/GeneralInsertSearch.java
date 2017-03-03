@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {
@@ -21,42 +23,37 @@ public class GeneralInsertSearch extends ThemeableActivity {
     private int fromAdd;
     private int idLista;
     private int listPosition;
-    private LUtils mLUtils;
+
+    @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.view_pager) ViewPager mViewPager;
+    @BindView(R.id.material_tabs) TabLayout mTabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert_search);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
-        toolbar.setTitle("");
+//        Toolbar toolbar = ((Toolbar) findViewById(R.id.risuscito_toolbar));
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_inserisci_titolo);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setBackgroundColor(getThemeUtils().primaryColor());
-        setSupportActionBar(toolbar);
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
+        LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
 
         Bundle bundle = GeneralInsertSearch.this.getIntent().getExtras();
         fromAdd = bundle.getInt("fromAdd");
         idLista = bundle.getInt("idLista");
         listPosition = bundle.getInt("position");
 
-        final ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
+//        final ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
-        final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
-//        tabs.setupWithViewPager(mViewPager);
-//        tabs.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                tabs.setupWithViewPager(mViewPager);
-//                mLUtils.applyFontedTab(mViewPager, tabs);
-//            }
-//        });
+//        final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
+        mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+        mTabLayout.setupWithViewPager(mViewPager);
+        mLUtils.applyFontedTab(mViewPager, mTabLayout);
 
     }
 

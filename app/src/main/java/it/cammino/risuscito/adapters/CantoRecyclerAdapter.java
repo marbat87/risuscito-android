@@ -34,18 +34,7 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         this.context = activity;
     }
 
-//    // Adapter constructor 2
-//    public CantoRecyclerAdapter(List<CantoRecycled> dataItems
-//            , View.OnClickListener clickListener
-//            , View.OnLongClickListener longClickListener) {
-//
-//        this.dataItems = dataItems;
-//        this.clickListener = clickListener;
-//        this.longClickListener = longClickListener;
-//        this.createContextMenuListener = null;
-//    }
-
-    // Adapter constructor 3
+    // Adapter constructor 2
     public CantoRecyclerAdapter(Activity activity, List<CantoRecycled> dataItems
             , View.OnClickListener clickListener
             , View.OnCreateContextMenuListener createContextMenuListener) {
@@ -91,29 +80,10 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-//        Drawable drawable = ContextCompat.getDrawable(context,
-//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
-//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
-//        if (LUtils.hasJB())
-//            cantoHolder.cantoPage.setBackground(drawable);
-//        else
-//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
         cantoHolder.cantoPage.setBackgroundResource(
                 context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
                         , "drawable"
                         , context.getPackageName()));
-
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
 
         if (context != null) {
             if (dataItem.ismSelected())

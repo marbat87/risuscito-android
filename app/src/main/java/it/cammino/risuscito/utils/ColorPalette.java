@@ -2,9 +2,6 @@ package it.cammino.risuscito.utils;
 
 import android.graphics.Color;
 
-/**
- * Created by marcello.battain on 31/08/2015.
- */
 public final class ColorPalette {
 
     public final static int[] PRIMARY_COLORS = new int[]{

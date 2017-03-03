@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/theme">
+
+        <it.cammino.risuscito.preferences.ColorPickerPreference
+            android:defaultValue="@color/theme_primary"
+            android:key="primary_color"
+            android:layout="@layout/color_preference"
+            android:title="@string/primary_color"
+            android:summary="@string/primary_color_desc"/>
+
+        <it.cammino.risuscito.preferences.ColorPickerPreference
+            android:defaultValue="@color/theme_accent"
+            android:key="accent_color"
+            android:layout="@layout/color_preference"
+            android:title="@string/accent_color"
+            android:summary="@string/accent_color_desc"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/lists_pref">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="mostra_seconda_lettura"
+            android:title="@string/show_seconda_title"
+            android:summary="@string/show_seconda_summary"/>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="mostra_canto_offertorio"
+            android:title="@string/show_offertorio_title"
+            android:summary="@string/show_offertorio_summary"/>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="mostra_santo"
+            android:title="@string/show_santo_title"
+            android:summary="@string/show_santo_summary"/>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="mostra_canto_pace"
+            android:title="@string/show_pace_title"
+            android:summary="@string/show_pace_summary"/>
+
+        <ListPreference
+            android:defaultValue="0"
+            android:title="@string/default_index_title"
+            android:summary="@string/default_index_summary"
+            android:entries="@array/pref_default_index_entries"
+            android:entryValues="@array/pref_default_index_values"
+            android:key="indice_predefinito" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/system">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="sempre_acceso"
+            android:title="@string/always_on"
+            android:summary="@string/always_on_summary"/>
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="mostra_audio"
+            android:title="@string/show_audio_title"
+            android:summary="@string/show_audio_summary"/>
+
+        <ListPreference
+            android:defaultValue="0"
+            android:title="@string/save_location_title"
+            android:summary="@string/save_location_summary"
+            android:entries="@array/save_location_sd_entries"
+            android:entryValues="@array/save_location_nosd_values"
+            android:key="memoria_salvataggio_scelta" />
+
+        <ListPreference
+            android:defaultValue="it"
+            android:title="@string/language_title"
+            android:summary="@string/language_summary"
+            android:entries="@array/pref_languages_entries"
+            android:entryValues="@array/pref_languages_values"
+            android:key="lingua_sistema" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

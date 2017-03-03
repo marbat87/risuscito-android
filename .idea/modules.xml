@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/fab-toolbar/fab-toolbar.iml" filepath="$PROJECT_DIR$/fab-toolbar/fab-toolbar.iml" />
       <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" />
     </modules>
   </component>

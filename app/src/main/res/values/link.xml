@@ -10,32 +10,25 @@
     <string formatted="false" name="santo_palme_link">http://www.resuscicanti.com/25Santotempopasquale%203,47.mp3</string>
     <string formatted="false" name="santo_1988_link">http://www.resuscicanti.com/21SantoSantoSanto%20(1988)%205,22.mp3</string>
     <string formatted="false" name="santo_1983_link">http://www.resuscicanti.com/Santo%20(1983).mp3</string>
-<string formatted="false" name="preghiera_eucarestica_II_link">
-</string>
-<string formatted="false" name="preghiera_eucaristica_II_parte2_link">
-</string>
+<string formatted="false" name="preghiera_eucarestica_II_link">http://www.resuscicanti.com/16PreghieraucaristicaIIprefazio%204,36.mp3</string>
+<string formatted="false" name="preghiera_eucaristica_II_parte2_link"></string>
     <string formatted="false" name="benedizione_acqua_fonte_link">http://www.resuscicanti.com/05Benedizionedell\'\'acquadelfontebattesimale%208,30.mp3</string>
-    <string formatted="false" name="benedizione_acqua_fonte_2_link">http://www.resuscicanti.com/05Benedizionedell\'\'acquadelfontebattesimale%208,30.mp3</string>
     <string formatted="false" name="preconio_pasquale_link">http://www.resuscicanti.com/15Preconiopasquale%2011,41.mp3</string>
     <string formatted="false" name="prefazio_eucarestia_veglia_pasquale_link">http://www.resuscicanti.com/Prefazio%20dell%C2%B4eucaristia%20della%20veglia%20pasquale.mp3</string>
     <string formatted="false" name="inno_lodi_avvento_fino16_link">http://www.resuscicanti.com/31%20inno%20di%20avvento%20alle%20lodi.mp3</string>
-<string formatted="false" name="inno_lodi_avvento_dopo16_link">
-</string>
+<string formatted="false" name="inno_lodi_avvento_dopo16_link"></string>
     <string formatted="false" name="inno_lodi_pasqua_fino_ascensione_link">http://www.resuscicanti.com/Inno%20delle%20lodi%20da%20pasqua%20all%C2%B4ascensione.mp3</string>
-<string formatted="false" name="inno_vespri_pasqua_fino_ascensione_link">
-</string>
+<string formatted="false" name="inno_vespri_pasqua_fino_ascensione_link"></string>
     <string formatted="false" name="inno_lodi_pasqua_ascensione_pentecoste_link">http://www.resuscicanti.com/Inno%20dei%20vespri%20del%20giorno%20dell\'\'Ascensione.mp3</string>
     <string formatted="false" name="inno_vespri_pasqua_ascensione_pentecoste_link">http://www.resuscicanti.com/inno%20dei%20vespri%20dall\'\'ascensione%20a%20pentecoste.mp3</string>
-<string formatted="false" name="inno_lodi_pentecoste_link">
-</string>
+<string formatted="false" name="inno_lodi_pentecoste_link"></string>
     <string formatted="false" name="sequenza_di_pentecoste_link">http://www.resuscicanti.com/27%20sequenzadipentecoste.mp3</string>
-    <string formatted="false" name="preghiera_eucaristia_II_2_prefazio_link">http://www.resuscicanti.com/16PreghieraucaristicaIIprefazio%204,36.mp3</string>
+    <string formatted="false" name="preghiera_eucaristia_II_2_prefazio_link"></string>
     <string formatted="false" name="preghiera_eucaristica_II_2_consacrazione_link">http://www.resuscicanti.com/18PreghieraeucaristicaII(Consagrazi0ne)4,58.mp3</string>
     <string formatted="false" name="preghiera_eucaristica_II_2_offerta_link">http://www.resuscicanti.com/17PreghieraeucaristicaII(offerta)4,13.mp3</string>
     <string formatted="false" name="alleluja_pasquale_link">http://www.resuscicanti.com/03Alleluiapasquale1,17.mp3</string>
     <string formatted="false" name="acclamazioni_al_vangelo_link">http://www.resuscicanti.com/01Acclamazionealvangelo%201,40.mp3</string>
-<string formatted="false" name="acclamazioni_al_vangelo_quaresima_link">
-</string>
+<string formatted="false" name="acclamazioni_al_vangelo_quaresima_link"></string>
     <string formatted="false" name="te_deum_link">http://www.resuscicanti.com/28Tedeuma6,25.mp3</string>
     <string formatted="false" name="padre_nostro_link">http://www.resuscicanti.com/14Padre%20nostro2,02.mp3</string>
     <string formatted="false" name="credo_apostolico_link">http://www.resuscicanti.com/08Credo%203,19.mp3</string>
@@ -236,4 +229,5 @@
     <string formatted="false" name="ecco_il_mio_servo_link">http://www.resuscicanti.com/ecco%20il%20mio%20servo.mp3</string>
     <string formatted="false" name="ave_maria_colomba_link">http://www.resuscicanti.com/aveomariacolomba.mp3</string>
     <string formatted="false" name="messia_leone_vincere_link">http://www.resuscicanti.com/Il%20Messia%20Italiano.mp3</string>
+    <string formatted="false" name="come_pecora_che_vede_link">http://www.resuscicanti.com/Come%20pecora%20che%20vede%202016.%20Kiko-%20cantico%20della%20Vergine%20Maria%20ai%20piedi%20della%20croce.mp3</string>
 </resources>

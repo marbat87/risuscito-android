@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ProgressBar
+<me.zhanghai.android.materialprogressbar.MaterialProgressBar
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_progress"
-    android:layout_gravity="center_horizontal|top"
-    android:visibility="invisible"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:indeterminate="true" />
+    android:layout_gravity="center_horizontal|top"
+    android:indeterminate="true"
+    risuscito:mpb_progressStyle="circular"
+    android:visibility="invisible"
+    android:elevation="1dp"
+    risuscito:mpb_progressTint="?colorAccent"
+    risuscito:mpb_progressBackgroundTint="@android:color/white"
+    style="@style/Widget.MaterialProgressBar.ProgressBar" />

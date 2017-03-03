@@ -3,6 +3,7 @@ package it.cammino.risuscito.music;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class MusicIntentReceiver extends BroadcastReceiver {
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
             if (keyEvent.getAction() != KeyEvent.ACTION_DOWN)
                 return;
+            Log.d(getClass().getName(), "onReceive: keycode " + keyEvent.getKeyCode());
             Intent i = new Intent(context, MusicService.class);
             switch (keyEvent.getKeyCode()) {
                 case KeyEvent.KEYCODE_HEADSETHOOK:

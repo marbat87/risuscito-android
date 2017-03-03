@@ -6,19 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,19 +26,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.alexkolpa.fabtoolbar.FabToolbar;
+import com.afollestad.materialcab.MaterialCab;
+import com.google.firebase.crash.FirebaseCrash;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class CantiParolaFragment extends Fragment {
+public class CantiParolaFragment extends Fragment implements MaterialCab.Callback {
+
+    private final String TAG = getClass().getCanonicalName();
+
+    // create boolean for fetching data
+    private boolean isViewShown = true;
 
     private int posizioneDaCanc;
     private int idDaCanc;
@@ -49,12 +57,14 @@ public class CantiParolaFragment extends Fragment {
     private View rootView;
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
-    public ActionMode mMode;
+//    public ActionMode mMode;
     private boolean mSwhitchMode;
     private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> posizioniList;
     private int longclickedPos, longClickedChild;
     private PosizioneRecyclerAdapter cantoAdapter;
     private boolean actionModeOk;
+
+    private MainActivity mMainActivity;
 
     private long mLastClickTime = 0;
 
@@ -62,43 +72,63 @@ public class CantiParolaFragment extends Fragment {
 
     private LUtils mLUtils;
 
+    @BindView(R.id.recycler_list) RecyclerView mRecyclerView;
+
+    @OnClick(R.id.button_pulisci)
+    public void pulisciLista() {
+//                Log.i(getClass().toString(), "cantiparola");
+        db = listaCanti.getReadableDatabase();
+        String sql = "DELETE FROM CUST_LISTS" +
+                " WHERE _id =  1 ";
+        db.execSQL(sql);
+        db.close();
+        updateLista();
+        cantoAdapter.notifyDataSetChanged();
+    }
+
+    @OnClick(R.id.button_condividi)
+    public void condividiLista() {
+//                Log.i(getClass().toString(), "cantiparola");
+        BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+        bottomSheetDialog.show(getFragmentManager(), null);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(
-                R.layout.activity_lista_personalizzata, container, false);
+        rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
+        ButterKnife.bind(this, rootView);
+
+        mMainActivity = (MainActivity) getActivity();
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
 
-        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantiparola");
-                db = listaCanti.getReadableDatabase();
-                String sql = "DELETE FROM CUST_LISTS" +
-                        " WHERE _id =  1 ";
-                db.execSQL(sql);
-                db.close();
-                updateLista();
-                cantoAdapter.notifyDataSetChanged();
-            }
-        });
+//        rootView.findViewById(R.id.button_pulisci).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantiparola");
+//                db = listaCanti.getReadableDatabase();
+//                String sql = "DELETE FROM CUST_LISTS" +
+//                        " WHERE _id =  1 ";
+//                db.execSQL(sql);
+//                db.close();
+//                updateLista();
+//                cantoAdapter.notifyDataSetChanged();
+//            }
+//        });
 
-        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Log.i(getClass().toString(), "cantiparola");
-//                BottomSheetHelper.shareAction(getActivity(), getDefaultIntent())
-//                        .title(R.string.share_by)
-//                        .show();
-                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(getDefaultIntent());
-                bottomSheetDialog.show(getFragmentManager(), null);
-            }
-        });
+//        rootView.findViewById(R.id.button_condividi).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Log.i(getClass().toString(), "cantiparola");
+//                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getDefaultIntent());
+//                bottomSheetDialog.show(getFragmentManager(), null);
+//            }
+//        });
 
         mLUtils = LUtils.getInstance(getActivity());
-        mMode = null;
+//        mMode = null;
         mSwhitchMode = false;
 
         updateLista();
@@ -114,7 +144,8 @@ public class CantiParolaFragment extends Fragment {
                     if (mSwhitchMode)
                         scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                     else {
-                        if (mMode == null) {
+                        if (!mMainActivity.getMaterialCab().isActive()) {
+//                        if (mMode == null) {
                             Bundle bundle = new Bundle();
                             bundle.putInt("fromAdd", 1);
                             bundle.putInt("idLista", 1);
@@ -125,7 +156,8 @@ public class CantiParolaFragment extends Fragment {
                 }
                 else {
                     if (!mSwhitchMode)
-                        if (mMode != null) {
+                        if (mMainActivity.getMaterialCab().isActive()) {
+//                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
                             idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
                             timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
@@ -152,14 +184,22 @@ public class CantiParolaFragment extends Fragment {
             }
         };
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
+//        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
         cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
-        recyclerView.setAdapter(cantoAdapter);
+        mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if (!isViewShown) {
+            if (mMainActivity.getMaterialCab().isActive())
+                mMainActivity.getMaterialCab().finish();
+            FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+            fab1.show();
+//            mLUtils.animateIn(fab1);
+        }
 
         return rootView;
     }
@@ -168,11 +208,16 @@ public class CantiParolaFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            ((CustomLists) getParentFragment()).fabDelete.setVisibility(View.GONE);
-            ((CustomLists) getParentFragment()).fabEdit.setVisibility(View.GONE);
-            FabToolbar fab1 = ((CustomLists) getParentFragment()).getFab();
-            if (!fab1.isShowing())
-                fab1.scrollUp();
+            if (getView() != null) {
+                isViewShown = true;
+                if (mMainActivity.getMaterialCab().isActive())
+                    mMainActivity.getMaterialCab().finish();
+                FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
+                fab1.show();
+//                mLUtils.animateIn(fab1);
+            }
+            else
+                isViewShown = false;
         }
     }
 
@@ -182,7 +227,6 @@ public class CantiParolaFragment extends Fragment {
         if (requestCode == TAG_INSERT_PAROLA && resultCode == Activity.RESULT_OK) {
             updateLista();
             cantoAdapter.notifyDataSetChanged();
-//            mShareActionProvider.setShareIntent(getDefaultIntent());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -191,8 +235,10 @@ public class CantiParolaFragment extends Fragment {
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
-        if (mMode != null)
-            mMode.finish();
+//        if (mMode != null)
+//            mMode.finish();
+        if (mMainActivity.getMaterialCab().isActive())
+            mMainActivity.getMaterialCab().finish();
         super.onDestroy();
     }
 
@@ -419,95 +465,103 @@ public class CantiParolaFragment extends Fragment {
     }
 
     public void snackBarRimuoviCanto(View view) {
-        if (mMode != null)
-            mMode.finish();
+//        if (mMode != null)
+//            mMode.finish();
+        if (mMainActivity.getMaterialCab().isActive())
+            mMainActivity.getMaterialCab().finish();
         View parent = (View) view.getParent().getParent();
         longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
         longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
-        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+//        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+        mMainActivity.getAppBarLayout().setExpanded(true, true);
+        mMainActivity.getMaterialCab().start(CantiParolaFragment.this);
     }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
 
-    private final class ModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Create the menu from the xml file
-            posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
-            cantoAdapter.notifyItemChanged(longclickedPos);
-            getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
-            Drawable drawable = DrawableCompat.wrap(menu.findItem(R.id.action_remove_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_remove_item).setIcon(drawable);
-            drawable = DrawableCompat.wrap(menu.findItem(R.id.action_switch_item).getIcon());
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-            menu.findItem(R.id.action_switch_item).setIcon(drawable);
-            actionModeOk = false;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // Here, you can checked selected items to adapt available actions
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mSwhitchMode = false;
-            if (!actionModeOk) {
-                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
-                cantoAdapter.notifyItemChanged(longclickedPos);
-            }
-            if (mode == mMode)
-                mMode = null;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch(item.getItemId()) {
-                case R.id.action_remove_item:
-                    db = listaCanti.getReadableDatabase();
-                    db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
-                    db.close();
-                    updateLista();
-                    cantoAdapter.notifyItemChanged(longclickedPos);
-                    actionModeOk = true;
-                    mode.finish();
-                    Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    db = listaCanti.getReadableDatabase();
-                                    ContentValues values = new ContentValues();
-                                    values.put("_id", 1);
-                                    values.put("position", posizioneDaCanc);
-                                    values.put("id_canto", idDaCanc);
-                                    values.put("timestamp", timestampDaCanc);
-                                    db.insert("CUST_LISTS", null, values);
-                                    db.close();
-                                    updateLista();
-                                    cantoAdapter.notifyItemChanged(longclickedPos);
-                                }
-                            })
-                            .setActionTextColor(getThemeUtils().accentColor())
-                            .show();
-                    mSwhitchMode = false;
-                    break;
-                case R.id.action_switch_item:
-                    mSwhitchMode = true;
-                    mode.setTitle(R.string.switch_started);
-                    Toast.makeText(getActivity()
-                            , getResources().getString(R.string.switch_tooltip)
-                            , Toast.LENGTH_SHORT).show();
-                    break;
-            }
-            return true;
-        }
-    }
+//    private final class ModeCallback implements ActionMode.Callback {
+//
+//        @Override
+//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            // Create the menu from the xml file
+//            posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
+//            cantoAdapter.notifyItemChanged(longclickedPos);
+//            getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
+//            menu.findItem(R.id.action_switch_item).setIcon(
+//                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_shuffle)
+//                            .sizeDp(24)
+//                            .paddingDp(2)
+//                            .colorRes(R.color.icon_ative_black));
+//            menu.findItem(R.id.action_remove_item).setIcon(
+//                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+//                            .sizeDp(24)
+//                            .paddingDp(2)
+//                            .colorRes(R.color.icon_ative_black));
+//            actionModeOk = false;
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//            // Here, you can checked selected items to adapt available actions
+//            return false;
+//        }
+//
+//        @Override
+//        public void onDestroyActionMode(ActionMode mode) {
+//            mSwhitchMode = false;
+//            if (!actionModeOk) {
+//                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
+//                cantoAdapter.notifyItemChanged(longclickedPos);
+//            }
+//            if (mode == mMode)
+//                mMode = null;
+//        }
+//
+//        @Override
+//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//            switch(item.getItemId()) {
+//                case R.id.action_remove_item:
+//                    db = listaCanti.getReadableDatabase();
+//                    db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+//                    db.close();
+//                    updateLista();
+//                    cantoAdapter.notifyItemChanged(longclickedPos);
+//                    actionModeOk = true;
+//                    mode.finish();
+//                    Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
+//                            .setAction(R.string.cancel, new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    db = listaCanti.getReadableDatabase();
+//                                    ContentValues values = new ContentValues();
+//                                    values.put("_id", 1);
+//                                    values.put("position", posizioneDaCanc);
+//                                    values.put("id_canto", idDaCanc);
+//                                    values.put("timestamp", timestampDaCanc);
+//                                    db.insert("CUST_LISTS", null, values);
+//                                    db.close();
+//                                    updateLista();
+//                                    cantoAdapter.notifyItemChanged(longclickedPos);
+//                                }
+//                            })
+//                            .setActionTextColor(getThemeUtils().accentColor())
+//                            .show();
+//                    mSwhitchMode = false;
+//                    break;
+//                case R.id.action_switch_item:
+//                    mSwhitchMode = true;
+//                    mode.setTitle(R.string.switch_started);
+//                    Toast.makeText(getActivity()
+//                            , getResources().getString(R.string.switch_tooltip)
+//                            , Toast.LENGTH_SHORT).show();
+//                    break;
+//            }
+//            return true;
+//        }
+//    }
 
     private void scambioCanto(View v, int position) {
         db = listaCanti.getReadableDatabase();
@@ -538,7 +592,8 @@ public class CantiParolaFragment extends Fragment {
 
             mSwhitchMode = false;
             actionModeOk = true;
-            mMode.finish();
+//            mMode.finish();
+            mMainActivity.getMaterialCab().finish();
             updateLista();
             View parent = (View) v.getParent().getParent();
             cantoAdapter.notifyItemChanged(longclickedPos);
@@ -569,7 +624,8 @@ public class CantiParolaFragment extends Fragment {
 
         mSwhitchMode = false;
         actionModeOk = true;
-        mMode.finish();
+//        mMode.finish();
+        mMainActivity.getMaterialCab().finish();
         updateLista();
         cantoAdapter.notifyItemChanged(longclickedPos);
         cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
@@ -577,4 +633,86 @@ public class CantiParolaFragment extends Fragment {
                 .show();
     }
 
+    @Override
+    public boolean onCabCreated(MaterialCab cab, Menu menu) {
+        Log.d(TAG, "onCabCreated: ");
+        cab.setMenu(R.menu.menu_actionmode_lists);
+        cab.setTitle("");
+        posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
+        cantoAdapter.notifyItemChanged(longclickedPos);
+        menu.findItem(R.id.action_switch_item).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_shuffle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(android.R.color.white));
+        menu.findItem(R.id.action_remove_item).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(android.R.color.white));
+        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_close_circle_outline)
+                .sizeDp(24)
+                .paddingDp(2)
+                .colorRes(android.R.color.white));
+        actionModeOk = false;
+        return true;
+    }
+
+    @Override
+    public boolean onCabItemClicked(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_remove_item:
+                db = listaCanti.getReadableDatabase();
+                db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+                db.close();
+                updateLista();
+                cantoAdapter.notifyItemChanged(longclickedPos);
+                actionModeOk = true;
+                mMainActivity.getMaterialCab().finish();
+                Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.cancel, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                db = listaCanti.getReadableDatabase();
+                                ContentValues values = new ContentValues();
+                                values.put("_id", 1);
+                                values.put("position", posizioneDaCanc);
+                                values.put("id_canto", idDaCanc);
+                                values.put("timestamp", timestampDaCanc);
+                                db.insert("CUST_LISTS", null, values);
+                                db.close();
+                                updateLista();
+                                cantoAdapter.notifyItemChanged(longclickedPos);
+                            }
+                        })
+                        .setActionTextColor(getThemeUtils().accentColor())
+                        .show();
+                mSwhitchMode = false;
+                return true;
+            case R.id.action_switch_item:
+                mSwhitchMode = true;
+                mMainActivity.getMaterialCab().setTitleRes(R.string.switch_started);
+                Toast.makeText(getActivity()
+                        , getResources().getString(R.string.switch_tooltip)
+                        , Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCabFinished(MaterialCab cab) {
+        Log.d(TAG, "onCabFinished: ");
+        mSwhitchMode = false;
+        if (!actionModeOk) {
+            try {
+                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
+                cantoAdapter.notifyItemChanged(longclickedPos);
+            }
+            catch (Exception e){
+                FirebaseCrash.log("Possibile crash - longclickedPos: " + longclickedPos);
+            }
+        }
+        return true;
+    }
 }

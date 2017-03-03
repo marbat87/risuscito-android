@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/sheet_title_area"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <View
+            android:id="@+id/bs_divider"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/list_divider"/>
+
+        <TextView
+            android:layout_above="@id/bs_divider"
+            android:id="@+id/sheet_title"
+            style="@style/BottomSheet.Title" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <include
+            android:id="@+id/fab_fullscreen_on"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/fab_sound_off"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+        <include
+            android:id="@+id/save_file"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+    </LinearLayout>
+
+        <include
+            android:id="@+id/fab_favorite"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="24dp"
+            android:layout_height="wrap_content"
+            layout="@layout/bottom_item" />
+
+</LinearLayout>

@@ -12,12 +12,14 @@
     <!--<dimen name="myListPreferredItemHeightSmall">48dip</dimen>-->
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
-    <dimen name="about_image_width">100dip</dimen>
+    <!--<dimen name="about_image_width">100dip</dimen>-->
     <!--<dimen name="percent_padding">15dip</dimen>-->
 
     <!--<dimen name="navdrawer_chosen_account_height">100dp</dimen>-->
-    <dimen name="nav_header_height">170dp</dimen>
+    <!--<dimen name="nav_header_height">170dp</dimen>-->
     <!--<dimen name="navdrawer_width">302dp</dimen>-->
+    <dimen name="max_bottomsheet_width">380dp</dimen>
+    <!--<dimen name="drawer_content_padding">0dp</dimen>-->
 
     <!--<dimen name="action_bar_text_field_margin">15dip</dimen>-->
     <dimen name="min_button_margin">10dip</dimen>
@@ -30,21 +32,21 @@
 
     <!--<dimen name="button_icon_padding">-5dip</dimen>-->
 
-    <dimen name="toolbar_elevation">4dp</dimen>
+    <!--<dimen name="toolbar_elevation">4dp</dimen>-->
     <!--<integer name="toolbar_elevation">4</integer>-->
 
     <!--<dimen name="button_icon_radius">40dp</dimen>-->
     <!--<dimen name="button_icon_drawable">26dp</dimen>-->
     <dimen name="button_playbar_padding">14dp</dimen>
     <!--<dimen name="floating_margin_lateral">8dp</dimen>-->
-    <dimen name="fab_margin_end">16dp</dimen>
-    <dimen name="fab_margin_bottom">16dp</dimen>
+    <dimen name="fab_margin_coord">16dp</dimen>
+    <dimen name="fab_margin_frame">8dp</dimen>
     <!--<dimen name="fab_translation_z">10dp</dimen>-->
     <!--<dimen name="floating_margin_lateral_menu">11dp</dimen>-->
 
     f <!--<dimen name="circle_view_border">1dp</dimen>-->
     <!--<dimen name="circle_view_check">24dp</dimen>-->
-    <dimen name="paper_button_width">88dip</dimen>
+    <!--<dimen name="paper_button_width">88dip</dimen>-->
 
     <!--<dimen name="tabs_height">48dip</dimen>-->
     <!--<dimen name="tabs_text_size">13sp</dimen>-->
@@ -54,7 +56,7 @@
     <dimen name="cardListPreferredItemMargin">10dip</dimen>
     <dimen name="cardListPreferredTextMarginStart">60dip</dimen>
     <dimen name="cardListElevation">3dip</dimen>
-    <dimen name="button_text_padding">4dp</dimen>
+    <!--<dimen name="button_text_padding">4dp</dimen>-->
     <!--<dimen name="fab_toolbar_bottom_tb">@dimen/abc_action_bar_default_height_material</dimen>-->
     <!--<dimen name="fab_toolbar_bottom_no_tb">-25dp</dimen>-->
     <!--<dimen name="bottom_toolbar_height">56dp</dimen>-->
@@ -70,5 +72,12 @@
     <dimen name="brand_name_bottom">48dp</dimen>
 
     <dimen name="custom_peek_height">335dp</dimen>
+
+    <dimen name="raised_button_default_elevation">2dp</dimen>
+    <dimen name="raised_button_pressed_elevation">8dp</dimen>
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
+
+    <dimen name="about_appbarlayout_height">200dp</dimen>
 
 </resources>
