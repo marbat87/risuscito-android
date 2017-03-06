@@ -35,16 +35,18 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.9'
-    compile 'com.afollestad.material-dialogs:commons:0.9.3.0'
+    compile ('com.afollestad.material-dialogs:commons:0.9.3.0') {
+        exclude module: 'support-v13'
+    }
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.3'
     compile 'com.github.turing-tech:MaterialScrollBar:12.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.stephentuso:welcome:1.1.1'
-    compile('com.mikepenz:materialdrawer:5.8.1@aar') { transitive = true }
+    compile('com.mikepenz:materialdrawer:5.8.2@aar') { transitive = true }
     compile 'com.mikepenz:crossfader:1.5.0@aar'
-    compile 'com.mikepenz:community-material-typeface:1.7.22.1@aar'
-    compile 'com.mikepenz:google-material-typeface:2.2.0.3.original@aar'
+    compile 'com.mikepenz:community-material-typeface:1.8.36.1@aar'
+    compile 'com.mikepenz:google-material-typeface:3.0.1.0.original@aar'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.mikepenz:itemanimators:0.5.0@aar'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'

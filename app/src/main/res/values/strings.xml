@@ -41,7 +41,7 @@
     <string name="title_activity_custom_lists">Liste personalizzate</string>
     <string name="copertina">copertina</string>
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
-    <string name="title_activity_about">Changelog</string>
+    <string name="title_activity_about">Info</string>
     <string name="save_file">Salva in locale</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
