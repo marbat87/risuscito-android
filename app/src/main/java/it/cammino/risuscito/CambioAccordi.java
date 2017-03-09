@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.ui.ThemeableActivity;
+
 public class CambioAccordi {
 
     public static final String[] accordi_it =
@@ -159,7 +161,8 @@ public class CambioAccordi {
                 || notaCambio == null || notaCambio.equals(""))
             return null;
 
-        String language = context.getResources().getConfiguration().locale.getLanguage();
+//        String language = context.getResources().getConfiguration().locale.getLanguage();
+        String language = ThemeableActivity.getSystemLocalWrapper(context.getResources().getConfiguration()).getLanguage();
         Log.d(getClass().getName(), "diffSemiToni: language " + language);
 
         String primoAccordo = primaNota;

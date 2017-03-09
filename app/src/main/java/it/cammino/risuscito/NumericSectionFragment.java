@@ -458,10 +458,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                 .show();
     }
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
-
     @Override
     public void onPositive(@NonNull String tag) {
         Log.d(getClass().getName(), "onPositive: " + tag);

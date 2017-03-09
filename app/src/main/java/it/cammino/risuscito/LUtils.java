@@ -16,7 +16,6 @@
 
 package it.cammino.risuscito;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -27,7 +26,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
@@ -61,7 +59,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class LUtils {
 
     final String TAG = getClass().getCanonicalName();
@@ -70,7 +67,7 @@ public class LUtils {
 
     final static String FILE_FORMAT = ".risuscito";
 
-    protected Activity mActivity;
+    private Activity mActivity;
 
     private LUtils(Activity activity) {
         mActivity = activity;
@@ -124,24 +121,24 @@ public class LUtils {
 
     }
 
-    public void startActivityWithTransition(Intent intent) {
-        mActivity.startActivity(intent);
-        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
-    }
+//    public void startActivityWithTransition(Intent intent) {
+//        mActivity.startActivity(intent);
+//        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on);
+//    }
 
 
-    public void startActivityWithFadeIn(Intent intent, final View clickedView,
-                                        final String transitionName) {
-//        ActivityOptions options = null;
-//        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
-//            options = ActivityOptions.makeSceneTransitionAnimation(
-//                    mActivity, clickedView, transitionName);
-//            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
-//        } else {
-        mActivity.startActivity(intent);
-        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
-//        }
-    }
+//    public void startActivityWithFadeIn(Intent intent, final View clickedView,
+//                                        final String transitionName) {
+////        ActivityOptions options = null;
+////        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
+////            options = ActivityOptions.makeSceneTransitionAnimation(
+////                    mActivity, clickedView, transitionName);
+////            ActivityCompat.startActivity(mActivity, intent, options.toBundle());
+////        } else {
+//        mActivity.startActivity(intent);
+//        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
+////        }
+//    }
 
     public void startActivityWithFadeIn(Intent intent) {
         mActivity.startActivity(intent);
@@ -179,9 +176,6 @@ public class LUtils {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-//    public static boolean hasHoneycomb() {
-//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-//    }
 
     public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
         for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
@@ -198,6 +192,10 @@ public class LUtils {
 
     public static boolean hasJB() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    public static boolean hasN() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 
     public Uri listToXML(@NonNull ListaPersonalizzata lista) {

@@ -7,8 +7,9 @@ android {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 4211
-        versionName '4.2.1'
+        multiDexEnabled true
+        versionCode 4303
+        versionName '4.3.0'
     }
     lintOptions {
         disable 'PrivateResource'
@@ -33,14 +34,13 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
-    compile 'com.itextpdf:itextpdf:5.5.9'
-    compile ('com.afollestad.material-dialogs:commons:0.9.3.0') {
-        exclude module: 'support-v13'
-    }
+    compile 'com.itextpdf:itextpdf:5.5.10'
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.1'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.3'
-    compile 'com.github.turing-tech:MaterialScrollBar:12.3.1'
+    compile 'com.github.turing-tech:MaterialScrollBar:12.3.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.stephentuso:welcome:1.1.1'
     compile('com.mikepenz:materialdrawer:5.8.2@aar') { transitive = true }
@@ -58,7 +58,8 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.0'
     compile 'com.google.firebase:firebase-crash:10.2.0'
     compile 'com.afollestad:material-cab:0.1.12'
-    compile 'com.github.jrvansuita:MaterialAbout:v0.1.1'
+    compile 'com.github.jrvansuita:MaterialAbout:9b39a6cbd9'
+    compile 'com.anjlab.android.iab.v3:library:1.0.38'
 }
 
 apply plugin: 'com.google.gms.google-services'

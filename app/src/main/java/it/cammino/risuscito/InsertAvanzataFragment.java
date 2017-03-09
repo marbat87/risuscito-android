@@ -41,6 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -187,7 +188,8 @@ public class InsertAvanzataFragment extends Fragment {
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
-            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                 in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
@@ -341,15 +343,12 @@ public class InsertAvanzataFragment extends Fragment {
                         break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
-                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+                        text = text.toLowerCase(ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()));
 
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
                         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                         text = pattern.matcher(nfdNormalizedString).replaceAll("");
-//                        }
-//                        else
-//                            text = Utility.removeAccents(text);
 
                         if (!aText[1].contains(text))
                             found = false;
@@ -410,10 +409,6 @@ public class InsertAvanzataFragment extends Fragment {
                 PaginaRenderActivity.class);
         intent.putExtras(bundle);
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return ((GeneralInsertSearch)getActivity()).getThemeUtils();
     }
 
 }

@@ -65,7 +65,6 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialize.util.UIUtils;
@@ -179,9 +178,6 @@ public class MainActivity extends ThemeableActivity
 //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
             appBarLayout.setExpanded(true, true);
         }
-
-//        mCircleProgressBar = (CircleProgressBar) findViewById(R.id.loadingBar);
-//        mCircleProgressBar.setColorSchemeColors(getThemeUtils().accentColor());
 
         if (savedInstanceState != null) {
             dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
@@ -305,7 +301,7 @@ public class MainActivity extends ThemeableActivity
                 @Override
                 public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
                     Log.d(getClass().getName(), "Reconnected");
-                    hideProgressDialog();
+//                    hideProgressDialog();
                     handleSignInResult(googleSignInResult);
                     Log.d(getClass().getName(), "dbRestoreRunning: " + dbRestoreRunning);
                     Log.d(getClass().getName(), "prefRestoreRunning: " + prefRestoreRunning);
@@ -584,7 +580,9 @@ public class MainActivity extends ThemeableActivity
         if (isOnTablet) {
             mDrawer = mDrawerBuilder.buildView();
             //the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-            mMiniDrawer = mDrawer.getMiniDrawer();
+            mMiniDrawer = mDrawer.getMiniDrawer()
+                    .withEnableSelectedMiniDrawerItemBackground(true)
+                    .withIncludeSecondaryDrawerItems(true);
 
             //get the widths in px for the first and second panel
             int firstWidth = (int) UIUtils.convertDpToPixel(302, this);
@@ -604,6 +602,7 @@ public class MainActivity extends ThemeableActivity
 
             //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
             crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left);
+            crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceRight(R.drawable.material_drawer_shadow_right);
         }
         else {
             mDrawer = mDrawerBuilder.build();
@@ -700,8 +699,8 @@ public class MainActivity extends ThemeableActivity
             getIntent().removeExtra(Utility.DB_RESET);
             DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
             SQLiteDatabase db = listaCanti.getReadableDatabase();
-            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db.getVersion(), db);
-            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db.getVersion(), db);
+            DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
+            DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db);
             listaCanti.reCreateDatabse(db);
             listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
             convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
@@ -912,6 +911,7 @@ public class MainActivity extends ThemeableActivity
                 mMiniDrawer.onProfileClick();
 
         }
+        hideProgressDialog();
 
     }
 
@@ -1404,10 +1404,34 @@ public class MainActivity extends ThemeableActivity
                 }
                 break;
             case "SIGNOUT":
-                signOut();
+                if (mGoogleApiClient.isConnected())
+                    signOut();
+                else {
+                    // [START_EXCLUDE]
+                    updateUI(false);
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(MainActivity.this)
+                            .edit();
+                    editor.putBoolean(Utility.SIGNED_IN, false);
+                    editor.apply();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                    // [END_EXCLUDE]
+                }
                 break;
             case "REVOKE":
-                revokeAccess();
+                if (mGoogleApiClient.isConnected())
+                    revokeAccess();
+                else {
+                    // [START_EXCLUDE]
+                    updateUI(false);
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(MainActivity.this)
+                            .edit();
+                    editor.putBoolean(Utility.SIGNED_IN, false);
+                    editor.apply();
+                    Snackbar.make(findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT).show();
+                    // [END_EXCLUDE]
+                }
                 break;
             case "RESTART":
                 Intent i = getBaseContext().getPackageManager()

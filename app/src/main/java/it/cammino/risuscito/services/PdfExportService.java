@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import it.cammino.risuscito.CambioAccordi;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class PdfExportService extends IntentService {
     // The tag we put on debug messages
@@ -94,7 +95,8 @@ public class PdfExportService extends IntentService {
 
         HashMap<String, String> testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio);
         HashMap<String, String> testConvMin = null;
-        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+        if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
             testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         String urlHtml = "";
         if (testConv != null) {
@@ -240,7 +242,8 @@ public class PdfExportService extends IntentService {
                     new OutputStreamWriter(
                             new FileOutputStream(cantoTrasportato), "UTF-8"));
 
-            String language = getResources().getConfiguration().locale.getLanguage();
+//            String language = getResources().getConfiguration().locale.getLanguage();
+            String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
             Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
             Pattern patternMinore = null;

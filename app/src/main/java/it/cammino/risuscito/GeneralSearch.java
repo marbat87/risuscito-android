@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
@@ -76,7 +77,8 @@ public class GeneralSearch extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getActivity().getResources().getConfiguration().locale;
+//            Locale l = getActivity().getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.fast_search_title).toUpperCase(l);

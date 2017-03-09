@@ -32,6 +32,10 @@ public class Utility {
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
     public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
+    public static final String SMALL_DONATIONS_COUNT = "small_donations_count";
+    public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
+    public static final String LARGE_DONATIONS_COUNT = "large_donations_count";
+
 
 //    public static final String GENERATE_XML = "generate_xml";
 
@@ -60,21 +64,21 @@ public class Utility {
 //    public static final String AUDIO_REQUESTED = "AUDIO_REQUESTED";
 
     //metodo che restituisce la stringa di input senza la pagina all'inizio
-    public static String truncatePage(String input) {
-
-        int length = input.length();
-        int start;
-
-        for (start = 0; start < length; start++) {
-
-            if (input.charAt(start) == ')') {
-                start += 2;
-                break;
-            }
-        }
-
-        return input.substring(start);
-    }
+//    public static String truncatePage(String input) {
+//
+//        int length = input.length();
+//        int start;
+//
+//        for (start = 0; start < length; start++) {
+//
+//            if (input.charAt(start) == ')') {
+//                start += 2;
+//                break;
+//            }
+//        }
+//
+//        return input.substring(start);
+//    }
 
     //metodo che duplica tutti gli apici presenti nella stringa
     public static String duplicaApostrofi(String input) {
@@ -253,9 +257,9 @@ public class Utility {
         return ch >= 'a' && ch <= 'z';
     }
 
-    public static boolean isUpperCase(char ch) {
-        return ch >= 'A' && ch <= 'Z';
-    }
+//    public static boolean isUpperCase(char ch) {
+//        return ch >= 'A' && ch <= 'Z';
+//    }
 
     private static Map<Character, Character> MAP_NORM;
 

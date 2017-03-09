@@ -186,7 +186,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public void onCreate() {
         Log.i(TAG, "debug: Creating service");
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
-        mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+        mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
 //        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 

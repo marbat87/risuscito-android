@@ -247,7 +247,7 @@ public class DraggableSwipeableAdapter
             // other --- do nothing
             case RecyclerViewSwipeManager.RESULT_CANCELED:
             default:
-                return new UnpinResultAction();
+                return new SwipeResultActionDefault();
         }
     }
 
@@ -285,18 +285,18 @@ public class DraggableSwipeableAdapter
         }
     }
 
-    private static class UnpinResultAction extends SwipeResultActionDefault {
-        @Override
-        protected void onPerformAction() {
-            super.onPerformAction();
-        }
-
-        @Override
-        protected void onCleanUp() {
-            super.onCleanUp();
-            // clear the references
-        }
-    }
+//    private static class UnpinResultAction extends SwipeResultActionDefault {
+//        @Override
+//        protected void onPerformAction() {
+//            super.onPerformAction();
+//        }
+//
+//        @Override
+//        protected void onCleanUp() {
+//            super.onCleanUp();
+//            // clear the references
+//        }
+//    }
 
     public EventListener getEventListener() {
         return mEventListener;

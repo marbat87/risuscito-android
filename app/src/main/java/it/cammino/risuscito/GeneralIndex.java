@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
@@ -98,7 +99,8 @@ public class GeneralIndex extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getActivity().getResources().getConfiguration().locale;
+//            Locale l = getActivity().getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.letter_order_text).toUpperCase(l);

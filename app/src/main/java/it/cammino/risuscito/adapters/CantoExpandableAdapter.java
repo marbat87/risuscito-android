@@ -214,18 +214,15 @@ public class CantoExpandableAdapter
 
         public TextView groupTitle;
         public TextView groupId;
-        //        public MorphButtonCompat mMorphButton;
         public ImageView indicator;
-        public ViewGroup mContainer;
+//        public ViewGroup mContainer;
 
         public GroupViewHolder(View itemView) {
             super(itemView);
-//            mMorphButton = new MorphButtonCompat(itemView.findViewById(R.id.indicator));
-//            mMorphButtonOld = (ImageView) itemView.findViewById(R.id.indicatorOld);
             indicator = (ImageView) itemView.findViewById(R.id.indicator);
             groupTitle = (TextView) itemView.findViewById(android.R.id.text1);
             groupId = (TextView) itemView.findViewById(R.id.text_id_gruppo);
-            mContainer = (ViewGroup) itemView.findViewById(R.id.container);
+//            mContainer = (ViewGroup) itemView.findViewById(R.id.container);
         }
 
     }

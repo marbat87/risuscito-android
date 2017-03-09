@@ -42,6 +42,7 @@ import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiParolaFragment extends Fragment implements MaterialCab.Callback {
@@ -342,7 +343,8 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
     private String getTitlesList() {
 
-        Locale l = getActivity().getResources().getConfiguration().locale;
+//        Locale l = getActivity().getResources().getConfiguration().locale;
+        Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
         String result = "";
         String temp;
 

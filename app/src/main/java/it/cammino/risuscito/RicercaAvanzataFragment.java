@@ -51,6 +51,7 @@ import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -63,10 +64,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     private DatabaseCanti listaCanti;
     private List<CantoRecycled> titoli;
-//    private EditText searchPar;
+    //    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-//    RecyclerView recyclerView;
+    //    RecyclerView recyclerView;
     CantoRecyclerAdapter cantoAdapter;
 //    private CircleProgressBar progress;
 
@@ -138,7 +139,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
-            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                 in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
@@ -599,7 +601,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
-                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+                        text = text.toLowerCase(ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()));
 
 //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -662,10 +665,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             else
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
         }
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
     @Override

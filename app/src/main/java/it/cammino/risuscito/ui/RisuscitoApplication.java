@@ -1,8 +1,8 @@
 package it.cammino.risuscito.ui;
 
-import android.app.Application;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.multidex.MultiDexApplication;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 import it.cammino.risuscito.R;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-public class RisuscitoApplication extends Application {
+public class RisuscitoApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {

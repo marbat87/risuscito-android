@@ -18,7 +18,6 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class ChangelogActivity extends ThemeableActivity implements AppBarLayout.OnOffsetChangedListener {
 
-    private LUtils mLUtils;
     private boolean appBarIsExpanded = true;
     @BindView(R.id.appbarlayout) AppBarLayout mAppBarLayout;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
@@ -43,14 +42,13 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
         else
             Utility.setupTransparentTints(ChangelogActivity.this, getThemeUtils().primaryColorDark(), false);
 
-        mLUtils = LUtils.getInstance(ChangelogActivity.this);
-
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mLUtils.closeActivityWithTransition();
+            finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
             return true;
         }
         return  super.onKeyUp(keyCode, event);
@@ -60,7 +58,8 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mLUtils.closeActivityWithTransition();
+                finish();
+                overridePendingTransition(0, R.anim.slide_out_bottom);
                 return true;
             default:
                 return false;

@@ -2,7 +2,7 @@
 <resources>
 
     <dimen name="activity_min_margin">5dip</dimen>
-    <dimen name="settings_min_margin">10dip</dimen>
+    <!--<dimen name="settings_min_margin">10dip</dimen>-->
     <!--<dimen name="list_preferred_item_height_small">40dip</dimen>-->
     <!--<dimen name="default_padding_selectable">5dip</dimen>-->
     <!--<dimen name="list_preferred_item_height_medium">50dip</dimen>-->

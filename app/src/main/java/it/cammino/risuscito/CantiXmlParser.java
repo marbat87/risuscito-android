@@ -69,12 +69,23 @@ public class CantiXmlParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals(TITOLO)) {
-                title = readTitle(parser);
-            } else if (name.equals(TESTO)) {
-                summary = readSummary(parser);
-            } else {
-                skip(parser);
+//            if (name.equals(TITOLO)) {
+//                title = readTitle(parser);
+//            } else if (name.equals(TESTO)) {
+//                summary = readSummary(parser);
+//            } else {
+//                skip(parser);
+//            }
+            switch (name) {
+                case TITOLO:
+                    title = readTitle(parser);
+                    break;
+                case TESTO:
+                    summary = readSummary(parser);
+                    break;
+                default:
+                    skip(parser);
+                    break;
             }
         }
         entries[i][0] = title;

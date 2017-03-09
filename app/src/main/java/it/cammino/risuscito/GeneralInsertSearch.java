@@ -122,7 +122,8 @@ public class GeneralInsertSearch extends ThemeableActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getResources().getConfiguration().locale;
+//            Locale l = getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.fast_search_title).toUpperCase(l);

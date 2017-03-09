@@ -26,8 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.firebase.FirebaseApiNotAvailableException;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -43,6 +41,7 @@ import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Callback {
@@ -351,7 +350,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
         int progressivePos = 0;
 
-        Locale l = getActivity().getResources().getConfiguration().locale;
+//        Locale l = getActivity().getResources().getConfiguration().locale;
+        Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
         String result = "";
         String temp;
 

@@ -48,7 +48,8 @@
                         android:gravity="end"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat" />
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat"
+                        tools:ignore="HardcodedText" />
 
                     <SeekBar
                         android:id="@+id/music_seekbar"
@@ -89,11 +90,13 @@
                     android:id="@+id/slider_text"
                     android:layout_width="50dip"
                     android:paddingLeft="@dimen/activity_min_margin"
+                    android:paddingStart="@dimen/activity_min_margin"
                     android:layout_gravity="center_vertical"
                     android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="0 %"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse" />
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
+                    tools:ignore="HardcodedText" />
 
                 <SeekBar
                     android:id="@+id/speed_seekbar"

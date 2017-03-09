@@ -3,11 +3,15 @@
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
+    <string name="lang_it_value" translatable="false">it</string>
+    <string name="lang_uk_value" translatable="false">uk</string>
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
-    <string name="promotional_text" translatable="false">Evangelist by profession, developer in his spare time (cit.) ;)</string>
+    <!--<string name="promotional_text" translatable="false">Evangelist by profession, developer in his spare time (cit.) ;)</string>-->
 
 
+    <string name="private_memory">>Memoria privata</string>
+    <string name="public_memory">Memoria pubblica</string>
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_favourites">Preferiti</string>
     <string name="action_share">Condividi</string>
@@ -41,7 +45,7 @@
     <string name="title_activity_custom_lists">Liste personalizzate</string>
     <string name="copertina">copertina</string>
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
-    <string name="title_activity_about">Info</string>
+    <string name="title_activity_about">About</string>
     <string name="save_file">Salva in locale</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
@@ -58,8 +62,8 @@
     <string name="file_delete">File cancellato</string>
     <string name="download_completed">File salvato</string>
     <string name="download_running">Download in corso&#8230;</string>
-    <string name="present_yet">Canto già presente</string>
-    <string name="dialog_present_yet">&#200; già presente il canto: </string>
+    <string name="present_yet">Canto gi&#224; presente</string>
+    <string name="dialog_present_yet">&#200; gi&#224; presente il canto: </string>
     <string name="dialog_wonna_replace">. Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
@@ -290,4 +294,10 @@
     <string name="show_offertorio_title">Eucarestia - Offertorio</string>
     <string name="show_offertorio_summary">Abilita il canto all\'offertorio per l\'Eucarestia</string>
     <string name="canto_offertorio">All\'offertorio</string>
+    <string name="title_activity_donate">Dona</string>
+    <string name="purchase_success" >Donazione effettuata correttamente</string>
+    <string name="user_canceled" >Transazione annullata dall\'utente</string>
+    <string name="service_unavailable">Servizio non disponibile</string>
+    <string name="object_invalid" >Oggetto non disponibile</string>
+    <string name="object_owned">Oggetto gi&#224; posseduto</string>
 </resources>

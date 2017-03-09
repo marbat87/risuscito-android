@@ -116,7 +116,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     private final long SCROLL_SLEEP = 700;
 
-    private static final int REQUEST_CODE = 6384;
+//    private static final int REQUEST_CODE = 6384;
 
     private LUtils mLUtils;
 
@@ -482,7 +482,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
     @OnClick(R.id.fab_canti)
-    public void FabOptions(View v) {
+    public void FabOptions() {
         BottomSheetFabCanto bottomSheetDialog = BottomSheetFabCanto.newInstance(mostraAudioBool, mDownload, selectFavouriteFromSource() == 1);
         bottomSheetDialog.show(getSupportFragmentManager(), null);
     }
@@ -791,7 +791,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 notaCambio = primaNota;
                 HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 HashMap<String, String> convMin = null;
-                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                     convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap != null) {
@@ -832,7 +833,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 barreCambio = primoBarre;
                 HashMap<String, String> convMap1 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 HashMap<String, String> convMin1 = null;
-                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                     convMin1 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
                 if (convMap1 != null) {
@@ -852,7 +854,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     notaCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap2 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     HashMap<String, String> convMin2 = null;
-                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                         convMin2 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap2 != null) {
@@ -872,7 +875,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     barreCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap3 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     HashMap<String, String> convMin3 = null;
-                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+                    if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                         convMin3 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
                     if (convMap3 != null) {
@@ -953,7 +957,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
         HashMap<String, String> convMin = null;
-        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+        if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
             convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         if (convMap != null) {
             String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin, true);
@@ -1216,7 +1221,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     new OutputStreamWriter(
                             new FileOutputStream(cantoTrasportato), "UTF-8"));
 
-            String language = getResources().getConfiguration().locale.getLanguage();
+//            String language = getResources().getConfiguration().locale.getLanguage();
+            String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
             Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
             Pattern patternMinore = null;

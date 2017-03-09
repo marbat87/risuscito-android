@@ -1,15 +1,12 @@
 package it.cammino.risuscito;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.vansuita.materialabout.builder.AboutBuilder;
 
@@ -43,6 +40,22 @@ public class AboutFragment extends Fragment {
         }
         mMainActivity.mTabLayout.setVisibility(View.GONE);
 
+        View.OnClickListener mDonateClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mMainActivity, DonateActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+            }
+        };
+
+        View.OnClickListener mChangeLogClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mMainActivity, ChangelogActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
+            }
+        };
+
         mScrollView.addView(
                 AboutBuilder.with(mMainActivity)
                         .setAppIcon(R.mipmap.ic_launcher)
@@ -54,7 +67,7 @@ public class AboutFragment extends Fragment {
 //                        .setName("MARBAT87")
 //                        .setSubTitle("Mobile Developer")
                         .setLinksColumnsCount(1)
-                        .setBrief(R.string.promotional_text)
+//                        .setBrief(R.string.promotional_text)
 //                        .addGooglePlayStoreLink("8002078663318221363")
 //                        .addGitHubLink("jrvansuita")
 //                        .addBitbucketLink("jrvansuita")
@@ -80,13 +93,15 @@ public class AboutFragment extends Fragment {
 //                        .addFeedbackAction("vansuita.jr@gmail.com")
 //                        .addIntroduceAction((Intent) null)
 //                        .addHelpAction((Intent) null)
-                        .addChangeLogAction(new Intent(mMainActivity, ChangelogActivity.class))
+                        .addChangeLogAction(mChangeLogClickListener)
 //                        .addRemoveAdsAction((Intent) null)
-//                        .addDonateAction((Intent) null)
+                        .addDonateAction(mDonateClickListener)
                         .build());
 
         return rootView;
 
     }
+
+
 
 }
