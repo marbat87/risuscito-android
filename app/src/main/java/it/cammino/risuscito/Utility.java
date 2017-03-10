@@ -36,6 +36,8 @@ public class Utility {
     public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
     public static final String LARGE_DONATIONS_COUNT = "large_donations_count";
 
+    public static final String INTRO_CONSEGNATI = "into_consegnati_test";
+
 
 //    public static final String GENERATE_XML = "generate_xml";
 

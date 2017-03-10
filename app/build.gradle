@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 4303
+        versionCode 4304
         versionName '4.3.0'
     }
     lintOptions {
@@ -60,6 +60,7 @@ dependencies {
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.jrvansuita:MaterialAbout:9b39a6cbd9'
     compile 'com.anjlab.android.iab.v3:library:1.0.38'
+    compile 'uk.co.samuelwall:material-tap-target-prompt:1.9.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

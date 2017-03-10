@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +23,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +44,14 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
-import it.cammino.risuscito.slides.IntroConsegnatiNew;
 import it.cammino.risuscito.utils.ThemeUtils;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
 
     private final String TAG = getClass().getCanonicalName();
 
@@ -65,7 +72,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
-    private WelcomeHelper mWelcomeScreen;
+//    private WelcomeHelper mWelcomeScreen;
 
     private BroadcastReceiver positionBRec = new BroadcastReceiver() {
         @Override
@@ -281,73 +288,89 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         });
 
-        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroConsegnatiNew.class);
-        mWelcomeScreen.show(savedInstanceState);
-        return rootView;
-    }
+//        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroConsegnatiNew.class);
+//        mWelcomeScreen.show(savedInstanceState);
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
+            rootView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(getClass().getName(), "onResume: ");
-        getActivity().registerReceiver(positionBRec, new IntentFilter(
-                ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
-        getActivity().registerReceiver(completedBRec, new IntentFilter(
-                ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(getClass().getName(), "onPause: ");
-        getActivity().unregisterReceiver(positionBRec);
-        getActivity().unregisterReceiver(completedBRec);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean(EDIT_MODE, editMode);
-        super.onSaveInstanceState(savedInstanceState);
-        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        if (listaCanti != null)
-            listaCanti.close();
-        super.onDestroy();
-        if (mMainActivity.isOnTablet())
-            enableBottombar(false);
-        else
-            mMainActivity.enableBottombar(false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-        menu.findItem(R.id.action_help).setIcon(
-                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE));
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_help:
-                mWelcomeScreen.forceShow();
-                return true;
+                        @Override
+                        public void onGlobalLayout() {
+                            // only want to do this once
+                            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            runIntro1();
+                        }
+                    });
         }
-        return false;
-    }
+
+            return rootView;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            Log.d(getClass().getName(), "onResume: ");
+            getActivity().registerReceiver(positionBRec, new IntentFilter(
+                    ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
+            getActivity().registerReceiver(completedBRec, new IntentFilter(
+                    ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            Log.d(getClass().getName(), "onPause: ");
+            getActivity().unregisterReceiver(positionBRec);
+            getActivity().unregisterReceiver(completedBRec);
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle savedInstanceState) {
+            savedInstanceState.putBoolean(EDIT_MODE, editMode);
+            super.onSaveInstanceState(savedInstanceState);
+//        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
+        }
+
+        @Override
+        public void onDestroy() {
+            if (listaCanti != null)
+                listaCanti.close();
+            super.onDestroy();
+            if (mMainActivity.isOnTablet())
+                enableBottombar(false);
+            else
+                mMainActivity.enableBottombar(false);
+        }
+
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            setHasOptionsMenu(true);
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            super.onCreateOptionsMenu(menu, inflater);
+            getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+            menu.findItem(R.id.action_help).setIcon(
+                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .color(Color.WHITE));
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_help:
+//                mWelcomeScreen.forceShow();
+                    runIntro1();
+                    return true;
+            }
+            return false;
+        }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
@@ -517,20 +540,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         return mFab;
     }
 
-//    private void hideFab() {
-//        getFab().hide();
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-//        params.setBehavior(null);
-//        getFab().requestLayout();
-//    }
-//
-//    private void showFab() {
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-//        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
-//        getFab().requestLayout();
-//        getFab().show();
-//    }
-
     private void enableBottombar(boolean enabled) {
         mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
@@ -544,5 +553,120 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    private void runIntro1() {
+
+        if (editMode) {
+            ImageButton cancel_change = mMainActivity.isOnTablet() ?
+                    (ImageButton) rootView.findViewById(R.id.cancel_change):
+                    (ImageButton) getActivity().findViewById(R.id.cancel_change);
+            cancel_change.performClick();
+        }
+
+        new MaterialTapTargetPrompt.Builder(getActivity())
+                .setTarget(getFab())
+                .setPrimaryText(R.string.title_activity_consegnati)
+                .setSecondaryText(R.string.showcase_consegnati_desc)
+                .setCaptureTouchEventOnFocal(true)
+                .setCaptureTouchEventOutsidePrompt(true)
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
+                        //Do something such as storing a value so that this prompt is never shown again
+                        runIntro2();
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+
+                    }
+                })
+                .show();
+    }
+
+    private void runIntro2() {
+
+        new MaterialTapTargetPrompt.Builder(getActivity())
+                .setTarget(getFab())
+                .setPrimaryText(R.string.title_activity_consegnati)
+                .setSecondaryText(R.string.showcase_consegnati_howto)
+                .setCaptureTouchEventOnFocal(true)
+                .setCaptureTouchEventOutsidePrompt(true)
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
+                        //Do something such as storing a value so that this prompt is never shown again
+                        runIntro3();
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+
+                    }
+                })
+                .show();
+    }
+
+    private void runIntro3() {
+
+        getFab().performClick();
+
+        new MaterialTapTargetPrompt.Builder(getActivity())
+                .setTarget(mMainActivity.isOnTablet() ?
+                        (ImageButton) rootView.findViewById(R.id.confirm_changes):
+                        (ImageButton) getActivity().findViewById(R.id.confirm_changes))
+                .setFocalColourAlpha(99)
+                .setPrimaryText(R.string.title_activity_consegnati)
+                .setSecondaryText(R.string.showcase_consegnati_confirm)
+                .setCaptureTouchEventOnFocal(true)
+                .setCaptureTouchEventOutsidePrompt(true)
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
+                        //Do something such as storing a value so that this prompt is never shown again
+                        runIntro4();
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+
+                    }
+                })
+                .show();
+    }
+
+    private void runIntro4() {
+
+        getFab().performClick();
+
+        new MaterialTapTargetPrompt.Builder(getActivity())
+                .setTarget(mMainActivity.isOnTablet() ?
+                        (ImageButton) rootView.findViewById(R.id.cancel_change):
+                        (ImageButton) getActivity().findViewById(R.id.cancel_change))
+                .setFocalColourAlpha(99)
+                .setPrimaryText(R.string.title_activity_consegnati)
+                .setSecondaryText(R.string.showcase_consegnati_cancel)
+                .setCaptureTouchEventOnFocal(true)
+                .setCaptureTouchEventOutsidePrompt(true)
+                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+                    @Override
+                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
+                        ImageButton cancel_change = mMainActivity.isOnTablet() ?
+                                (ImageButton) rootView.findViewById(R.id.cancel_change):
+                                (ImageButton) getActivity().findViewById(R.id.cancel_change);
+                        cancel_change.performClick();
+                        //Do something such as storing a value so that this prompt is never shown again
+                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                        prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true);
+                        prefEditor.apply();
+                    }
+
+                    @Override
+                    public void onHidePromptComplete() {
+
+                    }
+                })
+                .show();
+    }
 
 }
