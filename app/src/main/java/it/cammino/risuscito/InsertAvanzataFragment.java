@@ -42,7 +42,6 @@ import butterknife.OnClick;
 import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
 import it.cammino.risuscito.objects.CantoInsert;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.risuscito.utils.ThemeUtils;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class InsertAvanzataFragment extends Fragment {
@@ -130,13 +129,14 @@ public class InsertAvanzataFragment extends Fragment {
                     // chiude il cursore
                     cursor.close();
 
-                    // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
-                    listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
-                    cursor.close();
+                    if (listaPersonalizzata != null) {
+                        // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
+                        listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
 
-                    ContentValues  values = new  ContentValues( );
-                    values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-                    db.update("LISTE_PERS", values, "_id = " + idLista, null );
+                        ContentValues values = new ContentValues();
+                        values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
+                        db.update("LISTE_PERS", values, "_id = " + idLista, null);
+                    }
                     db.close();
                 }
 

@@ -247,10 +247,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE").setmCallback(RicercaVeloceFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2").setmCallback(RicercaVeloceFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaVeloceFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaVeloceFragment.this);
         }
 
         if (!isViewShown) {

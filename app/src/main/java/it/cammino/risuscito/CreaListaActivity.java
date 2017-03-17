@@ -2,11 +2,15 @@ package it.cammino.risuscito;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,10 +27,15 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.ToolbarTapTarget;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
@@ -36,7 +45,6 @@ import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.ArrayList;
 
@@ -47,10 +55,12 @@ import it.cammino.risuscito.adapters.DraggableSwipeableAdapter;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.DraggableItem;
-import it.cammino.risuscito.slides.IntroCreaListaNew;
+import it.cammino.risuscito.ui.SwipeDismissTouchListener;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class CreaListaActivity extends ThemeableActivity implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private ListaPersonalizzata celebrazione;
     private DatabaseCanti listaCanti;
@@ -74,13 +84,18 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private EditText textfieldTitle;
 
     private int positionToRename;
-    private WelcomeHelper mWelcomeScreen;
+//    private WelcomeHelper mWelcomeScreen;
 
     private final String TEMP_TITLE = "temp_title";
+
+    private boolean hintVisible;
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.fab_crea_lista) FloatingActionButton fabCreaLista;
+    @BindView(R.id.recycler_container) ViewGroup mRecyclerContainer;
+    @BindView(R.id.noElementsAdded) View mNoElementsAdded;
 
     @OnClick(R.id.fab_crea_lista)
     public void aggiuntiPosizione() {
@@ -100,6 +115,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //        Toolbar mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
@@ -217,8 +233,15 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                     nomiCanti.remove(position);
 //                    	Log.i("RIMOSSO", which + "");
                 }
-                if (mAdapter.getItemCount() == 0)
-                    findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
+                if (mAdapter.getItemCount() == 0) {
+                    mNoElementsAdded.setVisibility(View.VISIBLE);
+                    if (hintVisible) {
+                        mRecyclerContainer.removeView(mRecyclerContainer.getChildAt(mRecyclerContainer.getChildCount() - 1));
+                        hintVisible = false;
+                    }
+                }
+//                    findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -273,13 +296,13 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
-        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
+//        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4);
-        fabAdd.setImageDrawable(icon);
+        fabCreaLista.setImageDrawable(icon);
 //        fabAdd.setOnClickListener(new OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -292,21 +315,25 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //        });
 
         if (elementi.size() > 0)
-            findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+            mNoElementsAdded.setVisibility(View.GONE);
+//            findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
 
-        mWelcomeScreen = new WelcomeHelper(this, IntroCreaListaNew.class);
-        mWelcomeScreen.show(savedInstanceState);
+//        mWelcomeScreen = new WelcomeHelper(this, IntroCreaListaNew.class);
+//        mWelcomeScreen.show(savedInstanceState);
         findViewById(R.id.textTitleDescription).requestFocus();
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreate: RESTORING");
             positionToRename = savedInstanceState.getInt("positionToRename", 0);
-            if (InputTextDialogFragment.findVisible(CreaListaActivity.this, "RENAME") != null)
-                InputTextDialogFragment.findVisible(CreaListaActivity.this, "RENAME").setmCallback(CreaListaActivity.this);
-            if (InputTextDialogFragment.findVisible(CreaListaActivity.this, "ADD_POSITION") != null)
-                InputTextDialogFragment.findVisible(CreaListaActivity.this, "ADD_POSITION").setmCallback(CreaListaActivity.this);
-            if (SimpleDialogFragment.findVisible(CreaListaActivity.this, "SAVE_LIST") != null)
-                SimpleDialogFragment.findVisible(CreaListaActivity.this, "SAVE_LIST").setmCallback(CreaListaActivity.this);
+            InputTextDialogFragment iFragment = InputTextDialogFragment.findVisible(CreaListaActivity.this, "RENAME");
+            if (iFragment != null)
+                iFragment.setmCallback(CreaListaActivity.this);
+            iFragment = InputTextDialogFragment.findVisible(CreaListaActivity.this, "ADD_POSITION");
+            if (iFragment != null)
+                iFragment.setmCallback(CreaListaActivity.this);
+            SimpleDialogFragment fragment = SimpleDialogFragment.findVisible(CreaListaActivity.this, "SAVE_LIST");
+            if (fragment != null)
+                fragment.setmCallback(CreaListaActivity.this);
         }
 
     }
@@ -367,6 +394,25 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                         .sizeDp(24)
                         .paddingDp(2)
                         .color(Color.WHITE));
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this);
+        Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    playIntro();
+                }
+            }, 1500);
+        }
+        if (elementi != null && elementi.size() > 0) {
+            Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false));
+            if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
+                if (!hintVisible)
+                    inflateHint();
+            }
+        }
         return true;
     }
 
@@ -374,8 +420,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-//                showHelp();
-                mWelcomeScreen.forceShow();
+//                mWelcomeScreen.forceShow();
+                playIntro();
+                if (elementi != null && elementi.size() > 0 && !hintVisible)
+                    inflateHint();
                 return true;
             case R.id.action_save_list:
                 if (saveList()) {
@@ -502,7 +550,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("positionToRename", positionToRename);
-        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
+//        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     public static class RetainedFragment extends Fragment {
@@ -541,16 +589,26 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         Log.d(getClass().getName(), "onPositive: " + tag);
         switch (tag) {
             case "RENAME":
-                elementi.set(positionToRename, new DraggableItem(dialog.getInputEditText().getText().toString()
+                EditText mEditText = dialog.getInputEditText();
+                elementi.set(positionToRename, new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
                         , elementi.get(positionToRename).getIdPosizione()));
                 mAdapter.notifyDataSetChanged();
                 break;
             case "ADD_POSITION":
-                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
-                elementi.add(new DraggableItem(dialog.getInputEditText().getText().toString(), Utility.random(1, 500)));
+//                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
+                mNoElementsAdded.setVisibility(View.GONE);
+                mEditText = dialog.getInputEditText();
+                elementi.add(new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
+                        , Utility.random(1, 500)));
                 if (modifica)
                     nomiCanti.add("");
                 mAdapter.notifyItemInserted(elementi.size() - 1);
+                SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this);
+                Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false));
+                if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
+                    if (!hintVisible)
+                        inflateHint();
+                }
                 break;
         }
     }
@@ -585,4 +643,81 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     }
     @Override
     public void onNeutral(@NonNull String tag) { }
+
+    private void inflateHint() {
+        final View mHintLayout = getLayoutInflater().inflate(R.layout.hint_layout, null, false);
+        TextView mHintLayoutText = (TextView) mHintLayout.findViewById(R.id.hint_text);
+        mHintLayoutText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
+        mHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
+                mHintLayout,
+                null,
+                new SwipeDismissTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(Object token) {
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismiss(View view, Object token) {
+                        mRecyclerContainer.removeView(mHintLayout);
+                        hintVisible = false;
+                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
+                        prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true);
+                        prefEditor.apply();
+                    }
+                }));
+        mRecyclerContainer.addView(mHintLayout);
+        hintVisible = true;
+    }
+
+    private void playIntro() {
+        fabCreaLista.show();
+        new TapTargetSequence(CreaListaActivity.this)
+                .continueOnCancel(true)
+                .targets(
+                        TapTarget.forView(fabCreaLista
+                                , getString(R.string.add_position), getString(R.string.showcase_add_pos_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .tintTarget(false)
+                                .id(1)
+                        ,
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.action_save_list
+                                , getString(R.string.list_save_exit), getString(R.string.showcase_saveexit_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(2)
+                        ,
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.action_help
+                                , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(3)
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true);
+                                prefEditor.apply();
+
+                            }
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget) {}
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true);
+                                prefEditor.apply();
+                            }
+                        }).start();
+    }
 }

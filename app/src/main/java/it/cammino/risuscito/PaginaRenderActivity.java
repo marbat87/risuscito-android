@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -39,9 +40,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.ToolbarTapTarget;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -51,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +65,6 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.music.MusicService;
 import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
-import it.cammino.risuscito.slides.IntroPaginaRenderNew;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -82,7 +85,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String barreSalvato;
     private static String barreCambio;
     private String personalUrl, localUrl,  playUrl;
-    private WelcomeHelper mWelcomeScreen;
+//    private WelcomeHelper mWelcomeScreen;
 
     enum MP_State {Started, Stopped}
 
@@ -135,8 +138,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 Log.d(getClass().getName(), "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
                 scroll_song_bar.setMax(intent.getIntExtra(MusicService.DATA_DURATION, 0));
                 scroll_song_bar.setEnabled(true);
-                if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING") != null)
-                    SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING").dismiss();
+                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
+                if (sFragment != null)
+                    sFragment.dismiss();
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -200,9 +204,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             try {
                 Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_PROGRESS");
                 Log.d(getClass().getName(), "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
-                if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null) {
-                    SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3")
-                            .setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
+                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
+                if (sFragment != null) {
+                    sFragment.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
                 }
             }
             catch (IllegalArgumentException e) {
@@ -217,8 +221,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             //Implement UI change code here once notification is received
             try {
                 Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_COMPLETED");
-                if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
-                    SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").dismiss();
+                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
+                if (sFragment != null)
+                    sFragment.dismiss();
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                 int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
                 if (saveLocation == 1) {
@@ -264,8 +269,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             try {
                 Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_ERROR");
                 Log.d(getClass().getName(), "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR));
-                if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
-                    SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").dismiss();
+                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
+                if (sFragment != null)
+                    sFragment.dismiss();
                 Snackbar.make(findViewById(android.R.id.content)
                         , getString(R.string.download_error) + " " + intent.getStringExtra(DownloadService.DATA_ERROR)
                         , Snackbar.LENGTH_SHORT)
@@ -283,8 +289,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             //Implement UI change code here once notification is received
             Log.d(getClass().getName(), "BROADCAST_EXPORT_COMPLETED");
             Log.d(getClass().getName(), "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH));
-            if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF") != null)
-                SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF").dismiss();
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF");
+            if (sFragment != null)
+                sFragment.dismiss();
             String localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH);
             File file = new File(localPDFPath);
             Intent target = new Intent(Intent.ACTION_VIEW);
@@ -309,8 +316,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             try {
                 Log.d(getClass().getName(), "BROADCAST_EXPORT_ERROR");
                 Log.d(getClass().getName(), "DATA_EXPORT_ERROR: " + intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR));
-                if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF") != null)
-                    SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF").dismiss();
+                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF");
+                if (sFragment != null)
+                    sFragment.dismiss();
                 Snackbar.make(findViewById(android.R.id.content)
                         , intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
                         , Snackbar.LENGTH_SHORT)
@@ -496,6 +504,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
@@ -608,11 +617,17 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     i.setData(uri);
                     startService(i);
                 }
-                int seconds = progress / 1000 % 60;
-                Log.d(getClass().getName(), "seconds: " + seconds);
-                int minutes = (progress / (1000 * 60));
-                Log.d(getClass().getName(), "minutes: " + minutes);
-                ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+//                int seconds = progress / 1000 % 60;
+//                Log.d(getClass().getName(), "seconds: " + seconds);
+//                int minutes = (progress / (1000 * 60));
+//                Log.d(getClass().getName(), "minutes: " + minutes);
+                String time = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(progress),
+                        TimeUnit.MILLISECONDS.toSeconds(progress) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress))
+                );
+                ((TextView) findViewById(R.id.time_text)).setText(time);
+//                ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
             }
 
             @Override
@@ -645,27 +660,36 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
 
-        mWelcomeScreen = new WelcomeHelper(this, IntroPaginaRenderNew.class);
-        mWelcomeScreen.show(savedInstanceState);
+//        mWelcomeScreen = new WelcomeHelper(this, IntroPaginaRenderNew.class);
+//        mWelcomeScreen.show(savedInstanceState);
 
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLINK_CHOOSE") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLINK_CHOOSE").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_MP3") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_MP3").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "ONLY_LINK") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "ONLY_LINK").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE").setmCallback(PaginaRenderActivity.this);
-        if (SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE") != null)
-            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE").setmCallback(PaginaRenderActivity.this);
+        SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLINK_CHOOSE");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_MP3");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "ONLY_LINK");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
+        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
+        if (sFragment != null)
+            sFragment.setmCallback(PaginaRenderActivity.this);
 
     }
 
@@ -723,6 +747,21 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         .sizeDp(24)
                         .paddingDp(2)
                         .color(Color.WHITE));
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+        Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    if (music_buttons.getVisibility() == View.VISIBLE)
+                        playIntroFull();
+                    else
+                        playIntroSmall();
+                }
+            }, 1500);
+        }
         return true;
     }
 
@@ -764,7 +803,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 startService(i);
                 return true;
             case R.id.action_help_canto:
-                mWelcomeScreen.forceShow();
+//                mWelcomeScreen.forceShow();
+                if (music_buttons.getVisibility() == View.VISIBLE)
+                    playIntroFull();
+                else
+                    playIntroSmall();
                 return true;
             case R.id.action_save_tab:
                 if (!notaSalvata.equalsIgnoreCase(notaCambio)) {
@@ -1020,6 +1063,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 PdfExportService.BROADCAST_EXPORT_ERROR));
         registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabCanto.CHOOSE_DONE));
+
+        Log.d(TAG, "onResume: ");
+
     }
 
     @Override
@@ -1059,7 +1105,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         outState.putSerializable("mediaPlayerState", mediaPlayerState);
         outState.putBoolean("playSelected", isPlaying());
         outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
-        mWelcomeScreen.onSaveInstanceState(outState);
+//        mWelcomeScreen.onSaveInstanceState(outState);
     }
 
     public void pulisciVars() {
@@ -1713,41 +1759,168 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onFileSelection(@NonNull FileChooserDialog dialog, @NonNull File file) {
-        if (file != null) {
-            String path = file.getAbsolutePath();
-            Snackbar.make(findViewById(android.R.id.content),
-                    getString(R.string.file_selected) + ": " + path
-                    , Snackbar.LENGTH_SHORT)
-                    .show();
+        String path = file.getAbsolutePath();
+        Snackbar.make(findViewById(android.R.id.content),
+                getString(R.string.file_selected) + ": " + path
+                , Snackbar.LENGTH_SHORT)
+                .show();
 
-            scroll_song_bar.setProgress(0);
-            scroll_song_bar.setEnabled(false);
-            showPlaying(false);
-            if (mediaPlayerState != MP_State.Stopped) {
-                mediaPlayerState = MP_State.Stopped;
-                Intent i = new Intent(getApplicationContext(), MusicService.class);
-                i.setAction(MusicService.ACTION_STOP);
-                startService(i);
-            }
-
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            ContentValues values = new ContentValues();
-            values.put("_id", idCanto);
-            values.put("local_path", path);
-            db.insert("LOCAL_LINKS", null, values);
-            db.close();
-
-            localFile = true;
-            personalUrl = path;
-
-            mDownload = true;
-
-            //mostra i pulsanti per il lettore musicale
-            music_buttons.setVisibility(View.VISIBLE);
-            no_records_text.setVisibility(View.INVISIBLE);
+        scroll_song_bar.setProgress(0);
+        scroll_song_bar.setEnabled(false);
+        showPlaying(false);
+        if (mediaPlayerState != MP_State.Stopped) {
+            mediaPlayerState = MP_State.Stopped;
+            Intent i = new Intent(getApplicationContext(), MusicService.class);
+            i.setAction(MusicService.ACTION_STOP);
+            startService(i);
         }
+
+        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("_id", idCanto);
+        values.put("local_path", path);
+        db.insert("LOCAL_LINKS", null, values);
+        db.close();
+
+        localFile = true;
+        personalUrl = path;
+
+        mDownload = true;
+
+        //mostra i pulsanti per il lettore musicale
+        music_buttons.setVisibility(View.VISIBLE);
+        no_records_text.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onFileChooserDismissed(@NonNull FileChooserDialog dialog) {}
+
+    private void playIntroSmall() {
+        findViewById(R.id.music_controls).setVisibility(View.VISIBLE);
+        new TapTargetSequence(PaginaRenderActivity.this)
+                .continueOnCancel(true)
+                .targets(
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
+                                , getString(R.string.action_tonalita), getString(R.string.sc_tonalita_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(1)
+                        ,
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.barre
+                                , getString(R.string.action_barre), getString(R.string.sc_barre_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(2)
+                        ,
+                        TapTarget.forView(play_scroll
+                                , getString(R.string.sc_scroll_title), getString(R.string.sc_scroll_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(3)
+                        ,
+                        ToolbarTapTarget.forToolbarOverflow(mToolbar
+                                , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(4)
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true);
+                                prefEditor.apply();
+                                findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
+
+                            }
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget) {}
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true);
+                                prefEditor.apply();
+                                findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
+                            }
+                        }).start();
+    }
+
+    private void playIntroFull() {
+        findViewById(R.id.music_controls).setVisibility(View.VISIBLE);
+        new TapTargetSequence(PaginaRenderActivity.this)
+                .continueOnCancel(true)
+                .targets(
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
+                                , getString(R.string.action_tonalita), getString(R.string.sc_tonalita_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(1)
+                        ,
+                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.barre
+                                , getString(R.string.action_barre), getString(R.string.sc_barre_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(2)
+                        ,
+                        TapTarget.forView(play_button
+                                , getString(R.string.sc_audio_title), getString(R.string.sc_audio_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(3)
+                        ,
+                        TapTarget.forView(play_scroll
+                                , getString(R.string.sc_scroll_title), getString(R.string.sc_scroll_desc))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(4)
+                        ,
+                        ToolbarTapTarget.forToolbarOverflow(mToolbar
+                                , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
+                                // All options below are optional
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .id(5)
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true);
+                                prefEditor.apply();
+                                findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
+
+                            }
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget) {}
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this).edit();
+                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true);
+                                prefEditor.apply();
+                                findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
+                            }
+                        }).start();
+    }
 }

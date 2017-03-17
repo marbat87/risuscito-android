@@ -96,6 +96,7 @@ public class AboutFragment extends Fragment {
                         .addChangeLogAction(mChangeLogClickListener)
 //                        .addRemoveAdsAction((Intent) null)
                         .addDonateAction(mDonateClickListener)
+                        .setShowAsCard(false)
                         .build());
 
         return rootView;

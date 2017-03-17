@@ -37,7 +37,6 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class SalmiSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -150,10 +149,12 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE").setmCallback(SalmiSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE_2").setmCallback(SalmiSectionFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(SalmiSectionFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "SALMI_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(SalmiSectionFragment.this);
         }
 
         if (!isViewShown) {

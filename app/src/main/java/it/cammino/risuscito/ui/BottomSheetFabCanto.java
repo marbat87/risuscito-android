@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -188,7 +189,10 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         boolean mLimited = getActivity().getResources().getBoolean(R.bool.is_bottom_sheet_limited);
         if (mLimited) {
             int mMaxWidth = (int) getActivity().getResources().getDimension(R.dimen.max_bottomsheet_width);
-            getDialog().getWindow().setLayout(mMaxWidth, -1);
+//            getDialog().getWindow().setLayout(mMaxWidth, -1);
+            Window win = getDialog().getWindow();
+            if (null != win)
+                win.setLayout(mMaxWidth, -1);
         }
     }
 

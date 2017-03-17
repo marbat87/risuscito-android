@@ -38,7 +38,6 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 
 public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -150,10 +149,12 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE").setmCallback(AlphabeticSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2").setmCallback(AlphabeticSectionFragment.this);
+            SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE");
+            if (fragment != null)
+                fragment.setmCallback(AlphabeticSectionFragment.this);
+            fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2");
+            if (fragment != null)
+                fragment.setmCallback(AlphabeticSectionFragment.this);
         }
 
         if (!isViewShown) {

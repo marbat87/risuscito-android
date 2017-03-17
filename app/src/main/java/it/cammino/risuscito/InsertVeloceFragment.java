@@ -115,12 +115,13 @@ public class InsertVeloceFragment extends Fragment {
                     // chiude il cursore
                     cursor.close();
 
-                    listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
-                    cursor.close();
+                    if (listaPersonalizzata != null) {
+                        listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
 
-                    ContentValues  values = new  ContentValues( );
-                    values.put("lista" , ListaPersonalizzata.serializeObject(listaPersonalizzata));
-                    db.update("LISTE_PERS", values, "_id = " + idLista, null );
+                        ContentValues values = new ContentValues();
+                        values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
+                        db.update("LISTE_PERS", values, "_id = " + idLista, null);
+                    }
                     db.close();
                 }
 

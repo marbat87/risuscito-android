@@ -16,7 +16,7 @@
             android:layout_centerHorizontal="true"
             android:layout_width="120dip"
             android:layout_height="120dip"
-            android:src="@drawable/sad_history"/>
+            android:src="@drawable/ic_sad_history"/>
 
         <TextView
             android:id="@+id/no_history_text"

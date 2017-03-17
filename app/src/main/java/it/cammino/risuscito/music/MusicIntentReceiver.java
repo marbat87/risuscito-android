@@ -24,7 +24,7 @@ public class MusicIntentReceiver extends BroadcastReceiver {
             context.startService(i);
         } else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
-            if (keyEvent.getAction() != KeyEvent.ACTION_DOWN)
+            if (keyEvent == null || keyEvent.getAction() != KeyEvent.ACTION_DOWN)
                 return;
             Log.d(getClass().getName(), "onReceive: keycode " + keyEvent.getKeyCode());
             Intent i = new Intent(context, MusicService.class);

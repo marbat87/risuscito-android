@@ -178,11 +178,14 @@ public class LUtils {
 
 
     public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
+        TabLayout.Tab mTab;
         for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
             TextView tv = (TextView) mActivity.getLayoutInflater().inflate(R.layout.item_tab, null);
             if (i == viewPager.getCurrentItem()) tv.setSelected(true);
             tv.setText(viewPager.getAdapter().getPageTitle(i));
-            tabLayout.getTabAt(i).setCustomView(tv);
+            mTab = tabLayout.getTabAt(i);
+            if (mTab != null)
+                mTab.setCustomView(tv);
         }
     }
 

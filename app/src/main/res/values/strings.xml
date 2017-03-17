@@ -75,7 +75,7 @@
     <string name="action_add_list">Nuova lista</string>
     <string name="action_remove_list">Elimina lista</string>
     <string name="action_edit_list">Modifica lista</string>
-    <string name="title_activity_nuova_lista">Nuova lista</string>
+    <!--<string name="title_activity_nuova_lista">Nuova lista</string>-->
     <string name="list_save_exit">Salva ed esci</string>
     <string name="add_position">Aggiungi elemento</string>
     <string name="content_drag">trascina elemento</string>
@@ -114,14 +114,14 @@
     <string name="showcase_end_title">Fine</string>
     <string name="list_added">Aggiunto alla lista</string>
     <string name="posizione_rename">Rinomina elemento</string>
-    <string name="showcase_welcome_crea">Benvenuto. Da qui puoi creare/modificare la tua lista personalizzata per qualsiasi celebrazione.</string>
+    <!--<string name="showcase_welcome_crea">Benvenuto. Da qui puoi creare/modificare la tua lista personalizzata per qualsiasi celebrazione.</string>-->
     <string name="showcase_add_pos_desc">Con questo pulsante puoi aggiungere un nuovo elemento a piacere (es. \"Canto iniziale\", \"prima lettura\", etc.).
         Puoi aggiungere fino a 30 elementi.</string>
-    <string name="posizione_reorder">Riordina gli elementi</string>
-    <string name="showcase_reorder_desc">Una volta creati pi&#249; elementi, trascinandoli verso l\'alto o verso il basso, puoi riordinarli come preferisci.</string>
+    <!--<string name="posizione_reorder">Riordina gli elementi</string>-->
+    <!--<string name="showcase_reorder_desc">Una volta creati pi&#249; elementi, trascinandoli verso l\'alto o verso il basso, puoi riordinarli come preferisci.</string>-->
     <string name="showcase_rename_desc">Tieni premuto sul nome di un elemento per rinominarlo.</string>
     <string name="showcase_saveexit_desc">Una volta finito, premi qui per salvare e vedere la tua lista assieme alle altre.</string>
-    <string name="posizione_delete">Elimina l\'elemento</string>
+    <!--<string name="posizione_delete">Elimina l\'elemento</string>-->
     <string name="showcase_delete_desc">Fai scorrere a destra o a sinistra per rimuovere un elemento.</string>
     <string name="action_barre">Barr&#232;</string>
     <string name="action_reset_barre">Predefinito</string>
@@ -198,7 +198,7 @@
     <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
     <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
-    <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
+    <!--<string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>-->
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
@@ -223,8 +223,8 @@
     <string name="list_removed">Rimossa la lista \'</string>
     <string name="favorites_removed">% rimossi dai preferiti</string>
     <string name="histories_removed">% rimossi dalla cronologia</string>
-    <string name="sc_pagina_render_title">Pagina del canto</string>
-    <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
+    <!--<string name="sc_pagina_render_title">Pagina del canto</string>-->
+    <!--<string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>-->
     <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
          salvataggio della tonalit&#224; impostata e reset di quella predefinita.</string>
     <string name="sc_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le stesse tre funzioni della tonalit&#224;.</string>
@@ -288,8 +288,8 @@
     <string name="favorite_on">Aggiungi preferito</string>
     <string name="favorite_off">Rimuovi preferito</string>
     <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
-    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
-    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive e seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <!--<string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>-->
     <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
     <string name="show_offertorio_title">Eucarestia - Offertorio</string>
     <string name="show_offertorio_summary">Abilita il canto all\'offertorio per l\'Eucarestia</string>

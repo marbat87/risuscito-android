@@ -52,7 +52,6 @@ import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.risuscito.utils.ThemeUtils;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -235,10 +234,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE").setmCallback(RicercaAvanzataFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2").setmCallback(RicercaAvanzataFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaAvanzataFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaAvanzataFragment.this);
         }
 
         if (!isViewShown) {

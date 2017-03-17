@@ -36,7 +36,12 @@ public class Utility {
     public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
     public static final String LARGE_DONATIONS_COUNT = "large_donations_count";
 
-    public static final String INTRO_CONSEGNATI = "into_consegnati_test";
+    public static final String INTRO_CONSEGNATI = "intro_consegnati_test";
+    public static final String INTRO_CONSEGNATI_2 = "intro_consegnati_test";
+    public static final String INTRO_PAGINARENDER = "intro_paginarender_test";
+    public static final String INTRO_CREALISTA = "intro_crealista_test";
+    public static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
+    public static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
 
 
 //    public static final String GENERATE_XML = "generate_xml";

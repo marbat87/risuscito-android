@@ -187,10 +187,12 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE").setmCallback(IndiceLiturgicoFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE_2").setmCallback(IndiceLiturgicoFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(IndiceLiturgicoFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "LITURGICO_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(IndiceLiturgicoFragment.this);
         }
 
         if (!isViewShown) {

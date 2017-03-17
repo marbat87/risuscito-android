@@ -33,14 +33,6 @@
         <activity android:name="it.cammino.risuscito.DonateActivity" android:label=""></activity>
         <activity android:name="it.cammino.risuscito.slides.IntroMainNew" android:label=""
             android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroPaginaRenderNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroCreaListaNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroConsegnatiNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroListePers" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
 
         <service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">
             <intent-filter>

@@ -120,9 +120,18 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
 
         boolean isAvailable = BillingProcessor.isIabServiceAvailable(DonateActivity.this);
         if(isAvailable) {
-            mLoadingBar.setVisibility(View.VISIBLE);
-            bp = new BillingProcessor(this, base64EncodedPublicKey1 + base64EncodedPublicKey2 + base64EncodedPublicKey3 + base64EncodedPublicKey4, this);
-            mBottomBar.setVisibility(View.VISIBLE);
+            if (Utility.isOnline(DonateActivity.this)) {
+                mLoadingBar.setVisibility(View.VISIBLE);
+                bp = new BillingProcessor(this, base64EncodedPublicKey1 + base64EncodedPublicKey2 + base64EncodedPublicKey3 + base64EncodedPublicKey4, this);
+                mBottomBar.setVisibility(View.VISIBLE);
+            }
+            else {
+                Snackbar.make(findViewById(R.id.main_content)
+                        , R.string.no_connection
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
+                mBottomBar.setVisibility(View.GONE);
+            }
         }
         else {
             FirebaseCrash.log(TAG + "onCreate - " + getString(R.string.service_unavailable));
@@ -133,6 +142,7 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDonateView.setBackgroundColor(0);
@@ -192,12 +202,25 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
          * Called when BillingProcessor was initialized and it's ready to purchase
          */
         Log.d(TAG, "onBillingInitialized: OK");
+
         SkuDetails skuSmall = bp.getPurchaseListingDetails(SKU_1_EURO);
-        mDonateSmallButton.setText(skuSmall.priceText);
+        if (skuSmall != null)
+            mDonateSmallButton.setText(skuSmall.priceText);
+        else
+            mDonateSmallButton.setEnabled(false);
+
         SkuDetails skuMedim = bp.getPurchaseListingDetails(SKU_5_EURO);
-        mDonateMediumButton.setText(skuMedim.priceText);
+        if (skuMedim != null)
+            mDonateMediumButton.setText(skuMedim.priceText);
+        else
+            mDonateMediumButton.setEnabled(false);
+
         SkuDetails skuLarge = bp.getPurchaseListingDetails(SKU_10_EURO);
+        if (skuLarge != null)
         mDonateLargeButton.setText(skuLarge.priceText);
+        else
+            mDonateMediumButton.setEnabled(false);
+
         mLoadingBar.setVisibility(View.INVISIBLE);
     }
 

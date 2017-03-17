@@ -38,6 +38,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_inserisci_titolo);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);

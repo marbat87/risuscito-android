@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import java.util.List;
@@ -112,13 +113,12 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
                 ComponentName name = new ComponentName(((TextView) v.findViewById(R.id.app_package)).getText().toString(),
                         ((TextView) v.findViewById(R.id.app_name)).getText().toString());
-                Intent newIntent = (Intent) intent.clone();
-//                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-//                        Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                newIntent.setComponent(name);
-//                sendIntent.setPackage("com.whatsapp");
-                getActivity().startActivity(newIntent);
-                getDialog().dismiss();
+                if (intent != null) {
+                    Intent newIntent = (Intent) intent.clone();
+                    newIntent.setComponent(name);
+                    getActivity().startActivity(newIntent);
+                    getDialog().dismiss();
+                }
             }
         };
 
@@ -137,7 +137,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         boolean mLimited = getActivity().getResources().getBoolean(R.bool.is_bottom_sheet_limited);
         if (mLimited) {
             int mMaxWidth = (int) getActivity().getResources().getDimension(R.dimen.max_bottomsheet_width);
-            getDialog().getWindow().setLayout(mMaxWidth, -1);
+//            getDialog().getWindow().setLayout(mMaxWidth, -1);
+            Window win = getDialog().getWindow();
+            if (win != null)
+                win.setLayout(mMaxWidth, -1);
         }
     }
 

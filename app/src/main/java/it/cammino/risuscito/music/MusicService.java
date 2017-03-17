@@ -1,6 +1,5 @@
 package it.cammino.risuscito.music;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -33,10 +32,12 @@ import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.PaginaRenderActivity;
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class MusicService extends Service implements OnCompletionListener, OnPreparedListener,
         OnErrorListener, MusicFocusable, PhoneStateHelper.PhoneListener {
@@ -762,12 +763,16 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             case Playing:
             case Paused:
                 int duration = mPlayer.getDuration();
-                int seconds = duration / 1000 % 60;
-                Log.d(getClass().getName(), "seconds: " + seconds);
-                int minutes = (duration / (1000 * 60));
-                Log.d(getClass().getName(), "minutes: " + minutes);
-                @SuppressLint("DefaultLocale")
-                String durationStr = String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+//                int seconds = duration / 1000 % 60;
+//                Log.d(getClass().getName(), "seconds: " + seconds);
+//                int minutes = (duration / (1000 * 60));
+//                Log.d(getClass().getName(), "minutes: " + minutes);
+//                String durationStr = String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+                String durationStr = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
+                );
 
                 builder.setStyle(new NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0,1)  // show only play/pause in compact view

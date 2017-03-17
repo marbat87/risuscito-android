@@ -129,8 +129,9 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }, 250);
         }
 
-        if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET") != null)
-            SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET").setmCallback(FavouritesActivity.this);
+        SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET");
+        if (sFragment != null)
+            sFragment.setmCallback(FavouritesActivity.this);
 
         return rootView;
     }

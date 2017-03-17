@@ -193,10 +193,12 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE").setmCallback(ArgumentsSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2").setmCallback(ArgumentsSectionFragment.this);
+            SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE");
+            if (fragment != null)
+                fragment.setmCallback(ArgumentsSectionFragment.this);
+            fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2");
+            if (fragment != null)
+                fragment.setmCallback(ArgumentsSectionFragment.this);
         }
 
         if (!isViewShown) {

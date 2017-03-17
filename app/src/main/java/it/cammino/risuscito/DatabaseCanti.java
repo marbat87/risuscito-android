@@ -4420,32 +4420,34 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
                         .deserializeObject(cursor.getBlob(1));
 
-                int totPosiz = lista.getNumPosizioni();
+                if (lista != null) {
+                    int totPosiz = lista.getNumPosizioni();
 
-                for (int j = 0; j < totPosiz; j++) {
-                    if (!lista.getCantoPosizione(j).equals("")) {
+                    for (int j = 0; j < totPosiz; j++) {
+                        if (!lista.getCantoPosizione(j).equals("")) {
 //						Log.i("NOME DUP", lista.getCantoPosizione(j).substring(10));
-                        String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
+                            String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
 //						Log.i("NOME NO-DUP", nomeCanto.substring(10));
-                        sql = "SELECT _id" +
-                                "  FROM ELENCO" +
-                                "  WHERE titolo =  '" + nomeCanto + "'";
-                        Cursor cCheckExists = db.rawQuery(sql, null);
+                            sql = "SELECT _id" +
+                                    "  FROM ELENCO" +
+                                    "  WHERE titolo =  '" + nomeCanto + "'";
+                            Cursor cCheckExists = db.rawQuery(sql, null);
 //						Log.i("ESISTE?", cCheckExists.getCount() + "");
-                        if (cCheckExists.getCount() == 0)
-                            lista.removeCanto(j);
-                        else {
-                            cCheckExists.moveToFirst();
-                            lista.addCanto(String.valueOf(cCheckExists.getInt(0)), j);
+                            if (cCheckExists.getCount() == 0)
+                                lista.removeCanto(j);
+                            else {
+                                cCheckExists.moveToFirst();
+                                lista.addCanto(String.valueOf(cCheckExists.getInt(0)), j);
+                            }
+
+                            cCheckExists.close();
+
                         }
-
-                        cCheckExists.close();
-
                     }
+                    values = new ContentValues();
+                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
-                values = new  ContentValues( );
-                values.put("lista" , ListaPersonalizzata.serializeObject(lista));
-                db.update("LISTE_PERS", values, "_id = " + idLista, null );
                 cursor.moveToNext();
             }
 
@@ -4502,31 +4504,33 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
                         .deserializeObject(cursor.getBlob(1));
 
-                int totPosiz = lista.getNumPosizioni();
+                if (lista != null) {
+                    int totPosiz = lista.getNumPosizioni();
 
-                for (int j = 0; j < totPosiz; j++) {
-                    if (!lista.getCantoPosizione(j).equals("")) {
+                    for (int j = 0; j < totPosiz; j++) {
+                        if (!lista.getCantoPosizione(j).equals("")) {
 //						Log.i("NOME DUP", lista.getCantoPosizione(j).substring(10));
 //                        String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
 //						Log.i("NOME NO-DUP", nomeCanto.substring(10));
 //                        sql = "SELECT _id" +
 //                                "  FROM ELENCO" +
 //                                "  WHERE titolo =  '" + nomeCanto + "'";
-                          sql = "SELECT _id" +
-                                "  FROM ELENCO" +
-                                "  WHERE _id = " + lista.getCantoPosizione(j);
-                        Cursor cCheckExists = db.rawQuery(sql, null);
+                            sql = "SELECT _id" +
+                                    "  FROM ELENCO" +
+                                    "  WHERE _id = " + lista.getCantoPosizione(j);
+                            Cursor cCheckExists = db.rawQuery(sql, null);
 //						Log.i("ESISTE?", cCheckExists.getCount() + "");
-                        if (cCheckExists.getCount() == 0)
-                            lista.removeCanto(j);
+                            if (cCheckExists.getCount() == 0)
+                                lista.removeCanto(j);
 
-                        cCheckExists.close();
+                            cCheckExists.close();
 
+                        }
                     }
+                    values = new ContentValues();
+                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
-                values = new  ContentValues( );
-                values.put("lista" , ListaPersonalizzata.serializeObject(lista));
-                db.update("LISTE_PERS", values, "_id = " + idLista, null );
                 cursor.moveToNext();
             }
 

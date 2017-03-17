@@ -21,4 +21,7 @@
 
     <color name="material_drawer_header_selection_text">#FFFFFF</color>
 
+    <!--<color name="grey_500">#9E9E9E</color>-->
+    <!--<color name="grey_hint">#CCCCCC</color>-->
+
 </resources> 

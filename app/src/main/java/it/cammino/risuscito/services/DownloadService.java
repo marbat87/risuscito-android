@@ -122,7 +122,6 @@ public class DownloadService extends IntentService {
                             File fileToDelete = new File(mPath);
                             fileToDelete.delete();
                         } catch (IOException ignored) {
-//                                ignored.printStackTrace();
                             Log.e(getClass().toString(), ignored.getLocalizedMessage(), ignored);
                         }
                         if (connection != null)

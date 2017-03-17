@@ -37,7 +37,6 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.CantoAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class NumericSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -142,10 +141,12 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE").setmCallback(NumericSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2").setmCallback(NumericSectionFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(NumericSectionFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(NumericSectionFragment.this);
         }
 
         if (!isViewShown) {

@@ -67,8 +67,7 @@ public class ConsegnatiSaverService extends IntentService {
             }
         }
         db.close();
-        if (privateListaCanti != null)
-            privateListaCanti.close();
+        privateListaCanti.close();
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SAVING_COMPLETED);
         sendBroadcast(new Intent(BROADCAST_SAVING_COMPLETED));
     }

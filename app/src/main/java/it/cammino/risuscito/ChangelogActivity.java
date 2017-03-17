@@ -29,6 +29,7 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -23,13 +24,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -45,7 +47,6 @@ import it.cammino.risuscito.objects.Canto;
 import it.cammino.risuscito.objects.CantoRecycled;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.utils.ThemeUtils;
-import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
     @Override
@@ -81,10 +82,9 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             try {
                 Log.d(getClass().getName(), "BROADCAST_SINGLE_COMPLETED");
                 Log.d(getClass().getName(), "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
-                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null) {
-                    SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "CONSEGNATI_SAVING")
-                            .setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
-                }
+                SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING");
+                if (fragment != null)
+                    fragment.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -98,19 +98,17 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             //Implement UI change code here once notification is received
             try {
                 Log.d(getClass().getName(), "BROADCAST_SAVING_COMPLETED");
-                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
-                    SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
+                SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING");
+                if (fragment != null)
+                    fragment.dismiss();
                 updateConsegnatiList(true);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
                 mChoosedRecyclerView.setVisibility(View.GONE);
                 if (mMainActivity.isOnTablet())
                     enableBottombar(false);
                 else
                     mMainActivity.enableBottombar(false);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 if (mMainActivity.isOnTablet())
-//                    showFab();
                     getFab().show();
                 else
                     mMainActivity.enableFab(true);
@@ -133,18 +131,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
         mMainActivity = (MainActivity) getActivity();
 
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
-
-//        Log.d(TAG, "onCreateView: isOnTablet " + isOnTablet);
+//        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_consegnati);
 
         mBottomBar = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.bottom_bar):
                 getActivity().findViewById(R.id.bottom_bar);
 
-//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
         mMainActivity.mTabLayout.setVisibility(View.GONE);
-        if (!mMainActivity.isOnTablet())
-            mMainActivity.enableFab(true);
+//        if (!mMainActivity.isOnTablet())
+//            mMainActivity.enableFab(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -161,41 +157,37 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         }
 
-        if (editMode) {
-//            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
-            mChoosedRecyclerView.setVisibility(View.VISIBLE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(true);
-            else
-                mMainActivity.enableBottombar(true);
-//            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-//            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
-            mNoConsegnati.setVisibility(View.INVISIBLE);
-            if (mMainActivity.isOnTablet())
-//                hideFab();
-                getFab().hide();
-            else
-                mMainActivity.enableFab(false);
-
-            updateChooseList(false);
-        }
-        else {
-//            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-            mChoosedRecyclerView.setVisibility(View.GONE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(false);
-            else
-                mMainActivity.enableBottombar(false);
-//            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-            if (mMainActivity.isOnTablet())
-//                showFab();
-                getFab().show();
-            else
-                mMainActivity.enableFab(true);
-            updateConsegnatiList(true);
-        }
+        Log.d(TAG, "onCreateView - editMode: "+ editMode);
+//        if (editMode) {
+//            mChoosedRecyclerView.setVisibility(View.VISIBLE);
+//            if (mMainActivity.isOnTablet())
+//                enableBottombar(true);
+//            else
+//                mMainActivity.enableBottombar(true);
+//            mRecyclerView.setVisibility(View.GONE);
+//            mNoConsegnati.setVisibility(View.INVISIBLE);
+//            if (mMainActivity.isOnTablet())
+////                hideFab();
+//                getFab().hide();
+//            else
+//                mMainActivity.enableFab(false);
+//
+//            updateChooseList(false);
+//        }
+//        else {
+//            mChoosedRecyclerView.setVisibility(View.GONE);
+//            if (mMainActivity.isOnTablet())
+//                enableBottombar(false);
+//            else
+//                mMainActivity.enableBottombar(false);
+//            mRecyclerView.setVisibility(View.VISIBLE);
+//            if (mMainActivity.isOnTablet())
+////                showFab();
+//                getFab().show();
+//            else
+//                mMainActivity.enableFab(true);
+//            updateConsegnatiList(true);
+//        }
         View mSelectNone = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.select_none):
                 getActivity().findViewById(R.id.select_none);
@@ -230,16 +222,13 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             public void onClick(View view) {
                 editMode = false;
                 updateConsegnatiList(true);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
                 mChoosedRecyclerView.setVisibility(View.INVISIBLE);
                 if (mMainActivity.isOnTablet())
                     enableBottombar(false);
                 else
                     mMainActivity.enableBottombar(false);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 if (mMainActivity.isOnTablet())
-//                    showFab();
                     getFab().show();
                 else
                     mMainActivity.enableFab(true);
@@ -270,107 +259,145 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             public void onClick(View v) {
                 editMode = true;
                 updateChooseList(true);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
                 mRecyclerView.setVisibility(View.GONE);
-//                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
                 mChoosedRecyclerView.setVisibility(View.VISIBLE);
                 if (mMainActivity.isOnTablet())
                     enableBottombar(true);
                 else
                     mMainActivity.enableBottombar(true);
                 if (mMainActivity.isOnTablet())
-//                    hideFab();
                     getFab().hide();
                 else
                     mMainActivity.enableFab(false);
+                SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Log.d(TAG, "onClick - INTRO_CONSEGNATI_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false));
+                if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+                    managerIntro();
+                }
             }
         });
 
 //        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroConsegnatiNew.class);
 //        mWelcomeScreen.show(savedInstanceState);
-        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
-        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
-            rootView.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
+//        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
+//        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
+//            rootView.getViewTreeObserver().addOnGlobalLayoutListener(
+//                    new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+//                        @Override
+//                        public void onGlobalLayout() {
+//                            // only want to do this once
+//                            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+//                            runIntro1();
+//                        }
+//                    });
+//        }
 
-                        @Override
-                        public void onGlobalLayout() {
-                            // only want to do this once
-                            rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            runIntro1();
-                        }
-                    });
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(getClass().getName(), "onResume: ");
+        getActivity().registerReceiver(positionBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
+        getActivity().registerReceiver(completedBRec, new IntentFilter(
+                ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
+        if (editMode) {
+            mChoosedRecyclerView.setVisibility(View.VISIBLE);
+            if (mMainActivity.isOnTablet())
+                enableBottombar(true);
+            else
+                mMainActivity.enableBottombar(true);
+            mRecyclerView.setVisibility(View.GONE);
+            mNoConsegnati.setVisibility(View.INVISIBLE);
+            if (mMainActivity.isOnTablet())
+                getFab().hide();
+            else
+                mMainActivity.enableFab(false);
+
+            updateChooseList(false);
         }
-
-            return rootView;
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            Log.d(getClass().getName(), "onResume: ");
-            getActivity().registerReceiver(positionBRec, new IntentFilter(
-                    ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
-            getActivity().registerReceiver(completedBRec, new IntentFilter(
-                    ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            Log.d(getClass().getName(), "onPause: ");
-            getActivity().unregisterReceiver(positionBRec);
-            getActivity().unregisterReceiver(completedBRec);
-        }
-
-        @Override
-        public void onSaveInstanceState(Bundle savedInstanceState) {
-            savedInstanceState.putBoolean(EDIT_MODE, editMode);
-            super.onSaveInstanceState(savedInstanceState);
-//        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
-        }
-
-        @Override
-        public void onDestroy() {
-            if (listaCanti != null)
-                listaCanti.close();
-            super.onDestroy();
+        else {
+            mChoosedRecyclerView.setVisibility(View.GONE);
             if (mMainActivity.isOnTablet())
                 enableBottombar(false);
             else
                 mMainActivity.enableBottombar(false);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            if (mMainActivity.isOnTablet())
+                getFab().show();
+            else
+                mMainActivity.enableFab(true);
+            updateConsegnatiList(true);
+        }
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
+            fabIntro();
         }
 
-        @Override
-        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            setHasOptionsMenu(true);
-        }
+    }
 
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            super.onCreateOptionsMenu(menu, inflater);
-            getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-            menu.findItem(R.id.action_help).setIcon(
-                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .color(Color.WHITE));
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(getClass().getName(), "onPause: ");
+        getActivity().unregisterReceiver(positionBRec);
+        getActivity().unregisterReceiver(completedBRec);
+    }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_help:
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(EDIT_MODE, editMode);
+        super.onSaveInstanceState(savedInstanceState);
+//        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (listaCanti != null)
+            listaCanti.close();
+        if (mMainActivity.isOnTablet())
+            enableBottombar(false);
+        else
+            mMainActivity.enableBottombar(false);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+        menu.findItem(R.id.action_help).setIcon(
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .color(Color.WHITE));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_help:
 //                mWelcomeScreen.forceShow();
-                    runIntro1();
-                    return true;
-            }
-            return false;
+                if (editMode)
+                    managerIntro();
+                else
+                    fabIntro();
+                return true;
         }
+        return false;
+    }
 
     private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
@@ -542,9 +569,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
     private void enableBottombar(boolean enabled) {
         mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
-//        mBottomBar.requestLayout();
     }
 
     @Override
@@ -554,119 +578,64 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     @Override
     public void onNeutral(@NonNull String tag) {}
 
-    private void runIntro1() {
-
-        if (editMode) {
-            ImageButton cancel_change = mMainActivity.isOnTablet() ?
-                    (ImageButton) rootView.findViewById(R.id.cancel_change):
-                    (ImageButton) getActivity().findViewById(R.id.cancel_change);
-            cancel_change.performClick();
-        }
-
-        new MaterialTapTargetPrompt.Builder(getActivity())
-                .setTarget(getFab())
-                .setPrimaryText(R.string.title_activity_consegnati)
-                .setSecondaryText(R.string.showcase_consegnati_desc)
-                .setCaptureTouchEventOnFocal(true)
-                .setCaptureTouchEventOutsidePrompt(true)
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
+    private void fabIntro() {
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(getFab(), getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_howto))
+                        .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                        .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                        .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                        .tintTarget(false)                   // Whether to tint the target view's color
+                , new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                        //Do something such as storing a value so that this prompt is never shown again
-                        runIntro2();
-                    }
-
-                    @Override
-                    public void onHidePromptComplete() {
-
-                    }
-                })
-                .show();
-    }
-
-    private void runIntro2() {
-
-        new MaterialTapTargetPrompt.Builder(getActivity())
-                .setTarget(getFab())
-                .setPrimaryText(R.string.title_activity_consegnati)
-                .setSecondaryText(R.string.showcase_consegnati_howto)
-                .setCaptureTouchEventOnFocal(true)
-                .setCaptureTouchEventOutsidePrompt(true)
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
-                    @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                        //Do something such as storing a value so that this prompt is never shown again
-                        runIntro3();
-                    }
-
-                    @Override
-                    public void onHidePromptComplete() {
-
-                    }
-                })
-                .show();
-    }
-
-    private void runIntro3() {
-
-        getFab().performClick();
-
-        new MaterialTapTargetPrompt.Builder(getActivity())
-                .setTarget(mMainActivity.isOnTablet() ?
-                        (ImageButton) rootView.findViewById(R.id.confirm_changes):
-                        (ImageButton) getActivity().findViewById(R.id.confirm_changes))
-                .setFocalColourAlpha(99)
-                .setPrimaryText(R.string.title_activity_consegnati)
-                .setSecondaryText(R.string.showcase_consegnati_confirm)
-                .setCaptureTouchEventOnFocal(true)
-                .setCaptureTouchEventOutsidePrompt(true)
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
-                    @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                        //Do something such as storing a value so that this prompt is never shown again
-                        runIntro4();
-                    }
-
-                    @Override
-                    public void onHidePromptComplete() {
-
-                    }
-                })
-                .show();
-    }
-
-    private void runIntro4() {
-
-        getFab().performClick();
-
-        new MaterialTapTargetPrompt.Builder(getActivity())
-                .setTarget(mMainActivity.isOnTablet() ?
-                        (ImageButton) rootView.findViewById(R.id.cancel_change):
-                        (ImageButton) getActivity().findViewById(R.id.cancel_change))
-                .setFocalColourAlpha(99)
-                .setPrimaryText(R.string.title_activity_consegnati)
-                .setSecondaryText(R.string.showcase_consegnati_cancel)
-                .setCaptureTouchEventOnFocal(true)
-                .setCaptureTouchEventOutsidePrompt(true)
-                .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
-                    @Override
-                    public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                        ImageButton cancel_change = mMainActivity.isOnTablet() ?
-                                (ImageButton) rootView.findViewById(R.id.cancel_change):
-                                (ImageButton) getActivity().findViewById(R.id.cancel_change);
-                        cancel_change.performClick();
-                        //Do something such as storing a value so that this prompt is never shown again
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        Log.d(TAG, "onTargetDismissed: ");
                         SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                         prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true);
                         prefEditor.apply();
                     }
+                });
+    }
 
-                    @Override
-                    public void onHidePromptComplete() {
-
-                    }
-                })
-                .show();
+    private void managerIntro() {
+        new TapTargetSequence(getActivity())
+                .continueOnCancel(true)
+                .targets(
+                        TapTarget.forView(mMainActivity.isOnTablet() ?
+                                (ImageButton) rootView.findViewById(R.id.confirm_changes):
+                                (ImageButton) getActivity().findViewById(R.id.confirm_changes)
+                                , getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_confirm))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                        ,
+                        TapTarget.forView(mMainActivity.isOnTablet() ?
+                                        (ImageButton) rootView.findViewById(R.id.cancel_change):
+                                        (ImageButton) getActivity().findViewById(R.id.cancel_change)
+                                , getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_cancel))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true);
+                                prefEditor.apply();
+                            }
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget) {}
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true);
+                                prefEditor.apply();
+                            }
+                        }).start();
     }
 
 }
