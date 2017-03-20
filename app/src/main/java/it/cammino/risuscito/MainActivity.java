@@ -580,7 +580,7 @@ public class MainActivity extends ThemeableActivity
                                 transaction.replace(R.id.content_frame, fragment, String.valueOf(drawerItem.getIdentifier())).commit();
                             }
                         }
-                        return false;
+                        return isOnTablet;
 
                     }
                 })
