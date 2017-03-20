@@ -10,7 +10,7 @@
     <!--<string name="promotional_text" translatable="false">Evangelist by profession, developer in his spare time (cit.) ;)</string>-->
 
 
-    <string name="private_memory">>Memoria privata</string>
+    <string name="private_memory">Memoria privata</string>
     <string name="public_memory">Memoria pubblica</string>
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_favourites">Preferiti</string>
