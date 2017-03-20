@@ -36,7 +36,13 @@
         <item name="tabMode">scrollable</item>
         <item name="android:background">?colorPrimary</item>
         <item name="colorControlHighlight">#3fff</item>
+        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
         <item name="android:theme">@style/ActionBarThemeOverlay</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+    </style>
+
+    <style name="TextAppearance.Design.Tab.Risuscito">
+        <item name="android:textColor">#99FFFFFF</item>
     </style>
 
     <style name="Widget.Design.NavigationView.Risuscito">

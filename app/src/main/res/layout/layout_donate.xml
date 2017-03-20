@@ -15,7 +15,8 @@
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         risuscito:layout_scrollFlags="scroll|enterAlways"
-        android:elevation="@dimen/design_appbar_elevation">
+        android:elevation="@dimen/design_appbar_elevation"
+        tools:targetApi="lollipop">
 
         <TextView
             android:layout_width="wrap_content"
@@ -109,7 +110,8 @@
         android:elevation="5dp"
         android:visibility="invisible"
         android:background="@drawable/cover_shadow"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:targetApi="lollipop">
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"

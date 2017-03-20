@@ -37,9 +37,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.10'
-    compile ('com.afollestad.material-dialogs:commons:0.9.4.1') {
-        exclude module: 'support-v13'
-    }
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.2'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.4'
     compile 'com.github.turing-tech:MaterialScrollBar:12.3.4'

@@ -9,9 +9,9 @@
     android:minHeight="@dimen/myListPreferredItemHeightMedium">
 
     <ImageView
+        android:id="@+id/question_mark"
         android:translationZ="1dp"
         android:layout_centerInParent="true"
-        android:id="@+id/question_mark"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_width="34dp"
@@ -24,7 +24,8 @@
         android:background="@drawable/oval_bg_hint"
         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
         android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        tools:ignore="MissingPrefix"/>
+        tools:ignore="MissingPrefix"
+        tools:targetApi="lollipop" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -57,8 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.Design.Hint"
-        android:text=""
         android:layout_centerInParent="true"
+        tools:text="@string/showcase_rename_desc"
         android:textColor="?android:textColorPrimary"
         android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"

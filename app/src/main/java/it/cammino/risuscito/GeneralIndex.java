@@ -38,7 +38,7 @@ public class GeneralIndex extends Fragment {
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
-        LUtils mLUtils = LUtils.getInstance(getActivity());
+//        LUtils mLUtils = LUtils.getInstance(getActivity());
 
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
@@ -56,7 +56,7 @@ public class GeneralIndex extends Fragment {
             mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         return rootView;
 

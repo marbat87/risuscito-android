@@ -645,7 +645,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     public void onNeutral(@NonNull String tag) { }
 
     private void inflateHint() {
-        final View mHintLayout = getLayoutInflater().inflate(R.layout.hint_layout, null, false);
+        final View mHintLayout = getLayoutInflater().inflate(R.layout.hint_layout, mRecyclerContainer, false);
         TextView mHintLayoutText = (TextView) mHintLayout.findViewById(R.id.hint_text);
         mHintLayoutText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
         mHintLayout.setOnTouchListener(new SwipeDismissTouchListener(

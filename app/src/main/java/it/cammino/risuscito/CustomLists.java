@@ -187,7 +187,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         tabs.setVisibility(View.VISIBLE);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         getFab().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,7 +287,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
             tabs.setupWithViewPager(mViewPager);
-            mLUtils.applyFontedTab(mViewPager, tabs);
+//            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
                 @Override
@@ -458,7 +458,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                 updateLista();
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
+//                mLUtils.applyFontedTab(mViewPager, tabs);
                 Handler myHandler = new Handler();
                 final Runnable mMyRunnable2 = new Runnable() {
                     @Override
@@ -484,7 +484,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
                                 tabs.setupWithViewPager(mViewPager);
-                                mLUtils.applyFontedTab(mViewPager, tabs);
+//                                mLUtils.applyFontedTab(mViewPager, tabs);
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override

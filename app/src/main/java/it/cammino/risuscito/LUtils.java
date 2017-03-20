@@ -26,17 +26,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
-import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -177,17 +174,17 @@ public class LUtils {
     }
 
 
-    public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
-        TabLayout.Tab mTab;
-        for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
-            TextView tv = (TextView) mActivity.getLayoutInflater().inflate(R.layout.item_tab, null);
-            if (i == viewPager.getCurrentItem()) tv.setSelected(true);
-            tv.setText(viewPager.getAdapter().getPageTitle(i));
-            mTab = tabLayout.getTabAt(i);
-            if (mTab != null)
-                mTab.setCustomView(tv);
-        }
-    }
+//    public void applyFontedTab(ViewPager viewPager, TabLayout tabLayout) {
+//        TabLayout.Tab mTab;
+//        for (int i = 0; i < viewPager.getAdapter().getCount(); i++) {
+//            TextView tv = (TextView) mActivity.getLayoutInflater().inflate(R.layout.item_tab, null);
+//            if (i == viewPager.getCurrentItem()) tv.setSelected(true);
+//            tv.setText(viewPager.getAdapter().getPageTitle(i));
+//            mTab = tabLayout.getTabAt(i);
+//            if (mTab != null)
+//                mTab.setCustomView(tv);
+//        }
+//    }
 
 //    public static boolean hasICS() {
 //        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;

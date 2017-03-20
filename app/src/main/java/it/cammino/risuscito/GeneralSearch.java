@@ -33,7 +33,7 @@ public class GeneralSearch extends Fragment {
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
-        LUtils mLUtils = LUtils.getInstance(getActivity());
+//        LUtils mLUtils = LUtils.getInstance(getActivity());
 
 //        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
@@ -47,7 +47,7 @@ public class GeneralSearch extends Fragment {
         }
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         return rootView;
     }
