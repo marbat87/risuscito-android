@@ -520,6 +520,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .descriptionTextSize(15)
                                 .tintTarget(false)                   // Whether to tint the target view's color
                         ,
                         TapTarget.forView(getFab()

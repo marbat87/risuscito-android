@@ -169,16 +169,6 @@ public class SimpleDialogFragment extends DialogFragment {
             }
         });
 
-//        if (getBuilder().mCanceListener) {
-//            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                @Override
-//                public void onCancel(DialogInterface dialog) {
-//                    mCallback.onPositive(getBuilder().mTag);
-//                }
-//            });
-//        }
-//        dialog.setCancelable(false);
-
         return dialog;
     }
 

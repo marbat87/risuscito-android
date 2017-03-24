@@ -16,7 +16,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -211,14 +211,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         // drag & drop manager
         mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
-//        if (LUtils.hasL())
-//            mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
-//                    (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3, getTheme()));
-//        else
-//            mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
-//                    (NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z3));
         mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
-                (NinePatchDrawable) ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
+                (NinePatchDrawable) AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
+//                (NinePatchDrawable) ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
 
         // swipe manager
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
@@ -279,14 +274,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         mRecyclerView.setItemAnimator(animator);
 
-//        if (LUtils.hasL())
-//            mRecyclerView.addItemDecoration(
-//                    new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider, getTheme()), true));
-//        else
-//            mRecyclerView.addItemDecoration(
-//                    new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
         mRecyclerView.addItemDecoration(
-                new SimpleListDividerDecorator(ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
+                new SimpleListDividerDecorator(AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
+//                new SimpleListDividerDecorator(ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.

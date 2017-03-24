@@ -423,7 +423,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     @Override
     public boolean onCabItemClicked(MenuItem item) {
-        Log.d(TAG, "onCabCreated: ");
+        Log.d(TAG, "onCabItemClicked: ");
         switch(item.getItemId()) {
             case R.id.action_remove_item:
                 Log.d(TAG, "onCabItemClicked: CLICKED");
@@ -452,7 +452,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 mMainActivity.getMaterialCab().finish();
                 if (removedItems.size() > 0) {
                     String message = removedItems.size() > 1 ?
-                            getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
+                            getString(R.string.favorites_removed, removedItems.size())
+//                            getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
                             : getString(R.string.favorite_removed);
                     Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
                             .setAction(R.string.cancel, new View.OnClickListener() {

@@ -837,9 +837,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                Toast.LENGTH_SHORT).show();
         Log.e(TAG, "Media player error! Resetting.");
         Log.e(TAG, "Error: what=" + String.valueOf(what) + ", extra=" + String.valueOf(extra));
-        mState = State.Stopped;
-        relaxResources(true);
-        giveUpAudioFocus();
+//        mState = State.Stopped;
+//        relaxResources(true);
+//        giveUpAudioFocus();
+        processStopRequest(true);
         return true; // true indicates we handled the error
     }
 

@@ -211,8 +211,8 @@
     <string name="switch_tooltip">Натисніть на пісню або на пустий рядок зі списку, на яку хочете змінити пісню</string>
     <string name="switch_started">Змінюється&#8230;</string>
     <string name="list_removed">Список видалено \'</string>
-    <string name="favorites_removed">% видалено з закладок</string>
-    <string name="histories_removed">% видалено з хронології</string>
+    <string name="favorites_removed">%1$d видалено з закладок</string>
+    <string name="histories_removed">%1$d видалено з хронології</string>
     <!--<string name="sc_pagina_render_title">Сторінка пісні</string>-->
     <!--<string name="sc_pagina_render_desc">Вітаємо в нову сторінку пісні. \nОсь головні функції:</string>-->
     <string name="sc_tonalita_desc">З цього меню можна здійснити зміну тональності з наступними функціями: перенесення аккордів,

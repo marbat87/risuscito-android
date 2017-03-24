@@ -426,7 +426,7 @@ public class MainActivity extends ThemeableActivity
                                     .positiveButton(R.string.confirm)
                                     .negativeButton(R.string.dismiss)
                                     .show();
-                            return true;
+//                            return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gdrive_restore) {
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
@@ -435,7 +435,7 @@ public class MainActivity extends ThemeableActivity
                                     .positiveButton(R.string.confirm)
                                     .negativeButton(R.string.dismiss)
                                     .show();
-                            return true;
+//                            return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_signout) {
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
@@ -444,7 +444,7 @@ public class MainActivity extends ThemeableActivity
                                     .positiveButton(R.string.confirm)
                                     .negativeButton(R.string.dismiss)
                                     .show();
-                            return true;
+//                            return true;
                         }
                         else if (profile instanceof IDrawerItem && profile.getIdentifier() == R.id.gplus_revoke) {
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
@@ -453,7 +453,7 @@ public class MainActivity extends ThemeableActivity
                                     .positiveButton(R.string.confirm)
                                     .negativeButton(R.string.dismiss)
                                     .show();
-                            return true;
+//                            return true;
                         }
 
                         //false if you have not consumed the event and it should close the drawer
@@ -579,6 +579,9 @@ public class MainActivity extends ThemeableActivity
                                 transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
                                 transaction.replace(R.id.content_frame, fragment, String.valueOf(drawerItem.getIdentifier())).commit();
                             }
+
+                            if (isOnTablet)
+                                mMiniDrawer.setSelection(drawerItem.getIdentifier());
                         }
                         return isOnTablet;
 
@@ -751,10 +754,10 @@ public class MainActivity extends ThemeableActivity
     public void enableFab(boolean enable) {
         Log.d(TAG, "enableFab: " + enable);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
-        View mScrolling = findViewById(R.id.content_frame);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
-        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());
-        mFab.requestLayout();
+//        View mScrolling = findViewById(R.id.content_frame);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
+//        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());
+//        mFab.requestLayout();
         if (enable)
             mFab.show();
         else

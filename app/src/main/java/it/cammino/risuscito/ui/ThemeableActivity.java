@@ -45,21 +45,22 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         Log.d(TAG, "onSharedPreferenceChanged: " + s);
         if (s.equals(Utility.SYSTEM_LANGUAGE)) {
 //            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + getResources().getConfiguration().locale.getLanguage());
-            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
-            Log.d(TAG, "onSharedPreferenceChanged: cur set" + sharedPreferences.getString(s, ""));
+            Log.d(TAG, "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
+            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, ""));
 //            if (sharedPreferences.getString(s, "it").equals("it") && !getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-            if (sharedPreferences.getString(s, "it").equals("it") && !ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-                return;
+//            if (sharedPreferences.getString(s, "it").equals("it") && !ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
+//                return;
 //            if (!getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
-            if (!ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
+            if (!ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage()
+                    .equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.putExtra(Utility.DB_RESET, true);
-                String currentLang = "it";
-//                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-                    currentLang = "uk";
+                String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
+//                String currentLang = "it";
+//                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
+//                    currentLang = "uk";
                 i.putExtra(Utility.CHANGE_LANGUAGE,
                         currentLang + "-" + sharedPreferences.getString(s, ""));
                 startActivity(i);
@@ -196,8 +197,28 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                 .getDefaultSharedPreferences(newBase);
         String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
         Log.d(TAG, "attachBaseContext - language: " + language);
+        //ho settato almeno una volta la lingua --> imposto quella
         if (!language.equals("")) {
             Locale locale = new Locale(language);
+            Locale.setDefault(locale);
+            ThemeableActivity.setSystemLocalWrapper(config, locale);
+            changeConfig = true;
+        }
+        // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua selezionabile oppure IT se non presente
+        else {
+            SharedPreferences.Editor mEditor = sp.edit();
+            String mLanguage;
+            switch (getSystemLocalWrapper(newBase.getResources().getConfiguration()).getLanguage()) {
+                case "uk":
+                    mLanguage = "uk";
+                    break;
+                default:
+                    mLanguage = "it";
+                    break;
+            }
+            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage);
+            mEditor.apply();
+            Locale locale = new Locale(mLanguage);
             Locale.setDefault(locale);
             ThemeableActivity.setSystemLocalWrapper(config, locale);
             changeConfig = true;

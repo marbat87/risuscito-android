@@ -139,8 +139,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 getActivity().findViewById(R.id.bottom_bar);
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);
-//        if (!mMainActivity.isOnTablet())
-//            mMainActivity.enableFab(true);
+        if (!mMainActivity.isOnTablet())
+            mMainActivity.enableFab(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 

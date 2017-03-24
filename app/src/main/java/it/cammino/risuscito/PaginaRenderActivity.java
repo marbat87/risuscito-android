@@ -527,7 +527,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         getRecordLink();
 
         try {
-            primaNota = CambioAccordi.recuperaPrimoAccordo(getAssets().open(pagina + ".htm"));
+            primaNota = CambioAccordi.recuperaPrimoAccordo(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
             primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"));
         }
         catch (IOException e) {
@@ -800,6 +800,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 i.putExtra(PdfExportService.DATA_PRIMO_BARRE, primoBarre);
                 i.putExtra(PdfExportService.DATA_BARRE_CAMBIO, barreCambio);
                 i.putExtra(PdfExportService.DATA_PAGINA, pagina);
+                i.putExtra(PdfExportService.DATA_LINGUA, ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
                 startService(i);
                 return true;
             case R.id.action_help_canto:
@@ -1270,13 +1271,35 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //            String language = getResources().getConfiguration().locale.getLanguage();
             String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
-            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+//            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+            Pattern pattern = null;
             Pattern patternMinore = null;
-            if (language.equalsIgnoreCase("uk")) {
-                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
-                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
-                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+//            if (language.equalsIgnoreCase("uk")) {
+//                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
+//                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
+//                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+//            }
+//
+//            if (language.equalsIgnoreCase("en"))
+//                pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B");
+
+            switch (language) {
+                case "it":
+                    pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+                    break;
+                case "uk":
+                    pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
+                    //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
+                    patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+                    break;
+                case "en":
+                    pattern = Pattern.compile("C#|C|D|Eb|E|F#|F|G#|G|A|Bb|B");
+                    break;
+                default:
+                    pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+                    break;
             }
+
 
             //serve per segnarsi se si è già evidenziato il primo accordo del testo
             boolean notaHighlighed = !higlightDiff;
@@ -1284,7 +1307,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             while (line != null) {
                 Log.d(getClass().getName(), "RIGA DA ELAB: " + line);
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (language.equalsIgnoreCase("uk")) {
+                    if (language.equalsIgnoreCase("uk") || language.equalsIgnoreCase("en")) {
                         line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
                         line = line.replaceAll("</FONT><FONT COLOR=\"#000000\">", "<K2>");
                     }
@@ -1332,6 +1355,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 notaHighlighed = true;
                             }
                         }
+
+                        if (language.equalsIgnoreCase("en")) {
+                            line = line.replaceAll("<K>", "</FONT><FONT COLOR='#A13F3C'>");
+                            line = line.replaceAll("<K2>", "</FONT><FONT COLOR='#000000'>");
+                        }
+
                     }
                     out.write(line);
                     out.newLine();

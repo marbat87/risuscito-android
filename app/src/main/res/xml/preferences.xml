@@ -78,7 +78,6 @@
             android:key="memoria_salvataggio_scelta" />
 
         <ListPreference
-            android:defaultValue="@string/lang_it_value"
             android:title="@string/language_title"
             android:summary="@string/language_summary"
             android:entries="@array/pref_languages_entries"
