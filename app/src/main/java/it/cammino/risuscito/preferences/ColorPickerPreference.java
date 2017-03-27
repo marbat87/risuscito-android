@@ -114,7 +114,7 @@ public class ColorPickerPreference extends Preference {
         }
     }
 
-    public MainActivity getPrefActivity() {
+    private MainActivity getPrefActivity() {
         Context context = getContext();
         if (context instanceof ContextThemeWrapper)
         {

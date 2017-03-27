@@ -200,7 +200,6 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
             collapsingToolbarLayout.setTitle(titoloLista);
         }
 
-        //noinspection ConstantConditions
 //        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(CreaListaActivity.this);
 

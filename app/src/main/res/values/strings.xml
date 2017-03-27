@@ -3,10 +3,10 @@
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
-    <string name="lang_en" translatable="false">English</string>
+    <!--<string name="lang_en" translatable="false">English</string>-->
     <string name="lang_it_value" translatable="false">it</string>
     <string name="lang_uk_value" translatable="false">uk</string>
-    <string name="lang_en_value" translatable="false">en</string>
+    <!--<string name="lang_en_value" translatable="false">en</string>-->
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
     <!--<string name="promotional_text" translatable="false">Evangelist by profession, developer in his spare time (cit.) ;)</string>-->
@@ -215,7 +215,7 @@
     <string name="dialog_reset_favorites_title">Svuota preferiti</string>
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
-    <string name="history_removed">Rimosso dalla cronologia</string>
+    <!--<string name="history_removed">Rimosso dalla cronologia</string>-->
     <string name="action_switch_to">Scambia con&#8230;</string>
     <string name="song_removed">Canto rimosso</string>
     <string name="switch_done">Scambio effettuato</string>
@@ -223,8 +223,16 @@
     <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
     <string name="switch_started">Scambio in corso&#8230;</string>
     <string name="list_removed">Rimossa la lista \'</string>
-    <string name="favorites_removed">%1$d rimossi dai preferiti</string>
-    <string name="histories_removed">%1$d rimossi dalla cronologia</string>
+    <plurals name="favorites_removed">
+        <item quantity="one">%1$d rimosso dai preferiti</item>
+        <item quantity="other">%1$d rimossi dai preferiti</item>
+    </plurals>
+    <!--<string name="favorites_removed">%1$d rimossi dai preferiti</string>-->
+    <plurals name="histories_removed">
+        <item quantity="one">%1$d rimosso dalla cronologia</item>
+        <item quantity="other">%1$d rimossi dalla cronologia</item>
+    </plurals>
+    <!--<string name="histories_removed">%1$d rimossi dalla cronologia</string>-->
     <!--<string name="sc_pagina_render_title">Pagina del canto</string>-->
     <!--<string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>-->
     <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,

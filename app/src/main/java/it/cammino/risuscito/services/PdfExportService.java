@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import it.cammino.risuscito.CambioAccordi;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
-import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class PdfExportService extends IntentService {
     // The tag we put on debug messages

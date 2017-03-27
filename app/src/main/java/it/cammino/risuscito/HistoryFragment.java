@@ -437,11 +437,12 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
                 if (removedItems.size() > 0) {
-                    String message = removedItems.size() > 1 ?
-                            getString(R.string.histories_removed, removedItems.size())
-//                            getString(R.string.histories_removed).replaceAll("%", String.valueOf(removedItems.size()))
-                            : getString(R.string.history_removed);
-                    Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+//                    String message = removedItems.size() > 1 ?
+//                            getString(R.string.histories_removed, removedItems.size())
+//                            : getString(R.string.history_removed);
+                    Snackbar.make(getActivity().findViewById(R.id.main_content)
+                            , getResources().getQuantityString(R.plurals.histories_removed, removedItems.size(), removedItems.size())
+                            , Snackbar.LENGTH_LONG)
                             .setAction(R.string.cancel, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

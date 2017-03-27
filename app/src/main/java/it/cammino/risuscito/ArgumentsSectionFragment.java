@@ -160,7 +160,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             }
         };
 
-        //noinspection ConstantConditions
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
 

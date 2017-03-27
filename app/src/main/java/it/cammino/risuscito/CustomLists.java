@@ -290,9 +290,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 //            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
+                @SuppressWarnings("ConstantConditions")
                 @Override
                 public void run() {
-                    //noinspection ConstantConditions
                     tabs.getTabAt(indDaModif).select();
                 }
             };
@@ -461,9 +461,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 //                mLUtils.applyFontedTab(mViewPager, tabs);
                 Handler myHandler = new Handler();
                 final Runnable mMyRunnable2 = new Runnable() {
+                    @SuppressWarnings("ConstantConditions")
                     @Override
                     public void run() {
-                        //noinspection ConstantConditions
                         tabs.getTabAt(0).select();
                     }
                 };

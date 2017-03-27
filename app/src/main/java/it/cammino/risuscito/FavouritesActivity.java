@@ -451,11 +451,12 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
                 if (removedItems.size() > 0) {
-                    String message = removedItems.size() > 1 ?
-                            getString(R.string.favorites_removed, removedItems.size())
-//                            getString(R.string.favorites_removed).replaceAll("%", String.valueOf(removedItems.size()))
-                            : getString(R.string.favorite_removed);
-                    Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG)
+//                    String message = removedItems.size() > 1 ?
+//                            getString(R.string.favorites_removed, removedItems.size())
+//                            : getString(R.string.favorite_removed);
+                    Snackbar.make(getActivity().findViewById(R.id.main_content)
+                            , getResources().getQuantityString(R.plurals.favorites_removed, removedItems.size(), removedItems.size())
+                            , Snackbar.LENGTH_LONG)
                             .setAction(R.string.cancel, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

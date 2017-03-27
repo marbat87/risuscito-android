@@ -16,7 +16,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -84,7 +83,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
-import it.cammino.risuscito.ui.FABAwareScrollingViewBehavior;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
@@ -522,9 +520,8 @@ public class MainActivity extends ThemeableActivity
                             Fragment fragment;
                             if (drawerItem.getIdentifier() == R.id.navigation_home) {
                                 fragment = new Risuscito();
+                                appBarLayout.setExpanded(true, true);
                                 if (LUtils.hasL()) {
-//                                    AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.toolbar_layout);
-                                    appBarLayout.setExpanded(true, true);
                                     mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 }
                             }
