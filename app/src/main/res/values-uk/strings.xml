@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!---->
+    <!---->
+    <!---->
     <string name="private_memory">Приватна пам\'ять</string>
     <string name="public_memory">Публічна пам\'ять</string>
     <string name="app_name">Христос Воскрес</string>
@@ -65,7 +68,6 @@
     <string name="action_add_list">Новий список</string>
     <string name="action_remove_list">Видалити список</string>
     <string name="action_edit_list">Редагувати список</string>
-    <!--<string name="title_activity_nuova_lista">Новий список</string>-->
     <string name="list_save_exit">Зберегти і вийти</string>
     <string name="add_position">Додати елемент</string>
     <string name="content_drag">перенести елемент</string>
@@ -104,14 +106,10 @@
     <string name="showcase_end_title">Завершити</string>
     <string name="list_added">Додано до списку</string>
     <string name="posizione_rename">Перейменувати</string>
-    <!--<string name="showcase_welcome_crea">Ласкаво просимо. Звідси ти можеш створити/змінити свої особисті списки для будь-якої літургії.</string>-->
     <string name="showcase_add_pos_desc">Цією кнопкою можна додати будь-який новий елемент (прикл. \"Пісня на вхід\", \"перше читання\", ітд.).
         Можна додати до 30 елементів.</string>
-    <!--<string name="posizione_reorder">Переставити елементи</string>-->
-    <!--<string name="showcase_reorder_desc">Створивши більше елементів, їх можна переставляти, перетягуючи їх вниз та вверх.</string>-->
     <string name="showcase_rename_desc">Тримайте назву елементу, щоб перейменувати його.</string>
     <string name="showcase_saveexit_desc">Завершивши, натисни сюди, щоб зберегти і побачити список разом з іншими.</string>
-    <!--<string name="posizione_delete">Видалити елемент</string>-->
     <string name="showcase_delete_desc">Перетягніть вправо або вліво, щоб видалити елемент.</string>
     <string name="action_barre">Баре</string>
     <string name="action_reset_barre">Стандартно</string>
@@ -188,7 +186,6 @@
     <string name="no_favourites_short">Ви не додали жодної закладки.</string>
     <string name="no_consegnati">Ві не додали жодної пісні як \"вручену\".</string>
     <string name="title_activity_consegnati">Вручені пісні</string>
-    <!--<string name="showcase_consegnati_desc">Вітаємо, тут Ви можете позначити пісні, які навчили вас катехісти.</string>-->
     <string name="showcase_consegnati_howto">Натисніть цю кнопку, щоб відкрити список та позначити пісні.</string>
     <string name="showcase_consegnati_confirm">Коли закінчите, натисніть ПІДТВЕРДИТИ, щоб зберегти зміни&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;або натисніть СКАСУВАТИ, щоб скасувати.</string>
@@ -203,7 +200,6 @@
     <string name="dialog_reset_favorites_title">Очистити закладки</string>
     <string name="dialog_reset_favorites_desc">Бажаєш очистити список закладок?</string>
     <string name="action_remove">Видалити</string>
-    <!--<string name="history_removed">Видалено з хронології</string>-->
     <string name="action_switch_to">Змінити на&#8230;</string>
     <string name="song_removed">Пічня видалена</string>
     <string name="switch_done">Зміну здійснено</string>
@@ -217,16 +213,12 @@
         <item quantity="many">%1$d видалено з закладок</item>
         <item quantity="other">%1$d видалено з закладок</item>
     </plurals>
-    <!--<string name="favorites_removed">%1$d видалено з закладок</string>-->
     <plurals name="histories_removed">
         <item quantity="one">%1$d видалено з хронології</item>
         <item quantity="few">%1$d видалено з хронології</item>
         <item quantity="many">%1$d видалено з хронології</item>
         <item quantity="other">%1$d видалено з хронології</item>
     </plurals>
-    <!--<string name="histories_removed">%1$d видалено з хронології</string>-->
-    <!--<string name="sc_pagina_render_title">Сторінка пісні</string>-->
-    <!--<string name="sc_pagina_render_desc">Вітаємо в нову сторінку пісні. \nОсь головні функції:</string>-->
     <string name="sc_tonalita_desc">З цього меню можна здійснити зміну тональності з наступними функціями: перенесення аккордів,
          збереження встановленої тональності та відновлення стандартної.</string>
     <string name="sc_barre_desc">З цього меню можна здійснити зміну баре з тими самими трьома функціями тональності.</string>
@@ -282,7 +274,7 @@
     <string name="import_error">Не вдалося імпортувати список!</string>
     <string name="import_running">Імпортація списку</string>
     <string name="import_done">Імпортація списку вдало завершена!</string>
-    <string name="dialog_import">Ти хочеш імпортувати особистий список з файлу.\nпродовжити?</string>
+    <string name="dialog_import">Ти хочеш імпортувати особистий список з файлу. продовжити?</string>
     <string name="audio_on">Показувати аудіо</string>
     <string name="audio_off">Сховати аудіо</string>
     <string name="fab_delete_unlink">Видалити файл</string>
@@ -290,16 +282,15 @@
     <string name="favorite_off">Видалити с закладок</string>
     <string name="showcase_listepers_title">Експортувати/Імпортувати списки</string>
     <string name="showcase_listepers_desc1">В цій версії можна експортувати та імпортувати скелет та обрані пісні зі створених тобою списків (не дефолтних). Натисни кнопку для додаткових налаштувань та обери нову опцію Відправити файл для того, щоб обрати як і кому відправити список</string>
-    <!--<string name="showcase_listepers_desc2">&#8230;та обери нову опцію Відправити файл для того, щоб обрати як і кому відправити список</string>-->
     <string name="showcase_listepers_desc3">Щоб імпортувати список, відкрий файл в форматі \".risuscito\", який ти отримав, прямо з програми, через яку ти отримав або з файл менеджеру.</string>
     <string name="show_offertorio_title">Євхаристія - принесення дарів</string>
     <string name="show_offertorio_summary">Включити пісню на принесення дарів для Євхаристії</string>
     <string name="canto_offertorio">На принесення дарів</string>
     <string name="title_activity_donate">Подякувати</string>
-    <string name="purchase_success" >Pagamento effettuato correttamente</string>
-    <string name="user_canceled" >Transazione annullata dall\'utente</string>
-    <string name="service_unavailable">Servizio non disponibile</string>
-    <string name="object_invalid" >Oggetto non disponibile</string>
-    <string name="object_owned">Oggetto gi&#224; posseduto</string>
+    <string name="purchase_success">Платіж виконано успішно</string>
+    <string name="user_canceled">Транзакції була відмінена корисиувачем</string>
+    <string name="service_unavailable">"Послуга недоступна "</string>
+    <string name="object_invalid">Об\'єкт недоступний</string>
+    <string name="object_owned">Об\'єкт вже в розпорядженні</string>
     <string name="generic_removed">%1$s видалено</string>
 </resources>
