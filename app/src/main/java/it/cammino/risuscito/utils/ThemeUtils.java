@@ -61,6 +61,12 @@ public class ThemeUtils {
         return shiftColorDown(primaryColor());
     }
 
+    public int primaryColorLight() {
+//        return shiftColorUp(accentColor());
+        return lighter(primaryColor(), 0.5f);
+
+    }
+
     public int accentColor() {
         final int defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent);
         return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("accent_color", defaultColor);

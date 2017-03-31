@@ -40,13 +40,13 @@
         <View
             android:layout_width="2dp"
             android:layout_height="0dp"
-            android:background="#CCCCCC"
+            android:background="@android:color/transparent"
             android:layout_weight="0.5" />
 
         <View
             android:layout_width="2dp"
             android:layout_height="0dp"
-            android:background="@android:color/transparent"
+            android:background="#CCCCCC"
             android:layout_weight="0.5" />
 
     </LinearLayout>

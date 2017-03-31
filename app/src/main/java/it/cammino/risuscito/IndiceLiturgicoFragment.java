@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,15 +8,13 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -27,24 +26,22 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoExpandableAdapter;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IFlexible;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.objects.ExpandableGroup;
+import it.cammino.risuscito.items.ExpandableHeaderItem;
+import it.cammino.risuscito.items.SubItem;
+import it.cammino.risuscito.layoutmanagers.SmoothScrollLinearLayoutManager;
+import it.cammino.risuscito.utils.ThemeUtils;
 
-public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
 
@@ -67,12 +64,18 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     private LUtils mLUtils;
 
+    private int mContextIndex;
+
     private long mLastClickTime = 0;
 
 //    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mWrappedAdapter;
-    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
+//    private RecyclerView.LayoutManager mLayoutManager;
+//    private RecyclerView.Adapter mWrappedAdapter;
+//    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
+
+    private FlexibleAdapter mAdapter;
+    private List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
+
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
@@ -99,10 +102,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         int total = arguments.getCount();
         arguments.moveToFirst();
 
-        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
+//        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
+        List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
 
         for (int i = 0; i < total; i++) {
-            int argId =  arguments.getInt(0);
+            String argId =  String.valueOf(arguments.getInt(0));
             query = "SELECT B._id, B.titolo, B.color, B.pagina, B.source" +
                     "		FROM INDICE_LIT A, ELENCO B " +
                     "       WHERE A._id = " + argId +
@@ -114,21 +118,39 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
             int totCanti = argCanti.getCount();
             argCanti.moveToFirst();
 
-            List<CantoRecycled> children =  new ArrayList<>();
-
-            for (int j = 0; j < totCanti; j++) {
-                children.add(new CantoRecycled(argCanti.getString(1)
-                        , argCanti.getInt(3)
-                        , argCanti.getString(2)
-                        , argCanti.getInt(0)
-                        , argCanti.getString(4)));
+//            List<CantoRecycled> children =  new ArrayList<>();
+//
+//            for (int j = 0; j < totCanti; j++) {
+//                children.add(new CantoRecycled(argCanti.getString(1)
+//                        , argCanti.getInt(3)
+//                        , argCanti.getString(2)
+//                        , argCanti.getInt(0)
+//                        , argCanti.getString(4)));
+//                argCanti.moveToNext();
+//            }
+//
+            ExpandableHeaderItem expandableItem = new ExpandableHeaderItem(argId, arguments.getString(1));
+            expandableItem.setSubtitle("(" + totCanti + ")");
+            expandableItem.setActiveColor(getThemeUtils().primaryColorDark());
+            for (int j = 1; j <= totCanti; j++) {
+//                Log.d(getClass().getName(), "onCreateView: " + argCanti.getString(1));
+                SubItem subItem = new SubItem(argId + argCanti.getInt(0), argCanti.getString(1));
+                subItem.setCantoId(argCanti.getInt(0));
+                subItem.setColor(argCanti.getString(2));
+                subItem.setPage(String.valueOf(argCanti.getInt(3)));
+                subItem.setSource(argCanti.getString(4));
+                subItem.setActiveColor(getThemeUtils().accentColor());
+                //In this case the Header is the same parent: ExpandableHeaderItem instance
+                subItem.setHeader(expandableItem);
+                expandableItem.addSubItem(subItem);
                 argCanti.moveToNext();
             }
             argCanti.close();
 
-            dataItems.add(new Pair(
-                    new ExpandableGroup(arguments.getString(1), arguments.getInt(0))
-                    , children));
+//            dataItems.add(new Pair(
+//                    new ExpandableGroup(arguments.getString(1), arguments.getInt(0))
+//                    , children));
+            mItems.add(expandableItem);
 
             arguments.moveToNext();
 
@@ -136,47 +158,59 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
         arguments.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
-                mLastClickTime = SystemClock.elapsedRealtime();
-                // recupera il titolo della voce cliccata
-                String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText());
-                String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText());
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
-            }
-        };
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // recupera il titolo della voce cliccata
+//                String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText());
+//                String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText());
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", source);
+//                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
 
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+//        mLayoutManager = new LinearLayoutManager(getActivity());
+//
+//        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+//        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+//
+//        //adapter
+//        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, IndiceLiturgicoFragment.this);
+//        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
+//
+//        // Change animations are enabled by default since support-v7-recyclerview v22.
+//        // Need to disable them when using animation indicator.
+//        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+//        animator.setSupportsChangeAnimations(false);
+//
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+//        mRecyclerView.setItemAnimator(animator);
+//        mRecyclerView.setHasFixedSize(false);
+//
+//        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
+        mAdapter = new FlexibleAdapter(mItems, IndiceLiturgicoFragment.this);
+        registerForContextMenu(mRecyclerView);
 
-        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
-        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
-
-        //adapter
-        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, IndiceLiturgicoFragment.this);
-        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
-
-        // Change animations are enabled by default since support-v7-recyclerview v22.
-        // Need to disable them when using animation indicator.
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        mRecyclerView.setItemAnimator(animator);
-        mRecyclerView.setHasFixedSize(false);
-
-        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+        mAdapter.setDisplayHeadersAtStartUp(true)
+                .setAutoScrollOnExpand(true)
+                .setAutoCollapseOnExpand(true)
+                .setAutoScrollOnExpand(true)
+                .setStickyHeaders(true);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -277,31 +311,31 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         outState.putInt("posizioneDaAgg", posizioneDaAgg);
 
         // save current state to support screen rotation, etc...
-        if (mRecyclerViewExpandableItemManager != null) {
-            outState.putParcelable(
-                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
-                    mRecyclerViewExpandableItemManager.getSavedState());
-        }
+//        if (mRecyclerViewExpandableItemManager != null) {
+//            outState.putParcelable(
+//                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
+//                    mRecyclerViewExpandableItemManager.getSavedState());
+//        }
     }
 
     @Override
     public void onDestroyView() {
-        if (mRecyclerViewExpandableItemManager != null) {
-            mRecyclerViewExpandableItemManager.release();
-            mRecyclerViewExpandableItemManager = null;
-        }
+//        if (mRecyclerViewExpandableItemManager != null) {
+//            mRecyclerViewExpandableItemManager.release();
+//            mRecyclerViewExpandableItemManager = null;
+//        }
 
-        if (mRecyclerView != null) {
-            mRecyclerView.setItemAnimator(null);
-            mRecyclerView.setAdapter(null);
-            mRecyclerView = null;
-        }
-
-        if (mWrappedAdapter != null) {
-            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
-            mWrappedAdapter = null;
-        }
-        mLayoutManager = null;
+//        if (mRecyclerView != null) {
+//            mRecyclerView.setItemAnimator(null);
+//            mRecyclerView.setAdapter(null);
+//            mRecyclerView = null;
+//        }
+//
+//        if (mWrappedAdapter != null) {
+//            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+//            mWrappedAdapter = null;
+//        }
+//        mLayoutManager = null;
 
         super.onDestroyView();
     }
@@ -319,13 +353,21 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
+    private void startSubActivity(Bundle bundle) {
+        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+        intent.putExtras(bundle);
+        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        //        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        titoloDaAgg =  ((SubItem)mAdapter.getItem(mContextIndex)).getTitle();
+//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        idDaAgg = ((SubItem)mAdapter.getItem(mContextIndex)).getCantoId();
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -567,4 +609,33 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     @Override
     public void onNeutral(@NonNull String tag) {}
 
+    @Override
+    public boolean onItemClick(int i) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+            return false;
+        mLastClickTime = SystemClock.elapsedRealtime();
+        IFlexible flexibleItem = mAdapter.getItem(i);
+        if (flexibleItem instanceof SubItem) {
+            SubItem subItem = (SubItem) flexibleItem;
+            Bundle bundle = new Bundle();
+            bundle.putString("pagina", subItem.getSource());
+            bundle.putInt("idCanto", subItem.getCantoId());
+
+            // lancia l'activity che visualizza il canto passando il parametro creato
+            startSubActivity(bundle);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemLongClick(int i) {
+        mContextIndex = i;
+        if (mAdapter.getItem(i) instanceof SubItem)
+            ((Activity) getContext()).openContextMenu(mRecyclerView);
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
+    }
 }

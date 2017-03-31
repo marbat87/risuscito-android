@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -16,10 +15,11 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,36 +36,40 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.getkeepsafe.taptargetview.ToolbarTapTarget;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
-import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.adapters.DraggableSwipeableAdapter;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.common.DividerItemDecoration;
+import eu.davidea.flexibleadapter.helpers.UndoHelper;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IFlexible;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.DraggableItem;
+import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.ui.SwipeDismissTouchListener;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
-public class CreaListaActivity extends ThemeableActivity implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+public class CreaListaActivity extends ThemeableActivity implements InputTextDialogFragment.SimpleInputCallback
+        , SimpleDialogFragment.SimpleCallback
+        , FlexibleAdapter.OnItemLongClickListener
+        , FlexibleAdapter.OnItemSwipeListener
+        , FlexibleAdapter.OnItemMoveListener
+        , UndoHelper.OnUndoListener {
 
     private final String TAG = getClass().getCanonicalName();
 
     private ListaPersonalizzata celebrazione;
     private DatabaseCanti listaCanti;
-    private ArrayList<DraggableItem> elementi;
+    //    private ArrayList<DraggableItem> elementi;
     private String titoloLista;
     private boolean modifica;
     private int idModifica;
@@ -74,12 +79,19 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private ArrayList<String> nomiCanti;
     private Bundle tempArgs;
 
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.Adapter mWrappedAdapter;
-    private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
-    private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
-    private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+    private String removedCanto;
+    private int removedPosition;
+    private AbstractFlexibleItem removedItem;
+
+//    private RecyclerView.LayoutManager mLayoutManager;
+//    private RecyclerView.Adapter mAdapter;
+//    private RecyclerView.Adapter mWrappedAdapter;
+//    private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
+//    private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
+//    private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+
+    private FlexibleAdapter mAdapter;
+    private List<AbstractFlexibleItem> elementi = new ArrayList<AbstractFlexibleItem>();
 
     private EditText textfieldTitle;
 
@@ -88,7 +100,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
     private final String TEMP_TITLE = "temp_title";
 
-    private boolean hintVisible;
+//    private boolean hintVisible;
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
@@ -96,6 +108,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @BindView(R.id.fab_crea_lista) FloatingActionButton fabCreaLista;
     @BindView(R.id.recycler_container) ViewGroup mRecyclerContainer;
     @BindView(R.id.noElementsAdded) View mNoElementsAdded;
+    @BindView(R.id.main_hint_layout) View mMainHintLayout;
+    @BindView(R.id.hint_text) TextView mHintText;
 
     @OnClick(R.id.fab_crea_lista)
     public void aggiuntiPosizione() {
@@ -163,13 +177,15 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         dataFragment = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiElementi");
         if (dataFragment != null) {
-            elementi = dataFragment.getDataDrag();
+            elementi = dataFragment.getDataFrag();
         }
         else {
             elementi = new ArrayList<>();
             if (modifica) {
                 for (int i = 0; i < celebrazione.getNumPosizioni(); i++)
-                    elementi.add(new DraggableItem(celebrazione.getNomePosizione(i), Utility.random(1,500)));
+//                    elementi.add(new DraggableItem(celebrazione.getNomePosizione(i), Utility.random(1,500)));
+                    elementi.add(new SimpleItem(String.valueOf(Utility.random(0, 5000))
+                            , celebrazione.getNomePosizione(i)));
             }
         }
 
@@ -201,89 +217,111 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         }
 
 //        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(CreaListaActivity.this);
-
-        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-        mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-
-        // drag & drop manager
-        mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
-        mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
-                (NinePatchDrawable) AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
-//                (NinePatchDrawable) ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
-
-        // swipe manager
-        mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+//        mLayoutManager = new LinearLayoutManager(CreaListaActivity.this);
+//
+//        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
+//        mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+//        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+//        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+//
+//        // drag & drop manager
+//        mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
+//        mRecyclerViewDragDropManager.setDraggingItemShadowDrawable(
+//                (NinePatchDrawable) AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
+////                (NinePatchDrawable) ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.material_shadow_z3));
+//
+//        // swipe manager
+//        mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
         //adapter
-        final DraggableSwipeableAdapter myItemAdapter = new DraggableSwipeableAdapter(CreaListaActivity.this
-                ,elementi);
-        myItemAdapter.setEventListener(new DraggableSwipeableAdapter.EventListener() {
-            @Override
-            public void onItemRemoved(int position) {
-                if (modifica) {
-                    nomiCanti.remove(position);
-//                    	Log.i("RIMOSSO", which + "");
-                }
-                if (mAdapter.getItemCount() == 0) {
-                    mNoElementsAdded.setVisibility(View.VISIBLE);
-                    if (hintVisible) {
-                        mRecyclerContainer.removeView(mRecyclerContainer.getChildAt(mRecyclerContainer.getChildCount() - 1));
-                        hintVisible = false;
-                    }
-                }
-//                    findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
+//        final DraggableSwipeableAdapter myItemAdapter = new DraggableSwipeableAdapter(CreaListaActivity.this
+//                ,elementi);
+//        myItemAdapter.setEventListener(new DraggableSwipeableAdapter.EventListener() {
+//            @Override
+//            public void onItemRemoved(int position) {
+//                if (modifica) {
+//                    nomiCanti.remove(position);
+////                    	Log.i("RIMOSSO", which + "");
+//                }
+//                if (mAdapter.getItemCount() == 0) {
+//                    mNoElementsAdded.setVisibility(View.VISIBLE);
+//                    if (hintVisible) {
+//                        mRecyclerContainer.removeView(mRecyclerContainer.getChildAt(mRecyclerContainer.getChildCount() - 1));
+//                        hintVisible = false;
+//                    }
+//                }
+////                    findViewById(R.id.noElementsAdded).setVisibility(View.VISIBLE);
+//
+//            }
+//
+//            @Override
+//            public void onItemMoved(int from, int to)  {
+//                if (modifica) {
+////                    	Log.i("SPOSTO CANTO", "da " + from + " a " + to);
+//                    nomiCanti.add(to, nomiCanti.remove(from));
+//                }
+//            }
+//
+//            @Override
+//            public void onItemViewLongClicked(View v) {
+//                positionToRename = mRecyclerView.getChildAdapterPosition(v);
+//                new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "RENAME")
+//                        .title(R.string.posizione_rename)
+//                        .prefill(elementi.get(positionToRename).getTitolo())
+//                        .positiveButton(R.string.aggiungi_rename)
+//                        .negativeButton(R.string.aggiungi_dismiss)
+//                        .show();
+//            }
+//
+//        });
 
-            }
+//        mAdapter = myItemAdapter;
+//
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(CreaListaActivity.this));
 
-            @Override
-            public void onItemMoved(int from, int to)  {
-                if (modifica) {
-//                    	Log.i("SPOSTO CANTO", "da " + from + " a " + to);
-                    nomiCanti.add(to, nomiCanti.remove(from));
-                }
-            }
+//        final Parcelable eimSavedState = (savedInstnceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+//        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
-            @Override
-            public void onItemViewLongClicked(View v) {
-                positionToRename = mRecyclerView.getChildAdapterPosition(v);
-                new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "RENAME")
-                        .title(R.string.posizione_rename)
-                        .prefill(elementi.get(positionToRename).getTitolo())
-                        .positiveButton(R.string.aggiungi_rename)
-                        .negativeButton(R.string.aggiungi_dismiss)
-                        .show();
-            }
+        //adapter
+//        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, ArgumentsSectionFragment.this);
+        mAdapter = new FlexibleAdapter(elementi, CreaListaActivity.this);
+        mAdapter.enableLogs(true);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        });
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(CreaListaActivity.this,
+                R.drawable.list_divider, 0)); //Increase to add gap between sections (Works only with LinearLayout!)
 
-        mAdapter = myItemAdapter;
+        mAdapter.setHandleDragEnabled(true)
+                .setSwipeEnabled(true);
+//                .setOnlyEntryAnimation(true)
+//                .setAnimationInterpolator(new DecelerateInterpolator())
+//                .setAnimationInitialDelay(500L);
 
-        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);      // wrap for dragging
-        mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mWrappedAdapter);      // wrap for swiping
+//        mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);      // wrap for dragging
+//        mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mWrappedAdapter);      // wrap for swiping
 
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Disable the change animation in order to make turning back animation of swiped item works properly.
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        mRecyclerView.setItemAnimator(animator);
-
-        mRecyclerView.addItemDecoration(
-                new SimpleListDividerDecorator(AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
+//        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+//        animator.setSupportsChangeAnimations(false);
+//
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+//        mRecyclerView.setItemAnimator(animator);
+//
+//        mRecyclerView.addItemDecoration(
+//                new SimpleListDividerDecorator(AppCompatResources.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
 //                new SimpleListDividerDecorator(ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.list_divider), true));
 
         // NOTE:
         // The initialization order is very important! This order determines the priority of touch event handling.
         //
         // priority: TouchActionGuard > Swipe > DragAndDrop
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(mRecyclerView);
-        mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
-        mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
+//        mRecyclerViewTouchActionGuardManager.attachRecyclerView(mRecyclerView);
+//        mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
+//        mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
 
 //        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fab_crea_lista);
         IconicsDrawable icon = new IconicsDrawable(this)
@@ -325,43 +363,64 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 fragment.setmCallback(CreaListaActivity.this);
         }
 
+        mHintText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
+        mMainHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
+                mMainHintLayout,
+                null,
+                new SwipeDismissTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(Object token) {
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismiss(View view, Object token) {
+//                        mRecyclerContainer.removeView(mHintLayout);
+                        mMainHintLayout.setVisibility(View.GONE);
+//                        hintVisible = false;
+                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
+                        prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true);
+                        prefEditor.apply();
+                    }
+                }));
+
     }
 
     @Override
     public void onPause() {
-        mRecyclerViewDragDropManager.cancelDrag();
+//        mRecyclerViewDragDropManager.cancelDrag();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        if (mRecyclerViewDragDropManager != null) {
-            mRecyclerViewDragDropManager.release();
-            mRecyclerViewDragDropManager = null;
-        }
-
-        if (mRecyclerViewSwipeManager != null) {
-            mRecyclerViewSwipeManager.release();
-            mRecyclerViewSwipeManager = null;
-        }
-
-        if (mRecyclerViewTouchActionGuardManager != null) {
-            mRecyclerViewTouchActionGuardManager.release();
-            mRecyclerViewTouchActionGuardManager = null;
-        }
-
-        if (mRecyclerView != null) {
-            mRecyclerView.setItemAnimator(null);
-            mRecyclerView.setAdapter(null);
-            mRecyclerView = null;
-        }
-
-        if (mWrappedAdapter != null) {
-            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
-            mWrappedAdapter = null;
-        }
-        mAdapter = null;
-        mLayoutManager = null;
+//        if (mRecyclerViewDragDropManager != null) {
+//            mRecyclerViewDragDropManager.release();
+//            mRecyclerViewDragDropManager = null;
+//        }
+//
+//        if (mRecyclerViewSwipeManager != null) {
+//            mRecyclerViewSwipeManager.release();
+//            mRecyclerViewSwipeManager = null;
+//        }
+//
+//        if (mRecyclerViewTouchActionGuardManager != null) {
+//            mRecyclerViewTouchActionGuardManager.release();
+//            mRecyclerViewTouchActionGuardManager = null;
+//        }
+//
+//        if (mRecyclerView != null) {
+//            mRecyclerView.setItemAnimator(null);
+//            mRecyclerView.setAdapter(null);
+//            mRecyclerView = null;
+//        }
+//
+//        if (mWrappedAdapter != null) {
+//            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+//            mWrappedAdapter = null;
+//        }
+//        mAdapter = null;
+//        mLayoutManager = null;
 
         if (listaCanti != null)
             listaCanti.close();
@@ -395,13 +454,14 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 }
             }, 1500);
         }
-        if (elementi != null && elementi.size() > 0) {
-            Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false));
-            if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
-                if (!hintVisible)
-                    inflateHint();
-            }
-        }
+        if (elementi == null || elementi.size() == 0 || mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
+            mMainHintLayout.setVisibility(View.GONE);
+//            if (mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
+////                if (!hintVisible)
+////                    inflateHint();
+//                mMainHintLayout.setVisibility(View.GONE);
+//            }
+//        }
         return true;
     }
 
@@ -411,8 +471,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
             case R.id.action_help:
 //                mWelcomeScreen.forceShow();
                 playIntro();
-                if (elementi != null && elementi.size() > 0 && !hintVisible)
-                    inflateHint();
+//                if (elementi != null && elementi.size() > 0 && !hintVisible)
+//                    inflateHint();
+                if (elementi != null && elementi.size() > 0)
+                    mMainHintLayout.setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_save_list:
                 if (saveList()) {
@@ -480,8 +542,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         }
 
         celebrazione.setName(titoloLista);
+        SimpleItem mElement;
         for (int i = 0; i < elementi.size(); i++) {
-            if (celebrazione.addPosizione(elementi.get(i).getTitolo()) == -2) {
+            mElement = (SimpleItem) mAdapter.getItem(i);
+            if (celebrazione.addPosizione(mElement.getTitolo()) == -2) {
                 Snackbar.make(findViewById(android.R.id.content)
                         , R.string.lista_pers_piena, Snackbar.LENGTH_SHORT)
                         .show();
@@ -542,11 +606,43 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
+    public void onItemLongClick(int i) {
+        Log.d(TAG, "onItemLongClick: " + i);
+        positionToRename = i;
+        SimpleItem mElement = (SimpleItem) mAdapter.getItem(positionToRename);
+        new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "RENAME")
+                .title(R.string.posizione_rename)
+                .prefill(mElement.getTitolo())
+                .positiveButton(R.string.aggiungi_rename)
+                .negativeButton(R.string.aggiungi_dismiss)
+                .show();
+    }
+
+    @Override
+    public void onActionStateChanged(RecyclerView.ViewHolder viewHolder, int i) {}
+
+    @Override
+    public void onUndoConfirmed(int i) {
+        Log.d(TAG, "onUndoConfirmed: " + removedPosition);
+        elementi.add(removedPosition, removedItem);
+        mAdapter.notifyItemInserted(removedPosition);
+        mNoElementsAdded.setVisibility(View.GONE);
+        if (modifica) {
+            nomiCanti.add(removedPosition, removedCanto);
+            Log.d(TAG, "onUndoConfirmed - size: " + nomiCanti.size());
+            Log.d(TAG, "onUndoConfirmed - elSize: " + elementi.size());
+        }
+    }
+
+    @Override
+    public void onDeleteConfirmed(int i) {}
+
     public static class RetainedFragment extends Fragment {
 
         // data object we want to retain
         private ArrayList<String> data;
-        private ArrayList<DraggableItem> dataDrag;
+        private List<AbstractFlexibleItem> dataDrag;
 
         // this method is only called once for this fragment
         @Override
@@ -564,11 +660,11 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
             return data;
         }
 
-        public ArrayList<DraggableItem> getDataDrag() {
+        public List<AbstractFlexibleItem> getDataFrag() {
             return dataDrag;
         }
 
-        public void setDataDrag(ArrayList<DraggableItem> dataDrag) {
+        public void setDataDrag(List<AbstractFlexibleItem> dataDrag) {
             this.dataDrag = dataDrag;
         }
     }
@@ -579,24 +675,29 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         switch (tag) {
             case "RENAME":
                 EditText mEditText = dialog.getInputEditText();
-                elementi.set(positionToRename, new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
-                        , elementi.get(positionToRename).getIdPosizione()));
+//                elementi.set(positionToRename, new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
+//                        , elementi.get(positionToRename).getIdPosizione()));
+                SimpleItem mElement = (SimpleItem) elementi.get(positionToRename);
+                mElement.setTitolo(mEditText != null ? mEditText.getText().toString() : "NULL");
                 mAdapter.notifyDataSetChanged();
                 break;
             case "ADD_POSITION":
 //                findViewById(R.id.noElementsAdded).setVisibility(View.GONE);
                 mNoElementsAdded.setVisibility(View.GONE);
                 mEditText = dialog.getInputEditText();
-                elementi.add(new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
-                        , Utility.random(1, 500)));
+//                elementi.add(new DraggableItem(mEditText != null ? mEditText.getText().toString() : "NULL"
+//                        , Utility.random(1, 500)));
+                elementi.add(new SimpleItem(String.valueOf(Utility.random(1, 5000))
+                        , mEditText != null ? mEditText.getText().toString() : "NULL"));
                 if (modifica)
                     nomiCanti.add("");
                 mAdapter.notifyItemInserted(elementi.size() - 1);
                 SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this);
                 Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false));
                 if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
-                    if (!hintVisible)
-                        inflateHint();
+                    mMainHintLayout.setVisibility(View.VISIBLE);
+//                    if (!hintVisible)
+//                        inflateHint();
                 }
                 break;
         }
@@ -633,31 +734,103 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @Override
     public void onNeutral(@NonNull String tag) { }
 
-    private void inflateHint() {
-        final View mHintLayout = getLayoutInflater().inflate(R.layout.hint_layout, mRecyclerContainer, false);
-        TextView mHintLayoutText = (TextView) mHintLayout.findViewById(R.id.hint_text);
-        mHintLayoutText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
-        mHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
-                mHintLayout,
-                null,
-                new SwipeDismissTouchListener.DismissCallbacks() {
-                    @Override
-                    public boolean canDismiss(Object token) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onDismiss(View view, Object token) {
-                        mRecyclerContainer.removeView(mHintLayout);
-                        hintVisible = false;
-                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
-                        prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true);
-                        prefEditor.apply();
-                    }
-                }));
-        mRecyclerContainer.addView(mHintLayout);
-        hintVisible = true;
+    @Override
+    public boolean shouldMoveItem(int i, int i1) {
+        return true;
     }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (modifica) {
+//          Log.i("SPOSTO CANTO", "da " + from + " a " + to);
+            nomiCanti.add(toPosition, nomiCanti.remove(fromPosition));
+        }
+    }
+
+    @Override
+    public void onItemSwipe(final int position, int direction) {
+        Log.i(TAG, "onItemSwipe position=" + position +
+                " direction=" + (direction == ItemTouchHelper.LEFT ? "LEFT" : "RIGHT"));
+
+        // Option 1 FULL_SWIPE: Direct action no Undo Action
+        // Do something based on direction when item has been swiped:
+        //   A) update item, set "read" if an email etc.
+        //   B) remove the item from the adapter;
+
+        // Option 2 FULL_SWIPE: Delayed action with Undo Action
+        // Show action button and start a new Handler:
+        //   A) on time out do something based on direction (open dialog with options);
+
+        // Create list for single position (only in onItemSwipe)
+        List<Integer> positions = new ArrayList<>(1);
+        positions.add(position);
+        // Build the message
+        IFlexible abstractItem = mAdapter.getItem(position);
+        String message = getString(R.string.generic_removed, extractTitleFrom(abstractItem));
+
+        removedPosition = position;
+        removedItem = elementi.get(removedPosition);
+
+        // Perform different actions
+        // Here, option 2A) is implemented
+        new UndoHelper(mAdapter, this)
+                .withAction(UndoHelper.ACTION_REMOVE, new UndoHelper.SimpleActionListener() {
+                    @Override
+                    public void onPostAction() {
+                        // Handle ActionMode title
+                        if (modifica) {
+                            removedCanto = nomiCanti.remove(removedPosition);
+                            Log.d(TAG, "onItemSwipe: " + removedPosition);
+                            Log.d(TAG, "onItemSwipe - size: " + nomiCanti.size());
+                            Log.d(TAG, "onItemSwipe - elSize: " + elementi.size());
+                        }
+                        if (mAdapter.getItemCount() == 0) {
+                            mNoElementsAdded.setVisibility(View.VISIBLE);
+                            mMainHintLayout.setVisibility(View.GONE);
+                        }
+                    }
+                })
+                .remove(positions, findViewById(android.R.id.content), message,
+                        getString(R.string.cancel), 3000);
+
+    }
+
+    private String extractTitleFrom(IFlexible flexibleItem) {
+        if (flexibleItem instanceof SimpleItem) {
+            SimpleItem exampleItem = (SimpleItem) flexibleItem;
+            return exampleItem.getTitolo();
+        }
+        // We already covered all situations with instanceof
+        return "";
+    }
+
+//    private void inflateHint() {
+//        final View mHintLayout = getLayoutInflater().inflate(R.layout.hint_layout, mRecyclerContainer, false);
+//        TextView mHintLayoutText = (TextView) mHintLayout.findViewById(R.id.hint_text);
+//        mHintText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
+//        mMainHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
+//                mMainHintLayout,
+//                null,
+//                new SwipeDismissTouchListener.DismissCallbacks() {
+//                    @Override
+//                    public boolean canDismiss(Object token) {
+//                        return true;
+//                    }
+//
+//                    @Override
+//                    public void onDismiss(View view, Object token) {
+////                        mRecyclerContainer.removeView(mHintLayout);
+//                        mMainHintLayout.setVisibility(View.GONE);
+//                        hintVisible = false;
+//                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this).edit();
+//                        prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true);
+//                        prefEditor.apply();
+//                    }
+//                }));
+//        mRecyclerContainer.addView(mHintLayout);
+//        mMainHintLayout.setVisibility(View.VISIBLE);
+//        hintVisible = true;
+//    }
 
     private void playIntro() {
         fabCreaLista.show();
@@ -672,7 +845,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .tintTarget(false)
                                 .id(1)
                         ,
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.action_save_list
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.action_save_list
                                 , getString(R.string.list_save_exit), getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -680,7 +853,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
                                 .id(2)
                         ,
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.action_help
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.action_help
                                 , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -698,8 +871,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 prefEditor.apply();
 
                             }
+
                             @Override
-                            public void onSequenceStep(TapTarget tapTarget) {}
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
                             @Override
                             public void onSequenceCanceled(TapTarget tapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ");

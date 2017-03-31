@@ -97,7 +97,16 @@
             android:layout_height="wrap_content"
             android:text="@string/no_elements_added" />
 
-        <include layout="@layout/layout_recycler" />
+        <include layout="@layout/hint_layout" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
 

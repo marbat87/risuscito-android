@@ -538,8 +538,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true);
                                 prefEditor.apply();
                             }
+
                             @Override
-                            public void onSequenceStep(TapTarget tapTarget) {}
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
                             @Override
                             public void onSequenceCanceled(TapTarget tapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ");

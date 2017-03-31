@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
@@ -55,7 +56,7 @@ public class Utility {
     public static final String SPEED_VALUE = "speedValue";
     public static final String SCROLL_PLAYING = "scrollPlaying";
     public static final String ID_CANTO = "idCanto";
-//    public static final String TAG_TRANSIZIONE = "fullscreen";
+    //    public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
 
 //    public static final String GIALLO = "#EBD0A5";
@@ -206,7 +207,7 @@ public class Utility {
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
         if (fileInt.exists()) {
-			Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
+            Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
             return fileInt.getAbsolutePath();
         }
         else
@@ -346,11 +347,20 @@ public class Utility {
         return sb.toString();
     }
 
-//    public static String escapeEmail(String email) {
+    //    public static String escapeEmail(String email) {
 //        String result = email.substring(0, email.indexOf("@"));
 ////        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
 ////        Log.d("UTILITY", "escapeEmail: result " + result);
 //        return result.replaceAll("\\.", "_");
 //    }
+
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+        return context.getResources().getDisplayMetrics();
+    }
+
+    public static float dpToPx(Context context, float dp) {
+        return Math.round(dp * getDisplayMetrics(context).density);
+    }
+
 
 }

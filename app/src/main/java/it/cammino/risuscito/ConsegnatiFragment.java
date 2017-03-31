@@ -626,8 +626,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                                 prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true);
                                 prefEditor.apply();
                             }
+
                             @Override
-                            public void onSequenceStep(TapTarget tapTarget) {}
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
                             @Override
                             public void onSequenceCanceled(TapTarget tapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ");

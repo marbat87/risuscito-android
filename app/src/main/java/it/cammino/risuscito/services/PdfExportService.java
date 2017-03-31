@@ -354,20 +354,22 @@ public class PdfExportService extends IntentService {
                                 String oldLine;
                                 if (higlightDiff && !barre.equalsIgnoreCase(primoBarre)) {
                                     oldLine = "<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></SPAN></H4>";
                                 }
                                 else {
                                     oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></H4>";
                                 }
                                 out.write(oldLine);

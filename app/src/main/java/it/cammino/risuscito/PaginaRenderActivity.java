@@ -42,7 +42,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.getkeepsafe.taptargetview.ToolbarTapTarget;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -1372,20 +1371,22 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 String oldLine;
                                 if (higlightDiff && !barre.equalsIgnoreCase(primoBarre)) {
                                     oldLine = "<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></SPAN></H4>";
                                 }
                                 else {
                                     oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></H4>";
                                 }
                                 out.write(oldLine);
@@ -1829,7 +1830,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         new TapTargetSequence(PaginaRenderActivity.this)
                 .continueOnCancel(true)
                 .targets(
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
                                 , getString(R.string.action_tonalita), getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1837,7 +1838,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
                                 .id(1)
                         ,
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.barre
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.barre
                                 , getString(R.string.action_barre), getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1853,7 +1854,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
                                 .id(3)
                         ,
-                        ToolbarTapTarget.forToolbarOverflow(mToolbar
+                        TapTarget.forToolbarOverflow(mToolbar
                                 , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1872,8 +1873,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
 
                             }
+
                             @Override
-                            public void onSequenceStep(TapTarget tapTarget) {}
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
                             @Override
                             public void onSequenceCanceled(TapTarget tapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ");
@@ -1890,7 +1893,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         new TapTargetSequence(PaginaRenderActivity.this)
                 .continueOnCancel(true)
                 .targets(
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.tonalita
                                 , getString(R.string.action_tonalita), getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1898,7 +1901,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
                                 .id(1)
                         ,
-                        ToolbarTapTarget.forToolbarMenuItem(mToolbar, R.id.barre
+                        TapTarget.forToolbarMenuItem(mToolbar, R.id.barre
                                 , getString(R.string.action_barre), getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1921,7 +1924,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
                                 .id(4)
                         ,
-                        ToolbarTapTarget.forToolbarOverflow(mToolbar
+                        TapTarget.forToolbarOverflow(mToolbar
                                 , getString(R.string.showcase_end_title), getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
@@ -1940,8 +1943,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
 
                             }
+
                             @Override
-                            public void onSequenceStep(TapTarget tapTarget) {}
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
                             @Override
                             public void onSequenceCanceled(TapTarget tapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ");

@@ -242,8 +242,7 @@
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
-    <string name="barre_al_tasto_I">Баре на</string>
-    <string name="barre_al_tasto_II">лад</string>
+    <string name="barre_al_tasto">Баре на %1$s лад</string>
     <string name="external_storage_title">Доступ до публічної памяті</string>
     <string name="external_storage_rationale">Додаток просить доступ до зовнішної памяті. Це наобхідне для того, щоб завантажений файл був видимий для інших додатків. Якщо Ви не згодитесь, файл буде збережений в приватній памяті додатку.</string>
     <string name="external_storage_denied">Немає доступу до публічної памяті.</string>
@@ -302,4 +301,5 @@
     <string name="service_unavailable">Servizio non disponibile</string>
     <string name="object_invalid" >Oggetto non disponibile</string>
     <string name="object_owned">Oggetto gi&#224; posseduto</string>
+    <string name="generic_removed">%1$s видалено</string>
 </resources>
