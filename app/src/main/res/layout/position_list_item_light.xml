@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/myListPreferredItemHeightMedium"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:background="?customSelector">
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/container"

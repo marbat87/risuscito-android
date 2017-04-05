@@ -1,10 +1,19 @@
 package it.cammino.risuscito.items;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -13,9 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
@@ -81,15 +90,14 @@ public class SimpleItem extends AbstractFlexibleItem<SimpleItem.SimpleViewHolder
 	@SuppressWarnings({"unchecked"})
 	public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
 		Context context = holder.itemView.getContext();
-
 		// Background, when bound the first time
-		if (payloads.size() == 0) {
-			Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-					Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-					DrawableUtils.getColorControlHighlight(context));
+//		if (payloads.size() == 0) {
+			Drawable drawable = getSelectableBackgroundCompat(
+					Color.WHITE, ContextCompat.getColor(context, R.color.ripple_color), //Same color of divider
+					ContextCompat.getColor(context, R.color.ripple_color));
 			DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
 			DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
-		}
+//		}
 
 		// In case of searchText matches with Title or with a field this will be highlighted
 		if (adapter.hasSearchText()) {
@@ -137,25 +145,6 @@ public class SimpleItem extends AbstractFlexibleItem<SimpleItem.SimpleViewHolder
 				view.setVisibility(View.GONE);
 			}
 		}
-
-//		@Override
-//		public void onClick(View view) {
-//			Toast.makeText(mContext, "Click on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-//			super.onClick(view);
-//		}
-////
-//		@Override
-//		public boolean onLongClick(View view) {
-//			Toast.makeText(mContext, "LongClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-//			return super.onLongClick(view);
-//		}
-////
-//		@Override
-//		public void toggleActivation() {
-//			super.toggleActivation();
-//			// Here we use a custom Animation inside the ItemView
-////			mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
-//		}
 
 		@Override
 		public float getActivationElevation() {
@@ -214,6 +203,51 @@ public class SimpleItem extends AbstractFlexibleItem<SimpleItem.SimpleViewHolder
 	@Override
 	public String toString() {
 		return "SimpleItem[title=" + getTitolo() + "]";
+	}
+
+	private static StateListDrawable getStateListDrawable(@ColorInt int normalColor, @ColorInt int pressedColor) {
+		StateListDrawable states = new StateListDrawable();
+		states.addState(new int[]{16843518}, getColorDrawable(pressedColor));
+		states.addState(new int[0], getColorDrawable(normalColor));
+		if(!Utils.hasLollipop() || Utils.hasNougat()) {
+			short duration = 200;
+			states.setEnterFadeDuration(duration);
+			states.setExitFadeDuration(duration);
+		}
+
+		return states;
+	}
+
+	public static ColorDrawable getColorDrawable(@ColorInt int color) {
+		return new ColorDrawable(color);
+	}
+
+	@SuppressLint("NewApi")
+	public static Drawable getSelectableBackgroundCompat(@ColorInt int normalColor, @ColorInt int pressedColor, @ColorInt int rippleColor) {
+		return (Utils.hasLollipop()?new RippleDrawable(ColorStateList.valueOf(rippleColor), getStateListDrawable(normalColor, pressedColor), getRippleMask(normalColor)):getStateListDrawableLegacy(normalColor, pressedColor));
+	}
+
+	private static Drawable getRippleMask(@ColorInt int color) {
+		float[] outerRadii = new float[8];
+		Arrays.fill(outerRadii, 3.0F);
+		RoundRectShape r = new RoundRectShape(outerRadii, null, null);
+		ShapeDrawable shapeDrawable = new ShapeDrawable(r);
+		shapeDrawable.getPaint().setColor(color);
+		return shapeDrawable;
+	}
+
+	private static StateListDrawable getStateListDrawableLegacy(@ColorInt int normalColor, @ColorInt int pressedColor) {
+		StateListDrawable states = new StateListDrawable();
+		states.addState(new int[]{16843518}, getColorDrawable(pressedColor));
+		states.addState(new int[]{16842919}, getColorDrawable(pressedColor));
+		states.addState(new int[0], getColorDrawable(normalColor));
+		if(!Utils.hasLollipop() || Utils.hasNougat()) {
+			short duration = 200;
+			states.setEnterFadeDuration(duration);
+			states.setExitFadeDuration(duration);
+		}
+
+		return states;
 	}
 
 }

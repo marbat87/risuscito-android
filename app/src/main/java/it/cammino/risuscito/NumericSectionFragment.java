@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,11 +8,13 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,21 +27,25 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoAdapter;
+import eu.davidea.fastscroller.FastScroller;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IFlexible;
+import it.cammino.risuscito.adapters.CantoBubbleAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.items.CantoItem;
+import it.cammino.risuscito.utils.ThemeUtils;
 
-public class NumericSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+public class NumericSectionFragment extends Fragment implements View.OnCreateContextMenuListener
+        , SimpleDialogFragment.SimpleCallback
+        , FlexibleAdapter.OnItemClickListener
+        , FlexibleAdapter.OnItemLongClickListener {
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -59,8 +66,14 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 
     private LUtils mLUtils;
 
+    private long mLastClickTime = 0;
+    private int mContextIndex;
+
+    private FlexibleAdapter mAdapter;
+
     @BindView(R.id.cantiList_numeric) RecyclerView mRecyclerView;
-    @BindView(R.id.dragScrollBar_numeric) DragScrollBar mDragScrollBar;
+    //    @BindView(R.id.dragScrollBar_numeric) DragScrollBar mDragScrollBar;
+    @BindView(R.id.fast_scroller) FastScroller mFastScroller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,53 +97,71 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoRecycled> titoli = new ArrayList<>();
+//        List<CantoRecycled> titoli = new ArrayList<>();
+        List<AbstractFlexibleItem> mItems = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
-            titoli.add(new CantoRecycled(lista.getString(1)
-                    , lista.getInt(3)
-                    , lista.getString(2)
-                    , lista.getInt(0)
-                    , lista.getString(4)));
+//            titoli.add(new CantoRecycled(lista.getString(1)
+//                    , lista.getInt(3)
+//                    , lista.getString(2)
+//                    , lista.getInt(0)
+//                    , lista.getString(4)));
+            CantoItem mCanto = new CantoItem(String.valueOf(lista.getInt(0)), lista.getString(1));
+            mCanto.setCantoId(lista.getInt(0));
+            mCanto.setColor(lista.getString(2));
+            mCanto.setPage(String.valueOf(lista.getInt(3)));
+            mCanto.setSource(lista.getString(4));
+            mCanto.setActiveColor(getThemeUtils().accentColor());
+            mItems.add(mCanto);
             lista.moveToNext();
         }
 
         // chiude il cursore
         lista.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // recupera il titolo della voce cliccata
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
-                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText().toString();
-
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
-            }
-        };
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // recupera il titolo della voce cliccata
+//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText().toString();
+//                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText().toString();
+//
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", source);
+//                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
 
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
 
-        CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
+//        CantoAdapter adapter = new CantoAdapter(getActivity(), 1, titoli, clickListener, this);
+//        adapter.setHasStableIds(true);
+//        mRecyclerView.setAdapter(adapter);
+//
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setHasFixedSize(true);
+//
+////        new DragScrollBar(getActivity(), mRecyclerView, true)
+//        mDragScrollBar
+//                .setIndicator(new CustomIndicator(getActivity()), true);
+////                .setHandleColour(getThemeUtils().accentColor())
+////                .setHandleOffColour(getThemeUtils().accentColor());
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new CantoBubbleAdapter(mItems, NumericSectionFragment.this, 1);
+        registerForContextMenu(mRecyclerView);
 
-//        new DragScrollBar(getActivity(), mRecyclerView, true)
-        mDragScrollBar
-                .setIndicator(new CustomIndicator(getActivity()), true);
-//                .setHandleColour(getThemeUtils().accentColor())
-//                .setHandleOffColour(getThemeUtils().accentColor());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter.setFastScroller(mFastScroller, getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -241,18 +272,27 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
         super.onDestroy();
     }
 
-    private void startSubActivity(Bundle bundle, View view) {
+//    private void startSubActivity(Bundle bundle, View view) {
+//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+//        intent.putExtras(bundle);
+//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+//    }
+
+    private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+//        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        titoloDaAgg = ((CantoItem)mAdapter.getItem(mContextIndex)).getTitle();
+        idDaAgg = ((CantoItem)mAdapter.getItem(mContextIndex)).getCantoId();
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -491,4 +531,33 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     @Override
     public void onNeutral(@NonNull String tag) {}
 
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
+    }
+
+    @Override
+    public boolean onItemClick(int i) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+            return false;
+        mLastClickTime = SystemClock.elapsedRealtime();
+        IFlexible flexibleItem = mAdapter.getItem(i);
+        if (flexibleItem instanceof CantoItem) {
+            CantoItem subItem = (CantoItem) flexibleItem;
+            Bundle bundle = new Bundle();
+            bundle.putString("pagina", subItem.getSource());
+            bundle.putInt("idCanto", subItem.getCantoId());
+
+            // lancia l'activity che visualizza il canto passando il parametro creato
+            startSubActivity(bundle);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemLongClick(int i) {
+        mContextIndex = i;
+        if (mAdapter.getItem(i) instanceof  CantoItem)
+            ((Activity) getContext()).openContextMenu(mRecyclerView);
+    }
 }

@@ -1,6 +1,8 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,28 +47,12 @@ public class CantoSelezionabileAdapter extends RecyclerView.Adapter {
         final CantoViewHolder cantoHolder = (CantoViewHolder) viewHolder;
         cantoHolder.cantoTitle.setText(dataItem.getTitolo());
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
-//        Drawable drawable = ContextCompat.getDrawable(context,
-//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase(), "drawable", context.getPackageName()));
-//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.page_oval_bkg));
-//        DrawableCompat.setTint(drawable, Color.parseColor(dataItem.getColore()));
-//        if (LUtils.hasJB())
-//            cantoHolder.cantoPage.setBackground(drawable);
-//        else
-//            cantoHolder.cantoPage.setBackgroundDrawable(drawable);
-        cantoHolder.cantoPage.setBackgroundResource(
-                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
-                        , "drawable"
-                        , context.getPackageName()));
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GIALLO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_yellow);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.GRIGIO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_grey);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.VERDE))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_green);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.AZZURRO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_blue);
-//        if (dataItem.getColore().equalsIgnoreCase(Utility.BIANCO))
-//            cantoHolder.cantoPage.setBackgroundResource(R.drawable.bkg_round_white);
+//        cantoHolder.cantoPage.setBackgroundResource(
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+//                        , "drawable"
+//                        , context.getPackageName()));
+        GradientDrawable bgShape = (GradientDrawable) cantoHolder.cantoPage.getBackground();
+        bgShape.setColor(Color.parseColor(dataItem.getColore()));
 
         cantoHolder.checkBox.setChecked(dataItem.isSelected());
 //        cantoHolder.checkBox.setCheckedImmediately(dataItem.isSelected());

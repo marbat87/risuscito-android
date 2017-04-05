@@ -18,6 +18,7 @@
         android:layout_height="40dp"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
+        android:background="@drawable/page_oval_bkg"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:layout_marginLeft="@dimen/myListPreferredItemMargin"

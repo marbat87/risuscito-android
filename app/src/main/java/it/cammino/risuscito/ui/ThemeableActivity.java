@@ -190,7 +190,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
     protected void attachBaseContext(Context newBase) {
 
         Configuration config = new Configuration();
-        boolean changeConfig = false;
+//        boolean changeConfig = false;
 
         //lingua
         SharedPreferences sp = PreferenceManager
@@ -202,7 +202,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             Locale locale = new Locale(language);
             Locale.setDefault(locale);
             ThemeableActivity.setSystemLocalWrapper(config, locale);
-            changeConfig = true;
+//            changeConfig = true;
         }
         // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua selezionabile oppure IT se non presente
         else {
@@ -221,7 +221,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             Locale locale = new Locale(mLanguage);
             Locale.setDefault(locale);
             ThemeableActivity.setSystemLocalWrapper(config, locale);
-            changeConfig = true;
+//            changeConfig = true;
         }
 
         //fond dimension
@@ -232,7 +232,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             Log.d(getClass().toString(), "systemScale: " + systemScale);
             if (actualScale != systemScale) {
                 config.fontScale = systemScale;
-                changeConfig = true;
+//                changeConfig = true;
             }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
@@ -241,13 +241,13 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
         }
 
-        if (changeConfig) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                newBase = newBase.createConfigurationContext(config);
-            } else {
-                newBase.getResources().updateConfiguration(config, newBase.getResources().getDisplayMetrics());
-            }
+//        if (changeConfig) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            newBase = newBase.createConfigurationContext(config);
+        } else {
+            newBase.getResources().updateConfiguration(config, newBase.getResources().getDisplayMetrics());
         }
+//        }
 
         //Calligraphy
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));

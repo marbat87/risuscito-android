@@ -43,7 +43,7 @@ import it.cammino.risuscito.utils.ThemeUtils;
 
 public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener {
 
-    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
+//    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -74,7 +74,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
 
     private FlexibleAdapter mAdapter;
-    private List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
 
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -103,7 +102,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         arguments.moveToFirst();
 
 //        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
-        List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
+        List<AbstractFlexibleItem> mItems = new ArrayList<>();
 
         for (int i = 0; i < total; i++) {
             String argId =  String.valueOf(arguments.getInt(0));

@@ -2,6 +2,8 @@ package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -80,10 +82,12 @@ public class CantoRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.cantoId.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.cantoSource.setText(dataItem.getSource());
-        cantoHolder.cantoPage.setBackgroundResource(
-                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
-                        , "drawable"
-                        , context.getPackageName()));
+//        cantoHolder.cantoPage.setBackgroundResource(
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+//                        , "drawable"
+//                        , context.getPackageName()));
+        GradientDrawable bgShape = (GradientDrawable) cantoHolder.cantoPage.getBackground();
+        bgShape.setColor(Color.parseColor(dataItem.getColore()));
 
         if (context != null) {
             if (dataItem.ismSelected())

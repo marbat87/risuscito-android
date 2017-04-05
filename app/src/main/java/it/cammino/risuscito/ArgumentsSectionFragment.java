@@ -41,9 +41,12 @@ import it.cammino.risuscito.items.SubItem;
 import it.cammino.risuscito.layoutmanagers.SmoothScrollLinearLayoutManager;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener {
+public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener
+        , SimpleDialogFragment.SimpleCallback
+        , FlexibleAdapter.OnItemClickListener
+        , FlexibleAdapter.OnItemLongClickListener {
 
-    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+//    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -72,7 +75,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 //    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
 
     private FlexibleAdapter mAdapter;
-    private List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
 
     private long mLastClickTime = 0;
 
@@ -102,7 +104,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         arguments.moveToFirst();
 
 //        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
-        List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
+        List<AbstractFlexibleItem> mItems = new ArrayList<>();
 
         for (int i = 0; i < total; i++) {
             String argId =  String.valueOf(arguments.getInt(0));
@@ -644,5 +646,4 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
-
 }

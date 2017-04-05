@@ -1271,7 +1271,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
 //            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
-            Pattern pattern = null;
+            Pattern pattern;
             Pattern patternMinore = null;
 //            if (language.equalsIgnoreCase("uk")) {
 //                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");

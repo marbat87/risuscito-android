@@ -253,7 +253,7 @@ public class PdfExportService extends IntentService {
 //            String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
 //            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
-            Pattern pattern = null;
+            Pattern pattern;
             Pattern patternMinore = null;
 //            if (language.equalsIgnoreCase("uk")) {
 //            if (mLingua.equalsIgnoreCase("uk")) {

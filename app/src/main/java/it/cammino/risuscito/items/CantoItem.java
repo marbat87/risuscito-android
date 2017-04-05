@@ -25,11 +25,11 @@ import it.cammino.risuscito.Utility;
 
 /**
  * If you don't have many fields in common better to extend directly from
- * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
+ * {@link AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
-public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
-        implements ISectionable<SubItem.ChildViewHolder, IHeader>, IFilterable {
+public class CantoItem extends AbstractFlexibleItem<CantoItem.ChildViewHolder>
+        implements ISectionable<CantoItem.ChildViewHolder, IHeader>, IFilterable {
 
     protected String id;
     protected String title;
@@ -37,6 +37,7 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
     protected String source;
     protected String color;
     protected int cantoId;
+    protected int numeroSalmo;
     protected int activeColor;
     protected String subtitle = "";
 
@@ -45,7 +46,7 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
      */
     IHeader header;
 
-    public SubItem(String id, String titolo) {
+    public CantoItem(String id, String titolo) {
         this.id = id;
         this.title = titolo;
     }
@@ -98,6 +99,14 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
         this.activeColor = activeColor;
     }
 
+    public int getNumeroSalmo() {
+        return numeroSalmo;
+    }
+
+    public void setNumeroSalmo(int numeroSalmo) {
+        this.numeroSalmo = numeroSalmo;
+    }
+
     public String getSubtitle() {
         return subtitle;
     }
@@ -108,8 +117,8 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
 
     @Override
     public boolean equals(Object inObject) {
-        if (inObject instanceof SubItem) {
-            SubItem inItem = (SubItem) inObject;
+        if (inObject instanceof CantoItem) {
+            CantoItem inItem = (CantoItem) inObject;
             return this.id.equals(inItem.id);
         }
         return false;
@@ -162,6 +171,10 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
         holder.mPage.setText(getPage());
         GradientDrawable bgShape = (GradientDrawable)holder.mPage.getBackground();
         bgShape.setColor(Color.parseColor(getColor()));
+//        holder.mPage.setBackgroundResource(
+//                holder.itemView.getContext().getResources().getIdentifier("page_oval_border_bkg_" + getColor().substring(1).toLowerCase()
+//                        , "drawable"
+//                        , holder.itemView.getContext().getPackageName()));
     }
 
     @Override
@@ -176,13 +189,16 @@ public class SubItem extends AbstractFlexibleItem<SubItem.ChildViewHolder>
      */
     static final class ChildViewHolder extends FlexibleViewHolder {
 
-        public TextView mTitle;
-        public TextView mPage;
+        TextView mTitle;
+        TextView mPage;
+//        View mPageContainer;
+
 
         public ChildViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.mTitle = (TextView) view.findViewById(R.id.text_title);
             this.mPage = (TextView) view.findViewById(R.id.text_page);
+//            this.mPageContainer = view.findViewById(R.id.page_container);
         }
 
         @Override

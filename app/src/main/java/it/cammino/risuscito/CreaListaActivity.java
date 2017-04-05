@@ -15,6 +15,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,8 +38,6 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +89,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //    private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
 
     private FlexibleAdapter mAdapter;
-    private List<AbstractFlexibleItem> elementi = new ArrayList<AbstractFlexibleItem>();
+    private List<AbstractFlexibleItem> elementi;
 
     private EditText textfieldTitle;
 
@@ -364,6 +362,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         }
 
         mHintText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
+        ViewCompat.setElevation(findViewById(R.id.question_mark), 1);
         mMainHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
                 mMainHintLayout,
                 null,

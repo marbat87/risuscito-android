@@ -1,6 +1,8 @@
 package it.cammino.risuscito.adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,13 +63,12 @@ public class CantoInsertRecyclerAdapter extends RecyclerView.Adapter {
         cantoHolder.cantoPage.setText(String.valueOf(dataItem.getPagina()));
         cantoHolder.idCanto.setText(String.valueOf(dataItem.getIdCanto()));
         cantoHolder.sourceCanto.setText(dataItem.getSource());
-
-//        Drawable drawable = DrawableCompat.wrap(cantoHolder.seeCanto.getDrawable());
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.icon_ative_black));
-        cantoHolder.cantoPage.setBackgroundResource(
-                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
-                        , "drawable"
-                        , context.getPackageName()));
+//        cantoHolder.cantoPage.setBackgroundResource(
+//                context.getResources().getIdentifier("page_oval_border_bkg_" + dataItem.getColore().substring(1).toLowerCase()
+//                        , "drawable"
+//                        , context.getPackageName()));
+        GradientDrawable bgShape = (GradientDrawable) cantoHolder.cantoPage.getBackground();
+        bgShape.setColor(Color.parseColor(dataItem.getColore()));
 
     }
 

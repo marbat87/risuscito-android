@@ -16,6 +16,7 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:background="@drawable/page_oval_bkg"
         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
         android:layout_marginStart="@dimen/myListPreferredItemMargin" />
 
