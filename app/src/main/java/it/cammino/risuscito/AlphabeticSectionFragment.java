@@ -28,25 +28,23 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.turingtechnologies.materialscrollbar.CustomIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import eu.davidea.fastscroller.FastScroller;
-import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-import eu.davidea.flexibleadapter.items.IFlexible;
-import it.cammino.risuscito.adapters.CantoBubbleAdapter;
+import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.items.CantoItem;
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.items.SimpleItem;
 
 
 public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener
-        , SimpleDialogFragment.SimpleCallback
-        , FlexibleAdapter.OnItemClickListener
-        , FlexibleAdapter.OnItemLongClickListener {
+        , SimpleDialogFragment.SimpleCallback {
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -70,11 +68,11 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private long mLastClickTime = 0;
     private int mContextIndex;
 
-    private FlexibleAdapter mAdapter;
+    private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
     @BindView(R.id.cantiList) RecyclerView mRecyclerView;
-    //    @BindView(R.id.dragScrollBar) DragScrollBar mDragScrollBar;
-    @BindView(R.id.fast_scroller) FastScroller mFastScroller;
+    @BindView(R.id.dragScrollBar) DragScrollBar mDragScrollBar;
+//    @BindView(R.id.fast_scroller) FastScroller mFastScroller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,7 +97,8 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
         // crea un array e ci memorizza i titoli estratti
 //        List<CantoRecycled> titoli = new ArrayList<>();
-        List<AbstractFlexibleItem> mItems = new ArrayList<>();
+//        List<AbstractFlexibleItem> mItems = new ArrayList<>();
+        List<SimpleItem> mItems = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
 //            titoli.add(new CantoRecycled(lista.getString(1)
@@ -107,13 +106,22 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 //                    , lista.getString(2)
 //                    , lista.getInt(0)
 //                    , lista.getString(4)));
-            CantoItem mCanto = new CantoItem(String.valueOf(lista.getInt(0)), lista.getString(1));
-            mCanto.setCantoId(lista.getInt(0));
-            mCanto.setColor(lista.getString(2));
-            mCanto.setPage(String.valueOf(lista.getInt(3)));
-            mCanto.setSource(lista.getString(4));
-            mCanto.setActiveColor(getThemeUtils().accentColor());
-            mItems.add(mCanto);
+//            CantoItem mCanto = new CantoItem(String.valueOf(lista.getInt(0)), lista.getString(1));
+//            mCanto.setCantoId(lista.getInt(0));
+//            mCanto.setColor(lista.getString(2));
+//            mCanto.setPage(String.valueOf(lista.getInt(3)));
+//            mCanto.setSource(lista.getString(4));
+//            mCanto.setActiveColor(getThemeUtils().accentColor());
+//            mItems.add(mCanto);
+            SimpleItem sampleItem = new SimpleItem();
+            sampleItem
+                    .withTitle(lista.getString(1))
+                    .withPage(String.valueOf(lista.getInt(3)))
+                    .withSource(lista.getString(4))
+                    .withColor(lista.getString(2))
+                    .withId(lista.getInt(0))
+                    .withIdentifier(lista.getInt(0));
+            mItems.add(sampleItem);
             lista.moveToNext();
         }
 
@@ -152,21 +160,51 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mRecyclerView.setHasFixedSize(true);
 //
-////        new DragScrollBar(getActivity(), mRecyclerView, true)
-//        mDragScrollBar
-//                .setIndicator(new CustomIndicator(getActivity()), true);
-////                .setHandleColour(getThemeUtils().accentColor())
-////                .setHandleOffColour(getThemeUtils().accentColor());
+//        new DragScrollBar(getActivity(), mRecyclerView, true)
+
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return false;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle);
+                return true;
+            }
+        };
+
+        FastAdapter.OnLongClickListener<SimpleItem> mOnLongClickListener = new FastAdapter.OnLongClickListener<SimpleItem>() {
+            @Override
+            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                mContextIndex = i;
+                ((Activity) getContext()).openContextMenu(mRecyclerView);
+                return true;
+            }
+        };
+
+        mDragScrollBar
+                .setIndicator(new CustomIndicator(getActivity()), true);
+//                .setHandleColour(getThemeUtils().accentColor())
+//                .setHandleOffColour(getThemeUtils().accentColor());
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new CantoBubbleAdapter(mItems, AlphabeticSectionFragment.this, 0);
+//        mAdapter = new CantoBubbleAdapter(mItems, AlphabeticSectionFragment.this, 0);
+        mAdapter = new FastScrollIndicatorAdapter<>(0);
+        mAdapter.add(mItems);
+        mAdapter.withOnClickListener(mOnClickListener)
+                .withOnLongClickListener(mOnLongClickListener);
         registerForContextMenu(mRecyclerView);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter.setFastScroller(mFastScroller, getThemeUtils().accentColor());
+//        mAdapter.setFastScroller(mFastScroller, getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -241,7 +279,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (getView() != null) {
-                isViewShown = false;
+                isViewShown = true;
                 Log.d(getClass().getName(), "VISIBLE");
                 if (listaCanti == null)
                     listaCanti = new DatabaseCanti(getActivity());
@@ -296,8 +334,8 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         super.onCreateContextMenu(menu, v, menuInfo);
 //        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
 //        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
-        titoloDaAgg = ((CantoItem)mAdapter.getItem(mContextIndex)).getTitle();
-        idDaAgg = ((CantoItem)mAdapter.getItem(mContextIndex)).getCantoId();
+        titoloDaAgg = mAdapter.getItem(mContextIndex).getTitle().getText();
+        idDaAgg = mAdapter.getItem(mContextIndex).getId();
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -547,33 +585,33 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     @Override
     public void onNeutral(@NonNull String tag) {}
 
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
-    }
+//    private ThemeUtils getThemeUtils() {
+//        return ((MainActivity)getActivity()).getThemeUtils();
+//    }
 
-    @Override
-    public boolean onItemClick(int i) {
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-            return false;
-        mLastClickTime = SystemClock.elapsedRealtime();
-        IFlexible flexibleItem = mAdapter.getItem(i);
-        if (flexibleItem instanceof CantoItem) {
-            CantoItem subItem = (CantoItem) flexibleItem;
-            Bundle bundle = new Bundle();
-            bundle.putString("pagina", subItem.getSource());
-            bundle.putInt("idCanto", subItem.getCantoId());
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onItemLongClick(int i) {
-        mContextIndex = i;
-        if (mAdapter.getItem(i) instanceof  CantoItem)
-            ((Activity) getContext()).openContextMenu(mRecyclerView);
-    }
+//    @Override
+//    public boolean onItemClick(int i) {
+//        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//            return false;
+//        mLastClickTime = SystemClock.elapsedRealtime();
+//        IFlexible flexibleItem = mAdapter.getItem(i);
+//        if (flexibleItem instanceof CantoItem) {
+//            CantoItem subItem = (CantoItem) flexibleItem;
+//            Bundle bundle = new Bundle();
+//            bundle.putString("pagina", subItem.getSource());
+//            bundle.putInt("idCanto", subItem.getCantoId());
+//
+//            // lancia l'activity che visualizza il canto passando il parametro creato
+//            startSubActivity(bundle);
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public void onItemLongClick(int i) {
+//        mContextIndex = i;
+//        if (mAdapter.getItem(i) instanceof  CantoItem)
+//            ((Activity) getContext()).openContextMenu(mRecyclerView);
+//    }
 }

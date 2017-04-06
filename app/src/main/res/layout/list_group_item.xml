@@ -9,6 +9,8 @@
 
     <LinearLayout
         android:id="@+id/title_container"
+        android:layout_toLeftOf="@+id/indicator"
+        android:layout_toStartOf="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/myListPreferredItemMargin"
@@ -16,14 +18,13 @@
         android:paddingRight="@dimen/myListPreferredItemMargin"
         android:paddingEnd="@dimen/myListPreferredItemMargin"
         android:layout_centerInParent="true"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
             tools:text="Header"/>
 

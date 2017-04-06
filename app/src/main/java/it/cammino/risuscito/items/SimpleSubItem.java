@@ -1,16 +1,20 @@
 package it.cammino.risuscito.items;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mikepenz.fastadapter.FastAdapter;
-import com.mikepenz.fastadapter.items.AbstractItem;
+import com.mikepenz.fastadapter.IClickable;
+import com.mikepenz.fastadapter.IExpandable;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.ISubItem;
+import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
 
@@ -20,68 +24,63 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 
-public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
+public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClickable> extends AbstractExpandableItem<Parent, SimpleSubItem.ViewHolder, SimpleSubItem<Parent>> {
 
     public StringHolder title;
     public StringHolder page;
     protected StringHolder source;
     protected ColorHolder color;
-    protected int numSalmo;
     protected int id;
 
-    public SimpleItem withTitle(String title) {
+    private View.OnCreateContextMenuListener createContextMenuListener;
+
+    public SimpleSubItem<Parent> withTitle(String title) {
         this.title = new StringHolder(title);
         return this;
     }
 
-    public SimpleItem withTitle(@StringRes int titleRes) {
+    public SimpleSubItem<Parent> withTitle(@StringRes int titleRes) {
         this.title = new StringHolder(titleRes);
         return this;
     }
 
-    public SimpleItem withPage(String page) {
+    public SimpleSubItem<Parent> withPage(String page) {
         this.page = new StringHolder(page);
         return this;
     }
 
-    public SimpleItem withPage(@StringRes int pageRes) {
+    public SimpleSubItem<Parent> withPage(@StringRes int pageRes) {
         this.page = new StringHolder(pageRes);
         return this;
     }
 
-    public SimpleItem withSource(String src) {
+    public SimpleSubItem<Parent> withSource(String src) {
         this.source = new StringHolder(src);
         return this;
     }
 
-    public SimpleItem withSource(@StringRes int srcRes) {
+    public SimpleSubItem<Parent> withSource(@StringRes int srcRes) {
         this.source = new StringHolder(srcRes);
         return this;
     }
 
-    public SimpleItem withColor(String color) {
+    public SimpleSubItem<Parent> withColor(String color) {
         this.color = ColorHolder.fromColor(Color.parseColor(color));
         return this;
     }
 
-    public SimpleItem withColor(@ColorRes int colorRes) {
+    public SimpleSubItem<Parent> withColor(@ColorRes int colorRes) {
         this.color = ColorHolder.fromColorRes(colorRes);
         return this;
     }
 
-    public SimpleItem withId(int id) {
+    public SimpleSubItem<Parent> withId(int id) {
         this.id = id;
         return this;
     }
 
-    public SimpleItem withNumSalmo(String numSalmo) {
-        int numeroTemp = 0;
-        try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3));
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-        }
-        this.numSalmo = numeroTemp;
+    public SimpleSubItem<Parent> withContextMenuListener(View.OnCreateContextMenuListener listener) {
+        this.createContextMenuListener = listener;
         return this;
     }
 
@@ -103,10 +102,6 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
 
     public int getId() {
         return id;
-    }
-
-    public int getNumSalmo() {
-        return numSalmo;
     }
 
     /**
@@ -143,6 +138,12 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         StringHolder.applyToOrHide(page, viewHolder.mPage);
         GradientDrawable bgShape = (GradientDrawable)viewHolder.mPage.getBackground();
         bgShape.setColor(color.getColorInt());
+
+        viewHolder.mId.setText(String.valueOf(id));
+
+        ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
+        viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
+
     }
 
     @Override
@@ -150,6 +151,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         super.unbindView(holder);
         holder.mTitle.setText(null);
         holder.mPage.setText(null);
+        holder.mId.setText(null);
     }
 
     @Override
@@ -164,6 +166,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         protected View view;
         @BindView(R.id.text_title) TextView mTitle;
         @BindView(R.id.text_page) TextView mPage;
+        @BindView(R.id.text_id_canto) TextView mId;
 
         public ViewHolder(View view) {
             super(view);

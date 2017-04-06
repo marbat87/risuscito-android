@@ -1,6 +1,5 @@
 package it.cammino.risuscito;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -26,22 +25,27 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.itemanimators.SlideDownAlphaAnimator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-import eu.davidea.flexibleadapter.items.IFlexible;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.items.ExpandableHeaderItem;
-import it.cammino.risuscito.items.SubItem;
-import it.cammino.risuscito.layoutmanagers.SmoothScrollLinearLayoutManager;
+import it.cammino.risuscito.items.SimpleSubExpandableItem;
+import it.cammino.risuscito.items.SimpleSubItem;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener {
+public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateContextMenuListener
+        , SimpleDialogFragment.SimpleCallback {
 
 //    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManagerLit";
 
@@ -64,7 +68,8 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     private LUtils mLUtils;
 
-    private int mContextIndex;
+    private FastItemAdapter<IItem> mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     private long mLastClickTime = 0;
 
@@ -73,9 +78,6 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //    private RecyclerView.Adapter mWrappedAdapter;
 //    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
 
-    private FlexibleAdapter mAdapter;
-
-
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
     @Override
@@ -83,6 +85,22 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false);
         ButterKnife.bind(this, rootView);
+
+        FastAdapter.OnClickListener<SimpleSubItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleSubItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleSubItem> iAdapter, SimpleSubItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return false;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle);
+                return true;
+            }
+        };
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -102,7 +120,7 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         arguments.moveToFirst();
 
 //        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
-        List<AbstractFlexibleItem> mItems = new ArrayList<>();
+        List<IItem> mItems = new ArrayList<>();
 
         for (int i = 0; i < total; i++) {
             String argId =  String.valueOf(arguments.getInt(0));
@@ -128,23 +146,38 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //                argCanti.moveToNext();
 //            }
 //
-            ExpandableHeaderItem expandableItem = new ExpandableHeaderItem(argId, arguments.getString(1));
-            expandableItem.setSubtitle("(" + totCanti + ")");
-            expandableItem.setActiveColor(getThemeUtils().primaryColorDark());
+            SimpleSubExpandableItem expandableItem = new SimpleSubExpandableItem();
+            expandableItem
+                    .withTitle(arguments.getString(1) + " (" + totCanti + ")")
+                    .withColor(getThemeUtils().primaryColorDark())
+                    .withOnClickListener(new FastAdapter.OnClickListener<SimpleSubExpandableItem>() {
+                        @Override
+                        public boolean onClick(View view, IAdapter<SimpleSubExpandableItem> iAdapter, SimpleSubExpandableItem item, int i) {
+                            Log.d(getClass().getName(), "SimpleSubExpandableItem onClick: ");
+                            if (item.isExpanded())
+                                mLayoutManager.scrollToPositionWithOffset(i, 0);
+                            return false;
+                        }
+                    })
+                    .withIdentifier(Integer.parseInt(argId));
+            List<SimpleSubItem> subItems = new LinkedList<>();
+
             for (int j = 1; j <= totCanti; j++) {
 //                Log.d(getClass().getName(), "onCreateView: " + argCanti.getString(1));
-                SubItem subItem = new SubItem(argId + argCanti.getInt(0), argCanti.getString(1));
-                subItem.setCantoId(argCanti.getInt(0));
-                subItem.setColor(argCanti.getString(2));
-                subItem.setPage(String.valueOf(argCanti.getInt(3)));
-                subItem.setSource(argCanti.getString(4));
-                subItem.setActiveColor(getThemeUtils().accentColor());
-                //In this case the Header is the same parent: ExpandableHeaderItem instance
-                subItem.setHeader(expandableItem);
-                expandableItem.addSubItem(subItem);
+                SimpleSubItem simpleItem = new SimpleSubItem()
+                        .withTitle(argCanti.getString(1))
+                        .withPage(String.valueOf(argCanti.getInt(3)))
+                        .withSource(argCanti.getString(4))
+                        .withColor(argCanti.getString(2))
+                        .withId(argCanti.getInt(0));
+                simpleItem.withContextMenuListener(IndiceLiturgicoFragment.this)
+                        .withOnItemClickListener(mOnClickListener);
+                simpleItem.withIdentifier(Integer.parseInt(argId) * 1000 + j);
+                subItems.add(simpleItem);
                 argCanti.moveToNext();
             }
             argCanti.close();
+            expandableItem.withSubItems(subItems);
 
 //            dataItems.add(new Pair(
 //                    new ExpandableGroup(arguments.getString(1), arguments.getInt(0))
@@ -198,18 +231,19 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //        mRecyclerView.setHasFixedSize(false);
 //
 //        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
-        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
-        mAdapter = new FlexibleAdapter(mItems, IndiceLiturgicoFragment.this);
-        registerForContextMenu(mRecyclerView);
+//        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
+//        mAdapter = new FlexibleAdapter(mItems, IndiceLiturgicoFragment.this);
+//        registerForContextMenu(mRecyclerView);
 
-        mAdapter.setDisplayHeadersAtStartUp(true)
-                .setAutoScrollOnExpand(true)
-                .setAutoCollapseOnExpand(true)
-                .setAutoScrollOnExpand(true)
-                .setStickyHeaders(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new FastItemAdapter<>();
+        mAdapter.add(mItems);
+
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -317,13 +351,13 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //        }
     }
 
-    @Override
-    public void onDestroyView() {
+//    @Override
+//    public void onDestroyView() {
 //        if (mRecyclerViewExpandableItemManager != null) {
 //            mRecyclerViewExpandableItemManager.release();
 //            mRecyclerViewExpandableItemManager = null;
 //        }
-
+//
 //        if (mRecyclerView != null) {
 //            mRecyclerView.setItemAnimator(null);
 //            mRecyclerView.setAdapter(null);
@@ -335,9 +369,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 //            mWrappedAdapter = null;
 //        }
 //        mLayoutManager = null;
-
-        super.onDestroyView();
-    }
+//
+//        super.onDestroyView();
+//    }
 
     @Override
     public void onDestroy() {
@@ -346,11 +380,11 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         super.onDestroy();
     }
 
-    private void startSubActivity(Bundle bundle, View view) {
-        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-        intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-    }
+//    private void startSubActivity(Bundle bundle, View view) {
+//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+//        intent.putExtras(bundle);
+//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+//    }
 
     private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
@@ -362,11 +396,8 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
-        //        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-        titoloDaAgg =  ((SubItem)mAdapter.getItem(mContextIndex)).getTitle();
-//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
-        idDaAgg = ((SubItem)mAdapter.getItem(mContextIndex)).getCantoId();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -608,31 +639,31 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
     @Override
     public void onNeutral(@NonNull String tag) {}
 
-    @Override
-    public boolean onItemClick(int i) {
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-            return false;
-        mLastClickTime = SystemClock.elapsedRealtime();
-        IFlexible flexibleItem = mAdapter.getItem(i);
-        if (flexibleItem instanceof SubItem) {
-            SubItem subItem = (SubItem) flexibleItem;
-            Bundle bundle = new Bundle();
-            bundle.putString("pagina", subItem.getSource());
-            bundle.putInt("idCanto", subItem.getCantoId());
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onItemLongClick(int i) {
-        mContextIndex = i;
-        if (mAdapter.getItem(i) instanceof SubItem)
-            ((Activity) getContext()).openContextMenu(mRecyclerView);
-    }
+//    @Override
+//    public boolean onItemClick(int i) {
+//        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//            return false;
+//        mLastClickTime = SystemClock.elapsedRealtime();
+//        IFlexible flexibleItem = mAdapter.getItem(i);
+//        if (flexibleItem instanceof SubItem) {
+//            SubItem subItem = (SubItem) flexibleItem;
+//            Bundle bundle = new Bundle();
+//            bundle.putString("pagina", subItem.getSource());
+//            bundle.putInt("idCanto", subItem.getCantoId());
+//
+//            // lancia l'activity che visualizza il canto passando il parametro creato
+//            startSubActivity(bundle);
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public void onItemLongClick(int i) {
+//        mContextIndex = i;
+//        if (mAdapter.getItem(i) instanceof SubItem)
+//            ((Activity) getContext()).openContextMenu(mRecyclerView);
+//    }
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();

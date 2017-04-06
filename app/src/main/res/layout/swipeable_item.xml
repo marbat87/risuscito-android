@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_drawer_item_primary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_result_content"
+        android:paddingEnd="@dimen/material_drawer_vertical_padding"
+        android:paddingLeft="@dimen/material_drawer_vertical_padding"
+        android:paddingRight="@dimen/material_drawer_vertical_padding"
+        android:paddingStart="@dimen/material_drawer_vertical_padding"
+        android:gravity="center_vertical"
+        android:visibility="visible"
+        android:background="@color/md_red_900">
+
+        <TextView
+            android:id="@+id/swiped_text"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|start"
+            android:lines="1"
+            android:maxLines="1"
+            android:textDirection="anyRtl"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/material_drawer_item_primary_text"
+            tools:text="@string/generic_removed"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/swiped_action"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|start"
+            android:lines="1"
+            android:maxLines="1"
+            android:textDirection="anyRtl"
+            android:textAllCaps="true"
+            android:textColor="@android:color/primary_text_dark"
+            android:textStyle="bold"
+            android:textSize="@dimen/material_drawer_item_primary_description"
+            android:text="@string/cancel"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:background="?customSelector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/drag_image"
+            android:contentDescription="@string/content_drag"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            risuscito:ico_color="@color/icon_ative_black"
+            risuscito:ico_icon="gmd-reorder"
+            risuscito:ico_size="24dp"
+            risuscito:ico_padding="2dp"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            tools:ignore="MissingPrefix" />
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/drag_image"
+            android:textColor="#000000"
+            android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="RtlHardcoded" />
+
+    </RelativeLayout>
+
+</FrameLayout>

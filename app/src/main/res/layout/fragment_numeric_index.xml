@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cantiList_numeric"
@@ -9,12 +10,13 @@
         android:layout_height="match_parent"
         android:scrollbars="none" />
 
-    <eu.davidea.fastscroller.FastScroller
-        android:id="@+id/fast_scroller"
+    <com.turingtechnologies.materialscrollbar.DragScrollBar
+        android:id="@+id/dragScrollBar_numeric"
         android:layout_width="wrap_content"
+        risuscito:msb_recyclerView="@id/cantiList_numeric"
+        risuscito:msb_lightOnTouch="true"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
-
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
