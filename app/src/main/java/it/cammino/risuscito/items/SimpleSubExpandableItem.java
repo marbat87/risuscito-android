@@ -30,9 +30,9 @@ import it.cammino.risuscito.R;
 
 public class SimpleSubExpandableItem<Parent extends IItem & IExpandable, SubItem extends IItem & ISubItem> extends AbstractExpandableItem<SimpleSubExpandableItem<Parent, SubItem>, SimpleSubExpandableItem.ViewHolder, SubItem> {
 
-    StringHolder title;
-    StringHolder subTitle;
-    ColorHolder color;
+    private StringHolder title;
+    private StringHolder subTitle;
+    private ColorHolder color;
 
     private FastAdapter.OnClickListener<SimpleSubExpandableItem> mOnClickListener;
 
@@ -93,7 +93,7 @@ public class SimpleSubExpandableItem<Parent extends IItem & IExpandable, SubItem
     /**
      * we overwrite the item specific click listener so we can automatically animate within the item
      *
-     * @return
+     * @return the FastAdapter.OnClickListener
      */
     @Override
     public FastAdapter.OnClickListener<SimpleSubExpandableItem<Parent, SubItem>> getOnItemClickListener() {

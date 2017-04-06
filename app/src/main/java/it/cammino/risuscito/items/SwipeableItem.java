@@ -20,9 +20,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 
-/**
- * Created by Mattias on 2016-02-15.
- */
 public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.ViewHolder> implements ISwipeable<SwipeableItem, IItem>, IExtendedDraggable {
 
     public StringHolder name;
@@ -33,9 +30,9 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
 //    public StringHolder undoTextSwipeFromTop;
 //    public StringHolder undoTextSwipeFromBottom;
 
-    public int swipedDirection;
+    private int swipedDirection;
     private Runnable swipedAction;
-    public boolean swipeable = true;
+    private boolean swipeable = true;
     private ItemTouchHelper mHelper;
 
     public SwipeableItem withName(String Name) {
@@ -187,7 +184,7 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
         @BindView(R.id.swiped_action) TextView swipedAction;
         @BindView(R.id.drag_image) View mDragHandler;
 
-        public Runnable swipedActionRunnable;
+        Runnable swipedActionRunnable;
 
         public ViewHolder(View view) {
             super(view);

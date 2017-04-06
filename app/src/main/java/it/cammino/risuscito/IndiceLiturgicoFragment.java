@@ -245,6 +245,9 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
         mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
 
+        //restore selections (this has to be done after the items were added
+        mAdapter.withSavedInstanceState(savedInstanceState);
+
         mLUtils = LUtils.getInstance(getActivity());
 
         if (savedInstanceState != null) {
@@ -335,20 +338,13 @@ public class IndiceLiturgicoFragment extends Fragment implements View.OnCreateCo
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
+        outState = mAdapter.saveInstanceState(outState);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
         outState.putInt("idListaClick", idListaClick);
         outState.putInt("idListaDaAgg", idListaDaAgg);
         outState.putInt("posizioneDaAgg", posizioneDaAgg);
-
-        // save current state to support screen rotation, etc...
-//        if (mRecyclerViewExpandableItemManager != null) {
-//            outState.putParcelable(
-//                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
-//                    mRecyclerViewExpandableItemManager.getSavedState());
-//        }
+        super.onSaveInstanceState(outState);
     }
 
 //    @Override

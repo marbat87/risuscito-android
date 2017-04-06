@@ -1,7 +1,5 @@
 package it.cammino.risuscito.adapters;
 
-import android.util.Log;
-
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.turingtechnologies.materialscrollbar.ICustomAdapter;

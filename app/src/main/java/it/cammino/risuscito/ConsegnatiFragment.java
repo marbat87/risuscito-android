@@ -49,10 +49,6 @@ import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
 
     private final String TAG = getClass().getCanonicalName();
 
