@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -60,7 +61,6 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     private View rootView;
 
     private long mLastClickTime = 0;
-    private int mContextIndex;
 
     private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
@@ -116,6 +116,7 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
                     .withColor(lista.getString(2))
                     .withId(lista.getInt(0))
                     .withNumSalmo(lista.getString(4))
+                    .withContextMenuListener(SalmiSectionFragment.this)
                     .withIdentifier(lista.getInt(0));
             mItems.add(sampleItem);
             lista.moveToNext();
@@ -173,15 +174,6 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
             }
         };
 
-        FastAdapter.OnLongClickListener<SimpleItem> mOnLongClickListener = new FastAdapter.OnLongClickListener<SimpleItem>() {
-            @Override
-            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                mContextIndex = i;
-                ((Activity) getContext()).openContextMenu(mRecyclerView);
-                return true;
-            }
-        };
-
         mDragScrollBar
                 .setIndicator(new CustomIndicator(getActivity()), true);
 ////                .setHandleColour(getThemeUtils().accentColor())
@@ -191,9 +183,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
 //        mAdapter = new CantoBubbleAdapter(mItems, SalmiSectionFragment.this, 2);
         mAdapter = new FastScrollIndicatorAdapter<>(2);
         mAdapter.add(mItems);
-        mAdapter.withOnClickListener(mOnClickListener)
-                .withOnLongClickListener(mOnLongClickListener);
-        registerForContextMenu(mRecyclerView);
+        mAdapter.withOnClickListener(mOnClickListener);
+//        registerForContextMenu(mRecyclerView);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
@@ -326,10 +317,8 @@ public class SalmiSectionFragment extends Fragment implements View.OnCreateConte
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
-        titoloDaAgg = mAdapter.getItem(mContextIndex).getTitle().getText();
-        idDaAgg = mAdapter.getItem(mContextIndex).getId();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {

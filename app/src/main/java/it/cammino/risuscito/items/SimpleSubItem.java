@@ -26,11 +26,11 @@ import it.cammino.risuscito.R;
 
 public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClickable> extends AbstractExpandableItem<Parent, SimpleSubItem.ViewHolder, SimpleSubItem<Parent>> {
 
-    public StringHolder title;
-    public StringHolder page;
-    protected StringHolder source;
-    protected ColorHolder color;
-    protected int id;
+    private StringHolder title;
+    private StringHolder page;
+    private StringHolder source;
+    private ColorHolder color;
+    private int id;
 
     private View.OnCreateContextMenuListener createContextMenuListener;
 
@@ -141,8 +141,10 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
 
         viewHolder.mId.setText(String.valueOf(id));
 
-        ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
-        viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
+        if (createContextMenuListener != null) {
+            ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
+            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
+        }
 
     }
 

@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -66,7 +67,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
-    private int mContextIndex;
 
     private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
@@ -120,6 +120,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
                     .withSource(lista.getString(4))
                     .withColor(lista.getString(2))
                     .withId(lista.getInt(0))
+                    .withContextMenuListener(AlphabeticSectionFragment.this)
                     .withIdentifier(lista.getInt(0));
             mItems.add(sampleItem);
             lista.moveToNext();
@@ -178,15 +179,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
             }
         };
 
-        FastAdapter.OnLongClickListener<SimpleItem> mOnLongClickListener = new FastAdapter.OnLongClickListener<SimpleItem>() {
-            @Override
-            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                mContextIndex = i;
-                ((Activity) getContext()).openContextMenu(mRecyclerView);
-                return true;
-            }
-        };
-
         mDragScrollBar
                 .setIndicator(new CustomIndicator(getActivity()), true);
 //                .setHandleColour(getThemeUtils().accentColor())
@@ -196,9 +188,8 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 //        mAdapter = new CantoBubbleAdapter(mItems, AlphabeticSectionFragment.this, 0);
         mAdapter = new FastScrollIndicatorAdapter<>(0);
         mAdapter.add(mItems);
-        mAdapter.withOnClickListener(mOnClickListener)
-                .withOnLongClickListener(mOnLongClickListener);
-        registerForContextMenu(mRecyclerView);
+        mAdapter.withOnClickListener(mOnClickListener);
+//        registerForContextMenu(mRecyclerView);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
@@ -332,10 +323,8 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
-        titoloDaAgg = mAdapter.getItem(mContextIndex).getTitle().getText();
-        idDaAgg = mAdapter.getItem(mContextIndex).getId();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {
@@ -585,33 +574,4 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     @Override
     public void onNeutral(@NonNull String tag) {}
 
-//    private ThemeUtils getThemeUtils() {
-//        return ((MainActivity)getActivity()).getThemeUtils();
-//    }
-
-//    @Override
-//    public boolean onItemClick(int i) {
-//        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-//            return false;
-//        mLastClickTime = SystemClock.elapsedRealtime();
-//        IFlexible flexibleItem = mAdapter.getItem(i);
-//        if (flexibleItem instanceof CantoItem) {
-//            CantoItem subItem = (CantoItem) flexibleItem;
-//            Bundle bundle = new Bundle();
-//            bundle.putString("pagina", subItem.getSource());
-//            bundle.putInt("idCanto", subItem.getCantoId());
-//
-//            // lancia l'activity che visualizza il canto passando il parametro creato
-//            startSubActivity(bundle);
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public void onItemLongClick(int i) {
-//        mContextIndex = i;
-//        if (mAdapter.getItem(i) instanceof  CantoItem)
-//            ((Activity) getContext()).openContextMenu(mRecyclerView);
-//    }
 }

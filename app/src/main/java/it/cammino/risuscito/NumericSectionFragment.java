@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -65,7 +66,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
-    private int mContextIndex;
 
     private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
@@ -119,6 +119,7 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
                     .withSource(lista.getString(4))
                     .withColor(lista.getString(2))
                     .withId(lista.getInt(0))
+                    .withContextMenuListener(NumericSectionFragment.this)
                     .withIdentifier(lista.getInt(0));
             mItems.add(sampleItem);
             lista.moveToNext();
@@ -173,15 +174,6 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
             }
         };
 
-        FastAdapter.OnLongClickListener<SimpleItem> mOnLongClickListener = new FastAdapter.OnLongClickListener<SimpleItem>() {
-            @Override
-            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                mContextIndex = i;
-                ((Activity) getContext()).openContextMenu(mRecyclerView);
-                return true;
-            }
-        };
-
         mDragScrollBar
                 .setIndicator(new CustomIndicator(getActivity()), true);
 //                .setHandleColour(getThemeUtils().accentColor())
@@ -191,9 +183,8 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
 //        mAdapter = new CantoBubbleAdapter(mItems, NumericSectionFragment.this, 1);
         mAdapter = new FastScrollIndicatorAdapter<>(1);
         mAdapter.add(mItems);
-        mAdapter.withOnClickListener(mOnClickListener)
-                .withOnLongClickListener(mOnLongClickListener);
-        registerForContextMenu(mRecyclerView);
+        mAdapter.withOnClickListener(mOnClickListener);
+//        registerForContextMenu(mRecyclerView);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
@@ -327,10 +318,8 @@ public class NumericSectionFragment extends Fragment implements View.OnCreateCon
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-//        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-//        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
-        titoloDaAgg = mAdapter.getItem(mContextIndex).getTitle().getText();
-        idDaAgg = mAdapter.getItem(mContextIndex).getId();
+        titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
+        idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
 
         for (int i = 0; i < idListe.length; i++) {

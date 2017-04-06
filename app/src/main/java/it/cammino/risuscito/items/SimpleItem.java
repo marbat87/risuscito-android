@@ -1,5 +1,6 @@
 package it.cammino.risuscito.items;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
@@ -22,12 +23,14 @@ import it.cammino.risuscito.R;
 
 public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
 
-    public StringHolder title;
-    public StringHolder page;
-    protected StringHolder source;
-    protected ColorHolder color;
-    protected int numSalmo;
-    protected int id;
+    private StringHolder title;
+    private StringHolder page;
+    private StringHolder source;
+    private ColorHolder color;
+    private int numSalmo;
+    private int id;
+
+    private View.OnCreateContextMenuListener createContextMenuListener;
 
     public SimpleItem withTitle(String title) {
         this.title = new StringHolder(title);
@@ -82,6 +85,11 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
         }
         this.numSalmo = numeroTemp;
+        return this;
+    }
+
+    public SimpleItem withContextMenuListener(View.OnCreateContextMenuListener listener) {
+        this.createContextMenuListener = listener;
         return this;
     }
 
@@ -143,6 +151,14 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         StringHolder.applyToOrHide(page, viewHolder.mPage);
         GradientDrawable bgShape = (GradientDrawable)viewHolder.mPage.getBackground();
         bgShape.setColor(color.getColorInt());
+
+        viewHolder.mId.setText(String.valueOf(id));
+
+        if (createContextMenuListener != null) {
+            ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
+            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
+        }
+
     }
 
     @Override
@@ -150,6 +166,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         super.unbindView(holder);
         holder.mTitle.setText(null);
         holder.mPage.setText(null);
+        holder.mId.setText(null);
     }
 
     @Override
@@ -164,6 +181,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         protected View view;
         @BindView(R.id.text_title) TextView mTitle;
         @BindView(R.id.text_page) TextView mPage;
+        @BindView(R.id.text_id_canto) TextView mId;
 
         public ViewHolder(View view) {
             super(view);
