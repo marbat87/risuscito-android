@@ -18,16 +18,20 @@ import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
 import com.mikepenz.materialize.util.UIUtils;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 
-public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
+public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHistoryItem.ViewHolder> {
 
     private StringHolder title;
     private StringHolder page;
+    private StringHolder timestamp;
     private StringHolder source;
     private ColorHolder color;
     private int numSalmo;
@@ -35,52 +39,62 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
 
     private View.OnCreateContextMenuListener createContextMenuListener;
 
-    public SimpleItem withTitle(String title) {
+    public SimpleHistoryItem withTitle(String title) {
         this.title = new StringHolder(title);
         return this;
     }
 
-    public SimpleItem withTitle(@StringRes int titleRes) {
+    public SimpleHistoryItem withTitle(@StringRes int titleRes) {
         this.title = new StringHolder(titleRes);
         return this;
     }
 
-    public SimpleItem withPage(String page) {
+    public SimpleHistoryItem withPage(String page) {
         this.page = new StringHolder(page);
         return this;
     }
 
-    public SimpleItem withPage(@StringRes int pageRes) {
+    public SimpleHistoryItem withPage(@StringRes int pageRes) {
         this.page = new StringHolder(pageRes);
         return this;
     }
 
-    public SimpleItem withSource(String src) {
+    public SimpleHistoryItem withTimestamp(String timestamp) {
+        this.timestamp = new StringHolder(timestamp);
+        return this;
+    }
+
+    public SimpleHistoryItem withTimestamp(@StringRes int timestampRes) {
+        this.timestamp = new StringHolder(timestampRes);
+        return this;
+    }
+
+    public SimpleHistoryItem withSource(String src) {
         this.source = new StringHolder(src);
         return this;
     }
 
-    public SimpleItem withSource(@StringRes int srcRes) {
+    public SimpleHistoryItem withSource(@StringRes int srcRes) {
         this.source = new StringHolder(srcRes);
         return this;
     }
 
-    public SimpleItem withColor(String color) {
+    public SimpleHistoryItem withColor(String color) {
         this.color = ColorHolder.fromColor(Color.parseColor(color));
         return this;
     }
 
-    public SimpleItem withColor(@ColorRes int colorRes) {
+    public SimpleHistoryItem withColor(@ColorRes int colorRes) {
         this.color = ColorHolder.fromColorRes(colorRes);
         return this;
     }
 
-    public SimpleItem withId(int id) {
+    public SimpleHistoryItem withId(int id) {
         this.id = id;
         return this;
     }
 
-    public SimpleItem withNumSalmo(String numSalmo) {
+    public SimpleHistoryItem withNumSalmo(String numSalmo) {
         int numeroTemp = 0;
         try {
             numeroTemp = Integer.valueOf(numSalmo.substring(0, 3));
@@ -91,7 +105,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         return this;
     }
 
-    public SimpleItem withContextMenuListener(View.OnCreateContextMenuListener listener) {
+    public SimpleHistoryItem withContextMenuListener(View.OnCreateContextMenuListener listener) {
         this.createContextMenuListener = listener;
         return this;
     }
@@ -137,7 +151,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
      */
     @Override
     public int getLayoutRes() {
-        return R.layout.simple_row_item;
+        return R.layout.row_item_history;
     }
 
     /**
@@ -145,6 +159,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
      *
      * @param viewHolder the viewHolder of this item
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void bindView(ViewHolder viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
@@ -156,6 +171,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
+
 //        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);
 //        UIUtils.setBackground(viewHolder.view, drawable);
         UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
@@ -172,6 +188,28 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         }
 
         viewHolder.mId.setText(String.valueOf(id));
+
+        if (timestamp != null) {
+            //FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+            DateFormat df = DateFormat.getDateTimeInstance(
+                    DateFormat.SHORT
+                    , DateFormat.MEDIUM
+                    , ctx.getResources().getConfiguration().locale);
+            String tempTimestamp;
+
+            if (df instanceof SimpleDateFormat) {
+                SimpleDateFormat sdf = (SimpleDateFormat) df;
+                String pattern = sdf.toPattern().replaceAll("y+", "yyyy");
+                sdf.applyPattern(pattern);
+                tempTimestamp = sdf.format(Timestamp.valueOf(timestamp.getText()));
+            } else
+                tempTimestamp = df.format(Timestamp.valueOf(timestamp.getText()));
+//            viewHolder.mTimestamp.setText(ctx.getString(R.string.last_open_date, tempTimestamp));
+            viewHolder.mTimestamp.setText(tempTimestamp);
+            viewHolder.mTimestamp.setVisibility(View.VISIBLE);
+        }
+        else
+            viewHolder.mTimestamp.setVisibility(View.GONE);
 
         if (createContextMenuListener != null) {
             ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
@@ -201,6 +239,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         @BindView(R.id.text_title) TextView mTitle;
         @BindView(R.id.text_page) TextView mPage;
         @BindView(R.id.selected_mark) View mPageSelected;
+        @BindView(R.id.text_timestamp) TextView mTimestamp;
         @BindView(R.id.text_id_canto) TextView mId;
 
         public ViewHolder(View view) {

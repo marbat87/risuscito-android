@@ -1,10 +1,12 @@
 package it.cammino.risuscito.items;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -14,8 +16,10 @@ import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.ISubItem;
 import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
+import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 
@@ -131,12 +135,29 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
     @Override
     public void bindView(ViewHolder viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
+
+        //get the context
+        Context ctx = viewHolder.itemView.getContext();
+
         //set the text for the name
         StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
-        GradientDrawable bgShape = (GradientDrawable)viewHolder.mPage.getBackground();
-        bgShape.setColor(color.getColorInt());
+
+//        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);
+//        UIUtils.setBackground(viewHolder.view, drawable);
+        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+
+        if (isSelected()) {
+            viewHolder.mPage.setVisibility(View.INVISIBLE);
+            viewHolder.mPageSelected.setVisibility(View.VISIBLE);
+        }
+        else {
+            GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();
+            bgShape.setColor(color.getColorInt());
+            viewHolder.mPage.setVisibility(View.VISIBLE);
+            viewHolder.mPageSelected.setVisibility(View.INVISIBLE);
+        }
 
         viewHolder.mId.setText(String.valueOf(id));
 
@@ -167,6 +188,7 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
         protected View view;
         @BindView(R.id.text_title) TextView mTitle;
         @BindView(R.id.text_page) TextView mPage;
+        @BindView(R.id.selected_mark) View mPageSelected;
         @BindView(R.id.text_id_canto) TextView mId;
 
         public ViewHolder(View view) {

@@ -1,6 +1,5 @@
 package it.cammino.risuscito;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -24,35 +23,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter_extensions.UndoHelper;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoHistoryRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoHistory;
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.items.SimpleHistoryItem;
 
 public class HistoryFragment extends Fragment implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-    private List<CantoHistory> titoli;
-    private int posizDaCanc;
-    private List<CantoHistory> removedItems;
+    private List<SimpleHistoryItem> titoli;
+//    private int posizDaCanc;
+//    private List<CantoHistory> removedItems;
     //    private RecyclerView recyclerView;
-    private CantoHistoryRecyclerAdapter cantoAdapter;
+    private FastItemAdapter<SimpleHistoryItem> cantoAdapter;
     private FloatingActionButton fabClear;
 //    private ActionMode mMode;
     private boolean actionModeOk;
@@ -170,10 +171,16 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         super.onDestroy();
     }
 
-    private void startSubActivity(Bundle bundle, View view) {
+//    private void startSubActivity(Bundle bundle, View view) {
+//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
+//        intent.putExtras(bundle);
+//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+//    }
+
+    private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
+        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
     }
 
     private void updateHistoryList() {
@@ -193,72 +200,143 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < lista.getCount(); i++) {
-
-            titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
-                    , lista.getInt(0)
-                    , lista.getString(4)
-                    , lista.getString(5)));
+//            titoli.add(new CantoHistory(Utility.intToString(lista.getInt(3), 3) + lista.getString(2) + lista.getString(1)
+//                    , lista.getInt(0)
+//                    , lista.getString(4)
+//                    , lista.getString(5)));
+            SimpleHistoryItem sampleItem = new SimpleHistoryItem();
+            sampleItem
+                    .withTitle(lista.getString(1))
+                    .withPage(String.valueOf(lista.getInt(3)))
+                    .withSource(lista.getString(4))
+                    .withColor(lista.getString(2))
+                    .withTimestamp(lista.getString(5))
+                    .withId(lista.getInt(0))
+                    .withIdentifier(lista.getInt(0));
+            titoli.add(sampleItem);
             lista.moveToNext();
         }
         // chiude il cursore
         lista.close();
+        db.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                if (!mMainActivity.getMaterialCab().isActive()) {
+////                if (mMode == null) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                        return;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                    bundle.putInt("idCanto", Integer.parseInt(
+//                            String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+//                    // lancia l'activity che visualizza il canto passando il parametro creato
+//                    startSubActivity(bundle, v);
+//                }
+//                else {
+//                    int tempPos = mRecyclerView.getChildAdapterPosition(v);
+//                    titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
+//                    cantoAdapter.notifyItemChanged(tempPos);
+//                }
+//            }
+//        };
+//
+//        View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                posizDaCanc = mRecyclerView.getChildAdapterPosition(v);
+////                if (mMode == null)
+////                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+////                else {
+////                    mMode.finish();
+////                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
+////                }
+//                Log.d(TAG, "onLongClick: mMainActivity.getMaterialCab().isActive()" + mMainActivity.getMaterialCab().isActive());
+//                if (mMainActivity.getMaterialCab().isActive()) {
+//                    mMainActivity.getMaterialCab().finish();
+//                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+//                    mMainActivity.getMaterialCab().start(HistoryFragment.this);
+//                }
+//                else
+//                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+//                mMainActivity.getMaterialCab().start(HistoryFragment.this);
+//                return true;
+//            }
+//        };
+
+        FastAdapter.OnClickListener<SimpleHistoryItem> mOnPreClickListener = new FastAdapter.OnClickListener<SimpleHistoryItem>() {
             @Override
-            public void onClick(View v) {
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                if (!mMainActivity.getMaterialCab().isActive()) {
-//                if (mMode == null) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                        return;
+            public boolean onClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
+                Log.d(TAG, "onClick: 2");
+                if (mMainActivity.getMaterialCab().isActive()) {
+//                    cantoAdapter.select(i);
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
+                        return true;
                     mLastClickTime = SystemClock.elapsedRealtime();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                    bundle.putInt("idCanto", Integer.parseInt(
-                            String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-                    // lancia l'activity che visualizza il canto passando il parametro creato
-                    startSubActivity(bundle, v);
+                    cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
+                    cantoAdapter.notifyAdapterItemChanged(i);
+                    if (cantoAdapter.getSelectedItems().size() == 0)
+                        mMainActivity.getMaterialCab().finish();
+                    return true;
                 }
-                else {
-                    int tempPos = mRecyclerView.getChildAdapterPosition(v);
-                    titoli.get(tempPos).setmSelected(!titoli.get(tempPos).ismSelected());
-                    cantoAdapter.notifyItemChanged(tempPos);
-                }
+                return false;
             }
         };
 
-        View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+        FastAdapter.OnClickListener<SimpleHistoryItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleHistoryItem>() {
             @Override
-            public boolean onLongClick(View v) {
-                posizDaCanc = mRecyclerView.getChildAdapterPosition(v);
-//                if (mMode == null)
-//                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-//                else {
-//                    mMode.finish();
-//                    mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-//                }
-                Log.d(TAG, "onLongClick: mMainActivity.getMaterialCab().isActive()" + mMainActivity.getMaterialCab().isActive());
-                if (mMainActivity.getMaterialCab().isActive()) {
-                    mMainActivity.getMaterialCab().finish();
-                    mMainActivity.getAppBarLayout().setExpanded(true, true);
-                    mMainActivity.getMaterialCab().start(HistoryFragment.this);
-                }
-                else
-                    mMainActivity.getAppBarLayout().setExpanded(true, true);
-                mMainActivity.getMaterialCab().start(HistoryFragment.this);
+            public boolean onClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return true;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle);
                 return true;
             }
         };
 
+        FastAdapter.OnLongClickListener<SimpleHistoryItem> mOnPreLongClickListener = new FastAdapter.OnLongClickListener<SimpleHistoryItem>() {
+            @Override
+            public boolean onLongClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
+                if (mMainActivity.getMaterialCab().isActive())
+                    return true;
+                mMainActivity.getAppBarLayout().setExpanded(true, true);
+                mMainActivity.getMaterialCab().start(HistoryFragment.this);
+//                cantoAdapter.select(i);
+                cantoAdapter.getAdapterItem(i).withSetSelected(true);
+                cantoAdapter.notifyAdapterItemChanged(i);
+                return true;
+            }
+        };
+
+
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.history_recycler);
 
         // Creating new adapter object
-        cantoAdapter = new CantoHistoryRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
+//        cantoAdapter = new CantoHistoryRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.setHasStableIds(true);
+        cantoAdapter.withSelectable(true)
+                .withMultiSelect(true)
+                .withSelectOnLongClick(true)
+                .withOnPreClickListener(mOnPreClickListener)
+                .withOnClickListener(mOnClickListener)
+                .withOnPreLongClickListener(mOnPreLongClickListener);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+
+        cantoAdapter.add(titoli);
+        cantoAdapter.notifyAdapterDataSetChanged();
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
 //        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
@@ -277,9 +355,9 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         }
     }
 
-    private ThemeUtils getThemeUtils() {
-        return mMainActivity.getThemeUtils();
-    }
+//    private ThemeUtils getThemeUtils() {
+//        return mMainActivity.getThemeUtils();
+//    }
 
 //    private final class ModeCallback implements ActionMode.Callback {
 //
@@ -394,9 +472,9 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         Log.d(TAG, "onCabCreated: ");
         cab.setMenu(R.menu.menu_delete);
         cab.setTitle("");
-        titoli.get(posizDaCanc).setmSelected(true);
-        cantoAdapter.notifyItemChanged(posizDaCanc);
-        removedItems = new ArrayList<>();
+//        titoli.get(posizDaCanc).setmSelected(true);
+//        cantoAdapter.notifyItemChanged(posizDaCanc);
+//        removedItems = new ArrayList<>();
         menu.findItem(R.id.action_remove_item).setIcon(
                 new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
                         .sizeDp(24)
@@ -415,51 +493,81 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         Log.d(TAG, "onCabCreated: ");
         switch(item.getItemId()) {
             case R.id.action_remove_item:
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                for (int i = 0; i < titoli.size(); i++) {
-                    Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
-                    if (titoli.get(i).ismSelected()) {
-                        db.delete("CRONOLOGIA", "id_canto =  " + titoli.get(i).getIdCanto(), null);
-                        titoli.get(i).setmSelected(false);
-                        removedItems.add(titoli.remove(i));
-                        cantoAdapter.notifyItemRemoved(i);
-                        i--;
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                for (int i = 0; i < titoli.size(); i++) {
+//                    Log.d(getClass().getName(), "selezionato[" + i + "]: " + titoli.get(i).ismSelected());
+//                    if (titoli.get(i).ismSelected()) {
+//                        db.delete("CRONOLOGIA", "id_canto =  " + titoli.get(i).getIdCanto(), null);
+//                        titoli.get(i).setmSelected(false);
+//                        removedItems.add(titoli.remove(i));
+//                        cantoAdapter.notifyItemRemoved(i);
+//                        i--;
+//                    }
+//                }
+//                db.close();
+//                mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                if (titoli.size() == 0) {
+//                    if (mMainActivity.isOnTablet())
+//                        fabClear.hide();
+//                    else
+//                        mMainActivity.enableFab(false);
+//                }
+
+                int iRemoved = cantoAdapter.getSelectedItems().size();
+                Log.d(TAG, "onCabItemClicked: " + iRemoved);
+
+                UndoHelper mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleHistoryItem>() {
+                    @Override
+                    public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>> arrayList) {
+                        Log.d(TAG, "commitRemove: " + arrayList.size());
+                        SQLiteDatabase db = listaCanti.getReadableDatabase();
+                        for (Object item: arrayList) {
+                            SimpleHistoryItem mItem = (SimpleHistoryItem) ((FastAdapter.RelativeInfo)item).item;
+                            db.delete("CRONOLOGIA", "id_canto =  " + mItem.getId(), null);
+                        }
+                        db.close();
+                        mNoHistory.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                        if (cantoAdapter.getAdapterItemCount() == 0) {
+                            if (mMainActivity.isOnTablet())
+                                fabClear.hide();
+                            else
+                                mMainActivity.enableFab(false);
+                        }
                     }
-                }
-                db.close();
-                mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                if (titoli.size() == 0) {
-                    if (mMainActivity.isOnTablet())
-                        fabClear.hide();
-                    else
-                        mMainActivity.enableFab(false);
-                }
+                });
+                mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
+                        , getResources().getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved)
+                        , getString(R.string.cancel)
+                        , Snackbar.LENGTH_SHORT
+                        , cantoAdapter.getSelections());
+                cantoAdapter.deselect();
+
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
-                if (removedItems.size() > 0) {
-//                    String message = removedItems.size() > 1 ?
-//                            getString(R.string.histories_removed, removedItems.size())
-//                            : getString(R.string.history_removed);
-                    Snackbar.make(getActivity().findViewById(R.id.main_content)
-                            , getResources().getQuantityString(R.plurals.histories_removed, removedItems.size(), removedItems.size())
-                            , Snackbar.LENGTH_LONG)
-                            .setAction(R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-                                    ContentValues values = new ContentValues();
-                                    for (CantoHistory cantoRemoved: removedItems) {
-                                        values.put("id_canto", cantoRemoved.getIdCanto());
-                                        values.put("ultima_visita", cantoRemoved.getTimestamp());
-                                        db.insert("CRONOLOGIA", null, values);
-                                    }
-                                    db.close();
-                                    updateHistoryList();
-                                }
-                            })
-                            .setActionTextColor(getThemeUtils().accentColor())
-                            .show();
-                }
+//                if (removedItems.size() > 0) {
+////                    String message = removedItems.size() > 1 ?
+////                            getString(R.string.histories_removed, removedItems.size())
+////                            : getString(R.string.history_removed);
+//                    Snackbar.make(getActivity().findViewById(R.id.main_content)
+//                            , getResources().getQuantityString(R.plurals.histories_removed, removedItems.size(), removedItems.size())
+//                            , Snackbar.LENGTH_LONG)
+//                            .setAction(R.string.cancel, new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                                    ContentValues values = new ContentValues();
+//                                    for (CantoHistory cantoRemoved: removedItems) {
+//                                        values.put("id_canto", cantoRemoved.getIdCanto());
+//                                        values.put("ultima_visita", cantoRemoved.getTimestamp());
+//                                        db.insert("CRONOLOGIA", null, values);
+//                                    }
+//                                    db.close();
+//                                    updateHistoryList();
+//                                }
+//                            })
+//                            .setActionTextColor(getThemeUtils().accentColor())
+//                            .show();
+//                }
                 return true;
         }
         return false;
@@ -470,10 +578,11 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         Log.d(TAG, "onCabFinished: " + actionModeOk);
         if (!actionModeOk) {
             try {
-                for (CantoHistory canto : titoli) {
-                    canto.setmSelected(false);
-                    cantoAdapter.notifyDataSetChanged();
-                }
+                cantoAdapter.deselect();
+//                for (CantoHistory canto : titoli) {
+//                    canto.setmSelected(false);
+//                    cantoAdapter.notifyDataSetChanged();
+//                }
             }
             catch (Exception e){
                 FirebaseCrash.log("Possibile crash");

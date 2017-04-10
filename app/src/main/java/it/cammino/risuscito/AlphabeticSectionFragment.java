@@ -11,7 +11,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,10 +40,13 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.ui.HFFragment;
 
 
-public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener
+public class AlphabeticSectionFragment extends HFFragment implements View.OnCreateContextMenuListener
         , SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -186,6 +188,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mAdapter = new CantoBubbleAdapter(mItems, AlphabeticSectionFragment.this, 0);
         mAdapter = new FastScrollIndicatorAdapter<>(0);
+        mAdapter.setHasStableIds(true);
         mAdapter.add(mItems);
         mAdapter.withOnClickListener(mOnClickListener);
 //        registerForContextMenu(mRecyclerView);
@@ -346,6 +349,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        Log.d(TAG, "onContextItemSelected: " + item.getItemId());
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:

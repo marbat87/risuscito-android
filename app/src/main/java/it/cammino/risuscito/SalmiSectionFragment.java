@@ -11,7 +11,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,8 +40,9 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.ui.HFFragment;
 
-public class SalmiSectionFragment extends Fragment implements View.OnCreateContextMenuListener
+public class SalmiSectionFragment extends HFFragment implements View.OnCreateContextMenuListener
         , SimpleDialogFragment.SimpleCallback {
 
     // create boolean for fetching data

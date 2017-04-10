@@ -50,6 +50,7 @@ public class Utility {
 //    public static final int HIDE_DELAY = 1500;
 
     public static final long CLICK_DELAY = 1000;
+    public static final long CLICK_DELAY_SELECTION = 300;
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     public static final String URL_CANTO = "urlCanto";

@@ -11,7 +11,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,12 +41,14 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleSubExpandableItem;
 import it.cammino.risuscito.items.SimpleSubItem;
+import it.cammino.risuscito.ui.HFFragment;
 import it.cammino.risuscito.utils.ThemeUtils;
 
-public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener
+public class ArgumentsSectionFragment extends HFFragment implements View.OnCreateContextMenuListener
         , SimpleDialogFragment.SimpleCallback {
 
-//    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+    //    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+    private final String TAG = getClass().getCanonicalName();
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -252,6 +253,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
 
         //restore selections (this has to be done after the items were added
+        Log.d(TAG, "onCreateView: ");
         mAdapter.withSavedInstanceState(savedInstanceState);
 //        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
@@ -302,8 +304,9 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             }
 
             lista.close();
-            db.close();
         }
+
+        db.close();
 
         return rootView;
     }
@@ -357,12 +360,15 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState = mAdapter.saveInstanceState(outState);
-        outState.putInt("idDaAgg", idDaAgg);
-        outState.putInt("idPosizioneClick", idPosizioneClick);
-        outState.putInt("idListaClick", idListaClick);
-        outState.putInt("idListaDaAgg", idListaDaAgg);
-        outState.putInt("posizioneDaAgg", posizioneDaAgg);
+        Log.d(TAG, "onSaveInstanceState: ");
+        if (getUserVisibleHint()) {
+            outState = mAdapter.saveInstanceState(outState);
+            outState.putInt("idDaAgg", idDaAgg);
+            outState.putInt("idPosizioneClick", idPosizioneClick);
+            outState.putInt("idListaClick", idListaClick);
+            outState.putInt("idListaDaAgg", idListaDaAgg);
+            outState.putInt("posizioneDaAgg", posizioneDaAgg);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -391,6 +397,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
