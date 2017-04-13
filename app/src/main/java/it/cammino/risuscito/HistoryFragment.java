@@ -484,7 +484,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_close_circle_outline)
+        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
                 .sizeDp(24)
                 .paddingDp(2)
                 .colorRes(android.R.color.white));

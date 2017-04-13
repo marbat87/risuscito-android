@@ -40,7 +40,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 import java.util.Locale;
@@ -508,7 +507,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private void playIntro() {
         getFab().show();
         Drawable doneDrawable =
-                new IconicsDrawable(getActivity(), GoogleMaterial.Icon.gmd_done)
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_check)
                         .sizeDp(24)
                         .paddingDp(2);
         new TapTargetSequence(getActivity())

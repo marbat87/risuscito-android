@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            risuscito:ico_icon="gmd-done"
+            risuscito:ico_icon="cmd-check"
             risuscito:ico_size="24dp"
             risuscito:ico_padding="7dp"
             risuscito:ico_color="@android:color/white"
