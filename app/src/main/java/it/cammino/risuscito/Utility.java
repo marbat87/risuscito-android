@@ -33,6 +33,8 @@ public class Utility {
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
     public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
+    public static final String PREFERITI_OPEN = "preferiti_open";
+    public static final String HISTORY_OPEN = "history_open";
     public static final String SMALL_DONATIONS_COUNT = "small_donations_count";
     public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
     public static final String LARGE_DONATIONS_COUNT = "large_donations_count";

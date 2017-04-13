@@ -65,7 +65,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -99,7 +99,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                 bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle);
+                startSubActivity(bundle, view);
                 return true;
             }
         };
@@ -191,6 +191,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                         .withSource(argCanti.getString(4))
                         .withColor(argCanti.getString(2))
                         .withId(argCanti.getInt(0));
+                //noinspection unchecked
                 simpleItem.withContextMenuListener(ArgumentsSectionFragment.this)
                         .withOnItemClickListener(mOnClickListener);
                 simpleItem.withIdentifier(Integer.parseInt(argId) * 1000 + j);
@@ -198,6 +199,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                 argCanti.moveToNext();
             }
             argCanti.close();
+            //noinspection unchecked
             expandableItem.withSubItems(subItems);
 
             mItems.add(expandableItem);
@@ -403,18 +405,11 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
         super.onDestroy();
     }
 
-//    private void startSubActivity(Bundle bundle, View view) {
-//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-//        intent.putExtras(bundle);
-//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-//    }
-
-    private void startSubActivity(Bundle bundle) {
+    private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
+        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -427,7 +422,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++)
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
         }
 
         MenuInflater inflater = getActivity().getMenuInflater();

@@ -14,7 +14,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,8 +52,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-    private List<SimpleItem> titoli;
-//    private int posizDaCanc;
+//    private List<SimpleItem> titoli;
+    //    private int posizDaCanc;
 //    private List<SimpleItem> removedItems;
     //    private RecyclerView recyclerView;
     private FastItemAdapter<SimpleItem> cantoAdapter;
@@ -59,7 +61,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     //    private ActionMode mMode;
     private boolean actionModeOk;
 
-    private String PREFERITI_OPEN = "preferiti_open";
+//    private String PREFERITI_OPEN = "preferiti_open";
 
     private MainActivity mMainActivity;
 
@@ -118,11 +120,11 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
         if(!PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
-                .getBoolean(PREFERITI_OPEN, false)) {
+                .getBoolean(Utility.PREFERITI_OPEN, false)) {
             SharedPreferences.Editor editor = PreferenceManager
                     .getDefaultSharedPreferences(getActivity())
                     .edit();
-            editor.putBoolean(PREFERITI_OPEN, true);
+            editor.putBoolean(Utility.PREFERITI_OPEN, true);
             editor.apply();
             android.os.Handler mHandler = new android.os.Handler();
             mHandler.postDelayed(new Runnable() {
@@ -179,16 +181,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         super.onDestroy();
     }
 
-//    private void startSubActivity(Bundle bundle, View view) {
-//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-//        intent.putExtras(bundle);
-//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-//    }
-
-    private void startSubActivity(Bundle bundle) {
+    private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
+        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
     private void updateFavouritesList() {
@@ -204,7 +200,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         Cursor lista = db.rawQuery(query, null);
 
         // crea un array e ci memorizza i titoli estratti
-        titoli = new ArrayList<>();
+        List<SimpleItem> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < lista.getCount(); i++) {
 //            titoli.add(new CantoRecycled(lista.getString(0)
@@ -218,8 +214,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                     .withPage(String.valueOf(lista.getInt(2)))
                     .withSource(lista.getString(4))
                     .withColor(lista.getString(1))
-                    .withId(lista.getInt(3))
-                    .withIdentifier(lista.getInt(3));
+                    .withId(lista.getInt(3));
+//                    .withIdentifier(lista.getInt(3));
             titoli.add(sampleItem);
             lista.moveToNext();
         }
@@ -282,7 +278,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle);
+                startSubActivity(bundle, view);
                 return true;
             }
         };
@@ -351,21 +347,27 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         // Creating new adapter object
 //        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, longClickListener);
         cantoAdapter = new FastItemAdapter<>();
-        cantoAdapter.setHasStableIds(true);
         cantoAdapter.withSelectable(true)
                 .withMultiSelect(true)
                 .withSelectOnLongClick(true)
                 .withOnPreClickListener(mOnPreClickListener)
                 .withOnClickListener(mOnClickListener)
-                .withOnPreLongClickListener(mOnPreLongClickListener);
-        mRecyclerView.setAdapter(cantoAdapter);
-
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
-
+                .withOnPreLongClickListener(mOnPreLongClickListener)
+                .setHasStableIds(true);
         cantoAdapter.add(titoli);
-        cantoAdapter.notifyAdapterDataSetChanged();
+
+//        mRecyclerView.setAdapter(cantoAdapter);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+        mRecyclerView.setAdapter(cantoAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
 //        mUndoHelper = new UndoHelper(cantoAdapter, mUndoListener);
 
@@ -552,6 +554,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 int iRemoved = cantoAdapter.getSelectedItems().size();
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
 
+                //noinspection unchecked
                 UndoHelper mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
                     @Override
                     public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {

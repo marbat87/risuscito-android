@@ -141,7 +141,7 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
      */
     @Override
     public int getType() {
-        return R.id.fastadapter_sub_item_id;
+        return R.id.fastadapter_history_item_id;
     }
 
     /**

@@ -105,7 +105,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 } catch (NumberFormatException e) {
                     paginaView.scrollBy(0, 0);
                 }
-                mHandler.postDelayed(this, SCROLL_SLEEP);
+                mHandler.postDelayed(this, 700);
             }
             else
                 Log.d(getClass().getName(), "attività chiusa o annullato lo scroll");
@@ -116,7 +116,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private int savedSpeed;
     public static boolean scrollPlaying;
 
-    private final long SCROLL_SLEEP = 700;
+//    private final long SCROLL_SLEEP = 700;
 
 //    private static final int REQUEST_CODE = 6384;
 

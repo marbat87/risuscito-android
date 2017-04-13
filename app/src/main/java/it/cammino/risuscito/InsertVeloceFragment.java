@@ -9,8 +9,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -25,25 +29,30 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.ClickEventHook;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.adapters.CantoInsertRecyclerAdapter;
-import it.cammino.risuscito.objects.CantoInsert;
+import it.cammino.risuscito.items.InsertItem;
 
 public class InsertVeloceFragment extends Fragment {
 
     // create boolean for fetching data
 
     private DatabaseCanti listaCanti;
-    private List<CantoInsert> titoli;
+//    private List<CantoInsert> titoli;
 //    private EditText searchPar;
     private View rootView;
 //    RecyclerView mRecyclerView;
-    CantoInsertRecyclerAdapter cantoAdapter;
+//    CantoInsertRecyclerAdapter cantoAdapter;
+    FastItemAdapter<InsertItem> cantoAdapter;
 
     private int fromAdd;
     private int idLista;
@@ -74,24 +83,100 @@ public class InsertVeloceFragment extends Fragment {
 
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText().toString();
+//
+//                if (fromAdd == 1)  {
+//                    // chiamato da una lista predefinita
+//                    String query = "INSERT INTO CUST_LISTS ";
+//                    query+= "VALUES (" + idLista + ", "
+//                            + listPosition + ", "
+//                            + idCanto
+//                            + ", CURRENT_TIMESTAMP)";
+//                    try {
+//                        db.execSQL(query);
+//                    } catch (SQLException e) {
+//                        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT)
+//                                .show();
+//                    }
+//                }
+//                else {
+//                    //chiamato da una lista personalizzata
+//                    String query = "SELECT lista" +
+//                            "  FROM LISTE_PERS" +
+//                            "  WHERE _id =  " + idLista;
+//                    Cursor cursor = db.rawQuery(query, null);
+//                    // recupera l'oggetto lista personalizzata
+//                    cursor.moveToFirst();
+//
+//                    ListaPersonalizzata listaPersonalizzata = (ListaPersonalizzata) ListaPersonalizzata.
+//                            deserializeObject(cursor.getBlob(0));
+//
+//                    // chiude il cursore
+//                    cursor.close();
+//
+//                    if (listaPersonalizzata != null) {
+//                        listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
+//
+//                        ContentValues values = new ContentValues();
+//                        values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
+//                        db.update("LISTE_PERS", values, "_id = " + idLista, null);
+//                    }
+//                    db.close();
+//                }
+//
+//                getActivity().setResult(Activity.RESULT_OK);
+//                getActivity().finish();
+//                getActivity().overridePendingTransition(0, R.anim.slide_out_right);
+//            }
+//        };
+//
+//        View.OnClickListener seeOnClickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // recupera il titolo della voce cliccata
+//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText().toString();
+//                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText().toString();
+//
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", source);
+//                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
+
+        FastAdapter.OnClickListener<InsertItem> mOnClickListener = new FastAdapter.OnClickListener<InsertItem>() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(View view, IAdapter<InsertItem> iAdapter, InsertItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
+                    return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
 
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
 
                 if (fromAdd == 1)  {
                     // chiamato da una lista predefinita
                     String query = "INSERT INTO CUST_LISTS ";
                     query+= "VALUES (" + idLista + ", "
                             + listPosition + ", "
-                            + idCanto
+                            + item.getId()
                             + ", CURRENT_TIMESTAMP)";
                     try {
                         db.execSQL(query);
@@ -116,7 +201,8 @@ public class InsertVeloceFragment extends Fragment {
                     cursor.close();
 
                     if (listaPersonalizzata != null) {
-                        listaPersonalizzata.addCanto(String.valueOf(idCanto), listPosition);
+                        // lancia la ricerca di tutti i titoli presenti in DB e li dispone in ordine alfabetico
+                        listaPersonalizzata.addCanto(String.valueOf(item.getId()), listPosition);
 
                         ContentValues values = new ContentValues();
                         values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
@@ -128,38 +214,53 @@ public class InsertVeloceFragment extends Fragment {
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
                 getActivity().overridePendingTransition(0, R.anim.slide_out_right);
+                return true;
             }
         };
 
-        View.OnClickListener seeOnClickListener = new View.OnClickListener() {
+        ClickEventHook hookListener = new ClickEventHook<InsertItem>() {
+            @Nullable
             @Override
-            public void onClick(View v) {
+            public View onBind(@NonNull RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof InsertItem.ViewHolder) {
+                    return ((InsertItem.ViewHolder) viewHolder).mPreview;
+                }
+                return null;
+            }
+
+            @Override
+            public void onClick(View view, int i, FastAdapter fastAdapter, InsertItem item) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // recupera il titolo della voce cliccata
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
-                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText().toString();
 
                 // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+                bundle.putString("pagina", item.getSource().toString());
+                bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                startSubActivity(bundle, view);
             }
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<>();
-        cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
-        mRecyclerView.setAdapter(cantoAdapter);
+//        titoli = new ArrayList<>();
+//        cantoAdapter = new CantoInsertRecyclerAdapter(getActivity(), titoli, clickListener, seeOnClickListener);
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.setHasStableIds(true);
+        //noinspection unchecked
+        cantoAdapter.withOnClickListener(mOnClickListener)
+                .withItemEvent(hookListener);
 
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(cantoAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
         Bundle bundle = getArguments();
         fromAdd = bundle.getInt("fromAdd");
@@ -200,22 +301,34 @@ public class InsertVeloceFragment extends Fragment {
                     int total = lista.getCount();
 
                     // crea un array e ci memorizza i titoli estratti
-                    titoli.clear();
+//                    titoli.clear();
+                    List<InsertItem> titoli = new ArrayList<>();
+                    cantoAdapter.clear();
+
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
                         titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
-                        if (titoloTemp.contains(stringa))
-                            titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
-                                    + lista.getString(1) + lista.getString(0)
-                                    , lista.getInt(3)
-                                    , lista.getString(4)));
+                        if (titoloTemp.contains(stringa)) {
+//                            titoli.add(new CantoInsert(Utility.intToString(lista.getInt(2), 3)
+//                                    + lista.getString(1) + lista.getString(0)
+//                                    , lista.getInt(3)
+//                                    , lista.getString(4)));
+                            InsertItem insertItem = new InsertItem();
+                            insertItem.withTitle(lista.getString(0))
+                                    .withColor(lista.getString(1))
+                                    .withPage(String.valueOf(lista.getInt(2)))
+                                    .withId(lista.getInt(3))
+                                    .withSource(lista.getString(4));
+                            titoli.add(insertItem);
+                        }
                         lista.moveToNext();
                     }
 
                     // chiude il cursore
                     lista.close();
+//                    cantoAdapter.notifyDataSetChanged();
+                    cantoAdapter.add(titoli);
                     cantoAdapter.notifyDataSetChanged();
-
 
                     if (total == 0)
 //                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
@@ -223,8 +336,9 @@ public class InsertVeloceFragment extends Fragment {
                 }
                 else {
                     if (s.length() == 0) {
-                        titoli.clear();
-                        cantoAdapter.notifyDataSetChanged();
+                        cantoAdapter.clear();
+//                        titoli.clear();
+//                        cantoAdapter.notifyDataSetChanged();
 //                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                         mNoResults.setVisibility(View.GONE);
                     }
@@ -270,15 +384,6 @@ public class InsertVeloceFragment extends Fragment {
             public void afterTextChanged(Editable s) { }
 
         });
-
-//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                searchPar.setText("");
-////                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                mNoResults.setVisibility(View.GONE);
-//            }
-//        });
 
         mLUtils = LUtils.getInstance(getActivity());
 

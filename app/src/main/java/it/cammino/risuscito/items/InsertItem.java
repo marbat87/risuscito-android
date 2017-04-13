@@ -1,22 +1,17 @@
 package it.cammino.risuscito.items;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
-import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 
@@ -24,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 
-public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
+public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> {
 
     private StringHolder title;
     private StringHolder page;
@@ -33,55 +28,53 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     private int numSalmo;
     private int id;
 
-    private View.OnCreateContextMenuListener createContextMenuListener;
-
-    public SimpleItem withTitle(String title) {
+    public InsertItem withTitle(String title) {
         this.title = new StringHolder(title);
         return this;
     }
 
-    public SimpleItem withTitle(@StringRes int titleRes) {
+    public InsertItem withTitle(@StringRes int titleRes) {
         this.title = new StringHolder(titleRes);
         return this;
     }
 
-    public SimpleItem withPage(String page) {
+    public InsertItem withPage(String page) {
         this.page = new StringHolder(page);
         return this;
     }
 
-    public SimpleItem withPage(@StringRes int pageRes) {
+    public InsertItem withPage(@StringRes int pageRes) {
         this.page = new StringHolder(pageRes);
         return this;
     }
 
-    public SimpleItem withSource(String src) {
+    public InsertItem withSource(String src) {
         this.source = new StringHolder(src);
         return this;
     }
 
-    public SimpleItem withSource(@StringRes int srcRes) {
+    public InsertItem withSource(@StringRes int srcRes) {
         this.source = new StringHolder(srcRes);
         return this;
     }
 
-    public SimpleItem withColor(String color) {
+    public InsertItem withColor(String color) {
         this.color = ColorHolder.fromColor(Color.parseColor(color));
         return this;
     }
 
-    public SimpleItem withColor(@ColorRes int colorRes) {
+    public InsertItem withColor(@ColorRes int colorRes) {
         this.color = ColorHolder.fromColorRes(colorRes);
         return this;
     }
 
-    public SimpleItem withId(int id) {
+    public InsertItem withId(int id) {
         this.id = id;
         super.withIdentifier(id);
         return this;
     }
 
-    public SimpleItem withNumSalmo(String numSalmo) {
+    public InsertItem withNumSalmo(String numSalmo) {
         int numeroTemp = 0;
         try {
             numeroTemp = Integer.valueOf(numSalmo.substring(0, 3));
@@ -89,11 +82,6 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
         }
         this.numSalmo = numeroTemp;
-        return this;
-    }
-
-    public SimpleItem withContextMenuListener(View.OnCreateContextMenuListener listener) {
-        this.createContextMenuListener = listener;
         return this;
     }
 
@@ -128,7 +116,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
      */
     @Override
     public int getType() {
-        return R.id.fastadapter_simple_item_id;
+        return R.id.fastadapter_insert_item_id;
     }
 
     /**
@@ -138,7 +126,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
      */
     @Override
     public int getLayoutRes() {
-        return R.layout.simple_row_item;
+        return R.layout.row_item_to_insert;
     }
 
     /**
@@ -150,34 +138,12 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     public void bindView(ViewHolder viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
 
-        //get the context
-        Context ctx = viewHolder.itemView.getContext();
-
         //set the text for the name
         StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
-//        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);
-//        UIUtils.setBackground(viewHolder.view, drawable);
-        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
-
-        if (isSelected()) {
-            viewHolder.mPage.setVisibility(View.INVISIBLE);
-            viewHolder.mPageSelected.setVisibility(View.VISIBLE);
-        }
-        else {
-            GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();
-            bgShape.setColor(color.getColorInt());
-            viewHolder.mPage.setVisibility(View.VISIBLE);
-            viewHolder.mPageSelected.setVisibility(View.INVISIBLE);
-        }
-
-        viewHolder.mId.setText(String.valueOf(id));
-
-        if (createContextMenuListener != null) {
-            ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
-            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
-        }
+        GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();
+        bgShape.setColor(color.getColorInt());
 
     }
 
@@ -186,7 +152,6 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         super.unbindView(holder);
         holder.mTitle.setText(null);
         holder.mPage.setText(null);
-        holder.mId.setText(null);
     }
 
     @Override
@@ -197,12 +162,11 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     /**
      * our ViewHolder
      */
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         protected View view;
         @BindView(R.id.text_title) TextView mTitle;
         @BindView(R.id.text_page) TextView mPage;
-        @BindView(R.id.selected_mark) View mPageSelected;
-        @BindView(R.id.text_id_canto) TextView mId;
+        public @BindView(R.id.preview) View mPreview;
 
         public ViewHolder(View view) {
             super(view);
@@ -210,4 +174,5 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
             this.view = view;
         }
     }
+
 }

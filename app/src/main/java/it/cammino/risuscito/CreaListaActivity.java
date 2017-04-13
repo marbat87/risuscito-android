@@ -76,9 +76,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private int idModifica;
     private RetainedFragment dataFragment;
     private RetainedFragment dataFragment2;
-    private RetainedFragment dataFragment3;
+//    private RetainedFragment dataFragment3;
     private ArrayList<String> nomiCanti;
-    private Bundle tempArgs;
+//    private Bundle tempArgs;
 
 //    private String removedCanto;
 //    private int removedPosition;
@@ -96,7 +96,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private List<SwipeableItem> elementi;
 
     //drag & drop
-    private SimpleDragCallback touchCallback;
+//    private SimpleDragCallback touchCallback;
     private ItemTouchHelper touchHelper;
 
     private EditText textfieldTitle;
@@ -165,7 +165,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 .sizeDp(24)
                 .paddingDp(2);
 
-        touchCallback = new SimpleSwipeDragCallback(
+        SimpleDragCallback touchCallback = new SimpleSwipeDragCallback(
                 this,
                 this,
                 leaveBehindDrawable,
@@ -948,7 +948,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 }
             }
         };
-        mRecyclerView.postDelayed(removeRunnable, 3000);
+        mRecyclerView.postDelayed(removeRunnable, 2000);
 
         item.setSwipedAction(new Runnable() {
             @Override

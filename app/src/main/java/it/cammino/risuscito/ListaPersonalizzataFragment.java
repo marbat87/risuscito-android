@@ -323,6 +323,7 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
 
             }
 
+            //noinspection unchecked
             Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(listaPersonalizzata.getNomePosizione(cantoIndex)
                     , idLista
                     , cantoIndex

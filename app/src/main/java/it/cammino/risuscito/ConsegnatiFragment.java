@@ -16,7 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,24 +29,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
-import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.Canto;
-import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.items.CheckableItem;
+import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
 import it.cammino.risuscito.utils.ThemeUtils;
 
@@ -53,9 +57,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-    private List<Canto> titoliChoose;
+    //    private List<Canto> titoliChoose;
+    private List<CheckableItem> titoliChoose;
     private View rootView;
-    private CantoSelezionabileAdapter selectableAdapter;
+    //    private CantoSelezionabileAdapter selectableAdapter;
+    private FastItemAdapter<CheckableItem> selectableAdapter;
     private FloatingActionButton mFab;
     private View mBottomBar;
 
@@ -190,10 +196,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mSelectNone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Canto canto: titoliChoose) {
-                    canto.setSelected(false);
-                    selectableAdapter.notifyDataSetChanged();
-                }
+                selectableAdapter.deselect();
+//                for (Canto canto: titoliChoose) {
+//                    canto.setSelected(false);
+//                    selectableAdapter.notifyDataSetChanged();
+//                }
             }
         });
 
@@ -203,10 +210,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mSelectAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Canto canto: titoliChoose) {
-                    canto.setSelected(true);
-                    selectableAdapter.notifyDataSetChanged();
-                }
+                selectableAdapter.select();
+//                for (Canto canto: titoliChoose) {
+//                    canto.setSelected(true);
+//                    selectableAdapter.notifyDataSetChanged();
+//                }
             }
         });
 
@@ -244,8 +252,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                         .progressIndeterminate(false)
                         .progressMax(selectableAdapter.getItemCount())
                         .show();
+
+                Set<CheckableItem> mSelected = selectableAdapter.getSelectedItems();
+                ArrayList<Integer> mSelectedId = new ArrayList<>();
+                for (CheckableItem item: mSelected) {
+                    mSelectedId.add(item.getId());
+                }
+
                 Intent intent = new Intent(getActivity().getApplicationContext(), ConsegnatiSaverService.class);
-                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+//                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId);
                 getActivity().getApplicationContext().startService(intent);
             }
         });
@@ -385,7 +401,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-//                mWelcomeScreen.forceShow();
                 if (editMode)
                     managerIntro();
                 else
@@ -423,14 +438,23 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             mNoConsegnati.setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoRecycled> titoli = new ArrayList<>();
+//        List<CantoRecycled> titoli = new ArrayList<>();
+        List<SimpleItem> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < totalConsegnati; i++) {
-            titoli.add(new CantoRecycled(lista.getString(0)
-                    , lista.getInt(2)
-                    , lista.getString(1)
-                    , lista.getInt(3)
-                    , lista.getString(4)));
+//            titoli.add(new CantoRecycled(lista.getString(0)
+//                    , lista.getInt(2)
+//                    , lista.getString(1)
+//                    , lista.getInt(3)
+//                    , lista.getString(4)));
+            SimpleItem sampleItem = new SimpleItem();
+            sampleItem
+                    .withTitle(lista.getString(0))
+                    .withPage(String.valueOf(lista.getInt(2)))
+                    .withSource(lista.getString(4))
+                    .withColor(lista.getString(1))
+                    .withId(lista.getInt(3));
+            titoli.add(sampleItem);
             lista.moveToNext();
         }
 
@@ -440,34 +464,60 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         if (listaCanti != null)
             listaCanti.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
-                mLastClickTime = SystemClock.elapsedRealtime();
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", Integer.valueOf(
+//                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
 
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return true;
+                mLastClickTime = SystemClock.elapsedRealtime();
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                bundle.putInt("idCanto", Integer.valueOf(
-                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                startSubActivity(bundle, view);
+                return true;
             }
         };
 
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiRecycler);
 
         // Creating new adapter object
-        CantoRecyclerAdapter cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
+//        CantoRecyclerAdapter cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
+        FastItemAdapter<SimpleItem> cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.withOnClickListener(mOnClickListener);
+        cantoAdapter.add(titoli);
+
+//        mRecyclerView.setAdapter(cantoAdapter);
+//        mRecyclerView.setHasFixedSize(true);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(cantoAdapter);
-
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
-
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
     }
 
@@ -492,9 +542,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //            Log.i(getClass().toString(), "CANTO: " + Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0));
 //            Log.i(getClass().toString(), "ID: " + lista.getInt(3));
 //            Log.i(getClass().toString(), "SELEZIONATO: " + lista.getInt(4));
-                titoliChoose.add(new Canto(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
-                        , lista.getInt(3)
-                        , lista.getInt(4) > 0));
+//                titoliChoose.add(new Canto(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
+//                        , lista.getInt(3)
+//                        , lista.getInt(4) > 0));
+                CheckableItem checkableItem = new CheckableItem();
+                checkableItem.withTitle(lista.getString(0))
+                        .withPage(String.valueOf(lista.getInt(2)))
+                        .withColor(lista.getString(1))
+                        .withSetSelected(lista.getInt(4) > 0)
+                        .withId(lista.getInt(3));
+                titoliChoose.add(checkableItem);
                 lista.moveToNext();
             }
 
@@ -508,14 +565,36 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //        RecyclerView mChoosedRecyclerView = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
 
         // Creating new adapter object
-        selectableAdapter = new CantoSelezionabileAdapter(getActivity(), titoliChoose);
+//        selectableAdapter = new CantoSelezionabileAdapter(getActivity(), titoliChoose);
+        selectableAdapter = new FastItemAdapter<>();
+        selectableAdapter.withSelectable(true)
+                .setHasStableIds(true);
+
+        //init the ClickListenerHelper which simplifies custom click listeners on views of the Adapter
+//        final ClickListenerHelper<CheckableItem> checkableItemClickListenerHelper = new ClickListenerHelper<>(selectableAdapter);
+        selectableAdapter.withOnPreClickListener(new FastAdapter.OnClickListener<CheckableItem>() {
+            @Override
+            public boolean onClick(View v, IAdapter<CheckableItem> adapter, CheckableItem item, int position) {
+                selectableAdapter.getAdapterItem(position).withSetSelected(!selectableAdapter.getAdapterItem(position).isSelected());
+                selectableAdapter.notifyAdapterItemChanged(position);
+                return true;
+            }
+        });
+        selectableAdapter.withItemEvent(new CheckableItem.CheckBoxClickEvent());
+        selectableAdapter.add(titoliChoose);
+
+//        mChoosedRecyclerView.setAdapter(selectableAdapter);
+//        mChoosedRecyclerView.setHasFixedSize(true);
+//        mChoosedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mChoosedRecyclerView.setAdapter(selectableAdapter);
-
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mChoosedRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mChoosedRecyclerView.setHasFixedSize(true);
-
-        // Setting the layoutManager
-        mChoosedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mChoosedRecyclerView.addItemDecoration(insetDivider);
+        mChoosedRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -525,7 +604,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public static class RetainedFragment extends Fragment {
 
         // data object we want to retain
-        private List<Canto> data;
+        private List<CheckableItem> data;
 
         // this method is only called once for this fragment
         @Override
@@ -535,16 +614,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             setRetainInstance(true);
         }
 
-        public void setData(List<Canto> data) {
+        public void setData(List<CheckableItem> data) {
             this.data = data;
         }
 
-        public List<Canto> getData() {
+        public List<CheckableItem> getData() {
             return data;
         }
     }
 
-    public List<Canto> getTitoliChoose() {
+    public List<CheckableItem> getTitoliChoose() {
         return titoliChoose;
     }
 
@@ -598,8 +677,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(mMainActivity.isOnTablet() ?
-                                (ImageButton) rootView.findViewById(R.id.confirm_changes):
-                                (ImageButton) getActivity().findViewById(R.id.confirm_changes)
+                                        (ImageButton) rootView.findViewById(R.id.confirm_changes):
+                                        (ImageButton) getActivity().findViewById(R.id.confirm_changes)
                                 , getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_confirm))
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle

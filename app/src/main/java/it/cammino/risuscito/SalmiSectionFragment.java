@@ -11,8 +11,9 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -61,10 +62,10 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
 
     private long mLastClickTime = 0;
 
-    private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
+//    private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -115,8 +116,8 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
                     .withColor(lista.getString(2))
                     .withId(lista.getInt(0))
                     .withNumSalmo(lista.getString(4))
-                    .withContextMenuListener(SalmiSectionFragment.this)
-                    .withIdentifier(lista.getInt(0));
+                    .withContextMenuListener(SalmiSectionFragment.this);
+//                    .withIdentifier(lista.getInt(0));
             mItems.add(sampleItem);
             lista.moveToNext();
         }
@@ -168,7 +169,7 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
                 bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle);
+                startSubActivity(bundle, view);
                 return true;
             }
         };
@@ -180,14 +181,23 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mAdapter = new CantoBubbleAdapter(mItems, SalmiSectionFragment.this, 2);
-        mAdapter = new FastScrollIndicatorAdapter<>(2);
+        FastScrollIndicatorAdapter<SimpleItem> mAdapter = new FastScrollIndicatorAdapter<>(2);
+        mAdapter.withOnClickListener(mOnClickListener)
+                .setHasStableIds(true);
         mAdapter.add(mItems);
-        mAdapter.withOnClickListener(mOnClickListener);
 //        registerForContextMenu(mRecyclerView);
 
+//        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
 //        mAdapter.setFastScroller(mFastScroller, getThemeUtils().accentColor());
 
@@ -300,16 +310,10 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
         super.onDestroy();
     }
 
-//    private void startSubActivity(Bundle bundle, View view) {
-//        Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
-//        intent.putExtras(bundle);
-//        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
-//    }
-
-    private void startSubActivity(Bundle bundle) {
+    private void startSubActivity(Bundle bundle, View view) {
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
-        mLUtils.startActivityWithTransition(intent, null, Utility.TRANS_PAGINA_RENDER);
+        mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
     @Override
@@ -323,7 +327,7 @@ public class SalmiSectionFragment extends HFFragment implements View.OnCreateCon
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
             }
         }
 

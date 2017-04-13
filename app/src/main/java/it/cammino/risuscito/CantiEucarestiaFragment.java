@@ -333,6 +333,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
             }
         }
 
+        //noinspection unchecked
         Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(titoloPosizione
                 , 2
                 , position

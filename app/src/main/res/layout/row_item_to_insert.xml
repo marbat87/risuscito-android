@@ -2,13 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/checkable_bck"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/customSelector"
-    android:minHeight="@dimen/myListPreferredItemHeightMedium"
-    android:layout_gravity="center_vertical"
-    android:orientation="horizontal">
+    android:minHeight="@dimen/myListPreferredItemHeightLarge"
+    android:layout_gravity="center_vertical">
 
     <TextView
         android:id="@+id/text_page"
@@ -22,57 +20,44 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-        android:layout_marginStart="@dimen/myListPreferredItemMargin" />
+        android:layout_marginStart="@dimen/myListPreferredItemMargin"
+        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+        android:layout_marginEnd="@dimen/myListPreferredItemMargin"/>
 
     <FrameLayout
         android:id="@+id/preview"
         android:layout_width="@dimen/myListPreferredItemHeightMedium"
         android:layout_height="@dimen/myListPreferredItemHeightMedium"
-        android:paddingLeft="@dimen/myListPreferredItemMargin"
-        android:paddingRight="@dimen/myListPreferredItemMargin"
-        android:layout_gravity="center_vertical"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:soundEffectsEnabled="true"
         android:background="?attr/customSelectorRoundAccent" >
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             risuscito:ico_color="@color/icon_ative_black"
             risuscito:ico_icon="cmd-eye"
             risuscito:ico_size="24dp"
             risuscito:ico_padding="2dp"
-            android:layout_gravity="center"
             android:scaleType="fitCenter"
             tools:ignore="MissingPrefix" />
-
-        <TextView
-            android:id="@+id/text_id_canto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/text_source_canto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible" />
 
     </FrameLayout>
 
     <TextView
         android:id="@+id/text_title"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
         android:layout_toLeftOf="@id/preview"
-        android:layout_toStartOf="@id/preview"/>
+        android:layout_toStartOf="@id/preview"
+        android:layout_toRightOf="@+id/text_page"
+        android:layout_toEndOf="@+id/text_page"
+        android:layout_centerVertical="true"
+        tools:text="Single line text "/>
 
 </RelativeLayout>

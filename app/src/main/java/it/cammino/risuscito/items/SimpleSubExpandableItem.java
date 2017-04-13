@@ -84,8 +84,10 @@ public class SimpleSubExpandableItem<Parent extends IItem & IExpandable, SubItem
                 } else {
                     ViewCompat.animate(v.findViewById(R.id.indicator)).rotation(0).start();
                 }
+                //noinspection unchecked
                 return mOnClickListener == null || mOnClickListener.onClick(v, adapter, item, position);
             }
+            //noinspection unchecked
             return mOnClickListener != null && mOnClickListener.onClick(v, adapter, item, position);
         }
     };

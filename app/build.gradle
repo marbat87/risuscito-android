@@ -38,9 +38,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.10'
-    compile ('com.afollestad.material-dialogs:commons:0.9.4.2') {
-        exclude module: 'support-v13'
-    }
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.3'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.stephentuso:welcome:1.2.1'

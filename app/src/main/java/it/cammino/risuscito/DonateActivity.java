@@ -46,7 +46,7 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
     String base64EncodedPublicKey3 = "a5TB+OZEZaLbOqcId4Pl87RW9/oonw+x/u7sVLAmxB+Skqgji3/ExJW/dztPTdjAj0Vu/vqdph0sAV8C++mDKt19IHkX/U";
     String base64EncodedPublicKey4 = "9I2+xqJsQEKyruPR3d5cZkfWCVQ0lfXjQqg4YtuTP3v9rShYBJn2K3sGy2byt4ykSFNoBO6RGZLBlyu1Gyv2a5WDfmvqqPe+HY0BVbPQIDAQAB";
 
-    private final int TEXTZOOM = 90;
+//    private final int TEXTZOOM = 90;
     private final String TAG = getClass().getCanonicalName();
     private final String SKU_1_EURO = "sku_consumable_1_euro";
     private final String SKU_5_EURO = "sku_consumable_5_euro";
@@ -156,7 +156,7 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
                 + "</body></html>";
 
         mDonateView.loadData(text, "text/html; charset=utf-8", "UTF-8");
-        mDonateView.getSettings().setTextZoom(TEXTZOOM);
+        mDonateView.getSettings().setTextZoom(90);
 
     }
 

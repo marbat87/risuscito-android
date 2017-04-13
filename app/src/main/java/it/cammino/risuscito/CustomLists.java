@@ -71,7 +71,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
-    private LUtils mLUtils;
+//    private LUtils mLUtils;
 
 //    private WelcomeHelper mWelcomeScreen;
 
@@ -160,7 +160,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists);
 
-        mLUtils = LUtils.getInstance(getActivity());
+//        mLUtils = LUtils.getInstance(getActivity());
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());

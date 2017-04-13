@@ -328,6 +328,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
             }
         }
 
+        //noinspection unchecked
         Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(titoloPosizione
                 , 1
                 , position

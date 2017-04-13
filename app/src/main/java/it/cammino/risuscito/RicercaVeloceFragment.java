@@ -13,7 +13,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,15 +36,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.items.SimpleItem;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -50,11 +55,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private boolean isViewShown = true;
 
     private DatabaseCanti listaCanti;
-    private List<CantoRecycled> titoli;
+//    private List<CantoRecycled> titoli;
 //    private EditText searchPar;
     private View rootView;
 //    RecyclerView recyclerView;
-    CantoRecyclerAdapter cantoAdapter;
+//    CantoRecyclerAdapter cantoAdapter;
+    FastItemAdapter<SimpleItem> cantoAdapter;
 
     private String titoloDaAgg;
     private int idDaAgg;
@@ -66,7 +72,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private int idPosizioneClick;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -93,32 +99,56 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // crea un bundle e ci mette il parametro "pagina",
+//                // contente il nome del file della pagina da
+//                // visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", Integer.valueOf(
+//                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+//                // lancia l'activity che visualizza il canto
+//                // passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
+
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
+                    return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // crea un bundle e ci mette il parametro "pagina",
-                // contente il nome del file della pagina da
-                // visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                bundle.putInt("idCanto", Integer.valueOf(
-                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-                // lancia l'activity che visualizza il canto
-                // passando il parametro creato
-                startSubActivity(bundle, v);
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, view);
+                return true;
             }
         };
 
         // Creating new adapter object
-        titoli = new ArrayList<>();
-        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
-        mRecyclerView.setAdapter(cantoAdapter);
+//        titoli = new ArrayList<>();
+//        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.setHasStableIds(true);
+        cantoAdapter.withOnClickListener(mOnClickListener);
 
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(cantoAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
 //        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         searchPar.addTextChangedListener(new TextWatcher() {
@@ -155,22 +185,35 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     int total = lista.getCount();
 
                     // crea un array e ci memorizza i titoli estratti
-                    titoli.clear();
+//                    titoli.clear();
+                    List<SimpleItem> titoli = new ArrayList<>();
+                    cantoAdapter.clear();
+
                     lista.moveToFirst();
                     for (int i = 0; i < total; i++) {
                         titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
-                        if (titoloTemp.contains(stringa))
-                            titoli.add(new CantoRecycled(lista.getString(0)
-                                    , lista.getInt(2)
-                                    , lista.getString(1)
-                                    , lista.getInt(3)
-                                    , lista.getString(4)));
+                        if (titoloTemp.contains(stringa)) {
+//                            titoli.add(new CantoRecycled(lista.getString(0)
+//                                    , lista.getInt(2)
+//                                    , lista.getString(1)
+//                                    , lista.getInt(3)
+//                                    , lista.getString(4)));
+                            SimpleItem simpleItem = new SimpleItem();
+                            simpleItem.withTitle(lista.getString(0))
+                                    .withColor(lista.getString(1))
+                                    .withPage(String.valueOf(lista.getInt(2)))
+                                    .withId(lista.getInt(3))
+                                    .withSource(lista.getString(4))
+                                    .withContextMenuListener(RicercaVeloceFragment.this);
+                            titoli.add(simpleItem);
+                        }
                         lista.moveToNext();
                     }
 
                     // chiude il cursore
                     lista.close();
 
+                    cantoAdapter.add(titoli);
                     cantoAdapter.notifyDataSetChanged();
 
                     if (total == 0)
@@ -178,8 +221,9 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                         mNoResults.setVisibility(View.VISIBLE);
                 } else {
                     if (s.length() == 0) {
-                        titoli.clear();
-                        cantoAdapter.notifyDataSetChanged();
+                        cantoAdapter.clear();
+//                        titoli.clear();
+//                        cantoAdapter.notifyDataSetChanged();
 //                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
                         mNoResults.setVisibility(View.GONE);
                     }
@@ -366,7 +410,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i,
                     listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
             }
         }
 
