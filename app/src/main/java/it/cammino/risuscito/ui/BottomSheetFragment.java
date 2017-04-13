@@ -79,17 +79,20 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         ButterKnife.bind(this, view);
 
         Boolean showTitle = getArguments().getBoolean("showTitle");
+        //noinspection ConstantConditions
+        titleView.setText(showTitle? getArguments().getInt("title"): null);
+        titleArea.setVisibility(showTitle? View.VISIBLE: View.GONE);
 //        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
-        if (showTitle) {
-//            int title = getArguments().getInt("title");
-            titleView.setText(getArguments().getInt("title"));
-//            view.findViewById(R.id.sheet_title_area).setVisibility(View.VISIBLE);
-            titleArea.setVisibility(View.VISIBLE);
-        }
-        else {
-//            view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
-            titleArea.setVisibility(View.GONE);
-        }
+//        if (showTitle) {
+////            int title = getArguments().getInt("title");
+//            titleView.setText(getArguments().getInt("title"));
+////            view.findViewById(R.id.sheet_title_area).setVisibility(View.VISIBLE);
+//            titleArea.setVisibility(View.VISIBLE);
+//        }
+//        else {
+////            view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
+//            titleArea.setVisibility(View.GONE);
+//        }
 
         final Intent intent = getArguments().getParcelable("intent");
         PackageManager pm = getActivity().getPackageManager();
