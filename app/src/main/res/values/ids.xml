@@ -18,6 +18,7 @@
     <item name="fastadapter_checkable_item_id" type="id" />
     <item name="fastadapter_history_item_id" type="id" />
     <item name="fastadapter_simple_item_id" type="id" />
+    <item name="fastadapter_bottom_item_id" type="id" />
     <item name="fastadapter_insert_item_id" type="id" />
     <item name="fastadapter_expandable_item_id" type="id" />
     <item name="fastadapter_swipable_item_id" type="id" />
