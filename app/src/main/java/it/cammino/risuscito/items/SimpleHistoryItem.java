@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
@@ -34,7 +35,7 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
     private StringHolder timestamp;
     private StringHolder source;
     private ColorHolder color;
-    private int numSalmo;
+    private ColorHolder selectedColor;
     private int id;
 
     private View.OnCreateContextMenuListener createContextMenuListener;
@@ -94,14 +95,18 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
         return this;
     }
 
-    public SimpleHistoryItem withNumSalmo(String numSalmo) {
-        int numeroTemp = 0;
-        try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3));
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
-        }
-        this.numSalmo = numeroTemp;
+    public SimpleHistoryItem withSelectedColor(String selectedColor) {
+        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor));
+        return this;
+    }
+
+    public SimpleHistoryItem withSelectedColor(@ColorInt int selectedColor) {
+        this.selectedColor = ColorHolder.fromColor(selectedColor);
+        return this;
+    }
+
+    public SimpleHistoryItem withSelectedColorRes(@ColorRes int selectedColorRes) {
+        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes);
         return this;
     }
 
@@ -128,10 +133,6 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
 
     public int getId() {
         return id;
-    }
-
-    public int getNumSalmo() {
-        return numSalmo;
     }
 
     /**
@@ -179,6 +180,8 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
         if (isSelected()) {
             viewHolder.mPage.setVisibility(View.INVISIBLE);
             viewHolder.mPageSelected.setVisibility(View.VISIBLE);
+            GradientDrawable bgShape = (GradientDrawable) viewHolder.mPageSelected.getBackground();
+            bgShape.setColor(selectedColor.getColorInt());
         }
         else {
             GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();

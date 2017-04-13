@@ -45,13 +45,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleHistoryItem;
+import it.cammino.risuscito.utils.ThemeUtils;
 
 public class HistoryFragment extends Fragment implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-//    private List<SimpleHistoryItem> titoli;
+    //    private List<SimpleHistoryItem> titoli;
     //    private int posizDaCanc;
 //    private List<CantoHistory> removedItems;
     //    private RecyclerView recyclerView;
@@ -207,7 +208,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                     .withSource(lista.getString(4))
                     .withColor(lista.getString(2))
                     .withTimestamp(lista.getString(5))
-                    .withId(lista.getInt(0));
+                    .withId(lista.getInt(0))
+                    .withSelectedColor(getThemeUtils().primaryColorDark());
 //                    .withIdentifier(lista.getInt(0));
             titoli.add(sampleItem);
             lista.moveToNext();
@@ -592,6 +594,10 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
             }
         }
         return true;
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

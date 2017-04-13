@@ -46,13 +46,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.utils.ThemeUtils;
 
 public class FavouritesActivity extends Fragment implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-//    private List<SimpleItem> titoli;
+    //    private List<SimpleItem> titoli;
     //    private int posizDaCanc;
 //    private List<SimpleItem> removedItems;
     //    private RecyclerView recyclerView;
@@ -214,7 +215,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                     .withPage(String.valueOf(lista.getInt(2)))
                     .withSource(lista.getString(4))
                     .withColor(lista.getString(1))
-                    .withId(lista.getInt(3));
+                    .withId(lista.getInt(3))
+                    .withSelectedColor(getThemeUtils().primaryColorDark());
 //                    .withIdentifier(lista.getInt(3));
             titoli.add(sampleItem);
             lista.moveToNext();
@@ -637,6 +639,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }
         }
         return true;
+    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
 }

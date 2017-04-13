@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +32,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     private StringHolder source;
     private ColorHolder color;
     private int numSalmo;
+    private ColorHolder selectedColor;
     private int id;
 
     private View.OnCreateContextMenuListener createContextMenuListener;
@@ -72,6 +74,21 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
 
     public SimpleItem withColor(@ColorRes int colorRes) {
         this.color = ColorHolder.fromColorRes(colorRes);
+        return this;
+    }
+
+    public SimpleItem withSelectedColor(String selectedColor) {
+        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor));
+        return this;
+    }
+
+    public SimpleItem withSelectedColor(@ColorInt int selectedColor) {
+        this.selectedColor = ColorHolder.fromColor(selectedColor);
+        return this;
+    }
+
+    public SimpleItem withSelectedColorRes(@ColorRes int selectedColorRes) {
+        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes);
         return this;
     }
 
@@ -164,6 +181,8 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         if (isSelected()) {
             viewHolder.mPage.setVisibility(View.INVISIBLE);
             viewHolder.mPageSelected.setVisibility(View.VISIBLE);
+            GradientDrawable bgShape = (GradientDrawable) viewHolder.mPageSelected.getBackground();
+            bgShape.setColor(selectedColor.getColorInt());
         }
         else {
             GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();
