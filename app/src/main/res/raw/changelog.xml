@@ -9,7 +9,7 @@
         <changelogtext>Various "under-the-hood" code fixes</changelogtext>
         <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
         <changelogimprovement>Improved List Creation management</changelogimprovement>
-        <changelogimprovement>New stile for indexes with expandable sections</changelogimprovement>
+        <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
     </changelogversion>
 
 </changelog>

@@ -9,7 +9,7 @@
         <changelogtext>Varie correzioni "nascoste" al codice</changelogtext>
         <changelogbug>Corretto un bug nella esportazione PDF in Ucraino</changelogbug>
         <changelogimprovement>Migliorata la gestione della Creazione Lista</changelogimprovement>
-        <changelogimprovement>Nuovo stile per gli indici con le sezioni espandibili</changelogimprovement>
+        <changelogimprovement>Modificato stile di indici ed elenchi</changelogimprovement>
     </changelogversion>
 
     <changelogversion versionName="4.2.1" changeDate="Febbraio 2017">
