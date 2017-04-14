@@ -136,7 +136,7 @@
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
     <string name="salmi_musica_index">Indice salmi musicati</string>
-    <string name="downlink_message">Desideri utilizzare la funzione di donwload della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
+    <string name="downlink_message">Desideri utilizzare la funzione di download della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="downlink_download">DOWNLOAD</string>
     <string name="downlink_choose">ASSOCIA</string>
     <string name="only_link">Vuoi associare un file mp3 presente nella memoria del tuo dispositivo?</string>

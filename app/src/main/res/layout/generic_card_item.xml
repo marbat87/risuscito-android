@@ -28,6 +28,6 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <include layout="@layout/card_row_item" />
+    <include layout="@layout/simple_row_item" />
 
 </FrameLayout>

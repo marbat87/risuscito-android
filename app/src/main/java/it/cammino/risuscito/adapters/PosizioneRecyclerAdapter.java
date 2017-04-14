@@ -1,9 +1,12 @@
 package it.cammino.risuscito.adapters;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -13,12 +16,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
+import com.mikepenz.materialize.holder.ColorHolder;
+import com.mikepenz.materialize.util.UIUtils;
+
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
-import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
 
@@ -26,28 +34,33 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
     private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
-    private Activity context;
+    //    private Activity context;
+    private ColorHolder mColor;
+
 
     // Adapter constructor 1
-    public PosizioneRecyclerAdapter(Activity activity, List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems
+//    public PosizioneRecyclerAdapter(Activity activity, List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems
+    public PosizioneRecyclerAdapter(@ColorInt int selectedColor, List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems
             , View.OnClickListener clickListener
             , View.OnLongClickListener longClickListener) {
 
         this.dataItems = dataItems;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        this.context = activity;
+//        this.context = activity;
+        this.mColor = ColorHolder.fromColor(selectedColor);
+
     }
 
     // Adapter constructor 2
-    public PosizioneRecyclerAdapter(Activity activity, List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems
-            , View.OnClickListener clickListener) {
-
-        this.dataItems = dataItems;
-        this.clickListener = clickListener;
-        this.longClickListener = null;
-        this.context = activity;
-    }
+//    public PosizioneRecyclerAdapter(Activity activity, List<Pair<PosizioneTitleItem, List<PosizioneItem>>> dataItems
+//            , View.OnClickListener clickListener) {
+//
+//        this.dataItems = dataItems;
+//        this.clickListener = clickListener;
+//        this.longClickListener = null;
+//        this.context = activity;
+//    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -61,6 +74,9 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
     @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
+        //get the context
+        Context context = viewHolder.itemView.getContext();
 
         PosizioneTitleItem dataItem = dataItems.get(position).first;
 
@@ -86,6 +102,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
 
                 TextView cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
                 TextView cantoPage = (TextView) itemView.findViewById(R.id.text_page);
+                View cantoPageSelected = itemView.findViewById(R.id.selected_mark);
                 TextView idCanto = (TextView) itemView.findViewById(R.id.text_id_canto);
                 TextView sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
                 TextView timestamp = (TextView) itemView.findViewById(R.id.text_timestamp);
@@ -98,23 +115,39 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 sourceCanto.setText(canto.getSource());
                 timestamp.setText(canto.getTimestamp());
                 itemTag.setText(String.valueOf(i));
+                UIUtils.setBackground(cantoView, FastAdapterUIUtils.getSelectableBackground(context, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
 //                cantoPage.setBackgroundResource(
 //                        context.getResources().getIdentifier("page_oval_border_bkg_" + canto.getColore().substring(1).toLowerCase()
 //                                , "drawable"
 //                                , context.getPackageName()));
-                GradientDrawable bgShape = (GradientDrawable) cantoPage.getBackground();
-                bgShape.setColor(Color.parseColor(canto.getColore()));
-                if (context != null) {
-                    if (canto.ismSelected())
-                        cantoView.setBackgroundColor(((ThemeableActivity) context).getThemeUtils().accentColorLight());
-                    else {
-                        TypedValue typedValue = new TypedValue();
-                        Resources.Theme theme = context.getTheme();
-                        theme.resolveAttribute(R.attr.customSelector, typedValue, true);
-                        cantoView.setBackgroundResource(typedValue.resourceId);
-                    }
-
+//                GradientDrawable bgShape = (GradientDrawable) cantoPage.getBackground();
+//                bgShape.setColor(Color.parseColor(canto.getColore()));
+//                if (context != null) {
+                if (canto.ismSelected()) {
+                    //                        cantoView.setBackgroundColor(((ThemeableActivity) context).getThemeUtils().accentColorLight());
+                    cantoPage.setVisibility(View.INVISIBLE);
+                    cantoPageSelected.setVisibility(View.VISIBLE);
+                    GradientDrawable bgShape = (GradientDrawable) cantoPageSelected.getBackground();
+                    bgShape.setColor(mColor.getColorInt());
+                    cantoView.setSelected(true);
+//                        cantoView.setBackgroundColor(ContextCompat.getColor(context, R.color.ripple_color));
+//                        cantoView.setSelected();
                 }
+                else {
+                    GradientDrawable bgShape = (GradientDrawable) cantoPage.getBackground();
+                    bgShape.setColor(Color.parseColor(canto.getColore()));
+                    cantoPage.setVisibility(View.VISIBLE);
+                    cantoPageSelected.setVisibility(View.INVISIBLE);
+//                        TypedValue typedValue = new TypedValue();
+//                        Resources.Theme theme = context.getTheme();
+//                        theme.resolveAttribute(R.attr.customSelector, typedValue, true);
+//                        cantoView.setBackgroundResource(typedValue.resourceId);
+//                        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.TRANSPARENT, ContextCompat.getColor(context, R.color.ripple_color), 10);
+//                        UIUtils.setBackground(cantoView, drawable);
+                    cantoView.setSelected(false);
+                }
+
+//                }
                 if (clickListener != null)
                     cantoView.setOnClickListener(clickListener);
                 if (longClickListener != null)
@@ -145,48 +178,37 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
 
     public static class TitleViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView idLista;
-        public TextView idPosizione;
-        public TextView nomePosizione;
-        public View addCanto;
+//        public TextView idLista;
+//        public TextView idPosizione;
+//        public TextView nomePosizione;
+//        public View addCanto;
         //        public View canto;
-        public View cardView;
-        public TextView tag;
-        public LinearLayout list;
+//        public View cardView;
+//        public TextView tag;
+//        public LinearLayout list;
 //        public ImageView plusImage;
+
+        @BindView(R.id.text_id_lista) TextView idLista;
+        @BindView(R.id.text_id_posizione) TextView idPosizione;
+        @BindView(R.id.titoloPosizioneGenerica) TextView nomePosizione;
+        @BindView(R.id.addCantoGenerico) View addCanto;
+        @BindView(R.id.tag) TextView tag;
+        @BindView(R.id.list) LinearLayout list;
 
         public TitleViewHolder(View itemView) {
             super(itemView);
-            idLista = (TextView) itemView.findViewById(R.id.text_id_lista);
-            idPosizione = (TextView) itemView.findViewById(R.id.text_id_posizione);
-            nomePosizione = (TextView) itemView.findViewById(R.id.titoloPosizioneGenerica);
-            addCanto = itemView.findViewById(R.id.addCantoGenerico);
-            cardView = itemView.findViewById(R.id.cardView);
-            tag = (TextView) itemView.findViewById(R.id.tag);
-            list = (LinearLayout) itemView.findViewById(R.id.list);
+            ButterKnife.bind(this, itemView);
+
+//            idLista = (TextView) itemView.findViewById(R.id.text_id_lista);
+//            idPosizione = (TextView) itemView.findViewById(R.id.text_id_posizione);
+//            nomePosizione = (TextView) itemView.findViewById(R.id.titoloPosizioneGenerica);
+//            addCanto = itemView.findViewById(R.id.addCantoGenerico);
+//            cardView = itemView.findViewById(R.id.cardView);
+//            tag = (TextView) itemView.findViewById(R.id.tag);
+//            list = (LinearLayout) itemView.findViewById(R.id.list);
 //            plusImage = (ImageView) itemView.findViewById(R.id.imageViewGenerica);
         }
 
     }
 
-//    public static class CantoViewHolder extends RecyclerView.ViewHolder {
-//
-//        public TextView cantoTitle;
-//        public TextView cantoPage;
-//        public TextView idCanto;
-//        public TextView sourceCanto;
-//        public TextView timestamp;
-//        public View canto;
-//
-//        public CantoViewHolder(View itemView) {
-//            super(itemView);
-//            cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
-//            cantoPage = (TextView) itemView.findViewById(R.id.text_page);
-//            idCanto = (TextView) itemView.findViewById(R.id.text_id_canto);
-//            sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
-//            timestamp = (TextView) itemView.findViewById(R.id.text_timestamp);
-//            canto = itemView.findViewById(R.id.cantoGenericoContainer);
-//        }
-//
-//    }
 }

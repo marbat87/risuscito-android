@@ -520,10 +520,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white));
+//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }

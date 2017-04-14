@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -186,7 +187,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
-        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -679,10 +681,11 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white));
+//        ContextCompat.getDrawable(getContext(), R.drawable.mcab_nav_back)
+//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }

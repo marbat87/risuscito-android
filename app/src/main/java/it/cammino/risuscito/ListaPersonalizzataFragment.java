@@ -190,7 +190,8 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         };
 
         // Creating new adapter object
-        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -539,10 +540,10 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white));
+//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }
