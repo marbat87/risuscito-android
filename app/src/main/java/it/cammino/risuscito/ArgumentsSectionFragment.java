@@ -11,7 +11,9 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.internal.MDAdapter;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
@@ -165,7 +168,6 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                     .withOnClickListener(new FastAdapter.OnClickListener<SimpleSubExpandableItem>() {
                         @Override
                         public boolean onClick(View view, IAdapter<SimpleSubExpandableItem> iAdapter, SimpleSubExpandableItem item, int i) {
-                            Log.d(getClass().getName(), "SimpleSubExpandableItem onClick: ");
                             if (item.isExpanded())
                                 mLayoutManager.scrollToPositionWithOffset(i, 0);
                             return false;
@@ -246,16 +248,18 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
 //        mAdapter = new FlexibleAdapter(mItems, ArgumentsSectionFragment.this);
         mAdapter = new FastItemAdapter<>();
         mAdapter.add(mItems);
-//                .withOnlyOneExpandedItem(true);
+        mAdapter.withOnlyOneExpandedItem(true);
 //                .withOnClickListener(mOnClickListener);
 //        registerForContextMenu(mRecyclerView);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
         mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), mLayoutManager.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
         //restore selections (this has to be done after the items were added
-        Log.d(TAG, "onCreateView: ");
         mAdapter.withSavedInstanceState(savedInstanceState);
 //        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
@@ -362,7 +366,6 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState: ");
         if (getUserVisibleHint()) {
             outState = mAdapter.saveInstanceState(outState);
             outState.putInt("idDaAgg", idDaAgg);
@@ -399,7 +402,6 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: ");
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
