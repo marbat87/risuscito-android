@@ -62,9 +62,8 @@ dependencies {
     compile 'com.github.jrvansuita:MaterialAbout:v0.1.2'
     compile 'com.anjlab.android.iab.v3:library:1.0.38'
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
-    compile 'com.mikepenz:fastadapter:2.5.1@aar'
-    compile 'com.mikepenz:fastadapter-commons:2.5.0@aar'
-    compile 'com.mikepenz:fastadapter-extensions:2.5.0@aar'
+    compile 'com.github.mikepenz.FastAdapter:library:2175fedd4e'
+    compile 'com.github.mikepenz.FastAdapter:library-extensions:2175fedd4e'
     compile 'com.github.turing-tech:MaterialScrollBar:12.3.5'
 }
 

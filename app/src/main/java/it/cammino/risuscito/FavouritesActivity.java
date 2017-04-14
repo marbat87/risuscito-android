@@ -70,7 +70,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     private long mLastClickTime = 0;
 
-//    private UndoHelper mUndoHelper;
+    private UndoHelper mUndoHelper;
 
     @BindView(R.id.favouritesList) RecyclerView mRecyclerView;
     @BindView(R.id.no_favourites) View mNoFavorites;
@@ -371,8 +371,28 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
-//        mUndoHelper = new UndoHelper(cantoAdapter, mUndoListener);
-
+        //noinspection unchecked
+        mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
+            @Override
+            public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
+                Log.d(TAG, "commitRemove: " + arrayList.size());
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                for (Object item: arrayList) {
+                    SimpleItem mItem = (SimpleItem) ((FastAdapter.RelativeInfo)item).item;
+                    ContentValues values = new ContentValues();
+                    values.put("favourite", 0);
+                    db.update("ELENCO", values, "_id =  " + mItem.getId(), null);
+                }
+                db.close();
+                mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                if (cantoAdapter.getAdapterItemCount() == 0) {
+                    if (mMainActivity.isOnTablet())
+                        fabClear.hide();
+                    else
+                        mMainActivity.enableFab(false);
+                }
+            }
+        });
 
 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
 //        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
@@ -556,28 +576,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 int iRemoved = cantoAdapter.getSelectedItems().size();
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
 
-                //noinspection unchecked
-                UndoHelper mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
-                    @Override
-                    public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
-                        Log.d(TAG, "commitRemove: " + arrayList.size());
-                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-                        for (Object item: arrayList) {
-                            SimpleItem mItem = (SimpleItem) ((FastAdapter.RelativeInfo)item).item;
-                            ContentValues values = new ContentValues();
-                            values.put("favourite", 0);
-                            db.update("ELENCO", values, "_id =  " + mItem.getId(), null);
-                        }
-                        db.close();
-                        mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-                        if (cantoAdapter.getAdapterItemCount() == 0) {
-                            if (mMainActivity.isOnTablet())
-                                fabClear.hide();
-                            else
-                                mMainActivity.enableFab(false);
-                        }
-                    }
-                });
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved)
                         , getString(R.string.cancel)

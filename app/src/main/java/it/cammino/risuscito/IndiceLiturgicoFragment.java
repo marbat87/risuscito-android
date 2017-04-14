@@ -11,7 +11,9 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -154,7 +156,6 @@ public class IndiceLiturgicoFragment extends HFFragment implements View.OnCreate
                     .withOnClickListener(new FastAdapter.OnClickListener<SimpleSubExpandableItem>() {
                         @Override
                         public boolean onClick(View view, IAdapter<SimpleSubExpandableItem> iAdapter, SimpleSubExpandableItem item, int i) {
-                            Log.d(getClass().getName(), "SimpleSubExpandableItem onClick: ");
                             if (item.isExpanded())
                                 mLayoutManager.scrollToPositionWithOffset(i, 0);
                             return false;
@@ -243,13 +244,16 @@ public class IndiceLiturgicoFragment extends HFFragment implements View.OnCreate
 
         mAdapter = new FastItemAdapter<>();
         mAdapter.add(mItems);
+        mAdapter.withOnlyOneExpandedItem(true);
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
         mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), mLayoutManager.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
         //restore selections (this has to be done after the items were added
-        Log.d(TAG, "onCreateView: ");
         mAdapter.withSavedInstanceState(savedInstanceState);
 
         mLUtils = LUtils.getInstance(getActivity());
@@ -343,7 +347,6 @@ public class IndiceLiturgicoFragment extends HFFragment implements View.OnCreate
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState: ");
         if (getUserVisibleHint()) {
             outState = mAdapter.saveInstanceState(outState);
             outState.putInt("idDaAgg", idDaAgg);
@@ -379,7 +382,6 @@ public class IndiceLiturgicoFragment extends HFFragment implements View.OnCreate
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: ");
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();

@@ -69,6 +69,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
     private long mLastClickTime = 0;
 
+    private UndoHelper mUndoHelper;
+
     @BindView(R.id.history_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.no_history) View mNoHistory;
 
@@ -342,6 +344,27 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
+        //noinspection unchecked
+        mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleHistoryItem>() {
+            @Override
+            public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>> arrayList) {
+                Log.d(TAG, "commitRemove: " + arrayList.size());
+                SQLiteDatabase db = listaCanti.getReadableDatabase();
+                for (Object item: arrayList) {
+                    SimpleHistoryItem mItem = (SimpleHistoryItem) ((FastAdapter.RelativeInfo)item).item;
+                    db.delete("CRONOLOGIA", "id_canto =  " + mItem.getId(), null);
+                }
+                db.close();
+                mNoHistory.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                if (cantoAdapter.getAdapterItemCount() == 0) {
+                    if (mMainActivity.isOnTablet())
+                        fabClear.hide();
+                    else
+                        mMainActivity.enableFab(false);
+                }
+            }
+        });
+
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
 //        rootView.findViewById(R.id.no_history).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
         mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
@@ -520,26 +543,6 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 int iRemoved = cantoAdapter.getSelectedItems().size();
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
 
-                //noinspection unchecked
-                UndoHelper mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleHistoryItem>() {
-                    @Override
-                    public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>> arrayList) {
-                        Log.d(TAG, "commitRemove: " + arrayList.size());
-                        SQLiteDatabase db = listaCanti.getReadableDatabase();
-                        for (Object item: arrayList) {
-                            SimpleHistoryItem mItem = (SimpleHistoryItem) ((FastAdapter.RelativeInfo)item).item;
-                            db.delete("CRONOLOGIA", "id_canto =  " + mItem.getId(), null);
-                        }
-                        db.close();
-                        mNoHistory.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-                        if (cantoAdapter.getAdapterItemCount() == 0) {
-                            if (mMainActivity.isOnTablet())
-                                fabClear.hide();
-                            else
-                                mMainActivity.enableFab(false);
-                        }
-                    }
-                });
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved)
                         , getString(R.string.cancel)
