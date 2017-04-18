@@ -16,10 +16,13 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
+
+    final String TAG = getClass().getCanonicalName();
 
     private static final String PAGE_VIEWED = "pageViewed";
 
@@ -27,13 +30,13 @@ public class GeneralIndex extends Fragment {
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
-    final String TAG = getClass().getCanonicalName();
+    private Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
@@ -63,14 +66,20 @@ public class GeneralIndex extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

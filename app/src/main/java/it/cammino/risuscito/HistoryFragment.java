@@ -43,6 +43,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleHistoryItem;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -74,11 +75,13 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     @BindView(R.id.history_recycler) RecyclerView mRecyclerView;
     @BindView(R.id.no_history) View mNoHistory;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_history, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder  = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_history);
@@ -134,6 +137,12 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

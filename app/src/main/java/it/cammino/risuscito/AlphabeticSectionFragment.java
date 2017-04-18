@@ -38,6 +38,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
@@ -76,11 +77,13 @@ public class AlphabeticSectionFragment extends HFFragment implements View.OnCrea
     @BindView(R.id.dragScrollBar) DragScrollBar mDragScrollBar;
 //    @BindView(R.id.fast_scroller) FastScroller mFastScroller;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_alphanum_index, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -247,6 +250,12 @@ public class AlphabeticSectionFragment extends HFFragment implements View.OnCrea
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**

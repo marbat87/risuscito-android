@@ -41,6 +41,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleSubExpandableItem;
 import it.cammino.risuscito.items.SimpleSubItem;
@@ -85,11 +86,13 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         FastAdapter.OnClickListener<SimpleSubItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleSubItem>() {
             @Override
@@ -315,6 +318,12 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
         db.close();
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**

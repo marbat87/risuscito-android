@@ -37,6 +37,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
@@ -109,11 +110,13 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                     .show();
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -206,6 +209,12 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
@@ -23,11 +24,13 @@ public class GeneralSearch extends Fragment {
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -52,9 +55,15 @@ public class GeneralSearch extends Fragment {
         return rootView;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

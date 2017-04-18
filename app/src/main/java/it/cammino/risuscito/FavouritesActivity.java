@@ -44,6 +44,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.utils.ThemeUtils;
@@ -75,11 +76,13 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     @BindView(R.id.favouritesList) RecyclerView mRecyclerView;
     @BindView(R.id.no_favourites) View mNoFavorites;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_favourites, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder  = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
         Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity.isOnTablet());
@@ -140,6 +143,12 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         if (sFragment != null)
             sFragment.setmCallback(FavouritesActivity.this);
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

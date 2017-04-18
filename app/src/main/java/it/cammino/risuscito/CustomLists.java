@@ -46,6 +46,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
@@ -148,12 +149,14 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -226,6 +229,12 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             playIntro();
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -349,10 +358,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -386,7 +395,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             super.destroyItem(container, position, object);
         }
 
-        public Fragment getRegisteredFragment(int position) {
+        Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position);
         }
 

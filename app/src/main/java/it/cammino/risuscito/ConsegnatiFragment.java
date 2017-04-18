@@ -46,6 +46,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.CheckableItem;
 import it.cammino.risuscito.items.SimpleItem;
@@ -125,11 +126,13 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     @BindView(R.id.chooseRecycler) RecyclerView mChoosedRecyclerView;
     @BindView(R.id.no_consegnati) View mNoConsegnati;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -308,6 +311,12 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //        }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

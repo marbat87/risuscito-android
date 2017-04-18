@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
+import android.icu.util.MeasureUnit;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -12,12 +13,15 @@ import com.vansuita.materialabout.builder.AboutBuilder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class AboutFragment extends Fragment {
 
     private MainActivity mMainActivity;
     @BindView(R.id.about) NestedScrollView mScrollView;
+
+    private Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,7 +33,7 @@ public class AboutFragment extends Fragment {
 //        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
 
         View rootView = inflater.inflate(R.layout.about_layout, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -103,6 +107,9 @@ public class AboutFragment extends Fragment {
 
     }
 
-
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 }

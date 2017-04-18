@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.items.InsertItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
@@ -87,11 +88,13 @@ public class InsertAvanzataFragment extends Fragment {
         searchPar.setText("");
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
 //        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         listaCanti = new DatabaseCanti(getActivity());
@@ -378,6 +381,12 @@ public class InsertAvanzataFragment extends Fragment {
         mLUtils = LUtils.getInstance(getActivity());
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**

@@ -763,10 +763,20 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //                        , Utility.random(1, 500)));
 //                elementi.add(new SimpleItem(String.valueOf(Utility.random(1, 5000))
 //                        , mEditText != null ? mEditText.getText().toString() : "NULL"));
-                mAdapter.getAdapterItems().add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
+//                mAdapter.getAdapterItems().add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
                 if (modifica)
                     nomiCanti.add("");
-                mAdapter.notifyAdapterItemInserted(elementi.size());
+                if (mAdapter.getAdapterItemCount() == 0) {
+                    elementi.add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
+                    mAdapter.add(elementi);
+                    mAdapter.notifyAdapterDataSetChanged();
+                }
+                else {
+                    int mSize = mAdapter.getAdapterItemCount();
+                    mAdapter.getAdapterItems().add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
+                    mAdapter.notifyAdapterItemInserted(mSize);
+                }
+//                mAdapter.notifyAdapterItemInserted(elementi.size());
 //                mAdapter.add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
                 Log.d(TAG, "onPositive - elementi.size(): " + mAdapter.getAdapterItems().size());
                 SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this);

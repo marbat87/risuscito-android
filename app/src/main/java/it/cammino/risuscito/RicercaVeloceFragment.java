@@ -46,6 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 
@@ -88,11 +89,13 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         mNoResults.setVisibility(View.GONE);
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         if (listaCanti == null)
             listaCanti = new DatabaseCanti(getActivity());
@@ -322,6 +325,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**
