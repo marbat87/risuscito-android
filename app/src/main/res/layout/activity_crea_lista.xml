@@ -74,20 +74,19 @@
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginLeft="@dimen/activity_min_margin"
-        android:layout_marginRight="@dimen/activity_min_margin">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_min_margin"
+            android:layout_margin="@dimen/activity_min_margin"
             android:text="@string/list_elements" />
 
         <TextView
             android:id="@+id/noElementsAdded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_min_margin"
             android:text="@string/no_elements_added" />
 
         <include layout="@layout/hint_layout" />

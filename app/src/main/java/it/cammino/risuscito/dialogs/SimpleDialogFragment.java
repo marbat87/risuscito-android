@@ -193,6 +193,11 @@ public class SimpleDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void dismiss() {
+        super.dismissAllowingStateLoss();
+    }
+
+    @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         Builder mBuilder = getBuilder();
@@ -205,24 +210,24 @@ public class SimpleDialogFragment extends DialogFragment {
     public static class Builder implements Serializable {
 
         @NonNull
-        protected final transient AppCompatActivity mContext;
+        final transient AppCompatActivity mContext;
         protected int mTitle = 0;
-        protected boolean mShowProgress = false;
-        protected boolean mProgressIndeterminate;
-        protected int mProgressMax;
+        boolean mShowProgress = false;
+        boolean mProgressIndeterminate;
+        int mProgressMax;
         @Nullable
-        protected CharSequence mContent;
+        CharSequence mContent;
         @NonNull
-        protected final String mTag;
-        protected CharSequence mPositiveButton;
-        protected CharSequence mNegativeButton;
-        protected CharSequence mNeutralButton;
-        protected boolean mCanceable = false;
-        protected boolean mAutoDismiss = true;
-        protected boolean mCanceListener = false;
-        protected int mCustomView = 0;
+        final String mTag;
+        CharSequence mPositiveButton;
+        CharSequence mNegativeButton;
+        CharSequence mNeutralButton;
+        boolean mCanceable = false;
+        boolean mAutoDismiss = true;
+        boolean mCanceListener = false;
+        int mCustomView = 0;
         @NonNull
-        protected transient SimpleCallback mListener;
+        transient SimpleCallback mListener;
 
         public <ActivityType extends AppCompatActivity> Builder(@NonNull ActivityType context, @NonNull SimpleCallback listener, @NonNull String tag) {
             mContext = context;

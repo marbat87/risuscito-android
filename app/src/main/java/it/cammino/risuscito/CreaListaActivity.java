@@ -18,7 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -76,7 +76,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private int idModifica;
     private RetainedFragment dataFragment;
     private RetainedFragment dataFragment2;
-//    private RetainedFragment dataFragment3;
+    //    private RetainedFragment dataFragment3;
     private ArrayList<String> nomiCanti;
 //    private Bundle tempArgs;
 
@@ -116,6 +116,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @BindView(R.id.noElementsAdded) View mNoElementsAdded;
     @BindView(R.id.main_hint_layout) View mMainHintLayout;
     @BindView(R.id.hint_text) TextView mHintText;
+    @BindView(R.id.textTitleDescription) View mTitleDescr;
+    @BindView(R.id.question_mark) View mQuestionMark;
 
     @OnClick(R.id.fab_crea_lista)
     public void aggiuntiPosizione() {
@@ -213,7 +215,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //                    elementi.add(new DraggableItem(celebrazione.getNomePosizione(i), Utility.random(1,500)));
 //                    elementi.add(new SimpleItem(String.valueOf(Utility.random(0, 5000))
 //                            , celebrazione.getNomePosizione(i)));
-                    elementi.add(new SwipeableItem().withName(celebrazione.getNomePosizione(i)).withTouchHelper(touchHelper));
+                    elementi.add(new SwipeableItem().withName(celebrazione.getNomePosizione(i)).withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
                 }
             }
         }
@@ -316,8 +318,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
 //        mAdapter = myItemAdapter;
 //
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(CreaListaActivity.this));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(CreaListaActivity.this));
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 //        final Parcelable eimSavedState = (savedInstnceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
 //        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
@@ -345,9 +347,16 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         mAdapter.add(elementi);
         mAdapter.withOnLongClickListener(mLongClickListener);
 
+        LinearLayoutManager llm = new LinearLayoutManager(CreaListaActivity.this);
+        mRecyclerView.setLayoutManager(llm);
+
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true); //Size of RV will not change
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        DividerItemDecoration insetDivider = new DividerItemDecoration(CreaListaActivity.this, llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(CreaListaActivity.this, R.drawable.preference_list_divider_material));
+        mRecyclerView.addItemDecoration(insetDivider);
 
 //        mRecyclerView.addItemDecoration(new DividerItemDecoration(CreaListaActivity.this,
 //                R.drawable.list_divider, 0)); //Increase to add gap between sections (Works only with LinearLayout!)
@@ -408,7 +417,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
 //        mWelcomeScreen = new WelcomeHelper(this, IntroCreaListaNew.class);
 //        mWelcomeScreen.show(savedInstanceState);
-        findViewById(R.id.textTitleDescription).requestFocus();
+//        findViewById(R.id.textTitleDescription).requestFocus();
+        mTitleDescr.requestFocus();
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreate: RESTORING");
@@ -425,7 +435,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         }
 
         mHintText.setText(getString(R.string.showcase_rename_desc) + "\n" + getString(R.string.showcase_delete_desc));
-        ViewCompat.setElevation(findViewById(R.id.question_mark), 1);
+//        ViewCompat.setElevation(findViewById(R.id.question_mark), 1);
+        ViewCompat.setElevation(mQuestionMark, 1);
         mMainHintLayout.setOnTouchListener(new SwipeDismissTouchListener(
                 mMainHintLayout,
                 null,
@@ -767,13 +778,14 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 if (modifica)
                     nomiCanti.add("");
                 if (mAdapter.getAdapterItemCount() == 0) {
-                    elementi.add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
+                    elementi.clear();
+                    elementi.add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
                     mAdapter.add(elementi);
-                    mAdapter.notifyAdapterDataSetChanged();
+                    mAdapter.notifyItemInserted(0);
                 }
                 else {
                     int mSize = mAdapter.getAdapterItemCount();
-                    mAdapter.getAdapterItems().add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper));
+                    mAdapter.getAdapterItems().add(new SwipeableItem().withName(mEditText != null ? mEditText.getText().toString() : "NULL").withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
                     mAdapter.notifyAdapterItemInserted(mSize);
                 }
 //                mAdapter.notifyAdapterItemInserted(elementi.size());
@@ -955,6 +967,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                     mAdapter.notifyAdapterItemRemoved(position);
                     if (modifica)
                         nomiCanti.remove(position);
+                    if (mAdapter.getAdapterItemCount() == 0) {
+                        mNoElementsAdded.setVisibility(View.VISIBLE);
+                        mMainHintLayout.setVisibility(View.GONE);
+                    }
                 }
             }
         };
