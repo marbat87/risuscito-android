@@ -5,7 +5,7 @@
     android:id="@+id/cantoGenericoContainer">
 
     <TextView
-        android:id="@+id/text_id_canto"
+        android:id="@+id/text_id_canto_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />

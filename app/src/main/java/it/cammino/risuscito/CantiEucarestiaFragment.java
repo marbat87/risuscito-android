@@ -162,7 +162,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                         if (mMainActivity.getMaterialCab().isActive()) {
 //                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                             timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                             snackBarRimuoviCanto(v);
                         }
@@ -180,7 +180,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
             public boolean onLongClick(View v) {
                 View parent = (View) v.getParent().getParent();
                 posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                 timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                 snackBarRimuoviCanto(v);
                 return true;
@@ -270,7 +270,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
     private void openPagina(View v) {
         Bundle bundle = new Bundle();
         bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
-        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
@@ -316,7 +316,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                 "  	   , ELENCO B" +
                 "  WHERE A._id = 2" +
                 "  AND   A.position = " + position +
-                "  AND   A.id_canto = B._id";
+                "  AND   A.id_canto = B._id" +
+                " ORDER BY A.timestamp ASC";
         Cursor cursor = db.rawQuery(query, null);
 
         int total = cursor.getCount();
@@ -606,7 +607,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
     private void scambioCanto(View v, int position) {
         db = listaCanti.getReadableDatabase();
-        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
         String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
 //        Log.i(getClass().toString(), "positionNew: " + position);
 //        Log.i(getClass().toString(), "idNew: " + idNew);

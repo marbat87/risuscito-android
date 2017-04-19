@@ -103,7 +103,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 TextView cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
                 TextView cantoPage = (TextView) itemView.findViewById(R.id.text_page);
                 View cantoPageSelected = itemView.findViewById(R.id.selected_mark);
-                TextView idCanto = (TextView) itemView.findViewById(R.id.text_id_canto);
+                TextView idCanto = (TextView) itemView.findViewById(R.id.text_id_canto_card);
                 TextView sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
                 TextView timestamp = (TextView) itemView.findViewById(R.id.text_timestamp);
                 View cantoView = itemView.findViewById(R.id.cantoGenericoContainer);
@@ -176,7 +176,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         return dataItems.size();
     }
 
-    public static class TitleViewHolder extends RecyclerView.ViewHolder {
+    static class TitleViewHolder extends RecyclerView.ViewHolder {
 
 //        public TextView idLista;
 //        public TextView idPosizione;
@@ -195,7 +195,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         @BindView(R.id.tag) TextView tag;
         @BindView(R.id.list) LinearLayout list;
 
-        public TitleViewHolder(View itemView) {
+        TitleViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 

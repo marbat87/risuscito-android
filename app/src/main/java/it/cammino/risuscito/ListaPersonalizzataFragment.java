@@ -292,7 +292,7 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
         Bundle bundle = new Bundle();
         bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
-        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);

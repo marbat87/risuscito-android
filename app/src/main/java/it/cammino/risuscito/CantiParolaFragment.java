@@ -163,7 +163,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
                         if (mMainActivity.getMaterialCab().isActive()) {
 //                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                             timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                             snackBarRimuoviCanto(v);
                         }
@@ -181,7 +181,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
             public boolean onLongClick(View v) {
                 View parent = (View) v.getParent().getParent();
                 posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                 timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                 snackBarRimuoviCanto(v);
                 return true;
@@ -293,7 +293,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
         Bundle bundle = new Bundle();
         bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
-        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
@@ -578,7 +578,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
     private void scambioCanto(View v, int position) {
         db = listaCanti.getReadableDatabase();
-        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
         String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
 //        Log.i(getClass().toString(), "positionNew: " + position);
 //        Log.i(getClass().toString(), "idNew: " + idNew);
