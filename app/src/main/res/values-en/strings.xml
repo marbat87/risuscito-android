@@ -191,14 +191,12 @@ You can add up to 30 elements.</string>
     <string name="title_activity_history">Chronology</string>
     <string name="new_hint_remove">Press and hold an element to remove it.</string>
     <string name="history_empty">Chronology is empty.</string>
-    <string name="last_open_date">LAST OPENING: %1$s</string>
     <string name="dialog_reset_history_title">Empty chronology</string>
     <string name="dialog_reset_history_desc">Do you want to empty the chronology of the viewed songs?</string>
     <string name="canto_title_activity">Song</string>
     <string name="dialog_reset_favorites_title">Empty favourites</string>
     <string name="dialog_reset_favorites_desc">Do you want to empty the favourites list?</string>
     <string name="action_remove">Delete</string>
-    <string name="history_removed">Deleted from chronology</string>
     <string name="action_switch_to">Exchange with&#8230;</string>
     <string name="song_removed">Deleted song</string>
     <string name="switch_done">Exchange completed</string>
@@ -206,8 +204,14 @@ You can add up to 30 elements.</string>
     <string name="switch_tooltip">Tap on a song or on an empty position of the same list with which you want to exchange</string>
     <string name="switch_started">Exchange in progress&#8230;</string>
     <string name="list_removed">Removed list \'</string>
-    <string name="favorites_removed">%1$d removed from favourites</string>
-    <string name="histories_removed">%1$d removed from the chronology</string>
+    <plurals name="favorites_removed">
+        <item quantity="one">%1$d removed from favourites</item>
+        <item quantity="other">%1$d removed from favourites</item>
+    </plurals>
+    <plurals name="histories_removed">
+        <item quantity="one">%1$d removed from the chronology</item>
+        <item quantity="other">%1$d removed from the chronology</item>
+    </plurals>
     <string name="sc_tonalita_desc">From this menu you can manage the change of tone with the following functions: transposition chord, saving of the set up tone and reset of the predefined one.</string>
     <string name="sc_barre_desc">From this menu you can manage the change of capo with the same functions of the tone.</string>
     <string name="sc_audio_title">Reproduction audio</string>
@@ -221,8 +225,7 @@ You can add up to 30 elements.</string>
     <string name="delete_list_dialog">Are you sure you want to delete the list?</string>
     <string name="barre_search_string">Capo</string>
     <string name="barre_add_al">on</string>
-    <string name="barre_al_tasto_I">Capo on</string>
-    <string name="barre_al_tasto_II">fret</string>
+    <string name="barre_al_tasto">Capo %1$s</string>
     <string name="external_storage_title">Access the public memory</string>
     <string name="external_storage_rationale">He rose from death is going to ask you for permission to access the external memory. This is necessary to make visible the downloaded file to other applications. If you do not accept, the file will be downloaded in the private memory of the application.</string>
     <string name="external_storage_denied">Public memory not available.</string>
