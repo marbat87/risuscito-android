@@ -15,7 +15,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -36,6 +38,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -48,10 +54,10 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class RicercaAvanzataFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -62,12 +68,14 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private boolean isViewShown = true;
 
     private DatabaseCanti listaCanti;
-    private List<CantoRecycled> titoli;
-//    private EditText searchPar;
+//    private List<CantoRecycled> titoli;
+    private List<SimpleItem> titoli;
+    //    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-//    RecyclerView recyclerView;
-    CantoRecyclerAdapter cantoAdapter;
+    //    RecyclerView recyclerView;
+//    CantoRecyclerAdapter cantoAdapter;
+    FastItemAdapter<SimpleItem> cantoAdapter;
 //    private CircleProgressBar progress;
 
     private String titoloDaAgg;
@@ -80,7 +88,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private int idPosizioneClick;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -97,48 +105,74 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         searchPar.setText("");
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         if (listaCanti == null)
             listaCanti = new DatabaseCanti(getActivity());
 
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
+//                bundle.putInt("idCanto", Integer.valueOf(
+//                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
+
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
+                    return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                bundle.putInt("idCanto", Integer.valueOf(
-                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                startSubActivity(bundle, view);
+                return true;
             }
         };
 
         // Creating new adapter object
         titoli = new ArrayList<>();
-        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
+//        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.setHasStableIds(true);
+        cantoAdapter.withOnClickListener(mOnClickListener);
+
         mRecyclerView.setAdapter(cantoAdapter);
-
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
 //        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
 //        progress.setColorSchemeColors(getThemeUtils().accentColor());
 
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
-            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                 in = getActivity().getAssets().open("fileout_uk.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
@@ -168,8 +202,9 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 else {
                     if (s.length() == 0) {
                         rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                        titoli.clear();
-                        cantoAdapter.notifyDataSetChanged();
+                        cantoAdapter.clear();
+//                        titoli.clear();
+//                        cantoAdapter.notifyDataSetChanged();
                         progress.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -233,10 +268,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE").setmCallback(RicercaAvanzataFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2").setmCallback(RicercaAvanzataFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaAvanzataFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaAvanzataFragment.this);
         }
 
         if (!isViewShown) {
@@ -262,6 +299,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**
@@ -352,7 +395,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
             }
         }
 
@@ -582,6 +625,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
             String text;
             titoli.clear();
+            cantoAdapter.clear();
 
             for (String[] aText : aTexts) {
 
@@ -599,7 +643,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
-                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
+                        text = text.toLowerCase(ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()));
 
 //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -630,11 +675,19 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         lista.moveToFirst();
 //		    			Log.i("TROVATO IN", aTexts[k][0]);
 //		    			Log.i("LUNGHEZZA", aResults.length+"");
-                        titoli.add(new CantoRecycled(lista.getString(0)
-                                , lista.getInt(2)
-                                , lista.getString(1)
-                                , lista.getInt(3)
-                                , lista.getString(4)));
+//                        titoli.add(new CantoRecycled(lista.getString(0)
+//                                , lista.getInt(2)
+//                                , lista.getString(1)
+//                                , lista.getInt(3)
+//                                , lista.getString(4)));
+                        SimpleItem simpleItem = new SimpleItem();
+                        simpleItem.withTitle(lista.getString(0))
+                                .withColor(lista.getString(1))
+                                .withPage(String.valueOf(lista.getInt(2)))
+                                .withId(lista.getInt(3))
+                                .withSource(lista.getString(4))
+                                .withContextMenuListener(RicercaAvanzataFragment.this);
+                        titoli.add(simpleItem);
                     }
                     // chiude il cursore
                     lista.close();
@@ -655,17 +708,15 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            cantoAdapter.notifyDataSetChanged();
+            cantoAdapter.add(titoli);
+//            cantoAdapter.notifyDataSetChanged();
+            cantoAdapter.notifyAdapterDataSetChanged();
             progress.setVisibility(View.INVISIBLE);
             if (titoli.size() == 0)
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
             else
                 rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
         }
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
     @Override

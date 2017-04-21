@@ -47,12 +47,14 @@ public class PdfExportService extends IntentService {
     public static final String DATA_PRIMO_BARRE = "it.cammino.risuscito.services.data.PRIMO_BARRE";
     public static final String DATA_EXPORT_ERROR = "it.cammino.risuscito.services.data.DATA_EXPORT_ERROR";
     public static final String DATA_PDF_PATH = "it.cammino.risuscito.services.data.DATA_PDF_PATH";
+    public static final String DATA_LINGUA = "it.cammino.risuscito.services.data.DATA_LINGUA";
 
     String pagina;
     String primaNota;
     String notaCambio;
     String primoBarre;
     String localPDFPath;
+    String mLingua;
 
     public PdfExportService() {
         super("PdfExportService");
@@ -77,13 +79,14 @@ public class PdfExportService extends IntentService {
     }
 
     void exportPdf(Intent intent) {
-        CambioAccordi cambioAccordi = new CambioAccordi(getApplicationContext());
+//        CambioAccordi cambioAccordi = new CambioAccordi(getApplicationContext());
 
         Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA " + intent.getStringExtra(DATA_PRIMA_NOTA));
         Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO " + intent.getStringExtra(DATA_NOTA_CAMBIO));
         Log.d(TAG, "exportPdf: PRIMO_BARRE " + intent.getStringExtra(DATA_PRIMO_BARRE));
         Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO " + intent.getStringExtra(DATA_BARRE_CAMBIO));
         Log.d(TAG, "exportPdf: DATA_PAGINA " + intent.getStringExtra(DATA_PAGINA));
+        Log.d(TAG, "exportPdf: DATA_LINGUA " + intent.getStringExtra(DATA_LINGUA));
 
         primaNota = intent.getStringExtra(DATA_PRIMA_NOTA);
         notaCambio = intent.getStringExtra(DATA_NOTA_CAMBIO);
@@ -91,10 +94,16 @@ public class PdfExportService extends IntentService {
         String barreCambio = intent.getStringExtra(DATA_BARRE_CAMBIO);
         pagina = intent.getStringExtra(DATA_PAGINA);
         localPDFPath = "";
+        mLingua = intent.getStringExtra(DATA_LINGUA);
+
+        CambioAccordi cambioAccordi = new CambioAccordi(getApplicationContext(), mLingua);
 
         HashMap<String, String> testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio);
         HashMap<String, String> testConvMin = null;
-        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//        if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk")
+//                || ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
+        if (mLingua.equalsIgnoreCase("uk"))
             testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         String urlHtml = "";
         if (testConv != null) {
@@ -240,14 +249,37 @@ public class PdfExportService extends IntentService {
                     new OutputStreamWriter(
                             new FileOutputStream(cantoTrasportato), "UTF-8"));
 
-            String language = getResources().getConfiguration().locale.getLanguage();
+//            String language = getResources().getConfiguration().locale.getLanguage();
+//            String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
-            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+//            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+            Pattern pattern;
             Pattern patternMinore = null;
-            if (language.equalsIgnoreCase("uk")) {
-                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
-                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
-                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+//            if (language.equalsIgnoreCase("uk")) {
+//            if (mLingua.equalsIgnoreCase("uk")) {
+//                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
+//                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
+//                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+//            }
+//
+//            if (mLingua.equalsIgnoreCase("en"))
+//                pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B");
+
+            switch (mLingua) {
+                case "it":
+                    pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+                    break;
+                case "uk":
+                    pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
+                    //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
+                    patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
+                    break;
+                case "en":
+                    pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B");
+                    break;
+                default:
+                    pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
+                    break;
             }
 
             //serve per segnarsi se si è già evidenziato il primo accordo del testo
@@ -256,7 +288,8 @@ public class PdfExportService extends IntentService {
             while (line != null) {
                 Log.d(getClass().getName(), "RIGA DA ELAB: " + line);
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (language.equalsIgnoreCase("uk")) {
+//                    if (language.equalsIgnoreCase("uk") ||language.equalsIgnoreCase("en")) {
+                    if (mLingua.equalsIgnoreCase("uk") || mLingua.equalsIgnoreCase("en")) {
                         line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
                         line = line.replaceAll("</FONT><FONT COLOR=\"#000000\">", "<K2>");
                     }
@@ -266,7 +299,8 @@ public class PdfExportService extends IntentService {
                     while(matcher.find())
                         matcher.appendReplacement(sb, conversione.get(matcher.group(0)));
                     matcher.appendTail(sb);
-                    if (language.equalsIgnoreCase("uk")) {
+//                    if (language.equalsIgnoreCase("uk")) {
+                    if (mLingua.equalsIgnoreCase("uk")) {
                         Matcher matcherMin = patternMinore.matcher(sb.toString());
                         while (matcherMin.find())
                             matcherMin.appendReplacement(sb2, conversioneMin.get(matcherMin.group(0)));
@@ -304,6 +338,11 @@ public class PdfExportService extends IntentService {
                                 notaHighlighed = true;
                             }
                         }
+
+                        if (mLingua.equalsIgnoreCase("en")) {
+                            line = line.replaceAll("<K>", "</FONT><FONT COLOR='#A13F3C'>");
+                            line = line.replaceAll("<K2>", "</FONT><FONT COLOR='#000000'>");
+                        }
                     }
                     out.write(line);
                     out.newLine();
@@ -315,20 +354,22 @@ public class PdfExportService extends IntentService {
                                 String oldLine;
                                 if (higlightDiff && !barre.equalsIgnoreCase(primoBarre)) {
                                     oldLine = "<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></SPAN></H4>";
                                 }
                                 else {
                                     oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>"
-                                            + getString(R.string.barre_al_tasto_I)
-                                            + " "
-                                            + barre
-                                            + " "
-                                            + getString(R.string.barre_al_tasto_II)
+                                            + getString(R.string.barre_al_tasto, barre)
+//                                            + getString(R.string.barre_al_tasto_I)
+//                                            + " "
+//                                            + barre
+//                                            + " "
+//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></H4>";
                                 }
                                 out.write(oldLine);

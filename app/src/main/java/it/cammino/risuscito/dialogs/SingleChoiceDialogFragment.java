@@ -61,33 +61,46 @@ public class SingleChoiceDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (getArguments() == null || !getArguments().containsKey("builder"))
+        final Builder mBuilder = getBuilder();
+//        if (getArguments() == null || !getArguments().containsKey("builder") || getBuilder() == null)
+        if (mBuilder == null)
             throw new IllegalStateException("SimpleDialogFragment should be created using its Builder interface.");
 
         if (mCallback == null)
-            mCallback = getBuilder().mListener;
+            mCallback = mBuilder.mListener;
+//            mCallback = getBuilder().mListener;
 
         MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(getActivity())
 //                .title(getBuilder().mTitle)
                 .items(getBuilder().mItems)
-                .itemsCallbackSingleChoice(getBuilder().mDefaultIndex, new MaterialDialog.ListCallbackSingleChoice() {
+                .itemsCallbackSingleChoice(mBuilder.mDefaultIndex, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        return mCallback.onSelection(getBuilder().mTag, mContext, dialog, view, which, text);
+                        return mCallback.onSelection(mBuilder.mTag, mContext, dialog, view, which, text);
                     }
                 });
+//                .itemsCallbackSingleChoice(getBuilder().mDefaultIndex, new MaterialDialog.ListCallbackSingleChoice() {
+//                    @Override
+//                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+//                        return mCallback.onSelection(getBuilder().mTag, mContext, dialog, view, which, text);
+//                    }
+//                });
 
 
-        if (getBuilder().mTitle != 0)
-            dialogBuilder.title(getBuilder().mTitle);
+//        if (getBuilder().mTitle != 0)
+//            dialogBuilder.title(getBuilder().mTitle);
+        if (mBuilder.mTitle != 0)
+            dialogBuilder.title(mBuilder.mTitle);
 
-        if (getBuilder().mNegativeButton != null) {
-            dialogBuilder.negativeText(getBuilder().mNegativeButton);
-        }
+//        if (getBuilder().mNegativeButton != null)
+//            dialogBuilder.negativeText(getBuilder().mNegativeButton);
+        if (mBuilder.mNegativeButton != null)
+            dialogBuilder.negativeText(mBuilder.mNegativeButton);
 
         MaterialDialog dialog = dialogBuilder.build();
 
-        dialog.setCancelable(getBuilder().mCanceable);
+//        dialog.setCancelable(getBuilder().mCanceable);
+        dialog.setCancelable(mBuilder.mCanceable);
 
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
@@ -211,8 +224,10 @@ public class SingleChoiceDialogFragment extends DialogFragment {
     @NonNull
     public SingleChoiceDialogFragment show(AppCompatActivity context) {
         Builder builder = getBuilder();
-        dismissIfNecessary(context, builder.mTag);
-        show(context.getSupportFragmentManager(), builder.mTag);
+        if (builder != null) {
+            dismissIfNecessary(context, builder.mTag);
+            show(context.getSupportFragmentManager(), builder.mTag);
+        }
         return this;
     }
 

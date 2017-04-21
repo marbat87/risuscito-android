@@ -30,6 +30,7 @@ import com.stephentuso.welcome.WelcomeHelper;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
 
@@ -46,6 +47,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     private SignInButton mSignInButton;
 
     private MainActivity mMainActivity;
+
+    private Unbinder mUnbinder;
 
     private BroadcastReceiver signInVisibility = new BroadcastReceiver() {
         @Override
@@ -71,7 +74,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -155,6 +158,12 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
                 .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

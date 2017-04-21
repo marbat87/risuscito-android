@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/myListPreferredTextMarginStart">
+
+    <shape android:shape="rectangle">
+        <size android:height="1dp" />
+        <solid android:color="@color/md_light_dividers" />
+    </shape>
+
+</inset>

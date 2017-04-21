@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/risuscito_toolbar"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ActionBarThemeOverlay"
+        risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        risuscito:layout_scrollFlags="scroll|enterAlways"
+        android:elevation="@dimen/design_appbar_elevation"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_toolbarTitle"
+            android:textAppearance="@style/ActionBar.TitleText"
+            android:ellipsize="end"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:gravity="start"
+            tools:ignore="MissingPrefix"
+            android:maxLines="1" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="top"
+        android:layout_below="@id/risuscito_toolbar"
+        android:background="?toolbar_shadow" />
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:background="?colorPrimary"
+        android:divider="?attr/dividerVertical"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/min_button_margin"
+        android:paddingTop="@dimen/min_button_margin"
+        android:visibility="gone"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/donate_1"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_button_margin"
+            android:layout_marginEnd="@dimen/min_button_margin"
+            android:text=""
+            fontPath="fonts/Roboto-Medium.ttf"
+            style="@style/Widget.AppCompat.Button.Colored"
+            risuscito:elevation="@dimen/raised_button_default_elevation"
+            risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+            tools:ignore="MissingPrefix" />
+
+        <Button
+            android:id="@+id/donate_5"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_button_margin"
+            android:layout_marginEnd="@dimen/min_button_margin"
+            android:text=""
+            fontPath="fonts/Roboto-Medium.ttf"
+            style="@style/Widget.AppCompat.Button.Colored"
+            risuscito:elevation="@dimen/raised_button_default_elevation"
+            risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+            tools:ignore="MissingPrefix" />
+
+        <Button
+            android:id="@+id/donate_10"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_button_margin"
+            android:layout_marginEnd="@dimen/min_button_margin"
+            android:text=""
+            fontPath="fonts/Roboto-Medium.ttf"
+            style="@style/Widget.AppCompat.Button.Colored"
+            risuscito:elevation="@dimen/raised_button_default_elevation"
+            risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+            tools:ignore="MissingPrefix" />
+
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/donate_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_bar"
+        android:layout_below="@id/risuscito_toolbar"/>
+
+    <FrameLayout
+        android:id="@+id/loadingBar"
+        android:layout_width="match_parent"
+        android:elevation="5dp"
+        android:visibility="invisible"
+        android:background="@drawable/cover_shadow"
+        android:layout_height="match_parent"
+        tools:targetApi="lollipop">
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            risuscito:mpb_progressStyle="circular"
+            android:elevation="1dp"
+            risuscito:mpb_progressTint="?colorAccent"
+            risuscito:mpb_progressBackgroundTint="@android:color/white"
+            style="@style/Widget.MaterialProgressBar.ProgressBar" />
+
+    </FrameLayout>
+
+</RelativeLayout>

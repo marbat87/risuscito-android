@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="4.3.0" changeDate="May 2017">
+        <changelogimprovement>New Info page</changelogimprovement>
+        <changelogimprovement>New style for tutorials</changelogimprovement>
+        <changelogtext>Chance to thank with small amounts is back, through Google Play</changelogtext>
+        <changelogbug>Fixed page numbers for last Italian songs</changelogbug>
+        <changelogtext>Various "under-the-hood" code fixes</changelogtext>
+        <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
+        <changelogimprovement>Improved List Creation management</changelogimprovement>
+        <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
+    </changelogversion>
+
     <changelogversion versionName="4.2.1" changeDate="February 2017">
         <changelogimprovement>Now requires Android 4.0 or upper (API 14)</changelogimprovement>
         <changelogimprovement>Adde new song "Come pecora che vede"</changelogimprovement>
         <changelogimprovement>Added the option to enable offertory song</changelogimprovement>
-        <changelogtext>Removed donations page and link due to Google policy. You can still manually donate to marbat87@outlook.it through Paypal</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="4.1.0" changeDate="August 2016">

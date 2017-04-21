@@ -38,10 +38,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiParolaFragment extends Fragment implements MaterialCab.Callback {
@@ -93,11 +95,13 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         bottomSheetDialog.show(getFragmentManager(), null);
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -159,7 +163,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
                         if (mMainActivity.getMaterialCab().isActive()) {
 //                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                             timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                             snackBarRimuoviCanto(v);
                         }
@@ -177,7 +181,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
             public boolean onLongClick(View v) {
                 View parent = (View) v.getParent().getParent();
                 posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                 timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                 snackBarRimuoviCanto(v);
                 return true;
@@ -187,7 +191,8 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
-        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -202,6 +207,12 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -282,7 +293,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
         Bundle bundle = new Bundle();
         bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
-        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
@@ -327,6 +338,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
             }
         }
 
+        //noinspection unchecked
         Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(titoloPosizione
                 , 1
                 , position
@@ -342,7 +354,8 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
     private String getTitlesList() {
 
-        Locale l = getActivity().getResources().getConfiguration().locale;
+//        Locale l = getActivity().getResources().getConfiguration().locale;
+        Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
         String result = "";
         String temp;
 
@@ -565,7 +578,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
     private void scambioCanto(View v, int position) {
         db = listaCanti.getReadableDatabase();
-        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
         String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
 //        Log.i(getClass().toString(), "positionNew: " + position);
 //        Log.i(getClass().toString(), "idNew: " + idNew);
@@ -650,10 +663,10 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_close_circle_outline)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white));
+//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }

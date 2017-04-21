@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_height="@dimen/about_appbarlayout_height">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            risuscito:title="@string/title_activity_about"
+            risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
+            risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+
+
+            <ImageView
+                risuscito:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                android:background="@android:color/white"
+                android:src="@drawable/about_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/app_name"/>
+
+            <View
+                android:elevation="1dp"
+                risuscito:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/cover_shadow"
+                tools:targetApi="lollipop" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/risuscito_toolbar"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/ActionBarThemeOverlay"
+                risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:layout_width="match_parent"
+                android:minHeight="?attr/actionBarSize"
+                android:elevation="1dp"
+                android:background="@android:color/transparent"
+                risuscito:layout_collapseMode="pin"
+                tools:targetApi="lollipop" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_min_margin"
+        android:paddingRight="@dimen/activity_min_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="@string/about_subtitle"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            risuscito:changeLogFileResourceId="@raw/changelog_full"
+            risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
+            risuscito:rowLayoutId="@layout/changelogrow_material_layout"
+            android:id="@+id/aboutText" />
+
+    </LinearLayout>
+
+    <View
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_below="@id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="?toolbar_shadow" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,18 +44,23 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Log.d(TAG, "onSharedPreferenceChanged: " + s);
         if (s.equals(Utility.SYSTEM_LANGUAGE)) {
-            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + getResources().getConfiguration().locale.getLanguage());
-            Log.d(TAG, "onSharedPreferenceChanged: cur set" + sharedPreferences.getString(s, ""));
-            if (sharedPreferences.getString(s, "it").equals("it") && !getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-                return;
-            if (!getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
+//            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + getResources().getConfiguration().locale.getLanguage());
+            Log.d(TAG, "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
+            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, ""));
+//            if (sharedPreferences.getString(s, "it").equals("it") && !getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
+//            if (sharedPreferences.getString(s, "it").equals("it") && !ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
+//                return;
+//            if (!getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
+            if (!ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage()
+                    .equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.putExtra(Utility.DB_RESET, true);
-                String currentLang = "it";
-                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-                    currentLang = "uk";
+                String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
+//                String currentLang = "it";
+//                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
+//                    currentLang = "uk";
                 i.putExtra(Utility.CHANGE_LANGUAGE,
                         currentLang + "-" + sharedPreferences.getString(s, ""));
                 startActivity(i);
@@ -76,21 +82,22 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 
+//        //lingua
+//        SharedPreferences sp = PreferenceManager
+//                .getDefaultSharedPreferences(this);
+//        // get version numbers
+//        String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
+//        if (!language.equals("")) {
+//            Locale locale = new Locale(language);
+//            Locale.setDefault(locale);
+//            Configuration config = new Configuration();
+////            config.locale = locale;
+//            ThemeableActivity.setSystemLocalWrapper(config, locale);
+//            getBaseContext().getResources().updateConfiguration(config,
+//                    getBaseContext().getResources().getDisplayMetrics());
+//        }
 
-
-        //lingua
-        SharedPreferences sp = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        // get version numbers
-        String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
-        if (!language.equals("")) {
-            Locale locale = new Locale(language);
-            Locale.setDefault(locale);
-            Configuration config = new Configuration();
-            config.locale = locale;
-            getBaseContext().getResources().updateConfiguration(config,
-                    getBaseContext().getResources().getDisplayMetrics());
-        }
+        //Iconic
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
         super.onCreate(savedInstanceState);
 
@@ -98,30 +105,22 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
 
     @Override
     protected void onResume() {
-        try {
-            float actualScale = getResources().getConfiguration().fontScale;
-            Log.d(getClass().toString(), "actualScale: " + actualScale);
-            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
-            Log.d(getClass().toString(), "systemScale: " + systemScale);
-            if (actualScale != systemScale) {
-                Configuration config = new Configuration();
-                config.fontScale = systemScale;
-                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-            }
-        } catch (Settings.SettingNotFoundException e) {
-            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
-//            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
-//            for (StackTraceElement ste: e.getStackTrace()) {
-//                Log.e(getClass().toString(), ste.toString());
+//        try {
+//            float actualScale = getResources().getConfiguration().fontScale;
+//            Log.d(getClass().toString(), "actualScale: " + actualScale);
+//            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
+//            Log.d(getClass().toString(), "systemScale: " + systemScale);
+//            if (actualScale != systemScale) {
+//                Configuration config = new Configuration();
+//                config.fontScale = systemScale;
+//                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 //            }
-        }
-        catch (NullPointerException e) {
-            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
-//            Log.e(getClass().getName(), "ECCEZIONE: " +  e.toString());
-//            for (StackTraceElement ste: e.getStackTrace()) {
-//                Log.e(getClass().toString(), ste.toString());
-//            }
-        }
+//        } catch (Settings.SettingNotFoundException e) {
+//            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+//        }
+//        catch (NullPointerException e) {
+//            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+//        }
         super.onResume();
 
         checkScreenAwake();
@@ -186,8 +185,71 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         return mThemeUtils;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void attachBaseContext(Context newBase) {
+
+        Configuration config = new Configuration();
+//        boolean changeConfig = false;
+
+        //lingua
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(newBase);
+        String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
+        Log.d(TAG, "attachBaseContext - language: " + language);
+        //ho settato almeno una volta la lingua --> imposto quella
+        if (!language.equals("")) {
+            Locale locale = new Locale(language);
+            Locale.setDefault(locale);
+            ThemeableActivity.setSystemLocalWrapper(config, locale);
+//            changeConfig = true;
+        }
+        // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua selezionabile oppure IT se non presente
+        else {
+            SharedPreferences.Editor mEditor = sp.edit();
+            String mLanguage;
+            switch (getSystemLocalWrapper(newBase.getResources().getConfiguration()).getLanguage()) {
+                case "uk":
+                    mLanguage = "uk";
+                    break;
+                default:
+                    mLanguage = "it";
+                    break;
+            }
+            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage);
+            mEditor.apply();
+            Locale locale = new Locale(mLanguage);
+            Locale.setDefault(locale);
+            ThemeableActivity.setSystemLocalWrapper(config, locale);
+//            changeConfig = true;
+        }
+
+        //fond dimension
+        try {
+            float actualScale = newBase.getResources().getConfiguration().fontScale;
+            Log.d(getClass().toString(), "actualScale: " + actualScale);
+            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
+            Log.d(getClass().toString(), "systemScale: " + systemScale);
+            if (actualScale != systemScale) {
+                config.fontScale = systemScale;
+//                changeConfig = true;
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+        }
+        catch (NullPointerException e) {
+            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+        }
+
+//        if (changeConfig) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            newBase = newBase.createConfigurationContext(config);
+        } else {
+            newBase.getResources().updateConfiguration(config, newBase.getResources().getDisplayMetrics());
+        }
+//        }
+
+        //Calligraphy
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
@@ -270,6 +332,40 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             }
         }
         return res;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Locale getSystemLocaleLegacy(Configuration config) {
+        return config.locale;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Locale getSystemLocale(Configuration config) {
+        return config.getLocales().get(0);
+    }
+
+    public static Locale getSystemLocalWrapper(Configuration config) {
+        if (LUtils.hasN())
+            return ThemeableActivity.getSystemLocale(config);
+        else
+            return ThemeableActivity.getSystemLocaleLegacy(config);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void setSystemLocaleLegacy(Configuration config, Locale locale){
+        config.locale = locale;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static void setSystemLocale(Configuration config, Locale locale){
+        config.setLocale(locale);
+    }
+
+    public static void setSystemLocalWrapper(Configuration config, Locale locale){
+        if (LUtils.hasN())
+            ThemeableActivity.setSystemLocale(config, locale);
+        else
+            ThemeableActivity.setSystemLocaleLegacy(config, locale);
     }
 
 }

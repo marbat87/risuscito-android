@@ -8,4 +8,8 @@
         <attr name="toolbar_shadow" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="FontTabLayout">
+        <attr name="fontPath" format="string" />
+    </declare-styleable>
+
 </resources>

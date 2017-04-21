@@ -11,8 +11,9 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
@@ -35,13 +38,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoAdapter;
+import butterknife.Unbinder;
+import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.ui.HFFragment;
 
 
-public class AlphabeticSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+public class AlphabeticSectionFragment extends HFFragment implements View.OnCreateContextMenuListener
+        , SimpleDialogFragment.SimpleCallback {
+
+    private final String TAG = getClass().getCanonicalName();
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -58,20 +65,25 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
 
+//    private FastScrollIndicatorAdapter<SimpleItem> mAdapter;
+
     @BindView(R.id.cantiList) RecyclerView mRecyclerView;
     @BindView(R.id.dragScrollBar) DragScrollBar mDragScrollBar;
+//    @BindView(R.id.fast_scroller) FastScroller mFastScroller;
+
+    private Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_alphanum_index, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -89,57 +101,115 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         int total = lista.getCount();
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoRecycled> titoli = new ArrayList<>();
+//        List<CantoRecycled> titoli = new ArrayList<>();
+//        List<AbstractFlexibleItem> mItems = new ArrayList<>();
+        List<SimpleItem> mItems = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < total; i++) {
-            titoli.add(new CantoRecycled(lista.getString(1)
-                    , lista.getInt(3)
-                    , lista.getString(2)
-                    , lista.getInt(0)
-                    , lista.getString(4)));
+//            titoli.add(new CantoRecycled(lista.getString(1)
+//                    , lista.getInt(3)
+//                    , lista.getString(2)
+//                    , lista.getInt(0)
+//                    , lista.getString(4)));
+//            CantoItem mCanto = new CantoItem(String.valueOf(lista.getInt(0)), lista.getString(1));
+//            mCanto.setCantoId(lista.getInt(0));
+//            mCanto.setColor(lista.getString(2));
+//            mCanto.setPage(String.valueOf(lista.getInt(3)));
+//            mCanto.setSource(lista.getString(4));
+//            mCanto.setActiveColor(getThemeUtils().accentColor());
+//            mItems.add(mCanto);
+            SimpleItem sampleItem = new SimpleItem();
+            sampleItem
+                    .withTitle(lista.getString(1))
+                    .withPage(String.valueOf(lista.getInt(3)))
+                    .withSource(lista.getString(4))
+                    .withColor(lista.getString(2))
+                    .withId(lista.getInt(0))
+                    .withContextMenuListener(AlphabeticSectionFragment.this);
+//                    .withIdentifier(lista.getInt(0));
+            mItems.add(sampleItem);
             lista.moveToNext();
         }
 
         // chiude il cursore
         lista.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
-                mLastClickTime = SystemClock.elapsedRealtime();
-                // recupera il titolo della voce cliccata
-                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText().toString();
-                String source = ((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText().toString();
-
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
-            }
-        };
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // recupera il titolo della voce cliccata
+//                String idCanto = ((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText().toString();
+//                String source = ((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText().toString();
+//
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", source);
+//                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
 
 //        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cantiList);
 
-        CantoAdapter adapter = new CantoAdapter(getActivity(), 0, titoli, clickListener, this);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setHasFixedSize(true);
-
+//        CantoAdapter adapter = new CantoAdapter(getActivity(), 0, titoli, clickListener, this);
+//        adapter.setHasStableIds(true);
+//        mRecyclerView.setAdapter(adapter);
+//
+//        // Setting the layoutManager
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setHasFixedSize(true);
+//
 //        new DragScrollBar(getActivity(), mRecyclerView, true)
+
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return false;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putString("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, view);
+                return true;
+            }
+        };
+
         mDragScrollBar
                 .setIndicator(new CustomIndicator(getActivity()), true);
 //                .setHandleColour(getThemeUtils().accentColor())
 //                .setHandleOffColour(getThemeUtils().accentColor());
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mAdapter = new CantoBubbleAdapter(mItems, AlphabeticSectionFragment.this, 0);
+        FastScrollIndicatorAdapter<SimpleItem> mAdapter = new FastScrollIndicatorAdapter<>(0);
+        mAdapter.withOnClickListener(mOnClickListener)
+                .setHasStableIds(true);
+        mAdapter.add(mItems);
+//        registerForContextMenu(mRecyclerView);
+
+//        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
+
+//        mAdapter.setFastScroller(mFastScroller, getThemeUtils().accentColor());
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -150,10 +220,12 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE").setmCallback(AlphabeticSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2").setmCallback(AlphabeticSectionFragment.this);
+            SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE");
+            if (fragment != null)
+                fragment.setmCallback(AlphabeticSectionFragment.this);
+            fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ALPHA_REPLACE_2");
+            if (fragment != null)
+                fragment.setmCallback(AlphabeticSectionFragment.this);
         }
 
         if (!isViewShown) {
@@ -178,6 +250,12 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**
@@ -212,7 +290,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (getView() != null) {
-                isViewShown = false;
+                isViewShown = true;
                 Log.d(getClass().getName(), "VISIBLE");
                 if (listaCanti == null)
                     listaCanti = new DatabaseCanti(getActivity());
@@ -254,7 +332,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
@@ -266,7 +343,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
             }
         }
 
@@ -283,6 +360,7 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        Log.d(TAG, "onContextItemSelected: " + item.getItemId());
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.add_to_favorites:
@@ -475,10 +553,6 @@ public class AlphabeticSectionFragment extends Fragment implements View.OnCreate
 
         Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                 .show();
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return ((MainActivity)getActivity()).getThemeUtils();
     }
 
     @Override

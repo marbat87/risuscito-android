@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.firebase.FirebaseApiNotAvailableException;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -39,10 +38,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Callback {
@@ -93,11 +94,13 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         bottomSheetDialog.show(getFragmentManager(), null);
     }
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
@@ -159,7 +162,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                         if (mMainActivity.getMaterialCab().isActive()) {
 //                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                            idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                             timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                             snackBarRimuoviCanto(v);
                         }
@@ -177,7 +180,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
             public boolean onLongClick(View v) {
                 View parent = (View) v.getParent().getParent();
                 posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
-                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+                idDaCanc = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
                 timestampDaCanc = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
                 snackBarRimuoviCanto(v);
                 return true;
@@ -187,7 +190,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 //        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_list);
 
         // Creating new adapter object
-        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
+        cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
@@ -203,6 +207,12 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -260,7 +270,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
     private void openPagina(View v) {
         Bundle bundle = new Bundle();
         bundle.putString("pagina", ((TextView) v.findViewById(R.id.text_source_canto)).getText().toString());
-        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString()));
+        bundle.putInt("idCanto", Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString()));
 
         Intent intent = new Intent(getActivity(), PaginaRenderActivity.class);
         intent.putExtras(bundle);
@@ -306,7 +316,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                 "  	   , ELENCO B" +
                 "  WHERE A._id = 2" +
                 "  AND   A.position = " + position +
-                "  AND   A.id_canto = B._id";
+                "  AND   A.id_canto = B._id" +
+                " ORDER BY A.timestamp ASC";
         Cursor cursor = db.rawQuery(query, null);
 
         int total = cursor.getCount();
@@ -334,6 +345,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
             }
         }
 
+        //noinspection unchecked
         Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(titoloPosizione
                 , 2
                 , position
@@ -351,7 +363,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
         int progressivePos = 0;
 
-        Locale l = getActivity().getResources().getConfiguration().locale;
+//        Locale l = getActivity().getResources().getConfiguration().locale;
+        Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
         String result = "";
         String temp;
 
@@ -594,7 +607,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
     private void scambioCanto(View v, int position) {
         db = listaCanti.getReadableDatabase();
-        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+        int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
         String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
 //        Log.i(getClass().toString(), "positionNew: " + position);
 //        Log.i(getClass().toString(), "idNew: " + idNew);
@@ -678,10 +691,11 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_close_circle_outline)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white));
+//        ContextCompat.getDrawable(getContext(), R.drawable.mcab_nav_back)
+//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }

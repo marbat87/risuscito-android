@@ -24,7 +24,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SimpleDialogFragment.SimpleCallback {
 
-    private MainActivity mMainActivity;
+//    private MainActivity mMainActivity;
     CharSequence[] mEntries;
     CharSequence[] mEntryValues;
 
@@ -43,7 +43,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Simple
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mMainActivity = (MainActivity) getActivity();
+        MainActivity mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);

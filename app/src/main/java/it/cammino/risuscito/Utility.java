@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
@@ -32,19 +33,33 @@ public class Utility {
     public static final String CHANGE_LANGUAGE = "changed";
     public static final String SIGNED_IN = "signed_id";
     public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
+    public static final String PREFERITI_OPEN = "preferiti_open";
+    public static final String HISTORY_OPEN = "history_open";
+    public static final String SMALL_DONATIONS_COUNT = "small_donations_count";
+    public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
+    public static final String LARGE_DONATIONS_COUNT = "large_donations_count";
+
+    public static final String INTRO_CONSEGNATI = "intro_consegnati_test";
+    public static final String INTRO_CONSEGNATI_2 = "intro_consegnati_2_test";
+    public static final String INTRO_PAGINARENDER = "intro_paginarender_test";
+    public static final String INTRO_CREALISTA = "intro_crealista_test";
+    public static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
+    public static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
+
 
 //    public static final String GENERATE_XML = "generate_xml";
 
 //    public static final int HIDE_DELAY = 1500;
 
     public static final long CLICK_DELAY = 1000;
+    public static final long CLICK_DELAY_SELECTION = 300;
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     public static final String URL_CANTO = "urlCanto";
     public static final String SPEED_VALUE = "speedValue";
     public static final String SCROLL_PLAYING = "scrollPlaying";
     public static final String ID_CANTO = "idCanto";
-//    public static final String TAG_TRANSIZIONE = "fullscreen";
+    //    public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
 
 //    public static final String GIALLO = "#EBD0A5";
@@ -60,21 +75,21 @@ public class Utility {
 //    public static final String AUDIO_REQUESTED = "AUDIO_REQUESTED";
 
     //metodo che restituisce la stringa di input senza la pagina all'inizio
-    public static String truncatePage(String input) {
-
-        int length = input.length();
-        int start;
-
-        for (start = 0; start < length; start++) {
-
-            if (input.charAt(start) == ')') {
-                start += 2;
-                break;
-            }
-        }
-
-        return input.substring(start);
-    }
+//    public static String truncatePage(String input) {
+//
+//        int length = input.length();
+//        int start;
+//
+//        for (start = 0; start < length; start++) {
+//
+//            if (input.charAt(start) == ')') {
+//                start += 2;
+//                break;
+//            }
+//        }
+//
+//        return input.substring(start);
+//    }
 
     //metodo che duplica tutti gli apici presenti nella stringa
     public static String duplicaApostrofi(String input) {
@@ -195,7 +210,7 @@ public class Utility {
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
         if (fileInt.exists()) {
-			Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
+            Log.d("Utility.java", "FILE interno: " + fileInt.getAbsolutePath());
             return fileInt.getAbsolutePath();
         }
         else
@@ -253,9 +268,9 @@ public class Utility {
         return ch >= 'a' && ch <= 'z';
     }
 
-    public static boolean isUpperCase(char ch) {
-        return ch >= 'A' && ch <= 'Z';
-    }
+//    public static boolean isUpperCase(char ch) {
+//        return ch >= 'A' && ch <= 'Z';
+//    }
 
     private static Map<Character, Character> MAP_NORM;
 
@@ -335,11 +350,20 @@ public class Utility {
         return sb.toString();
     }
 
-//    public static String escapeEmail(String email) {
+    //    public static String escapeEmail(String email) {
 //        String result = email.substring(0, email.indexOf("@"));
 ////        Log.d("UTILITY", "escapeEmail: email.indexOf @ " + email.indexOf("@"));
 ////        Log.d("UTILITY", "escapeEmail: result " + result);
 //        return result.replaceAll("\\.", "_");
 //    }
+
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+        return context.getResources().getDisplayMetrics();
+    }
+
+    public static float dpToPx(Context context, float dp) {
+        return Math.round(dp * getDisplayMetrics(context).density);
+    }
+
 
 }

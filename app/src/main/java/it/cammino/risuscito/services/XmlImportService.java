@@ -134,43 +134,7 @@ public class XmlImportService extends IntentService {
                     stopSelf();
                 }
             }
-            catch (XmlPullParserException e) {
-                Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
-                FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_alert_error)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setTicker(getString(R.string.import_error))
-                        .setContentText(getString(R.string.import_error))
-                        .build();
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
-                Intent intentBroadcast = new Intent(ACTION_FINISH);
-                sendBroadcast(intentBroadcast);
-
-                stopSelf();
-            }
-            catch (IOException e) {
-                Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
-                FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_alert_error)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setTicker(getString(R.string.import_error))
-                        .setContentText(getString(R.string.import_error))
-                        .build();
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
-                Intent intentBroadcast = new Intent(ACTION_FINISH);
-                sendBroadcast(intentBroadcast);
-
-                stopSelf();
-            }
-            catch (SecurityException e) {
+            catch (XmlPullParserException | SecurityException | IOException e) {
                 Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
                 FirebaseCrash.log("importData: " + e.getMessage());
                 mNotification = new NotificationCompat.Builder(this)

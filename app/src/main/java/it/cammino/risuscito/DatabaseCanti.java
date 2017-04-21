@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 48;
+    private static final int DB_VERSION = 49;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -4295,9 +4295,9 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Backup[] backup = backupTables(oldVersion, newVersion, db);
+        Backup[] backup = backupTables(oldVersion, db);
 
-        BackupLocalLink[] backupLink = backupLocalLink(oldVersion, newVersion, db);
+        BackupLocalLink[] backupLink = backupLocalLink(oldVersion, db);
 
         reCreateDatabse(db);
 
@@ -4324,7 +4324,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
     }
 
-    public Backup[] backupTables(int oldVersion, int newVersion, SQLiteDatabase db) {
+    public Backup[] backupTables(int oldVersion, SQLiteDatabase db) {
 
         Backup[] backup = new Backup[300];
         if(oldVersion >= 21) {
@@ -4385,7 +4385,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         return backup;
     }
 
-    public BackupLocalLink[] backupLocalLink(int oldVersion, int newVersion, SQLiteDatabase db) {
+    public BackupLocalLink[] backupLocalLink(int oldVersion, SQLiteDatabase db) {
 
         //dalla versionee 25 è stata introdotta la tabella di link locali. Va fatto il backup
         BackupLocalLink[] backupLink = new BackupLocalLink[300];
@@ -4420,32 +4420,34 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
                         .deserializeObject(cursor.getBlob(1));
 
-                int totPosiz = lista.getNumPosizioni();
+                if (lista != null) {
+                    int totPosiz = lista.getNumPosizioni();
 
-                for (int j = 0; j < totPosiz; j++) {
-                    if (!lista.getCantoPosizione(j).equals("")) {
+                    for (int j = 0; j < totPosiz; j++) {
+                        if (!lista.getCantoPosizione(j).equals("")) {
 //						Log.i("NOME DUP", lista.getCantoPosizione(j).substring(10));
-                        String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
+                            String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
 //						Log.i("NOME NO-DUP", nomeCanto.substring(10));
-                        sql = "SELECT _id" +
-                                "  FROM ELENCO" +
-                                "  WHERE titolo =  '" + nomeCanto + "'";
-                        Cursor cCheckExists = db.rawQuery(sql, null);
+                            sql = "SELECT _id" +
+                                    "  FROM ELENCO" +
+                                    "  WHERE titolo =  '" + nomeCanto + "'";
+                            Cursor cCheckExists = db.rawQuery(sql, null);
 //						Log.i("ESISTE?", cCheckExists.getCount() + "");
-                        if (cCheckExists.getCount() == 0)
-                            lista.removeCanto(j);
-                        else {
-                            cCheckExists.moveToFirst();
-                            lista.addCanto(String.valueOf(cCheckExists.getInt(0)), j);
+                            if (cCheckExists.getCount() == 0)
+                                lista.removeCanto(j);
+                            else {
+                                cCheckExists.moveToFirst();
+                                lista.addCanto(String.valueOf(cCheckExists.getInt(0)), j);
+                            }
+
+                            cCheckExists.close();
+
                         }
-
-                        cCheckExists.close();
-
                     }
+                    values = new ContentValues();
+                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
-                values = new  ContentValues( );
-                values.put("lista" , ListaPersonalizzata.serializeObject(lista));
-                db.update("LISTE_PERS", values, "_id = " + idLista, null );
                 cursor.moveToNext();
             }
 
@@ -4453,24 +4455,43 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         }
 
         if (oldVersion >= 19) {
-            for (int i = 0; i < backup.length; i++) {
-                if (backup[i] == null)
+//            for (int i = 0; i < backup.length; i++) {
+//                if (backup[i] == null)
+//                    break;
+//                values = new  ContentValues( );
+//                values.put("zoom" , backup[i].getZoom());
+//                //Nella versione 22 sono stati completati i ritornelli di tutti i canti,
+//                //quindi meglio resettare lo scroll salvato
+//                if (newVersion != 22) {
+//                    values.put("scroll_x", backup[i].getScroll_x());
+//                    values.put("scroll_y", backup[i].getScroll_y());
+//                }
+//                values.put("favourite", backup[i].getFavourite());
+//                values.put("saved_tab", backup[i].getNota());
+//                if (oldVersion >= 20)
+//                    values.put("saved_barre", backup[i].getBarre());
+//                if (oldVersion >= 21)
+//                    values.put("saved_speed", backup[i].getSpeed());
+//                db.update("ELENCO", values, "_id = " + backup[i].getId(), null );
+//            }
+            for (Backup aBackup : backup) {
+                if (aBackup == null)
                     break;
-                values = new  ContentValues( );
-                values.put("zoom" , backup[i].getZoom());
+                values = new ContentValues();
+                values.put("zoom", aBackup.getZoom());
                 //Nella versione 22 sono stati completati i ritornelli di tutti i canti,
                 //quindi meglio resettare lo scroll salvato
                 if (newVersion != 22) {
-                    values.put("scroll_x", backup[i].getScroll_x());
-                    values.put("scroll_y", backup[i].getScroll_y());
+                    values.put("scroll_x", aBackup.getScroll_x());
+                    values.put("scroll_y", aBackup.getScroll_y());
                 }
-                values.put("favourite", backup[i].getFavourite());
-                values.put("saved_tab", backup[i].getNota());
+                values.put("favourite", aBackup.getFavourite());
+                values.put("saved_tab", aBackup.getNota());
                 if (oldVersion >= 20)
-                    values.put("saved_barre", backup[i].getBarre());
+                    values.put("saved_barre", aBackup.getBarre());
                 if (oldVersion >= 21)
-                    values.put("saved_speed", backup[i].getSpeed());
-                db.update("ELENCO", values, "_id = " + backup[i].getId(), null );
+                    values.put("saved_speed", aBackup.getSpeed());
+                db.update("ELENCO", values, "_id = " + aBackup.getId(), null);
             }
 
             //cancella dalle liste i canti inesistenti
@@ -4483,31 +4504,33 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                 ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
                         .deserializeObject(cursor.getBlob(1));
 
-                int totPosiz = lista.getNumPosizioni();
+                if (lista != null) {
+                    int totPosiz = lista.getNumPosizioni();
 
-                for (int j = 0; j < totPosiz; j++) {
-                    if (!lista.getCantoPosizione(j).equals("")) {
+                    for (int j = 0; j < totPosiz; j++) {
+                        if (!lista.getCantoPosizione(j).equals("")) {
 //						Log.i("NOME DUP", lista.getCantoPosizione(j).substring(10));
 //                        String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
 //						Log.i("NOME NO-DUP", nomeCanto.substring(10));
 //                        sql = "SELECT _id" +
 //                                "  FROM ELENCO" +
 //                                "  WHERE titolo =  '" + nomeCanto + "'";
-                          sql = "SELECT _id" +
-                                "  FROM ELENCO" +
-                                "  WHERE _id = " + lista.getCantoPosizione(j);
-                        Cursor cCheckExists = db.rawQuery(sql, null);
+                            sql = "SELECT _id" +
+                                    "  FROM ELENCO" +
+                                    "  WHERE _id = " + lista.getCantoPosizione(j);
+                            Cursor cCheckExists = db.rawQuery(sql, null);
 //						Log.i("ESISTE?", cCheckExists.getCount() + "");
-                        if (cCheckExists.getCount() == 0)
-                            lista.removeCanto(j);
+                            if (cCheckExists.getCount() == 0)
+                                lista.removeCanto(j);
 
-                        cCheckExists.close();
+                            cCheckExists.close();
 
+                        }
                     }
+                    values = new ContentValues();
+                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
-                values = new  ContentValues( );
-                values.put("lista" , ListaPersonalizzata.serializeObject(lista));
-                db.update("LISTE_PERS", values, "_id = " + idLista, null );
                 cursor.moveToNext();
             }
 
@@ -4515,12 +4538,20 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         }
 
         if (oldVersion >= 25) {
-            for (int i = 0; i < backupLink.length; i++) {
-                if (backupLink[i] == null)
+//            for (int i = 0; i < backupLink.length; i++) {
+//                if (backupLink[i] == null)
+//                    break;
+//                values = new  ContentValues( );
+//                values.put("_id", backupLink[i].getIdCanto());
+//                values.put("local_path", backupLink[i].getLocalPath());
+//                db.insert("LOCAL_LINKS", null, values);
+//            }
+            for (BackupLocalLink aBackupLink : backupLink) {
+                if (aBackupLink == null)
                     break;
-                values = new  ContentValues( );
-                values.put("_id", backupLink[i].getIdCanto());
-                values.put("local_path", backupLink[i].getLocalPath());
+                values = new ContentValues();
+                values.put("_id", aBackupLink.getIdCanto());
+                values.put("local_path", aBackupLink.getLocalPath());
                 db.insert("LOCAL_LINKS", null, values);
             }
         }

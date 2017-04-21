@@ -90,13 +90,13 @@
     <item
         android:id="@+id/action_exp_pdf"
         android:orderInCategory="96"
-        risuscito:showAsAction="ifRoom"
+        risuscito:showAsAction="never"
         android:title="@string/action_exp_pdf" />
 
     <item
         android:id="@+id/action_help_canto"
         android:orderInCategory="98"
-        risuscito:showAsAction="ifRoom"
+        risuscito:showAsAction="never"
         android:title="@string/action_help" />
 
 </menu>

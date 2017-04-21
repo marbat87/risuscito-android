@@ -38,9 +38,10 @@ public class GeneralInsertSearch extends ThemeableActivity {
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_inserisci_titolo);
         mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
+//        LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
 
         Bundle bundle = GeneralInsertSearch.this.getIntent().getExtras();
         fromAdd = bundle.getInt("fromAdd");
@@ -53,7 +54,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
 //        final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
         mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
         mTabLayout.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, mTabLayout);
+//        mLUtils.applyFontedTab(mViewPager, mTabLayout);
 
     }
 
@@ -122,7 +123,8 @@ public class GeneralInsertSearch extends ThemeableActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getResources().getConfiguration().locale;
+//            Locale l = getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.fast_search_title).toUpperCase(l);

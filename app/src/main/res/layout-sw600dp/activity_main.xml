@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
@@ -29,20 +30,23 @@
         <FrameLayout
             android:id="@+id/main_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:ignore="InconsistentLayout">
 
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="@dimen/design_appbar_elevation"
-                android:theme="@style/ActionBarThemeOverlay">
+                android:theme="@style/ActionBarThemeOverlay"
+                tools:targetApi="lollipop">
 
-                <android.support.design.widget.TabLayout
+                <it.cammino.risuscito.ui.FontTabLayout
                     android:layout_height="48dp"
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:id="@+id/material_tabs"
+                    risuscito:fontPath="fonts/Roboto-Medium.ttf"
                     style="@style/Widget.Design.TabLayout.Risuscito" />
 
             </android.support.design.widget.AppBarLayout>

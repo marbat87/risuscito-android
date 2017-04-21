@@ -6,7 +6,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.List;
@@ -20,8 +19,6 @@ public class FABAwareScrollingViewBehavior extends AppBarLayout.ScrollingViewBeh
         super();
     }
 
-    private final String TAG = getClass().getCanonicalName();
-    
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
         return super.layoutDependsOn(parent, child, dependency) ||
@@ -46,14 +43,24 @@ public class FABAwareScrollingViewBehavior extends AppBarLayout.ScrollingViewBeh
             List<View> dependencies = coordinatorLayout.getDependencies(child);
             for (View view : dependencies) {
                 if (view instanceof FloatingActionButton) {
-                    ((FloatingActionButton) view).hide();
+                    //TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
+//                    ((FloatingActionButton) view).hide();
+                    ((FloatingActionButton) view).hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                        @Override
+                        public void onHidden(FloatingActionButton fab) {
+                            super.onHidden(fab);
+                            fab.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
             }
         } else if (dyConsumed < 0) {
             // User scrolled up -> show the FAB
             List<View> dependencies = coordinatorLayout.getDependencies(child);
             for (View view : dependencies) {
-                if (view instanceof FloatingActionButton) {
+//                if (view instanceof FloatingActionButton) {
+                //TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
+                if (view instanceof FloatingActionButton && view.getVisibility() != View.GONE) {
                     ((FloatingActionButton) view).show();
                 }
             }

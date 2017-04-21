@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
+    <changelogversion versionName="4.3.0" changeDate="Maggio 2017">
+        <changelogimprovement>Nuova pagina Info</changelogimprovement>
+        <changelogimprovement>Nuovo stile per i tutorial</changelogimprovement>
+        <changelogtext>Reintrodotta la possiblità di ringraziare con piccole somme, tramite Google Play</changelogtext>
+        <changelogbug>Corretti i numeri pagina per i nuovi canti in Italiano</changelogbug>
+        <changelogtext>Varie correzioni "nascoste" al codice</changelogtext>
+        <changelogbug>Corretto un bug nella esportazione PDF in Ucraino</changelogbug>
+        <changelogimprovement>Migliorata la gestione della Creazione Lista</changelogimprovement>
+        <changelogimprovement>Modificato stile di indici ed elenchi</changelogimprovement>
+    </changelogversion>
+
     <changelogversion versionName="4.2.1" changeDate="Febbraio 2017">
         <changelogimprovement>Compatibilità minima Android 4.0 (API 14)</changelogimprovement>
         <changelogimprovement>Aggiunto il nuovo canto "Come pecora che vede"</changelogimprovement>
         <changelogimprovement>Aggiunta l'opzione per il canto all'offertorio</changelogimprovement>
-        <changelogtext>Rimosse la pagina e il link per le donazioni a causa delle policy di Google. Potete comunque donare manualmente, tramite Paypal, a marbat87@outlook.it</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="4.1.0" changeDate="Agosto 2016">

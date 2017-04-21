@@ -9,7 +9,8 @@
     android:layout_width="match_parent"
     android:background="?attr/colorPrimary"
     risuscito:layout_scrollFlags="scroll|enterAlways"
-    android:elevation="@dimen/design_appbar_elevation">
+    android:elevation="@dimen/design_appbar_elevation"
+    tools:targetApi="lollipop">
 
     <TextView
         android:layout_width="wrap_content"

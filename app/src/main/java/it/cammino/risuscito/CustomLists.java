@@ -6,11 +6,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,20 +34,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.slides.IntroListePers;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class CustomLists extends Fragment implements InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -57,16 +64,16 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private int listaDaCanc, idDaCanc, indDaModif;
     private ListaPersonalizzata celebrazioneDaCanc;
     private String titoloDaCanc;
-//    private ViewPager mViewPager;
+    //    private ViewPager mViewPager;
     private FloatingActionButton mFab;
     private View rootView;
     private static final String PAGE_EDITED = "pageEdited";
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
-    private LUtils mLUtils;
+//    private LUtils mLUtils;
 
-    private WelcomeHelper mWelcomeScreen;
+//    private WelcomeHelper mWelcomeScreen;
 
     private MainActivity mMainActivity;
 
@@ -92,8 +99,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                             .show();
                     break;
                 case BottomSheetFabListe.SHARE_TEXT:
-                    mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-                            .getView().findViewById(R.id.button_condividi).performClick();
+                    View mView = mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+                            .getView();
+                    if (mView != null)
+                        mView.findViewById(R.id.button_condividi).performClick();
                     break;
                 case BottomSheetFabListe.EDIT_LIST:
                     Bundle bundle = new Bundle();
@@ -127,8 +136,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                             .show();
                     break;
                 case BottomSheetFabListe.SHARE_FILE:
-                    mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-                            .getView().findViewById(R.id.button_invia_file).performClick();
+                    mView = mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+                            .getView();
+                    if (mView != null)
+                        mView.findViewById(R.id.button_invia_file).performClick();
                     break;
                 default:
                     break;
@@ -138,18 +149,20 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists);
 
-        mLUtils = LUtils.getInstance(getActivity());
+//        mLUtils = LUtils.getInstance(getActivity());
 
         //crea un istanza dell'oggetto DatabaseCanti
         listaCanti = new DatabaseCanti(getActivity());
@@ -176,7 +189,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         tabs.setVisibility(View.VISIBLE);
         tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         getFab().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,21 +206,35 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             titoloDaCanc = savedInstanceState.getString("titoloDaCanc");
             listaDaCanc = savedInstanceState.getInt("listaDaCanc", 0);
             celebrazioneDaCanc = (ListaPersonalizzata) savedInstanceState.getSerializable("celebrazioneDaCanc");
-            if (InputTextDialogFragment.findVisible((AppCompatActivity) getActivity(), "NEW_LIST") != null)
-                InputTextDialogFragment.findVisible((AppCompatActivity) getActivity(), "NEW_LIST").setmCallback(CustomLists.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "RESET_LIST") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "RESET_LIST").setmCallback(CustomLists.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST").setmCallback(CustomLists.this);
+            InputTextDialogFragment iFragment = InputTextDialogFragment.findVisible((AppCompatActivity) getActivity(), "NEW_LIST");
+            if (iFragment != null)
+                iFragment.setmCallback(CustomLists.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "RESET_LIST");
+            if (sFragment != null)
+                sFragment.setmCallback(CustomLists.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST");
+            if (sFragment != null)
+                sFragment.setmCallback(CustomLists.this);
         }
 
         getActivity().registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabListe.CHOOSE_DONE));
 
-        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroListePers.class);
-        mWelcomeScreen.show(savedInstanceState);
+//        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroListePers.class);
+//        mWelcomeScreen.show(savedInstanceState);
+
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Log.d(TAG, "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false))
+            playIntro();
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -231,7 +258,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-                mWelcomeScreen.forceShow();
+//                mWelcomeScreen.forceShow();
+                playIntro();
                 return true;
         }
         return false;
@@ -249,7 +277,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         outState.putInt("idDaCanc", idDaCanc);
         outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
         outState.putInt("listaDaCanc", listaDaCanc);
-        mWelcomeScreen.onSaveInstanceState(outState);
+//        mWelcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override
@@ -267,9 +295,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
             tabs.setupWithViewPager(mViewPager);
-            mLUtils.applyFontedTab(mViewPager, tabs);
+//            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
+                @SuppressWarnings("ConstantConditions")
                 @Override
                 public void run() {
                     tabs.getTabAt(indDaModif).select();
@@ -329,10 +358,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -366,7 +395,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             super.destroyItem(container, position, object);
         }
 
-        public Fragment getRegisteredFragment(int position) {
+        Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position);
         }
 
@@ -377,7 +406,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getActivity().getResources().getConfiguration().locale;
+//            Locale l = getActivity().getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.title_activity_canti_parola).toUpperCase(l);
@@ -404,7 +434,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         switch (tag) {
             case "NEW_LIST":
                 Bundle bundle = new Bundle();
-                bundle.putString("titolo", dialog.getInputEditText().getText().toString());
+                EditText mEditText = dialog.getInputEditText();
+                bundle.putString("titolo",mEditText != null ? dialog.getInputEditText().getText().toString() : "NULL");
                 bundle.putBoolean("modifica", false);
                 indDaModif = 2 + idListe.length;
                 startActivityForResult(new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
@@ -422,8 +453,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         Log.d(TAG, "onPositive: " + tag);
         switch (tag) {
             case "RESET_LIST":
-                mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
-                        .getView().findViewById(R.id.button_pulisci).performClick();
+                View mView = mSectionsPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem())
+                        .getView();
+                if (mView != null)
+                    mView.findViewById(R.id.button_pulisci).performClick();
                 break;
             case "DELETE_LIST":
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -433,9 +466,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                 updateLista();
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 tabs.setupWithViewPager(mViewPager);
-                mLUtils.applyFontedTab(mViewPager, tabs);
+//                mLUtils.applyFontedTab(mViewPager, tabs);
                 Handler myHandler = new Handler();
                 final Runnable mMyRunnable2 = new Runnable() {
+                    @SuppressWarnings("ConstantConditions")
                     @Override
                     public void run() {
                         tabs.getTabAt(0).select();
@@ -458,7 +492,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
                                 tabs.setupWithViewPager(mViewPager);
-                                mLUtils.applyFontedTab(mViewPager, tabs);
+//                                mLUtils.applyFontedTab(mViewPager, tabs);
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override
@@ -478,4 +512,52 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    private void playIntro() {
+        getFab().show();
+        Drawable doneDrawable =
+                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_check)
+                        .sizeDp(24)
+                        .paddingDp(2);
+        new TapTargetSequence(getActivity())
+                .continueOnCancel(true)
+                .targets(
+                        TapTarget.forView(getFab()
+                                , getString(R.string.showcase_listepers_title)
+                                , getString(R.string.showcase_listepers_desc1))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .descriptionTextSize(15)
+                                .tintTarget(false)                   // Whether to tint the target view's color
+                        ,
+                        TapTarget.forView(getFab()
+                                , getString(R.string.showcase_listepers_title), getString(R.string.showcase_listepers_desc3))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .icon(doneDrawable)
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true);
+                                prefEditor.apply();
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true);
+                                prefEditor.apply();
+                            }
+                        }).start();
+    }
+
 }
