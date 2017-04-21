@@ -3,10 +3,10 @@
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
-    <!--<string name="lang_en" translatable="false">English</string>-->
+    <string name="lang_en" translatable="false">English</string>
     <string name="lang_it_value" translatable="false">it</string>
     <string name="lang_uk_value" translatable="false">uk</string>
-    <!--<string name="lang_en_value" translatable="false">en</string>-->
+    <string name="lang_en_value" translatable="false">en</string>
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
 

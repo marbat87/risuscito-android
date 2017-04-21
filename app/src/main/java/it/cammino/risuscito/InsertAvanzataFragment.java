@@ -297,6 +297,8 @@ public class InsertAvanzataFragment extends Fragment {
 //            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
             if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                 in = getActivity().getAssets().open("fileout_uk.xml");
+            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
+                in = getActivity().getAssets().open("fileout_en.xml");
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();

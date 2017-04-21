@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!---->
-    <!---->
-    <!---->
+
     <string name="private_memory">Приватна пам\'ять</string>
     <string name="public_memory">Публічна пам\'ять</string>
     <string name="app_name">Христос Воскрес</string>
