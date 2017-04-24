@@ -285,4 +285,11 @@ Do you want to proceed?</string>
     <string name="object_invalid">Item unavailable</string>
     <string name="object_owned">Item owned yet</string>
     <string name="generic_removed">%1$s removed</string>
+    <string name="title_trabar_I">1</string>
+    <string name="title_trabar_II">2</string>
+    <string name="title_trabar_III">3</string>
+    <string name="title_trabar_IV">4</string>
+    <string name="title_trabar_V">5</string>
+    <string name="title_trabar_VI">6</string>
+    <string name="title_trabar_VII">7</string>
 </resources>

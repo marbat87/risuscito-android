@@ -669,40 +669,112 @@ public class MainActivity extends ThemeableActivity
     //converte gli accordi salvati dalla lingua vecchia alla nuova
     private void convertTabs(SQLiteDatabase db, String conversion) {
 //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
-        HashMap<String, String> mappa = null;
-        if (conversion.equalsIgnoreCase("it-uk")) {
-            mappa = new HashMap<>();
-            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
+//        HashMap<String, String> mappa = null;
+//        if (conversion.equalsIgnoreCase("it-uk")) {
+//            mappa = new HashMap<>();
+//            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+//                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
+//        }
+//        if (conversion.equalsIgnoreCase("uk-it")) {
+//            mappa = new HashMap<>();
+//            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+//                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
+//        }
+        String[] accordi1 = CambioAccordi.accordi_it;
+        Log.d(TAG, "convertTabs - from: " + conversion.substring(0,2));
+        switch (conversion.substring(0,2)) {
+            case "uk":
+                accordi1 = CambioAccordi.accordi_uk;
+                break;
+            case "en":
+                accordi1 = CambioAccordi.accordi_en;
+                break;
         }
-        if (conversion.equalsIgnoreCase("uk-it")) {
-            mappa = new HashMap<>();
-            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
-        }
-        if (mappa != null) {
-            String query = "SELECT _id, saved_tab" +
-                    "  FROM ELENCO";
-            Cursor cursor = db.rawQuery(query, null);
 
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-//                Log.i(getClass().toString(),"ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)) );
-                    query = "UPDATE ELENCO" +
-                            "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
-                            "  WHERE _id =  " + cursor.getInt(0);
-                    db.execSQL(query);
-                }
-                cursor.moveToNext();
-            }
-            cursor.close();
+        String[] accordi2 = CambioAccordi.accordi_it;
+        Log.d(TAG, "convertTabs - to: " + conversion.substring(3,5));
+        switch (conversion.substring(3,5)) {
+            case "uk":
+                accordi2 = CambioAccordi.accordi_uk;
+                break;
+            case "en":
+                accordi2 = CambioAccordi.accordi_en;
+                break;
         }
+
+        HashMap<String, String>mappa = new HashMap<>();
+        for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+            mappa.put(accordi1[i], accordi2[i]);
+
+//        if (mappa != null) {
+        String query = "SELECT _id, saved_tab" +
+                "  FROM ELENCO";
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+                Log.d(TAG, "convertTabs: " + "ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)));
+                query = "UPDATE ELENCO" +
+                        "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                        "  WHERE _id =  " + cursor.getInt(0);
+                db.execSQL(query);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+//        }
+    }
+
+    //converte gli accordi salvati dalla lingua vecchia alla nuova
+    private void convertiBarre(SQLiteDatabase db, String conversion) {
+        String[] barre1 = CambioAccordi.barre_it;
+        Log.d(TAG, "convertiBarre - from: " + conversion.substring(0,2));
+        switch (conversion.substring(0,2)) {
+            case "uk":
+                barre1 = CambioAccordi.barre_uk;
+                break;
+            case "en":
+                barre1 = CambioAccordi.barre_en;
+                break;
+        }
+
+        String[] barre2 = CambioAccordi.barre_it;
+        Log.d(TAG, "convertiBarre - to: " + conversion.substring(3,5));
+        switch (conversion.substring(3,5)) {
+            case "uk":
+                barre2 = CambioAccordi.barre_uk;
+                break;
+            case "en":
+                barre2 = CambioAccordi.barre_en;
+                break;
+        }
+
+        HashMap<String, String>mappa = new HashMap<>();
+        for (int i = 0; i < CambioAccordi.barre_it.length; i++)
+            mappa.put(barre1[i], barre2[i]);
+
+        String query = "SELECT _id, saved_barre" +
+                "  FROM ELENCO";
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+                Log.d(TAG, "convertiBarre: " + "ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)));
+                query = "UPDATE ELENCO" +
+                        "  SET saved_barre = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                        "  WHERE _id =  " + cursor.getInt(0);
+                db.execSQL(query);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
     }
 
     private class TranslationTask extends AsyncTask<String, Integer, String> {
 
-        public TranslationTask() {
+        TranslationTask() {
         }
 
         @Override
@@ -715,6 +787,7 @@ public class MainActivity extends ThemeableActivity
             listaCanti.reCreateDatabse(db);
             listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
             convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+            convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
             db.close();
             listaCanti.close();
             return "";

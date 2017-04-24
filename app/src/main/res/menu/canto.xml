@@ -62,13 +62,13 @@
                 <menu>
                     <group android:id="@+id/menu_gruppo_barre">
                         <item android:id="@+id/nobarre" android:title="@string/action_trabar_NO" android:titleCondensed="0" />
-                        <item android:id="@+id/barre1" android:title="@string/action_trabar_I" android:titleCondensed="I" />
-                        <item android:id="@+id/barre2" android:title="@string/action_trabar_II" android:titleCondensed="II" />
-                        <item android:id="@+id/barre3" android:title="@string/action_trabar_III" android:titleCondensed="III" />
-                        <item android:id="@+id/barre4" android:title="@string/action_trabar_IV" android:titleCondensed="IV" />
-                        <item android:id="@+id/barre5" android:title="@string/action_trabar_V" android:titleCondensed="V" />
-                        <item android:id="@+id/barre6" android:title="@string/action_trabar_VI" android:titleCondensed="VI" />
-                        <item android:id="@+id/barre7" android:title="@string/action_trabar_VII" android:titleCondensed="VII" />
+                        <item android:id="@+id/barre1" android:title="@string/action_trabar_I" android:titleCondensed="@string/title_trabar_I" />
+                        <item android:id="@+id/barre2" android:title="@string/action_trabar_II" android:titleCondensed="@string/title_trabar_II" />
+                        <item android:id="@+id/barre3" android:title="@string/action_trabar_III" android:titleCondensed="@string/title_trabar_III" />
+                        <item android:id="@+id/barre4" android:title="@string/action_trabar_IV" android:titleCondensed="@string/title_trabar_IV" />
+                        <item android:id="@+id/barre5" android:title="@string/action_trabar_V" android:titleCondensed="@string/title_trabar_V" />
+                        <item android:id="@+id/barre6" android:title="@string/action_trabar_VI" android:titleCondensed="@string/title_trabar_VI" />
+                        <item android:id="@+id/barre7" android:title="@string/action_trabar_VII" android:titleCondensed="@string/title_trabar_VII" />
                     </group>
                 </menu>
             </item>

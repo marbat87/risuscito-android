@@ -16,22 +16,26 @@ public class CambioAccordi {
 
     private static final String TAG = "CambioAccordi";
 
-    public static final String[] accordi_it =
+    static final String[] accordi_it =
             {"Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si"};
 
-    public static final String[] accordi_uk =
+    static final String[] accordi_uk =
             {"C", "Cis", "D","Eb", "E", "F", "Fis", "G", "Gis", "A", "B","H"};
 
-    public static final String[] accordi_uk_lower =
+    private static final String[] accordi_uk_lower =
             {"c", "cis", "d","eb", "e", "f", "fis", "g", "gis", "a", "b","h"};
 
-    public static final String[] accordi_en =
+    static final String[] accordi_en =
             {"C", "C#", "D","Eb", "E", "F", "F#", "G", "G#", "A", "Bb","B"};
+
+    static final String[] barre_it = {"I", "II", "III", "IV", "V", "VI", "VII"};
+    static final String[] barre_uk = {"I", "II", "III", "IV", "V", "VI", "VII"};
+    static final String[] barre_en = {"1", "2", "3", "4", "5", "6", "7"};
 
     private Context context;
     private String mLanguage;
 
-    public CambioAccordi(Context context) {
+    CambioAccordi(Context context) {
         this.context = context;
     }
 
@@ -40,7 +44,7 @@ public class CambioAccordi {
         this.mLanguage = language;
     }
 
-    public static String recuperaPrimoAccordo(InputStream canto, String language) {
+    static String recuperaPrimoAccordo(InputStream canto, String language) {
 
         if (canto == null)
             return "";
@@ -117,7 +121,7 @@ public class CambioAccordi {
         }
     }
 
-    public String recuperaBarre(InputStream canto) {
+    String recuperaBarre(InputStream canto, String language) {
 
         if (canto == null)
             return "";
@@ -135,14 +139,18 @@ public class CambioAccordi {
             boolean found = false;
 
             while (line != null && !found) {
-                if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
+                int start = line.indexOf(context.getResources().getString(R.string.barre_search_string));
+//                if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
+                if (start >= 0) {
                     Log.d(TAG, "recuperaBarre - RIGA: " + line);
                     found = true;
-                    int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
+
+//                    int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
+                    start = language.equalsIgnoreCase("en")? start + 5 : (line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3);
 
                     primoBarre = "";
                     for (int i = start; i < line.length(); i++) {
-                        if (line.charAt(i) == ' ')
+                        if (line.charAt(i) == ' ' || line.charAt(i) == '<')
                             break;
                         else
                             primoBarre += line.charAt(i);

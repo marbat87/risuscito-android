@@ -296,4 +296,11 @@
     <string name="object_invalid" >Oggetto non disponibile</string>
     <string name="object_owned">Oggetto gi&#224; posseduto</string>
     <string name="generic_removed">%1$s rimosso</string>
+    <string name="title_trabar_I">I</string>
+    <string name="title_trabar_II">II</string>
+    <string name="title_trabar_III">III</string>
+    <string name="title_trabar_IV">IV</string>
+    <string name="title_trabar_V">V</string>
+    <string name="title_trabar_VI">VI</string>
+    <string name="title_trabar_VII">VII</string>
 </resources>

@@ -86,7 +86,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String personalUrl, localUrl,  playUrl;
 //    private WelcomeHelper mWelcomeScreen;
 
-    enum MP_State {Started, Stopped}
+    private enum MP_State {Started, Stopped}
 
     MP_State mediaPlayerState = MP_State.Stopped;
 
@@ -527,7 +527,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         try {
             primaNota = CambioAccordi.recuperaPrimoAccordo(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
-            primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"));
+            primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
         }
         catch (IOException e) {
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
