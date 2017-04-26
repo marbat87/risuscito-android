@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            risuscito:title="@string/title_activity_about"
+            risuscito:title="@string/changelog"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
