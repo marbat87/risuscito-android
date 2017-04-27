@@ -1,7 +1,6 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
-import android.icu.util.MeasureUnit;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;

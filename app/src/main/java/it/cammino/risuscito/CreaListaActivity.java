@@ -26,7 +26,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -580,28 +579,47 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         return false;
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+////            if (elementi.size() > 0) {
+//            if (mAdapter.getAdapterItems().size() > 0) {
+//                new SimpleDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "SAVE_LIST")
+//                        .title(R.string.save_list_title)
+//                        .content(R.string.save_list_question)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .neutralButton(R.string.cancel)
+//                        .show();
+//                return true;
+//            }
+//            else {
+//                setResult(Activity.RESULT_CANCELED);
+//                finish();
+//                overridePendingTransition(0, R.anim.slide_out_bottom);
+//                return true;
+//            }
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (elementi.size() > 0) {
-            if (mAdapter.getAdapterItems().size() > 0) {
-                new SimpleDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "SAVE_LIST")
-                        .title(R.string.save_list_title)
-                        .content(R.string.save_list_question)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .neutralButton(R.string.cancel)
-                        .show();
-                return true;
-            }
-            else {
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-                overridePendingTransition(0, R.anim.slide_out_bottom);
-                return true;
-            }
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        if (mAdapter.getAdapterItems().size() > 0) {
+            new SimpleDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "SAVE_LIST")
+                    .title(R.string.save_list_title)
+                    .content(R.string.save_list_question)
+                    .positiveButton(R.string.confirm)
+                    .negativeButton(R.string.dismiss)
+                    .neutralButton(R.string.cancel)
+                    .show();
         }
-        return super.onKeyUp(keyCode, event);
+        else {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
+        }
     }
 
     private boolean saveList()  {

@@ -428,13 +428,11 @@ public class InsertAvanzataFragment extends Fragment {
 
     private class SearchTask extends AsyncTask<String, Integer, String> {
 
-        SQLiteDatabase db;
+//        SQLiteDatabase db;
 
         @Override
         protected String doInBackground(String... sSearchText) {
 
-            // crea un manipolatore per il Database in modalità READ
-//            SQLiteDatabase db = listaCanti.getReadableDatabase();
             Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
 
             String[] words = sSearchText[0].split("\\W");
@@ -446,7 +444,6 @@ public class InsertAvanzataFragment extends Fragment {
             for (String[] aText : aTexts) {
 
                 Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
-
                 if (isCancelled())
                     break;
 
@@ -459,9 +456,7 @@ public class InsertAvanzataFragment extends Fragment {
                         break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
-//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
                         text = text.toLowerCase(ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()));
-
                         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
                         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                         text = pattern.matcher(nfdNormalizedString).replaceAll("");
@@ -474,7 +469,7 @@ public class InsertAvanzataFragment extends Fragment {
                 Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
 
                 if (found && !isCancelled()) {
-                    db = listaCanti.getReadableDatabase();
+                    SQLiteDatabase db = listaCanti.getReadableDatabase();
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
                     String query = "SELECT titolo, color, pagina, _id, source"
                             + "		FROM ELENCO"

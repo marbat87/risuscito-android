@@ -1,26 +1,13 @@
 package it.cammino.risuscito.items;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.StringRes;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
-import com.mikepenz.materialize.holder.ColorHolder;
-import com.mikepenz.materialize.holder.StringHolder;
-import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 

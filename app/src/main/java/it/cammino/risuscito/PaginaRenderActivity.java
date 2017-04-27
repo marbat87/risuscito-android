@@ -28,7 +28,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -939,28 +938,48 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         return false;
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if (notaCambio == null || notaSalvata == null
+//                    || barreCambio == null || barreSalvato == null
+//                    || (notaCambio.equals(notaSalvata)
+//                    && barreCambio.equals(barreSalvato))) {
+//                pulisciVars();
+//                mLUtils.closeActivityWithTransition();
+//                return true;
+//            }
+//            else {
+//                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
+//                        .title(R.string.dialog_save_tab_title)
+//                        .content(R.string.dialog_save_tab)
+//                        .positiveButton(R.string.confirm)
+//                        .negativeButton(R.string.dismiss)
+//                        .show();
+//                return true;
+//            }
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (notaCambio == null || notaSalvata == null
-                    || barreCambio == null || barreSalvato == null
-                    || (notaCambio.equals(notaSalvata)
-                    && barreCambio.equals(barreSalvato))) {
-                pulisciVars();
-                mLUtils.closeActivityWithTransition();
-                return true;
-            }
-            else {
-                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
-                        .title(R.string.dialog_save_tab_title)
-                        .content(R.string.dialog_save_tab)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
-                        .show();
-                return true;
-            }
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        if (notaCambio == null || notaSalvata == null
+                || barreCambio == null || barreSalvato == null
+                || (notaCambio.equals(notaSalvata)
+                && barreCambio.equals(barreSalvato))) {
+            pulisciVars();
+            mLUtils.closeActivityWithTransition();
         }
-        return super.onKeyUp(keyCode, event);
+        else {
+            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
+                    .title(R.string.dialog_save_tab_title)
+                    .content(R.string.dialog_save_tab)
+                    .positiveButton(R.string.confirm)
+                    .negativeButton(R.string.dismiss)
+                    .show();
+        }
     }
 
     @Override

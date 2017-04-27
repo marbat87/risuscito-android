@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -19,6 +19,8 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private int fromAdd;
     private int idLista;
@@ -70,14 +72,22 @@ public class GeneralInsertSearch extends ThemeableActivity {
         return false;
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            setResult(Activity.RESULT_CANCELED);
+//            finish();
+//            overridePendingTransition(0, R.anim.slide_out_right);
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            setResult(Activity.RESULT_CANCELED);
-            finish();
-            overridePendingTransition(0, R.anim.slide_out_right);
-        }
-        return super.onKeyUp(keyCode, event);
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

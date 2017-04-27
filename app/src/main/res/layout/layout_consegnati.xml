@@ -32,7 +32,8 @@
             android:layout_centerHorizontal="true"
             android:layout_width="120dip"
             android:layout_height="120dip"
-            android:src="@drawable/ic_sad_book"/>
+            android:src="@drawable/ic_sad_book"
+            android:contentDescription="@string/no_consegnati" />
 
         <TextView
             android:id="@+id/consegnati_text"

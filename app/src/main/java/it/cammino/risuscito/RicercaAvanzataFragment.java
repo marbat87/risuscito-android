@@ -614,12 +614,12 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private class SearchTask extends AsyncTask<String, Integer, String> {
+    private class SearchTask extends AsyncTask<String, Void, Integer> {
 
-        SQLiteDatabase db;
+//        SQLiteDatabase db;
 
         @Override
-        protected String doInBackground(String... sSearchText) {
+        protected Integer doInBackground(String... sSearchText) {
 
             Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
 
@@ -632,7 +632,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             for (String[] aText : aTexts) {
 
                 Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
-
                 if (isCancelled())
                     break;
 
@@ -645,16 +644,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         break;
                     if (word.trim().length() > 1) {
                         text = word.trim();
-//                        text = text.toLowerCase(getActivity().getResources().getConfiguration().locale);
                         text = text.toLowerCase(ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()));
-
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
                         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
                         text = pattern.matcher(nfdNormalizedString).replaceAll("");
-//                        }
-//                        else
-//                            text = Utility.removeAccents(text);
 
                         if (!aText[1].contains(text))
                             found = false;
@@ -665,7 +658,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
                 if (found && !isCancelled()) {
                     // crea un manipolatore per il Database in modalità READ
-                    db = listaCanti.getReadableDatabase();
+                    SQLiteDatabase db = listaCanti.getReadableDatabase();
                     // recupera il titolo colore e pagina del canto da aggiungere alla lista
                     String query = "SELECT titolo, color, pagina, _id, source"
                             + "		FROM ELENCO"
@@ -697,7 +690,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                 }
             }
 
-            return null;
+            return 0;
         }
 
         @Override
@@ -708,7 +701,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             cantoAdapter.add(titoli);
 //            cantoAdapter.notifyDataSetChanged();

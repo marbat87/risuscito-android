@@ -23,7 +23,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -622,35 +621,63 @@ public class MainActivity extends ThemeableActivity
 
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if (isOnTablet) {
+//                if (crossFader != null && crossFader.isCrossFaded()) {
+//                    crossFader.crossFade();
+//                    return true;
+//                }
+//            }
+//            else {
+//                if (mDrawer != null && mDrawer.isDrawerOpen()) {
+//                    mDrawer.closeDrawer();
+//                    return true;
+//                }
+//            }
+//
+//            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
+//            if (myFragment != null && myFragment.isVisible()) {
+//                finish();
+//                return true;
+//            }
+//
+//            if (isOnTablet)
+//                mMiniDrawer.setSelection(R.id.navigation_home);
+//            mDrawer.setSelection(R.id.navigation_home);
+//            appBarLayout.setExpanded(true, true);
+//            return true;
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isOnTablet) {
-                if (crossFader != null && crossFader.isCrossFaded()) {
-                    crossFader.crossFade();
-                    return true;
-                }
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        if (isOnTablet) {
+            if (crossFader != null && crossFader.isCrossFaded()) {
+                crossFader.crossFade();
+                return;
             }
-            else {
-                if (mDrawer != null && mDrawer.isDrawerOpen()) {
-                    mDrawer.closeDrawer();
-                    return true;
-                }
-            }
-
-            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
-            if (myFragment != null && myFragment.isVisible()) {
-                finish();
-                return true;
-            }
-
-            if (isOnTablet)
-                mMiniDrawer.setSelection(R.id.navigation_home);
-            mDrawer.setSelection(R.id.navigation_home);
-            appBarLayout.setExpanded(true, true);
-            return true;
         }
-        return super.onKeyUp(keyCode, event);
+        else {
+            if (mDrawer != null && mDrawer.isDrawerOpen()) {
+                mDrawer.closeDrawer();
+                return;
+            }
+        }
+
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
+        if (myFragment != null && myFragment.isVisible()) {
+            finish();
+            return;
+        }
+
+        if (isOnTablet)
+            mMiniDrawer.setSelection(R.id.navigation_home);
+        mDrawer.setSelection(R.id.navigation_home);
+        appBarLayout.setExpanded(true, true);
     }
 
     @Override
@@ -772,13 +799,13 @@ public class MainActivity extends ThemeableActivity
         cursor.close();
     }
 
-    private class TranslationTask extends AsyncTask<String, Integer, String> {
+    private class TranslationTask extends AsyncTask<String, Void, Integer> {
 
         TranslationTask() {
         }
 
         @Override
-        protected String doInBackground(String... sUrl) {
+        protected Integer doInBackground(String... sUrl) {
             getIntent().removeExtra(Utility.DB_RESET);
             DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
             SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -790,7 +817,7 @@ public class MainActivity extends ThemeableActivity
             convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
             db.close();
             listaCanti.close();
-            return "";
+            return 0;
         }
 
         @Override
@@ -805,11 +832,10 @@ public class MainActivity extends ThemeableActivity
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
             getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
             try {
-//                if (SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION") != null)
-//                    SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION").dismiss();
                 dismissDialog("TRANSLATION");
             } catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
