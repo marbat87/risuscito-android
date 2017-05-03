@@ -3,7 +3,6 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:foreground="?customSelector"
     android:layout_height="@dimen/myListPreferredItemHeightMedium">
 
     <LinearLayout
@@ -53,6 +52,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="?customSelector"
         android:layout_marginTop="-5dp"
         android:layout_marginBottom="-5dp"
         android:layout_marginLeft="-3dp"
