@@ -12,6 +12,7 @@
         android:layout_marginRight="@dimen/activity_min_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:gravity="center"
         android:text="@string/fast_search_subtitle"/>
 
@@ -26,6 +27,39 @@
         android:imeOptions="actionDone"
         android:hint="@string/search_hint"
         android:maxLines="1" />
+
+    <RelativeLayout
+        android:id="@+id/consegnati_only_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/myListPreferredItemHeightSmall"
+        android:layout_gravity="center_vertical">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/consegnati_only_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textSize="16sp"
+            android:layout_toLeftOf="@id/consegnati_only_check"
+            android:layout_toStartOf="@id/consegnati_only_check"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:layout_centerVertical="true"
+            android:text="@string/consegnati_only" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/pulisci_ripple"

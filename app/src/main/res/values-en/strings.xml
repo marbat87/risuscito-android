@@ -292,4 +292,5 @@ Do you want to proceed?</string>
     <string name="title_trabar_V">5</string>
     <string name="title_trabar_VI">6</string>
     <string name="title_trabar_VII">7</string>
+    <string name="consegnati_only">Cerca solo nei consegnati</string>
 </resources>

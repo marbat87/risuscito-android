@@ -9,7 +9,7 @@
     <dimen name="myListPreferredItemMargin">16dip</dimen>
     <!--<dimen name="myListPreferredExpTextMargin">40dip</dimen>-->
     <dimen name="myListPreferredTextMarginStart">72dip</dimen>
-    <!--<dimen name="myListPreferredItemHeightSmall">48dip</dimen>-->
+    <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <!--<dimen name="about_image_width">100dip</dimen>-->

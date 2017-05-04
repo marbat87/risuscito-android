@@ -54,6 +54,8 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
@@ -68,15 +70,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private boolean isViewShown = true;
 
     private DatabaseCanti listaCanti;
-//    private List<CantoRecycled> titoli;
     private List<SimpleItem> titoli;
-    //    private EditText searchPar;
     private View rootView;
     private static String[][] aTexts;
-    //    RecyclerView recyclerView;
-//    CantoRecyclerAdapter cantoAdapter;
     FastItemAdapter<SimpleItem> cantoAdapter;
-//    private CircleProgressBar progress;
 
     private String titoloDaAgg;
     private int idDaAgg;
@@ -88,7 +85,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private int idPosizioneClick;
 
     private final int ID_FITTIZIO = 99999999;
-//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -99,10 +95,27 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     @BindView(R.id.matchedList) RecyclerView mRecyclerView;
     @BindView(R.id.textfieldRicerca) EditText searchPar;
     @BindView(R.id.search_progress) MaterialProgressBar progress;
+    @BindView(R.id.consegnati_only_view) View mConsegnatiOnly;
 
     @OnClick(R.id.pulisci_ripple)
     public void pulisciRisultati() {
         searchPar.setText("");
+    }
+
+    @OnEditorAction(R.id.textfieldRicerca)
+    public boolean nascondiTastiera(TextView v, int actionId, KeyEvent evemt) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            //to hide soft keyboard
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+            return true;
+        }
+        return false;
+    }
+
+    @OnTextChanged(value = R.id.textfieldRicerca, callback = OnTextChanged.Callback.TEXT_CHANGED)
+    void ricercaCambiata(CharSequence s, int start, int before, int count) {
+        ricercaStringa(s.toString());
     }
 
     private Unbinder mUnbinder;
@@ -116,23 +129,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         if (listaCanti == null)
             listaCanti = new DatabaseCanti(getActivity());
 
-//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
-
-//        View.OnClickListener clickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-//                    return;
-//                mLastClickTime = SystemClock.elapsedRealtime();
-//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-//                Bundle bundle = new Bundle();
-//                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-//                bundle.putInt("idCanto", Integer.valueOf(
-//                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-//                // lancia l'activity che visualizza il canto passando il parametro creato
-//                startSubActivity(bundle, v);
-//            }
-//        };
+        mConsegnatiOnly.setVisibility(View.GONE);
 
         FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
             @Override
@@ -150,9 +147,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             }
         };
 
-        // Creating new adapter object
         titoli = new ArrayList<>();
-//        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
         cantoAdapter = new FastItemAdapter<>();
         cantoAdapter.setHasStableIds(true);
         cantoAdapter.withOnClickListener(mOnClickListener);
@@ -160,18 +155,13 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         mRecyclerView.setAdapter(cantoAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(llm);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
         insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
         mRecyclerView.addItemDecoration(insetDivider);
 
-//        progress = (CircleProgressBar) rootView.findViewById(R.id.search_progress);
-//        progress.setColorSchemeColors(getThemeUtils().accentColor());
-
         try {
             InputStream in = getActivity().getAssets().open("fileout_new.xml");
-//            if (getActivity().getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
             if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                 in = getActivity().getAssets().open("fileout_uk.xml");
             if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
@@ -183,55 +173,52 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             e.printStackTrace();
         }
 
-//        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
         searchPar.setText("");
-        searchPar.addTextChangedListener(new TextWatcher() {
+//        searchPar.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
+//                if (!tempText.equals(s.toString()))
+//                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
+//
+//                //abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
+//                if (s.toString().trim().length() >= 3) {
+//                    if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
+//                        searchTask.cancel(true);
+//                    searchTask = new SearchTask();
+//                    searchTask.execute(searchPar.getText().toString());
+//                }
+//                else {
+//                    if (s.length() == 0) {
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+//                        cantoAdapter.clear();
+//                        progress.setVisibility(View.INVISIBLE);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) { }
+//
+//        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
-                if (!tempText.equals(s.toString()))
-                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
-
-                //abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-                if (s.toString().trim().length() >= 3) {
-                    if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
-                        searchTask.cancel(true);
-                    searchTask = new SearchTask();
-                    searchTask.execute(searchPar.getText().toString());
-                }
-                else {
-                    if (s.length() == 0) {
-                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                        cantoAdapter.clear();
-//                        titoli.clear();
-//                        cantoAdapter.notifyDataSetChanged();
-                        progress.setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void afterTextChanged(Editable s) { }
-
-        });
-
-        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //to hide soft keyboard
-                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
+//        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -253,18 +240,10 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         });
 
-//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                searchPar.setText("");
-//            }
-//        });
-
         mLUtils = LUtils.getInstance(getActivity());
 
         if (savedInstanceState != null) {
             Log.d(getClass().getName(), "onCreateView: RESTORING");
-//            titoloDaAgg = savedInstanceState.getString("titoloDaAgg");
             idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
             idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
@@ -316,7 +295,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.putString("titoloDaAgg", titoloDaAgg);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
         outState.putInt("idListaClick", idListaClick);
@@ -616,8 +594,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
     private class SearchTask extends AsyncTask<String, Void, Integer> {
 
-//        SQLiteDatabase db;
-
         @Override
         protected Integer doInBackground(String... sSearchText) {
 
@@ -626,8 +602,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             String[] words = sSearchText[0].split("\\W");
 
             String text;
-            titoli.clear();
-            cantoAdapter.clear();
 
             for (String[] aText : aTexts) {
 
@@ -668,13 +642,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
                     if (lista.getCount() > 0) {
                         lista.moveToFirst();
-//		    			Log.i("TROVATO IN", aTexts[k][0]);
-//		    			Log.i("LUNGHEZZA", aResults.length+"");
-//                        titoli.add(new CantoRecycled(lista.getString(0)
-//                                , lista.getInt(2)
-//                                , lista.getString(1)
-//                                , lista.getInt(3)
-//                                , lista.getString(4)));
                         SimpleItem simpleItem = new SimpleItem();
                         simpleItem.withTitle(lista.getString(0))
                                 .withColor(lista.getString(1))
@@ -698,13 +665,14 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
             super.onPreExecute();
             rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
             progress.setVisibility(View.VISIBLE);
+            titoli.clear();
+            cantoAdapter.clear();
         }
 
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             cantoAdapter.add(titoli);
-//            cantoAdapter.notifyDataSetChanged();
             cantoAdapter.notifyAdapterDataSetChanged();
             progress.setVisibility(View.INVISIBLE);
             if (titoli.size() == 0)
@@ -746,5 +714,26 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    private void ricercaStringa(String s) {
+        String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
+        if (!tempText.equals(s))
+            ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
+
+        //abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
+        if (s.trim().length() >= 3) {
+            if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
+                searchTask.cancel(true);
+            searchTask = new SearchTask();
+            searchTask.execute(searchPar.getText().toString());
+        }
+        else {
+            if (s.isEmpty()) {
+                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+                cantoAdapter.clear();
+                progress.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
 
 }

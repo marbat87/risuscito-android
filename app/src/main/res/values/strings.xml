@@ -303,4 +303,5 @@
     <string name="title_trabar_V">V</string>
     <string name="title_trabar_VI">VI</string>
     <string name="title_trabar_VII">VII</string>
+    <string name="consegnati_only">Cerca solo nei consegnati</string>
 </resources>
