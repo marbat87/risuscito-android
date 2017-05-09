@@ -78,7 +78,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     Item playingItem;
 
     // indicates the state our service:
-    enum State {
+    private enum State {
 //        Retrieving, // the MediaRetriever is retrieving music
         Stopped,    // media player is stopped and not prepared to play
         Preparing,  // media player is preparing...
@@ -104,7 +104,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // why did we pause? (only relevant if mState == State.Paused)
 //    PauseReason mPauseReason = PauseReason.UserRequest;
     // do we have audio focus?
-    enum AudioFocus {
+    private enum AudioFocus {
         NoFocusNoDuck,    // we don't have audio focus, and can't duck
         NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
         Focused           // we have full audio focus
@@ -877,16 +877,16 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             processPauseRequest();
     }
 
-    public void onMusicRetrieverPrepared() {
-        // Done retrieving!
-        mState = State.Stopped;
-        // If the flag indicates we should start playing after retrieving, let's do that now.
-        if (mStartPlayingAfterRetrieve) {
-            tryToGetAudioFocus();
-            playNextSong(mWhatToPlayAfterRetrieve == null ?
-                    null : mWhatToPlayAfterRetrieve.toString());
-        }
-    }
+//    public void onMusicRetrieverPrepared() {
+//        // Done retrieving!
+//        mState = State.Stopped;
+//        // If the flag indicates we should start playing after retrieving, let's do that now.
+//        if (mStartPlayingAfterRetrieve) {
+//            tryToGetAudioFocus();
+//            playNextSong(mWhatToPlayAfterRetrieve == null ?
+//                    null : mWhatToPlayAfterRetrieve.toString());
+//        }
+//    }
 
     @Override
     public void onDestroy() {
@@ -1112,13 +1112,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     };
 
-    public static class Item {
+    private static class Item {
         long id;
         String artist;
         String title;
         String album;
         long duration;
-        public Item(long id, String artist, String title, String album, long duration) {
+        Item(long id, String artist, String title, String album, long duration) {
             this.id = id;
             this.artist = artist;
             this.title = title;
@@ -1134,7 +1134,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         public String getTitle() {
             return title;
         }
-        public String getAlbum() {
+        String getAlbum() {
             return album;
         }
         public long getDuration() {

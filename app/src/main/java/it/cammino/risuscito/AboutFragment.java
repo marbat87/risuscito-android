@@ -99,6 +99,7 @@ public class AboutFragment extends Fragment {
                         .addChangeLogAction(mChangeLogClickListener)
 //                        .addRemoveAdsAction((Intent) null)
                         .addDonateAction(mDonateClickListener)
+                        .addPrivacyPolicyAction("http://marbat87.altervista.org/privacy_policy.html")
                         .setShowAsCard(false)
                         .build());
 
