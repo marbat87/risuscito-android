@@ -36,10 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
+        <include layout="@layout/common_shadow_no_behavior" />
 
     </FrameLayout>
 

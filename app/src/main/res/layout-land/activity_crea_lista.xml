@@ -85,11 +85,21 @@
         android:layout_marginLeft="@dimen/activity_min_margin"
         android:layout_marginRight="@dimen/activity_min_margin">
 
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/activity_min_margin"-->
+            <!--android:text="@string/list_elements" />-->
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_min_margin"
-            android:text="@string/list_elements" />
+            android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:gravity="start|center_vertical"
+            android:background="@color/material_grey_100"
+            android:text="@string/list_elements"/>
 
         <TextView
             android:id="@+id/noElementsAdded"
@@ -114,7 +124,7 @@
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:background="@drawable/toolbar_shadow" />
 
     <android.support.design.widget.FloatingActionButton

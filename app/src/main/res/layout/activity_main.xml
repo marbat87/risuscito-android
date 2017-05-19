@@ -40,13 +40,13 @@
 
     <include layout="@layout/common_circle_progress"/>
 
-    <include layout="@layout/common_shadow"/>
-
     <FrameLayout
         risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior"
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <include layout="@layout/common_shadow"/>
 
     <include layout="@layout/common_bottom_bar"/>
 

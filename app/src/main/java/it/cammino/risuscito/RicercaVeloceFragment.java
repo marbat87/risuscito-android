@@ -668,6 +668,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             lista.moveToFirst();
             for (int i = 0; i < total; i++) {
                 titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+//                Log.d(getClass().getName(), "ricercaStringa: " + titoloTemp);
+//                Log.d(getClass().getName(), "ricercaStringa: " + stringa);
                 if (titoloTemp.contains(stringa)) {
                     SimpleItem simpleItem = new SimpleItem();
                     simpleItem.withTitle(lista.getString(0))
@@ -675,6 +677,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                             .withPage(String.valueOf(lista.getInt(2)))
                             .withId(lista.getInt(3))
                             .withSource(lista.getString(4))
+                            .withNormalizedTitle(titoloTemp)
+                            .withFilter(stringa)
                             .withContextMenuListener(RicercaVeloceFragment.this);
                     titoli.add(simpleItem);
                 }

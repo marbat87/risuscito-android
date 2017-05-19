@@ -605,7 +605,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
             for (String[] aText : aTexts) {
 
-                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
+//                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
                 if (isCancelled())
                     break;
 
@@ -628,7 +628,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                     }
                 }
 
-                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
+//                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
 
                 if (found && !isCancelled()) {
                     // crea un manipolatore per il Database in modalità READ

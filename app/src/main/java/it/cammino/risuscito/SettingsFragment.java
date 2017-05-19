@@ -24,16 +24,8 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SimpleDialogFragment.SimpleCallback {
 
-//    private MainActivity mMainActivity;
     CharSequence[] mEntries;
     CharSequence[] mEntryValues;
-
-//    @Override
-//    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-//        // Load the preferences from an XML resource
-//        setPreferencesFromResource(R.xml.preferences, rootKey);
-//
-//    }
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -47,8 +39,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Simple
         mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
 
@@ -120,7 +113,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Simple
 
     void showDeniedForExternalDownload() {
         Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED");
-//        saveEntries = R.array.save_location_nosd_entries;
         mEntries = getResources().getStringArray(R.array.save_location_nosd_entries);
         mEntryValues = getResources().getStringArray(R.array.save_location_nosd_values);
         Snackbar.make(getActivity().findViewById(android.R.id.content)

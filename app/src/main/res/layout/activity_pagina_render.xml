@@ -18,10 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+            <FrameLayout
                 android:id="@+id/music_controls"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
+                android:background="@color/material_grey_50"
                 android:layout_height="@dimen/abc_action_bar_default_height_material">
 
                 <TextView
@@ -31,7 +32,8 @@
                     android:gravity="center"
                     android:padding="@dimen/activity_min_margin"
                     android:layout_height="match_parent"
-                    android:text="@string/no_record" />
+                    android:text="@string/no_record"
+                    tools:visibility="invisible" />
 
                 <LinearLayout
                     android:id="@+id/music_buttons"
@@ -49,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat"
-                        tools:ignore="HardcodedText" />
+                        tools:ignore="HardcodedText,RtlSymmetry" />
 
                     <SeekBar
                         android:id="@+id/music_seekbar"
@@ -71,11 +73,11 @@
                         android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
                         android:soundEffectsEnabled="true"
-                        tools:ignore="MissingPrefix" />
+                        android:contentDescription="@null" />
 
                 </LinearLayout>
 
-            </RelativeLayout>
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/bottom_bar"
@@ -96,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <SeekBar
                     android:id="@+id/speed_seekbar"
@@ -120,7 +122,7 @@
                     android:theme="@style/ActionBarThemeOverlay"
                     android:background="?attr/customSelectorRound"
                     android:soundEffectsEnabled="true"
-                    tools:ignore="MissingPrefix" />
+                    android:contentDescription="@null" />
 
             </LinearLayout>
 
@@ -145,10 +147,7 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
+        <include layout="@layout/common_shadow_no_behavior" />
 
     </FrameLayout>
 

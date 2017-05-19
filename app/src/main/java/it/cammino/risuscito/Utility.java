@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,29 +23,29 @@ public class Utility {
 
     //Costanti per le impostazioni
     public static final String SCREEN_ON = "sempre_acceso";
-    public static final String SHOW_SECONDA = "mostra_seconda_lettura";
-    public static final String SHOW_PACE = "mostra_canto_pace";
-    public static final String SAVE_LOCATION = "memoria_salvataggio_scelta";
-    public static final String DEFAULT_INDEX = "indice_predefinito";
-    public static final String SHOW_SANTO = "mostra_santo";
-    public static final String SHOW_AUDIO = "mostra_audio";
+    static final String SHOW_SECONDA = "mostra_seconda_lettura";
+    static final String SHOW_PACE = "mostra_canto_pace";
+    static final String SAVE_LOCATION = "memoria_salvataggio_scelta";
+    static final String DEFAULT_INDEX = "indice_predefinito";
+    static final String SHOW_SANTO = "mostra_santo";
+    static final String SHOW_AUDIO = "mostra_audio";
     public static final String SYSTEM_LANGUAGE = "lingua_sistema";
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
-    public static final String SIGNED_IN = "signed_id";
-    public static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
-    public static final String PREFERITI_OPEN = "preferiti_open";
-    public static final String HISTORY_OPEN = "history_open";
-    public static final String SMALL_DONATIONS_COUNT = "small_donations_count";
-    public static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
-    public static final String LARGE_DONATIONS_COUNT = "large_donations_count";
+    static final String SIGNED_IN = "signed_id";
+    static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
+    static final String PREFERITI_OPEN = "preferiti_open";
+    static final String HISTORY_OPEN = "history_open";
+    static final String SMALL_DONATIONS_COUNT = "small_donations_count";
+    static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
+    static final String LARGE_DONATIONS_COUNT = "large_donations_count";
 
-    public static final String INTRO_CONSEGNATI = "intro_consegnati_test";
-    public static final String INTRO_CONSEGNATI_2 = "intro_consegnati_2_test";
-    public static final String INTRO_PAGINARENDER = "intro_paginarender_test";
-    public static final String INTRO_CREALISTA = "intro_crealista_test";
-    public static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
-    public static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
+    static final String INTRO_CONSEGNATI = "intro_consegnati_test";
+    static final String INTRO_CONSEGNATI_2 = "intro_consegnati_2_test";
+    static final String INTRO_PAGINARENDER = "intro_paginarender_test";
+    static final String INTRO_CREALISTA = "intro_crealista_test";
+    static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
+    static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
 
 
 //    public static final String GENERATE_XML = "generate_xml";
@@ -52,13 +53,13 @@ public class Utility {
 //    public static final int HIDE_DELAY = 1500;
 
     public static final long CLICK_DELAY = 1000;
-    public static final long CLICK_DELAY_SELECTION = 300;
+    static final long CLICK_DELAY_SELECTION = 300;
 
     //Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
-    public static final String URL_CANTO = "urlCanto";
-    public static final String SPEED_VALUE = "speedValue";
-    public static final String SCROLL_PLAYING = "scrollPlaying";
-    public static final String ID_CANTO = "idCanto";
+    static final String URL_CANTO = "urlCanto";
+    static final String SPEED_VALUE = "speedValue";
+    static final String SCROLL_PLAYING = "scrollPlaying";
+    static final String ID_CANTO = "idCanto";
     //    public static final String TAG_TRANSIZIONE = "fullscreen";
     public static final String TRANS_PAGINA_RENDER = "paginarender";
 
@@ -68,8 +69,8 @@ public class Utility {
 //    public static final String VERDE = "#8FC490";
 //    public static final String GRIGIO = "#CAC8BC";
 
-    public static final int EXTERNAL_FILE_RC = 122;
-    public static final int WRITE_STORAGE_RC = 123;
+    static final int EXTERNAL_FILE_RC = 122;
+    static final int WRITE_STORAGE_RC = 123;
 //    public static final int PHONE_LISTENER_RC = 124;
 
 //    public static final String AUDIO_REQUESTED = "AUDIO_REQUESTED";
@@ -92,7 +93,7 @@ public class Utility {
 //    }
 
     //metodo che duplica tutti gli apici presenti nella stringa
-    public static String duplicaApostrofi(String input) {
+    static String duplicaApostrofi(String input) {
 
         String result = input;
         int massimo  = result.length() - 1;
@@ -123,7 +124,7 @@ public class Utility {
         return df.format(num);
     }
 
-    public static boolean isOnline(Activity activity) {
+    static boolean isOnline(Activity activity) {
         ConnectivityManager cm =
                 (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -137,14 +138,14 @@ public class Utility {
     }
 
     /* Checks if external storage is available to at least read */
-    public static boolean isExternalStorageReadable() {
+    private static boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
-    public static String filterMediaLinkNew(String link) {
+    static String filterMediaLinkNew(String link) {
         if (link.length() == 0)
             return link;
         else {
@@ -163,7 +164,7 @@ public class Utility {
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
-    public static String filterMediaLink(String link) {
+    static String filterMediaLink(String link) {
         if (link.length() == 0)
             return link;
         else {
@@ -181,7 +182,7 @@ public class Utility {
         }
     }
 
-    public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
+    static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
 
         if (isExternalStorageReadable() && cercaEsterno) {
 //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
@@ -256,11 +257,11 @@ public class Utility {
 //        }
 //    }
 
-    public static int random(int start, int end) {
+    static int random(int start, int end) {
         return ((new Random()).nextInt(end - start + 1) + start);
     }
 
-    public static boolean hasMarshmallow() {
+    static boolean hasMarshmallow() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
@@ -274,80 +275,83 @@ public class Utility {
 
     private static Map<Character, Character> MAP_NORM;
 
-    public static String removeAccents(String value) {
+    static String removeAccents(String value) {
 
-        if (MAP_NORM == null || MAP_NORM.size() == 0)
-        {
-            MAP_NORM = new HashMap<>();
-            MAP_NORM.put('\u00C1', 'A');
-            MAP_NORM.put('\u00C0', 'A');
-            MAP_NORM.put('\u00C2', 'A');
-            MAP_NORM.put('\u00C3', 'A');
-            MAP_NORM.put('\u00C4', 'A');
-            MAP_NORM.put('\u00C8', 'E');
-            MAP_NORM.put('\u00C9', 'E');
-            MAP_NORM.put('\u00CA', 'E');
-            MAP_NORM.put('\u00CB', 'E');
-            MAP_NORM.put('\u00CD', 'I');
-            MAP_NORM.put('\u00CC', 'I');
-            MAP_NORM.put('\u00CE', 'I');
-            MAP_NORM.put('\u00CF', 'I');
-            MAP_NORM.put('\u00D9', 'U');
-            MAP_NORM.put('\u00DA', 'U');
-            MAP_NORM.put('\u00DB', 'U');
-            MAP_NORM.put('\u00DC', 'U');
-            MAP_NORM.put('\u00D2', 'O');
-            MAP_NORM.put('\u00D3', 'O');
-            MAP_NORM.put('\u00D4', 'O');
-            MAP_NORM.put('\u00D5', 'O');
-            MAP_NORM.put('\u00D6', 'O');
-            MAP_NORM.put('\u00D1', 'N');
-            MAP_NORM.put('\u00C7', 'C');
-            MAP_NORM.put('\u00AA', 'A');
-            MAP_NORM.put('\u00BA', 'O');
-            MAP_NORM.put('\u00A7', 'S');
-            MAP_NORM.put('\u00B3', '3');
-            MAP_NORM.put('\u00B2', '2');
-            MAP_NORM.put('\u00B9', '1');
-            MAP_NORM.put('\u00E0', 'a');
-            MAP_NORM.put('\u00E1', 'a');
-            MAP_NORM.put('\u00E2', 'a');
-            MAP_NORM.put('\u00E3', 'a');
-            MAP_NORM.put('\u00E4', 'a');
-            MAP_NORM.put('\u00E8', 'e');
-            MAP_NORM.put('\u00E9', 'e');
-            MAP_NORM.put('\u00EA', 'e');
-            MAP_NORM.put('\u00EB', 'e');
-            MAP_NORM.put('\u00ED', 'i');
-            MAP_NORM.put('\u00EC', 'i');
-            MAP_NORM.put('\u00EE', 'i');
-            MAP_NORM.put('\u00EF', 'i');
-            MAP_NORM.put('\u00F9', 'u');
-            MAP_NORM.put('\u00FA', 'u');
-            MAP_NORM.put('\u00FB', 'u');
-            MAP_NORM.put('\u00FC', 'u');
-            MAP_NORM.put('\u00F2', 'o');
-            MAP_NORM.put('\u00F3', 'o');
-            MAP_NORM.put('\u00F4', 'o');
-            MAP_NORM.put('\u00F5', 'o');
-            MAP_NORM.put('\u00F6', 'o');
-            MAP_NORM.put('\u00F1', 'n');
-            MAP_NORM.put('\u00E7', 'c');
-        }
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
+        return normalized.replaceAll("[^\\p{ASCII}]", "");
 
-        if (value == null) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder(value);
-
-        for(int i = 0; i < value.length(); i++) {
-            Character c = MAP_NORM.get(sb.charAt(i));
-            if(c != null)
-                sb.setCharAt(i, c);
-        }
-
-        return sb.toString();
+//        if (MAP_NORM == null || MAP_NORM.size() == 0)
+//        {
+//            MAP_NORM = new HashMap<>();
+//            MAP_NORM.put('\u00C1', 'A');
+//            MAP_NORM.put('\u00C0', 'A');
+//            MAP_NORM.put('\u00C2', 'A');
+//            MAP_NORM.put('\u00C3', 'A');
+//            MAP_NORM.put('\u00C4', 'A');
+//            MAP_NORM.put('\u00C8', 'E');
+//            MAP_NORM.put('\u00C9', 'E');
+//            MAP_NORM.put('\u00CA', 'E');
+//            MAP_NORM.put('\u00CB', 'E');
+//            MAP_NORM.put('\u00CD', 'I');
+//            MAP_NORM.put('\u00CC', 'I');
+//            MAP_NORM.put('\u00CE', 'I');
+//            MAP_NORM.put('\u00CF', 'I');
+//            MAP_NORM.put('\u00D9', 'U');
+//            MAP_NORM.put('\u00DA', 'U');
+//            MAP_NORM.put('\u00DB', 'U');
+//            MAP_NORM.put('\u00DC', 'U');
+//            MAP_NORM.put('\u00D2', 'O');
+//            MAP_NORM.put('\u00D3', 'O');
+//            MAP_NORM.put('\u00D4', 'O');
+//            MAP_NORM.put('\u00D5', 'O');
+//            MAP_NORM.put('\u00D6', 'O');
+//            MAP_NORM.put('\u00D1', 'N');
+//            MAP_NORM.put('\u00C7', 'C');
+//            MAP_NORM.put('\u00AA', 'A');
+//            MAP_NORM.put('\u00BA', 'O');
+//            MAP_NORM.put('\u00A7', 'S');
+//            MAP_NORM.put('\u00B3', '3');
+//            MAP_NORM.put('\u00B2', '2');
+//            MAP_NORM.put('\u00B9', '1');
+//            MAP_NORM.put('\u00E0', 'a');
+//            MAP_NORM.put('\u00E1', 'a');
+//            MAP_NORM.put('\u00E2', 'a');
+//            MAP_NORM.put('\u00E3', 'a');
+//            MAP_NORM.put('\u00E4', 'a');
+//            MAP_NORM.put('\u00E8', 'e');
+//            MAP_NORM.put('\u00E9', 'e');
+//            MAP_NORM.put('\u00EA', 'e');
+//            MAP_NORM.put('\u00EB', 'e');
+//            MAP_NORM.put('\u00ED', 'i');
+//            MAP_NORM.put('\u00EC', 'i');
+//            MAP_NORM.put('\u00EE', 'i');
+//            MAP_NORM.put('\u00EF', 'i');
+//            MAP_NORM.put('\u00F9', 'u');
+//            MAP_NORM.put('\u00FA', 'u');
+//            MAP_NORM.put('\u00FB', 'u');
+//            MAP_NORM.put('\u00FC', 'u');
+//            MAP_NORM.put('\u00F2', 'o');
+//            MAP_NORM.put('\u00F3', 'o');
+//            MAP_NORM.put('\u00F4', 'o');
+//            MAP_NORM.put('\u00F5', 'o');
+//            MAP_NORM.put('\u00F6', 'o');
+//            MAP_NORM.put('\u00F1', 'n');
+//            MAP_NORM.put('\u00E7', 'c');
+//        }
+//
+//        if (value == null) {
+//            return "";
+//        }
+//
+//        StringBuilder sb = new StringBuilder(value);
+//
+//        for(int i = 0; i < value.length(); i++) {
+//            Character c = MAP_NORM.get(sb.charAt(i));
+//            if(c != null)
+//                sb.setCharAt(i, c);
+//        }
+//
+//        return sb.toString();
     }
 
     //    public static String escapeEmail(String email) {
@@ -357,13 +361,12 @@ public class Utility {
 //        return result.replaceAll("\\.", "_");
 //    }
 
-    public static DisplayMetrics getDisplayMetrics(Context context) {
-        return context.getResources().getDisplayMetrics();
-    }
-
-    public static float dpToPx(Context context, float dp) {
-        return Math.round(dp * getDisplayMetrics(context).density);
-    }
-
+//    public static DisplayMetrics getDisplayMetrics(Context context) {
+//        return context.getResources().getDisplayMetrics();
+//    }
+//
+//    public static float dpToPx(Context context, float dp) {
+//        return Math.round(dp * getDisplayMetrics(context).density);
+//    }
 
 }

@@ -155,7 +155,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.tabs_layout_with_fab, container, false);
+        rootView = inflater.inflate(R.layout.tabs_layout, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
@@ -179,15 +179,16 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         else
             indDaModif = 0;
 
+        mMainActivity.enableFab(true);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(true);
+//            mMainActivity.enableFab(true);
             mMainActivity.enableBottombar(false);
         }
 
 //        tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
 //        mLUtils.applyFontedTab(mViewPager, tabs);
 
@@ -316,8 +317,9 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     public FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+//            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+//                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
                     .icon(CommunityMaterial.Icon.cmd_plus)

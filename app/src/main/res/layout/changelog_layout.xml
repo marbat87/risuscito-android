@@ -88,7 +88,7 @@
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:background="?toolbar_shadow" />
 
 </android.support.design.widget.CoordinatorLayout>

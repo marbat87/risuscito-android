@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -108,7 +109,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //    private boolean hintVisible;
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
-    @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.collapsingToolbarLayout) @Nullable CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.fab_crea_lista) FloatingActionButton fabCreaLista;
     @BindView(R.id.recycler_container) ViewGroup mRecyclerContainer;
@@ -117,6 +118,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @BindView(R.id.hint_text) TextView mHintText;
     @BindView(R.id.textTitleDescription) View mTitleDescr;
     @BindView(R.id.question_mark) View mQuestionMark;
+    @BindView(R.id.tabletToolbarBackground) @Nullable View mTabletBG;
+    @BindView(R.id.action_title_bar) View mActionTitleBar;
 
     @OnClick(R.id.fab_crea_lista)
     public void aggiuntiPosizione() {
@@ -138,7 +141,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         setSupportActionBar(mToolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
+        if (mTabletBG != null)
+            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+//        findViewById(R.id.action_title_bar).setBackgroundColor(getThemeUtils().primaryColor());
+        mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
 
@@ -152,7 +158,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                collapsingToolbarLayout.setTitle(charSequence);
+                if (collapsingToolbarLayout != null)
+                    collapsingToolbarLayout.setTitle(charSequence);
             }
 
             @Override
@@ -248,11 +255,13 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         if (savedInstanceState != null) {
             textfieldTitle.setText(savedInstanceState.getCharSequence(TEMP_TITLE));
-            collapsingToolbarLayout.setTitle(savedInstanceState.getCharSequence(TEMP_TITLE));
+            if (collapsingToolbarLayout != null)
+                collapsingToolbarLayout.setTitle(savedInstanceState.getCharSequence(TEMP_TITLE));
         }
         else {
             textfieldTitle.setText(titoloLista);
-            collapsingToolbarLayout.setTitle(titoloLista);
+            if (collapsingToolbarLayout != null)
+                collapsingToolbarLayout.setTitle(titoloLista);
         }
 
 

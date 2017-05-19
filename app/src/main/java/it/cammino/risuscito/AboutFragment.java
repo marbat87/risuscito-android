@@ -25,20 +25,15 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // create ContextThemeWrapper from the original Activity Context with the custom theme
-//        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.PreferenceFixTheme_NoActionBar);
-
-        // clone the inflater using the ContextThemeWrapper
-//        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-
         View rootView = inflater.inflate(R.layout.about_layout, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_about);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
         mMainActivity.mTabLayout.setVisibility(View.GONE);

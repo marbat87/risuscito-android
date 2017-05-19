@@ -345,7 +345,9 @@ public class InsertVeloceFragment extends Fragment {
                             .withColor(lista.getString(1))
                             .withPage(String.valueOf(lista.getInt(2)))
                             .withId(lista.getInt(3))
-                            .withSource(lista.getString(4));
+                            .withSource(lista.getString(4))
+                            .withNormalizedTitle(titoloTemp)
+                            .withFilter(stringa);
                     titoli.add(insertItem);
                 }
                 lista.moveToNext();

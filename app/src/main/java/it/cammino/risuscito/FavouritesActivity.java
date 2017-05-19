@@ -98,12 +98,14 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mLUtils = LUtils.getInstance(getActivity());
 //        mMode = null;
 
+        mMainActivity.enableFab(true);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(true);
+//            mMainActivity.enableFab(true);
             mMainActivity.enableBottombar(false);
         }
-        fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-                (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+//        fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
+//                (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+        fabClear = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .color(Color.WHITE)
@@ -299,7 +301,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (mMainActivity.getMaterialCab().isActive())
                     return true;
-                mMainActivity.getAppBarLayout().setExpanded(true, true);
+                if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+                    mMainActivity.getAppBarLayout().setExpanded(true, true);
                 mMainActivity.getMaterialCab().start(FavouritesActivity.this);
 //                cantoAdapter.select(i);
                 cantoAdapter.getAdapterItem(i).withSetSelected(true);
@@ -395,10 +398,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 db.close();
                 mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
                 if (cantoAdapter.getAdapterItemCount() == 0) {
-                    if (mMainActivity.isOnTablet())
-                        fabClear.hide();
-                    else
-                        mMainActivity.enableFab(false);
+//                    if (mMainActivity.isOnTablet())
+//                        fabClear.hide();
+//                    else
+                    mMainActivity.enableFab(false);
                 }
             }
         });
@@ -407,16 +410,16 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 //        rootView.findViewById(R.id.no_favourites).setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
         mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
         if (titoli.size() == 0) {
-            if (mMainActivity.isOnTablet())
-                fabClear.hide();
-            else
-                mMainActivity.enableFab(false);
+//            if (mMainActivity.isOnTablet())
+//                fabClear.hide();
+//            else
+            mMainActivity.enableFab(false);
         }
         else {
-            if (mMainActivity.isOnTablet())
-                fabClear.show();
-            else
-                mMainActivity.enableFab(true);
+//            if (mMainActivity.isOnTablet())
+//                fabClear.show();
+//            else
+            mMainActivity.enableFab(true);
         }
     }
 

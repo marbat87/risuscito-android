@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -102,8 +103,9 @@ public class MainActivity extends ThemeableActivity
     private AccountHeader mAccountHeader;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.loadingBar) MaterialProgressBar mCircleProgressBar;
-    @BindView(R.id.toolbar_layout) AppBarLayout appBarLayout;
+    @BindView(R.id.toolbar_layout) @Nullable AppBarLayout appBarLayout;
     @BindView(R.id.material_tabs) TabLayout mTabLayout;
+    @BindView(R.id.tabletToolbarBackground) @Nullable View mTabletBG;
     private boolean isOnTablet;
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
@@ -159,6 +161,11 @@ public class MainActivity extends ThemeableActivity
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
+        if (isOnTablet() && mTabletBG != null)
+            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+        else
+            mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+
         setupNavDrawer(savedInstanceState);
 
         materialCab = new MaterialCab(this, R.id.cab_stub)
@@ -174,7 +181,8 @@ public class MainActivity extends ThemeableActivity
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
 //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-            appBarLayout.setExpanded(true, true);
+            if (!isOnTablet && appBarLayout != null)
+                appBarLayout.setExpanded(true, true);
         }
 
         if (savedInstanceState != null) {
@@ -519,51 +527,52 @@ public class MainActivity extends ThemeableActivity
                             Fragment fragment;
                             if (drawerItem.getIdentifier() == R.id.navigation_home) {
                                 fragment = new Risuscito();
-                                appBarLayout.setExpanded(true, true);
-                                if (LUtils.hasL()) {
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
+                                if (!isOnTablet && appBarLayout != null)
+                                    appBarLayout.setExpanded(true, true);
+//                                if (LUtils.hasL()) {
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                }
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_search) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new GeneralSearch();
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_indexes) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new GeneralIndex();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navitagion_lists) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new CustomLists();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_favorites) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new FavouritesActivity();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new SettingsFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
 //                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, ChangelogActivity.class));
 //                                return true;
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new AboutFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new ConsegnatiFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_history) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new HistoryFragment();
                             }
                             else return true;
@@ -572,7 +581,8 @@ public class MainActivity extends ThemeableActivity
                             Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(drawerItem.getIdentifier()));
                             if (myFragment == null || !myFragment.isVisible()) {
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                                if (!isOnTablet)
+                                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
                                 transaction.replace(R.id.content_frame, fragment, String.valueOf(drawerItem.getIdentifier())).commit();
                             }
 
@@ -676,8 +686,12 @@ public class MainActivity extends ThemeableActivity
 
         if (isOnTablet)
             mMiniDrawer.setSelection(R.id.navigation_home);
+        else {
+            if (appBarLayout != null)
+                appBarLayout.setExpanded(true, true);
+        }
         mDrawer.setSelection(R.id.navigation_home);
-        appBarLayout.setExpanded(true, true);
+//        appBarLayout.setExpanded(true, true);
     }
 
     @Override
@@ -1575,6 +1589,17 @@ public class MainActivity extends ThemeableActivity
                 break;
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: " + item.getItemId());
+        if (isOnTablet && item.getItemId() == android.R.id.home) {
+            crossFader.crossFade();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onNegative(@NonNull String tag) {}
     @Override
@@ -1592,6 +1617,7 @@ public class MainActivity extends ThemeableActivity
         return materialCab;
     }
 
+    @Nullable
     public AppBarLayout getAppBarLayout() {
         return appBarLayout;
     }

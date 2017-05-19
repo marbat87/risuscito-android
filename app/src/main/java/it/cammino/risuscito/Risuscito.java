@@ -80,8 +80,9 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
 //        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
         mMainActivity.setupToolbarTitle(R.string.activity_homepage);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
 //        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);

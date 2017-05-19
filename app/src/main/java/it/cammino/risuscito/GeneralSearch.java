@@ -33,7 +33,6 @@ public class GeneralSearch extends Fragment {
         mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
-
         mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
 //        LUtils mLUtils = LUtils.getInstance(getActivity());
@@ -44,11 +43,12 @@ public class GeneralSearch extends Fragment {
 //        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
 //        mLUtils.applyFontedTab(mViewPager, tabs);
 

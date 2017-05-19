@@ -9,6 +9,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -23,7 +24,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.Utility;
 
 public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
 
@@ -33,6 +36,8 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     private ColorHolder color;
     private int numSalmo;
     private ColorHolder selectedColor;
+    private String normalizedTitle;
+    private String filter;
     private int id;
 
     private View.OnCreateContextMenuListener createContextMenuListener;
@@ -89,6 +94,16 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
 
     public SimpleItem withSelectedColorRes(@ColorRes int selectedColorRes) {
         this.selectedColor = ColorHolder.fromColorRes(selectedColorRes);
+        return this;
+    }
+
+    public SimpleItem withNormalizedTitle(String normTitle) {
+        this.normalizedTitle = normTitle;
+        return this;
+    }
+
+    public SimpleItem withFilter(String filter) {
+        this.filter = filter;
         return this;
     }
 
@@ -171,7 +186,17 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         Context ctx = viewHolder.itemView.getContext();
 
         //set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle);
+        if (filter != null && !filter.isEmpty()) {
+            int mPosition = normalizedTitle.indexOf(filter);
+            if (mPosition >= 0) {
+                String highlighted = title.getText().replaceAll("(?i)(" + title.getText().substring(mPosition, mPosition + filter.length()) + ")", "<b>$1</b>");
+                viewHolder.mTitle.setText(LUtils.fromHtmlWrapper(highlighted));
+            }
+            else
+                StringHolder.applyTo(title, viewHolder.mTitle);
+        }
+        else
+            StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
 //        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);

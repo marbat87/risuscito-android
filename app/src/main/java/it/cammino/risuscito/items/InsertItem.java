@@ -17,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 
 public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> {
@@ -26,6 +27,8 @@ public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> 
     private StringHolder source;
     private ColorHolder color;
     private int numSalmo;
+    private String normalizedTitle;
+    private String filter;
     private int id;
 
     public InsertItem withTitle(String title) {
@@ -85,6 +88,16 @@ public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> 
         return this;
     }
 
+    public InsertItem withNormalizedTitle(String normTitle) {
+        this.normalizedTitle = normTitle;
+        return this;
+    }
+
+    public InsertItem withFilter(String filter) {
+        this.filter = filter;
+        return this;
+    }
+
     public StringHolder getTitle() {
         return title;
     }
@@ -139,7 +152,17 @@ public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> 
         super.bindView(viewHolder, payloads);
 
         //set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle);
+        if (filter != null && !filter.isEmpty()) {
+            int mPosition = normalizedTitle.indexOf(filter);
+            if (mPosition >= 0) {
+                String highlighted = title.getText().replaceAll("(?i)(" + title.getText().substring(mPosition, mPosition + filter.length()) + ")", "<b>$1</b>");
+                viewHolder.mTitle.setText(LUtils.fromHtmlWrapper(highlighted));
+            }
+            else
+                StringHolder.applyTo(title, viewHolder.mTitle);
+        }
+        else
+            StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
         GradientDrawable bgShape = (GradientDrawable) viewHolder.mPage.getBackground();

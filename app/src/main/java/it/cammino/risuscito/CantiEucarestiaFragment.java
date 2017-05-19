@@ -514,7 +514,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
         longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
 //        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        mMainActivity.getAppBarLayout().setExpanded(true, true);
+        if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+            mMainActivity.getAppBarLayout().setExpanded(true, true);
         mMainActivity.getMaterialCab().start(CantiEucarestiaFragment.this);
     }
 

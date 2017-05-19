@@ -18,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:fadeScrollbars="true"
-        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+        android:fadeScrollbars="true" />
 
     <RelativeLayout
         android:layout_gravity="center"
@@ -53,6 +52,5 @@
     </RelativeLayout>
 
     <include layout="@layout/common_bottom_bar"/>
-    <include layout="@layout/common_fab"/>
 
 </android.support.design.widget.CoordinatorLayout>

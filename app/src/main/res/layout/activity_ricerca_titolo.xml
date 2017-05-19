@@ -4,17 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_min_margin"
     android:orientation="vertical" >
 
     <TextView
-        android:layout_marginLeft="@dimen/activity_min_margin"
-        android:layout_marginRight="@dimen/activity_min_margin"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:gravity="center"
+        android:layout_height="48dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:gravity="start|center_vertical"
+        android:background="@color/material_grey_100"
         android:text="@string/fast_search_subtitle"/>
+
+    <include layout="@layout/design_navigation_item_separator" />
 
     <EditText
         android:id="@+id/textfieldRicerca"
