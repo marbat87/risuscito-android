@@ -10,6 +10,8 @@
         <changelogbug>Corretto un bug nella esportazione PDF in Ucraino</changelogbug>
         <changelogimprovement>Migliorata la gestione della Creazione Lista</changelogimprovement>
         <changelogimprovement>Modificato stile di indici ed elenchi</changelogimprovement>
+        <changelogimprovement>Nuovo layout per tablet</changelogimprovement>
+        <changelogimprovement>Il testo ricercato viene evidenziato nei risultati della ricerca veloce</changelogimprovement>
     </changelogversion>
 
 </changelog>

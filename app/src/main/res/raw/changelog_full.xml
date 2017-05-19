@@ -10,6 +10,8 @@
         <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
         <changelogimprovement>Improved List Creation management</changelogimprovement>
         <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
+        <changelogimprovement>New tablet layout</changelogimprovement>
+        <changelogimprovement>Searched text is bold in the results list of fast search</changelogimprovement>
     </changelogversion>
 
     <changelogversion versionName="4.2.1" changeDate="February 2017">
