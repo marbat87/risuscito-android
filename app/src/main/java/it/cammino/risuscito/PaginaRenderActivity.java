@@ -1579,7 +1579,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
-        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+//        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
         switch (requestCode) {
             case Utility.WRITE_STORAGE_RC: {
                 // If request is cancelled, the result arrays are empty.

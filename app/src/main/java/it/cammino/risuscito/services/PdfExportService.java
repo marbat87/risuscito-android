@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.BuildConfig;
 import it.cammino.risuscito.CambioAccordi;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
@@ -81,12 +82,14 @@ public class PdfExportService extends IntentService {
     void exportPdf(Intent intent) {
 //        CambioAccordi cambioAccordi = new CambioAccordi(getApplicationContext());
 
-        Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA " + intent.getStringExtra(DATA_PRIMA_NOTA));
-        Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO " + intent.getStringExtra(DATA_NOTA_CAMBIO));
-        Log.d(TAG, "exportPdf: PRIMO_BARRE " + intent.getStringExtra(DATA_PRIMO_BARRE));
-        Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO " + intent.getStringExtra(DATA_BARRE_CAMBIO));
-        Log.d(TAG, "exportPdf: DATA_PAGINA " + intent.getStringExtra(DATA_PAGINA));
-        Log.d(TAG, "exportPdf: DATA_LINGUA " + intent.getStringExtra(DATA_LINGUA));
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA " + intent.getStringExtra(DATA_PRIMA_NOTA));
+            Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO " + intent.getStringExtra(DATA_NOTA_CAMBIO));
+            Log.d(TAG, "exportPdf: PRIMO_BARRE " + intent.getStringExtra(DATA_PRIMO_BARRE));
+            Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO " + intent.getStringExtra(DATA_BARRE_CAMBIO));
+            Log.d(TAG, "exportPdf: DATA_PAGINA " + intent.getStringExtra(DATA_PAGINA));
+            Log.d(TAG, "exportPdf: DATA_LINGUA " + intent.getStringExtra(DATA_LINGUA));
+        }
 
         primaNota = intent.getStringExtra(DATA_PRIMA_NOTA);
         notaCambio = intent.getStringExtra(DATA_NOTA_CAMBIO);
