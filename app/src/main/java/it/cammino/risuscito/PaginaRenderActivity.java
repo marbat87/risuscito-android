@@ -519,7 +519,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         Bundle bundle = this.getIntent().getExtras();
-        pagina = bundle.getString("pagina");
+        pagina = bundle.getCharSequence("pagina", "").toString();
         idCanto = bundle.getInt("idCanto");
 
         getRecordLink();

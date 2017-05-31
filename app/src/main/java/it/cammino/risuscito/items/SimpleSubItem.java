@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -19,7 +20,6 @@ import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
-import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 
@@ -146,7 +146,9 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
 
 //        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);
 //        UIUtils.setBackground(viewHolder.view, drawable);
-        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+//        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+        ViewCompat.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+
 
         if (isSelected()) {
             viewHolder.mPage.setVisibility(View.INVISIBLE);

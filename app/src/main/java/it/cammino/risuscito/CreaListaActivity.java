@@ -343,7 +343,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 positionToRename = i;
                 new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "RENAME")
                         .title(R.string.posizione_rename)
-                        .prefill(item.getName().getText())
+                        .prefill(item.getName().getText().toString())
                         .positiveButton(R.string.aggiungi_rename)
                         .negativeButton(R.string.aggiungi_dismiss)
                         .show();
@@ -651,7 +651,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //        for (int i = 0; i < elementi.size(); i++) {
         for (int i = 0; i < mAdapter.getAdapterItems().size(); i++) {
             mElement = mAdapter.getItem(i);
-            if (celebrazione.addPosizione(mElement.getName().getText()) == -2) {
+            if (celebrazione.addPosizione(mElement.getName().getText().toString()) == -2) {
                 Snackbar.make(findViewById(android.R.id.content)
                         , R.string.lista_pers_piena, Snackbar.LENGTH_SHORT)
                         .show();

@@ -8,14 +8,12 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 

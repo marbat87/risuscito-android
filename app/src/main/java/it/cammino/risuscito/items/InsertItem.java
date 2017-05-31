@@ -155,7 +155,7 @@ public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> 
         if (filter != null && !filter.isEmpty()) {
             int mPosition = normalizedTitle.indexOf(filter);
             if (mPosition >= 0) {
-                String highlighted = title.getText().replaceAll("(?i)(" + title.getText().substring(mPosition, mPosition + filter.length()) + ")", "<b>$1</b>");
+                String highlighted = title.getText().toString().replaceAll("(?i)(" + title.getText().toString().substring(mPosition, mPosition + filter.length()) + ")", "<b>$1</b>");
                 viewHolder.mTitle.setText(LUtils.fromHtmlWrapper(highlighted));
             }
             else

@@ -123,7 +123,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                     return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", item.getSource().getText());
+                bundle.putCharSequence("pagina", item.getSource().getText());
                 bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato

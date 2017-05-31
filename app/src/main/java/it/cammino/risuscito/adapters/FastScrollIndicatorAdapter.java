@@ -22,13 +22,13 @@ public class FastScrollIndicatorAdapter<Item extends IItem> extends FastItemAdap
             //based on the position we set the headers text
             switch (mIndicator) {
                 case 0:
-                    return ((SimpleItem) item).getTitle().getText().substring(0,1).toUpperCase();
+                    return ((SimpleItem) item).getTitle().getText().toString().substring(0,1).toUpperCase();
                 case 1:
-                    return ((SimpleItem) item).getPage().getText();
+                    return ((SimpleItem) item).getPage().getText().toString();
                 case 2:
                     return String.valueOf(((SimpleItem) item).getNumSalmo());
                 default:
-                    return ((SimpleItem) item).getTitle().getText().substring(0,1).toUpperCase();
+                    return ((SimpleItem) item).getTitle().getText().toString().substring(0,1).toUpperCase();
             }
         }
         return "";
