@@ -64,6 +64,7 @@ public class XmlImportService extends IntentService {
 
     private void importData(Uri data) {
         Log.d(TAG, "importData: data = " + data.toString());
+        Log.d(TAG, "importData:  data.getScheme = " + data.getScheme());
         final String scheme = data.getScheme();
 
         NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(this);
@@ -237,7 +238,7 @@ public class XmlImportService extends IntentService {
         }
     }
 
-    static class Position {
+    private static class Position {
         String name;
         String canto;
 

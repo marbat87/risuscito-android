@@ -206,9 +206,9 @@ public class InsertAvanzataFragment extends Fragment {
         titoli = new ArrayList<>();
         cantoAdapter = new FastItemAdapter<>();
         cantoAdapter.setHasStableIds(true);
+//        cantoAdapter.withOnClickListener(mOnClickListener).withItemEvent(hookListener);
         //noinspection unchecked
-        cantoAdapter.withOnClickListener(mOnClickListener)
-                .withItemEvent(hookListener);
+        cantoAdapter.withOnClickListener(mOnClickListener).withEventHook(hookListener);
 
         mRecyclerView.setAdapter(cantoAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());

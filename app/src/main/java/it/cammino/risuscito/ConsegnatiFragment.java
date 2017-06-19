@@ -489,7 +489,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 return true;
             }
         });
-        selectableAdapter.withItemEvent(new CheckableItem.CheckBoxClickEvent());
+//        selectableAdapter.withItemEvent(new CheckableItem.CheckBoxClickEvent());
+        selectableAdapter.withEventHook(new CheckableItem.CheckBoxClickEvent());
         selectableAdapter.add(titoliChoose);
 
         mChoosedRecyclerView.setAdapter(selectableAdapter);

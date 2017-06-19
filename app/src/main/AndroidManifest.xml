@@ -87,20 +87,17 @@
         <activity
             android:name="it.cammino.risuscito.ImportActivity"
             android:theme="@style/RisuscitoTheme.Invisibile"
+            android:exported="true"
             android:excludeFromRecents="true">
-            <intent-filter>
+            <intent-filter tools:ignore="GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <android:data android:mimeType="application/octet-stream" android:host="*"
-                    android:pathPattern=".*\\.risuscito" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <android:data android:mimeType="text/xml" android:host="*"
-                    android:pathPattern=".*\\.risuscito" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:mimeType="application/octet-stream"
+                    android:host="*"
+                    android:pathPattern=".*\\.risuscito"
+                    tools:ignore="GoogleAppIndexingUrlError" />
             </intent-filter>
         </activity>
 

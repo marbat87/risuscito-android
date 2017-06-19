@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 50;
+    private static final int DB_VERSION = 51;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";

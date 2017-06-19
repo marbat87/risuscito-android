@@ -22,12 +22,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.SignInButton;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeHelper;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -65,6 +68,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         }
     };
 
+    @BindView(R.id.imageView1) ImageView mCover;
     @OnClick(R.id.imageView1)
     public void closeDrawer() {
         mMainActivity.getDrawer().openDrawer();
@@ -87,6 +91,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         }
 //        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
         mMainActivity.mTabLayout.setVisibility(View.GONE);
+
+        Glide.with(getContext()).load(R.drawable.main_cover).into(mCover);
 
 //        rootView.findViewById(R.id.imageView1)
 //                .setOnClickListener(new OnClickListener() {

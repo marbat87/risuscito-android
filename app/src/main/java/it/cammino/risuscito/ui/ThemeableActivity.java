@@ -185,7 +185,6 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         return mThemeUtils;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void attachBaseContext(Context newBase) {
 
@@ -242,9 +241,10 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         }
 
 //        if (changeConfig) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (LUtils.hasJB()) {
             newBase = newBase.createConfigurationContext(config);
         } else {
+            //noinspection deprecation
             newBase.getResources().updateConfiguration(config, newBase.getResources().getDisplayMetrics());
         }
 //        }
