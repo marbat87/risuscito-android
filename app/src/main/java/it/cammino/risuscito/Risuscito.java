@@ -53,6 +53,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
     private Unbinder mUnbinder;
 
+    private String thisVersion;
+
     private BroadcastReceiver signInVisibility = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -82,59 +84,52 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
 
         mMainActivity = (MainActivity) getActivity();
 
-//        ((MainActivity) getActivity()).setupToolbar(rootView.findViewById(R.id.risuscito_toolbar), R.string.activity_homepage);
         mMainActivity.setupToolbarTitle(R.string.activity_homepage);
         mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
-//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
         mMainActivity.mTabLayout.setVisibility(View.GONE);
 
         Glide.with(getContext()).load(R.drawable.main_cover).into(mCover);
-
-//        rootView.findViewById(R.id.imageView1)
-//                .setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        mMainActivity.getDrawer().openDrawer();
-//                    }
-//                });
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
 
         // get version numbers
         String lastVersion = sp.getString(VERSION_KEY, NO_VERSION);
-        String thisVersion;
-//        Log.i("Changelog", "lastVersion: " + lastVersion);
+//        String thisVersion;
+        Log.d("Changelog", "lastVersion: " + lastVersion);
         try {
             thisVersion = getActivity().getPackageManager().getPackageInfo(
                     getActivity().getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
             thisVersion = NO_VERSION;
-//            Log.i("Changelog", "could not get version name from manifest!");
+            Log.d("Changelog", "could not get version name from manifest!");
             e.printStackTrace();
         }
-//        Log.i("Changelog", "appVersion: " + thisVersion);
+        Log.d("Changelog", "thisVersion: " + thisVersion);
 
+        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
+        mWelcomeScreen.show(savedInstanceState);
         if (!thisVersion.equals(lastVersion)) {
-            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
-            mWelcomeScreen.show(savedInstanceState);
+//            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
+//            mWelcomeScreen.show(savedInstanceState);
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
                     .positiveButton(R.string.dialog_chiudi)
+                    .cancelListener(true)
+                    .setCanceable(true)
                     .show();
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString(VERSION_KEY, thisVersion);
-            editor.apply();
+//            SharedPreferences.Editor editor = sp.edit();
+//            editor.putString(VERSION_KEY, thisVersion);
+//            editor.apply();
         }
-        else {
-            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
-            mWelcomeScreen.show(savedInstanceState);
-        }
+//        else {
+//            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
+//            mWelcomeScreen.show(savedInstanceState);
+//        }
 
         PaginaRenderActivity.notaCambio = null;
         PaginaRenderActivity.speedValue = null;
@@ -178,6 +173,9 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         super.onResume();
         getActivity().registerReceiver(signInVisibility, new IntentFilter(
                 BROADCAST_SIGNIN_VISIBLE));
+        SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "CHANGELOG");
+        if (fragment != null)
+            fragment.setmCallback(Risuscito.this);
     }
 
     @Override
@@ -220,7 +218,17 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     }
 
     @Override
-    public void onPositive(@NonNull String tag) {}
+    public void onPositive(@NonNull String tag) {
+        Log.d(TAG, "onPositive: " + tag);
+        switch (tag) {
+            case "CHANGELOG":
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity()).edit();
+                editor.putString(VERSION_KEY, thisVersion);
+                editor.apply();
+                break;
+        }
+    }
     @Override
     public void onNegative(@NonNull String tag) {}
     @Override

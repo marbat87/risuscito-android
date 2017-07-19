@@ -64,10 +64,10 @@ dependencies {
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.jrvansuita:MaterialAbout:0.1.6'
     compile 'com.anjlab.android.iab.v3:library:1.0.42'
-    compile 'com.github.KeepSafe:TapTargetView:-SNAPSHOT'
+    compile 'com.github.keepsafe:TapTargetView:-SNAPSHOT'
     compile 'com.mikepenz:fastadapter-commons:2.5.2@aar'
     compile 'com.mikepenz:fastadapter-extensions:2.5.2@aar'
-    compile 'com.github.turing-tech:MaterialScrollBar:12.4.0'
+    compile 'com.github.turing-tech:MaterialScrollBar:12.5.0a'
     compile 'com.github.bumptech.glide:glide:3.8.0'
 }
 
