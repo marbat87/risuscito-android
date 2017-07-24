@@ -31,18 +31,20 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
     //    AlertDialogListener mListener;
     private String TAG  = getClass().getCanonicalName();
 
-    public static BottomSheetFabCanto newInstance(boolean sound, boolean download, boolean favorite) {
+    public static BottomSheetFabCanto newInstance(boolean sound, boolean download, boolean favorite, boolean onlineUrl, boolean personalUrl) {
         BottomSheetFabCanto frag = new BottomSheetFabCanto();
         Bundle args = new Bundle();
         args.putBoolean("showTitle", false);
         args.putBoolean("sound", sound);
         args.putBoolean("download", download);
         args.putBoolean("favorite", favorite);
+        args.putBoolean("onlineUrl", onlineUrl);
+        args.putBoolean("personalUrl", personalUrl);
         frag.setArguments(args);
         return frag;
     }
 
-    public static BottomSheetFabCanto newInstance(@StringRes int title, boolean sound, boolean download, boolean favorite) {
+    public static BottomSheetFabCanto newInstance(@StringRes int title, boolean sound, boolean download, boolean favorite, boolean onlineUrl, boolean personalUrl) {
         BottomSheetFabCanto frag = new BottomSheetFabCanto();
         Bundle args = new Bundle();
         args.putInt("title", title);
@@ -50,6 +52,8 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         args.putBoolean("sound", sound);
         args.putBoolean("download", download);
         args.putBoolean("favorite", favorite);
+        args.putBoolean("onlineUrl", onlineUrl);
+        args.putBoolean("personalUrl", personalUrl);
         frag.setArguments(args);
         return frag;
     }
@@ -68,6 +72,8 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         Boolean mSound = getArguments().getBoolean("sound");
         Boolean mDownload = getArguments().getBoolean("download");
         Boolean mFavorite = getArguments().getBoolean("favorite");
+        Boolean mOnlineUrl = getArguments().getBoolean("onlineUrl");
+        Boolean mPersonalUrl = getArguments().getBoolean("personalUrl");
 
         TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
         if (showTitle) {
@@ -135,13 +141,35 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
         icon = new IconicsDrawable(getActivity())
-                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
+//                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
                 .colorRes(R.color.icon_ative_black)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
         mTextView = (TextView) mView.findViewById(R.id.app_label);
-        mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
+//        mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
+
+        if (mDownload) {
+            if (mPersonalUrl) {
+                icon.icon(CommunityMaterial.Icon.cmd_link_variant_off);
+                mTextView.setText(R.string.dialog_delete_link_title);
+            }
+            else {
+                icon.icon(CommunityMaterial.Icon.cmd_delete);
+                mTextView.setText(R.string.fab_delete_unlink);
+            }
+        }
+        else {
+            if (mOnlineUrl) {
+                icon.icon(CommunityMaterial.Icon.cmd_download);
+                mTextView.setText(R.string.save_file);
+            }
+            else {
+                icon.icon(CommunityMaterial.Icon.cmd_link_variant);
+                mTextView.setText(R.string.only_link_title);
+            }
+        }
+
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

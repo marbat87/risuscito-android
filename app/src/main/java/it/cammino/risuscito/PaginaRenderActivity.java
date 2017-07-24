@@ -489,7 +489,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
     @OnClick(R.id.fab_canti)
     public void FabOptions() {
-        BottomSheetFabCanto bottomSheetDialog = BottomSheetFabCanto.newInstance(mostraAudioBool, mDownload, selectFavouriteFromSource() == 1);
+        BottomSheetFabCanto bottomSheetDialog = BottomSheetFabCanto.newInstance(mostraAudioBool
+                , mDownload, selectFavouriteFromSource() == 1
+                , !url.equals("")
+                , !personalUrl.equals(""));
         bottomSheetDialog.show(getSupportFragmentManager(), null);
     }
 
@@ -1230,6 +1233,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     private void saveZoom(){
+        //noinspection deprecation
         defaultZoomLevel = (int) (paginaView.getScale() *100);
         defaultScrollX = paginaView.getScrollX();
         defaultScrollY = paginaView.getScrollY();
@@ -1462,9 +1466,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     void startExternalDownload() {
         Log.d(getClass().getName(), " WRITE_EXTERNAL_STORAGE OK");
         if (Utility.isExternalStorageWritable()) {
-            new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs();
-//                                                      Log.i(getClass().toString(), "RISUSCITO CREATA: " + folderCreated);
+            if (new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs())
+                Log.d(TAG, "CARTELLA RISUSCITO CREATA");
+            else
+                Log.d(TAG, "CARTELLA RISUSCITO ESISTENTE");
             String localFile = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC).getAbsolutePath()
                     + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
@@ -1677,17 +1683,22 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 break;
             case "DELETE_MP3":
                 File fileToDelete = new File(localUrl);
-                fileToDelete.delete();
-                if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
-                    // initiate media scan and put the new things into the path array to
-                    // make the scanner aware of the location and the files you want to see
-                    MediaScannerConnection.scanFile(getApplicationContext()
-                            , new String[] {fileToDelete.getAbsolutePath()}
-                            , null
-                            , null);
+//                fileToDelete.delete();
+                if (fileToDelete.delete()) {
+                    if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
+                        // initiate media scan and put the new things into the path array to
+                        // make the scanner aware of the location and the files you want to see
+                        MediaScannerConnection.scanFile(getApplicationContext()
+                                , new String[]{fileToDelete.getAbsolutePath()}
+                                , null
+                                , null);
+                    }
+                    Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                            .show();
                 }
-                Snackbar.make(findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-                        .show();
+                else
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                            .show();
 
                 scroll_song_bar.setProgress(0);
                 scroll_song_bar.setEnabled(false);
