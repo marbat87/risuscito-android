@@ -76,12 +76,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/activity_min_margin"-->
-            <!--android:text="@string/list_elements" />-->
-
         <TextView
             android:paddingStart="@dimen/myListPreferredItemMargin"
             android:paddingEnd="@dimen/myListPreferredItemMargin"
@@ -126,8 +120,8 @@
         android:layout_alignParentRight="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/toolbar_fab_margin_lateral"
-        android:layout_marginRight="@dimen/toolbar_fab_margin_lateral"
+        android:layout_marginEnd="@dimen/fab_margin_coord"
+        android:layout_marginRight="@dimen/fab_margin_coord"
         risuscito:layout_anchor="@id/appbarlayout"
         risuscito:layout_anchorGravity="bottom|right|end" />
 

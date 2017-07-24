@@ -30,7 +30,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,7 +111,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @BindView(R.id.collapsingToolbarLayout) @Nullable CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.fab_crea_lista) FloatingActionButton fabCreaLista;
-    @BindView(R.id.recycler_container) ViewGroup mRecyclerContainer;
+//    @BindView(R.id.recycler_container) ViewGroup mRecyclerContainer;
     @BindView(R.id.noElementsAdded) View mNoElementsAdded;
     @BindView(R.id.main_hint_layout) View mMainHintLayout;
     @BindView(R.id.hint_text) TextView mHintText;

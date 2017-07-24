@@ -15,8 +15,7 @@
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         risuscito:layout_scrollFlags="scroll|enterAlways"
-        android:elevation="@dimen/design_appbar_elevation"
-        tools:targetApi="lollipop">
+        risuscito:elevation="@dimen/design_appbar_elevation">
 
         <TextView
             android:layout_width="wrap_content"
