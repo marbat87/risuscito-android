@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/copertina"
-            android:layout_margin="@dimen/activity_min_margin"
-            android:layout_gravity="center" />
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/copertina"
+        android:layout_margin="@dimen/activity_min_margin"
+        android:src="@drawable/main_cover"
+        android:layout_gravity="center" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

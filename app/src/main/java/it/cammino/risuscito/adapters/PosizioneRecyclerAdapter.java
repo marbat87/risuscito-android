@@ -173,7 +173,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         return dataItems.size();
     }
 
-    private static class TitleViewHolder extends RecyclerView.ViewHolder {
+    static class TitleViewHolder extends RecyclerView.ViewHolder {
 
 //        public TextView idLista;
 //        public TextView idPosizione;

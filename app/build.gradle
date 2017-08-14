@@ -66,7 +66,8 @@ dependencies {
     compile 'com.mikepenz:fastadapter-commons:2.6.3@aar'
     compile 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
     compile 'com.github.turing-tech:MaterialScrollBar:13.0.1'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
