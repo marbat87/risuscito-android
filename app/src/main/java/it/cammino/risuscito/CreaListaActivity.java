@@ -98,7 +98,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //    private SimpleDragCallback touchCallback;
     private ItemTouchHelper touchHelper;
 
-    private EditText textfieldTitle;
+//    private EditText textfieldTitle;
 
     private int positionToRename;
 //    private WelcomeHelper mWelcomeScreen;
@@ -119,6 +119,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     @BindView(R.id.question_mark) View mQuestionMark;
     @BindView(R.id.tabletToolbarBackground) @Nullable View mTabletBG;
     @BindView(R.id.action_title_bar) View mActionTitleBar;
+    @BindView(R.id.textfieldTitle) EditText textFieldTitle;
 
     @OnClick(R.id.fab_crea_lista)
     public void aggiuntiPosizione() {
@@ -148,9 +149,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         listaCanti = new DatabaseCanti(this);
 
 //        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
-        textfieldTitle = (EditText)findViewById(R.id.textfieldTitle);
+//        textfieldTitle = (EditText)findViewById(R.id.textfieldTitle);
 
-        textfieldTitle.addTextChangedListener(new TextWatcher() {
+        textFieldTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -253,12 +254,12 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 //        }
 
         if (savedInstanceState != null) {
-            textfieldTitle.setText(savedInstanceState.getCharSequence(TEMP_TITLE));
+            textFieldTitle.setText(savedInstanceState.getCharSequence(TEMP_TITLE));
             if (collapsingToolbarLayout != null)
                 collapsingToolbarLayout.setTitle(savedInstanceState.getCharSequence(TEMP_TITLE));
         }
         else {
-            textfieldTitle.setText(titoloLista);
+            textFieldTitle.setText(titoloLista);
             if (collapsingToolbarLayout != null)
                 collapsingToolbarLayout.setTitle(titoloLista);
         }
@@ -633,10 +634,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private boolean saveList()  {
         celebrazione = new ListaPersonalizzata();
 
-        if (textfieldTitle.getText() != null
-                && !textfieldTitle.getText()
+        if (textFieldTitle.getText() != null
+                && !textFieldTitle.getText()
                 .toString().trim().equalsIgnoreCase("")) {
-            titoloLista = textfieldTitle.getText().toString();
+            titoloLista = textFieldTitle.getText().toString();
         }
         else {
             Toast toast = Toast.makeText(CreaListaActivity.this
@@ -710,7 +711,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt("positionToRename", positionToRename);
-        savedInstanceState.putCharSequence(TEMP_TITLE, textfieldTitle.getText());
+        savedInstanceState.putCharSequence(TEMP_TITLE, textFieldTitle.getText());
 //        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
@@ -966,6 +967,9 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         mAdapter.notifyAdapterItemMoved(oldPosition, newPosition);
         return true;
     }
+
+    @Override
+    public void itemTouchDropped(int i, int i1) {}
 
     @Override
     public void itemSwiped(int position, int direction) {

@@ -8,24 +8,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -79,7 +79,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     // indicates the state our service:
     private enum State {
-//        Retrieving, // the MediaRetriever is retrieving music
+        //        Retrieving, // the MediaRetriever is retrieving music
         Stopped,    // media player is stopped and not prepared to play
         Preparing,  // media player is preparing...
         Playing,    // playback active (media player ready!). (but the media player may actually be
@@ -92,10 +92,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     State mState = State.Stopped;
     // if in Retrieving mode, this flag indicates whether we should start playing immediately
     // when we are ready or not.
-    boolean mStartPlayingAfterRetrieve = false;
+//    boolean mStartPlayingAfterRetrieve = false;
     // if mStartPlayingAfterRetrieve is true, this variable indicates the URL that we should
     // start playing when we are ready. If null, we should play a random song from the device
-    Uri mWhatToPlayAfterRetrieve = null;
+//    Uri mWhatToPlayAfterRetrieve = null;
 
     //    enum PauseReason {
 //        UserRequest,  // paused by user request
@@ -495,7 +495,17 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             if (manualUrl != null) {
                 // set the source of the media player to a manual URL or path
                 createMediaPlayerIfNeeded();
-                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                if (LUtils.hasL()) {
+                    AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build();
+                    mPlayer.setAudioAttributes(mPlaybackAttributes);
+                }
+                else {
+                    //noinspection deprecation
+                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                }
                 if (mLocalFile) {
                     FileInputStream fileInputStream = new FileInputStream(manualUrl);
                     mPlayer.setDataSource(fileInputStream.getFD());
@@ -738,10 +748,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      */
     private Notification createNotification(String text) {
 
-        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this, "0");
         mNotificationBuilder
                 .setColor(mNotificationColor)
-//                .setSmallIcon(mState == State.Playing ? R.drawable.ic_play_circle_outline_white_24dp : R.drawable.ic_pause_circle_outline_white_24dp)
                 .setSmallIcon(mState == State.Playing ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(playingItem.getTitle() + text)
@@ -774,7 +783,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
                 );
 
-                builder.setStyle(new NotificationCompat.MediaStyle()
+                builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0,1)  // show only play/pause in compact view
                         .setMediaSession(mSession.getSessionToken())
                         .setShowCancelButton(true)
@@ -785,7 +794,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 builder.setProgress(0, 0, true);
                 break;
             default:
-                builder.setStyle(new NotificationCompat.MediaStyle()
+                builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mSession.getSessionToken())
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(getActionIntent(this, KeyEvent.KEYCODE_MEDIA_STOP)));
@@ -901,121 +910,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         return null;
     }
 
-//    private class MediaSessionCallback extends MediaSessionCompat.Callback {
-//        @Override
-//        public void onPlay() {
-//            LogHelper.d(TAG, "play");
-//            if (mQueueManager.getCurrentMusic() == null) {
-//                mQueueManager.setRandomQueue();
-//            }
-//            handlePlayRequest();
-//        }
-//
-//        @Override
-//        public void onSkipToQueueItem(long queueId) {
-//            LogHelper.d(TAG, "OnSkipToQueueItem:" + queueId);
-//            mQueueManager.setCurrentQueueItem(queueId);
-//            handlePlayRequest();
-//            mQueueManager.updateMetadata();
-//        }
-//
-//        @Override
-//        public void onSeekTo(long position) {
-//            LogHelper.d(TAG, "onSeekTo:", position);
-//            mPlayback.seekTo((int) position);
-//        }
-//
-//        @Override
-//        public void onPlayFromMediaId(String mediaId, Bundle extras) {
-//            LogHelper.d(TAG, "playFromMediaId mediaId:", mediaId, "  extras=", extras);
-//            mQueueManager.setQueueFromMusic(mediaId);
-//            handlePlayRequest();
-//        }
-//
-//        @Override
-//        public void onPause() {
-//            LogHelper.d(TAG, "pause. current state=" + mPlayback.getState());
-//            handlePauseRequest();
-//        }
-//
-//        @Override
-//        public void onStop() {
-//            LogHelper.d(TAG, "stop. current state=" + mPlayback.getState());
-//            handleStopRequest(null);
-//        }
-//
-//        @Override
-//        public void onSkipToNext() {
-//            LogHelper.d(TAG, "skipToNext");
-//            if (mQueueManager.skipQueuePosition(1)) {
-//                handlePlayRequest();
-//            } else {
-//                handleStopRequest("Cannot skip");
-//            }
-//            mQueueManager.updateMetadata();
-//        }
-//
-//        @Override
-//        public void onSkipToPrevious() {
-//            if (mQueueManager.skipQueuePosition(-1)) {
-//                handlePlayRequest();
-//            } else {
-//                handleStopRequest("Cannot skip");
-//            }
-//            mQueueManager.updateMetadata();
-//        }
-//
-//        @Override
-//        public void onCustomAction(@NonNull String action, Bundle extras) {
-//            if (CUSTOM_ACTION_THUMBS_UP.equals(action)) {
-//                LogHelper.i(TAG, "onCustomAction: favorite for current track");
-//                MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
-//                if (currentMusic != null) {
-//                    String mediaId = currentMusic.getDescription().getMediaId();
-//                    if (mediaId != null) {
-//                        String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
-//                        mMusicProvider.setFavorite(musicId, !mMusicProvider.isFavorite(musicId));
-//                    }
-//                }
-//                // playback state needs to be updated because the "Favorite" icon on the
-//                // custom action will change to reflect the new favorite state.
-//                updatePlaybackState(null);
-//            } else {
-//                LogHelper.e(TAG, "Unsupported action: ", action);
-//            }
-//        }
-//
-//        /**
-//         * Handle free and contextual searches.
-//         * <p/>
-//         * All voice searches on Android Auto are sent to this method through a connected
-//         * {@link android.support.v4.media.session.MediaControllerCompat}.
-//         * <p/>
-//         * Threads and async handling:
-//         * Search, as a potentially slow operation, should run in another thread.
-//         * <p/>
-//         * Since this method runs on the main thread, most apps with non-trivial metadata
-//         * should defer the actual search to another thread (for example, by using
-//         * an {@link AsyncTask} as we do here).
-//         **/
-//        @Override
-//        public void onPlayFromSearch(final String query, final Bundle extras) {
-//            LogHelper.d(TAG, "playFromSearch  query=", query, " extras=", extras);
-//
-//            mPlayback.setState(PlaybackStateCompat.STATE_CONNECTING);
-//            mQueueManager.setQueueFromSearch(query, extras);
-//            handlePlayRequest();
-//            mQueueManager.updateMetadata();
-//        }
-//    }
-
     private PendingIntent createContentIntent() {
         Intent openUI = new Intent(this, PaginaRenderActivity.class);
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        openUI.putExtra(MusicPlayerActivity.EXTRA_START_FULLSCREEN, true);
-//        if (description != null) {
-//            openUI.putExtra(MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, description);
-//        }
         return PendingIntent.getActivity(this, 9876, openUI,
                 PendingIntent.FLAG_CANCEL_CURRENT);
     }
@@ -1128,18 +1025,18 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         public long getId() {
             return id;
         }
-        public String getArtist() {
-            return artist;
-        }
+        //        public String getArtist() {
+//            return artist;
+//        }
         public String getTitle() {
             return title;
         }
         String getAlbum() {
             return album;
         }
-        public long getDuration() {
-            return duration;
-        }
+//        public long getDuration() {
+//            return duration;
+//        }
 //        public Uri getURI() {
 //            return ContentUris.withAppendedId(
 //                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);

@@ -537,7 +537,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         if (mFab == null) {
 //            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
 //                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
-            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
                     .icon(CommunityMaterial.Icon.cmd_pencil)

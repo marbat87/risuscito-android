@@ -81,6 +81,10 @@ public class LUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    public static boolean hasO() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
     public void startActivityWithTransition(Intent intent, final View clickedView,
                                             final String transitionName) {
 //        ActivityOptions options = null;

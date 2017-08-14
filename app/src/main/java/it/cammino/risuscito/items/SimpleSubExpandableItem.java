@@ -147,9 +147,11 @@ public class SimpleSubExpandableItem<Parent extends IItem & IExpandable, SubItem
         StringHolder.applyToOrHide(subTitle, viewHolder.mSubTitle);
 
         if (isExpanded()) {
-            ViewCompat.setRotation(viewHolder.mIndicator, 0);
+            viewHolder.mIndicator.setRotation(0);
+//            ViewCompat.setRotation(viewHolder.mIndicator, 0);
         } else {
-            ViewCompat.setRotation(viewHolder.mIndicator, 180);
+//            ViewCompat.setRotation(viewHolder.mIndicator, 180);
+            viewHolder.mIndicator.setRotation(180);
         }
 
     }

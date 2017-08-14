@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -231,7 +232,7 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
     }
 
     @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
+    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
         /*
          * Called when requested PRODUCT ID was successfully purchased
          */

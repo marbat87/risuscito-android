@@ -125,6 +125,9 @@ public class ImportActivity extends AppCompatActivity {
                 case "uk":
                     mLanguage = "uk";
                     break;
+                case "en":
+                    mLanguage = "en";
+                    break;
                 default:
                     mLanguage = "it";
                     break;

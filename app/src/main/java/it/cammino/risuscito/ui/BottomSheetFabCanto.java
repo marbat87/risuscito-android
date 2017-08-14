@@ -75,7 +75,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         Boolean mOnlineUrl = getArguments().getBoolean("onlineUrl");
         Boolean mPersonalUrl = getArguments().getBoolean("personalUrl");
 
-        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
+        TextView titleView = view.findViewById(R.id.sheet_title);
         if (showTitle) {
 //            int title = getArguments().getInt("title");
             titleView.setText(getArguments().getInt("title"));
@@ -86,7 +86,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         }
 
         View mView = view.findViewById(R.id.fab_fullscreen_on);
-        ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        ImageView mImage = mView.findViewById(R.id.app_icon);
 //        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -96,7 +96,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
+        TextView mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.fullscreen);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +111,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_sound_off);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -121,7 +121,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(mSound ? R.string.audio_off: R.string.audio_on);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +136,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.save_file);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -146,7 +146,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
 //        mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
 
         if (mDownload) {
@@ -183,7 +183,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_favorite);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -193,7 +193,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(mFavorite? R.string.favorite_off: R.string.favorite_on);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -216,7 +216,7 @@ You can add up to 30 elements.</string>
     <string name="sc_barre_desc">From this menu you can manage the change of capo with the same functions of the tone.</string>
     <string name="sc_audio_title">Reproduction audio</string>
     <string name="sc_audio_desc">Using this control you can reproduce the recording of the song with the functions of: play, pause, positioning in the track against the bar, display to the passed time.</string>
-    <string name="sc_scroll_title">Automatica scroll of the text</string>
+    <string name="sc_scroll_title">Automatic scroll of the text</string>
     <string name="sc_scroll_desc">Using these controls you can automatically scroll the text and regulate its speed of scrolling.
 \nADVICE: Regulate the zoom to obtain a better effect.</string>
     <string name="download_error">Download error:</string>

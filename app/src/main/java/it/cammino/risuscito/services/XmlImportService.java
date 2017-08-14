@@ -8,8 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.util.Xml;
 
@@ -71,7 +71,7 @@ public class XmlImportService extends IntentService {
         mNotificationManager.cancelAll();
         Notification mNotification;
 
-        mNotification = new NotificationCompat.Builder(this)
+        mNotification = new NotificationCompat.Builder(this, "0")
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(getString(R.string.app_name))
@@ -99,7 +99,7 @@ public class XmlImportService extends IntentService {
 
                     db.close();
 
-                    mNotification = new NotificationCompat.Builder(this)
+                    mNotification = new NotificationCompat.Builder(this, "0")
                             .setSmallIcon(R.drawable.ic_stat_action_done)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
@@ -119,7 +119,7 @@ public class XmlImportService extends IntentService {
                     stopSelf();
                 }
                 else {
-                    mNotification = new NotificationCompat.Builder(this)
+                    mNotification = new NotificationCompat.Builder(this, "0")
                             .setSmallIcon(R.drawable.ic_stat_alert_error)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
@@ -138,7 +138,7 @@ public class XmlImportService extends IntentService {
             catch (XmlPullParserException | SecurityException | IOException e) {
                 Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
                 FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
+                mNotification = new NotificationCompat.Builder(this, "0")
                         .setSmallIcon(R.drawable.ic_stat_alert_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setContentTitle(getString(R.string.app_name))

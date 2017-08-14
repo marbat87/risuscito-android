@@ -97,14 +97,14 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 PosizioneItem canto = listItems.get(i);
                 itemView = inflater.inflate(R.layout.generic_card_item, titleHolder.list, false);
 
-                TextView cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
-                TextView cantoPage = (TextView) itemView.findViewById(R.id.text_page);
+                TextView cantoTitle = itemView.findViewById(R.id.text_title);
+                TextView cantoPage = itemView.findViewById(R.id.text_page);
                 View cantoPageSelected = itemView.findViewById(R.id.selected_mark);
-                TextView idCanto = (TextView) itemView.findViewById(R.id.text_id_canto_card);
-                TextView sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
-                TextView timestamp = (TextView) itemView.findViewById(R.id.text_timestamp);
+                TextView idCanto = itemView.findViewById(R.id.text_id_canto_card);
+                TextView sourceCanto = itemView.findViewById(R.id.text_source_canto);
+                TextView timestamp = itemView.findViewById(R.id.text_timestamp);
                 View cantoView = itemView.findViewById(R.id.cantoGenericoContainer);
-                TextView itemTag = (TextView) itemView.findViewById(R.id.item_tag);
+                TextView itemTag = itemView.findViewById(R.id.item_tag);
 
                 cantoTitle.setText(canto.getTitolo());
                 cantoPage.setText(String.valueOf(canto.getPagina()));
@@ -173,7 +173,7 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
         return dataItems.size();
     }
 
-    static class TitleViewHolder extends RecyclerView.ViewHolder {
+    private static class TitleViewHolder extends RecyclerView.ViewHolder {
 
 //        public TextView idLista;
 //        public TextView idPosizione;

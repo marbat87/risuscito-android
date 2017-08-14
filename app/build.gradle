@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'project-report'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 26
         multiDexEnabled true
         versionCode 4311
         versionName '4.3.0'
@@ -39,35 +39,33 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     compile 'com.itextpdf:itextpdf:5.5.10'
-    compile ('com.afollestad.material-dialogs:commons:0.9.4.5') {
+    compile ('com.afollestad.material-dialogs:commons:0.9.4.6') {
         exclude module: 'support-v13'
     }
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-    compile 'com.stephentuso:welcome:1.3.1'
-    compile('com.mikepenz:materialdrawer:5.9.4@aar') { transitive = true }
+    compile 'com.stephentuso:welcome:1.4.1'
+    compile('com.mikepenz:materialdrawer:5.9.5@aar') { transitive = true }
     compile 'com.mikepenz:crossfader:1.5.0@aar'
     compile 'com.mikepenz:community-material-typeface:1.9.32.2@aar'
-    compile 'com.jakewharton:butterknife:8.6.0'
-    compile 'com.mikepenz:itemanimators:0.5.0@aar'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'com.mikepenz:itemanimators:1.0.0@aar'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //noinspection GradleDependency
-    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:design:26.0.1'
     //noinspection GradleDependency
-    compile 'com.android.support:cardview-v7:25.4.0'
-    //noinspection GradleDependency
-    compile 'com.android.support:support-v13:25.4.0'
-    compile 'com.takisoft.fix:preference-v7:25.4.0.3'
-    compile 'com.google.android.gms:play-services-auth:11.0.2'
-    compile 'com.google.android.gms:play-services-drive:11.0.2'
-    compile 'com.google.firebase:firebase-core:11.0.2'
-    compile 'com.google.firebase:firebase-crash:11.0.2'
+    compile 'com.android.support:cardview-v7:26.0.1'
+    compile 'com.takisoft.fix:preference-v7:26.0.1.0'
+    compile 'com.google.android.gms:play-services-auth:11.0.4'
+    compile 'com.google.android.gms:play-services-drive:11.0.4'
+    compile 'com.google.firebase:firebase-core:11.0.4'
+    compile 'com.google.firebase:firebase-crash:11.0.4'
     compile 'com.afollestad:material-cab:0.1.12'
-    compile 'com.github.jrvansuita:MaterialAbout:0.1.6'
-    compile 'com.anjlab.android.iab.v3:library:1.0.42'
+    compile 'com.github.jrvansuita:MaterialAbout:0.1.7'
+    compile 'com.anjlab.android.iab.v3:library:1.0.44'
     compile 'com.github.keepsafe:TapTargetView:-SNAPSHOT'
-    compile 'com.mikepenz:fastadapter-commons:2.5.2@aar'
-    compile 'com.mikepenz:fastadapter-extensions:2.5.2@aar'
-    compile 'com.github.turing-tech:MaterialScrollBar:12.5.0a'
+    compile 'com.mikepenz:fastadapter-commons:2.6.3@aar'
+    compile 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
+    compile 'com.github.turing-tech:MaterialScrollBar:13.0.1'
     compile 'com.github.bumptech.glide:glide:3.8.0'
 }
 

@@ -47,7 +47,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public static final String DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE";
     private WelcomeHelper mWelcomeScreen;
 
-    private SignInButton mSignInButton;
+//    private SignInButton mSignInButton;
 
     private MainActivity mMainActivity;
 
@@ -71,6 +71,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     };
 
     @BindView(R.id.imageView1) ImageView mCover;
+    @BindView(R.id.sign_in_button) SignInButton mSignInButton;
     @OnClick(R.id.imageView1)
     public void closeDrawer() {
         mMainActivity.getDrawer().openDrawer();
@@ -142,7 +143,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         db.close();
         listaCanti.close();
 
-        mSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
+//        mSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override

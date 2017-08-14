@@ -17,7 +17,7 @@ import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
-import com.mikepenz.iconics.context.IconicsLayoutInflater;
+import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,10 +47,6 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
 //            Log.d(TAG, "onSharedPreferenceChanged: cur lang" + getResources().getConfiguration().locale.getLanguage());
             Log.d(TAG, "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
             Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, ""));
-//            if (sharedPreferences.getString(s, "it").equals("it") && !getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
-//            if (sharedPreferences.getString(s, "it").equals("it") && !ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-//                return;
-//            if (!getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
             if (!ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage()
                     .equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
                 Intent i = getBaseContext().getPackageManager()
@@ -58,9 +54,6 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.putExtra(Utility.DB_RESET, true);
                 String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
-//                String currentLang = "it";
-//                if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-//                    currentLang = "uk";
                 i.putExtra(Utility.CHANGE_LANGUAGE,
                         currentLang + "-" + sharedPreferences.getString(s, ""));
                 startActivity(i);
@@ -82,45 +75,14 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 
-//        //lingua
-//        SharedPreferences sp = PreferenceManager
-//                .getDefaultSharedPreferences(this);
-//        // get version numbers
-//        String language = sp.getString(Utility.SYSTEM_LANGUAGE, "");
-//        if (!language.equals("")) {
-//            Locale locale = new Locale(language);
-//            Locale.setDefault(locale);
-//            Configuration config = new Configuration();
-////            config.locale = locale;
-//            ThemeableActivity.setSystemLocalWrapper(config, locale);
-//            getBaseContext().getResources().updateConfiguration(config,
-//                    getBaseContext().getResources().getDisplayMetrics());
-//        }
-
         //Iconic
-        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
+        LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
 
     }
 
     @Override
     protected void onResume() {
-//        try {
-//            float actualScale = getResources().getConfiguration().fontScale;
-//            Log.d(getClass().toString(), "actualScale: " + actualScale);
-//            float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
-//            Log.d(getClass().toString(), "systemScale: " + systemScale);
-//            if (actualScale != systemScale) {
-//                Configuration config = new Configuration();
-//                config.fontScale = systemScale;
-//                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-//            }
-//        } catch (Settings.SettingNotFoundException e) {
-//            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
-//        }
-//        catch (NullPointerException e) {
-//            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
-//        }
         super.onResume();
 
         checkScreenAwake();
@@ -211,6 +173,9 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                 case "uk":
                     mLanguage = "uk";
                     break;
+                case "en":
+                    mLanguage = "en";
+                    break;
                 default:
                     mLanguage = "it";
                     break;
@@ -226,18 +191,18 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         //fond dimension
         try {
             float actualScale = newBase.getResources().getConfiguration().fontScale;
-            Log.d(getClass().toString(), "actualScale: " + actualScale);
+            Log.d(TAG, "actualScale: " + actualScale);
             float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE);
-            Log.d(getClass().toString(), "systemScale: " + systemScale);
+            Log.d(TAG, "systemScale: " + systemScale);
             if (actualScale != systemScale) {
                 config.fontScale = systemScale;
 //                changeConfig = true;
             }
         } catch (Settings.SettingNotFoundException e) {
-            Log.e(getClass().toString(), "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+            Log.e(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
         }
         catch (NullPointerException e) {
-            Log.e(getClass().toString(), "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
+            Log.e(TAG, "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.getLocalizedMessage());
         }
 
 //        if (changeConfig) {

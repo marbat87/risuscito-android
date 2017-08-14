@@ -226,11 +226,23 @@ public class InsertAvanzataFragment extends Fragment {
         listPosition = bundle.getInt("position");
 
         try {
-            InputStream in = getActivity().getAssets().open("fileout_new.xml");
-            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-                in = getActivity().getAssets().open("fileout_uk.xml");
-            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
-                in = getActivity().getAssets().open("fileout_en.xml");
+//            InputStream in = getActivity().getAssets().open("fileout_new.xml");
+//            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
+//                in = getActivity().getAssets().open("fileout_uk.xml");
+//            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
+//                in = getActivity().getAssets().open("fileout_en.xml");
+            InputStream in;
+            switch (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage()) {
+                case "uk":
+                    in = getActivity().getAssets().open("fileout_uk.xml");
+                    break;
+                case "en":
+                    in = getActivity().getAssets().open("fileout_en.xml");
+                    break;
+                default:
+                    in = getActivity().getAssets().open("fileout_new.xml");
+                    break;
+            }
             CantiXmlParser parser = new CantiXmlParser();
             aTexts = parser.parse(in);
             in.close();

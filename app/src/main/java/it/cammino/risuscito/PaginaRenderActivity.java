@@ -1765,7 +1765,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //                        .extensionsFilter(".mp3") // Optional extension filter, will override mimeType()
                         .tag("optional-identifier")
                         .goUpLabel("Up") // custom go up label, default label is "..."
-                        .show();
+                        .show(PaginaRenderActivity.this);
                 break;
             case "SAVE_TAB":
                 db = listaCanti.getReadableDatabase();
@@ -1805,7 +1805,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         .mimeType("audio/*") // Optional MIME type filter
                         .tag("optional-identifier")
                         .goUpLabel("Up") // custom go up label, default label is "..."
-                        .show();
+                        .show(PaginaRenderActivity.this);
                 break;
             case "SAVE_TAB":
                 pulisciVars();

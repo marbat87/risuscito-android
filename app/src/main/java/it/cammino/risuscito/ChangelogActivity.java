@@ -23,6 +23,7 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
     private boolean appBarIsExpanded = true;
     @BindView(R.id.appbarlayout) AppBarLayout mAppBarLayout;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+//        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
         if (savedInstanceState != null)

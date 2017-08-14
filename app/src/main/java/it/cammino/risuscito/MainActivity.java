@@ -863,7 +863,7 @@ public class MainActivity extends ThemeableActivity
 
     public void enableFab(boolean enable) {
         Log.d(TAG, "enableFab: " + enable);
-        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
+        FloatingActionButton mFab = findViewById(R.id.fab_pager);
 //        View mScrolling = findViewById(R.id.content_frame);
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
 //        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());

@@ -64,7 +64,7 @@
     <!--<dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>-->
     <!--<dimen name="toolbar_expansion_height">85dip</dimen>-->
     <!--<dimen name="toolbar_fab_margintop">-45dp</dimen>-->
-    <dimen name="toolbar_fab_margin_lateral">8dp</dimen>
+    <!--<dimen name="toolbar_fab_margin_lateral">8dp</dimen>-->
 
     <!--<dimen name="raise_elevation">8dp</dimen>-->
 

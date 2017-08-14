@@ -319,7 +319,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         if (mFab == null) {
 //            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
 //                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
-            mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
                     .icon(CommunityMaterial.Icon.cmd_plus)
