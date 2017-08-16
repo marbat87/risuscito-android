@@ -84,7 +84,9 @@
 
         <TextView
             android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
             android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"

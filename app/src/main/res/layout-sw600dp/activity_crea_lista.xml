@@ -97,18 +97,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!--<LinearLayout-->
-            <!--android:id="@+id/recycler_container"-->
-            <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_marginLeft="@dimen/activity_min_margin"-->
-            <!--android:layout_marginRight="@dimen/activity_min_margin">-->
-
             <TextView
                 android:paddingStart="@dimen/myListPreferredItemMargin"
+                android:paddingLeft="@dimen/myListPreferredItemMargin"
                 android:paddingEnd="@dimen/myListPreferredItemMargin"
+                android:paddingRight="@dimen/myListPreferredItemMargin"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -136,14 +129,6 @@
         </LinearLayout>
 
     </it.cammino.risuscito.ui.BoundedCardView>
-    <!--</LinearLayout>-->
-
-    <!--<View-->
-    <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-    <!--android:layout_below="@id/appbarlayout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="4dp"-->
-    <!--android:background="@drawable/toolbar_shadow" />-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_crea_lista"
