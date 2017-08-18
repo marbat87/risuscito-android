@@ -1,6 +1,8 @@
 package it.cammino.risuscito.music;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
@@ -16,13 +18,16 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -68,6 +73,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // The volume we set the media player to when we lose audio focus, but are allowed to reduce
     // the volume instead of stopping playback.
     public static final float DUCK_VOLUME = 0.1f;
+
+    private static final String CHANNEL_ID = "risuscito_media_playback_channel";
+
     // our media player
     MediaPlayer mPlayer = null;
     // our AudioFocusHelper object, if it's available (it's available on SDK level >= 8)
@@ -88,21 +96,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         Paused      // playback paused (media player ready!)
     }
 
-    //    State mState = State.Retrieving;
     State mState = State.Stopped;
-    // if in Retrieving mode, this flag indicates whether we should start playing immediately
-    // when we are ready or not.
-//    boolean mStartPlayingAfterRetrieve = false;
-    // if mStartPlayingAfterRetrieve is true, this variable indicates the URL that we should
-    // start playing when we are ready. If null, we should play a random song from the device
-//    Uri mWhatToPlayAfterRetrieve = null;
-
-    //    enum PauseReason {
-//        UserRequest,  // paused by user request
-//        FocusLoss,    // paused because of audio focus loss
-//    }
-    // why did we pause? (only relevant if mState == State.Paused)
-//    PauseReason mPauseReason = PauseReason.UserRequest;
     // do we have audio focus?
     private enum AudioFocus {
         NoFocusNoDuck,    // we don't have audio focus, and can't duck
@@ -123,21 +117,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // area at the top of the screen as an icon -- and as text as well if the user expands the
     // notification area).
     final int NOTIFICATION_ID = 1;
-    // Our instance of our MusicRetriever, which handles scanning for media and
-    // providing titles and URIs as we need.
-//    MusicRetriever mRetriever;
-    // our RemoteControlClient object, which will use remote control APIs available in
-    // SDK level >= 14, if they're available.
-//    RemoteControlClientCompat mRemoteControlClientCompat;
     // Dummy album art we will pass to the remote control (if the APIs are available).
     Bitmap mDummyAlbumArt;
     // The component name of MusicIntentReceiver, for use with media button and remote control
     // APIs
-    //ComponentName mMediaButtonReceiverComponent;
     AudioManager mAudioManager;
     NotificationManagerCompat mNotificationManager;
     int mNotificationColor;
-//    NotificationCompat.Builder mNotificationBuilder = null;
 
     private MediaSessionCompat mSession;
     private MediaControllerCompat.TransportControls mTransportController;
@@ -185,11 +171,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     @Override
     public void onCreate() {
-        Log.i(TAG, "debug: Creating service");
+        Log.d(TAG, "debug: Creating service");
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-//        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mNotificationManager = NotificationManagerCompat.from(this);
         // Cancel all notifications to handle the case where the Service was killed and
@@ -197,33 +182,19 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationManager.cancelAll();
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        // Create the retriever and start an asynchronous task that will prepare it.
-//        mRetriever = new MusicRetriever(getContentResolver());
-//        (new PrepareMusicRetrieverTask(mRetriever, this)).execute();
-        // create the Audio Focus Helper, if the Audio Focus feature is available (SDK 8 or above)
-//        if (android.os.Build.VERSION.SDK_INT >= 8)
         mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
         if (!LUtils.hasL())
             mPhoneStateHelper = new PhoneStateHelper(getApplicationContext(), this);
-//        else
-//            mAudioFocus = AudioFocus.Focused; // no focus feature, so we always "have" audio focus
-        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.main_cover);
+        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_144dp);
         ComponentName mMediaButtonReceiverComponent = new ComponentName(this, MusicIntentReceiver.class);
-//        ComponentName mRemoteControlResponder = new ComponentName(getPackageName(),
-//                MediaButtonReceiver.class.getName());
-//        final Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-//        mediaButtonIntent.setComponent(mRemoteControlResponder);
-        // Try to handle the intent as a media button event wrapped by MediaButtonReceiver
-//        MediaButtonReceiver.handleIntent(mSession, mediaButtonIntent);
         // Start a new MediaSession
         mSession = new MediaSessionCompat(this, "MusicService", mMediaButtonReceiverComponent, null);
-//        mSession = new MediaSessionCompat(this, "MusicService");
-//        setSessionToken(mSession.getSessionToken());
-//        mSession.setCallback(mPlaybackManager.getMediaSessionCallback());
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mSession.setCallback(mMediaSessionCallback);
         mTransportController = mSession.getController().getTransportControls();
+
+        createNotification();
     }
 
     /**
@@ -234,32 +205,35 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
-        Log.d(TAG, "onStartCommand: " + action);
-        switch (action) {
-            case ACTION_TOGGLE_PLAYBACK:
-                processTogglePlaybackRequest();
-                break;
-            case ACTION_PLAY:
-                processPlayRequest();
-                break;
-            case ACTION_PAUSE:
-                processPauseRequest();
-                break;
-            case ACTION_SKIP:
-                processSkipRequest();
-                break;
-            case ACTION_STOP:
-                processStopRequest();
-                break;
-            case ACTION_REWIND:
-                processRewindRequest();
-                break;
-            case ACTION_URL:
-                processAddRequest(intent);
-                break;
-            case ACTION_SEEK:
-                processSeekRequest(intent);
-                break;
+        if (action != null) {
+            Log.d(TAG, "onStartCommand: " + action);
+            switch (action) {
+                case ACTION_TOGGLE_PLAYBACK:
+                    processTogglePlaybackRequest();
+                    break;
+                case ACTION_PLAY:
+                    processPlayRequest();
+                    break;
+                case ACTION_PAUSE:
+                    processPauseRequest();
+                    break;
+                case ACTION_SKIP:
+                    processSkipRequest();
+                    break;
+                case ACTION_STOP:
+                    processStopRequest();
+                    break;
+                case ACTION_REWIND:
+                    processRewindRequest();
+                    processPlayRequest();
+                    break;
+                case ACTION_URL:
+                    processAddRequest(intent);
+                    break;
+                case ACTION_SEEK:
+                    processSeekRequest(intent);
+                    break;
+            }
         }
         return START_NOT_STICKY; // Means we started the service, but don't want it to
         // restart in case it's killed.
@@ -267,7 +241,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     void processTogglePlaybackRequest() {
         if (mState != State.Stopped) {
-//            if (mState == State.Paused || mState == State.Stopped) {
             if (mState == State.Paused )
                 processPlayRequest();
             else
@@ -276,13 +249,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processPlayRequest() {
-//        if (mState == State.Retrieving) {
-//            // If we are still retrieving media, just set the flag to start playing when we're
-//            // ready
-//            mWhatToPlayAfterRetrieve = null; // play a random song
-//            mStartPlayingAfterRetrieve = true;
-//            return;
-//        }
         tryToGetAudioFocus();
         // actually play the song
         if (mState == State.Stopped) {
@@ -291,17 +257,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         } else if (mState == State.Paused) {
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = State.Playing;
-//            setUpAsForeground(mSongTitle + " (playing)");
-//            updateNotification();
-            Notification mNotification = createNotification("");
-            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+//            Notification mNotification = updateNotification("");
+//            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+            updateNotification("");
             configAndStartMediaPlayer();
         }
         // Tell any remote controls that our playback state is 'playing'.
-//        if (mRemoteControlClientCompat != null) {
-//            mRemoteControlClientCompat
-//                    .setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
-//        }
         if (mSession != null)
             mSession.setPlaybackState(new PlaybackStateCompat.Builder()
                     .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
@@ -310,44 +271,28 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYER_STARTED);
-//        Intent intentBroadcast = new Intent(BROADCAST_PLAYER_STARTED);
-//        sendBroadcast(intentBroadcast);
         sendBroadcast(new Intent(BROADCAST_PLAYER_STARTED));
     }
 
     void processPauseRequest() {
-//        if (mState == State.Retrieving) {
-//            // If we are still retrieving media, clear the flag that indicates we should start
-//            // playing when we're ready
-//            mStartPlayingAfterRetrieve = false;
-//            return;
-//        }
         if (mState == State.Playing) {
             // Pause media player and cancel the 'foreground service' state.
             mState = State.Paused;
             mPlayer.pause();
-//            updateNotification();
-            Notification mNotification = createNotification("");
-            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+//            Notification mNotification = updateNotification("");
+//            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+            updateNotification("");
             relaxResources(false); // while paused, we always retain the MediaPlayer
             // do not give up audio focus
         }
-        // Tell any remote controls that our playback state is 'paused'.
-//        if (mRemoteControlClientCompat != null) {
-//            mRemoteControlClientCompat
-//                    .setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
-//        }
 
         if (mSession != null)
             mSession.setPlaybackState(new PlaybackStateCompat.Builder()
                     .setState(PlaybackStateCompat.STATE_PAUSED, 0, 0.0f)
                     .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_REWIND)
-//                    .setActions(PlaybackStateCompat.ACTION_REWIND)
                     .build());
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_PAUSED);
-//        Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_PAUSED);
-//        sendBroadcast(intentBroadcast);
         sendBroadcast(new Intent(BROADCAST_PLAYBACK_PAUSED));
     }
 
@@ -373,7 +318,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processStopRequest(boolean force) {
-        Log.d(TAG, "processStopRequest: force" + force);
+        Log.d(TAG, "processStopRequest: force " + force);
         Log.d(TAG, "processStopRequest: mState " + mState);
         if (mState == State.Playing || mState == State.Paused || mState == State.Preparing || force) {
             mState = State.Stopped;
@@ -381,14 +326,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             // let go of all resources...
             relaxResources(true);
             giveUpAudioFocus();
-            // Tell any remote controls that our playback state is 'paused'.
-//            if (mRemoteControlClientCompat != null) {
-//                mRemoteControlClientCompat
-//                        .setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
-//            }
             Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PLAYBACK_COMPLETED);
-//            Intent intentBroadcast = new Intent(BROADCAST_PLAYBACK_COMPLETED);
-//            sendBroadcast(intentBroadcast);
             sendBroadcast(new Intent(BROADCAST_PLAYBACK_COMPLETED));
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
@@ -413,7 +351,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         stopForeground(releaseMediaPlayer);
 
         if (releaseMediaPlayer) {
-//            stopForeground(true);
             mSession.release();
         }
         // we can also release the Wifi lock, if we're holding it
@@ -442,7 +379,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             // If we don't have audio focus and can't duck, we have to pause, even if mState
             // is State.Playing. But we stay in the Playing state so that we know we have to resume
             // playback once we get the focus back.
-//            if (mPlayer.isPlaying()) mPlayer.pause();
             if (mPlayer.isPlaying())
                 processPauseRequest();
             return;
@@ -461,13 +397,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationColor = intent.getIntExtra(DATA_COLOR, ContextCompat.getColor(this, R.color.theme_primary));
         mSongTitle = intent.getStringExtra(DATA_TITLE);
         mLocalFile = intent.getBooleanExtra(DATA_LOCAL, false);
-//        if (mState == State.Retrieving) {
-//            // we'll play the requested URL right after we finish retrieving
-//            mWhatToPlayAfterRetrieve = intent.getData();
-//            mStartPlayingAfterRetrieve = true;
-//        } else
         if (mState == State.Playing || mState == State.Paused || mState == State.Stopped) {
-            Log.i(TAG, "Playing from URL/path: " + intent.getData().toString());
+            Log.d(TAG, "Playing from URL/path: " + intent.getData().toString());
             tryToGetAudioFocus();
             playNextSong(intent.getData().toString());
         }
@@ -512,81 +443,29 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                     fileInputStream.close();
                 } else
                     mPlayer.setDataSource(manualUrl);
-//                mIsStreaming = manualUrl.startsWith("http:") || manualUrl.startsWith("https:");
                 mIsStreaming = !mLocalFile;
                 playingItem = new Item(0, null, mSongTitle, getString(R.string.risuscito_title), 0);
             } else {
                 mIsStreaming = false; // playing a locally available song
-//                playingItem = mRetriever.getRandomItem();
-//                if (playingItem == null) {
-////                    Toast.makeText(this,
-////                            "No available music to play. Place some music on your external storage "
-////                                    + "device (e.g. your SD card) and try again.",
-////                            Toast.LENGTH_LONG).show();
-//                    Log.d(TAG, "No available music to play. Place some music on your external storage "
-//                            + "device (e.g. your SD card) and try again.");
-//                    processStopRequest(true); // stop everything!
-//                    return;
-//                }
-//                // set the source of the media player a a content URI
-//                createMediaPlayerIfNeeded();
-//                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mPlayer.setDataSource(getApplicationContext(), playingItem.getURI());
                 return;
             }
-//            mSongTitle = playingItem.getTitle();
             mState = State.Preparing;
-//            setUpAsForeground(mSongTitle + " (loading)");
-            // Use the media button APIs (if available) to register ourselves for media button
-            // events
-//            MediaButtonHelper.registerMediaButtonEventReceiverCompat(
-//                    mAudioManager, mMediaButtonReceiverComponent);
-//            // Use the remote control APIs (if available) to set the playback state
-//            if (mRemoteControlClientCompat == null) {
-//                Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-//                intent.setComponent(mMediaButtonReceiverComponent);
-//                mRemoteControlClientCompat = new RemoteControlClientCompat(
-//                        PendingIntent.getBroadcast(this /*context*/,
-//                                0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
-//                RemoteControlHelper.registerRemoteControlClient(mAudioManager,
-//                        mRemoteControlClientCompat);
-//            }
-//            mRemoteControlClientCompat.setPlaybackState(
-//                    RemoteControlClient.PLAYSTATE_PLAYING);
-//            mRemoteControlClientCompat.setTransportControlFlags(
-//                    RemoteControlClient.FLAG_KEY_MEDIA_PLAY |
-//                            RemoteControlClient.FLAG_KEY_MEDIA_PAUSE |
-//                            RemoteControlClient.FLAG_KEY_MEDIA_NEXT |
-//                            RemoteControlClient.FLAG_KEY_MEDIA_STOP);
-//            // Update the remote controls
-//            mRemoteControlClientCompat.editMetadata(true)
-//                    .putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, playingItem.getArtist())
-//                    .putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, playingItem.getAlbum())
-//                    .putString(MediaMetadataRetriever.METADATA_KEY_TITLE, playingItem.getTitle())
-//                    .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION,
-//                            playingItem.getDuration())
-//                    .putBitmap(
-//                            RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK,
-//                            mDummyAlbumArt)
-//                    .apply();
-
             mSession.setPlaybackState(new PlaybackStateCompat.Builder()
                     .setState(PlaybackStateCompat.STATE_PAUSED, 0, 0.0f)
-//                    .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_REWIND)
-//                    .setActions(PlaybackStateCompat.ACTION_REWIND)
                     .build());
             mSession.setMetadata(new MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, playingItem.getAlbum())
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, playingItem.getTitle())
-//                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mSongTitle)
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                            BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_144dp))
                     .build());
             mSession.setActive(true);
 
 
-            Notification mNotification = createNotification(" (loading)");
-            startForeground(NOTIFICATION_ID, mNotification);
+//            Notification mNotification = updateNotification(" (loading)");
+//            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+            updateNotification(" (loading)");
+//            startForeground(NOTIFICATION_ID, mNotification);
             // starts preparing the media player in the background. When it's done, it will call
             // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
             // the listener to 'this').
@@ -634,15 +513,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mSongTitle)
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayer.getDuration())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                        BitmapFactory.decodeResource(getResources(), R.drawable.main_cover))
+                        BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_144dp))
                 .build());
 
-//        mSession.setActive(true);
-
-//        updateNotification();
-        Notification mNotification = createNotification("");
-        mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-//        startForeground(NOTIFICATION_ID, mNotification);
+//        Notification mNotification = updateNotification("");
+//        mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+        updateNotification("");
 
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_PREPARING_COMPLETED);
         Log.d(TAG, "DURATION SEND: " + mPlayer.getDuration());
@@ -651,111 +527,45 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         sendBroadcast(intentBroadcast);
         configAndStartMediaPlayer();
     }
-//    /** Updates the notification. */
-//    void updateNotification() {
-//
-//        int icon;
-//        String label;
-////        Intent i = new Intent(getApplicationContext(),MusicService.class);
-////        PendingIntent intent;
-//        if (mState == State.Playing) {
-//            icon = R.drawable.ic_pause_48dp;
-//            label = "Pause";
-////            intent = PendingIntent.getBroadcast(this, 9876,
-////                    new Intent(ACTION_PAUSE).setPackage(getPackageName()), PendingIntent.FLAG_CANCEL_CURRENT);
-////            intent = getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
-////            i.setAction(MusicService.ACTION_PAUSE);
-//        } else {
-//            icon = R.drawable.ic_play_arrow_48dp;
-//            label = "Play";
-////            i.setAction(MusicService.ACTION_PLAY);
-////            intent = PendingIntent.getBroadcast(this, 9876,
-////                    new Intent(ACTION_PLAY).setPackage(getPackageName()), PendingIntent.FLAG_CANCEL_CURRENT);
-////            intent = getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY);
-//        }
-//
-//        int duration = mPlayer.getDuration();
-//        int seconds = duration / 1000 % 60;
-//        Log.d(getClass().getName(), "seconds: " + seconds);
-//        int minutes = (duration / (1000 * 60));
-//        Log.d(getClass().getName(), "minutes: " + minutes);
-//        @SuppressLint("DefaultLocale")
-//        String durationStr = String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
-//
-////        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this);
-//        mNotificationBuilder
-//                .setStyle(new NotificationCompat.MediaStyle()
-//                        .setShowActionsInCompactView(0)  // show only play/pause in compact view
-//                        .setMediaSession(mSession.getSessionToken())
-//                        .setShowCancelButton(true)
-//                        .setCancelButtonIntent(getActionIntent(this, KeyEvent.KEYCODE_MEDIA_STOP)))
-//                .setColor(mNotificationColor)
-//                .setSmallIcon(mState == State.Playing ? R.drawable.ic_play_circle_outline_48dp : R.drawable.ic_pause_circle_outline_48dp)
-//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-////                .setUsesChronometer(true)
-////                .setContentIntent(createContentIntent(description))
-//                .setContentTitle(mSongTitle)
-//                .setContentText(durationStr)
-//                .addAction(new NotificationCompat.Action(icon, label, getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)))
-//                .setLargeIcon(mDummyAlbumArt)
-//                .setOngoing(mState == State.Playing);
-//
-//        mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-//    }
-//    /**
-//     * Configures service as a foreground service. A foreground service is a service that's doing
-//     * something the user is actively aware of (such as playing music), and must appear to the
-//     * user as a notification. That's why we create the notification here.
-//     */
-//    void setUpAsForeground(String text) {
-////        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-////                new Intent(getApplicationContext(), PaginaRenderActivity.class),
-////                PendingIntent.FLAG_UPDATE_CURRENT);
-//        // Build the notification object.
-////        mNotificationBuilder = new NotificationCompat.Builder(getApplicationContext())
-////                .setSmallIcon(R.drawable.ic_play_arrow_48dp)
-////                .setTicker(text)
-////                .setWhen(System.currentTimeMillis())
-////                .setContentTitle("RandomMusicPlayer")
-////                .setContentText(text)
-////                .setContentIntent(pi)
-////                .setOngoing(true);
-//
-//        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this);
-//        mNotificationBuilder
-//                .setStyle(new NotificationCompat.MediaStyle()
-////                        .setShowActionsInCompactView(0)  // show only play/pause in compact view
-//                        .setMediaSession(mSession.getSessionToken())
-//                        .setShowCancelButton(true)
-//                        .setCancelButtonIntent(getActionIntent(this, KeyEvent.KEYCODE_MEDIA_STOP)))
-//                .setColor(mNotificationColor)
-//                .setSmallIcon(R.drawable.ic_pause_circle_outline_48dp)
-//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-////                .setUsesChronometer(true)
-////                .setContentIntent(createContentIntent(description))
-//                .setContentTitle(text)
-//                .setContentText("00:00")
-//                .setLargeIcon(mDummyAlbumArt)
-//                .setOngoing(mState == State.Playing);
-//
-//        startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
-//    }
 
     /**
      * Creates the notification.
      */
-    private Notification createNotification(String text) {
+    private void createNotification() {
 
-        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this, "0");
+        //Crezione notification channel per Android O
+        if (LUtils.hasO())
+            createChannel();
+
+        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        mNotificationBuilder
+                .setColor(mNotificationColor)
+                .setSmallIcon(mState == State.Playing ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentTitle(getString(R.string.app_name))
+                .setLargeIcon(Bitmap.createScaledBitmap(mDummyAlbumArt, 128, 128, false))
+                .setContentIntent(createContentIntent())
+                .setOnlyAlertOnce(true)
+                .setShowWhen(false);
+
+        startForeground(NOTIFICATION_ID,mNotificationBuilder.build());
+
+    }
+
+    /**
+     * Creates the notification.
+     */
+    private void updateNotification(String text) {
+
+        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder
                 .setColor(mNotificationColor)
                 .setSmallIcon(mState == State.Playing ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(playingItem.getTitle() + text)
-                .setLargeIcon(mDummyAlbumArt)
+                .setLargeIcon(Bitmap.createScaledBitmap(mDummyAlbumArt, 128, 128, false))
                 .setContentIntent(createContentIntent())
+                .setOnlyAlertOnce(true)
                 .setShowWhen(false);
 
         addRestartAction(mNotificationBuilder);
@@ -764,7 +574,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         setNotificationPlaybackState(mNotificationBuilder);
 
-        return mNotificationBuilder.build();
+        startForeground(NOTIFICATION_ID,mNotificationBuilder.build());
     }
 
     private void setNotificationPlaybackState(NotificationCompat.Builder builder) {
@@ -772,18 +582,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             case Playing:
             case Paused:
                 int duration = mPlayer.getDuration();
-//                int seconds = duration / 1000 % 60;
-//                Log.d(getClass().getName(), "seconds: " + seconds);
-//                int minutes = (duration / (1000 * 60));
-//                Log.d(getClass().getName(), "minutes: " + minutes);
-//                String durationStr = String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
                 String durationStr = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(duration),
                         TimeUnit.MILLISECONDS.toSeconds(duration) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))
                 );
 
-                builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
+                builder.setStyle(new MediaStyle()
                         .setShowActionsInCompactView(0,1)  // show only play/pause in compact view
                         .setMediaSession(mSession.getSessionToken())
                         .setShowCancelButton(true)
@@ -794,7 +599,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 builder.setProgress(0, 0, true);
                 break;
             default:
-                builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
+                builder.setStyle(new MediaStyle()
                         .setMediaSession(mSession.getSessionToken())
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(getActionIntent(this, KeyEvent.KEYCODE_MEDIA_STOP)));
@@ -846,15 +651,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 //                Toast.LENGTH_SHORT).show();
         Log.e(TAG, "Media player error! Resetting.");
         Log.e(TAG, "Error: what=" + String.valueOf(what) + ", extra=" + String.valueOf(extra));
-//        mState = State.Stopped;
-//        relaxResources(true);
-//        giveUpAudioFocus();
         processStopRequest(true);
         return true; // true indicates we handled the error
     }
 
     public void onGainedAudioFocus() {
-//        Toast.makeText(getApplicationContext(), "gained audio focus.", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onGainedAudioFocus");
         mAudioFocus = AudioFocus.Focused;
         // restart media player with new focus settings
@@ -863,8 +664,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     public void onLostAudioFocus(boolean canDuck) {
-//        Toast.makeText(getApplicationContext(), "lost audio focus." + (canDuck ? "can duck" :
-//                "no duck"), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "lost audio focus." + (canDuck ? "can duck" : "no duck"));
         mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
         // start/restart/pause media player with new focus settings
@@ -885,17 +684,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         if (mPlayer != null && mPlayer.isPlaying())
             processPauseRequest();
     }
-
-//    public void onMusicRetrieverPrepared() {
-//        // Done retrieving!
-//        mState = State.Stopped;
-//        // If the flag indicates we should start playing after retrieving, let's do that now.
-//        if (mStartPlayingAfterRetrieve) {
-//            tryToGetAudioFocus();
-//            playNextSong(mWhatToPlayAfterRetrieve == null ?
-//                    null : mWhatToPlayAfterRetrieve.toString());
-//        }
-//    }
 
     @Override
     public void onDestroy() {
@@ -941,7 +729,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
             final String intentAction = mediaButtonEvent.getAction();
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intentAction)) {
-//                Toast.makeText(MusicService.this, "Headphones disconnected.", Toast.LENGTH_SHORT).show();
                 mTransportController.pause();
             } else if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
                 final KeyEvent event = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
@@ -954,7 +741,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                         case KeyEvent.KEYCODE_HEADSETHOOK:
                         case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                             if (mState != State.Stopped) {
-//                                if (mState == State.Paused || mState == State.Stopped)
                                 if (mState == State.Paused)
                                     mTransportController.play();
                                 else
@@ -1025,21 +811,31 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         public long getId() {
             return id;
         }
-        //        public String getArtist() {
-//            return artist;
-//        }
         public String getTitle() {
             return title;
         }
         String getAlbum() {
             return album;
         }
-//        public long getDuration() {
-//            return duration;
-//        }
-//        public Uri getURI() {
-//            return ContentUris.withAppendedId(
-//                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-//        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // The id of the channel.
+//        String id = CHANNEL_ID;
+        // The user-visible name of the channel.
+        CharSequence name = "Media playback";
+        // The user-visible description of the channel.
+        String description = "Media playback controls";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        if (mNotificationManager != null) {
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
     }
 }

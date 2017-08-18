@@ -26,6 +26,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -83,7 +84,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String barreSalvato;
     private static String barreCambio;
     private String personalUrl, localUrl,  playUrl;
-//    private WelcomeHelper mWelcomeScreen;
 
     private enum MP_State {Started, Stopped}
 
@@ -107,17 +107,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 mHandler.postDelayed(this, 700);
             }
             else
-                Log.d(getClass().getName(), "attività chiusa o annullato lo scroll");
+                Log.d(TAG, "attività chiusa o annullato lo scroll");
         }
     };
 
     public static String speedValue;
     private int savedSpeed;
     public static boolean scrollPlaying;
-
-//    private final long SCROLL_SLEEP = 700;
-
-//    private static final int REQUEST_CODE = 6384;
 
     private LUtils mLUtils;
 
@@ -132,8 +128,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(getClass().getName(), "BROADCAST_PREPARING_COMPLETED");
-                Log.d(getClass().getName(), "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
+                Log.d(TAG, "BROADCAST_PREPARING_COMPLETED");
+                Log.d(TAG, "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
                 scroll_song_bar.setMax(intent.getIntExtra(MusicService.DATA_DURATION, 0));
                 scroll_song_bar.setEnabled(true);
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
@@ -141,7 +137,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     sFragment.dismiss();
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -150,7 +146,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            Log.d(getClass().getName(), "BROADCAST_PLAYBACK_COMPLETED");
+            Log.d(TAG, "BROADCAST_PLAYBACK_COMPLETED");
             scroll_song_bar.setProgress(0);
             scroll_song_bar.setEnabled(false);
             showPlaying(false);
@@ -162,14 +158,14 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            Log.d(getClass().getName(), "BROADCAST_PLAYER_POSITION");
+            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
             try {
-                Log.d(getClass().getName(), "POSITION RECEIVED: " + intent.getIntExtra(MusicService.DATA_POSITION, 0));
+                Log.d(TAG, "POSITION RECEIVED: " + intent.getIntExtra(MusicService.DATA_POSITION, 0));
                 scroll_song_bar.setProgress(intent.getIntExtra(MusicService.DATA_POSITION, 0));
                 scroll_song_bar.setEnabled(true);
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -178,7 +174,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            Log.d(getClass().getName(), "BROADCAST_PLAYER_POSITION");
+            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
             showPlaying(true);
             mediaPlayerState = MP_State.Started;
             scroll_song_bar.setEnabled(true);
@@ -189,7 +185,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            Log.d(getClass().getName(), "BROADCAST_PLAYBACK_PAUSED");
+            Log.d(TAG, "BROADCAST_PLAYBACK_PAUSED");
             showPlaying(false);
             scroll_song_bar.setEnabled(true);
         }
@@ -200,15 +196,15 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_PROGRESS");
-                Log.d(getClass().getName(), "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
+                Log.d(TAG, "BROADCAST_DOWNLOAD_PROGRESS");
+                Log.d(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
                 if (sFragment != null) {
                     sFragment.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
                 }
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -218,7 +214,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_COMPLETED");
+                Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED");
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
                 if (sFragment != null)
                     sFragment.dismiss();
@@ -245,8 +241,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (mediaPlayerState != MP_State.Stopped) {
                     mediaPlayerState = MP_State.Stopped;
                     Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_STOP);
-                    startService(i);
+                    stopService(i);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    startService(i);
+//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 }
 
                 checkExternalFilePermissions();
@@ -255,7 +253,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 mDownload = true;
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -265,8 +263,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(getClass().getName(), "BROADCAST_DOWNLOAD_ERROR");
-                Log.d(getClass().getName(), "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR));
+                Log.d(TAG, "BROADCAST_DOWNLOAD_ERROR");
+                Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR));
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
                 if (sFragment != null)
                     sFragment.dismiss();
@@ -276,7 +274,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         .show();
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -285,16 +283,19 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            Log.d(getClass().getName(), "BROADCAST_EXPORT_COMPLETED");
-            Log.d(getClass().getName(), "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH));
+            Log.d(TAG, "BROADCAST_EXPORT_COMPLETED");
+            Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH));
             SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF");
             if (sFragment != null)
                 sFragment.dismiss();
             String localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH);
             File file = new File(localPDFPath);
             Intent target = new Intent(Intent.ACTION_VIEW);
-            target.setDataAndType(Uri.fromFile(file), "application/pdf");
-            target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//            target.setDataAndType(Uri.fromFile(file), "application/pdf");
+            Uri pdfUri = FileProvider.getUriForFile(PaginaRenderActivity.this, "it.cammino.risuscito.fileprovider", file);
+            Log.d(TAG, "pdfUri: " + pdfUri);
+            target.setDataAndType(pdfUri, "application/pdf");
+            target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY|Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Intent intent2 = Intent.createChooser(target, getString(R.string.open_pdf));
             try {
                 startActivity(intent2);
@@ -312,8 +313,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(getClass().getName(), "BROADCAST_EXPORT_ERROR");
-                Log.d(getClass().getName(), "DATA_EXPORT_ERROR: " + intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR));
+                Log.d(TAG, "BROADCAST_EXPORT_ERROR");
+                Log.d(TAG, "DATA_EXPORT_ERROR: " + intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR));
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXPORT_PDF");
                 if (sFragment != null)
                     sFragment.dismiss();
@@ -323,7 +324,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         .show();
             }
             catch (IllegalArgumentException e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+                Log.e(TAG, e.getLocalizedMessage(), e);
             }
         }
     };
@@ -431,7 +432,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             showPlaying(false);
             Intent i = new Intent(getApplicationContext(),MusicService.class);
             i.setAction(MusicService.ACTION_PAUSE);
-            startService(i);
+//            startService(i);
+            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
         }
         else {
             //controlla la presenza di una connessione internet
@@ -446,7 +448,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
             showPlaying(true);
 
-            Log.d(getClass().getName(), "mediaPlayerState" + mediaPlayerState);
+            Log.d(TAG, "mediaPlayerState" + mediaPlayerState);
 
             if (mediaPlayerState == MP_State.Stopped) {
                 // Send an intent with the URL of the song to play. This is expected by
@@ -459,7 +461,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 i.putExtra(MusicService.DATA_LOCAL, localFile);
                 i.putExtra(MusicService.DATA_COLOR, getThemeUtils().primaryColorDark());
                 i.putExtra(MusicService.DATA_TITLE, titoloCanto);
-                startService(i);
+//                startService(i);
+                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "BUFFERING")
                         .content(R.string.wait)
                         .showProgress(true)
@@ -470,7 +473,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             } else {
                 Intent i = new Intent(getApplicationContext(), MusicService.class);
                 i.setAction(MusicService.ACTION_PLAY);
-                startService(i);
+//                startService(i);
+                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
             }
         }
     }
@@ -522,8 +526,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         Bundle bundle = this.getIntent().getExtras();
-        pagina = bundle.getCharSequence("pagina", "").toString();
-        idCanto = bundle.getInt("idCanto");
+        pagina = bundle != null ? bundle.getCharSequence("pagina", "").toString() : null;
+        idCanto = bundle != null ? bundle.getInt("idCanto") : 0;
 
         getRecordLink();
 
@@ -532,7 +536,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
         }
         catch (IOException e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            Log.e(TAG, e.getLocalizedMessage(), e);
         }
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -610,25 +614,21 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d(getClass().getName(), "newValue: " + progress);
+                Log.d(TAG, "newValue: " + progress);
                 if (fromUser) {
                     Intent i = new Intent(getApplicationContext(), MusicService.class);
                     i.setAction(MusicService.ACTION_SEEK);
                     Uri uri = Uri.parse(String.valueOf(progress));
                     i.setData(uri);
-                    startService(i);
+//                    startService(i);
+                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 }
-//                int seconds = progress / 1000 % 60;
-//                Log.d(getClass().getName(), "seconds: " + seconds);
-//                int minutes = (progress / (1000 * 60));
-//                Log.d(getClass().getName(), "minutes: " + minutes);
                 String time = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(progress),
                         TimeUnit.MILLISECONDS.toSeconds(progress) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress))
                 );
                 ((TextView) findViewById(R.id.time_text)).setText(time);
-//                ((TextView) findViewById(R.id.time_text)).setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
             }
 
             @Override
@@ -660,9 +660,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
         }
         mostraAudioBool = Boolean.parseBoolean(mostraAudio);
-
-//        mWelcomeScreen = new WelcomeHelper(this, IntroPaginaRenderNew.class);
-//        mWelcomeScreen.show(savedInstanceState);
 
         SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
         if (sFragment != null)
@@ -805,7 +802,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 startService(i);
                 return true;
             case R.id.action_help_canto:
-//                mWelcomeScreen.forceShow();
                 if (music_buttons.getVisibility() == View.VISIBLE)
                     playIntroFull();
                 else
@@ -836,7 +832,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 notaCambio = primaNota;
                 HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 HashMap<String, String> convMin = null;
-//                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
                 if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                     convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
@@ -878,7 +873,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 barreCambio = primoBarre;
                 HashMap<String, String> convMap1 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                 HashMap<String, String> convMin1 = null;
-//                if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
                 if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                     convMin1 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                 saveZoom();
@@ -899,7 +893,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     notaCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap2 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     HashMap<String, String> convMin2 = null;
-//                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
                     if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                         convMin2 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
@@ -920,7 +913,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     barreCambio = String.valueOf(item.getTitleCondensed());
                     HashMap<String, String> convMap3 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
                     HashMap<String, String> convMin3 = null;
-//                    if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
                     if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
                         convMin3 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
                     saveZoom();
@@ -940,30 +932,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         return false;
     }
-
-//    @Override
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (notaCambio == null || notaSalvata == null
-//                    || barreCambio == null || barreSalvato == null
-//                    || (notaCambio.equals(notaSalvata)
-//                    && barreCambio.equals(barreSalvato))) {
-//                pulisciVars();
-//                mLUtils.closeActivityWithTransition();
-//                return true;
-//            }
-//            else {
-//                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
-//                        .title(R.string.dialog_save_tab_title)
-//                        .content(R.string.dialog_save_tab)
-//                        .positiveButton(R.string.confirm)
-//                        .negativeButton(R.string.dismiss)
-//                        .show();
-//                return true;
-//            }
-//        }
-//        return super.onKeyUp(keyCode, event);
-//    }
 
     @Override
     public void onBackPressed() {
@@ -1092,7 +1060,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onDestroy() {
-        Log.d(getClass().getName(), "onDestroy()");
+        Log.d(TAG, "onDestroy()");
         try {
             unregisterReceiver(gpsBRec);
             unregisterReceiver(stopBRec);
@@ -1106,15 +1074,17 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             unregisterReceiver(exportError);
             unregisterReceiver(fabBRec);
         } catch (IllegalArgumentException e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            Log.e(TAG, e.getLocalizedMessage(), e);
         }
         saveZoom();
-        Log.d(getClass().getName(), "onDestroy: isFinishing " + isFinishing());
-        Log.d(getClass().getName(), "onDestroy: mediaPlayerState " + mediaPlayerState);
+        Log.d(TAG, "onDestroy: isFinishing " + isFinishing());
+        Log.d(TAG, "onDestroy: mediaPlayerState " + mediaPlayerState);
         if (isFinishing() && mediaPlayerState != MP_State.Stopped) {
             Intent i = new Intent(getApplicationContext(), MusicService.class);
-            i.setAction(MusicService.ACTION_STOP);
-            startService(i);
+            stopService(i);
+//            i.setAction(MusicService.ACTION_STOP);
+//            startService(i);
+//            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
         }
         if (listaCanti != null)
             listaCanti.close();
@@ -1127,7 +1097,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         outState.putSerializable("mediaPlayerState", mediaPlayerState);
         outState.putBoolean("playSelected", isPlaying());
         outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
-//        mWelcomeScreen.onSaveInstanceState(outState);
     }
 
     public void pulisciVars() {
@@ -1290,20 +1259,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     new OutputStreamWriter(
                             new FileOutputStream(cantoTrasportato), "UTF-8"));
 
-//            String language = getResources().getConfiguration().locale.getLanguage();
             String language = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
 
-//            Pattern pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si");
             Pattern pattern;
             Pattern patternMinore = null;
-//            if (language.equalsIgnoreCase("uk")) {
-//                pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H");
-//                //inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
-//                patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h");
-//            }
-//
-//            if (language.equalsIgnoreCase("en"))
-//                pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B");
 
             switch (language) {
                 case "it":
@@ -1327,7 +1286,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             boolean notaHighlighed = !higlightDiff;
 
             while (line != null) {
-                Log.d(getClass().getName(), "RIGA DA ELAB: " + line);
+                Log.d(TAG, "RIGA DA ELAB: " + line);
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
                     if (language.equalsIgnoreCase("uk") || language.equalsIgnoreCase("en")) {
                         line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
@@ -1345,10 +1304,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                             matcherMin.appendReplacement(sb2, conversioneMin.get(matcherMin.group(0)));
                         matcherMin.appendTail(sb2);
                         line = sb2.toString();
-//                        Log.d(getClass().getName(), "RIGA ELAB 1: " + line);
-//                        Log.d(getClass().getName(), "notaHighlighed: " + notaHighlighed);
-//                        Log.d(getClass().getName(), "notaCambio: " + notaCambio);
-//                        Log.d(getClass().getName(), "primaNota: " + primaNota);
+//                        Log.d(TAG, "RIGA ELAB 1: " + line);
+//                        Log.d(TAG, "notaHighlighed: " + notaHighlighed);
+//                        Log.d(TAG, "notaCambio: " + notaCambio);
+//                        Log.d(TAG, "primaNota: " + primaNota);
                         if (!notaHighlighed) {
                             if (!primaNota.equalsIgnoreCase(notaCambio)) {
                                 if (Utility.isLowerCase(primaNota.charAt(0))) {
@@ -1364,10 +1323,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 notaHighlighed = true;
                             }
                         }
-//                        Log.d(getClass().getName(), "RIGA ELAB 2: " + line);
+//                        Log.d(TAG, "RIGA ELAB 2: " + line);
                         line = line.replaceAll("<K>", "</FONT><FONT COLOR='#A13F3C'>");
                         line = line.replaceAll("<K2>", "</FONT><FONT COLOR='#000000'>");
-//                        Log.d(getClass().getName(), "RIGA ELAB 3: " + line);
+//                        Log.d(TAG, "RIGA ELAB 3: " + line);
                     }
                     else {
                         line = sb.toString();
@@ -1395,21 +1354,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 if (higlightDiff && !barre.equalsIgnoreCase(primoBarre)) {
                                     oldLine = "<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
-//                                            + getString(R.string.barre_al_tasto_I)
-//                                            + " "
-//                                            + barre
-//                                            + " "
-//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></SPAN></H4>";
                                 }
                                 else {
                                     oldLine = "<H4><FONT COLOR=\"#A13F3C\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
-//                                            + getString(R.string.barre_al_tasto_I)
-//                                            + " "
-//                                            + barre
-//                                            + " "
-//                                            + getString(R.string.barre_al_tasto_II)
                                             + "</I></FONT></H4>";
                                 }
                                 out.write(oldLine);
@@ -1435,7 +1384,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             return cantoTrasportato;
         }
         catch(Exception e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+            Log.e(TAG, e.getLocalizedMessage(), e);
             return null;
         }
     }
@@ -1464,7 +1413,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     void startExternalDownload() {
-        Log.d(getClass().getName(), " WRITE_EXTERNAL_STORAGE OK");
+        Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK");
         if (Utility.isExternalStorageWritable()) {
             if (new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC), "Risuscitò").mkdirs())
@@ -1474,7 +1423,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             String localFile = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC).getAbsolutePath()
                     + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
-//                                                      Log.i(getClass().toString(), "LOCAL FILE: " + localFile);
             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
                     .title(R.string.download_running)
                     .showProgress(true)
@@ -1496,7 +1444,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     void showRationaleForExternalDownload() {
-        Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE RATIONALE");
+        Log.d(TAG, "WRITE_EXTERNAL_STORAGE RATIONALE");
         new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE")
                 .title(R.string.external_storage_title)
                 .content(R.string.external_storage_rationale)
@@ -1507,7 +1455,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     void startInternalDownload() {
-        Log.d(getClass().getName(), "WRITE_EXTERNAL_STORAGE DENIED or CHOOSED INTERNAL");
+        Log.d(TAG, "WRITE_EXTERNAL_STORAGE DENIED or CHOOSED INTERNAL");
         String localFile = PaginaRenderActivity.this.getFilesDir()
                 + "/"
                 + Utility.filterMediaLink(url);
@@ -1558,7 +1506,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     void showRationalForExternalFile() {
-        Log.d(getClass().getName(), "EXTERNAL_FILE RATIONALE");
+        Log.d(TAG, "EXTERNAL_FILE RATIONALE");
         new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE")
                 .title(R.string.external_storage_title)
                 .content(R.string.external_file_rationale)
@@ -1569,11 +1517,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     void showDeniedForExternalFile() {
-        Log.d(getClass().getName(), " EXTERNAL_FILE DENIED");
+        Log.d(TAG, " EXTERNAL_FILE DENIED");
         SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(PaginaRenderActivity.this)
                 .edit();
-//        editor.putInt(Utility.SAVE_LOCATION, 0);
         editor.putString(Utility.SAVE_LOCATION, "0");
         editor.apply();
         Snackbar.make(findViewById(android.R.id.content)
@@ -1584,8 +1531,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
-//        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+        Log.d(TAG, "onRequestPermissionsResult-request: " + requestCode);
+//        Log.d(TAG, "onRequestPermissionsResult-result: " + grantResults[0]);
         switch (requestCode) {
             case Utility.WRITE_STORAGE_RC: {
                 // If request is cancelled, the result arrays are empty.
@@ -1598,7 +1545,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(PaginaRenderActivity.this)
                             .edit();
-//                    editor.putInt(Utility.SAVE_LOCATION, 0);
                     editor.putString(Utility.SAVE_LOCATION, "0");
                     editor.apply();
                     Snackbar.make(findViewById(android.R.id.content)
@@ -1650,7 +1596,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onPositive(@NonNull String tag) {
-        Log.d(getClass().getName(), "onPositive: " + tag);
+        Log.d(TAG, "onPositive: " + tag);
         switch (tag) {
             case "DOWNLOAD_MP3":
                 sendBroadcast(new Intent(DownloadService.ACTION_CANCEL));
@@ -1665,8 +1611,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (mediaPlayerState != MP_State.Stopped) {
                     mediaPlayerState = MP_State.Stopped;
                     Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_STOP);
-                    startService(i);
+                    stopService(i);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    startService(i);
+//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 }
 
                 localFile = false;
@@ -1683,7 +1631,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 break;
             case "DELETE_MP3":
                 File fileToDelete = new File(localUrl);
-//                fileToDelete.delete();
                 if (fileToDelete.delete()) {
                     if (fileToDelete.getAbsolutePath().contains("/Risuscit")) {
                         // initiate media scan and put the new things into the path array to
@@ -1706,8 +1653,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (mediaPlayerState != MP_State.Stopped) {
                     mediaPlayerState = MP_State.Stopped;
                     Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_STOP);
-                    startService(i);
+                    stopService(i);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    startService(i);
+//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 }
 
                 localFile = false;
@@ -1732,8 +1681,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 if (mediaPlayerState != MP_State.Stopped) {
                     mediaPlayerState = MP_State.Stopped;
                     Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_STOP);
-                    startService(i);
+                    stopService(i);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    startService(i);
+//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 }
 
                 localFile = false;
@@ -1752,17 +1703,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 no_records_text.setVisibility(View.VISIBLE);
                 break;
             case "ONLY_LINK":
-//                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-//                // Set these depending on your use case. These are the defaults.
-//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                i.putExtra(FilePickerActivity.EXTRA_SINGLE_CLICK, true);
-//                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                startActivityForResult(i, REQUEST_CODE);
                 new FileChooserDialog.Builder(PaginaRenderActivity.this)
-//                        .initialPath("/sdcard/Download")  // changes initial path, defaults to external storage directory
                         .mimeType("audio/*") // Optional MIME type filter
-//                        .extensionsFilter(".mp3") // Optional extension filter, will override mimeType()
                         .tag("optional-identifier")
                         .goUpLabel("Up") // custom go up label, default label is "..."
                         .show(PaginaRenderActivity.this);
@@ -1792,16 +1734,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
     @Override
     public void onNegative(@NonNull String tag) {
-        Log.d(getClass().getName(), "onNegative: " + tag);
+        Log.d(TAG, "onNegative: " + tag);
         switch (tag) {
             case "DOWNLINK_CHOOSE":
-//                Intent i = new Intent(getApplicationContext(), ThemedFilePickerActivity.class);
-//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-//                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-//                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-//                startActivityForResult(i, REQUEST_CODE);
                 new FileChooserDialog.Builder(PaginaRenderActivity.this)
-//                        .initialPath("/sdcard/Download")  // changes initial path, defaults to external storage directory
                         .mimeType("audio/*") // Optional MIME type filter
                         .tag("optional-identifier")
                         .goUpLabel("Up") // custom go up label, default label is "..."
@@ -1831,8 +1767,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         if (mediaPlayerState != MP_State.Stopped) {
             mediaPlayerState = MP_State.Stopped;
             Intent i = new Intent(getApplicationContext(), MusicService.class);
-            i.setAction(MusicService.ACTION_STOP);
-            startService(i);
+            stopService(i);
+//            i.setAction(MusicService.ACTION_STOP);
+//            startService(i);
+//            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
         }
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
