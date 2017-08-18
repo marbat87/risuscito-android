@@ -83,7 +83,7 @@ class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
 
     @TargetApi(Build.VERSION_CODES.O)
     private boolean abandonFocusO() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocusRequest(mFocusRequest);
+        return mFocusRequest == null || AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocusRequest(mFocusRequest);
     }
 
     @SuppressWarnings("deprecation")
