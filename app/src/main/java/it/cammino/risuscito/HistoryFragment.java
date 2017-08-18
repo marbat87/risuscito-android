@@ -87,12 +87,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mLUtils = LUtils.getInstance(getActivity());
 
         mMainActivity.enableFab(true);
-        if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(true);
+        if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        }
-//        fabClear = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-//                (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
         fabClear = getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser_variant)
@@ -259,7 +255,6 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
                     mMainActivity.getAppBarLayout().setExpanded(true, true);
                 mMainActivity.getMaterialCab().start(HistoryFragment.this);
-//                cantoAdapter.select(i);
                 cantoAdapter.getAdapterItem(i).withSetSelected(true);
                 cantoAdapter.notifyAdapterItemChanged(i);
                 return true;
@@ -298,29 +293,19 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 }
                 db.close();
                 mNoHistory.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-                if (cantoAdapter.getAdapterItemCount() == 0) {
-//                    if (mMainActivity.isOnTablet())
-//                        fabClear.hide();
-//                    else
-                    mMainActivity.enableFab(false);
-                }
+                mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
+//                if (cantoAdapter.getAdapterItemCount() == 0)
+//                    mMainActivity.enableFab(false);
             }
         });
 
         //nel caso sia presente almeno un canto visitato di recente, viene nascosto il testo di nessun canto presente
         mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        if (titoli.size() == 0) {
-//            if (mMainActivity.isOnTablet())
-//                fabClear.hide();
-//            else
-            mMainActivity.enableFab(false);
-        }
-        else {
-//            if (mMainActivity.isOnTablet())
-//                fabClear.show();
-//            else
-            mMainActivity.enableFab(true);
-        }
+        mMainActivity.enableFab(titoli.size() != 0);
+//        if (titoli.size() == 0)
+//            mMainActivity.enableFab(false);
+//        else
+//            mMainActivity.enableFab(true);
     }
 
     @Override

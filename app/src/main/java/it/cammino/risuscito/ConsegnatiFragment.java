@@ -101,16 +101,15 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING");
                 if (fragment != null)
                     fragment.dismiss();
-                updateConsegnatiList(true);
+//                updateConsegnatiList(true);
+                updateConsegnatiList();
                 mChoosedRecyclerView.setVisibility(View.GONE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(false);
-                else
-                    mMainActivity.enableBottombar(false);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                enableBottombar(false);
 //                if (mMainActivity.isOnTablet())
-//                    getFab().show();
+//                    enableBottombar(false);
 //                else
+//                    mMainActivity.enableBottombar(false);
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mMainActivity.enableFab(true);
             }
             catch (IllegalArgumentException e) {
@@ -140,7 +139,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 getActivity().findViewById(R.id.bottom_bar);
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);
-//        if (!mMainActivity.isOnTablet())
         mMainActivity.enableFab(true);
 
         mLUtils = LUtils.getInstance(getActivity());
@@ -186,16 +184,15 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             @Override
             public void onClick(View view) {
                 editMode = false;
-                updateConsegnatiList(true);
+//                updateConsegnatiList(true);
+                updateConsegnatiList();
                 mChoosedRecyclerView.setVisibility(View.INVISIBLE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(false);
-                else
-                    mMainActivity.enableBottombar(false);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                enableBottombar(false);
 //                if (mMainActivity.isOnTablet())
-//                    getFab().show();
+//                    enableBottombar(false);
 //                else
+//                    mMainActivity.enableBottombar(false);
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mMainActivity.enableFab(true);
             }
         });
@@ -234,13 +231,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 mRecyclerView.setVisibility(View.GONE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
                 mChoosedRecyclerView.setVisibility(View.VISIBLE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(true);
-                else
-                    mMainActivity.enableBottombar(true);
+                enableBottombar(true);
 //                if (mMainActivity.isOnTablet())
-//                    getFab().hide();
+//                    enableBottombar(true);
 //                else
+//                    mMainActivity.enableBottombar(true);
                 mMainActivity.enableFab(false);
                 SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 Log.d(TAG, "onClick - INTRO_CONSEGNATI_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false));
@@ -269,31 +264,28 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
         if (editMode) {
             mChoosedRecyclerView.setVisibility(View.VISIBLE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(true);
-            else
-                mMainActivity.enableBottombar(true);
+            enableBottombar(true);
+//            if (mMainActivity.isOnTablet())
+//                enableBottombar(true);
+//            else
+//                mMainActivity.enableBottombar(true);
             mRecyclerView.setVisibility(View.GONE);
             mNoConsegnati.setVisibility(View.INVISIBLE);
-//            if (mMainActivity.isOnTablet())
-//                getFab().hide();
-//            else
             mMainActivity.enableFab(false);
 
             updateChooseList(false);
         }
         else {
             mChoosedRecyclerView.setVisibility(View.GONE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(false);
-            else
-                mMainActivity.enableBottombar(false);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            enableBottombar(false);
 //            if (mMainActivity.isOnTablet())
-//                getFab().show();
+//                enableBottombar(false);
 //            else
+//                mMainActivity.enableBottombar(false);
+            mRecyclerView.setVisibility(View.VISIBLE);
             mMainActivity.enableFab(true);
-            updateConsegnatiList(true);
+//            updateConsegnatiList(true);
+            updateConsegnatiList();
         }
         SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
@@ -321,10 +313,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
-        if (mMainActivity.isOnTablet())
-            enableBottombar(false);
-        else
-            mMainActivity.enableBottombar(false);
+        enableBottombar(false);
+//        if (mMainActivity.isOnTablet())
+//            enableBottombar(false);
+//        else
+//            mMainActivity.enableBottombar(false);
         super.onDestroy();
     }
 
@@ -364,7 +357,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private void updateConsegnatiList(boolean updateView) {
+    //    private void updateConsegnatiList(boolean updateView) {
+    private void updateConsegnatiList() {
 
         // crea un manipolatore per il Database in modalità READ
         listaCanti = new DatabaseCanti(getActivity());
@@ -381,8 +375,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         int totalConsegnati = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        if (updateView)
-            mNoConsegnati.setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
+//        if (updateView)
+        mNoConsegnati.setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
         List<SimpleItem> titoli = new ArrayList<>();
@@ -489,7 +483,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 return true;
             }
         });
-//        selectableAdapter.withItemEvent(new CheckableItem.CheckBoxClickEvent());
         selectableAdapter.withEventHook(new CheckableItem.CheckBoxClickEvent());
         selectableAdapter.add(titoliChoose);
 
@@ -535,8 +528,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
     private FloatingActionButton getFab() {
         if (mFab == null) {
-//            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-//                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab = getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
@@ -550,7 +541,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     }
 
     private void enableBottombar(boolean enabled) {
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+//        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (mMainActivity.isOnTablet())
+            mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        else
+            mMainActivity.enableBottombar(enabled);
     }
 
     @Override
