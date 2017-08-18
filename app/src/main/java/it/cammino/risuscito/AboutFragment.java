@@ -56,7 +56,7 @@ public class AboutFragment extends Fragment {
 
         mScrollView.addView(
                 AboutBuilder.with(mMainActivity)
-                        .setAppIcon(R.mipmap.ic_launcher)
+                        .setAppIcon(R.drawable.ic_launcher_144dp)
                         .setAppName(R.string.app_name)
                         .setPhoto(R.drawable.ic_brand_icon)
                         .setCover(R.mipmap.profile_cover)
