@@ -206,7 +206,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 editMode = false;
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ConsegnatiFragment.this, "CONSEGNATI_SAVING")
                         .content(R.string.save_consegnati_running)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(false)
                         .progressMax(selectableAdapter.getItemCount())
                         .show();

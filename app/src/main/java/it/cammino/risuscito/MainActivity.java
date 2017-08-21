@@ -260,7 +260,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_database)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -270,7 +270,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_settings)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -280,7 +280,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_database)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -296,7 +296,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_settings)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -327,7 +327,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                                 .title(R.string.restore_running)
                                 .content(R.string.restoring_database)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -337,7 +337,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                                 .title(R.string.restore_running)
                                 .content(R.string.restoring_settings)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -347,7 +347,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                                 .title(R.string.backup_running)
                                 .content(R.string.backup_database)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -363,7 +363,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                                 .title(R.string.backup_running)
                                 .content(R.string.backup_settings)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -837,7 +837,7 @@ public class MainActivity extends ThemeableActivity
             super.onPreExecute();
             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "TRANSLATION")
                     .content(R.string.translation_running)
-                    .showProgress(true)
+                    .showProgress()
                     .progressIndeterminate(true)
                     .progressMax(0)
                     .show();
@@ -1069,8 +1069,8 @@ public class MainActivity extends ThemeableActivity
         mCircleProgressBar.setVisibility(View.GONE);
     }
 
-    public void setShowSnackbar(boolean showSnackbar) {
-        this.showSnackbar = showSnackbar;
+    public void setShowSnackbar() {
+        this.showSnackbar = true;
     }
 
 //    public GoogleApiClient getmGoogleApiClient() {
@@ -1512,7 +1512,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                             .title(R.string.backup_running)
                             .content(R.string.backup_database)
-                            .showProgress(true)
+                            .showProgress()
                             .progressIndeterminate(true)
                             .progressMax(0)
                             .show();
@@ -1536,7 +1536,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                             .title(R.string.restore_running)
                             .content(R.string.restoring_database)
-                            .showProgress(true)
+                            .showProgress()
                             .progressIndeterminate(true)
                             .progressMax(0)
                             .show();
@@ -1582,7 +1582,8 @@ public class MainActivity extends ThemeableActivity
             case "RESTART":
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if (i != null)
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 break;
         }

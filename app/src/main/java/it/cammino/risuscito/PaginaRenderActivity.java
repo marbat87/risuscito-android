@@ -465,7 +465,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "BUFFERING")
                         .content(R.string.wait)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show()
@@ -787,7 +787,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             case R.id.action_exp_pdf:
                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXPORT_PDF")
                         .content(R.string.export_running)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show()
@@ -1425,7 +1425,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
                     .title(R.string.download_running)
-                    .showProgress(true)
+                    .showProgress()
                     .positiveButton(R.string.cancel)
                     .progressIndeterminate(false)
                     .progressMax(100)
@@ -1449,8 +1449,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 .title(R.string.external_storage_title)
                 .content(R.string.external_storage_rationale)
                 .positiveButton(R.string.dialog_chiudi)
-                .cancelListener(true)
-                .setCanceable(true)
+                .setHasCancelListener()
+                .setCanceable()
                 .show();
     }
 
@@ -1461,7 +1461,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 + Utility.filterMediaLink(url);
         new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
                 .title(R.string.download_running)
-                .showProgress(true)
+                .showProgress()
                 .positiveButton(R.string.cancel)
                 .progressIndeterminate(false)
                 .progressMax(100)
@@ -1511,8 +1511,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 .title(R.string.external_storage_title)
                 .content(R.string.external_file_rationale)
                 .positiveButton(R.string.dialog_chiudi)
-                .cancelListener(true)
-                .setCanceable(true)
+                .setHasCancelListener()
+                .setCanceable()
                 .show();
     }
 

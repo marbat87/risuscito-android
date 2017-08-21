@@ -106,8 +106,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Simple
                 .title(R.string.external_storage_title)
                 .content(R.string.external_storage_pref_rationale)
                 .positiveButton(R.string.dialog_chiudi)
-                .setCanceable(true)
-                .cancelListener(true)
+                .setCanceable()
+                .setHasCancelListener()
                 .show();
     }
 

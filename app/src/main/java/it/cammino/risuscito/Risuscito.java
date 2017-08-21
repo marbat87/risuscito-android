@@ -117,8 +117,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
                     .positiveButton(R.string.dialog_chiudi)
-                    .cancelListener(true)
-                    .setCanceable(true)
+                    .setHasCancelListener()
+                    .setCanceable()
                     .show();
 //            SharedPreferences.Editor editor = sp.edit();
 //            editor.putString(VERSION_KEY, thisVersion);
@@ -145,7 +145,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainActivity.setShowSnackbar(true);
+                mMainActivity.setShowSnackbar();
                 mMainActivity.signIn();
             }
         });
