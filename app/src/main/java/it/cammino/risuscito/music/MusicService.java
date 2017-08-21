@@ -194,7 +194,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mSession.setCallback(mMediaSessionCallback);
         mTransportController = mSession.getController().getTransportControls();
 
-        createNotification();
+//        createNotification();
     }
 
     /**
@@ -397,6 +397,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationColor = intent.getIntExtra(DATA_COLOR, ContextCompat.getColor(this, R.color.theme_primary));
         mSongTitle = intent.getStringExtra(DATA_TITLE);
         mLocalFile = intent.getBooleanExtra(DATA_LOCAL, false);
+        createNotification();
         if (mState == State.Playing || mState == State.Paused || mState == State.Stopped) {
             Log.d(TAG, "Playing from URL/path: " + intent.getData().toString());
             tryToGetAudioFocus();
@@ -504,13 +505,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mSession.setPlaybackState(new PlaybackStateCompat.Builder()
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                 .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_REWIND)
-//                .setActions(PlaybackStateCompat.ACTION_REWIND)
                 .build());
         mSession.setMetadata(new MediaMetadataCompat.Builder()
-//                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, playingItem.getArtist())
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, playingItem.getAlbum())
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, playingItem.getTitle())
-//                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mSongTitle)
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayer.getDuration())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
                         BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_144dp))
@@ -543,6 +541,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 .setSmallIcon(mState == State.Playing ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(mSongTitle)
                 .setLargeIcon(Bitmap.createScaledBitmap(mDummyAlbumArt, 128, 128, false))
                 .setContentIntent(createContentIntent())
                 .setOnlyAlertOnce(true)
@@ -647,8 +646,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
-//        Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
-//                Toast.LENGTH_SHORT).show();
         Log.e(TAG, "Media player error! Resetting.");
         Log.e(TAG, "Error: what=" + String.valueOf(what) + ", extra=" + String.valueOf(extra));
         processStopRequest(true);
