@@ -128,6 +128,9 @@ public class MainActivity extends ThemeableActivity
     private boolean dbBackupRunning;
     private boolean prefBackupRunning;
 
+    private Typeface mRegularFont;
+    private Typeface mMediumFont;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
@@ -136,6 +139,9 @@ public class MainActivity extends ThemeableActivity
         ButterKnife.bind(this);
 
 //        mSavedInstance = savedInstanceState;
+
+        mRegularFont = Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf");
+        mMediumFont = Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf");
 
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_menu)
@@ -407,7 +413,8 @@ public class MainActivity extends ThemeableActivity
         IProfile profile = new ProfileDrawerItem().withName("")
                 .withEmail("")
                 .withIcon(R.mipmap.profile_picture)
-                .withIdentifier(PROF_ID);
+                .withIdentifier(PROF_ID)
+                .withTypeface(mRegularFont);
 
         // Create the AccountHeader
         mAccountHeader = new AccountHeaderBuilder()
@@ -417,8 +424,10 @@ public class MainActivity extends ThemeableActivity
                 .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
-                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
-                .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
+//                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+//                .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
+                .withNameTypeface(mMediumFont)
+                .withEmailTypeface(mRegularFont)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
@@ -476,41 +485,49 @@ public class MainActivity extends ThemeableActivity
                         new PrimaryDrawerItem().withName(R.string.activity_homepage).withIcon(CommunityMaterial.Icon.cmd_home).withIdentifier(R.id.navigation_home)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.search_name_text).withIcon(CommunityMaterial.Icon.cmd_magnify).withIdentifier(R.id.navigation_search)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_general_index).withIcon(CommunityMaterial.Icon.cmd_view_list).withIdentifier(R.id.navigation_indexes)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_custom_lists).withIcon(CommunityMaterial.Icon.cmd_view_carousel).withIdentifier(R.id.navitagion_lists)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.action_favourites).withIcon(CommunityMaterial.Icon.cmd_heart).withIdentifier(R.id.navigation_favorites)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_consegnati).withIcon(CommunityMaterial.Icon.cmd_clipboard_check).withIdentifier(R.id.navigation_consegnati)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_history).withIcon(CommunityMaterial.Icon.cmd_history).withIdentifier(R.id.navigation_history)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_settings).withIcon(CommunityMaterial.Icon.cmd_settings).withIdentifier(R.id.navigation_settings)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")
-                                )
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+                                .withTypeface(mMediumFont)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -997,14 +1014,16 @@ public class MainActivity extends ThemeableActivity
                         .withName(acct.getDisplayName())
                         .withEmail(acct.getEmail())
                         .withIcon(personPhotoUrl)
-                        .withIdentifier(PROF_ID);
+                        .withIdentifier(PROF_ID)
+                        .withTypeface(mRegularFont);
             }
             else {
                 profile = new ProfileDrawerItem()
                         .withName(acct.getDisplayName())
                         .withEmail(acct.getEmail())
                         .withIcon(R.mipmap.profile_picture)
-                        .withIdentifier(PROF_ID);
+                        .withIdentifier(PROF_ID)
+                        .withTypeface(mRegularFont);
             }
             // Create the AccountHeader
             mAccountHeader.updateProfile(profile);
@@ -1022,7 +1041,8 @@ public class MainActivity extends ThemeableActivity
             IProfile profile = new ProfileDrawerItem().withName("")
                     .withEmail("")
                     .withIcon(R.mipmap.profile_picture)
-                    .withIdentifier(PROF_ID);
+                    .withIdentifier(PROF_ID)
+                    .withTypeface(mRegularFont);
             if (mAccountHeader.getProfiles().size() > 1) {
                 mAccountHeader.removeProfile(1);
                 mAccountHeader.removeProfile(1);
