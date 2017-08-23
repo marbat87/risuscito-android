@@ -54,6 +54,8 @@ public class PdfExportService extends IntentService {
     String localPDFPath;
     String mLingua;
 
+    private static final String mFont = "assets/fonts/roboto_mono.ttf";
+
     public PdfExportService() {
         super("PdfExportService");
     }
@@ -131,7 +133,7 @@ public class PdfExportService extends IntentService {
             PdfWriter.getInstance(document, new FileOutputStream(localPDFPath));
             // step 3
             document.open();
-            Font myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+            Font myFontColor = FontFactory.getFont(mFont,
                     BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.BLACK);
             // step 4
             try {
@@ -147,12 +149,12 @@ public class PdfExportService extends IntentService {
                             || line.contains("A13F3C"))
                             && !line.contains("BGCOLOR")) {
                         if (line.contains("000000")) {
-                            myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+                            myFontColor = FontFactory.getFont(mFont,
                                     BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.BLACK);
                         }
 
                         if (line.contains("A13F3C")) {
-                            myFontColor = FontFactory.getFont("assets/fonts/DejaVuSansMono.ttf",
+                            myFontColor = FontFactory.getFont(mFont,
                                     BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.RED);
                         }
                         line = line.replaceAll("<H4>", "");
