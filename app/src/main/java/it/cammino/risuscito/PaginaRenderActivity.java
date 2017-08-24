@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,8 +68,10 @@ import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback {
+public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback, EasyPermissions.PermissionCallbacks {
 
     final String TAG = getClass().getCanonicalName();
 
@@ -682,12 +685,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
-        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
-        if (sFragment != null)
-            sFragment.setmCallback(PaginaRenderActivity.this);
-        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
-        if (sFragment != null)
-            sFragment.setmCallback(PaginaRenderActivity.this);
+//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
+//        if (sFragment != null)
+//            sFragment.setmCallback(PaginaRenderActivity.this);
+//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
+//        if (sFragment != null)
+//            sFragment.setmCallback(PaginaRenderActivity.this);
 
     }
 
@@ -1389,27 +1392,37 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
 
+    @AfterPermissionGranted(Utility.WRITE_STORAGE_RC)
     private void checkStoragePermissions() {
+        Log.d(TAG, "checkStoragePermissions: ");
         // Here, thisActivity is the current activity
-        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                !=PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                showRationaleForExternalDownload();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Utility.WRITE_STORAGE_RC);
-            }
-        }
-        else
+//        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                !=PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//                showRationaleForExternalDownload();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        Utility.WRITE_STORAGE_RC);
+//            }
+//        }
+//        else
+//            startExternalDownload();
+        if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
             startExternalDownload();
+        } else {
+            // Ask for one permission
+            EasyPermissions.requestPermissions(PaginaRenderActivity.this, getString(R.string.external_storage_rationale),
+                    Utility.WRITE_STORAGE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     void startExternalDownload() {
@@ -1443,19 +1456,18 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     .show();
     }
 
-    void showRationaleForExternalDownload() {
-        Log.d(TAG, "WRITE_EXTERNAL_STORAGE RATIONALE");
-        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE")
-                .title(R.string.external_storage_title)
-                .content(R.string.external_storage_rationale)
-                .positiveButton(R.string.dialog_chiudi)
-                .setHasCancelListener()
-                .setCanceable()
-                .show();
-    }
+//    void showRationaleForExternalDownload() {
+//        Log.d(TAG, "WRITE_EXTERNAL_STORAGE RATIONALE");
+//        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE")
+//                .title(R.string.external_storage_title)
+//                .content(R.string.external_storage_rationale)
+//                .positiveButton(R.string.dialog_chiudi)
+//                .setHasCancelListener()
+//                .setCanceable()
+//                .show();
+//    }
 
     void startInternalDownload() {
-        Log.d(TAG, "WRITE_EXTERNAL_STORAGE DENIED or CHOOSED INTERNAL");
         String localFile = PaginaRenderActivity.this.getFilesDir()
                 + "/"
                 + Utility.filterMediaLink(url);
@@ -1474,28 +1486,39 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         startService(i);
     }
 
+    @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
     private void checkExternalFilePermissions() {
+    Log.d(TAG, "checkExternalFilePermissions: ");
         // Here, thisActivity is the current activity
-        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                !=PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                showRationalForExternalFile();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Utility.EXTERNAL_FILE_RC);
-            }
-            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
-        }
-        else {
+//        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                !=PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//                showRationalForExternalFile();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        Utility.EXTERNAL_FILE_RC);
+//            }
+//            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+//        }
+//        else {
+//            searchExternalFile(false);
+//        }
+        if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
             searchExternalFile(false);
+        } else {
+            // Ask for one permission
+            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+            EasyPermissions.requestPermissions(PaginaRenderActivity.this, getString(R.string.external_file_rationale),
+                    Utility.EXTERNAL_FILE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
 
@@ -1505,16 +1528,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             recreate();
     }
 
-    void showRationalForExternalFile() {
-        Log.d(TAG, "EXTERNAL_FILE RATIONALE");
-        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE")
-                .title(R.string.external_storage_title)
-                .content(R.string.external_file_rationale)
-                .positiveButton(R.string.dialog_chiudi)
-                .setHasCancelListener()
-                .setCanceable()
-                .show();
-    }
+//    void showRationalForExternalFile() {
+//        Log.d(TAG, "EXTERNAL_FILE RATIONALE");
+//        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE")
+//                .title(R.string.external_storage_title)
+//                .content(R.string.external_file_rationale)
+//                .positiveButton(R.string.dialog_chiudi)
+//                .setHasCancelListener()
+//                .setCanceable()
+//                .show();
+//    }
 
     void showDeniedForExternalFile() {
         Log.d(TAG, " EXTERNAL_FILE DENIED");
@@ -1531,41 +1554,79 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult-request: " + requestCode);
-//        Log.d(TAG, "onRequestPermissionsResult-result: " + grantResults[0]);
+//        Log.d(TAG, "onRequestPermissionsResult-request: " + requestCode);
+////        Log.d(TAG, "onRequestPermissionsResult-result: " + grantResults[0]);
+//        switch (requestCode) {
+//            case Utility.WRITE_STORAGE_RC: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // permission was granted, yay! Do the task you need to do.
+//                    startExternalDownload();
+//                } else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+//                            .edit();
+//                    editor.putString(Utility.SAVE_LOCATION, "0");
+//                    editor.apply();
+//                    Snackbar.make(findViewById(android.R.id.content)
+//                            , R.string.forced_private
+//                            , Snackbar.LENGTH_SHORT)
+//                            .show();
+//                    startInternalDownload();
+//                }
+//                return;
+//            }
+//            case Utility.EXTERNAL_FILE_RC: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // permission was granted, yay! Do the task you need to do.
+//                    searchExternalFile(true);
+//                } else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    showDeniedForExternalFile();
+//                }
+//            }
+//        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> list) {
+        // Some permissions have been granted
+        Log.d(TAG, "onPermissionsGranted: " + requestCode);
         switch (requestCode) {
-            case Utility.WRITE_STORAGE_RC: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the task you need to do.
-                    startExternalDownload();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putString(Utility.SAVE_LOCATION, "0");
-                    editor.apply();
-                    Snackbar.make(findViewById(android.R.id.content)
-                            , R.string.forced_private
-                            , Snackbar.LENGTH_SHORT)
-                            .show();
-                    startInternalDownload();
-                }
+            case Utility.WRITE_STORAGE_RC:
+                startExternalDownload();
                 return;
-            }
-            case Utility.EXTERNAL_FILE_RC: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the task you need to do.
-                    searchExternalFile(true);
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    showDeniedForExternalFile();
-                }
-            }
+            case Utility.EXTERNAL_FILE_RC:
+                searchExternalFile(true);
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> list) {
+        // Some permissions have been denied
+        Log.d(TAG, "onPermissionsDenied: " + requestCode);
+        switch (requestCode) {
+            case Utility.WRITE_STORAGE_RC:
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                        .edit();
+                editor.putString(Utility.SAVE_LOCATION, "0");
+                editor.apply();
+                Snackbar.make(findViewById(android.R.id.content)
+                        , R.string.forced_private
+                        , Snackbar.LENGTH_SHORT)
+                        .show();
+                startInternalDownload();
+                return;
+            case Utility.EXTERNAL_FILE_RC:
+                showDeniedForExternalFile();
         }
     }
 
@@ -1720,16 +1781,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 pulisciVars();
                 mLUtils.closeActivityWithTransition();
                 break;
-            case "EXTERNAL_STORAGE_RATIONALE":
-                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Utility.WRITE_STORAGE_RC);
-                break;
-            case "EXTERNAL_FILE_RATIONALE":
-                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Utility.EXTERNAL_FILE_RC);
-                break;
+//            case "EXTERNAL_STORAGE_RATIONALE":
+//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        Utility.WRITE_STORAGE_RC);
+//                break;
+//            case "EXTERNAL_FILE_RATIONALE":
+//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        Utility.EXTERNAL_FILE_RC);
+//                break;
         }
     }
     @Override
