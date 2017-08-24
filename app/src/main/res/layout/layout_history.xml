@@ -41,8 +41,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         risuscito:imageState="@drawable/ic_sad_history"
+        risuscito:subTitleStyle="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
         risuscito:setSubTitleText="@string/history_empty"
-        risuscito:setSubTitleFont="fonts/Roboto-Light.ttf" />
+        risuscito:setSubTitleFont="Roboto-Light.ttf" />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width= "match_parent"
