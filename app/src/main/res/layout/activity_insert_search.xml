@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,9 +10,8 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/design_appbar_elevation"
-        android:theme="@style/ActionBarThemeOverlay"
-        tools:targetApi="lollipop">
+        risuscito:elevation="@dimen/design_appbar_elevation"
+        android:theme="@style/ActionBarThemeOverlay">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
@@ -36,10 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="?toolbar_shadow" />
+        <include layout="@layout/common_shadow_no_behavior" />
 
     </FrameLayout>
 

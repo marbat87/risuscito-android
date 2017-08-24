@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -515,7 +514,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
         longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
 //        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        mMainActivity.getAppBarLayout().setExpanded(true, true);
+        if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+            mMainActivity.getAppBarLayout().setExpanded(true, true);
         mMainActivity.getMaterialCab().start(CantiEucarestiaFragment.this);
     }
 

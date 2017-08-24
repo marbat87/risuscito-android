@@ -47,8 +47,9 @@ public class GeneralIndex extends Fragment {
 
         final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
         if (savedInstanceState == null) {
@@ -57,7 +58,8 @@ public class GeneralIndex extends Fragment {
         }
         else
             mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        if (!mMainActivity.isOnTablet())
+            tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
 //        mLUtils.applyFontedTab(mViewPager, tabs);
 

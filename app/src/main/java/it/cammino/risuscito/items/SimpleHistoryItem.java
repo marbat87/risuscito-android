@@ -9,7 +9,6 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -204,9 +203,9 @@ public class SimpleHistoryItem extends AbstractItem<SimpleHistoryItem, SimpleHis
                 SimpleDateFormat sdf = (SimpleDateFormat) df;
                 String pattern = sdf.toPattern().replaceAll("y+", "yyyy");
                 sdf.applyPattern(pattern);
-                tempTimestamp = sdf.format(Timestamp.valueOf(timestamp.getText()));
+                tempTimestamp = sdf.format(Timestamp.valueOf(timestamp.getText().toString()));
             } else
-                tempTimestamp = df.format(Timestamp.valueOf(timestamp.getText()));
+                tempTimestamp = df.format(Timestamp.valueOf(timestamp.getText().toString()));
 //            viewHolder.mTimestamp.setText(ctx.getString(R.string.last_open_date, tempTimestamp));
             viewHolder.mTimestamp.setText(tempTimestamp);
             viewHolder.mTimestamp.setVisibility(View.VISIBLE);

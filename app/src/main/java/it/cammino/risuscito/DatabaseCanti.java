@@ -11,7 +11,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
     private static final String DB_NAME = "DBCanti";
     //la versione 20 è la prima con salvataggio tonalità e barrè
     //la versione 21 è la prima con il salvataggio velocità di scorrimento
-    private static final int DB_VERSION = 49;
+    private static final int DB_VERSION = 53;
 
     private final String GIALLO = "#EBD0A5";
     private final String BIANCO = "#FCFCFC";
@@ -4324,7 +4324,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
     }
 
-    public Backup[] backupTables(int oldVersion, SQLiteDatabase db) {
+    Backup[] backupTables(int oldVersion, SQLiteDatabase db) {
 
         Backup[] backup = new Backup[300];
         if(oldVersion >= 21) {
@@ -4385,7 +4385,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         return backup;
     }
 
-    public BackupLocalLink[] backupLocalLink(int oldVersion, SQLiteDatabase db) {
+    BackupLocalLink[] backupLocalLink(int oldVersion, SQLiteDatabase db) {
 
         //dalla versionee 25 è stata introdotta la tabella di link locali. Va fatto il backup
         BackupLocalLink[] backupLink = new BackupLocalLink[300];
@@ -4406,7 +4406,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         return backupLink;
     }
 
-    public void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
+    void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values;
 
         if (newVersion >= 43 && oldVersion >= 19 && oldVersion <= 38) {
@@ -4613,7 +4613,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
     }
 
-    public void reCreateDatabse(SQLiteDatabase db) {
+    void reCreateDatabse(SQLiteDatabase db) {
         String sql = "DROP TABLE IF EXISTS ELENCO";
         db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS ARGOMENTI";
@@ -4669,27 +4669,27 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             this.id = id;
         }
 
-        public int getZoom() {
+        int getZoom() {
             return zoom;
         }
 
-        public void setZoom(int zoom) {
+        void setZoom(int zoom) {
             this.zoom = zoom;
         }
 
-        public int getScroll_x() {
+        int getScroll_x() {
             return scroll_x;
         }
 
-        public void setScroll_x(int scroll_x) {
+        void setScroll_x(int scroll_x) {
             this.scroll_x = scroll_x;
         }
 
-        public int getScroll_y() {
+        int getScroll_y() {
             return scroll_y;
         }
 
-        public void setScroll_y(int scroll_y) {
+        void setScroll_y(int scroll_y) {
             this.scroll_y = scroll_y;
         }
 
@@ -4701,37 +4701,37 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             this.favourite = favourite;
         }
 
-        public String getNota() {
+        String getNota() {
             return nota;
         }
 
-        public void setNota(String nota) {
+        void setNota(String nota) {
             this.nota = nota;
         }
 
-        public String getBarre() {
+        String getBarre() {
             return barre;
         }
 
-        public void setBarre(String barre) {
+        void setBarre(String barre) {
             this.barre = barre;
         }
 
-        public int getSpeed() {
+        int getSpeed() {
             return speed;
         }
 
-        public void setSpeed(int speed) {
+        void setSpeed(int speed) {
             this.speed = speed;
         }
     }
 
-    public class BackupLocalLink{
+    class BackupLocalLink{
         private int idCanto;
         private String localPath;
 
 
-        public BackupLocalLink() {
+        BackupLocalLink() {
             this.idCanto = 0;
             this.localPath = "";
         }
@@ -4744,16 +4744,16 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             this.idCanto = idCanto;
         }
 
-        public String getLocalPath() {
+        String getLocalPath() {
             return localPath;
         }
 
-        public void setLocalPath(String localPath) {
+        void setLocalPath(String localPath) {
             this.localPath = localPath;
         }
     }
 
-    public static String getDbName() {
+    static String getDbName() {
         return DB_NAME;
     }
 }

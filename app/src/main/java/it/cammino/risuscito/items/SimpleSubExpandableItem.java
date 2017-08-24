@@ -1,7 +1,6 @@
 package it.cammino.risuscito.items;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +19,6 @@ import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialize.holder.ColorHolder;
-import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 
@@ -141,16 +139,19 @@ public class SimpleSubExpandableItem<Parent extends IItem & IExpandable, SubItem
         Context ctx = viewHolder.itemView.getContext();
 
         //set the background for the item
-        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(color.getColorInt(), ContextCompat.getColor(ctx, R.color.ripple_color), 10);
-        UIUtils.setBackground(viewHolder.view, drawable);
+//        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(color.getColorInt(), ContextCompat.getColor(ctx, R.color.ripple_color), 10);
+//        UIUtils.setBackground(viewHolder.view, drawable);
+        ViewCompat.setBackground(viewHolder.view, FastAdapterUIUtils.getRippleDrawable(color.getColorInt(), ContextCompat.getColor(ctx, R.color.ripple_color), 10));
         //set the text for the name
         StringHolder.applyTo(title, viewHolder.mTitle);
         StringHolder.applyToOrHide(subTitle, viewHolder.mSubTitle);
 
         if (isExpanded()) {
-            ViewCompat.setRotation(viewHolder.mIndicator, 0);
+            viewHolder.mIndicator.setRotation(0);
+//            ViewCompat.setRotation(viewHolder.mIndicator, 0);
         } else {
-            ViewCompat.setRotation(viewHolder.mIndicator, 180);
+//            ViewCompat.setRotation(viewHolder.mIndicator, 180);
+            viewHolder.mIndicator.setRotation(180);
         }
 
     }

@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
@@ -186,13 +186,20 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
         return false;
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            finish();
+//            overridePendingTransition(0, R.anim.slide_out_bottom);
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
-            overridePendingTransition(0, R.anim.slide_out_bottom);
-        }
-        return super.onKeyUp(keyCode, event);
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        finish();
+        overridePendingTransition(0, R.anim.slide_out_bottom);
     }
 
     // IBillingHandler implementation
@@ -225,7 +232,7 @@ public class DonateActivity extends ThemeableActivity implements BillingProcesso
     }
 
     @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
+    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
         /*
          * Called when requested PRODUCT ID was successfully purchased
          */

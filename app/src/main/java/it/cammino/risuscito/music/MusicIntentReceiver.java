@@ -3,9 +3,12 @@ package it.cammino.risuscito.music;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
+
+import it.cammino.risuscito.PaginaRenderActivity;
 
 /**
  * Receives broadcasted intents. In particular, we are interested in the
@@ -21,7 +24,8 @@ public class MusicIntentReceiver extends BroadcastReceiver {
             // send an intent to our MusicService to telling it to pause the audio
             Intent i = new Intent(context, MusicService.class);
             i.setAction(MusicService.ACTION_PAUSE);
-            context.startService(i);
+//            context.startService(i);
+            ContextCompat.startForegroundService(context, i);
         } else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(Intent.EXTRA_KEY_EVENT);
             if (keyEvent == null || keyEvent.getAction() != KeyEvent.ACTION_DOWN)
@@ -32,29 +36,32 @@ public class MusicIntentReceiver extends BroadcastReceiver {
                 case KeyEvent.KEYCODE_HEADSETHOOK:
                 case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                     i.setAction(MusicService.ACTION_TOGGLE_PLAYBACK);
-                    context.startService(i);
+//                    context.startService(i);
+                    ContextCompat.startForegroundService(context, i);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PLAY:
                     i.setAction(MusicService.ACTION_PLAY);
-                    context.startService(i);
+//                    context.startService(i);
+                    ContextCompat.startForegroundService(context, i);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PAUSE:
                     i.setAction(MusicService.ACTION_PAUSE);
-                    context.startService(i);
+//                    context.startService(i);
+                    ContextCompat.startForegroundService(context, i);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_STOP:
-                    i.setAction(MusicService.ACTION_STOP);
-                    context.startService(i);
+                    context.stopService(i);
+//                    i.setAction(MusicService.ACTION_STOP);
+//                    context.startService(i);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-//                    i.setAction(MusicService.ACTION_SKIP);
-//                    context.startService(i);
                     Toast.makeText(context, "Not supported!", Toast.LENGTH_SHORT).show();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                     // restart from beginning
                     i.setAction(MusicService.ACTION_REWIND);
-                    context.startService(i);
+//                    context.startService(i);
+                    ContextCompat.startForegroundService(context, i);
                     break;
             }
         }

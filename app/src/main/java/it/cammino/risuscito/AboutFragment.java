@@ -1,7 +1,6 @@
 package it.cammino.risuscito;
 
 import android.content.Intent;
-import android.icu.util.MeasureUnit;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -26,20 +25,15 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // create ContextThemeWrapper from the original Activity Context with the custom theme
-//        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.PreferenceFixTheme_NoActionBar);
-
-        // clone the inflater using the ContextThemeWrapper
-//        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-
         View rootView = inflater.inflate(R.layout.about_layout, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_about);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
         mMainActivity.mTabLayout.setVisibility(View.GONE);
@@ -62,7 +56,7 @@ public class AboutFragment extends Fragment {
 
         mScrollView.addView(
                 AboutBuilder.with(mMainActivity)
-                        .setAppIcon(R.mipmap.ic_launcher)
+                        .setAppIcon(R.drawable.ic_launcher_144dp)
                         .setAppName(R.string.app_name)
                         .setPhoto(R.drawable.ic_brand_icon)
                         .setCover(R.mipmap.profile_cover)
@@ -100,6 +94,7 @@ public class AboutFragment extends Fragment {
                         .addChangeLogAction(mChangeLogClickListener)
 //                        .addRemoveAdsAction((Intent) null)
                         .addDonateAction(mDonateClickListener)
+                        .addPrivacyPolicyAction("http://marbat87.altervista.org/privacy_policy.html")
                         .setShowAsCard(false)
                         .build());
 

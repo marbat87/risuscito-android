@@ -15,8 +15,7 @@
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         risuscito:layout_scrollFlags="scroll|enterAlways"
-        android:elevation="@dimen/design_appbar_elevation"
-        tools:targetApi="lollipop">
+        risuscito:elevation="@dimen/design_appbar_elevation">
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,7 +32,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:layout_gravity="top"
         android:layout_below="@id/risuscito_toolbar"
         android:background="?toolbar_shadow" />

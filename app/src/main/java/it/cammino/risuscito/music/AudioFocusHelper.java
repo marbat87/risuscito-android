@@ -1,7 +1,14 @@
 package it.cammino.risuscito.music;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
+
+import it.cammino.risuscito.LUtils;
+
 /**
  * Convenience class to deal with audio focus. This class deals with everything related to audio
  * focus: it can request and abandon focus, and will intercept focus change events and deliver
@@ -10,21 +17,27 @@ import android.media.AudioManager;
  * This class can only be used on SDK level 8 and above, since it uses API features that are not
  * available on previous SDK's.
  */
-public class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
-    AudioManager mAM;
-    MusicFocusable mFocusable;
-    public AudioFocusHelper(Context ctx, MusicFocusable focusable) {
+class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
+    private AudioManager mAM;
+    private MusicFocusable mFocusable;
+    private AudioFocusRequest mFocusRequest;
+    AudioFocusHelper(Context ctx, MusicFocusable focusable) {
         mAM = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
         mFocusable = focusable;
     }
     /** Requests audio focus. Returns whether request was successful or not. */
-    public boolean requestFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
-                mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    boolean requestFocus() {
+        if (LUtils.hasO())
+            return requestFocusO();
+        else
+            return requestFocusLegacy();
     }
     /** Abandons audio focus. Returns whether request was successful or not. */
-    public boolean abandonFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocus(this);
+    boolean abandonFocus() {
+        if (LUtils.hasO())
+            return abandonFocusO();
+        else
+            return abandonFocusLegacy();
     }
     /**
      * Called by AudioManager on audio focus changes. We implement this by calling our
@@ -46,4 +59,37 @@ public class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener
             default:
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private boolean requestFocusO() {
+        AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+        AudioFocusRequest mFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(mPlaybackAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(this)
+                .build();
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+                mAM.requestAudioFocus(mFocusRequest);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean requestFocusLegacy() {
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+                mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private boolean abandonFocusO() {
+        return mFocusRequest == null || AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocusRequest(mFocusRequest);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean abandonFocusLegacy() {
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocus(this);
+    }
+
+
 }

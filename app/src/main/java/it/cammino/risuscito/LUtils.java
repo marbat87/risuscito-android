@@ -16,6 +16,7 @@
 
 package it.cammino.risuscito;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -29,6 +30,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -62,7 +65,7 @@ public class LUtils {
 
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
 
-    final static String FILE_FORMAT = ".risuscito";
+    private final static String FILE_FORMAT = ".risuscito";
 
     private Activity mActivity;
 
@@ -76,6 +79,10 @@ public class LUtils {
 
     public static boolean hasL() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static boolean hasO() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
     public void startActivityWithTransition(Intent intent, final View clickedView,
@@ -137,12 +144,12 @@ public class LUtils {
 ////        }
 //    }
 
-    public void startActivityWithFadeIn(Intent intent) {
+    void startActivityWithFadeIn(Intent intent) {
         mActivity.startActivity(intent);
         mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on);
     }
 
-    public void closeActivityWithTransition() {
+    void closeActivityWithTransition() {
 //        if (hasL())
 //            mActivity.finishAfterTransition();
 //        else {
@@ -151,7 +158,7 @@ public class LUtils {
 //        }
     }
 
-    public void closeActivityWithFadeOut() {
+    void closeActivityWithFadeOut() {
 //        if (hasL())
 //            mActivity.finishAfterTransition();
 //        else {
@@ -160,7 +167,7 @@ public class LUtils {
 //        }
     }
 
-    public void goFullscreen() {
+    void goFullscreen() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
             mActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -191,14 +198,14 @@ public class LUtils {
 //    }
 
     public static boolean hasJB() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     public static boolean hasN() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 
-    public Uri listToXML(@NonNull ListaPersonalizzata lista) {
+    Uri listToXML(@NonNull ListaPersonalizzata lista) {
 
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -294,15 +301,32 @@ public class LUtils {
     }
 
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
-    public void animateIn(View view) {
+    void animateIn(View view) {
 //        if (view.getVisibility() == View.INVISIBLE) {
-            view.setVisibility(View.VISIBLE);
-            ViewCompat.animate(view)
-                    .setDuration(200)
-                    .translationY(0)
-                    .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
-                    .start();
+        view.setVisibility(View.VISIBLE);
+        ViewCompat.animate(view)
+                .setDuration(200)
+                .translationY(0)
+                .setInterpolator(INTERPOLATOR).withLayer().setListener(null)
+                .start();
 //        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Spanned fromHtmlLegacy(String input) {
+        return Html.fromHtml(input);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Spanned fromHtml(String input) {
+        return Html.fromHtml(input, Html.FROM_HTML_MODE_LEGACY);
+    }
+
+    public static Spanned fromHtmlWrapper(String input) {
+        if (LUtils.hasN())
+            return fromHtml(input);
+        else
+            return fromHtmlLegacy(input);
     }
 
 }

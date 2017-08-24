@@ -22,14 +22,6 @@ public class SimpleDialogFragment extends DialogFragment {
 
     protected SimpleCallback mCallback;
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        if (!(activity instanceof SimpleCallback))
-//            throw new IllegalStateException("SimpleDialogFragment needs to be shown from an Activity implementing SimpleCallback.");
-//        mCallback = (SimpleCallback) activity;
-//    }
-
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance())
@@ -49,19 +41,14 @@ public class SimpleDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Builder mBuilder = getBuilder();
-//        if (getArguments() == null || !getArguments().containsKey("builder") || getBuilder() == null)
         if (mBuilder == null)
             throw new IllegalStateException("SimpleDialogFragment should be created using its Builder interface.");
 
         if (mCallback == null)
             mCallback = mBuilder.mListener;
-//            mCallback = getBuilder().mListener;
 
         MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(getActivity())
-//                .title(getBuilder().mTitle)
                 .autoDismiss(mBuilder.mAutoDismiss);
-//                .autoDismiss(getBuilder().mAutoDismiss);
-//                .content(getBuilder().mContent);
 
         if (mBuilder.mShowProgress)
             dialogBuilder.progress(mBuilder.mProgressIndeterminate, mBuilder.mProgressMax, false);
@@ -107,53 +94,8 @@ public class SimpleDialogFragment extends DialogFragment {
             dialogBuilder.customView(mBuilder.mCustomView, false);
         }
 
-//        if (getBuilder().mShowProgress)
-//            dialogBuilder.progress(getBuilder().mProgressIndeterminate, getBuilder().mProgressMax, false);
-//
-//        if (getBuilder().mTitle != 0)
-//            dialogBuilder.title(getBuilder().mTitle);
-//
-//        if (getBuilder().mContent != null)
-//            dialogBuilder.content(getBuilder().mContent);
-//
-//        if (getBuilder().mPositiveButton != null) {
-//            dialogBuilder.positiveText(getBuilder().mPositiveButton)
-//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            mCallback.onPositive(getBuilder().mTag);
-//                        }
-//                    });
-//        }
-//
-//        if (getBuilder().mNegativeButton != null) {
-//            dialogBuilder.negativeText(getBuilder().mNegativeButton)
-//                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            mCallback.onNegative(getBuilder().mTag);
-//                        }
-//                    });
-//        }
-//
-//        if (getBuilder().mNeutralButton != null) {
-//            dialogBuilder.neutralText(getBuilder().mNeutralButton)
-//                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            mCallback.onNeutral(
-//                                    getBuilder().mTag);
-//                        }
-//                    });
-//        }
-//
-//        if (getBuilder().mCustomView != 0) {
-//            dialogBuilder.customView(getBuilder().mCustomView, false);
-//        }
-
         MaterialDialog dialog = dialogBuilder.build();
 
-//        dialog.setCancelable(getBuilder().mCanceable);
         dialog.setCancelable(mBuilder.mCanceable);
 
         dialog.setOnKeyListener(new Dialog.OnKeyListener() {
@@ -203,8 +145,6 @@ public class SimpleDialogFragment extends DialogFragment {
         Builder mBuilder = getBuilder();
         if(mBuilder != null && mBuilder.mCanceListener)
             mCallback.onPositive(mBuilder.mTag);
-//        if(getBuilder().mCanceListener)
-//            mCallback.onPositive(getBuilder().mTag);
     }
 
     public static class Builder implements Serializable {
@@ -254,8 +194,8 @@ public class SimpleDialogFragment extends DialogFragment {
         }
 
         @NonNull
-        public Builder showProgress(boolean showProgress) {
-            mShowProgress = showProgress;
+        public Builder showProgress() {
+            mShowProgress = true;
             return this;
         }
 
@@ -289,14 +229,14 @@ public class SimpleDialogFragment extends DialogFragment {
         }
 
         @NonNull
-        public Builder cancelListener(boolean hasIt) {
-            mCanceListener = hasIt;
+        public Builder setHasCancelListener() {
+            mCanceListener = true;
             return this;
         }
 
         @NonNull
-        public Builder setCanceable(boolean canceable) {
-            mCanceable = canceable;
+        public Builder setCanceable() {
+            mCanceable = true;
             return this;
         }
 

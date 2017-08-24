@@ -23,9 +23,9 @@ import it.cammino.risuscito.R;
 import it.cammino.risuscito.utils.ColorPalette;
 
 public class ColorPickerPreference extends Preference {
-    int mCurrentValue;
+    private int mCurrentValue;
 //    MainActivity mContext;
-    static final int DEFAULT_VALUE = Color.parseColor("#000000");
+    private static final int DEFAULT_VALUE = Color.parseColor("#000000");
 //    int mDefaultValue;
 
     private final String TAG = getClass().getCanonicalName();
@@ -34,7 +34,7 @@ public class ColorPickerPreference extends Preference {
         this(context, attrs, 0);
     }
 
-    public ColorPickerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    private ColorPickerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Log.d(TAG, "ColorPickerPreference: " + context);
     }
@@ -58,7 +58,7 @@ public class ColorPickerPreference extends Preference {
                         .backButton(R.string.dialog_back)  // changes label of the back button
                         .preselect(mCurrentValue)  // optional color int, preselects a color
                         .accentMode(getTitle().equals(getPrefActivity().getString(R.string.accent_color)))
-                        .show();
+                        .show(getPrefActivity());
             }
         });
     }

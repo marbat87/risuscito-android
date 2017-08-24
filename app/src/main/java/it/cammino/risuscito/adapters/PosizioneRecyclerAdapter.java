@@ -1,15 +1,12 @@
 package it.cammino.risuscito.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,14 +97,14 @@ public class PosizioneRecyclerAdapter extends RecyclerView.Adapter {
                 PosizioneItem canto = listItems.get(i);
                 itemView = inflater.inflate(R.layout.generic_card_item, titleHolder.list, false);
 
-                TextView cantoTitle = (TextView) itemView.findViewById(R.id.text_title);
-                TextView cantoPage = (TextView) itemView.findViewById(R.id.text_page);
+                TextView cantoTitle = itemView.findViewById(R.id.text_title);
+                TextView cantoPage = itemView.findViewById(R.id.text_page);
                 View cantoPageSelected = itemView.findViewById(R.id.selected_mark);
-                TextView idCanto = (TextView) itemView.findViewById(R.id.text_id_canto_card);
-                TextView sourceCanto = (TextView) itemView.findViewById(R.id.text_source_canto);
-                TextView timestamp = (TextView) itemView.findViewById(R.id.text_timestamp);
+                TextView idCanto = itemView.findViewById(R.id.text_id_canto_card);
+                TextView sourceCanto = itemView.findViewById(R.id.text_source_canto);
+                TextView timestamp = itemView.findViewById(R.id.text_timestamp);
                 View cantoView = itemView.findViewById(R.id.cantoGenericoContainer);
-                TextView itemTag = (TextView) itemView.findViewById(R.id.item_tag);
+                TextView itemTag = itemView.findViewById(R.id.item_tag);
 
                 cantoTitle.setText(canto.getTitolo());
                 cantoPage.setText(String.valueOf(canto.getPagina()));

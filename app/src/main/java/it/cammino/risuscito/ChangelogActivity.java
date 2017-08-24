@@ -8,7 +8,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.MenuItem;
 
 import butterknife.BindView;
@@ -18,9 +18,12 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class ChangelogActivity extends ThemeableActivity implements AppBarLayout.OnOffsetChangedListener {
 
+    private final String TAG = getClass().getCanonicalName();
+    
     private boolean appBarIsExpanded = true;
     @BindView(R.id.appbarlayout) AppBarLayout mAppBarLayout;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
+    @BindView(R.id.collapsingToolbarLayout) CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +35,7 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+//        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
         if (savedInstanceState != null)
@@ -45,14 +48,21 @@ public class ChangelogActivity extends ThemeableActivity implements AppBarLayout
 
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            finish();
+//            overridePendingTransition(0, R.anim.slide_out_bottom);
+//            return true;
+//        }
+//        return  super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
-            overridePendingTransition(0, R.anim.slide_out_bottom);
-            return true;
-        }
-        return  super.onKeyUp(keyCode, event);
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        finish();
+        overridePendingTransition(0, R.anim.slide_out_bottom);
     }
 
     @Override

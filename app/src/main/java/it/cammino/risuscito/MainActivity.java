@@ -23,7 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -103,8 +103,9 @@ public class MainActivity extends ThemeableActivity
     private AccountHeader mAccountHeader;
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.loadingBar) MaterialProgressBar mCircleProgressBar;
-    @BindView(R.id.toolbar_layout) AppBarLayout appBarLayout;
+    @BindView(R.id.toolbar_layout) @Nullable AppBarLayout appBarLayout;
     @BindView(R.id.material_tabs) TabLayout mTabLayout;
+    @BindView(R.id.tabletToolbarBackground) @Nullable View mTabletBG;
     private boolean isOnTablet;
     private static final String SHOW_SNACKBAR = "mostra_snackbar";
     private static final String DB_RESTORE_RUNNING = "db_restore_running";
@@ -127,6 +128,9 @@ public class MainActivity extends ThemeableActivity
     private boolean dbBackupRunning;
     private boolean prefBackupRunning;
 
+    private Typeface mRegularFont;
+    private Typeface mMediumFont;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.hasNavDrawer = true;
@@ -135,6 +139,9 @@ public class MainActivity extends ThemeableActivity
         ButterKnife.bind(this);
 
 //        mSavedInstance = savedInstanceState;
+
+        mRegularFont = Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf");
+        mMediumFont = Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf");
 
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_menu)
@@ -160,6 +167,11 @@ public class MainActivity extends ThemeableActivity
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getThemeUtils().primaryColorDark());
 
+        if (isOnTablet() && mTabletBG != null)
+            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+        else
+            mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+
         setupNavDrawer(savedInstanceState);
 
         materialCab = new MaterialCab(this, R.id.cab_stub)
@@ -175,7 +187,8 @@ public class MainActivity extends ThemeableActivity
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home)).commit();
 //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-            appBarLayout.setExpanded(true, true);
+            if (!isOnTablet && appBarLayout != null)
+                appBarLayout.setExpanded(true, true);
         }
 
         if (savedInstanceState != null) {
@@ -189,7 +202,7 @@ public class MainActivity extends ThemeableActivity
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
@@ -253,7 +266,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_database)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -263,7 +276,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_settings)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -273,7 +286,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_database)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -289,7 +302,7 @@ public class MainActivity extends ThemeableActivity
                 new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_settings)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show();
@@ -320,7 +333,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                                 .title(R.string.restore_running)
                                 .content(R.string.restoring_database)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -330,7 +343,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                                 .title(R.string.restore_running)
                                 .content(R.string.restoring_settings)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -340,7 +353,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                                 .title(R.string.backup_running)
                                 .content(R.string.backup_database)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -356,7 +369,7 @@ public class MainActivity extends ThemeableActivity
                         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                                 .title(R.string.backup_running)
                                 .content(R.string.backup_settings)
-                                .showProgress(true)
+                                .showProgress()
                                 .progressIndeterminate(true)
                                 .progressMax(0)
                                 .show();
@@ -400,7 +413,8 @@ public class MainActivity extends ThemeableActivity
         IProfile profile = new ProfileDrawerItem().withName("")
                 .withEmail("")
                 .withIcon(R.mipmap.profile_picture)
-                .withIdentifier(PROF_ID);
+                .withIdentifier(PROF_ID)
+                .withTypeface(mRegularFont);
 
         // Create the AccountHeader
         mAccountHeader = new AccountHeaderBuilder()
@@ -410,8 +424,10 @@ public class MainActivity extends ThemeableActivity
                 .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
-                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
-                .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
+//                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+//                .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
+                .withNameTypeface(mMediumFont)
+                .withEmailTypeface(mRegularFont)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
@@ -469,43 +485,49 @@ public class MainActivity extends ThemeableActivity
                         new PrimaryDrawerItem().withName(R.string.activity_homepage).withIcon(CommunityMaterial.Icon.cmd_home).withIdentifier(R.id.navigation_home)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.search_name_text).withIcon(CommunityMaterial.Icon.cmd_magnify).withIdentifier(R.id.navigation_search)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_general_index).withIcon(CommunityMaterial.Icon.cmd_view_list).withIdentifier(R.id.navigation_indexes)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_custom_lists).withIcon(CommunityMaterial.Icon.cmd_view_carousel).withIdentifier(R.id.navitagion_lists)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.action_favourites).withIcon(CommunityMaterial.Icon.cmd_heart).withIdentifier(R.id.navigation_favorites)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_consegnati).withIcon(CommunityMaterial.Icon.cmd_clipboard_check).withIdentifier(R.id.navigation_consegnati)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_history).withIcon(CommunityMaterial.Icon.cmd_history).withIdentifier(R.id.navigation_history)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new PrimaryDrawerItem().withName(R.string.title_activity_settings).withIcon(CommunityMaterial.Icon.cmd_settings).withIdentifier(R.id.navigation_settings)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
+                                .withTypeface(mMediumFont),
                         new DividerDrawerItem(),
-//                        new SecondaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog).withSelectable(false)
-//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")
                         new PrimaryDrawerItem().withName(R.string.title_activity_about).withIcon(CommunityMaterial.Icon.cmd_information_outline).withIdentifier(R.id.navigation_changelog)
                                 .withSelectedIconColor(getThemeUtils().primaryColor())
                                 .withSelectedTextColor(getThemeUtils().primaryColor())
-                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")
-                                )
+//                                .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
+                                .withTypeface(mMediumFont)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -520,51 +542,52 @@ public class MainActivity extends ThemeableActivity
                             Fragment fragment;
                             if (drawerItem.getIdentifier() == R.id.navigation_home) {
                                 fragment = new Risuscito();
-                                appBarLayout.setExpanded(true, true);
-                                if (LUtils.hasL()) {
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                                }
+                                if (!isOnTablet && appBarLayout != null)
+                                    appBarLayout.setExpanded(true, true);
+//                                if (LUtils.hasL()) {
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                }
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_search) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new GeneralSearch();
                             }
                             else if (drawerItem.getIdentifier() == R.id.navigation_indexes) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new GeneralIndex();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navitagion_lists) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(0);
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(0);
                                 fragment = new CustomLists();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_favorites) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new FavouritesActivity();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_settings) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new SettingsFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_changelog) {
 //                                mLUtils.startActivityWithTransition(new Intent(MainActivity.this, ChangelogActivity.class));
 //                                return true;
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new AboutFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_consegnati) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new ConsegnatiFragment();
                             }
                             else if (drawerItem.getIdentifier() ==  R.id.navigation_history) {
-                                if (LUtils.hasL())
-                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
+//                                if (LUtils.hasL())
+//                                    mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                                 fragment = new HistoryFragment();
                             }
                             else return true;
@@ -573,7 +596,8 @@ public class MainActivity extends ThemeableActivity
                             Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(drawerItem.getIdentifier()));
                             if (myFragment == null || !myFragment.isVisible()) {
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                                if (!isOnTablet)
+                                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
                                 transaction.replace(R.id.content_frame, fragment, String.valueOf(drawerItem.getIdentifier())).commit();
                             }
 
@@ -622,35 +646,67 @@ public class MainActivity extends ThemeableActivity
 
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if (isOnTablet) {
+//                if (crossFader != null && crossFader.isCrossFaded()) {
+//                    crossFader.crossFade();
+//                    return true;
+//                }
+//            }
+//            else {
+//                if (mDrawer != null && mDrawer.isDrawerOpen()) {
+//                    mDrawer.closeDrawer();
+//                    return true;
+//                }
+//            }
+//
+//            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
+//            if (myFragment != null && myFragment.isVisible()) {
+//                finish();
+//                return true;
+//            }
+//
+//            if (isOnTablet)
+//                mMiniDrawer.setSelection(R.id.navigation_home);
+//            mDrawer.setSelection(R.id.navigation_home);
+//            appBarLayout.setExpanded(true, true);
+//            return true;
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isOnTablet) {
-                if (crossFader != null && crossFader.isCrossFaded()) {
-                    crossFader.crossFade();
-                    return true;
-                }
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        if (isOnTablet) {
+            if (crossFader != null && crossFader.isCrossFaded()) {
+                crossFader.crossFade();
+                return;
             }
-            else {
-                if (mDrawer != null && mDrawer.isDrawerOpen()) {
-                    mDrawer.closeDrawer();
-                    return true;
-                }
-            }
-
-            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
-            if (myFragment != null && myFragment.isVisible()) {
-                finish();
-                return true;
-            }
-
-            if (isOnTablet)
-                mMiniDrawer.setSelection(R.id.navigation_home);
-            mDrawer.setSelection(R.id.navigation_home);
-            appBarLayout.setExpanded(true, true);
-            return true;
         }
-        return super.onKeyUp(keyCode, event);
+        else {
+            if (mDrawer != null && mDrawer.isDrawerOpen()) {
+                mDrawer.closeDrawer();
+                return;
+            }
+        }
+
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
+        if (myFragment != null && myFragment.isVisible()) {
+            finish();
+            return;
+        }
+
+        if (isOnTablet)
+            mMiniDrawer.setSelection(R.id.navigation_home);
+        else {
+            if (appBarLayout != null)
+                appBarLayout.setExpanded(true, true);
+        }
+        mDrawer.setSelection(R.id.navigation_home);
+//        appBarLayout.setExpanded(true, true);
     }
 
     @Override
@@ -669,44 +725,116 @@ public class MainActivity extends ThemeableActivity
     //converte gli accordi salvati dalla lingua vecchia alla nuova
     private void convertTabs(SQLiteDatabase db, String conversion) {
 //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
-        HashMap<String, String> mappa = null;
-        if (conversion.equalsIgnoreCase("it-uk")) {
-            mappa = new HashMap<>();
-            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
+//        HashMap<String, String> mappa = null;
+//        if (conversion.equalsIgnoreCase("it-uk")) {
+//            mappa = new HashMap<>();
+//            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+//                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
+//        }
+//        if (conversion.equalsIgnoreCase("uk-it")) {
+//            mappa = new HashMap<>();
+//            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+//                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
+//        }
+        String[] accordi1 = CambioAccordi.accordi_it;
+        Log.d(TAG, "convertTabs - from: " + conversion.substring(0,2));
+        switch (conversion.substring(0,2)) {
+            case "uk":
+                accordi1 = CambioAccordi.accordi_uk;
+                break;
+            case "en":
+                accordi1 = CambioAccordi.accordi_en;
+                break;
         }
-        if (conversion.equalsIgnoreCase("uk-it")) {
-            mappa = new HashMap<>();
-            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
-        }
-        if (mappa != null) {
-            String query = "SELECT _id, saved_tab" +
-                    "  FROM ELENCO";
-            Cursor cursor = db.rawQuery(query, null);
 
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-//                Log.i(getClass().toString(),"ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)) );
-                    query = "UPDATE ELENCO" +
-                            "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
-                            "  WHERE _id =  " + cursor.getInt(0);
-                    db.execSQL(query);
-                }
-                cursor.moveToNext();
-            }
-            cursor.close();
+        String[] accordi2 = CambioAccordi.accordi_it;
+        Log.d(TAG, "convertTabs - to: " + conversion.substring(3,5));
+        switch (conversion.substring(3,5)) {
+            case "uk":
+                accordi2 = CambioAccordi.accordi_uk;
+                break;
+            case "en":
+                accordi2 = CambioAccordi.accordi_en;
+                break;
         }
+
+        HashMap<String, String>mappa = new HashMap<>();
+        for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
+            mappa.put(accordi1[i], accordi2[i]);
+
+//        if (mappa != null) {
+        String query = "SELECT _id, saved_tab" +
+                "  FROM ELENCO";
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+                Log.d(TAG, "convertTabs: " + "ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)));
+                query = "UPDATE ELENCO" +
+                        "  SET saved_tab = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                        "  WHERE _id =  " + cursor.getInt(0);
+                db.execSQL(query);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+//        }
     }
 
-    private class TranslationTask extends AsyncTask<String, Integer, String> {
+    //converte gli accordi salvati dalla lingua vecchia alla nuova
+    private void convertiBarre(SQLiteDatabase db, String conversion) {
+        String[] barre1 = CambioAccordi.barre_it;
+        Log.d(TAG, "convertiBarre - from: " + conversion.substring(0,2));
+        switch (conversion.substring(0,2)) {
+            case "uk":
+                barre1 = CambioAccordi.barre_uk;
+                break;
+            case "en":
+                barre1 = CambioAccordi.barre_en;
+                break;
+        }
 
-        public TranslationTask() {
+        String[] barre2 = CambioAccordi.barre_it;
+        Log.d(TAG, "convertiBarre - to: " + conversion.substring(3,5));
+        switch (conversion.substring(3,5)) {
+            case "uk":
+                barre2 = CambioAccordi.barre_uk;
+                break;
+            case "en":
+                barre2 = CambioAccordi.barre_en;
+                break;
+        }
+
+        HashMap<String, String>mappa = new HashMap<>();
+        for (int i = 0; i < CambioAccordi.barre_it.length; i++)
+            mappa.put(barre1[i], barre2[i]);
+
+        String query = "SELECT _id, saved_barre" +
+                "  FROM ELENCO";
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+                Log.d(TAG, "convertiBarre: " + "ID " + cursor.getInt(0) +  " -> CONVERTO DA " + cursor.getString(1) + " A " + mappa.get(cursor.getString(1)));
+                query = "UPDATE ELENCO" +
+                        "  SET saved_barre = \'" + mappa.get(cursor.getString(1)) + "\' " +
+                        "  WHERE _id =  " + cursor.getInt(0);
+                db.execSQL(query);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+    }
+
+    private class TranslationTask extends AsyncTask<String, Void, Integer> {
+
+        TranslationTask() {
         }
 
         @Override
-        protected String doInBackground(String... sUrl) {
+        protected Integer doInBackground(String... sUrl) {
             getIntent().removeExtra(Utility.DB_RESET);
             DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
             SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -715,9 +843,10 @@ public class MainActivity extends ThemeableActivity
             listaCanti.reCreateDatabse(db);
             listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
             convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+            convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
             db.close();
             listaCanti.close();
-            return "";
+            return 0;
         }
 
         @Override
@@ -725,18 +854,17 @@ public class MainActivity extends ThemeableActivity
             super.onPreExecute();
             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "TRANSLATION")
                     .content(R.string.translation_running)
-                    .showProgress(true)
+                    .showProgress()
                     .progressIndeterminate(true)
                     .progressMax(0)
                     .show();
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
             getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
             try {
-//                if (SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION") != null)
-//                    SimpleDialogFragment.findVisible(MainActivity.this, "TRANSLATION").dismiss();
                 dismissDialog("TRANSLATION");
             } catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -750,7 +878,7 @@ public class MainActivity extends ThemeableActivity
 
     public void enableFab(boolean enable) {
         Log.d(TAG, "enableFab: " + enable);
-        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab_pager);
+        FloatingActionButton mFab = findViewById(R.id.fab_pager);
 //        View mScrolling = findViewById(R.id.content_frame);
 //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mScrolling.getLayoutParams();
 //        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new AppBarLayout.ScrollingViewBehavior());
@@ -886,14 +1014,16 @@ public class MainActivity extends ThemeableActivity
                         .withName(acct.getDisplayName())
                         .withEmail(acct.getEmail())
                         .withIcon(personPhotoUrl)
-                        .withIdentifier(PROF_ID);
+                        .withIdentifier(PROF_ID)
+                        .withTypeface(mRegularFont);
             }
             else {
                 profile = new ProfileDrawerItem()
                         .withName(acct.getDisplayName())
                         .withEmail(acct.getEmail())
                         .withIcon(R.mipmap.profile_picture)
-                        .withIdentifier(PROF_ID);
+                        .withIdentifier(PROF_ID)
+                        .withTypeface(mRegularFont);
             }
             // Create the AccountHeader
             mAccountHeader.updateProfile(profile);
@@ -911,7 +1041,8 @@ public class MainActivity extends ThemeableActivity
             IProfile profile = new ProfileDrawerItem().withName("")
                     .withEmail("")
                     .withIcon(R.mipmap.profile_picture)
-                    .withIdentifier(PROF_ID);
+                    .withIdentifier(PROF_ID)
+                    .withTypeface(mRegularFont);
             if (mAccountHeader.getProfiles().size() > 1) {
                 mAccountHeader.removeProfile(1);
                 mAccountHeader.removeProfile(1);
@@ -958,8 +1089,8 @@ public class MainActivity extends ThemeableActivity
         mCircleProgressBar.setVisibility(View.GONE);
     }
 
-    public void setShowSnackbar(boolean showSnackbar) {
-        this.showSnackbar = showSnackbar;
+    public void setShowSnackbar() {
+        this.showSnackbar = true;
     }
 
 //    public GoogleApiClient getmGoogleApiClient() {
@@ -1401,7 +1532,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                             .title(R.string.backup_running)
                             .content(R.string.backup_database)
-                            .showProgress(true)
+                            .showProgress()
                             .progressIndeterminate(true)
                             .progressMax(0)
                             .show();
@@ -1425,7 +1556,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                             .title(R.string.restore_running)
                             .content(R.string.restoring_database)
-                            .showProgress(true)
+                            .showProgress()
                             .progressIndeterminate(true)
                             .progressMax(0)
                             .show();
@@ -1471,11 +1602,23 @@ public class MainActivity extends ThemeableActivity
             case "RESTART":
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if (i != null)
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 break;
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: " + item.getItemId());
+        if (isOnTablet && item.getItemId() == android.R.id.home) {
+            crossFader.crossFade();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onNegative(@NonNull String tag) {}
     @Override
@@ -1493,6 +1636,7 @@ public class MainActivity extends ThemeableActivity
         return materialCab;
     }
 
+    @Nullable
     public AppBarLayout getAppBarLayout() {
         return appBarLayout;
     }

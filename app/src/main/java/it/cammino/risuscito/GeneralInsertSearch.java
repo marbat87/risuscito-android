@@ -2,14 +2,16 @@ package it.cammino.risuscito;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -20,6 +22,8 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralInsertSearch extends ThemeableActivity {
 
+    private final String TAG = getClass().getCanonicalName();
+
     private int fromAdd;
     private int idLista;
     private int listPosition;
@@ -27,6 +31,7 @@ public class GeneralInsertSearch extends ThemeableActivity {
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.view_pager) ViewPager mViewPager;
     @BindView(R.id.material_tabs) TabLayout mTabLayout;
+    @BindView(R.id.tabletToolbarBackground) @Nullable View mTabletBG;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,8 +56,12 @@ public class GeneralInsertSearch extends ThemeableActivity {
 //        final ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
-//        final TabLayout tabs = (TabLayout) findViewById(R.id.material_tabs);
-        mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+        LUtils mLUtils = LUtils.getInstance(GeneralInsertSearch.this);
+        if (mLUtils.isOnTablet() && mTabletBG != null)
+            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+        else
+            mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
+//        mTabLayout.setBackgroundColor(getThemeUtils().primaryColor());
         mTabLayout.setupWithViewPager(mViewPager);
 //        mLUtils.applyFontedTab(mViewPager, mTabLayout);
 
@@ -71,18 +80,16 @@ public class GeneralInsertSearch extends ThemeableActivity {
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            setResult(Activity.RESULT_CANCELED);
-            finish();
-            overridePendingTransition(0, R.anim.slide_out_right);
-        }
-        return super.onKeyUp(keyCode, event);
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

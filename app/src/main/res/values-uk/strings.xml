@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!---->
-    <!---->
-    <!---->
+
     <string name="private_memory">Приватна пам\'ять</string>
     <string name="public_memory">Публічна пам\'ять</string>
     <string name="app_name">Христос Воскрес</string>
@@ -292,4 +290,12 @@
     <string name="object_invalid">Об\'єкт недоступний</string>
     <string name="object_owned">Об\'єкт вже в розпорядженні</string>
     <string name="generic_removed">%1$s видалено</string>
+    <string name="title_trabar_I">I</string>
+    <string name="title_trabar_II">II</string>
+    <string name="title_trabar_III">III</string>
+    <string name="title_trabar_IV">IV</string>
+    <string name="title_trabar_V">V</string>
+    <string name="title_trabar_VI">VI</string>
+    <string name="title_trabar_VII">VII</string>
+    <string name="consegnati_only">Cerca solo nei consegnati</string>
 </resources>

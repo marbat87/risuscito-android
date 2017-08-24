@@ -59,7 +59,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     private View rootView;
     private DatabaseCanti listaCanti;
     private SQLiteDatabase db;
-//    public ActionMode mMode;
+    //    public ActionMode mMode;
     private boolean mSwhitchMode;
     private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> posizioniList;
     private int longclickedPos, longClickedChild;
@@ -486,7 +486,8 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
         longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
 //        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
-        mMainActivity.getAppBarLayout().setExpanded(true, true);
+        if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+            mMainActivity.getAppBarLayout().setExpanded(true, true);
         mMainActivity.getMaterialCab().start(CantiParolaFragment.this);
     }
 

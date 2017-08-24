@@ -39,7 +39,8 @@
             risuscito:ico_color="@android:color/white"
             android:background="@drawable/page_oval_bkg_selected"
             android:visibility="invisible"
-            tools:ignore="MissingPrefix" />
+            tools:ignore="MissingPrefix"
+            android:contentDescription="@null" />
 
     </FrameLayout>
 

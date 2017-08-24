@@ -31,18 +31,20 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
     //    AlertDialogListener mListener;
     private String TAG  = getClass().getCanonicalName();
 
-    public static BottomSheetFabCanto newInstance(boolean sound, boolean download, boolean favorite) {
+    public static BottomSheetFabCanto newInstance(boolean sound, boolean download, boolean favorite, boolean onlineUrl, boolean personalUrl) {
         BottomSheetFabCanto frag = new BottomSheetFabCanto();
         Bundle args = new Bundle();
         args.putBoolean("showTitle", false);
         args.putBoolean("sound", sound);
         args.putBoolean("download", download);
         args.putBoolean("favorite", favorite);
+        args.putBoolean("onlineUrl", onlineUrl);
+        args.putBoolean("personalUrl", personalUrl);
         frag.setArguments(args);
         return frag;
     }
 
-    public static BottomSheetFabCanto newInstance(@StringRes int title, boolean sound, boolean download, boolean favorite) {
+    public static BottomSheetFabCanto newInstance(@StringRes int title, boolean sound, boolean download, boolean favorite, boolean onlineUrl, boolean personalUrl) {
         BottomSheetFabCanto frag = new BottomSheetFabCanto();
         Bundle args = new Bundle();
         args.putInt("title", title);
@@ -50,6 +52,8 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         args.putBoolean("sound", sound);
         args.putBoolean("download", download);
         args.putBoolean("favorite", favorite);
+        args.putBoolean("onlineUrl", onlineUrl);
+        args.putBoolean("personalUrl", personalUrl);
         frag.setArguments(args);
         return frag;
     }
@@ -68,8 +72,10 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         Boolean mSound = getArguments().getBoolean("sound");
         Boolean mDownload = getArguments().getBoolean("download");
         Boolean mFavorite = getArguments().getBoolean("favorite");
+        Boolean mOnlineUrl = getArguments().getBoolean("onlineUrl");
+        Boolean mPersonalUrl = getArguments().getBoolean("personalUrl");
 
-        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
+        TextView titleView = view.findViewById(R.id.sheet_title);
         if (showTitle) {
 //            int title = getArguments().getInt("title");
             titleView.setText(getArguments().getInt("title"));
@@ -80,7 +86,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         }
 
         View mView = view.findViewById(R.id.fab_fullscreen_on);
-        ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        ImageView mImage = mView.findViewById(R.id.app_icon);
 //        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -90,7 +96,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
+        TextView mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.fullscreen);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +111,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_sound_off);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -115,7 +121,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(mSound ? R.string.audio_off: R.string.audio_on);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,18 +136,40 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.save_file);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
         icon = new IconicsDrawable(getActivity())
-                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
+//                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
                 .colorRes(R.color.icon_ative_black)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
-        mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
+        mTextView = mView.findViewById(R.id.app_label);
+//        mTextView.setText(mDownload? R.string.fab_delete_unlink: R.string.save_file);
+
+        if (mDownload) {
+            if (mPersonalUrl) {
+                icon.icon(CommunityMaterial.Icon.cmd_link_variant_off);
+                mTextView.setText(R.string.dialog_delete_link_title);
+            }
+            else {
+                icon.icon(CommunityMaterial.Icon.cmd_delete);
+                mTextView.setText(R.string.fab_delete_unlink);
+            }
+        }
+        else {
+            if (mOnlineUrl) {
+                icon.icon(CommunityMaterial.Icon.cmd_download);
+                mTextView.setText(R.string.save_file);
+            }
+            else {
+                icon.icon(CommunityMaterial.Icon.cmd_link_variant);
+                mTextView.setText(R.string.only_link_title);
+            }
+        }
+
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,7 +183,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_favorite);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -165,7 +193,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(mFavorite? R.string.favorite_off: R.string.favorite_on);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

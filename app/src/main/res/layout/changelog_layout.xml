@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            risuscito:title="@string/title_activity_about"
+            risuscito:title="@string/changelog"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
@@ -50,10 +50,9 @@
                 risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
-                android:elevation="1dp"
+                risuscito:elevation="1dp"
                 android:background="@android:color/transparent"
-                risuscito:layout_collapseMode="pin"
-                tools:targetApi="lollipop" />
+                risuscito:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -88,7 +87,7 @@
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:background="?toolbar_shadow" />
 
 </android.support.design.widget.CoordinatorLayout>

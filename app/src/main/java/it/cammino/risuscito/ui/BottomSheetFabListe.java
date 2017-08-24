@@ -63,7 +63,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_fablist, container, false);
 
         Boolean showTitle = getArguments().getBoolean("showTitle");
-        TextView titleView = (TextView) view.findViewById(R.id.sheet_title);
+        TextView titleView = view.findViewById(R.id.sheet_title);
         if (showTitle) {
 //            int title = getArguments().getInt("title");
             titleView.setText(getArguments().getInt("title"));
@@ -74,7 +74,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
         }
 
         View mView = view.findViewById(R.id.fab_pulisci);
-        ImageView mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        ImageView mImage = mView.findViewById(R.id.app_icon);
 //        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_eraser_white_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -84,7 +84,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        TextView mTextView = (TextView) mView.findViewById(R.id.app_label);
+        TextView mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.button_clean_list);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +99,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_condividi);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_share_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -109,7 +109,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.action_share);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +124,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
         });
 
         mView = view.findViewById(R.id.fab_add_lista);
-        mImage = (ImageView) mView.findViewById(R.id.app_icon);
+        mImage = mView.findViewById(R.id.app_icon);
 //        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_add_48dp));
 //        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //        mImage.setImageDrawable(drawable);
@@ -134,7 +134,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
-        mTextView = (TextView) mView.findViewById(R.id.app_label);
+        mTextView = mView.findViewById(R.id.app_label);
         mTextView.setText(R.string.action_add_list);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +154,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
             view.findViewById(R.id.custom_list_option).setVisibility(View.VISIBLE);
 
             mView = view.findViewById(R.id.fab_condividi_file);
-            mImage = (ImageView) mView.findViewById(R.id.app_icon);
+            mImage = mView.findViewById(R.id.app_icon);
 //            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_attachment_48dp));
 //            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //            mImage.setImageDrawable(drawable);
@@ -164,7 +164,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                     .sizeDp(48)
                     .paddingDp(4);
             mImage.setImageDrawable(icon);
-            mTextView = (TextView) mView.findViewById(R.id.app_label);
+            mTextView = mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_share_file);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -179,7 +179,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
             });
 
             mView = view.findViewById(R.id.fab_edit_lista);
-            mImage = (ImageView) mView.findViewById(R.id.app_icon);
+            mImage = mView.findViewById(R.id.app_icon);
 //            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_edit_48dp));
 //            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //            mImage.setImageDrawable(drawable);
@@ -189,7 +189,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                     .sizeDp(48)
                     .paddingDp(4);
             mImage.setImageDrawable(icon);
-            mTextView = (TextView) mView.findViewById(R.id.app_label);
+            mTextView = mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_edit_list);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -204,7 +204,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
             });
 
             mView = view.findViewById(R.id.fab_delete_lista);
-            mImage = (ImageView) mView.findViewById(R.id.app_icon);
+            mImage = mView.findViewById(R.id.app_icon);
 //            drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_48dp));
 //            DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
 //            mImage.setImageDrawable(drawable);
@@ -214,7 +214,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
                     .sizeDp(48)
                     .paddingDp(4);
             mImage.setImageDrawable(icon);
-            mTextView = (TextView) mView.findViewById(R.id.app_label);
+            mTextView = mView.findViewById(R.id.app_label);
             mTextView.setText(R.string.action_remove_list);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override

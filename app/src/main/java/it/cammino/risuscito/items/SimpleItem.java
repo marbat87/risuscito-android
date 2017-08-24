@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -17,12 +18,12 @@ import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
-import com.mikepenz.materialize.util.UIUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.R;
 
 public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> {
@@ -33,6 +34,8 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
     private ColorHolder color;
     private int numSalmo;
     private ColorHolder selectedColor;
+    private String normalizedTitle;
+    private String filter;
     private int id;
 
     private View.OnCreateContextMenuListener createContextMenuListener;
@@ -89,6 +92,16 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
 
     public SimpleItem withSelectedColorRes(@ColorRes int selectedColorRes) {
         this.selectedColor = ColorHolder.fromColorRes(selectedColorRes);
+        return this;
+    }
+
+    public SimpleItem withNormalizedTitle(String normTitle) {
+        this.normalizedTitle = normTitle;
+        return this;
+    }
+
+    public SimpleItem withFilter(String filter) {
+        this.filter = filter;
         return this;
     }
 
@@ -171,12 +184,23 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
         Context ctx = viewHolder.itemView.getContext();
 
         //set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle);
+        if (filter != null && !filter.isEmpty()) {
+            int mPosition = normalizedTitle.indexOf(filter);
+            if (mPosition >= 0) {
+                String highlighted = title.getText().toString().replaceAll("(?i)(" + title.getText().toString().substring(mPosition, mPosition + filter.length()) + ")", "<b>$1</b>");
+                viewHolder.mTitle.setText(LUtils.fromHtmlWrapper(highlighted));
+            }
+            else
+                StringHolder.applyTo(title, viewHolder.mTitle);
+        }
+        else
+            StringHolder.applyTo(title, viewHolder.mTitle);
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, viewHolder.mPage);
 //        Drawable drawable = FastAdapterUIUtils.getRippleDrawable(Color.WHITE, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), 10);
 //        UIUtils.setBackground(viewHolder.view, drawable);
-        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+//        UIUtils.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
+        ViewCompat.setBackground(viewHolder.view, FastAdapterUIUtils.getSelectableBackground(ctx, ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.ripple_color), true));
 
         if (isSelected()) {
             viewHolder.mPage.setVisibility(View.INVISIBLE);

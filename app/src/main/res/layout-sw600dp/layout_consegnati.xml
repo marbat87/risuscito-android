@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,40 +17,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:fadeScrollbars="true"
-        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+        android:fadeScrollbars="true" />
 
-    <RelativeLayout
-        android:layout_gravity="center"
+    <!--<RelativeLayout-->
+        <!--android:layout_gravity="center"-->
+        <!--android:id="@+id/no_consegnati"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/consegnati_image"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_width="120dip"-->
+            <!--android:layout_height="120dip"-->
+            <!--android:src="@drawable/ic_sad_book"-->
+            <!--android:contentDescription="@string/no_consegnati" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/consegnati_text"-->
+            <!--android:layout_below="@id/consegnati_image"-->
+            <!--android:layout_marginLeft="@dimen/text_min_margin"-->
+            <!--android:layout_marginRight="@dimen/text_min_margin"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:textColor="?android:textColorSecondary"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/no_consegnati"-->
+            <!--fontPath="fonts/Roboto-Light.ttf"-->
+            <!--tools:ignore="MissingPrefix"-->
+            <!--android:textAppearance="@style/TextAppearance.AppCompat.Title" />-->
+
+    <!--</RelativeLayout>-->
+
+    <com.cipolat.superstateview.SuperStateView
         android:id="@+id/no_consegnati"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/consegnati_image"
-            android:layout_centerHorizontal="true"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:src="@drawable/ic_sad_book"/>
-
-        <TextView
-            android:id="@+id/consegnati_text"
-            android:layout_below="@id/consegnati_image"
-            android:layout_marginLeft="@dimen/text_min_margin"
-            android:layout_marginRight="@dimen/text_min_margin"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:textColor="?android:textColorSecondary"
-            android:layout_height="wrap_content"
-            android:text="@string/no_consegnati"
-            fontPath="fonts/Roboto-Light.ttf"
-            tools:ignore="MissingPrefix"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-    </RelativeLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        risuscito:imageState="@drawable/ic_sad_book"
+        risuscito:subTitleStyle="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+        risuscito:setSubTitleText="@string/no_consegnati"
+        risuscito:setSubTitleFont="Roboto-Light.ttf" />
 
     <include layout="@layout/common_bottom_bar"/>
-    <include layout="@layout/common_fab"/>
 
 </android.support.design.widget.CoordinatorLayout>
