@@ -1,13 +1,11 @@
 package it.cammino.risuscito;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.util.Log;
@@ -20,7 +18,6 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements EasyPermissions.PermissionCallbacks {
