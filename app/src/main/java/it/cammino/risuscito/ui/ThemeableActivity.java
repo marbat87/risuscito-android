@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,11 +52,13 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                     .equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.putExtra(Utility.DB_RESET, true);
-                String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
-                i.putExtra(Utility.CHANGE_LANGUAGE,
-                        currentLang + "-" + sharedPreferences.getString(s, ""));
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.putExtra(Utility.DB_RESET, true);
+                    String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
+                    i.putExtra(Utility.CHANGE_LANGUAGE,
+                            currentLang + "-" + sharedPreferences.getString(s, ""));
+                }
                 startActivity(i);
             }
         }
@@ -74,6 +77,18 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         setTheme(mThemeUtils.getCurrent());
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
+
+        if (LUtils.hasL()) {
+            // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
+            // list gets weird. We need to change either the icon or the color
+            // of the TaskDescription.
+            ActivityManager.TaskDescription taskDesc =
+                    new ActivityManager.TaskDescription(
+                            null,
+                            null,
+                            mThemeUtils.primaryColor());
+            setTaskDescription(taskDesc);
+        }
 
         //Iconic
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
