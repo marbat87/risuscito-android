@@ -3,6 +3,7 @@ package it.cammino.risuscito;
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +19,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.RemoteException;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -52,6 +58,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,11 +74,12 @@ import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
+import it.cammino.risuscito.ui.MediaBrowserProvider;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback, EasyPermissions.PermissionCallbacks {
+public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback, EasyPermissions.PermissionCallbacks, MediaBrowserProvider {
 
     final String TAG = getClass().getCanonicalName();
 
@@ -87,6 +97,14 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String personalUrl, localUrl,  playUrl;
 
     private enum MP_State {Started, Stopped}
+    private PlaybackStateCompat mLastPlaybackState;
+    private ScheduledFuture<?> mScheduleFuture;
+
+    private final ScheduledExecutorService mExecutorService =
+            Executors.newSingleThreadScheduledExecutor();
+
+    private static final long PROGRESS_UPDATE_INTERNAL = 1000;
+    private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
 
     MP_State mediaPlayerState = MP_State.Stopped;
 
@@ -122,75 +140,77 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public boolean mostraAudioBool;
     public boolean mDownload;
 
+    private MediaBrowserCompat mMediaBrowser;
+
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
 
-    private BroadcastReceiver gpsBRec = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Implement UI change code here once notification is received
-            try {
-                Log.d(TAG, "BROADCAST_PREPARING_COMPLETED");
-                Log.d(TAG, "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
-                scroll_song_bar.setMax(intent.getIntExtra(MusicService.DATA_DURATION, 0));
-                scroll_song_bar.setEnabled(true);
-                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
-                if (sFragment != null)
-                    sFragment.dismiss();
-            }
-            catch (IllegalArgumentException e) {
-                Log.e(TAG, e.getLocalizedMessage(), e);
-            }
-        }
-    };
+//    private BroadcastReceiver gpsBRec = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Implement UI change code here once notification is received
+//            try {
+//                Log.d(TAG, "BROADCAST_PREPARING_COMPLETED");
+//                Log.d(TAG, "DURATION RECEIVED: " + intent.getIntExtra(MusicService.DATA_DURATION, 0));
+//                scroll_song_bar.setMax(intent.getIntExtra(MusicService.DATA_DURATION, 0));
+//                scroll_song_bar.setEnabled(true);
+//                SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
+//                if (sFragment != null)
+//                    sFragment.dismiss();
+//            }
+//            catch (IllegalArgumentException e) {
+//                Log.e(TAG, e.getLocalizedMessage(), e);
+//            }
+//        }
+//    };
 
-    private BroadcastReceiver stopBRec = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Implement UI change code here once notification is received
-            Log.d(TAG, "BROADCAST_PLAYBACK_COMPLETED");
-            scroll_song_bar.setProgress(0);
-            scroll_song_bar.setEnabled(false);
-            showPlaying(false);
-            mediaPlayerState = MP_State.Stopped;
-        }
-    };
+//    private BroadcastReceiver stopBRec = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Implement UI change code here once notification is received
+//            Log.d(TAG, "BROADCAST_PLAYBACK_COMPLETED");
+//            scroll_song_bar.setProgress(0);
+//            scroll_song_bar.setEnabled(false);
+//            showPlaying(false);
+//            mediaPlayerState = MP_State.Stopped;
+//        }
+//    };
 
-    private BroadcastReceiver positionBRecc = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Implement UI change code here once notification is received
-            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
-            try {
-                Log.d(TAG, "POSITION RECEIVED: " + intent.getIntExtra(MusicService.DATA_POSITION, 0));
-                scroll_song_bar.setProgress(intent.getIntExtra(MusicService.DATA_POSITION, 0));
-                scroll_song_bar.setEnabled(true);
-            }
-            catch (IllegalArgumentException e) {
-                Log.e(TAG, e.getLocalizedMessage(), e);
-            }
-        }
-    };
+//    private BroadcastReceiver positionBRecc = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Implement UI change code here once notification is received
+//            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
+//            try {
+//                Log.d(TAG, "POSITION RECEIVED: " + intent.getIntExtra(MusicService.DATA_POSITION, 0));
+//                scroll_song_bar.setProgress(intent.getIntExtra(MusicService.DATA_POSITION, 0));
+//                scroll_song_bar.setEnabled(true);
+//            }
+//            catch (IllegalArgumentException e) {
+//                Log.e(TAG, e.getLocalizedMessage(), e);
+//            }
+//        }
+//    };
 
-    private BroadcastReceiver playBRec = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Implement UI change code here once notification is received
-            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
-            showPlaying(true);
-            mediaPlayerState = MP_State.Started;
-            scroll_song_bar.setEnabled(true);
-        }
-    };
+//    private BroadcastReceiver playBRec = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Implement UI change code here once notification is received
+//            Log.d(TAG, "BROADCAST_PLAYER_POSITION");
+//            showPlaying(true);
+//            mediaPlayerState = MP_State.Started;
+//            scroll_song_bar.setEnabled(true);
+//        }
+//    };
 
-    private BroadcastReceiver pauseBRec = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Implement UI change code here once notification is received
-            Log.d(TAG, "BROADCAST_PLAYBACK_PAUSED");
-            showPlaying(false);
-            scroll_song_bar.setEnabled(true);
-        }
-    };
+//    private BroadcastReceiver pauseBRec = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Implement UI change code here once notification is received
+//            Log.d(TAG, "BROADCAST_PLAYBACK_PAUSED");
+//            showPlaying(false);
+//            scroll_song_bar.setEnabled(true);
+//        }
+//    };
 
     private BroadcastReceiver downloadPosBRec = new BroadcastReceiver() {
         @Override
@@ -429,55 +449,75 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @OnClick(R.id.play_song)
     public void playPause() {
-        if (isPlaying()) {
-            showPlaying(false);
-            Intent i = new Intent(getApplicationContext(),MusicService.class);
-            i.setAction(MusicService.ACTION_PAUSE);
-//            startService(i);
-            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
+//        if (isPlaying()) {
+//            showPlaying(false);
+//            Intent i = new Intent(getApplicationContext(),MusicService.class);
+//            i.setAction(MusicService.ACTION_PAUSE);
+////            startService(i);
+//            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
+//        }
+//        else {
+        //controlla la presenza di una connessione internet
+        if (!Utility.isOnline(PaginaRenderActivity.this)
+                && !localFile) {
+            Snackbar.make(findViewById(android.R.id.content)
+                    , R.string.no_connection
+                    , Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
         }
-        else {
-            //controlla la presenza di una connessione internet
-            if (!Utility.isOnline(PaginaRenderActivity.this)
-                    && !localFile) {
-                Snackbar.make(findViewById(android.R.id.content)
-                        , R.string.no_connection
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
 
-            showPlaying(true);
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        PlaybackStateCompat stateObj = controller.getPlaybackState();
+        final int state = stateObj == null ?
+                PlaybackStateCompat.STATE_NONE : stateObj.getState();
+        Log.d(TAG, "playPause: Button pressed, in state " + state);
 
-            Log.d(TAG, "mediaPlayerState" + mediaPlayerState);
-
-            if (mediaPlayerState == MP_State.Stopped) {
-                // Send an intent with the URL of the song to play. This is expected by
-                // MusicService.
-                mediaPlayerState = MP_State.Started;
-                Intent i = new Intent(getApplicationContext(), MusicService.class);
-                i.setAction(MusicService.ACTION_URL);
-                Uri uri = Uri.parse(playUrl);
-                i.setData(uri);
-                i.putExtra(MusicService.DATA_LOCAL, localFile);
-                i.putExtra(MusicService.DATA_COLOR, getThemeUtils().primaryColorDark());
-                i.putExtra(MusicService.DATA_TITLE, titoloCanto);
-//                startService(i);
-                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "BUFFERING")
-                        .content(R.string.wait)
-                        .showProgress()
-                        .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show()
-                        .setCancelable(true);
-            } else {
-                Intent i = new Intent(getApplicationContext(), MusicService.class);
-                i.setAction(MusicService.ACTION_PLAY);
-//                startService(i);
-                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-            }
+        if (state == PlaybackStateCompat.STATE_STOPPED ||
+                state == PlaybackStateCompat.STATE_NONE) {
+            playUri(Uri.parse(playUrl));
+            playMedia();
+        } else if (state == PlaybackStateCompat.STATE_PLAYING ||
+                state == PlaybackStateCompat.STATE_BUFFERING ||
+                state == PlaybackStateCompat.STATE_CONNECTING) {
+            pauseMedia();
+        } else if (state == PlaybackStateCompat.STATE_PAUSED) {
+            playMedia();
         }
+
+//                .playFromMediaId(item.getMediaId(), null);
+
+//            showPlaying(true);
+//
+//            Log.d(TAG, "mediaPlayerState" + mediaPlayerState);
+//
+//            if (mediaPlayerState == MP_State.Stopped) {
+//                // Send an intent with the URL of the song to play. This is expected by
+//                // MusicService.
+//                mediaPlayerState = MP_State.Started;
+//                Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                i.setAction(MusicService.ACTION_URL);
+//                Uri uri = Uri.parse(playUrl);
+//                i.setData(uri);
+//                i.putExtra(MusicService.DATA_LOCAL, localFile);
+//                i.putExtra(MusicService.DATA_COLOR, getThemeUtils().primaryColorDark());
+//                i.putExtra(MusicService.DATA_TITLE, titoloCanto);
+////                startService(i);
+//                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
+//                new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "BUFFERING")
+//                        .content(R.string.wait)
+//                        .showProgress()
+//                        .progressIndeterminate(true)
+//                        .progressMax(0)
+//                        .show()
+//                        .setCancelable(true);
+//            } else {
+//                Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                i.setAction(MusicService.ACTION_PLAY);
+////                startService(i);
+//                ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
+//            }
+//        }
     }
 
     @OnClick(R.id.play_scroll)
@@ -500,6 +540,98 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 , !personalUrl.equals(""));
         bottomSheetDialog.show(getSupportFragmentManager(), null);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        if (mMediaBrowser != null) {
+            mMediaBrowser.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mMediaBrowser != null) {
+            mMediaBrowser.disconnect();
+        }
+        if (MediaControllerCompat.getMediaController(this) != null) {
+            MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback);
+        }
+    }
+
+    private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =
+            new MediaBrowserCompat.ConnectionCallback() {
+                @Override
+                public void onConnected() {
+                    Log.d(TAG, "onConnected: a");
+                    try {
+                        //                        connectToSession(mMediaBrowser.getSessionToken());
+                        MediaControllerCompat mediaController =
+                                new MediaControllerCompat(
+                                        PaginaRenderActivity.this, mMediaBrowser.getSessionToken());
+                        MediaControllerCompat.setMediaController(PaginaRenderActivity.this, mediaController);
+                        mediaController.registerCallback(mMediaControllerCallback);
+                    } catch (RemoteException e) {
+//            LogHelper.e("PaginaRenderActivity", e, "could not connect media controller");
+                        Log.e(TAG, "onConnected: could not connect media controller", e);
+                        //                        hidePlaybackControls();
+                    }
+                }
+            };
+
+  // Callback that ensures that we are showing the controls
+  private final MediaControllerCompat.Callback mMediaControllerCallback =
+      new MediaControllerCompat.Callback() {
+        @Override
+        public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+          Log.d(TAG, "onPlaybackStateChanged: a " + state.getState());
+          mLastPlaybackState = state;
+          switch (state.getState()) {
+            case PlaybackStateCompat.STATE_PAUSED:
+              stopSeekbarUpdate();
+              showPlaying(false);
+              scroll_song_bar.setEnabled(true);
+              break;
+            case PlaybackStateCompat.STATE_STOPPED:
+              stopSeekbarUpdate();
+              scroll_song_bar.setProgress(0);
+              scroll_song_bar.setEnabled(false);
+              showPlaying(false);
+              break;
+            case PlaybackStateCompat.STATE_ERROR:
+              stopSeekbarUpdate();
+              scroll_song_bar.setProgress(0);
+              scroll_song_bar.setEnabled(false);
+              showPlaying(false);
+              Log.e(TAG, "onPlaybackStateChanged: " + state.getErrorMessage());
+              Snackbar.make(
+                      findViewById(android.R.id.content),
+                      state.getErrorMessage(),
+                      Snackbar.LENGTH_SHORT)
+                  .show();
+              break;
+            case PlaybackStateCompat.STATE_PLAYING:
+              scheduleSeekbarUpdate();
+              showPlaying(true);
+              scroll_song_bar.setEnabled(true);
+              break;
+          }
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadataCompat metadata) {
+          Log.d(TAG, "onMetadataChanged: ");
+          int duration = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+          //                    mEnd.setText(DateUtils.formatElapsedTime(duration/1000));
+          scroll_song_bar.setMax(duration);
+          scroll_song_bar.setEnabled(true);
+          SimpleDialogFragment sFragment =
+              SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
+          if (sFragment != null) sFragment.dismiss();
+        }
+      };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -616,14 +748,14 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.d(TAG, "newValue: " + progress);
-                if (fromUser) {
-                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-                    i.setAction(MusicService.ACTION_SEEK);
-                    Uri uri = Uri.parse(String.valueOf(progress));
-                    i.setData(uri);
-//                    startService(i);
-                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-                }
+//                if (fromUser) {
+//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
+//                    i.setAction(MusicService.ACTION_SEEK);
+//                    Uri uri = Uri.parse(String.valueOf(progress));
+//                    i.setData(uri);
+////                    startService(i);
+//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
+//                }
                 String time = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(progress),
                         TimeUnit.MILLISECONDS.toSeconds(progress) -
@@ -633,10 +765,15 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                stopSeekbarUpdate();
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                MediaControllerCompat.getMediaController(PaginaRenderActivity.this).getTransportControls().seekTo(seekBar.getProgress());
+                scheduleSeekbarUpdate();
+            }
         });
 
         scroll_speed_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -683,12 +820,19 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
-//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
-//        if (sFragment != null)
-//            sFragment.setmCallback(PaginaRenderActivity.this);
-//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
-//        if (sFragment != null)
-//            sFragment.setmCallback(PaginaRenderActivity.this);
+    //        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
+    //        if (sFragment != null)
+    //            sFragment.setmCallback(PaginaRenderActivity.this);
+    //        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
+    //        if (sFragment != null)
+    //            sFragment.setmCallback(PaginaRenderActivity.this);
+
+    // Connect a media browser just to get the media session token. There are other ways
+    // this can be done, for example by sharing the session token directly.
+    Log.i(TAG, "onCreate: 1");
+        mMediaBrowser = new MediaBrowserCompat(this,
+                new ComponentName(this, it.cammino.risuscito.services.MusicService.class), mConnectionCallback, null);
+        Log.i(TAG, "onCreate: 2");
 
     }
 
@@ -1032,16 +1176,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
 
         //registra un receiver per ricevere la notifica di preparazione della registrazione
-        registerReceiver(gpsBRec, new IntentFilter(
-                MusicService.BROADCAST_PREPARING_COMPLETED));
-        registerReceiver(stopBRec, new IntentFilter(
-                MusicService.BROADCAST_PLAYBACK_COMPLETED));
-        registerReceiver(positionBRecc, new IntentFilter(
-                MusicService.BROADCAST_PLAYER_POSITION));
-        registerReceiver(playBRec, new IntentFilter(
-                MusicService.BROADCAST_PLAYER_STARTED));
-        registerReceiver(pauseBRec, new IntentFilter(
-                MusicService.BROADCAST_PLAYBACK_PAUSED));
+//        registerReceiver(gpsBRec, new IntentFilter(
+//                MusicService.BROADCAST_PREPARING_COMPLETED));
+//        registerReceiver(stopBRec, new IntentFilter(
+//                MusicService.BROADCAST_PLAYBACK_COMPLETED));
+//        registerReceiver(positionBRecc, new IntentFilter(
+//                MusicService.BROADCAST_PLAYER_POSITION));
+//        registerReceiver(playBRec, new IntentFilter(
+//                MusicService.BROADCAST_PLAYER_STARTED));
+//        registerReceiver(pauseBRec, new IntentFilter(
+//                MusicService.BROADCAST_PLAYBACK_PAUSED));
         registerReceiver(downloadPosBRec, new IntentFilter(
                 DownloadService.BROADCAST_DOWNLOAD_PROGRESS));
         registerReceiver(downloadCompletedBRec, new IntentFilter(
@@ -1063,11 +1207,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
         try {
-            unregisterReceiver(gpsBRec);
-            unregisterReceiver(stopBRec);
-            unregisterReceiver(positionBRecc);
-            unregisterReceiver(playBRec);
-            unregisterReceiver(pauseBRec);
+//            unregisterReceiver(gpsBRec);
+//            unregisterReceiver(stopBRec);
+//            unregisterReceiver(positionBRecc);
+//            unregisterReceiver(playBRec);
+//            unregisterReceiver(pauseBRec);
             unregisterReceiver(downloadPosBRec);
             unregisterReceiver(downloadCompletedBRec);
             unregisterReceiver(downloadErrorBRec);
@@ -1078,24 +1222,25 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             Log.e(TAG, e.getLocalizedMessage(), e);
         }
         saveZoom();
-        Log.d(TAG, "onDestroy: isFinishing " + isFinishing());
-        Log.d(TAG, "onDestroy: mediaPlayerState " + mediaPlayerState);
-        if (isFinishing() && mediaPlayerState != MP_State.Stopped) {
-            Intent i = new Intent(getApplicationContext(), MusicService.class);
-            stopService(i);
+//        Log.d(TAG, "onDestroy: isFinishing " + isFinishing());
+//        Log.d(TAG, "onDestroy: mediaPlayerState " + mediaPlayerState);
+//        if (isFinishing() && mediaPlayerState != MP_State.Stopped) {
+//            Intent i = new Intent(getApplicationContext(), MusicService.class);
+//            stopService(i);
 //            i.setAction(MusicService.ACTION_STOP);
 //            startService(i);
 //            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-        }
+//        }
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+        stopSeekbarUpdate();
+        mExecutorService.shutdown();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putSerializable("mediaPlayerState", mediaPlayerState);
         outState.putBoolean("playSelected", isPlaying());
         outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
@@ -1487,7 +1632,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
     private void checkExternalFilePermissions() {
-    Log.d(TAG, "checkExternalFilePermissions: ");
+        Log.d(TAG, "checkExternalFilePermissions: ");
         // Here, thisActivity is the current activity
 //        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
 //                Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -1984,5 +2129,76 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
                             }
                         }).start();
+    }
+
+    @Override
+    public MediaBrowserCompat getMediaBrowser() {
+        return mMediaBrowser;
+    }
+
+    private void playMedia() {
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().play();
+        }
+    }
+
+    private void pauseMedia() {
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().pause();
+        }
+    }
+
+    private void playUri(Uri uri) {
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().playFromUri(uri, null);
+        }
+    }
+
+    private final Runnable mUpdateProgressTask = new Runnable() {
+        @Override
+        public void run() {
+            updateProgress();
+        }
+    };
+
+    private void scheduleSeekbarUpdate() {
+        stopSeekbarUpdate();
+        if (!mExecutorService.isShutdown()) {
+            mScheduleFuture = mExecutorService.scheduleAtFixedRate(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            mHandler.post(mUpdateProgressTask);
+                        }
+                    }, PROGRESS_UPDATE_INITIAL_INTERVAL,
+                    PROGRESS_UPDATE_INTERNAL, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void stopSeekbarUpdate() {
+        if (mScheduleFuture != null) {
+            mScheduleFuture.cancel(false);
+        }
+    }
+
+    private void updateProgress() {
+        if (mLastPlaybackState == null) {
+            return;
+        }
+        long currentPosition = mLastPlaybackState.getPosition();
+        if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+            // Calculate the elapsed time between the last position update and now and unless
+            // paused, we can assume (delta * speed) + current position is approximately the
+            // latest position. This ensure that we do not repeatedly call the getPlaybackState()
+            // on MediaControllerCompat.
+            long timeDelta = SystemClock.elapsedRealtime() -
+                    mLastPlaybackState.getLastPositionUpdateTime();
+            currentPosition += (int) timeDelta * mLastPlaybackState.getPlaybackSpeed();
+        }
+        scroll_song_bar.setEnabled(true);
+        scroll_song_bar.setProgress((int) currentPosition);
     }
 }
