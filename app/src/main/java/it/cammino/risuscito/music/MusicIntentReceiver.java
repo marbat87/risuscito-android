@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import it.cammino.risuscito.PaginaRenderActivity;
-
 /**
  * Receives broadcasted intents. In particular, we are interested in the
  * android.media.AUDIO_BECOMING_NOISY and android.intent.action.MEDIA_BUTTON intents, which is

@@ -23,7 +23,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.List;
 import it.cammino.risuscito.VoiceSearchParams;
 import it.cammino.risuscito.model.MusicProvider;
 
-import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
 import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
 
 /**

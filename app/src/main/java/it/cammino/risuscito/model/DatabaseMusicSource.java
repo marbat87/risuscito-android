@@ -19,26 +19,14 @@ package it.cammino.risuscito.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import it.cammino.risuscito.DatabaseCanti;
-import it.cammino.risuscito.ListaPersonalizzata;
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.utils.LogHelper;
 
 /**
  * Utility class to get a list of MusicTrack's based on a server-side JSON
