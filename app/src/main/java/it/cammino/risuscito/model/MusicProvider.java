@@ -1,21 +1,6 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package it.cammino.risuscito.model;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,6 +8,7 @@ import android.os.AsyncTask;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.utils.LogHelper;
 import it.cammino.risuscito.utils.MediaIDHelper;
 
 import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
@@ -48,7 +33,8 @@ import static it.cammino.risuscito.utils.MediaIDHelper.createMediaID;
  */
 public class MusicProvider {
 
-    private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
+//    private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
+    private final String TAG = getClass().getCanonicalName();
 
     private MusicProviderSource mSource;
 
@@ -68,9 +54,14 @@ public class MusicProvider {
         void onMusicCatalogReady(boolean success);
     }
 
-    public MusicProvider() {
-        this(new RemoteJSONSource());
+//    public MusicProvider() {
+//        this(new RemoteJSONSource());
+//    }
+
+    public MusicProvider(Context context) {
+        this(new DatabaseMusicSource(context));
     }
+
     public MusicProvider(MusicProviderSource source) {
         mSource = source;
         mMusicListByGenre = new ConcurrentHashMap<>();
@@ -213,7 +204,8 @@ public class MusicProvider {
      * for future reference, keying tracks by musicId and grouping by genre.
      */
     public void retrieveMediaAsync(final Callback callback) {
-        LogHelper.d(TAG, "retrieveMediaAsync called");
+//        LogHelper.d(TAG, "retrieveMediaAsync called");
+        Log.d(TAG, "retrieveMediaAsync: retrieveMediaAsync called");
         if (mCurrentState == State.INITIALIZED) {
             if (callback != null) {
                 // Nothing to do, execute callback immediately
@@ -259,10 +251,12 @@ public class MusicProvider {
             if (mCurrentState == State.NON_INITIALIZED) {
                 mCurrentState = State.INITIALIZING;
 
+                Log.d(TAG, "retrieveMedia: ");
                 Iterator<MediaMetadataCompat> tracks = mSource.iterator();
                 while (tracks.hasNext()) {
                     MediaMetadataCompat item = tracks.next();
                     String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                    Log.d(TAG, "retrieveMedia: " + musicId);
                     mMusicListById.put(musicId, new MutableMediaMetadata(musicId, item));
                 }
                 buildListsByGenre();
@@ -300,7 +294,8 @@ public class MusicProvider {
             }
 
         } else {
-            LogHelper.w(TAG, "Skipping unmatched mediaId: ", mediaId);
+//            LogHelper.w(TAG, "Skipping unmatched mediaId: ", mediaId);
+            Log.w(TAG, "getChildren: Skipping unmatched mediaId: " + mediaId);
         }
         return mediaItems;
     }

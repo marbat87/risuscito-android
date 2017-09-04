@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.content.res.XmlResourceParser;
 import android.os.Process;
 import android.util.Base64;
+import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -28,8 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import it.cammino.risuscito.utils.LogHelper;
 
 /**
  * Validates that the calling package is authorized to browse a
@@ -44,8 +43,8 @@ import it.cammino.risuscito.utils.LogHelper;
  * paste into allowed_media_browser_callers.xml. Spaces and newlines are ignored.
  */
 public class PackageValidator {
-    private static final String TAG = LogHelper.makeLogTag(PackageValidator.class);
-
+//    private static final String TAG = LogHelper.makeLogTag(PackageValidator.class);
+    private final String TAG = getClass().getCanonicalName();
     /**
      * Map allowed callers' certificate keys to the expected caller information.
      *
@@ -77,15 +76,19 @@ public class PackageValidator {
                         infos = new ArrayList<>();
                         validCertificates.put(certificate, infos);
                     }
-                    LogHelper.v(TAG, "Adding allowed caller: ", info.name,
-                        " package=", info.packageName, " release=", info.release,
-                        " certificate=", certificate);
+//                    LogHelper.v(TAG, "Adding allowed caller: ", info.name,
+//                        " package=", info.packageName, " release=", info.release,
+//                        " certificate=", certificate);
+                    Log.d(TAG, "readValidCertificates: " + "Adding allowed caller: " + info.name +
+                    " package=" + info.packageName + " release=" + info.release +
+                            " certificate=" + certificate);
                     infos.add(info);
                 }
                 eventType = parser.next();
             }
         } catch (XmlPullParserException | IOException e) {
-            LogHelper.e(TAG, e, "Could not read allowed callers from XML.");
+//            LogHelper.e(TAG, e, "Could not read allowed callers from XML.");
+            Log.e(TAG, "readValidCertificates: Could not read allowed callers from XML.", e);
         }
         return validCertificates;
     }
@@ -109,7 +112,8 @@ public class PackageValidator {
             return false;
         }
         if (packageInfo.signatures.length != 1) {
-            LogHelper.w(TAG, "Caller does not have exactly one signature certificate!");
+//            LogHelper.w(TAG, "Caller does not have exactly one signature certificate!");
+            Log.w(TAG, "isCallerAllowed: Caller does not have exactly one signature certificate!");
             return false;
         }
         String signature = Base64.encodeToString(
@@ -118,11 +122,16 @@ public class PackageValidator {
         // Test for known signatures:
         ArrayList<CallerInfo> validCallers = mValidCertificates.get(signature);
         if (validCallers == null) {
-            LogHelper.v(TAG, "Signature for caller ", callingPackage, " is not valid: \n"
-                , signature);
+//            LogHelper.v(TAG, "Signature for caller ", callingPackage, " is not valid: \n"
+//                    , signature);
+            Log.d(TAG, "isCallerAllowed: Signature for caller " + callingPackage + " is not valid: \n" +
+                    signature);
             if (mValidCertificates.isEmpty()) {
-                LogHelper.w(TAG, "The list of valid certificates is empty. Either your file ",
-                        "res/xml/allowed_media_browser_callers.xml is empty or there was an error ",
+//                LogHelper.w(TAG, "The list of valid certificates is empty. Either your file ",
+//                        "res/xml/allowed_media_browser_callers.xml is empty or there was an error ",
+//                        "while reading it. Check previous log messages.");
+                Log.w(TAG, "isCallerAllowed: The list of valid certificates is empty. Either your file " +
+                        "res/xml/allowed_media_browser_callers.xml is empty or there was an error " +
                         "while reading it. Check previous log messages.");
             }
             return false;
@@ -132,17 +141,23 @@ public class PackageValidator {
         StringBuffer expectedPackages = new StringBuffer();
         for (CallerInfo info: validCallers) {
             if (callingPackage.equals(info.packageName)) {
-                LogHelper.v(TAG, "Valid caller: ", info.name, "  package=", info.packageName,
-                    " release=", info.release);
+//                LogHelper.v(TAG, "Valid caller: ", info.name, "  package=", info.packageName,
+//                    " release=", info.release);
+                Log.d(TAG, "isCallerAllowed: Valid caller: " + info.name + "  package=" + info.packageName +
+                        " release=" + info.release);
                 return true;
             }
             expectedPackages.append(info.packageName).append(' ');
         }
 
-        LogHelper.i(TAG, "Caller has a valid certificate, but its package doesn't match any ",
-            "expected package for the given certificate. Caller's package is ", callingPackage,
-            ". Expected packages as defined in res/xml/allowed_media_browser_callers.xml are (",
-            expectedPackages, "). This caller's certificate is: \n", signature);
+//        LogHelper.i(TAG, "Caller has a valid certificate, but its package doesn't match any ",
+//            "expected package for the given certificate. Caller's package is ", callingPackage,
+//            ". Expected packages as defined in res/xml/allowed_media_browser_callers.xml are (",
+//            expectedPackages, "). This caller's certificate is: \n", signature);
+        Log.i(TAG, "isCallerAllowed: Caller has a valid certificate, but its package doesn't match any " +
+                "expected package for the given certificate. Caller's package is " + callingPackage +
+                " Expected packages as defined in res/xml/allowed_media_browser_callers.xml are (" +
+                expectedPackages + "). This caller's certificate is: " + signature);
 
         return false;
     }
@@ -174,7 +189,8 @@ public class PackageValidator {
             final PackageManager pm = context.getPackageManager();
             return pm.getPackageInfo(pkgName, PackageManager.GET_SIGNATURES);
         } catch (PackageManager.NameNotFoundException e) {
-            LogHelper.w(TAG, e, "Package manager can't find package: ", pkgName);
+//            LogHelper.w(TAG, e, "Package manager can't find package: ", pkgName);
+            Log.w(TAG, "getPackageInfo: Package manager can't find package: " + pkgName);
         }
         return null;
     }

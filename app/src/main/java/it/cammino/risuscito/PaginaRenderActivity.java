@@ -475,8 +475,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         if (state == PlaybackStateCompat.STATE_STOPPED ||
                 state == PlaybackStateCompat.STATE_NONE) {
-            playUri(Uri.parse(playUrl));
-            playMedia();
+//            playUri(Uri.parse(playUrl));
+            playFromId(String.valueOf(idCanto));
+//            playMedia();
         } else if (state == PlaybackStateCompat.STATE_PLAYING ||
                 state == PlaybackStateCompat.STATE_BUFFERING ||
                 state == PlaybackStateCompat.STATE_CONNECTING) {
@@ -558,6 +559,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback);
+            MediaControllerCompat.getMediaController(PaginaRenderActivity.this).getTransportControls().stop();
         }
     }
 
@@ -2150,10 +2152,17 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
 
-    private void playUri(Uri uri) {
+    private void playFromId(String id) {
+        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "BUFFERING")
+                        .content(R.string.wait)
+                        .showProgress()
+                        .progressIndeterminate(true)
+                        .progressMax(0)
+                        .show()
+                        .setCancelable(true);
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
-            controller.getTransportControls().playFromUri(uri, null);
+            controller.getTransportControls().playFromMediaId(id, null);
         }
     }
 
@@ -2189,6 +2198,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             return;
         }
         long currentPosition = mLastPlaybackState.getPosition();
+        Log.d(TAG, "updateProgress: " + currentPosition);
         if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
             // Calculate the elapsed time between the last position update and now and unless
             // paused, we can assume (delta * speed) + current position is approximately the

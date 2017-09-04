@@ -60,7 +60,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
     public static final String ACTION_PAUSE = "com.example.android.uamp.pause";
     public static final String ACTION_PLAY = "com.example.android.uamp.play";
     public static final String ACTION_PREV = "com.example.android.uamp.prev";
-    public static final String ACTION_NEXT = "com.example.android.uamp.next";
+    public static final String ACTION_REWIND = "com.example.android.uamp.rew";
+//    public static final String ACTION_NEXT = "com.example.android.uamp.next";
     public static final String ACTION_STOP_CASTING = "com.example.android.uamp.stop_cast";
 
     private final MusicService mService;
@@ -75,7 +76,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
     private final PendingIntent mPauseIntent;
     private final PendingIntent mPlayIntent;
-    private final PendingIntent mPreviousIntent;
+//    private final PendingIntent mPreviousIntent;
+    private final PendingIntent mRewindIntent;
 //    private final PendingIntent mNextIntent;
 
     private final PendingIntent mStopCastIntent;
@@ -100,8 +102,10 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
         mPlayIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
                 new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
-        mPreviousIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
-                new Intent(ACTION_PREV).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
+//        mPreviousIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
+//                new Intent(ACTION_PREV).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
+        mRewindIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
+                new Intent(ACTION_REWIND).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
 //        mNextIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
 //                new Intent(ACTION_NEXT).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
         mStopCastIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
@@ -128,10 +132,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
             if (notification != null) {
                 mController.registerCallback(mCb);
                 IntentFilter filter = new IntentFilter();
-                filter.addAction(ACTION_NEXT);
+//                filter.addAction(ACTION_NEXT);
                 filter.addAction(ACTION_PAUSE);
                 filter.addAction(ACTION_PLAY);
-                filter.addAction(ACTION_PREV);
+//                filter.addAction(ACTION_PREV);
+                filter.addAction(ACTION_REWIND);
                 filter.addAction(ACTION_STOP_CASTING);
                 mService.registerReceiver(this, filter);
 
@@ -170,11 +175,15 @@ public class MediaNotificationManager extends BroadcastReceiver {
             case ACTION_PLAY:
                 mTransportControls.play();
                 break;
-            case ACTION_NEXT:
-                mTransportControls.skipToNext();
-                break;
+//            case ACTION_NEXT:
+//                mTransportControls.skipToNext();
+//                break;
             case ACTION_PREV:
-                mTransportControls.skipToPrevious();
+//                mTransportControls.skipToPrevious();
+                mTransportControls.rewind();
+                break;
+            case ACTION_REWIND:
+                mTransportControls.rewind();
                 break;
             case ACTION_STOP_CASTING:
                 Intent i = new Intent(context, MusicService.class);
@@ -210,7 +219,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
         }
     }
 
-    private PendingIntent createContentIntent(MediaDescriptionCompat description) {
+//    private PendingIntent createContentIntent(MediaDescriptionCompat description) {
+    private PendingIntent createContentIntent() {
 //        Intent openUI = new Intent(mService, MusicPlayerActivity.class);
 //        openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        openUI.putExtra(MusicPlayerActivity.EXTRA_START_FULLSCREEN, true);
@@ -275,9 +285,10 @@ public class MediaNotificationManager extends BroadcastReceiver {
         int playPauseButtonPosition = 0;
 
         // If skip to previous action is enabled
-        if ((mPlaybackState.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
-            notificationBuilder.addAction(R.drawable.notification_restart,
-                        mService.getString(R.string.label_previous), mPreviousIntent);
+        if ((mPlaybackState.getActions() & PlaybackStateCompat.ACTION_REWIND) != 0) {
+//            notificationBuilder.addAction(R.drawable.notification_restart,
+//                        mService.getString(R.string.skip_prev), mPreviousIntent);
+            notificationBuilder.addAction(R.drawable.notification_restart, mService.getString(R.string.cast_rewind), mRewindIntent);
 
             // If there is a "skip to previous" button, the play/pause button will
             // be the second one. We need to keep track of it, because the MediaStyle notification
@@ -295,22 +306,25 @@ public class MediaNotificationManager extends BroadcastReceiver {
 //        }
 
         MediaDescriptionCompat description = mMetadata.getDescription();
+//
+//        String fetchArtUrl = null;
+//        Bitmap art = null;
+//        if (description.getIconUri() != null) {
+//            // This sample assumes the iconUri will be a valid URL formatted String, but
+//            // it can actually be any valid Android Uri formatted String.
+//            // async fetch the album art icon
+//            String artUrl = description.getIconUri().toString();
+//            art = AlbumArtCache.getInstance().getBigImage(artUrl);
+//            if (art == null) {
+//                fetchArtUrl = artUrl;
+//                // use a placeholder art while the remote art is being downloaded
+//                art = BitmapFactory.decodeResource(mService.getResources(),
+//                    R.drawable.ic_launcher_144dp);
+//            }
+//        }
 
-        String fetchArtUrl = null;
-        Bitmap art = null;
-        if (description.getIconUri() != null) {
-            // This sample assumes the iconUri will be a valid URL formatted String, but
-            // it can actually be any valid Android Uri formatted String.
-            // async fetch the album art icon
-            String artUrl = description.getIconUri().toString();
-            art = AlbumArtCache.getInstance().getBigImage(artUrl);
-            if (art == null) {
-                fetchArtUrl = artUrl;
-                // use a placeholder art while the remote art is being downloaded
-                art = BitmapFactory.decodeResource(mService.getResources(),
-                    R.drawable.ic_launcher_144dp);
-            }
-        }
+        Bitmap art = BitmapFactory.decodeResource(mService.getResources(),
+                R.drawable.ic_launcher_144dp);
 
         notificationBuilder
                 .setStyle(new MediaStyle()
@@ -321,7 +335,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 .setSmallIcon(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
-                .setContentIntent(createContentIntent(description))
+//                .setContentIntent(createContentIntent(description))
+                .setContentIntent(createContentIntent())
+//                .setContentTitle(description.getTitle())
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
                 .setLargeIcon(art);
@@ -338,9 +354,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
         }
 
         setNotificationPlaybackState(notificationBuilder);
-        if (fetchArtUrl != null) {
-            fetchBitmapFromURLAsync(fetchArtUrl, notificationBuilder);
-        }
+//        if (fetchArtUrl != null) {
+//            fetchBitmapFromURLAsync(fetchArtUrl, notificationBuilder);
+//        }
 
         return notificationBuilder.build();
     }
@@ -389,21 +405,21 @@ public class MediaNotificationManager extends BroadcastReceiver {
         builder.setOngoing(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING);
     }
 
-    private void fetchBitmapFromURLAsync(final String bitmapUrl,
-                                         final NotificationCompat.Builder builder) {
-        AlbumArtCache.getInstance().fetch(bitmapUrl, new AlbumArtCache.FetchListener() {
-            @Override
-            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                if (mMetadata != null && mMetadata.getDescription().getIconUri() != null &&
-                            mMetadata.getDescription().getIconUri().toString().equals(artUrl)) {
-                    // If the media is still the same, update the notification:
-                    LogHelper.d(TAG, "fetchBitmapFromURLAsync: set bitmap to ", artUrl);
-                    builder.setLargeIcon(bitmap);
-                    mNotificationManager.notify(NOTIFICATION_ID, builder.build());
-                }
-            }
-        });
-    }
+//    private void fetchBitmapFromURLAsync(final String bitmapUrl,
+//                                         final NotificationCompat.Builder builder) {
+//        AlbumArtCache.getInstance().fetch(bitmapUrl, new AlbumArtCache.FetchListener() {
+//            @Override
+//            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+//                if (mMetadata != null && mMetadata.getDescription().getIconUri() != null &&
+//                            mMetadata.getDescription().getIconUri().toString().equals(artUrl)) {
+//                    // If the media is still the same, update the notification:
+//                    LogHelper.d(TAG, "fetchBitmapFromURLAsync: set bitmap to ", artUrl);
+//                    builder.setLargeIcon(bitmap);
+//                    mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+//                }
+//            }
+//        });
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private void createChannel() {

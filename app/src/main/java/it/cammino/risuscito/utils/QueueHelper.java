@@ -23,6 +23,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,38 +47,58 @@ public class QueueHelper {
                                                                      MusicProvider musicProvider) {
 
         // extract the browsing hierarchy from the media ID:
-        String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
+//        String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
+//        Log.d(TAG, "getPlayingQueue: " + hierarchy.toString());
+//        Log.d(TAG, "getPlayingQueue: " + hierarchy.length);
+//
+//        if (hierarchy.length != 2) {
+////            LogHelper.e(TAG, "Could not build a playing queue for this mediaId: ", mediaId);
+//            Log.e(TAG, "getPlayingQueue: Could not build a playing queue for this mediaId: " + mediaId);
+//            return null;
+//        }
+//
+//        String categoryType = hierarchy[0];
+//        String categoryValue = hierarchy[1];
+////        LogHelper.d(TAG, "Creating playing queue for ", categoryType, ",  ", categoryValue);
+//
+//        Log.d(TAG, "getPlayingQueue: Creating playing queue for " + categoryType + ",  " + categoryValue);
+//
+//        Iterable<MediaMetadataCompat> tracks = null;
+//        // This sample only supports genre and by_search category types.
+//        if (categoryType.equals(MEDIA_ID_MUSICS_BY_GENRE)) {
+//            tracks = musicProvider.getMusicsByGenre(categoryValue);
+//        } else if (categoryType.equals(MEDIA_ID_MUSICS_BY_SEARCH)) {
+//            tracks = musicProvider.searchMusicBySongTitle(categoryValue);
+//        }
+//
+//        if (tracks == null) {
+////            LogHelper.e(TAG, "Unrecognized category type: ", categoryType, " for media ", mediaId);
+//            Log.e(TAG, "getPlayingQueue: Unrecognized category type: " + categoryType + " for media " + mediaId);
+//            return null;
+//        }
+//
+//        return convertToQueue(tracks, hierarchy[0], hierarchy[1]);
 
-        if (hierarchy.length != 2) {
-            LogHelper.e(TAG, "Could not build a playing queue for this mediaId: ", mediaId);
-            return null;
-        }
+        List<MediaSessionCompat.QueueItem> queue = new ArrayList<>();
 
-        String categoryType = hierarchy[0];
-        String categoryValue = hierarchy[1];
-        LogHelper.d(TAG, "Creating playing queue for ", categoryType, ",  ", categoryValue);
+        MediaMetadataCompat trackCopy = new MediaMetadataCompat.Builder(musicProvider.getMusic(mediaId))
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
+                .build();
 
-        Iterable<MediaMetadataCompat> tracks = null;
-        // This sample only supports genre and by_search category types.
-        if (categoryType.equals(MEDIA_ID_MUSICS_BY_GENRE)) {
-            tracks = musicProvider.getMusicsByGenre(categoryValue);
-        } else if (categoryType.equals(MEDIA_ID_MUSICS_BY_SEARCH)) {
-            tracks = musicProvider.searchMusicBySongTitle(categoryValue);
-        }
+        // We don't expect queues to change after created, so we use the item index as the
+        // queueId. Any other number unique in the queue would work.
+        MediaSessionCompat.QueueItem item = new MediaSessionCompat.QueueItem(
+                trackCopy.getDescription(), 1);
+        queue.add(item);
 
-        if (tracks == null) {
-            LogHelper.e(TAG, "Unrecognized category type: ", categoryType, " for media ", mediaId);
-            return null;
-        }
-
-        return convertToQueue(tracks, hierarchy[0], hierarchy[1]);
+        return queue;
     }
 
     public static List<MediaSessionCompat.QueueItem> getPlayingQueueFromSearch(String query,
                                                                                Bundle queryParams, MusicProvider musicProvider) {
 
         LogHelper.d(TAG, "Creating playing queue for musics from search: ", query,
-            " params=", queryParams);
+                " params=", queryParams);
 
         VoiceSearchParams params = new VoiceSearchParams(query, queryParams);
 
@@ -116,7 +137,7 @@ public class QueueHelper {
 
 
     public static int getMusicIndexOnQueue(Iterable<MediaSessionCompat.QueueItem> queue,
-             String mediaId) {
+                                           String mediaId) {
         int index = 0;
         for (MediaSessionCompat.QueueItem item : queue) {
             if (mediaId.equals(item.getDescription().getMediaId())) {
@@ -128,7 +149,7 @@ public class QueueHelper {
     }
 
     public static int getMusicIndexOnQueue(Iterable<MediaSessionCompat.QueueItem> queue,
-             long queueId) {
+                                           long queueId) {
         int index = 0;
         for (MediaSessionCompat.QueueItem item : queue) {
             if (queueId == item.getQueueId()) {

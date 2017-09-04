@@ -22,6 +22,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 
 import it.cammino.risuscito.model.MusicProvider;
 import it.cammino.risuscito.utils.LogHelper;
@@ -177,8 +178,9 @@ public class PlaybackManager implements Playback.Callback {
                 PlaybackStateCompat.ACTION_PLAY_PAUSE |
                         PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
                         PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
-                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT;
+//                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+//                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT;
+                        PlaybackStateCompat.ACTION_REWIND;
         if (mPlayback.isPlaying()) {
             actions |= PlaybackStateCompat.ACTION_PAUSE;
         } else {
@@ -272,6 +274,16 @@ public class PlaybackManager implements Playback.Callback {
                 mQueueManager.setRandomQueue();
             }
             handlePlayRequest();
+        }
+
+        @Override
+        public void onRewind() {
+            Log.d(TAG, "onRewind: ");
+            if (mQueueManager.getCurrentMusic() != null) {
+                mPlayback.seekTo(0);
+                mServiceCallback.onPlaybackStart();
+                mPlayback.play(mQueueManager.getCurrentMusic());
+            }
         }
 
         @Override

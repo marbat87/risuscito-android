@@ -47,7 +47,6 @@ import it.cammino.risuscito.model.MusicProvider;
 import it.cammino.risuscito.model.MusicProviderSource;
 import it.cammino.risuscito.services.MusicService;
 import it.cammino.risuscito.utils.LogHelper;
-import it.cammino.risuscito.utils.MediaIDHelper;
 
 import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
 
@@ -194,9 +193,10 @@ public final class LocalPlayback implements Playback {
         if (mediaHasChanged || mExoPlayer == null) {
             releaseResources(false); // release everything except the player
             MediaMetadataCompat track =
-                    mMusicProvider.getMusic(
-                            MediaIDHelper.extractMusicIDFromMediaID(
-                                    item.getDescription().getMediaId()));
+//                    mMusicProvider.getMusic(
+//                            MediaIDHelper.extractMusicIDFromMediaID(
+//                                    item.getDescription().getMediaId()));
+                    mMusicProvider.getMusic(item.getDescription().getMediaId());
 
             String source = track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
             if (source != null) {
