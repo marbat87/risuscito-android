@@ -59,7 +59,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
     private SQLiteDatabase db;
     private int idLista;
     private ListaPersonalizzata listaPersonalizzata;
-    //    public ActionMode mMode;
     private boolean mSwhitchMode;
     private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> posizioniList;
     private int longclickedPos, longClickedChild;
@@ -124,7 +123,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
-//        mMode = null;
         mSwhitchMode = false;
 
         idLista = getArguments().getInt("idLista");
@@ -154,7 +152,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                         scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                     else {
                         if (!mMainActivity.getMaterialCab().isActive()) {
-//                        if (mMode == null) {
                             Bundle bundle = new Bundle();
                             bundle.putInt("fromAdd", 0);
                             bundle.putInt("idLista", idLista);
@@ -169,7 +166,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                 else {
                     if (!mSwhitchMode)
                         if (mMainActivity.getMaterialCab().isActive()) {
-//                        if (mMode != null) {
                             posizioneDaCanc = Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString());
                             snackBarRimuoviCanto(v);
                         }
@@ -193,7 +189,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         };
 
         // Creating new adapter object
-//        cantoAdapter = new PosizioneRecyclerAdapter(getActivity(), posizioniList, click, longClick);
         cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
@@ -205,7 +200,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                 mMainActivity.getMaterialCab().finish();
             FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
             fab1.show();
-//            mLUtils.animateIn(fab1);
         }
 
         return rootView;
@@ -227,7 +221,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                     mMainActivity.getMaterialCab().finish();
                 FloatingActionButton fab1 = ((CustomLists) getParentFragment()).getFab();
                 fab1.show();
-//                mLUtils.animateIn(fab1);
             }
             else
                 isViewShown = false;
@@ -268,8 +261,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
-//        if (mMode != null)
-//            mMode.finish();
         if (mMainActivity.getMaterialCab().isActive())
             mMainActivity.getMaterialCab().finish();
         super.onDestroy();
@@ -279,7 +270,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         return new Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_TEXT, getTitlesList())
                 .setType("text/plain");
-//        return intent;
     }
 
     private Intent getSendIntent(Uri exportUri) {
@@ -347,41 +337,39 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
 
     private String getTitlesList() {
 
-//        Locale l = getActivity().getResources().getConfiguration().locale;
         Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         //titolo
-        result +=  "-- "  + listaPersonalizzata.getName().toUpperCase(l) + " --\n";
+        result.append("-- ").append(listaPersonalizzata.getName().toUpperCase(l)).append(" --\n");
 
         //tutti i canti
         for (int i = 0; i < listaPersonalizzata.getNumPosizioni(); i++) {
-            result += listaPersonalizzata.getNomePosizione(i).toUpperCase(l) + "\n";
+            result.append(listaPersonalizzata.getNomePosizione(i).toUpperCase(l)).append("\n");
             if (!listaPersonalizzata.getCantoPosizione(i).equalsIgnoreCase("")) {
                 for (PosizioneItem tempItem: posizioniList.get(i).second) {
-                    result += tempItem.getTitolo() + " - " + getString(R.string.page_contracted) + tempItem.getPagina();
-                    result += "\n";
+                    result.append(tempItem.getTitolo()).append(" - ").append(getString(R.string.page_contracted)).append(tempItem.getPagina());
+                    result.append("\n");
                 }
             }
-            else
-                result += ">> " + getString(R.string.to_be_chosen) + " <<";
+            else {
+                result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<");
+                result.append("\n");
+            }
             if (i < listaPersonalizzata.getNumPosizioni() - 1)
-                result += "\n";
+                result.append("\n");
         }
 
-        return result;
+        return result.toString();
 
     }
 
     public void snackBarRimuoviCanto(View view) {
-//        if (mMode != null)
-//            mMode.finish();
         if (mMainActivity.getMaterialCab().isActive())
             mMainActivity.getMaterialCab().finish();
         View parent = (View) view.getParent().getParent();
         longclickedPos = Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString());
         longClickedChild = Integer.valueOf(((TextView)view.findViewById(R.id.item_tag)).getText().toString());
-//        mMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ModeCallback());
         if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
             mMainActivity.getAppBarLayout().setExpanded(true, true);
         mMainActivity.getMaterialCab().start(ListaPersonalizzataFragment.this);
@@ -390,95 +378,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
     }
-
-//    private final class ModeCallback implements ActionMode.Callback {
-//
-//        @Override
-//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//            // Create the menu from the xml file
-//            posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(true);
-//            cantoAdapter.notifyItemChanged(longclickedPos);
-//            getActivity().getMenuInflater().inflate(R.menu.menu_actionmode_lists, menu);
-//            menu.findItem(R.id.action_switch_item).setIcon(
-//                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_shuffle)
-//                            .sizeDp(24)
-//                            .paddingDp(2)
-//                            .colorRes(R.color.icon_ative_black));
-//            menu.findItem(R.id.action_remove_item).setIcon(
-//                    new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_delete)
-//                            .sizeDp(24)
-//                            .paddingDp(2)
-//                            .colorRes(R.color.icon_ative_black));
-//            actionModeOk = false;
-//            return true;
-//        }
-//
-//        @Override
-//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//            // Here, you can checked selected items to adapt available actions
-//            return false;
-//        }
-//
-//        @Override
-//        public void onDestroyActionMode(ActionMode mode) {
-//            mSwhitchMode = false;
-//            TypedValue typedValue = new TypedValue();
-//            Resources.Theme theme = getActivity().getTheme();
-//            theme.resolveAttribute(R.attr.customSelector, typedValue, true);
-//            if (!actionModeOk) {
-//                posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
-//                cantoAdapter.notifyItemChanged(longclickedPos);
-//            }
-//            if (mode == mMode)
-//                mMode = null;
-//        }
-//
-//        @Override
-//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//            switch(item.getItemId()) {
-//                case R.id.action_remove_item:
-//                    db = listaCanti.getReadableDatabase();
-//                    ContentValues  values = new  ContentValues( );
-//                    cantoDaCanc = listaPersonalizzata.getCantoPosizione(posizioneDaCanc);
-//                    listaPersonalizzata.removeCanto(posizioneDaCanc);
-//                    values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
-//                    db.close();
-//                    updateLista();
-//                    cantoAdapter.notifyItemChanged(longclickedPos);
-//                    actionModeOk = true;
-//                    mode.finish();
-//                    Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
-//                            .setAction(R.string.cancel, new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View view) {
-//                                    db = listaCanti.getReadableDatabase();
-//                                    ContentValues  values = new  ContentValues( );
-//                                    listaPersonalizzata.addCanto(cantoDaCanc, posizioneDaCanc);
-//                                    values.put("lista", ListaPersonalizzata.serializeObject(listaPersonalizzata));
-//                                    db.update("LISTE_PERS", values, "_id = " + idLista, null);
-//                                    db.close();
-//                                    updateLista();
-//                                    cantoAdapter.notifyItemChanged(longclickedPos);
-//                                }
-//                            })
-//                            .setActionTextColor(getThemeUtils().accentColor())
-//                            .show();
-//                    mSwhitchMode = false;
-//                    break;
-//                case R.id.action_switch_item:
-//                    mSwhitchMode = true;
-//                    db = listaCanti.getReadableDatabase();
-//                    cantoDaCanc = listaPersonalizzata.getCantoPosizione(posizioneDaCanc);
-//                    mode.setTitle(R.string.switch_started);
-//                    Toast.makeText(getActivity()
-//                            , getResources().getString(R.string.switch_tooltip)
-//                            , Toast.LENGTH_SHORT).show();
-//                    break;
-//            }
-//            return true;
-//        }
-//    }
 
     private void scambioCanto(View v, int posizioneNew) {
 //        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
@@ -500,7 +399,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
             cantoAdapter.notifyItemChanged(longclickedPos);
             cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView)parent.findViewById(R.id.tag)).getText().toString()));
             actionModeOk = true;
-//            mMode.finish();
             mMainActivity.getMaterialCab().finish();
             Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
                     .show();
@@ -527,7 +425,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
         cantoAdapter.notifyItemChanged(longclickedPos);
         cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
         actionModeOk = true;
-//        mMode.finish();
         mMainActivity.getMaterialCab().finish();
         Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
                 .show();
@@ -550,10 +447,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white));
-//        cab.getToolbar().setNavigationIcon(new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_arrow_left)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .colorRes(android.R.color.white));
         actionModeOk = false;
         return true;
     }
@@ -607,9 +500,6 @@ public class ListaPersonalizzataFragment extends Fragment implements MaterialCab
     @Override
     public boolean onCabFinished(MaterialCab cab) {
         mSwhitchMode = false;
-//        TypedValue typedValue = new TypedValue();
-//        Resources.Theme theme = getActivity().getTheme();
-//        theme.resolveAttribute(R.attr.customSelector, typedValue, true);
         if (!actionModeOk) {
             try {
                 posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);

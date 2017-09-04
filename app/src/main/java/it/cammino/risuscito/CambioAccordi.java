@@ -49,7 +49,7 @@ public class CambioAccordi {
         if (canto == null)
             return "";
 
-        String primaNota = "";
+        StringBuilder primaNota = new StringBuilder();
 
         try {
             BufferedReader br = new BufferedReader(
@@ -78,7 +78,7 @@ public class CambioAccordi {
                         }
                         Log.d(TAG, "recuperaPrimoAccordo - inizio Nota: " + i);
                         Log.d(TAG, "recuperaPrimoAccordo - lunghezza stringa: " + line.length());
-                        primaNota += line.charAt(i);
+                        primaNota.append(line.charAt(i));
                         Log.d(TAG, "recuperaPrimoAccordo - prima lettera: " + primaNota);
                         for (int j = i+1; j < line.length(); j++) {
                             Log.d(TAG, "recuperaPrimoAccordo - DA ISP: " + line.charAt(j));
@@ -100,7 +100,7 @@ public class CambioAccordi {
                             }
                             if (myMatcher.find()) {
                                 Log.d(TAG, "recuperaPrimoAccordo - matchato OK");
-                                primaNota += line.charAt(j);
+                                primaNota.append(line.charAt(j));
                             }
                             else
                                 break;
@@ -112,7 +112,7 @@ public class CambioAccordi {
             }
             br.close();
             Log.d(TAG, "recuperaPrimoAccordo - risultato: " + primaNota);
-            return primaNota;
+            return primaNota.toString();
         }
         catch (Exception ex)
         {
