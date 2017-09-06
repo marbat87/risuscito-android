@@ -70,7 +70,7 @@ dependencies {
     implementation ('com.google.android.support:wearable:2.0.4') {
         exclude module: 'percent'
     }
-    implementation 'com.google.android.exoplayer:exoplayer:r2.4.1'
+    implementation 'com.google.android.exoplayer:exoplayer:r2.5.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
