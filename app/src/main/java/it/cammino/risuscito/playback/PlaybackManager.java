@@ -19,14 +19,13 @@ package it.cammino.risuscito.playback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import it.cammino.risuscito.model.MusicProvider;
+import java.util.logging.Logger;
+
 import it.cammino.risuscito.utils.LogHelper;
-import it.cammino.risuscito.utils.MediaIDHelper;
 
 
 /**
@@ -36,9 +35,9 @@ public class PlaybackManager implements Playback.Callback {
 
     private static final String TAG = LogHelper.makeLogTag(PlaybackManager.class);
     // Action to thumbs up a media item
-    private static final String CUSTOM_ACTION_THUMBS_UP = "com.example.android.uamp.THUMBS_UP";
+//    private static final String CUSTOM_ACTION_THUMBS_UP = "com.example.android.uamp.THUMBS_UP";
 
-    private MusicProvider mMusicProvider;
+//    private MusicProvider mMusicProvider;
     private QueueManager mQueueManager;
     //    private Resources mResources;
     private Playback mPlayback;
@@ -48,10 +47,9 @@ public class PlaybackManager implements Playback.Callback {
     //    public PlaybackManager(PlaybackServiceCallback serviceCallback, Resources resources,
 //                           MusicProvider musicProvider, QueueManager queueManager,
 //                           Playback playback) {
-    public PlaybackManager(PlaybackServiceCallback serviceCallback,
-                           MusicProvider musicProvider, QueueManager queueManager,
+    public PlaybackManager(PlaybackServiceCallback serviceCallback, QueueManager queueManager,
                            Playback playback) {
-        mMusicProvider = musicProvider;
+//        mMusicProvider = musicProvider;
         mServiceCallback = serviceCallback;
 //        mResources = resources;
         mQueueManager = queueManager;
@@ -146,6 +144,9 @@ public class PlaybackManager implements Playback.Callback {
 
         if (state == PlaybackStateCompat.STATE_PLAYING ||
                 state == PlaybackStateCompat.STATE_PAUSED) {
+            LocalPlayback mLocalPlayback = (LocalPlayback) mPlayback;
+            LogHelper.i(TAG, "duration: ", mLocalPlayback.getDuration());
+            mQueueManager.updateMetadata(mLocalPlayback.getDuration());
             mServiceCallback.onNotificationRequired();
         }
     }
@@ -339,25 +340,25 @@ public class PlaybackManager implements Playback.Callback {
             mQueueManager.updateMetadata();
         }
 
-        @Override
-        public void onCustomAction(@NonNull String action, Bundle extras) {
-            if (CUSTOM_ACTION_THUMBS_UP.equals(action)) {
-                LogHelper.i(TAG, "onCustomAction: favorite for current track");
-                MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
-                if (currentMusic != null) {
-                    String mediaId = currentMusic.getDescription().getMediaId();
-                    if (mediaId != null) {
-                        String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
-                        mMusicProvider.setFavorite(musicId, !mMusicProvider.isFavorite(musicId));
-                    }
-                }
-                // playback state needs to be updated because the "Favorite" icon on the
-                // custom action will change to reflect the new favorite state.
-                updatePlaybackState(null);
-            } else {
-                LogHelper.e(TAG, "Unsupported action: ", action);
-            }
-        }
+//        @Override
+//        public void onCustomAction(@NonNull String action, Bundle extras) {
+//            if (CUSTOM_ACTION_THUMBS_UP.equals(action)) {
+//                LogHelper.i(TAG, "onCustomAction: favorite for current track");
+//                MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
+//                if (currentMusic != null) {
+//                    String mediaId = currentMusic.getDescription().getMediaId();
+//                    if (mediaId != null) {
+//                        String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
+//                        mMusicProvider.setFavorite(musicId, !mMusicProvider.isFavorite(musicId));
+//                    }
+//                }
+//                // playback state needs to be updated because the "Favorite" icon on the
+//                // custom action will change to reflect the new favorite state.
+//                updatePlaybackState(null);
+//            } else {
+//                LogHelper.e(TAG, "Unsupported action: ", action);
+//            }
+//        }
 
         /**
          * Handle free and contextual searches.

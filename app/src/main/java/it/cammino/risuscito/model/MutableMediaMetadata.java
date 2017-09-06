@@ -26,9 +26,9 @@ import android.text.TextUtils;
 public class MutableMediaMetadata {
 
     public MediaMetadataCompat metadata;
-    public final String trackId;
+    private final String trackId;
 
-    public MutableMediaMetadata(String trackId, MediaMetadataCompat metadata) {
+    MutableMediaMetadata(String trackId, MediaMetadataCompat metadata) {
         this.metadata = metadata;
         this.trackId = trackId;
     }

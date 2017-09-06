@@ -51,7 +51,7 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
         , SimpleDialogFragment.SimpleCallback {
 
     //    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
-    private final String TAG = getClass().getCanonicalName();
+//    private final String TAG = getClass().getCanonicalName();
 
     // create boolean for fetching data
     private boolean isViewShown = true;

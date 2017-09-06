@@ -20,13 +20,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.media.MediaMetadataCompat;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import it.cammino.risuscito.DatabaseCanti;
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.utils.LogHelper;
 
 /**
  * Utility class to get a list of MusicTrack's based on a server-side JSON
@@ -34,15 +34,15 @@ import it.cammino.risuscito.R;
  */
 public class DatabaseMusicSource implements MusicProviderSource {
 
-    //    private static final String TAG = LogHelper.makeLogTag(DatabaseMusicSource.class);
-    private final String TAG = getClass().getCanonicalName();
+    private static final String TAG = LogHelper.makeLogTag(DatabaseMusicSource.class);
+//    private final String TAG = getClass().getCanonicalName();
 
 
-    Context mContext;
+    private Context mContext;
     private DatabaseCanti listaCanti;
 
 
-    public DatabaseMusicSource(Context context) {
+    DatabaseMusicSource(Context context) {
         this.mContext = context;
         listaCanti = new DatabaseCanti(mContext);
     }
@@ -56,14 +56,14 @@ public class DatabaseMusicSource implements MusicProviderSource {
                 "  LEFT JOIN LOCAL_LINKS B" +
                 "  ON (A._id = b._id)";
         Cursor cursor = db.rawQuery(query, null);
-        Log.d(TAG, "iterator: " + cursor.getCount());
+        LogHelper.d(TAG, "iterator: ", cursor.getCount());
 
         ArrayList<MediaMetadataCompat> tracks = new ArrayList<>();
         MediaMetadataCompat temp;
 
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
-            Log.d(TAG, "iterator: " + cursor.getInt(0) +  " / " + cursor.getString(1) + " / " + cursor.getString(2));
+            LogHelper.d(TAG, "iterator: ", cursor.getInt(0), " / ", cursor.getString(1), " / ", cursor.getString(2));
             temp =  new MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, cursor.getString(0))
                     .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, cursor.getString(2))

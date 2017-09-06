@@ -282,19 +282,21 @@ public class MediaNotificationManager extends BroadcastReceiver {
             createChannel();
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService, CHANNEL_ID);
-        int playPauseButtonPosition = 0;
+//        int playPauseButtonPosition = 0;
+        int[] buttonPositions = new int[]{0};
 
-        // If skip to previous action is enabled
+        // If rewind action is enabled
         if ((mPlaybackState.getActions() & PlaybackStateCompat.ACTION_REWIND) != 0) {
 //            notificationBuilder.addAction(R.drawable.notification_restart,
 //                        mService.getString(R.string.skip_prev), mPreviousIntent);
             notificationBuilder.addAction(R.drawable.notification_restart, mService.getString(R.string.cast_rewind), mRewindIntent);
 
-            // If there is a "skip to previous" button, the play/pause button will
+            // If there is a "rewind" button, the play/pause button will
             // be the second one. We need to keep track of it, because the MediaStyle notification
             // requires to specify the index of the buttons (actions) that should be visible
             // when in compact view.
-            playPauseButtonPosition = 1;
+//            playPauseButtonPosition = 1;
+            buttonPositions = new int[]{0,1};
         }
 
         addPlayPauseAction(notificationBuilder);
@@ -329,7 +331,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
         notificationBuilder
                 .setStyle(new MediaStyle()
                     .setShowActionsInCompactView(
-                            new int[]{playPauseButtonPosition})  // show only play/pause in compact view
+//                            new int[]{playPauseButtonPosition})  // show only play/pause in compact view
+                            buttonPositions)
                     .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
                 .setSmallIcon(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
@@ -337,7 +340,6 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 .setUsesChronometer(true)
 //                .setContentIntent(createContentIntent(description))
                 .setContentIntent(createContentIntent())
-//                .setContentTitle(description.getTitle())
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
                 .setLargeIcon(art);

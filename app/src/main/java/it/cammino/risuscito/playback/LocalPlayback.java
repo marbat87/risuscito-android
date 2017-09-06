@@ -15,6 +15,7 @@
  */
 package it.cammino.risuscito.playback;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,16 +23,18 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -43,6 +46,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.model.MusicProvider;
 import it.cammino.risuscito.model.MusicProviderSource;
 import it.cammino.risuscito.services.MusicService;
@@ -144,15 +148,15 @@ public final class LocalPlayback implements Playback {
                     : PlaybackStateCompat.STATE_NONE;
         }
         switch (mExoPlayer.getPlaybackState()) {
-            case ExoPlayer.STATE_IDLE:
+            case Player.STATE_IDLE:
                 return PlaybackStateCompat.STATE_PAUSED;
-            case ExoPlayer.STATE_BUFFERING:
+            case Player.STATE_BUFFERING:
                 return PlaybackStateCompat.STATE_BUFFERING;
-            case ExoPlayer.STATE_READY:
+            case Player.STATE_READY:
                 return mExoPlayer.getPlayWhenReady()
                         ? PlaybackStateCompat.STATE_PLAYING
                         : PlaybackStateCompat.STATE_PAUSED;
-            case ExoPlayer.STATE_ENDED:
+            case Player.STATE_ENDED:
                 return PlaybackStateCompat.STATE_PAUSED;
             default:
                 return PlaybackStateCompat.STATE_NONE;
@@ -211,7 +215,8 @@ public final class LocalPlayback implements Playback {
                 mExoPlayer.addListener(mEventListener);
             }
 
-            mExoPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//            mExoPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            setStreamType();
 
             // Produces DataSource instances through which media data is loaded.
             DataSource.Factory dataSourceFactory =
@@ -324,6 +329,14 @@ public final class LocalPlayback implements Playback {
         }
     }
 
+    public long getDuration() {
+        if (mExoPlayer != null && mExoPlayer.getPlaybackState() == Player.STATE_READY ) {
+            return mExoPlayer.getDuration();
+        }
+        else
+            return 0;
+    }
+
     private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
@@ -393,7 +406,7 @@ public final class LocalPlayback implements Playback {
         }
     }
 
-    private final class ExoPlayerEventListener implements ExoPlayer.EventListener {
+    private final class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
             // Nothing to do.
@@ -413,20 +426,25 @@ public final class LocalPlayback implements Playback {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             switch (playbackState) {
-                case ExoPlayer.STATE_IDLE:
-                case ExoPlayer.STATE_BUFFERING:
-                case ExoPlayer.STATE_READY:
+                case Player.STATE_IDLE:
+                case Player.STATE_BUFFERING:
+                case Player.STATE_READY:
                     if (mCallback != null) {
                         mCallback.onPlaybackStatusChanged(getState());
                     }
                     break;
-                case ExoPlayer.STATE_ENDED:
+                case Player.STATE_ENDED:
                     // The media player finished playing the current song.
                     if (mCallback != null) {
                         mCallback.onCompletion();
                     }
                     break;
             }
+        }
+
+        @Override
+        public void onRepeatModeChanged(int repeatMode) {
+            // Nothing to do.
         }
 
         @Override
@@ -462,4 +480,26 @@ public final class LocalPlayback implements Playback {
             // Nothing to do.
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStreamTypeLollipop() {
+        AudioAttributes mPlaybackAttributes = new AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+        mExoPlayer.setAudioAttributes(mPlaybackAttributes);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setStreamTypeLegacy() {
+        mExoPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
+
+    private void setStreamType()  {
+        if (LUtils.hasL())
+            setStreamTypeLollipop();
+        else
+            setStreamTypeLegacy();
+    }
+
 }

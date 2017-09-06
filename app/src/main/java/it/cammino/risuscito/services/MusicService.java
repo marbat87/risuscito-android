@@ -196,7 +196,7 @@ package it.cammino.risuscito.services;
          LocalPlayback playback = new LocalPlayback(this, mMusicProvider);
 //         mPlaybackManager = new PlaybackManager(this, mMusicProvider, queueManager,
 //                 playback);
-         mPlaybackManager = new PlaybackManager(this, mMusicProvider, queueManager,
+         mPlaybackManager = new PlaybackManager(this, queueManager,
                  playback);
 
          // Start a new MediaSession

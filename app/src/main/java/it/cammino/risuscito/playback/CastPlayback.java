@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -34,7 +35,6 @@ import org.json.JSONObject;
 
 import it.cammino.risuscito.model.MusicProvider;
 import it.cammino.risuscito.model.MusicProviderSource;
-import it.cammino.risuscito.utils.LogHelper;
 import it.cammino.risuscito.utils.MediaIDHelper;
 
 import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
@@ -44,7 +44,8 @@ import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
  */
 public class CastPlayback implements Playback {
 
-    private static final String TAG = LogHelper.makeLogTag(CastPlayback.class);
+    //    private static final String TAG = LogHelper.makeLogTag(CastPlayback.class);
+    private final String TAG = getClass().getCanonicalName();
 
     private static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
     private static final String ITEM_ID = "itemId";
@@ -112,7 +113,8 @@ public class CastPlayback implements Playback {
                 mCallback.onPlaybackStatusChanged(mPlaybackState);
             }
         } catch (JSONException e) {
-            LogHelper.e(TAG, "Exception loading media ", e, null);
+//            LogHelper.e(TAG, "Exception loading media ", e, null);
+            Log.e(TAG, "play: Exception loading media", e);
             if (mCallback != null) {
                 mCallback.onError(e.getMessage());
             }
@@ -129,7 +131,8 @@ public class CastPlayback implements Playback {
                 loadMedia(mCurrentMediaId, false);
             }
         } catch (JSONException e) {
-            LogHelper.e(TAG, e, "Exception pausing cast playback");
+            //            LogHelper.e(TAG, e, "Exception pausing cast playback");
+            Log.e(TAG, "pause: Exception pausing cast playback", e);
             if (mCallback != null) {
                 mCallback.onError(e.getMessage());
             }
@@ -151,7 +154,8 @@ public class CastPlayback implements Playback {
                 loadMedia(mCurrentMediaId, false);
             }
         } catch (JSONException e) {
-            LogHelper.e(TAG, e, "Exception pausing cast playback");
+//            LogHelper.e(TAG, e, "Exception pausing cast playback");
+            Log.e(TAG, "seekTo: Exception pausing cast playback", e);
             if (mCallback != null) {
                 mCallback.onError(e.getMessage());
             }
@@ -222,7 +226,7 @@ public class CastPlayback implements Playback {
                         track.getDescription().getTitle().toString());
         mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
                 track.getDescription().getSubtitle() == null ? "" :
-                    track.getDescription().getSubtitle().toString());
+                        track.getDescription().getSubtitle().toString());
         mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
                 track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST));
         mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
@@ -269,7 +273,8 @@ public class CastPlayback implements Playback {
                 }
             }
         } catch (JSONException e) {
-            LogHelper.e(TAG, e, "Exception processing update metadata");
+//            LogHelper.e(TAG, e, "Exception processing update metadata");
+            Log.e(TAG, "setMetadataFromRemote: Exception processing update metadata", e);
         }
 
     }
@@ -278,8 +283,8 @@ public class CastPlayback implements Playback {
         int status = mRemoteMediaClient.getPlayerState();
         int idleReason = mRemoteMediaClient.getIdleReason();
 
-        LogHelper.d(TAG, "onRemoteMediaPlayerStatusUpdated ", status);
-
+//        LogHelper.d(TAG, "onRemoteMediaPlayerStatusUpdated ", status);
+        Log.d(TAG, "updatePlaybackState: onRemoteMediaPlayerStatusUpdated " + status);
         // Convert the remote playback states to media playback states.
         switch (status) {
             case MediaStatus.PLAYER_STATE_IDLE:
@@ -310,7 +315,8 @@ public class CastPlayback implements Playback {
                 }
                 break;
             default: // case unknown
-                LogHelper.d(TAG, "State default : ", status);
+                //                LogHelper.d(TAG, "State default : ", status);
+                Log.d(TAG, "updatePlaybackState: State default : " + status);
                 break;
         }
     }
@@ -319,13 +325,15 @@ public class CastPlayback implements Playback {
 
         @Override
         public void onMetadataUpdated() {
-            LogHelper.d(TAG, "RemoteMediaClient.onMetadataUpdated");
+//            LogHelper.d(TAG, "RemoteMediaClient.onMetadataUpdated");
+            Log.d(TAG, "onMetadataUpdated: RemoteMediaClient.onMetadataUpdated");
             setMetadataFromRemote();
         }
 
         @Override
         public void onStatusUpdated() {
-            LogHelper.d(TAG, "RemoteMediaClient.onStatusUpdated");
+//            LogHelper.d(TAG, "RemoteMediaClient.onStatusUpdated");
+            Log.d(TAG, "onStatusUpdated: RemoteMediaClient.onStatusUpdated");
             updatePlaybackState();
         }
 

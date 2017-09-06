@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.utils.LogHelper;
 import it.cammino.risuscito.utils.MediaIDHelper;
 
 import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
@@ -33,8 +33,7 @@ import static it.cammino.risuscito.utils.MediaIDHelper.createMediaID;
  */
 public class MusicProvider {
 
-//    private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
-    private final String TAG = getClass().getCanonicalName();
+    private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
 
     private MusicProviderSource mSource;
 
@@ -204,8 +203,7 @@ public class MusicProvider {
      * for future reference, keying tracks by musicId and grouping by genre.
      */
     public void retrieveMediaAsync(final Callback callback) {
-//        LogHelper.d(TAG, "retrieveMediaAsync called");
-        Log.d(TAG, "retrieveMediaAsync: retrieveMediaAsync called");
+        LogHelper.d(TAG, "retrieveMediaAsync called");
         if (mCurrentState == State.INITIALIZED) {
             if (callback != null) {
                 // Nothing to do, execute callback immediately
@@ -251,12 +249,11 @@ public class MusicProvider {
             if (mCurrentState == State.NON_INITIALIZED) {
                 mCurrentState = State.INITIALIZING;
 
-                Log.d(TAG, "retrieveMedia: ");
                 Iterator<MediaMetadataCompat> tracks = mSource.iterator();
                 while (tracks.hasNext()) {
                     MediaMetadataCompat item = tracks.next();
                     String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-                    Log.d(TAG, "retrieveMedia: " + musicId);
+                    LogHelper.d(TAG, "retrieveMedia: ", musicId);
                     mMusicListById.put(musicId, new MutableMediaMetadata(musicId, item));
                 }
                 buildListsByGenre();
@@ -294,8 +291,7 @@ public class MusicProvider {
             }
 
         } else {
-//            LogHelper.w(TAG, "Skipping unmatched mediaId: ", mediaId);
-            Log.w(TAG, "getChildren: Skipping unmatched mediaId: " + mediaId);
+            LogHelper.w(TAG, "Skipping unmatched mediaId: ", mediaId);
         }
         return mediaItems;
     }
@@ -306,7 +302,7 @@ public class MusicProvider {
                 .setTitle(resources.getString(R.string.browse_genres))
                 .setSubtitle(resources.getString(R.string.browse_genre_subtitle))
                 .setIconUri(Uri.parse("android.resource://" +
-                        "com.example.android.uamp/drawable/ic_by_genre"))
+                        "it.cammino.risuscito/drawable/ic_by_genre"))
                 .build();
         return new MediaBrowserCompat.MediaItem(description,
                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);

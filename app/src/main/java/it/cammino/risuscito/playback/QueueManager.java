@@ -30,6 +30,8 @@ import java.util.List;
 
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.model.MusicProvider;
+import it.cammino.risuscito.model.MusicProviderSource;
+import it.cammino.risuscito.utils.LogHelper;
 import it.cammino.risuscito.utils.MediaIDHelper;
 import it.cammino.risuscito.utils.QueueHelper;
 
@@ -39,8 +41,8 @@ import it.cammino.risuscito.utils.QueueHelper;
  * given MusicProvider to provide the actual media metadata.
  */
 public class QueueManager {
-//    private static final String TAG = LogHelper.makeLogTag(QueueManager.class);
-    private final String TAG = getClass().getCanonicalName();
+    private static final String TAG = LogHelper.makeLogTag(QueueManager.class);
+//    private final String TAG = getClass().getCanonicalName();
 
     private MusicProvider mMusicProvider;
     private MetadataUpdateListener mListener;
@@ -232,6 +234,36 @@ public class QueueManager {
 //                }
 //            });
 //        }
+    }
+
+    public void updateMetadata(long duration) {
+        MediaSessionCompat.QueueItem currentMusic = getCurrentMusic();
+        if (currentMusic == null) {
+            mListener.onMetadataRetrieveError();
+            return;
+        }
+        final String musicId = currentMusic.getDescription().getMediaId();
+        LogHelper.i(TAG, "updateMetadata: ", musicId, " duration: ", duration);
+        MediaMetadataCompat metadata = mMusicProvider.getMusic(musicId);
+        if (metadata == null) {
+            throw new IllegalArgumentException("Invalid musicId " + musicId);
+        }
+
+        MediaMetadataCompat temp =  new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
+                .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, metadata.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE))
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
+                .putString(MediaMetadataCompat.METADATA_KEY_GENRE, metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE))
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, metadata.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER))
+                .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS,  metadata.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS))
+                .build();
+
+        mListener.onMetadataChanged(temp);
+
     }
 
     public interface MetadataUpdateListener {
