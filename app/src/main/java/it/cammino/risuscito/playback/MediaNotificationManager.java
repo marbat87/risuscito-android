@@ -335,7 +335,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
                             buttonPositions)
                     .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
-                .setSmallIcon(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
+//                .setSmallIcon(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING ? android.R.drawable. : android.R.drawable.ic_media_pause)
+                .setSmallIcon(R.drawable.ic_notification_music)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
 //                .setContentIntent(createContentIntent(description))
@@ -350,7 +351,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 String castInfo = mService.getResources()
                         .getString(R.string.casting_to_device, castName);
                 notificationBuilder.setSubText(castInfo);
-                notificationBuilder.addAction(R.drawable.ic_full_cancel,
+                notificationBuilder.addAction(R.drawable.quantum_ic_clear_white_24,
                         mService.getString(R.string.stop_casting), mStopCastIntent);
             }
         }

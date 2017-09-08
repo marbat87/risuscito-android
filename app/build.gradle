@@ -66,10 +66,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
     implementation 'pub.devrel:easypermissions:1.0.0'
-    compileOnly 'com.google.android.wearable:wearable:2.0.4'
-    implementation ('com.google.android.support:wearable:2.0.4') {
-        exclude module: 'percent'
-    }
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.1'
 }
 

@@ -88,8 +88,15 @@
     </item>
 
     <item
-        android:id="@+id/action_exp_pdf"
+        android:id="@+id/media_route_menu_item"
+        android:title="@string/media_route_menu_title"
         android:orderInCategory="96"
+        risuscito:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        risuscito:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_exp_pdf"
+        android:orderInCategory="97"
         risuscito:showAsAction="never"
         android:title="@string/action_exp_pdf" />
 

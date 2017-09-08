@@ -32,24 +32,31 @@ package it.cammino.risuscito.services;
  import android.support.v4.media.session.MediaButtonReceiver;
  import android.support.v4.media.session.MediaSessionCompat;
  import android.support.v4.media.session.PlaybackStateCompat;
+ import android.support.v7.media.MediaRouter;
 
  import com.google.android.gms.cast.framework.CastContext;
+ import com.google.android.gms.cast.framework.CastSession;
+ import com.google.android.gms.cast.framework.SessionManager;
+ import com.google.android.gms.cast.framework.SessionManagerListener;
+ import com.google.android.gms.common.ConnectionResult;
+ import com.google.android.gms.common.GoogleApiAvailability;
 
  import java.lang.ref.WeakReference;
  import java.util.ArrayList;
  import java.util.List;
 
- import it.cammino.risuscito.PackageValidator;
  import it.cammino.risuscito.PaginaRenderActivity;
  import it.cammino.risuscito.R;
  import it.cammino.risuscito.model.MusicProvider;
+ import it.cammino.risuscito.playback.CastPlayback;
  import it.cammino.risuscito.playback.LocalPlayback;
  import it.cammino.risuscito.playback.MediaNotificationManager;
+ import it.cammino.risuscito.playback.Playback;
  import it.cammino.risuscito.playback.PlaybackManager;
  import it.cammino.risuscito.playback.QueueManager;
  import it.cammino.risuscito.utils.CarHelper;
  import it.cammino.risuscito.utils.LogHelper;
- import it.cammino.risuscito.utils.WearHelper;
+ import it.cammino.risuscito.utils.TvHelper;
 
  import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_EMPTY_ROOT;
  import static it.cammino.risuscito.utils.MediaIDHelper.MEDIA_ID_ROOT;
@@ -117,10 +124,10 @@ package it.cammino.risuscito.services;
      private static final String TAG = LogHelper.makeLogTag(MusicService.class);
 
      // Extra on MediaSession that contains the Cast device name currently connected to
-     public static final String EXTRA_CONNECTED_CAST = "com.example.android.uamp.CAST_NAME";
+     public static final String EXTRA_CONNECTED_CAST = "it.cammino.risuscito.CAST_NAME";
      // The action of the incoming Intent indicating that it contains a command
      // to be executed (see {@link #onStartCommand})
-     public static final String ACTION_CMD = "com.example.android.uamp.ACTION_CMD";
+     public static final String ACTION_CMD = "it.cammino.risuscito.ACTION_CMD";
      // The key in the extras of the incoming Intent indicating the command that
      // should be executed (see {@link #onStartCommand})
      public static final String CMD_NAME = "CMD_NAME";
@@ -138,12 +145,12 @@ package it.cammino.risuscito.services;
 
      private MediaSessionCompat mSession;
      private MediaNotificationManager mMediaNotificationManager;
-//     private Bundle mSessionExtras;
+     private Bundle mSessionExtras;
      private final DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
-//     private MediaRouter mMediaRouter;
-     private PackageValidator mPackageValidator;
-//     private SessionManager mCastSessionManager;
-//     private SessionManagerListener<CastSession> mCastSessionManagerListener;
+     private MediaRouter mMediaRouter;
+//     private PackageValidator mPackageValidator;
+     private SessionManager mCastSessionManager;
+     private SessionManagerListener<CastSession> mCastSessionManagerListener;
 
      private boolean mIsConnectedToCar;
      private BroadcastReceiver mCarConnectionReceiver;
@@ -165,7 +172,7 @@ package it.cammino.risuscito.services;
          // {@link #onLoadChildren(String, Result<List<MediaItem>>) onLoadChildren()}.
          mMusicProvider.retrieveMediaAsync(null /* Callback */);
 
-         mPackageValidator = new PackageValidator(this);
+//         mPackageValidator = new PackageValidator(this);
 
          QueueManager queueManager = new QueueManager(mMusicProvider, getResources(),
                  new QueueManager.MetadataUpdateListener() {
@@ -200,7 +207,7 @@ package it.cammino.risuscito.services;
                  playback);
 
          // Start a new MediaSession
-         mSession = new MediaSessionCompat(this, "MusicService");
+         mSession = new MediaSessionCompat(this, MusicService.class.getSimpleName());
          setSessionToken(mSession.getSessionToken());
          mSession.setCallback(mPlaybackManager.getMediaSessionCallback());
          mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
@@ -212,7 +219,7 @@ package it.cammino.risuscito.services;
                  intent, PendingIntent.FLAG_UPDATE_CURRENT);
          mSession.setSessionActivity(pi);
 
-//         mSessionExtras = new Bundle();
+         mSessionExtras = new Bundle();
 //         CarHelper.setSlotReservationFlags(mSessionExtras, true, true, true);
 //         WearHelper.setSlotReservationFlags(mSessionExtras, true, true);
 //         WearHelper.setUseBackgroundFromTheme(mSessionExtras, true);
@@ -226,17 +233,17 @@ package it.cammino.risuscito.services;
              throw new IllegalStateException("Could not create a MediaNotificationManager", e);
          }
 
-//         int playServicesAvailable =
-//                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+         int playServicesAvailable =
+                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 
-//         if (!TvHelper.isTvUiMode(this) && playServicesAvailable == ConnectionResult.SUCCESS) {
-//             mCastSessionManager = CastContext.getSharedInstance(this).getSessionManager();
-//             mCastSessionManagerListener = new CastSessionManagerListener();
-//             mCastSessionManager.addSessionManagerListener(mCastSessionManagerListener,
-//                     CastSession.class);
-//         }
+         if (!TvHelper.isTvUiMode(this) && playServicesAvailable == ConnectionResult.SUCCESS) {
+             mCastSessionManager = CastContext.getSharedInstance(this).getSessionManager();
+             mCastSessionManagerListener = new CastSessionManagerListener();
+             mCastSessionManager.addSessionManagerListener(mCastSessionManagerListener,
+                     CastSession.class);
+         }
 
-//         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
+         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
 
          registerCarConnectionReceiver();
      }
@@ -280,10 +287,10 @@ package it.cammino.risuscito.services;
          mPlaybackManager.handleStopRequest(null);
          mMediaNotificationManager.stopNotification();
 
-//         if (mCastSessionManager != null) {
-//             mCastSessionManager.removeSessionManagerListener(mCastSessionManagerListener,
-//                     CastSession.class);
-//         }
+         if (mCastSessionManager != null) {
+             mCastSessionManager.removeSessionManagerListener(mCastSessionManagerListener,
+                     CastSession.class);
+         }
 
          mDelayedStopHandler.removeCallbacksAndMessages(null);
          mSession.release();
@@ -296,31 +303,31 @@ package it.cammino.risuscito.services;
                  "; clientUid=" + clientUid + " ; rootHints=", rootHints);
          // To ensure you are not allowing any arbitrary app to browse your app's contents, you
          // need to check the origin:
-         if (!mPackageValidator.isCallerAllowed(this, clientPackageName, clientUid)) {
-             // If the request comes from an untrusted package, return an empty browser root.
-             // If you return null, then the media browser will not be able to connect and
-             // no further calls will be made to other media browsing methods.
-             LogHelper.i(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
-                     + "Returning empty browser root so all apps can use MediaController."
-                     + clientPackageName);
-             return new MediaBrowserServiceCompat.BrowserRoot(MEDIA_ID_EMPTY_ROOT, null);
-         }
-         //noinspection StatementWithEmptyBody
-         if (CarHelper.isValidCarPackage(clientPackageName)) {
-             // Optional: if your app needs to adapt the music library to show a different subset
-             // when connected to the car, this is where you should handle it.
-             // If you want to adapt other runtime behaviors, like tweak ads or change some behavior
-             // that should be different on cars, you should instead use the boolean flag
-             // set by the BroadcastReceiver mCarConnectionReceiver (mIsConnectedToCar).
-         }
-         //noinspection StatementWithEmptyBody
-         if (WearHelper.isValidWearCompanionPackage(clientPackageName)) {
-             // Optional: if your app needs to adapt the music library for when browsing from a
-             // Wear device, you should return a different MEDIA ROOT here, and then,
-             // on onLoadChildren, handle it accordingly.
-         }
-
-         return new BrowserRoot(MEDIA_ID_ROOT, null);
+//         if (!mPackageValidator.isCallerAllowed(this, clientPackageName, clientUid)) {
+//             // If the request comes from an untrusted package, return an empty browser root.
+//             // If you return null, then the media browser will not be able to connect and
+//             // no further calls will be made to other media browsing methods.
+//             LogHelper.i(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
+//                     + "Returning empty browser root so all apps can use MediaController."
+//                     + clientPackageName);
+//             return new MediaBrowserServiceCompat.BrowserRoot(MEDIA_ID_EMPTY_ROOT, null);
+//         }
+//         //noinspection StatementWithEmptyBody
+//         if (CarHelper.isValidCarPackage(clientPackageName)) {
+//             // Optional: if your app needs to adapt the music library to show a different subset
+//             // when connected to the car, this is where you should handle it.
+//             // If you want to adapt other runtime behaviors, like tweak ads or change some behavior
+//             // that should be different on cars, you should instead use the boolean flag
+//             // set by the BroadcastReceiver mCarConnectionReceiver (mIsConnectedToCar).
+//         }
+//         //noinspection StatementWithEmptyBody
+////         if (WearHelper.isValidWearCompanionPackage(clientPackageName)) {
+////             // Optional: if your app needs to adapt the music library for when browsing from a
+////             // Wear device, you should return a different MEDIA ROOT here, and then,
+////             // on onLoadChildren, handle it accordingly.
+////         }
+//
+         return new BrowserRoot(MEDIA_ID_EMPTY_ROOT, null);
      }
 
      @Override
@@ -390,7 +397,7 @@ package it.cammino.risuscito.services;
              public void onReceive(Context context, Intent intent) {
                  String connectionEvent = intent.getStringExtra(CarHelper.MEDIA_CONNECTION_STATUS);
                  mIsConnectedToCar = CarHelper.MEDIA_CONNECTED.equals(connectionEvent);
-                 LogHelper.i(TAG, "Connection event to Android Auto: ", connectionEvent,
+                 LogHelper.d(TAG, "Connection event to Android Auto: ", connectionEvent,
                          " isConnectedToCar=", mIsConnectedToCar);
              }
          };
@@ -425,65 +432,65 @@ package it.cammino.risuscito.services;
          }
      }
 
-//     /**
-//      * Session Manager Listener responsible for switching the Playback instances
-//      * depending on whether it is connected to a remote player.
-//      */
-//     private class CastSessionManagerListener implements SessionManagerListener<CastSession> {
-//
-//         @Override
-//         public void onSessionEnded(CastSession session, int error) {
-//             LogHelper.d(TAG, "onSessionEnded");
-//             mSessionExtras.remove(EXTRA_CONNECTED_CAST);
-//             mSession.setExtras(mSessionExtras);
-//             Playback playback = new LocalPlayback(MusicService.this, mMusicProvider);
-//             mMediaRouter.setMediaSessionCompat(null);
-//             mPlaybackManager.switchToPlayback(playback, false);
-//         }
-//
-//         @Override
-//         public void onSessionResumed(CastSession session, boolean wasSuspended) {
-//         }
-//
-//         @Override
-//         public void onSessionStarted(CastSession session, String sessionId) {
-//             // In case we are casting, send the device name as an extra on MediaSession metadata.
-//             mSessionExtras.putString(EXTRA_CONNECTED_CAST,
-//                     session.getCastDevice().getFriendlyName());
-//             mSession.setExtras(mSessionExtras);
-//             // Now we can switch to CastPlayback
-//             Playback playback = new CastPlayback(mMusicProvider, MusicService.this);
-//             mMediaRouter.setMediaSessionCompat(mSession);
-//             mPlaybackManager.switchToPlayback(playback, true);
-//         }
-//
-//         @Override
-//         public void onSessionStarting(CastSession session) {
-//         }
-//
-//         @Override
-//         public void onSessionStartFailed(CastSession session, int error) {
-//         }
-//
-//         @Override
-//         public void onSessionEnding(CastSession session) {
-//             // This is our final chance to update the underlying stream position
-//             // In onSessionEnded(), the underlying CastPlayback#mRemoteMediaClient
-//             // is disconnected and hence we update our local value of stream position
-//             // to the latest position.
-//             mPlaybackManager.getPlayback().updateLastKnownStreamPosition();
-//         }
-//
-//         @Override
-//         public void onSessionResuming(CastSession session, String sessionId) {
-//         }
-//
-//         @Override
-//         public void onSessionResumeFailed(CastSession session, int error) {
-//         }
-//
-//         @Override
-//         public void onSessionSuspended(CastSession session, int reason) {
-//         }
-//     }
+     /**
+      * Session Manager Listener responsible for switching the Playback instances
+      * depending on whether it is connected to a remote player.
+      */
+     private class CastSessionManagerListener implements SessionManagerListener<CastSession> {
+
+         @Override
+         public void onSessionEnded(CastSession session, int error) {
+             LogHelper.d(TAG, "onSessionEnded");
+             mSessionExtras.remove(EXTRA_CONNECTED_CAST);
+             mSession.setExtras(mSessionExtras);
+             Playback playback = new LocalPlayback(MusicService.this, mMusicProvider);
+             mMediaRouter.setMediaSessionCompat(null);
+             mPlaybackManager.switchToPlayback(playback, false);
+         }
+
+         @Override
+         public void onSessionResumed(CastSession session, boolean wasSuspended) {
+         }
+
+         @Override
+         public void onSessionStarted(CastSession session, String sessionId) {
+             // In case we are casting, send the device name as an extra on MediaSession metadata.
+             mSessionExtras.putString(EXTRA_CONNECTED_CAST,
+                     session.getCastDevice().getFriendlyName());
+             mSession.setExtras(mSessionExtras);
+             // Now we can switch to CastPlayback
+             Playback playback = new CastPlayback(mMusicProvider, MusicService.this);
+             mMediaRouter.setMediaSessionCompat(mSession);
+             mPlaybackManager.switchToPlayback(playback, true);
+         }
+
+         @Override
+         public void onSessionStarting(CastSession session) {
+         }
+
+         @Override
+         public void onSessionStartFailed(CastSession session, int error) {
+         }
+
+         @Override
+         public void onSessionEnding(CastSession session) {
+             // This is our final chance to update the underlying stream position
+             // In onSessionEnded(), the underlying CastPlayback#mRemoteMediaClient
+             // is disconnected and hence we update our local value of stream position
+             // to the latest position.
+             mPlaybackManager.getPlayback().updateLastKnownStreamPosition();
+         }
+
+         @Override
+         public void onSessionResuming(CastSession session, String sessionId) {
+         }
+
+         @Override
+         public void onSessionResumeFailed(CastSession session, int error) {
+         }
+
+         @Override
+         public void onSessionSuspended(CastSession session, int reason) {
+         }
+     }
  }

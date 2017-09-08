@@ -31,6 +31,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.MediaRouteButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,13 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -106,6 +114,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
+    private static final int DELAY_MILLIS = 1000;
 
     MP_State mediaPlayerState = MP_State.Stopped;
 
@@ -145,6 +154,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private MediaBrowserCompat mMediaBrowser;
 
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
+
+    private CastContext mCastContext;
+    private MenuItem mMediaRouteMenuItem;
 
 //    private BroadcastReceiver gpsBRec = new BroadcastReceiver() {
 //        @Override
@@ -569,10 +581,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mCastContext != null) {
+            mCastContext.removeCastStateListener(mCastStateListener);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        if (MediaControllerCompat.getMediaController(this) != null)
-            MediaControllerCompat.getMediaController(PaginaRenderActivity.this).getTransportControls().stop();
         if (mMediaBrowser != null) {
             mMediaBrowser.disconnect();
         }
@@ -584,7 +602,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             new MediaBrowserCompat.ConnectionCallback() {
                 @Override
                 public void onConnected() {
-                    LogHelper.d(TAG, "onConnected");
+                    LogHelper.i(TAG, "onConnected");
                     try {
                         //                        connectToSession(mMediaBrowser.getSessionToken());
                         MediaControllerCompat mediaController =
@@ -658,6 +676,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogHelper.d(TAG, "onCreate");
         setContentView(R.layout.activity_pagina_render);
         ButterKnife.bind(this);
 
@@ -862,6 +881,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, it.cammino.risuscito.services.MusicService.class), mConnectionCallback, null);
 
+        int playServicesAvailable =
+                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+
+        if (playServicesAvailable == ConnectionResult.SUCCESS) {
+            mCastContext = CastContext.getSharedInstance(this);
+        }
+
     }
 
     @Override
@@ -934,6 +960,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 }
             }, 1500);
         }
+
+        if (mCastContext != null) {
+            mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
+                    menu, R.id.media_route_menu_item);
+        }
+
         return true;
     }
 
@@ -1132,6 +1164,10 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public void onResume() {
         super.onResume();
 
+        if (mCastContext != null) {
+            mCastContext.addCastStateListener(mCastStateListener);
+        }
+
         if (notaSalvata == null) {
             if (notaCambio == null)
                 notaSalvata = notaCambio = primaNota;
@@ -1267,6 +1303,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
+        if (MediaControllerCompat.getMediaController(this) != null)
+            MediaControllerCompat.getMediaController(PaginaRenderActivity.this).getTransportControls().stop();
         stopSeekbarUpdate();
         mExecutorService.shutdown();
     }
@@ -2283,5 +2321,38 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         scroll_song_bar.setEnabled(true);
         scroll_song_bar.setProgress((int) currentPosition);
+    }
+
+    private CastStateListener mCastStateListener = new CastStateListener() {
+        @Override
+        public void onCastStateChanged(int newState) {
+            if (newState != CastState.NO_DEVICES_AVAILABLE) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mMediaRouteMenuItem.isVisible()) {
+                            LogHelper.d(TAG, "Cast Icon is visible");
+                            showFtu();
+                        }
+                    }
+                }, DELAY_MILLIS);
+            }
+        }
+    };
+
+    /**
+     * Shows the Cast First Time User experience to the user (an overlay that explains what is
+     * the Cast icon)
+     */
+    private void showFtu() {
+        Menu menu = mToolbar.getMenu();
+        View view = menu.findItem(R.id.media_route_menu_item).getActionView();
+        if (view != null && view instanceof MediaRouteButton) {
+            IntroductoryOverlay overlay = new IntroductoryOverlay.Builder(this, mMediaRouteMenuItem)
+                    .setTitleText(R.string.touch_to_cast)
+                    .setSingleTime()
+                    .build();
+            overlay.show();
+        }
     }
 }

@@ -540,7 +540,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 .setColor(mNotificationColor)
                 .setSmallIcon(mState == State.Playing ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentTitle(getString(R.string.app_name))
+//                .setContentTitle(getString(R.string.app_name))
                 .setContentTitle(mSongTitle)
                 .setLargeIcon(Bitmap.createScaledBitmap(mDummyAlbumArt, 128, 128, false))
                 .setContentIntent(createContentIntent())
