@@ -11,7 +11,8 @@
     android:paddingEnd="20dp"
     android:clickable="true"
     android:background="?attr/customSelector"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/color_circle"

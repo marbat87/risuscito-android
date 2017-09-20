@@ -12,7 +12,7 @@
         <attr name="fontPath" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="BoundedView">
+    <declare-styleable name="BoundedCardView">
         <attr name="bounded_width" format="dimension" />
         <attr name="bounded_height" format="dimension" />
     </declare-styleable>

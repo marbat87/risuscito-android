@@ -40,7 +40,8 @@
             android:clickable="true"
             android:minHeight="@dimen/myListPreferredItemHeightMedium"
             android:orientation="horizontal"
-            android:background="?attr/customSelector" >
+            android:background="?attr/customSelector"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/text_id_posizione"

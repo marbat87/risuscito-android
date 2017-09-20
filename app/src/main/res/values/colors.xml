@@ -7,7 +7,7 @@
     <color name="Teal">#009688</color>
     <color name="BlueGreyDark">#455a64</color>
 
-    <color name="navdrawer_background">#ffffffff</color>
+    <!--<color name="navdrawer_background">#ffffffff</color>-->
 
     <color name="theme_primary">@color/BlueGrey</color>
     <color name="theme_accent">@color/Teal</color>

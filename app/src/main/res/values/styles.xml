@@ -45,10 +45,10 @@
         <item name="android:textColor">#99FFFFFF</item>
     </style>
 
-    <style name="Widget.Design.NavigationView.Risuscito">
-        <item name="android:background">@color/navdrawer_background</item>
-        <item name="colorControlHighlight">#12000000</item>
-    </style>
+    <!--<style name="Widget.Design.NavigationView.Risuscito">-->
+        <!--<item name="android:background">@color/navdrawer_background</item>-->
+        <!--<item name="colorControlHighlight">#12000000</item>-->
+    <!--</style>-->
 
     <style name="ActionBar.TitleText.Collapsed">
         <item name="android:textColor">@android:color/white</item>
@@ -92,10 +92,10 @@
         <item name="android:layout_marginBottom">0dp</item>
     </style>
 
-    <style name="GridItemLarge" parent="BottomSheet.GridItem">
-        <item name="android:layout_marginTop">16dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
-    </style>
+    <!--<style name="GridItemLarge" parent="BottomSheet.GridItem">-->
+        <!--<item name="android:layout_marginTop">16dp</item>-->
+        <!--<item name="android:layout_marginBottom">0dp</item>-->
+    <!--</style>-->
 
     <style name="Text" />
 

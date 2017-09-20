@@ -226,7 +226,7 @@ You can add up to 30 elements.</string>
     <string name="barre_search_string">Capo</string>
     <string name="barre_add_al">on</string>
     <string name="barre_al_tasto">Capo %1$s</string>
-    <string name="external_storage_title">Access the public memory</string>
+    <!--<string name="external_storage_title">Access the public memory</string>-->
     <string name="external_storage_rationale">He rose from death is going to ask you for permission to access the external memory. This is necessary to make visible the downloaded file to other applications. If you do not accept, the file will be downloaded in the private memory of the application.</string>
     <string name="external_storage_denied">Public memory not available.</string>
     <string name="external_storage_pref_rationale">He rose from death is going to ask you for permission to access the external memory. This is necessary to enable saving in the public memory. If you do not accept, the option will not be visible.</string>

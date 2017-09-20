@@ -70,7 +70,7 @@ public class DownloadService extends IntentService {
         PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 getClass().getName());
-        wakelock.acquire();
+        wakelock.acquire(30000);
 
         try {
             InputStream input = null;

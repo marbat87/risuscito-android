@@ -51,7 +51,7 @@
     <!--<dimen name="tabs_height">48dip</dimen>-->
     <!--<dimen name="tabs_text_size">13sp</dimen>-->
 
-    <dimen name="text_min_margin">20dip</dimen>
+    <!--<dimen name="text_min_margin">20dip</dimen>-->
 
     <dimen name="cardListPreferredItemMargin">10dip</dimen>
     <dimen name="cardListPreferredTextMarginStart">60dip</dimen>

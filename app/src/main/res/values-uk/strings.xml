@@ -232,7 +232,7 @@
     <string name="barre_search_string">Баре</string>
     <string name="barre_add_al">на</string>
     <string name="barre_al_tasto">Баре на %1$s лад</string>
-    <string name="external_storage_title">Доступ до публічної памяті</string>
+    <!--<string name="external_storage_title">Доступ до публічної памяті</string>-->
     <string name="external_storage_rationale">Додаток просить доступ до зовнішної памяті. Це наобхідне для того, щоб завантажений файл був видимий для інших додатків. Якщо Ви не згодитесь, файл буде збережений в приватній памяті додатку.</string>
     <string name="external_storage_denied">Немає доступу до публічної памяті.</string>
     <string name="external_storage_pref_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб активувати збереження в публічну память.  Якщо Ви не згодитесь, опція стане невидимою.</string>

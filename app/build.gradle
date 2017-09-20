@@ -52,7 +52,6 @@ dependencies {
     implementation 'com.takisoft.fix:preference-v7:26.0.1.0'
     implementation 'com.google.android.gms:play-services-auth:11.2.0'
     implementation 'com.google.android.gms:play-services-drive:11.2.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:11.2.0'
     implementation 'com.google.firebase:firebase-core:11.2.0'
     implementation 'com.google.firebase:firebase-crash:11.2.0'
     implementation 'com.afollestad:material-cab:0.1.12'
@@ -66,7 +65,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
     implementation 'pub.devrel:easypermissions:1.0.0'
-    implementation 'com.google.android.exoplayer:exoplayer:r2.5.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
