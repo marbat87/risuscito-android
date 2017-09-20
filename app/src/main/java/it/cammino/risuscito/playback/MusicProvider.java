@@ -16,6 +16,7 @@
 
 package it.cammino.risuscito.playback;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,6 +31,8 @@ import java.util.LinkedHashMap;
 
 import it.cammino.risuscito.DatabaseCanti;
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.Utility;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Utility class to get a list of MusicTrack's based on a server-side JSON
@@ -201,10 +204,24 @@ public class MusicProvider {
 
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
-                Log.d(TAG, "retrieveMedia: " + cursor.getInt(0) + " / " + cursor.getString(1) + " / " + cursor.getString(2));
+//                Log.d(TAG, "retrieveMedia: " + cursor.getInt(0) + " / " + cursor.getString(1) + " / " + cursor.getString(2));
+
+                String url = cursor.getString(2);
+                if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
+                    if (!Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), true).isEmpty())
+                        url = Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), true);
+                } else {
+                    if (!Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), false).isEmpty())
+                        url = Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), false);
+                }
+
+                Log.d(TAG, "retrieveMedia: " + cursor.getInt(0) + " / " + cursor.getString(1) + " / " + url);
+
                 temp = new MediaMetadataCompat.Builder()
                         .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, cursor.getString(0))
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, cursor.getString(2))
+//                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, cursor.getString(2))
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mContext.getString(R.string.app_name))
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
@@ -223,6 +240,7 @@ public class MusicProvider {
 //                                // serialized if necessary.
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
                         .build();
+
                 mMusicListById.put(cursor.getString(0), temp);
                 cursor.moveToNext();
             }

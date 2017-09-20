@@ -180,7 +180,7 @@ public class Utility {
         }
     }
 
-    static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
+    public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
 
         if (isExternalStorageReadable() && cercaEsterno) {
 //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
