@@ -308,4 +308,5 @@
     <string name="title_trabar_VI">VI</string>
     <string name="title_trabar_VII">VII</string>
     <string name="consegnati_only">Cerca solo nei consegnati</string>
+    <string name="permission_ok">Permesso concesso</string>
 </resources>

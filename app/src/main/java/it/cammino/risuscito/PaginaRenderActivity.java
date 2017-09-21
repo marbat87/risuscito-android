@@ -57,7 +57,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -75,17 +74,15 @@ import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback, EasyPermissions.PermissionCallbacks {
+public class PaginaRenderActivity extends ThemeableActivity implements SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback{
 
     final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
     private String pagina;
     private int idCanto;
-    //    private String titoloCanto;
     private String url;
     private String primaNota;
     private String notaSalvata;
@@ -93,10 +90,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     private String primoBarre;
     private String barreSalvato;
     private static String barreCambio;
-    //    private String personalUrl, localUrl,  playUrl;
     private String personalUrl, localUrl;
 
-    private enum MP_State {Started, Stopped}
     private PlaybackStateCompat mLastPlaybackState;
     private ScheduledFuture<?> mScheduleFuture;
 
@@ -105,11 +100,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
-//    private static final int DELAY_MILLIS = 1000;
-
-    MP_State mediaPlayerState = MP_State.Stopped;
-
-    private boolean localFile;
 
     private int defaultZoomLevel = 0;
     private int defaultScrollX = 0;
@@ -191,27 +181,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         R.string.download_completed
                         , Snackbar.LENGTH_SHORT)
                         .show();
-
-                scroll_song_bar.setProgress(0);
-                scroll_song_bar.setEnabled(false);
-                showPlaying(false);
-//                if (mediaPlayerState != MP_State.Stopped) {
-//                    mediaPlayerState = MP_State.Stopped;
-//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-//                    stopService(i);
-////                    i.setAction(MusicService.ACTION_STOP);
-////                    startService(i);
-////                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//                }
-                MediaControllerCompat controller = MediaControllerCompat.getMediaController(PaginaRenderActivity.this);
-                if (controller != null) {
-                    controller.getTransportControls().stop();
-                }
-
-                checkExternalFilePermissions();
-                localFile = true;
-//                playUrl = localUrl;
-                mDownload = true;
+                stopMedia();
                 recreate();
             }
             catch (IllegalArgumentException e) {
@@ -253,7 +223,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             String localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH);
             File file = new File(localPDFPath);
             Intent target = new Intent(Intent.ACTION_VIEW);
-//            target.setDataAndType(Uri.fromFile(file), "application/pdf");
             Uri pdfUri = FileProvider.getUriForFile(PaginaRenderActivity.this, "it.cammino.risuscito.fileprovider", file);
             Log.d(TAG, "pdfUri: " + pdfUri);
             target.setDataAndType(pdfUri, "application/pdf");
@@ -316,9 +285,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     mostraAudio = String.valueOf(mostraAudioBool);
                     break;
                 case BottomSheetFabCanto.SAVE_FILE:
-                    if (!url.equalsIgnoreCase("")) {
+//                    if (!url.equalsIgnoreCase("")) {
+                    if (!url.isEmpty()) {
                         if (mDownload) {
-                            if (personalUrl.equalsIgnoreCase("")) {
+//                            if (personalUrl.equalsIgnoreCase("")) {
+                            if (personalUrl.isEmpty()) {
                                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
                                         .title(R.string.dialog_delete_mp3_title)
                                         .content(R.string.dialog_delete_mp3)
@@ -347,7 +318,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     }
                     else {
                         if (mDownload) {
-                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
+//                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
+                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
                                     .title(R.string.dialog_delete_link_title)
                                     .content(R.string.dialog_delete_link)
                                     .positiveButton(R.string.confirm)
@@ -381,8 +353,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
     @BindView(R.id.cantoView) WebView paginaView;
     @BindView(R.id.play_song) ImageButton play_button;
-    @BindView(R.id.no_record) TextView no_records_text;
+    @BindView(R.id.no_record) View no_records_text;
     @BindView(R.id.music_buttons) View music_buttons;
+    @BindView(R.id.no_connection) View no_connection_text;
     @BindView(R.id.play_scroll) ImageButton play_scroll;
     @BindView(R.id.speed_seekbar) SeekBar scroll_speed_bar;
     @BindView(R.id.music_seekbar) SeekBar scroll_song_bar;
@@ -390,24 +363,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @OnClick(R.id.play_song)
     public void playPause() {
-//        if (isPlaying()) {
-//            showPlaying(false);
-//            Intent i = new Intent(getApplicationContext(),MusicService.class);
-//            i.setAction(MusicService.ACTION_PAUSE);
-////            startService(i);
-//            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//        }
-//        else {
-        //controlla la presenza di una connessione internet
-        if (!Utility.isOnline(PaginaRenderActivity.this)
-                && !localFile) {
-            Snackbar.make(findViewById(android.R.id.content)
-                    , R.string.no_connection
-                    , Snackbar.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         PlaybackStateCompat stateObj = controller.getPlaybackState();
         final int state = stateObj == null ?
@@ -417,7 +372,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         if (state == PlaybackStateCompat.STATE_STOPPED ||
                 state == PlaybackStateCompat.STATE_NONE) {
             playFromId(String.valueOf(idCanto));
-//            playMedia();
         } else if (state == PlaybackStateCompat.STATE_PLAYING ||
                 state == PlaybackStateCompat.STATE_BUFFERING ||
                 state == PlaybackStateCompat.STATE_CONNECTING) {
@@ -439,6 +393,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             mScrollDown.run();
         }
     }
+
     @OnClick(R.id.fab_canti)
     public void FabOptions() {
         BottomSheetFabCanto bottomSheetDialog = BottomSheetFabCanto.newInstance(mostraAudioBool
@@ -450,8 +405,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart: ");
         super.onStart();
+        Log.d(TAG, "onStart: ");
         if (mMediaBrowser != null) {
             mMediaBrowser.connect();
         }
@@ -467,8 +422,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop: ");
         super.onStop();
+        Log.d(TAG, "onStop: ");
         if (mMediaBrowser != null) {
             mMediaBrowser.disconnect();
         }
@@ -489,10 +444,26 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         MediaControllerCompat.setMediaController(PaginaRenderActivity.this, mediaController);
                         mediaController.registerCallback(mMediaControllerCallback);
                         mLastPlaybackState = mediaController.getPlaybackState();
-                        if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING)
+                        if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
                             scheduleSeekbarUpdate();
-                        if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED)
-                            scroll_song_bar.setEnabled(true);
+                        }
+                        showPlaying(mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING);
+                        scroll_song_bar.setEnabled(
+                                mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING
+                                        || mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PAUSED);
+
+                        if (mediaController.getMetadata() != null) {
+                            Log.d(TAG, "onConnected: duration " + mediaController
+                                    .getMetadata()
+                                    .getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+                            scroll_song_bar.setMax(
+                                    (int)
+                                            mediaController
+                                                    .getMetadata()
+                                                    .getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+                        }
+                        Log.d(TAG, "onConnected: mLastPlaybackState.getPosition() " + mLastPlaybackState.getPosition());
+                        scroll_song_bar.setProgress((int) mLastPlaybackState.getPosition());
                     } catch (RemoteException e) {
                         Log.e(TAG, "onConnected: could not connect media controller", e);
                     }
@@ -503,16 +474,17 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     Log.e(TAG, "onConnectionFailed");
                 }
 
-//                @Override
-//                public void onConnectionSuspended() {
-//                    Log.d(TAG, "onConnectionSuspended");
-//                    MediaControllerCompat mediaController = MediaControllerCompat
-//                            .getMediaController(PaginaRenderActivity.this);
-//                    if (mediaController != null) {
-//                        mediaController.unregisterCallback(mMediaControllerCallback);
-//                        MediaControllerCompat.setMediaController(PaginaRenderActivity.this, null);
-//                    }
-//                }
+                @Override
+                public void onConnectionSuspended() {
+                    Log.d(TAG, "onConnectionSuspended");
+                    MediaControllerCompat mediaController = MediaControllerCompat
+                            .getMediaController(PaginaRenderActivity.this);
+                    if (mediaController != null) {
+                        mediaController.unregisterCallback(mMediaControllerCallback);
+
+                        MediaControllerCompat.setMediaController(PaginaRenderActivity.this, null);
+                    }
+                }
 
             };
 
@@ -570,9 +542,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         scroll_song_bar.setMax(duration);
                         scroll_song_bar.setEnabled(true);
                     }
-//                    SimpleDialogFragment sFragment =
-//                            SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "BUFFERING");
-//                    if (sFragment != null) sFragment.dismiss();
                 }
             };
 
@@ -617,7 +586,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-//        String query = "SELECT saved_tab, saved_barre, saved_speed, titolo" +
         String query = "SELECT saved_tab, saved_barre, saved_speed" +
                 "  FROM ELENCO" +
                 "  WHERE _id =  " + idCanto;
@@ -627,83 +595,56 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         notaSalvata = cursor.getString(0);
         barreSalvato = cursor.getString(1);
         savedSpeed = cursor.getInt(2);
-//        titoloCanto = cursor.getString(3);
         cursor.close();
         db.close();
 
-        //recupera i pulsanti
-        showPlaying(false);
-
-        if (savedInstanceState != null) {
-            mediaPlayerState = (MP_State) savedInstanceState.getSerializable("mediaPlayerState");
-            showPlaying(savedInstanceState.getBoolean("playSelected"));
-            scroll_song_bar.setMax(savedInstanceState.getInt("scroll_audio_max", 0));
-        }
-
-        if (mediaPlayerState == MP_State.Stopped) {
-            scroll_song_bar.setEnabled(false);
-            scroll_song_bar.setProgress(0);
-        }
-
+        //c'è la registrazione online
         if (!url.equalsIgnoreCase("")) {
-            checkExternalFilePermissions();
+//            checkExternalFilePermissions();
+            //controllo se ho scaricato un file in locale
+            SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+            int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+            if (saveLocation == 1) {
+                if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    // Have permission, do the thing!
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+                }
+                else {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putString(Utility.SAVE_LOCATION, "0");
+                    editor.apply();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , getString(R.string.external_storage_denied)
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+                }
+            }
+            else
+                localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
 
             mDownload = !(localUrl.equalsIgnoreCase("") &&
                     personalUrl.equalsIgnoreCase(""));
 
-            //mostra i pulsanti per il lettore musicale
-            music_buttons.setVisibility(View.VISIBLE);
+            //almeno una registrazione c'è, quindi nascondo il messaggio di no_records
             no_records_text.setVisibility(View.INVISIBLE);
-
-            localFile = !(localUrl.equalsIgnoreCase("")
-                    && personalUrl.equalsIgnoreCase(""));
-
-//            if (localUrl.equalsIgnoreCase("")
-//                    && personalUrl.equalsIgnoreCase("")) {
-//                localFile = false;
-//                playUrl = url;
-//            }
-//            else {
-//                localFile = true;
-//                if (!localUrl.equals(""))
-//                    playUrl = localUrl;
-//                else
-//                    playUrl = personalUrl;
-//            }
-
+            //mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono online, altrimenti mostra il messaggio di mancata connessione
+            music_buttons.setVisibility(Utility.isOnline(this) || mDownload ? View.VISIBLE: View.INVISIBLE);
+            no_connection_text.setVisibility(Utility.isOnline(this) || mDownload ? View.INVISIBLE: View.VISIBLE);
         }
+        //NON c'è la registrazione online
         else {
-            localFile = true;
-//            playUrl = personalUrl;
-
-            if (!personalUrl.equalsIgnoreCase("")) {
-                mDownload = true;
-
-                //mostra i pulsanti per il lettore musicale
-                music_buttons.setVisibility(View.VISIBLE);
-                no_records_text.setVisibility(View.INVISIBLE);
-            }
-            else {
-                // nasconde i pulsanti
-                mDownload = false;
-                music_buttons.setVisibility(View.INVISIBLE);
-                no_records_text.setVisibility(View.VISIBLE);
-            }
-
+            mDownload = !personalUrl.isEmpty();
+            //Se c'è una registrazione locale mostro i pulsanti
+            music_buttons.setVisibility(mDownload ? View.VISIBLE : View.INVISIBLE);
+            no_records_text.setVisibility(mDownload ? View.INVISIBLE : View.VISIBLE);
         }
 
         scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                Log.d(TAG, "newValue: " + progress);
-//                if (fromUser) {
-//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-//                    i.setAction(MusicService.ACTION_SEEK);
-//                    Uri uri = Uri.parse(String.valueOf(progress));
-//                    i.setData(uri);
-////                    startService(i);
-//                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//                }
                 String time = String.format(ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()), "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(progress),
                         TimeUnit.MILLISECONDS.toSeconds(progress) -
@@ -753,9 +694,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
-        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2");
-        if (sFragment != null)
-            sFragment.setmCallback(PaginaRenderActivity.this);
+//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2");
+//        if (sFragment != null)
+//            sFragment.setmCallback(PaginaRenderActivity.this);
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLINK_CHOOSE");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
@@ -768,12 +709,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
-        //        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE");
-        //        if (sFragment != null)
-        //            sFragment.setmCallback(PaginaRenderActivity.this);
-        //        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE");
-        //        if (sFragment != null)
-        //            sFragment.setmCallback(PaginaRenderActivity.this);
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -795,7 +730,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.canto, menu);
         menu.findItem(R.id.tonalita).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note)
+                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note).actionBar()
                         .sizeDp(24)
                         .paddingDp(2)
                         .color(Color.WHITE));
@@ -1099,7 +1034,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
         HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
         HashMap<String, String> convMin = null;
-//        if (getResources().getConfiguration().locale.getLanguage().equalsIgnoreCase("uk"))
         if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
             convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
         if (convMap != null) {
@@ -1140,16 +1074,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         findViewById(R.id.music_controls).setVisibility(mostraAudioBool ? View.VISIBLE : View.GONE);
 
         //registra un receiver per ricevere la notifica di preparazione della registrazione
-//        registerReceiver(gpsBRec, new IntentFilter(
-//                MusicService.BROADCAST_PREPARING_COMPLETED));
-//        registerReceiver(stopBRec, new IntentFilter(
-//                MusicService.BROADCAST_PLAYBACK_COMPLETED));
-//        registerReceiver(positionBRecc, new IntentFilter(
-//                MusicService.BROADCAST_PLAYER_POSITION));
-//        registerReceiver(playBRec, new IntentFilter(
-//                MusicService.BROADCAST_PLAYER_STARTED));
-//        registerReceiver(pauseBRec, new IntentFilter(
-//                MusicService.BROADCAST_PLAYBACK_PAUSED));
         registerReceiver(downloadPosBRec, new IntentFilter(
                 DownloadService.BROADCAST_DOWNLOAD_PROGRESS));
         registerReceiver(downloadCompletedBRec, new IntentFilter(
@@ -1171,11 +1095,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
         try {
-//            unregisterReceiver(gpsBRec);
-//            unregisterReceiver(stopBRec);
-//            unregisterReceiver(positionBRecc);
-//            unregisterReceiver(playBRec);
-//            unregisterReceiver(pauseBRec);
             unregisterReceiver(downloadPosBRec);
             unregisterReceiver(downloadCompletedBRec);
             unregisterReceiver(downloadErrorBRec);
@@ -1189,18 +1108,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
-        if (isFinishing() && MediaControllerCompat.getMediaController(this) != null)
-            MediaControllerCompat.getMediaController(PaginaRenderActivity.this).getTransportControls().stop();
+        if (isFinishing()) {
+            stopMedia();
+            MediaControllerCompat.setMediaController(PaginaRenderActivity.this, null);
+        }
         stopSeekbarUpdate();
         mExecutorService.shutdown();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("mediaPlayerState", mediaPlayerState);
-        outState.putBoolean("playSelected", isPlaying());
-        outState.putInt("scroll_audio_max", scroll_song_bar.getMax());
     }
 
     public void pulisciVars() {
@@ -1493,39 +1406,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
 
-    @AfterPermissionGranted(Utility.WRITE_STORAGE_RC)
-    private void checkStoragePermissions() {
-        Log.d(TAG, "checkStoragePermissions: ");
-        // Here, thisActivity is the current activity
-//        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                !=PackageManager.PERMISSION_GRANTED) {
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                // Show an expanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//                showRationaleForExternalDownload();
-//            } else {
-//                // No explanation needed, we can request the permission.
-//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                        Utility.WRITE_STORAGE_RC);
-//            }
-//        }
-//        else
-//            startExternalDownload();
-        if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Have permission, do the thing!
-            startExternalDownload();
-        } else {
-            // Ask for one permission
-            EasyPermissions.requestPermissions(PaginaRenderActivity.this, getString(R.string.external_storage_rationale),
-                    Utility.WRITE_STORAGE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
     void startExternalDownload() {
         Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK");
         if (Utility.isExternalStorageWritable()) {
@@ -1534,7 +1414,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 Log.d(TAG, "CARTELLA RISUSCITO CREATA");
             else
                 Log.d(TAG, "CARTELLA RISUSCITO ESISTENTE");
-            String localFile = Environment.getExternalStoragePublicDirectory(
+            String localFilePath = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC).getAbsolutePath()
                     + "/Risuscitò/" + Utility.filterMediaLinkNew(url);
             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
@@ -1548,7 +1428,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             i.setAction(DownloadService.ACTION_DOWNLOAD);
             Uri uri = Uri.parse(url);
             i.setData(uri);
-            i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFile);
+            i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath);
             startService(i);
         } else
             Snackbar.make(findViewById(android.R.id.content)
@@ -1557,19 +1437,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     .show();
     }
 
-//    void showRationaleForExternalDownload() {
-//        Log.d(TAG, "WRITE_EXTERNAL_STORAGE RATIONALE");
-//        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_STORAGE_RATIONALE")
-//                .title(R.string.external_storage_title)
-//                .content(R.string.external_storage_rationale)
-//                .positiveButton(R.string.dialog_chiudi)
-//                .setHasCancelListener()
-//                .setCanceable()
-//                .show();
-//    }
-
     void startInternalDownload() {
-        String localFile = PaginaRenderActivity.this.getFilesDir()
+        String localFilePath = PaginaRenderActivity.this.getFilesDir()
                 + "/"
                 + Utility.filterMediaLink(url);
         new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
@@ -1583,152 +1452,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         i.setAction(DownloadService.ACTION_DOWNLOAD);
         Uri uri = Uri.parse(url);
         i.setData(uri);
-        i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFile);
+        i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath);
         startService(i);
-    }
-
-    @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
-    private void checkExternalFilePermissions() {
-        Log.d(TAG, "checkExternalFilePermissions: ");
-        // Here, thisActivity is the current activity
-//        if(ContextCompat.checkSelfPermission(PaginaRenderActivity.this,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                !=PackageManager.PERMISSION_GRANTED) {
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(PaginaRenderActivity.this,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                // Show an expanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//                showRationalForExternalFile();
-//            } else {
-//                // No explanation needed, we can request the permission.
-//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                        Utility.EXTERNAL_FILE_RC);
-//            }
-//            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
-//        }
-//        else {
-//            searchExternalFile(false);
-//        }
-        if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Have permission, do the thing!
-            searchExternalFile(false);
-        } else {
-            // Ask for one permission
-            localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
-            EasyPermissions.requestPermissions(PaginaRenderActivity.this, getString(R.string.external_file_rationale),
-                    Utility.EXTERNAL_FILE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    void searchExternalFile(boolean recreate) {
-        localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
-        if (recreate)
-            recreate();
-    }
-
-//    void showRationalForExternalFile() {
-//        Log.d(TAG, "EXTERNAL_FILE RATIONALE");
-//        new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "EXTERNAL_FILE_RATIONALE")
-//                .title(R.string.external_storage_title)
-//                .content(R.string.external_file_rationale)
-//                .positiveButton(R.string.dialog_chiudi)
-//                .setHasCancelListener()
-//                .setCanceable()
-//                .show();
-//    }
-
-    void showDeniedForExternalFile() {
-        Log.d(TAG, " EXTERNAL_FILE DENIED");
-        SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                .edit();
-        editor.putString(Utility.SAVE_LOCATION, "0");
-        editor.apply();
-        Snackbar.make(findViewById(android.R.id.content)
-                , getString(R.string.external_storage_denied)
-                , Snackbar.LENGTH_SHORT)
-                .show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-//        Log.d(TAG, "onRequestPermissionsResult-request: " + requestCode);
-////        Log.d(TAG, "onRequestPermissionsResult-result: " + grantResults[0]);
-//        switch (requestCode) {
-//            case Utility.WRITE_STORAGE_RC: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // permission was granted, yay! Do the task you need to do.
-//                    startExternalDownload();
-//                } else {
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-//                            .edit();
-//                    editor.putString(Utility.SAVE_LOCATION, "0");
-//                    editor.apply();
-//                    Snackbar.make(findViewById(android.R.id.content)
-//                            , R.string.forced_private
-//                            , Snackbar.LENGTH_SHORT)
-//                            .show();
-//                    startInternalDownload();
-//                }
-//                return;
-//            }
-//            case Utility.EXTERNAL_FILE_RC: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // permission was granted, yay! Do the task you need to do.
-//                    searchExternalFile(true);
-//                } else {
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    showDeniedForExternalFile();
-//                }
-//            }
-//        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // Some permissions have been granted
-        Log.d(TAG, "onPermissionsGranted: " + requestCode);
-        switch (requestCode) {
-            case Utility.WRITE_STORAGE_RC:
-                startExternalDownload();
-                return;
-            case Utility.EXTERNAL_FILE_RC:
-                searchExternalFile(true);
-        }
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // Some permissions have been denied
-        Log.d(TAG, "onPermissionsDenied: " + requestCode);
-        switch (requestCode) {
-            case Utility.WRITE_STORAGE_RC:
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                        .edit();
-                editor.putString(Utility.SAVE_LOCATION, "0");
-                editor.apply();
-                Snackbar.make(findViewById(android.R.id.content)
-                        , R.string.forced_private
-                        , Snackbar.LENGTH_SHORT)
-                        .show();
-                startInternalDownload();
-                return;
-            case Utility.EXTERNAL_FILE_RC:
-                showDeniedForExternalFile();
-        }
     }
 
     private void showPlaying(boolean started) {
@@ -1751,11 +1476,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         play_scroll.setImageDrawable(icon);
     }
 
-
-    private boolean isPlaying() {
-        return play_button.isSelected();
-    }
-
     @Override
     public void onPositive(@NonNull String tag) {
         Log.d(TAG, "onPositive: " + tag);
@@ -1766,37 +1486,12 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             case "DELETE_LINK":
                 Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show();
-
-                scroll_song_bar.setProgress(0);
-                scroll_song_bar.setEnabled(false);
-                showPlaying(false);
-//                if (mediaPlayerState != MP_State.Stopped) {
-//                    mediaPlayerState = MP_State.Stopped;
-//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-//                    stopService(i);
-////                    i.setAction(MusicService.ACTION_STOP);
-////                    startService(i);
-////                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//                }
-
-                if (mLastPlaybackState.getState() != PlaybackStateCompat.STATE_STOPPED) {
-                    MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-                    if (controller != null) {
-                        controller.getTransportControls().stop();
-                    }
-                }
-
-                localFile = false;
-                personalUrl = "";
-//                playUrl = url;
-
+                stopMedia();
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
                 String sql = "DELETE FROM LOCAL_LINKS" +
                         "  WHERE _id =  " + idCanto;
                 db.execSQL(sql);
                 db.close();
-
-                mDownload = false;
                 recreate();
                 break;
             case "DELETE_MP3":
@@ -1816,76 +1511,44 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 else
                     Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
                             .show();
-
-                scroll_song_bar.setProgress(0);
-                scroll_song_bar.setEnabled(false);
-                showPlaying(false);
-//                if (mediaPlayerState != MP_State.Stopped) {
-//                    mediaPlayerState = MP_State.Stopped;
-//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-//                    stopService(i);
-////                    i.setAction(MusicService.ACTION_STOP);
-////                    startService(i);
-////                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//                }
-                if (mLastPlaybackState.getState() != PlaybackStateCompat.STATE_STOPPED) {
-                    MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-                    if (controller != null) {
-                        controller.getTransportControls().stop();
-                    }
-                }
-
-                localFile = false;
-//                playUrl = url;
-                mDownload = false;
+                stopMedia();
                 recreate();
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
                 int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-                if (saveLocation == 1)
-                    checkStoragePermissions();
+                if (saveLocation == 1) {
+//                    checkStoragePermissions();
+                    if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                        // Have permission, do the thing!
+                        startExternalDownload();
+                    else {
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                                .edit();
+                        editor.putString(Utility.SAVE_LOCATION, "0");
+                        editor.apply();
+                        Snackbar.make(findViewById(android.R.id.content)
+                                , R.string.forced_private
+                                , Snackbar.LENGTH_SHORT)
+                                .show();
+                        startInternalDownload();
+                    }
+                }
                 else
                     startInternalDownload();
                 break;
-            case "DELETE_LINK_2":
-                Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
-                        .show();
-
-                scroll_song_bar.setProgress(0);
-                scroll_song_bar.setEnabled(false);
-                showPlaying(false);
-//                if (mediaPlayerState != MP_State.Stopped) {
-//                    mediaPlayerState = MP_State.Stopped;
-//                    Intent i = new Intent(getApplicationContext(), MusicService.class);
-//                    stopService(i);
-////                    i.setAction(MusicService.ACTION_STOP);
-////                    startService(i);
-////                    ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//                }
-                if (mLastPlaybackState.getState() != PlaybackStateCompat.STATE_STOPPED) {
-                    MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-                    if (controller != null) {
-                        controller.getTransportControls().stop();
-                    }
-                }
-
-                localFile = false;
-                personalUrl = "";
-//                playUrl = url;
-
-                db = listaCanti.getReadableDatabase();
-                sql = "DELETE FROM LOCAL_LINKS" +
-                        "  WHERE _id =  " + idCanto;
-                db.execSQL(sql);
-                db.close();
-
-                mDownload = false;
-
-                music_buttons.setVisibility(View.INVISIBLE);
-                no_records_text.setVisibility(View.VISIBLE);
-                recreate();
-                break;
+//            case "DELETE_LINK_2":
+//                Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+//                        .show();
+//                stopMedia();
+//                db = listaCanti.getReadableDatabase();
+//                sql = "DELETE FROM LOCAL_LINKS" +
+//                        "  WHERE _id =  " + idCanto;
+//                db.execSQL(sql);
+//                db.close();
+//                recreate();
+//                break;
             case "ONLY_LINK":
                 new FileChooserDialog.Builder(PaginaRenderActivity.this)
                         .mimeType("audio/*") // Optional MIME type filter
@@ -1904,16 +1567,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 pulisciVars();
                 mLUtils.closeActivityWithTransition();
                 break;
-//            case "EXTERNAL_STORAGE_RATIONALE":
-//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                        Utility.WRITE_STORAGE_RC);
-//                break;
-//            case "EXTERNAL_FILE_RATIONALE":
-//                ActivityCompat.requestPermissions(PaginaRenderActivity.this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                        Utility.EXTERNAL_FILE_RC);
-//                break;
         }
     }
     @Override
@@ -1944,40 +1597,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 getString(R.string.file_selected) + ": " + path
                 , Snackbar.LENGTH_SHORT)
                 .show();
-
-        scroll_song_bar.setProgress(0);
-        scroll_song_bar.setEnabled(false);
-        showPlaying(false);
-//        if (mediaPlayerState != MP_State.Stopped) {
-//            mediaPlayerState = MP_State.Stopped;
-//            Intent i = new Intent(getApplicationContext(), MusicService.class);
-//            stopService(i);
-////            i.setAction(MusicService.ACTION_STOP);
-////            startService(i);
-////            ContextCompat.startForegroundService(PaginaRenderActivity.this, i);
-//        }
-        if (mLastPlaybackState.getState() != PlaybackStateCompat.STATE_STOPPED) {
-            MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-            if (controller != null) {
-                controller.getTransportControls().stop();
-            }
-        }
-
+        stopMedia();
         SQLiteDatabase db = listaCanti.getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put("_id", idCanto);
         values.put("local_path", path);
         db.insert("LOCAL_LINKS", null, values);
         db.close();
-
-        localFile = true;
-        personalUrl = path;
-
-        mDownload = true;
-
-        //mostra i pulsanti per il lettore musicale
-        music_buttons.setVisibility(View.VISIBLE);
-        no_records_text.setVisibility(View.INVISIBLE);
         recreate();
     }
 
@@ -2118,6 +1744,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     private void playMedia() {
+        Log.d(TAG, "playMedia: ");
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.getTransportControls().play();
@@ -2125,9 +1752,20 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     private void pauseMedia() {
+        Log.d(TAG, "pauseMedia: ");
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.getTransportControls().pause();
+        }
+    }
+
+    private void stopMedia() {
+        Log.d(TAG, "stopMedia: ");
+        if (mLastPlaybackState.getState() != PlaybackStateCompat.STATE_STOPPED) {
+            MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+            if (controller != null) {
+                controller.getTransportControls().stop();
+            }
         }
     }
 

@@ -18,6 +18,7 @@
     <color name="dialtacts_secondary_text_color">#737373</color>
 
     <color name="icon_ative_black">#8A000000</color>
+    <color name="icon_inative_black">#61000000</color>
 
     <color name="intro_background">#00BCD4</color>
 

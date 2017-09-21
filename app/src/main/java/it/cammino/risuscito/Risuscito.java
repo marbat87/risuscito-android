@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,14 +30,18 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.stephentuso.welcome.WelcomeHelper;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback {
+public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCallback, EasyPermissions.PermissionCallbacks {
 
     private final String TAG = getClass().getCanonicalName();
 
@@ -46,13 +51,13 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public static final String DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE";
     private WelcomeHelper mWelcomeScreen;
 
-//    private SignInButton mSignInButton;
-
     private MainActivity mMainActivity;
 
     private Unbinder mUnbinder;
 
     private String thisVersion;
+
+    private View rootView;
 
     private BroadcastReceiver signInVisibility = new BroadcastReceiver() {
         @Override
@@ -79,7 +84,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
+        rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
@@ -111,8 +116,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
         mWelcomeScreen.show(savedInstanceState);
         if (!thisVersion.equals(lastVersion)) {
-//            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
-//            mWelcomeScreen.show(savedInstanceState);
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
@@ -120,14 +123,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
                     .setHasCancelListener()
                     .setCanceable()
                     .show();
-//            SharedPreferences.Editor editor = sp.edit();
-//            editor.putString(VERSION_KEY, thisVersion);
-//            editor.apply();
         }
-//        else {
-//            mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
-//            mWelcomeScreen.show(savedInstanceState);
-//        }
 
         PaginaRenderActivity.notaCambio = null;
         PaginaRenderActivity.speedValue = null;
@@ -140,7 +136,6 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         db.close();
         listaCanti.close();
 
-//        mSignInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -156,6 +151,8 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         rootView.findViewById(R.id.sign_in_button).setVisibility(PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
                 .getBoolean(Utility.SIGNED_IN, false) ? View.INVISIBLE : View.VISIBLE);
+
+        checkStoragePermissions();
 
         return rootView;
     }
@@ -231,5 +228,47 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
+    private void checkStoragePermissions() {
+        Log.d(TAG, "checkStoragePermissions: ");
+        if (!EasyPermissions.hasPermissions(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Ask for one permission
+            EasyPermissions.requestPermissions(Risuscito.this, getString(R.string.external_storage_pref_rationale),
+                    Utility.WRITE_STORAGE_RC, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> list) {
+        // Some permissions have been
+        Log.d(TAG, "onPermissionsGranted: ");
+        Snackbar.make(rootView
+                , getString(R.string.permission_ok)
+                , Snackbar.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> list) {
+        // Some permissions have been denied
+        Log.d(TAG, "onPermissionsDenied: ");
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(getContext())
+                .edit();
+        editor.putString(Utility.SAVE_LOCATION, "0");
+        editor.apply();
+        Snackbar.make(rootView
+                , getString(R.string.external_storage_denied)
+                , Snackbar.LENGTH_SHORT)
+                .show();
+    }
 
 }

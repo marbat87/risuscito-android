@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
@@ -15,12 +14,9 @@ import android.view.ViewGroup;
 
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
-import java.util.List;
-
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements EasyPermissions.PermissionCallbacks {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     CharSequence[] mEntries;
     CharSequence[] mEntryValues;
@@ -40,12 +36,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements EasyPe
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);
         mMainActivity.enableFab(false);
-        if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(false);
+        if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        }
 
         final ListPreference listPreference = (ListPreference) findPreference("memoria_salvataggio_scelta");
+
+        loadStorageList(EasyPermissions.hasPermissions(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE));
 
         listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -60,16 +56,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements EasyPe
         });
 
 //        if (Utility.hasMarshmallow())
-        checkStoragePermissions();
+//        checkStoragePermissions();
 //        else
 //            loadExternalStorage();
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
-    private void checkStoragePermissions() {
-        Log.d(TAG, "checkStoragePermissions: ");
+//    @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
+//    private void checkStoragePermissions() {
+//        Log.d(TAG, "checkStoragePermissions: ");
 //        // Here, thisActivity is the current activity
 //        if(ContextCompat.checkSelfPermission(getActivity(),
 //                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -89,16 +85,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements EasyPe
 //        }
 //        else
 //            loadExternalStorage();
-        loadStorageList(false);
-        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Have permission, do the thing!
-            loadStorageList(true);
-        } else {
-            // Ask for one permission
-            EasyPermissions.requestPermissions(SettingsFragment.this, getString(R.string.external_storage_pref_rationale),
-                    Utility.WRITE_STORAGE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-    }
+//        loadStorageList(false);
+//        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//            // Have permission, do the thing!
+//            loadStorageList(true);
+//        } else {
+//            // Ask for one permission
+//            EasyPermissions.requestPermissions(SettingsFragment.this, getString(R.string.external_storage_pref_rationale),
+//                    Utility.WRITE_STORAGE_RC, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        }
+//    }
 
     void loadStorageList(boolean external) {
         Log.d(TAG, "loadStorageList: WRITE_EXTERNAL_STORAGE " + Utility.isExternalStorageWritable() + " / " + external);
@@ -133,45 +129,45 @@ public class SettingsFragment extends PreferenceFragmentCompat implements EasyPe
 //                .show();
 //    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-//        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
-////        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
-//        switch (requestCode) {
-//            case Utility.WRITE_STORAGE_RC: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // permission was granted, yay! Do the task you need to do.
-//                    loadExternalStorage();
-//                } else {
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    showDeniedForExternalDownload();
-//                }
-//            }
-//        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+////        Log.d(getClass().getName(), "onRequestPermissionsResult-request: " + requestCode);
+//////        Log.d(getClass().getName(), "onRequestPermissionsResult-result: " + grantResults[0]);
+////        switch (requestCode) {
+////            case Utility.WRITE_STORAGE_RC: {
+////                // If request is cancelled, the result arrays are empty.
+////                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+////                    // permission was granted, yay! Do the task you need to do.
+////                    loadExternalStorage();
+////                } else {
+////                    // permission denied, boo! Disable the
+////                    // functionality that depends on this permission.
+////                    showDeniedForExternalDownload();
+////                }
+////            }
+////        }
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        // Forward results to EasyPermissions
+//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+//    }
 
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
+//    @Override
+//    public void onPermissionsGranted(int requestCode, List<String> list) {
+//        // Some permissions have been
+//        Log.d(TAG, "onPermissionsGranted: ");
+//        loadStorageList(true);
+//    }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // Some permissions have been
-        Log.d(TAG, "onPermissionsGranted: ");
-        loadStorageList(true);
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // Some permissions have been denied
-        Log.d(TAG, "onPermissionsDenied: ");
-        loadStorageList(false);
-//        if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
-//            new AppSettingsDialog.Builder(this).build().show();
-//        }
-    }
+//    @Override
+//    public void onPermissionsDenied(int requestCode, List<String> list) {
+//        // Some permissions have been denied
+//        Log.d(TAG, "onPermissionsDenied: ");
+//        loadStorageList(false);
+////        if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
+////            new AppSettingsDialog.Builder(this).build().show();
+////        }
+//    }
 
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {
