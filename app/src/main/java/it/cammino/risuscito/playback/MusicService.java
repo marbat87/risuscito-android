@@ -123,7 +123,7 @@ public class MusicService extends MediaBrowserServiceCompat {
     private static final int REQUEST_CODE = 99;
 
     // Delay stopSelf by using a handler.
-    private static final long STOP_DELAY = TimeUnit.SECONDS.toMillis(30);
+    private static final long STOP_DELAY = TimeUnit.MINUTES.toMillis(10);
     private static final int STOP_CMD = 0x7c48;
 
     private MusicProvider mMusicProvider;
@@ -399,6 +399,7 @@ public class MusicService extends MediaBrowserServiceCompat {
             // is disconnected. Call startService(Intent) and then stopSelf(..) when we no longer
             // need to play media.
             startService(new Intent(getApplicationContext(), MusicService.class));
+//            ContextCompat.startForegroundService(getApplicationContext(), new Intent(getApplicationContext(), MusicService.class));
             mServiceStarted = true;
         }
 
