@@ -136,8 +136,8 @@ public class DownloadService extends IntentService {
                     if (fileLength > 0) {// only if total length is known
 //                        publishProgress((int) (total * 100 / fileLength));
                         int progress = (int) total * 100 / fileLength;
-                        Log.d(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_PROGRESS);
-                        Log.d(TAG, "Sending broadcast notification: " + DATA_PROGRESS + ": " + progress);
+                        Log.v(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_PROGRESS);
+                        Log.v(TAG, "Sending broadcast notification: " + DATA_PROGRESS + ": " + progress);
                         Intent intentBroadcast = new Intent(BROADCAST_DOWNLOAD_PROGRESS);
                         intentBroadcast.putExtra(DATA_PROGRESS, progress);
                         sendBroadcast(intentBroadcast);
@@ -170,7 +170,8 @@ public class DownloadService extends IntentService {
                     connection.disconnect();
             }
         } finally {
-            wakelock.release();
+            if (wakelock.isHeld())
+                wakelock.release();
         }
         unregisterReceiver(cancelBRec);
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_COMPLETED);

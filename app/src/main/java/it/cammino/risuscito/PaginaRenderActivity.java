@@ -143,8 +143,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
             try {
-                Log.d(TAG, "BROADCAST_DOWNLOAD_PROGRESS");
-                Log.d(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
+                Log.v(TAG, "BROADCAST_DOWNLOAD_PROGRESS");
+                Log.v(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
                 SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
                 if (sFragment != null) {
                     sFragment.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0));
@@ -182,7 +182,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         , Snackbar.LENGTH_SHORT)
                         .show();
                 stopMedia();
-                recreate();
+                refreshCatalog();
+                checkRecordsState();
+//                recreate();
             }
             catch (IllegalArgumentException e) {
                 Log.e(TAG, e.getLocalizedMessage(), e);
@@ -437,7 +439,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 public void onConnected() {
                     Log.d(TAG, "onConnected");
                     try {
-                        //                        connectToSession(mMediaBrowser.getSessionToken());
                         MediaControllerCompat mediaController =
                                 new MediaControllerCompat(
                                         PaginaRenderActivity.this, mMediaBrowser.getSessionToken());
@@ -574,8 +575,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         pagina = bundle != null ? bundle.getCharSequence("pagina", "").toString() : null;
         idCanto = bundle != null ? bundle.getInt("idCanto") : 0;
 
-        getRecordLink();
-
         try {
             primaNota = CambioAccordi.recuperaPrimoAccordo(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
             primoBarre = cambioAccordi.recuperaBarre(getAssets().open(pagina + ".htm"), ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage());
@@ -597,50 +596,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         savedSpeed = cursor.getInt(2);
         cursor.close();
         db.close();
-
-        //c'è la registrazione online
-        if (!url.equalsIgnoreCase("")) {
-//            checkExternalFilePermissions();
-            //controllo se ho scaricato un file in locale
-            SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
-            int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
-            if (saveLocation == 1) {
-                if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    // Have permission, do the thing!
-                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
-                }
-                else {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
-                            .edit();
-                    editor.putString(Utility.SAVE_LOCATION, "0");
-                    editor.apply();
-                    Snackbar.make(findViewById(android.R.id.content)
-                            , getString(R.string.external_storage_denied)
-                            , Snackbar.LENGTH_SHORT)
-                            .show();
-                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
-                }
-            }
-            else
-                localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
-
-            mDownload = !(localUrl.equalsIgnoreCase("") &&
-                    personalUrl.equalsIgnoreCase(""));
-
-            //almeno una registrazione c'è, quindi nascondo il messaggio di no_records
-            no_records_text.setVisibility(View.INVISIBLE);
-            //mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono online, altrimenti mostra il messaggio di mancata connessione
-            music_buttons.setVisibility(Utility.isOnline(this) || mDownload ? View.VISIBLE: View.INVISIBLE);
-            no_connection_text.setVisibility(Utility.isOnline(this) || mDownload ? View.INVISIBLE: View.VISIBLE);
-        }
-        //NON c'è la registrazione online
-        else {
-            mDownload = !personalUrl.isEmpty();
-            //Se c'è una registrazione locale mostro i pulsanti
-            music_buttons.setVisibility(mDownload ? View.VISIBLE : View.INVISIBLE);
-            no_records_text.setVisibility(mDownload ? View.INVISIBLE : View.VISIBLE);
-        }
 
         scroll_song_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -709,6 +664,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "SAVE_TAB");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
+
+        checkRecordsState();
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -1108,10 +1065,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         if (listaCanti != null)
             listaCanti.close();
         super.onDestroy();
-        if (isFinishing()) {
+        if (isFinishing())
             stopMedia();
-            MediaControllerCompat.setMediaController(PaginaRenderActivity.this, null);
-        }
         stopSeekbarUpdate();
         mExecutorService.shutdown();
     }
@@ -1303,7 +1258,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             boolean notaHighlighed = !higlightDiff;
 
             while (line != null) {
-                Log.d(TAG, "RIGA DA ELAB: " + line);
+                Log.v(TAG, "RIGA DA ELAB: " + line);
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
                     if (language.equalsIgnoreCase("uk") || language.equalsIgnoreCase("en")) {
                         line = line.replaceAll("</FONT><FONT COLOR=\"#A13F3C\">", "<K>");
@@ -1492,7 +1447,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                         "  WHERE _id =  " + idCanto;
                 db.execSQL(sql);
                 db.close();
-                recreate();
+                refreshCatalog();
+                checkRecordsState();
+//                recreate();
                 break;
             case "DELETE_MP3":
                 File fileToDelete = new File(localUrl);
@@ -1512,7 +1469,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
                             .show();
                 stopMedia();
-                recreate();
+                refreshCatalog();
+                checkRecordsState();
+//                recreate();
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
@@ -1604,7 +1563,9 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         values.put("local_path", path);
         db.insert("LOCAL_LINKS", null, values);
         db.close();
-        recreate();
+        refreshCatalog();
+        checkRecordsState();
+//        recreate();
     }
 
     @Override
@@ -1783,6 +1744,14 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
     }
 
+    private void refreshCatalog() {
+    Log.d(TAG, "refreshCatalog");
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().sendCustomAction(MusicService.ACTION_REFRESH, null);
+        }
+    }
+
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
         public void run() {
@@ -1827,6 +1796,53 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         }
         scroll_song_bar.setEnabled(true);
         scroll_song_bar.setProgress((int) currentPosition);
+    }
+
+    private void checkRecordsState() {
+        getRecordLink();
+        //c'è la registrazione online
+        if (!url.equalsIgnoreCase("")) {
+//            checkExternalFilePermissions();
+            //controllo se ho scaricato un file in locale
+            SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
+            int saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"));
+            if (saveLocation == 1) {
+                if (EasyPermissions.hasPermissions(PaginaRenderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    // Have permission, do the thing!
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, true);
+                }
+                else {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(PaginaRenderActivity.this)
+                            .edit();
+                    editor.putString(Utility.SAVE_LOCATION, "0");
+                    editor.apply();
+                    Snackbar.make(findViewById(android.R.id.content)
+                            , getString(R.string.external_storage_denied)
+                            , Snackbar.LENGTH_SHORT)
+                            .show();
+                    localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+                }
+            }
+            else
+                localUrl =  Utility.retrieveMediaFileLink(PaginaRenderActivity.this, url, false);
+
+            mDownload = !(localUrl.equalsIgnoreCase("") &&
+                    personalUrl.equalsIgnoreCase(""));
+
+            //almeno una registrazione c'è, quindi nascondo il messaggio di no_records
+            no_records_text.setVisibility(View.INVISIBLE);
+            //mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono online, altrimenti mostra il messaggio di mancata connessione
+            music_buttons.setVisibility(Utility.isOnline(this) || mDownload ? View.VISIBLE: View.INVISIBLE);
+            no_connection_text.setVisibility(Utility.isOnline(this) || mDownload ? View.INVISIBLE: View.VISIBLE);
+        }
+        //NON c'è la registrazione online
+        else {
+            mDownload = !personalUrl.isEmpty();
+            //Se c'è una registrazione locale mostro i pulsanti
+            music_buttons.setVisibility(mDownload ? View.VISIBLE : View.INVISIBLE);
+            no_records_text.setVisibility(mDownload ? View.INVISIBLE : View.VISIBLE);
+        }
     }
 
 //    private CastStateListener mCastStateListener = new CastStateListener() {

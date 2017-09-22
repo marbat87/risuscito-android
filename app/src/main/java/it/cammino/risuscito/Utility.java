@@ -182,9 +182,13 @@ public class Utility {
 
     public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
 
+        if (link.isEmpty())
+            return "";
+
         if (isExternalStorageReadable() && cercaEsterno) {
-//			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
-//			File fileExt = new File(fileArray[0], filterMediaLink(link));
+            //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
+            //			File fileExt = new File(fileArray[0], filterMediaLink(link));
+            Log.v("Utility.java", "retrieveMediaFileLink: " + filterMediaLinkNew(link));
             //cerca file esterno con nuovi path e nome
             File fileExt = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC), "/Risuscitò/" + filterMediaLinkNew(link));
@@ -200,11 +204,11 @@ public class Utility {
                     return fileExt.getAbsolutePath();
                 }
                 else
-                    Log.d("Utility.java", "FILE ESTERNO NON TROVATO");
+                    Log.v("Utility.java", "FILE ESTERNO NON TROVATO");
             }
         }
         else {
-            Log.d("Utility.java", "isExternalStorageReadable: FALSE");
+            Log.v("Utility.java", "isExternalStorageReadable: FALSE");
         }
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
@@ -213,7 +217,7 @@ public class Utility {
             return fileInt.getAbsolutePath();
         }
         else
-            Log.d("Utility.java", "FILE INTERNO NON TROVATO");
+            Log.v("Utility.java", "FILE INTERNO NON TROVATO");
 //		Log.i("FILE INTERNO:", "NON TROVATO");
         return "";
     }
@@ -259,9 +263,9 @@ public class Utility {
         return ((new Random()).nextInt(end - start + 1) + start);
     }
 
-    static boolean hasMarshmallow() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    }
+//    static boolean hasMarshmallow() {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+//    }
 
     public static boolean isLowerCase(char ch) {
         return ch >= 'a' && ch <= 'z';

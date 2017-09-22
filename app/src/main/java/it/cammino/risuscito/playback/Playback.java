@@ -80,7 +80,8 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
     private static final int AUDIO_FOCUSED = 2;
 
     private final MusicService mService;
-    private final MusicProvider mMusicProvider;
+//    private final MusicProvider mMusicProvider;
+    private MusicProvider mMusicProvider;
     private final WifiManager.WifiLock mWifiLock;
     private int mState = PlaybackStateCompat.STATE_NONE;
     private boolean mPlayOnFocusGain;
@@ -135,6 +136,10 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
 
     int getCurrentStreamPosition() {
         return mMediaPlayer != null ? mMediaPlayer.getCurrentPosition() : mCurrentPosition;
+    }
+
+    public void setmMusicProvider(MusicProvider mMusicProvider) {
+        this.mMusicProvider = mMusicProvider;
     }
 
     public void play(MediaSessionCompat.QueueItem item) {

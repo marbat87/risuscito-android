@@ -209,39 +209,41 @@ public class MusicProvider {
                 String url = cursor.getString(2);
                 if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
-                    if (!Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), true).isEmpty())
-                        url = Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), true);
+                    if (!Utility.retrieveMediaFileLink(mContext, url, true).isEmpty())
+                        url = Utility.retrieveMediaFileLink(mContext, url, true);
                 } else {
-                    if (!Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), false).isEmpty())
-                        url = Utility.retrieveMediaFileLink(mContext,  cursor.getString(2), false);
+                    if (!Utility.retrieveMediaFileLink(mContext, url, false).isEmpty())
+                        url = Utility.retrieveMediaFileLink(mContext, url, false);
                 }
 
-                Log.d(TAG, "retrieveMedia: " + cursor.getInt(0) + " / " + cursor.getString(1) + " / " + url);
+                Log.v(TAG, "retrieveMedia: " + cursor.getInt(0) + " / " + cursor.getString(1) + " / " + url);
 
-                temp = new MediaMetadataCompat.Builder()
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, cursor.getString(0))
+                if (!url.isEmpty()) {
+                    temp = new MediaMetadataCompat.Builder()
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, cursor.getString(0))
 //                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, cursor.getString(2))
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mContext.getString(R.string.app_name))
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
-                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, cursor.getString(1))
-                        .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, Integer.parseInt(cursor.getString(0)))
-                        .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, cursor.getCount())
-                        // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mContext.getString(R.string.app_name))
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
+                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
+                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, cursor.getString(1))
+                            .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, Integer.parseInt(cursor.getString(0)))
+                            .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, cursor.getCount())
+                            // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
 //                                // used, for example, on the lockscreen background when the media
 //                                // session is active.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
 //
 //                                // Set small version of the album art in the DISPLAY_ICON. This is
 //                                // used on the MediaDescription and thus it should be small to be
 //                                // serialized if necessary.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
-                        .build();
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
+                            .build();
 
-                mMusicListById.put(cursor.getString(0), temp);
+                    mMusicListById.put(cursor.getString(0), temp);
+                }
                 cursor.moveToNext();
             }
 

@@ -61,27 +61,27 @@ public class CambioAccordi {
 
             while (line != null && !found) {
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    Log.d(TAG, "recuperaPrimoAccordo - RIGA: " + line);
+                    Log.v(TAG, "recuperaPrimoAccordo - RIGA: " + line);
                     int inizioRiga = line.indexOf("A13F3C") + 8;
 
                     if (inizioRiga < line.length()) {
-                        Log.d(TAG, "recuperaPrimoAccordo - inizioRiga: " + inizioRiga);
-                        Log.d(TAG, "recuperaPrimoAccordo - carattere: " + line.charAt(inizioRiga));
+                        Log.v(TAG, "recuperaPrimoAccordo - inizioRiga: " + inizioRiga);
+                        Log.v(TAG, "recuperaPrimoAccordo - carattere: " + line.charAt(inizioRiga));
                         int i = inizioRiga;
                         while (i < line.length()) {
-                            Log.d(TAG, "recuperaPrimoAccordo - LETTERA: " + line.charAt(i));
+                            Log.v(TAG, "recuperaPrimoAccordo - LETTERA: " + line.charAt(i));
                             if (line.charAt(i) != ' ') {
                                 found = true;
                                 break;
                             }
                             i++;
                         }
-                        Log.d(TAG, "recuperaPrimoAccordo - inizio Nota: " + i);
-                        Log.d(TAG, "recuperaPrimoAccordo - lunghezza stringa: " + line.length());
+                        Log.v(TAG, "recuperaPrimoAccordo - inizio Nota: " + i);
+                        Log.v(TAG, "recuperaPrimoAccordo - lunghezza stringa: " + line.length());
                         primaNota.append(line.charAt(i));
-                        Log.d(TAG, "recuperaPrimoAccordo - prima lettera: " + primaNota);
+                        Log.v(TAG, "recuperaPrimoAccordo - prima lettera: " + primaNota);
                         for (int j = i+1; j < line.length(); j++) {
-                            Log.d(TAG, "recuperaPrimoAccordo - DA ISP: " + line.charAt(j));
+                            Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line.charAt(j));
 //                            Matcher myMatcher = Pattern.compile("[a-z]|#]")
 //                                    .matcher(String.valueOf(line.charAt(j)));
 //                            if (language.equalsIgnoreCase("en"))
@@ -99,7 +99,7 @@ public class CambioAccordi {
                                     break;
                             }
                             if (myMatcher.find()) {
-                                Log.d(TAG, "recuperaPrimoAccordo - matchato OK");
+                                Log.v(TAG, "recuperaPrimoAccordo - matchato OK");
                                 primaNota.append(line.charAt(j));
                             }
                             else
@@ -111,7 +111,7 @@ public class CambioAccordi {
                 line = br.readLine();
             }
             br.close();
-            Log.d(TAG, "recuperaPrimoAccordo - risultato: " + primaNota);
+            Log.v(TAG, "recuperaPrimoAccordo - risultato: " + primaNota);
             return primaNota.toString();
         }
         catch (Exception ex)
@@ -142,7 +142,7 @@ public class CambioAccordi {
                 int start = line.indexOf(context.getResources().getString(R.string.barre_search_string));
 //                if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
                 if (start >= 0) {
-                    Log.d(TAG, "recuperaBarre - RIGA: " + line);
+                    Log.v(TAG, "recuperaBarre - RIGA: " + line);
                     found = true;
 
 //                    int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
@@ -159,7 +159,7 @@ public class CambioAccordi {
                 line = br.readLine();
             }
             br.close();
-            Log.d(TAG, "recuperaBarre - risultato: " + primoBarre);
+            Log.v(TAG, "recuperaBarre - risultato: " + primoBarre);
             return primoBarre;
         }
         catch (Exception ex) {
@@ -171,8 +171,8 @@ public class CambioAccordi {
     public HashMap<String, String> diffSemiToni(String primaNota, String notaCambio) {
 
 //		if (primaNota.equals(notaCambio))
-        Log.d(TAG, "diffSemiToni - primaNota: " + primaNota);
-        Log.d(TAG, "diffSemiToni - notaCambio: " + notaCambio);
+        Log.v(TAG, "diffSemiToni - primaNota: " + primaNota);
+        Log.v(TAG, "diffSemiToni - notaCambio: " + notaCambio);
 //			return null;
 
         if (primaNota == null || primaNota.equals("")
@@ -184,7 +184,7 @@ public class CambioAccordi {
         if (mLanguage != null && !mLanguage.isEmpty())
             language = mLanguage;
 
-        Log.d(TAG, "diffSemiToni: language " + language);
+        Log.v(TAG, "diffSemiToni: language " + language);
 
         String primoAccordo = primaNota;
         String cambioAccordo = notaCambio;
@@ -236,7 +236,7 @@ public class CambioAccordi {
         }
         if (start == accordi.length)
             return null;
-        Log.d(TAG, "diffSemiToni - posizionePrimaNota: " + start);
+        Log.v(TAG, "diffSemiToni - posizionePrimaNota: " + start);
         int end;
         for (end = 0; end < accordi.length; end++) {
             if (cambioAccordo.equals(accordi[end]))
@@ -244,7 +244,7 @@ public class CambioAccordi {
         }
         if (end == accordi.length)
             return null;
-        Log.d(TAG, "diffSemiToni - posizioneNotaCambio: " + end);
+        Log.v(TAG, "diffSemiToni - posizioneNotaCambio: " + end);
         int differenza;
         if (end > start)
             differenza = (end - start);
@@ -253,8 +253,8 @@ public class CambioAccordi {
 
         HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi.length; i++) {
-            Log.d(TAG, "diffSemiToni - NUOVO: " + (i+differenza)%12);
-            Log.d(TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i+differenza)%12]);
+            Log.v(TAG, "diffSemiToni - NUOVO: " + (i+differenza)%12);
+            Log.v(TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i+differenza)%12]);
             mappa.put(accordi[i], accordi[(i+differenza)%12]);
         }
         return mappa;
@@ -262,7 +262,7 @@ public class CambioAccordi {
 
     public HashMap<String, String> diffSemiToniMin(String primaNota, String notaCambio) {
 
-        Log.d(TAG, "diffSemiToniMin");
+        Log.v(TAG, "diffSemiToniMin");
 
         if (primaNota == null || primaNota.equals("")
                 || notaCambio == null || primaNota.equals(""))
@@ -286,7 +286,7 @@ public class CambioAccordi {
         }
         if (start == accordi_uk_lower.length)
             return null;
-        Log.d(TAG, "diffSemiToniMin - posizionePrimaNota: " + start);
+        Log.v(TAG, "diffSemiToniMin - posizionePrimaNota: " + start);
         int end;
         for (end = 0; end < accordi_uk_lower.length; end++) {
             if (cambioAccordo.equals(accordi_uk_lower[end]))
@@ -294,7 +294,7 @@ public class CambioAccordi {
         }
         if (end == accordi_uk_lower.length)
             return null;
-        Log.d(TAG, "diffSemiToniMin - posizioneNotaCambio: " + end);
+        Log.v(TAG, "diffSemiToniMin - posizioneNotaCambio: " + end);
         int differenza;
         if (end > start)
             differenza = (end - start);
@@ -303,8 +303,8 @@ public class CambioAccordi {
 
         HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi_uk_lower.length; i++) {
-            Log.d(TAG, "diffSemiToniMin - NUOVO: " + (i+differenza)%12);
-            Log.d(TAG, "diffSemiToniMin - CONVE: " + accordi_uk_lower[i] + " in " + accordi_uk_lower[(i + differenza) % 12]);
+            Log.v(TAG, "diffSemiToniMin - NUOVO: " + (i+differenza)%12);
+            Log.v(TAG, "diffSemiToniMin - CONVE: " + accordi_uk_lower[i] + " in " + accordi_uk_lower[(i + differenza) % 12]);
             mappa.put(accordi_uk_lower[i], accordi_uk_lower[(i+differenza)%12]);
         }
         return mappa;

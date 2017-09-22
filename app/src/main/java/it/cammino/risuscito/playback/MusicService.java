@@ -136,6 +136,8 @@ public class MusicService extends MediaBrowserServiceCompat {
     private MediaSessionCompat.QueueItem mCurrentMedia;
     private AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
 
+    public static final String ACTION_REFRESH = "itcr_media_action_REFRESH";
+
     /**
      * Custom {@link Handler} to process the delayed stop command.
      */
@@ -380,6 +382,23 @@ public class MusicService extends MediaBrowserServiceCompat {
             if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
                 onSkipToPrevious();
             return super.onMediaButtonEvent(mediaButtonEvent);
+        }
+
+        @Override
+        public void onCustomAction(String action, Bundle extras) {
+            Log.d(TAG, "onCustomAction: " + action);
+            if (ACTION_REFRESH.equals(action)) {
+                mMusicProvider = new MusicProvider(getApplicationContext());
+                mPlayback.setmMusicProvider(mMusicProvider);
+                mMusicProvider.retrieveMediaAsync(
+                        new MusicProvider.Callback() {
+                            @Override
+                            public void onMusicCatalogReady(boolean success) {
+                                Log.d(TAG, "onMusicCatalogReady");
+                            }
+                        });
+            }
+            super.onCustomAction(action, extras);
         }
     }
 
