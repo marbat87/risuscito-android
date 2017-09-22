@@ -101,7 +101,7 @@ class MediaNotificationHelper {
             NotificationCompat.Action actionRestart = new NotificationCompat.Action(R.drawable.notification_restart,
                     context.getString(R.string.label_restart),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
-                            PlaybackStateCompat.ACTION_REWIND));
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
             notificationBuilder.addAction(actionRestart);
         }
 

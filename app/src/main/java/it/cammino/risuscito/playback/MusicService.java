@@ -36,6 +36,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -365,20 +366,21 @@ public class MusicService extends MediaBrowserServiceCompat {
         }
 
         @Override
-        public void onRewind() {
-            Log.d(TAG, "rewind. current state=" + mPlayback.getState());
+        public void onSkipToPrevious() {
+            Log.d(TAG, "skip to previous. current state=" + mPlayback.getState());
             mPlayback.seekTo(0);
             if (mPlayback.getState() == PlaybackStateCompat.STATE_PAUSED)
                 handlePlayRequest();
         }
 
-//        @Override
-//        public void onSkipToPrevious() {
-//            Log.d(TAG, "skip to previous. current state=" + mPlayback.getState());
-//            mPlayback.seekTo(0);
-//            if (mPlayback.getState() == PlaybackStateCompat.STATE_PAUSED)
-//                handlePlayRequest();
-//        }
+        @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+            KeyEvent mKeyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            Log.d(TAG, "onMediaButtonEvent keycode: " + mKeyEvent.getKeyCode());
+            if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                onSkipToPrevious();
+            return super.onMediaButtonEvent(mediaButtonEvent);
+        }
     }
 
     /**
