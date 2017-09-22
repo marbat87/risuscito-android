@@ -138,7 +138,7 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
         return mMediaPlayer != null ? mMediaPlayer.getCurrentPosition() : mCurrentPosition;
     }
 
-    public void setmMusicProvider(MusicProvider mMusicProvider) {
+    void setmMusicProvider(MusicProvider mMusicProvider) {
         this.mMusicProvider = mMusicProvider;
     }
 
