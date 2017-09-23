@@ -65,6 +65,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
     implementation 'pub.devrel:easypermissions:1.0.0'
+    implementation 'com.blunderer:easy-animated-vector-drawable:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

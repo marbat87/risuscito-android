@@ -80,4 +80,6 @@
 
     <dimen name="about_appbarlayout_height">200dp</dimen>
 
+    <dimen name="play_pause_padding">18dp</dimen>
+
 </resources>

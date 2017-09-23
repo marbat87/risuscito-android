@@ -136,7 +136,9 @@ public class MusicService extends MediaBrowserServiceCompat {
     private MediaSessionCompat.QueueItem mCurrentMedia;
     private AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
 
-    public static final String ACTION_REFRESH = "itcr_media_action_REFRESH";
+    public static final String ACTION_REFRESH = "itcr_media_action_refresh";
+    public static final String BROADCAST_RETRIEVE_ASYNC = "itcr_media_broadcast_retrieve_async";
+    public static final String MSG_RETRIEVE_DONE = "itcr_media_retrieve_done";
 
     /**
      * Custom {@link Handler} to process the delayed stop command.
@@ -167,10 +169,11 @@ public class MusicService extends MediaBrowserServiceCompat {
         Log.d(TAG, "onCreate");
 
         mMusicProvider = new MusicProvider(getApplicationContext());
+        sendMusicProviderStatusBroadcast(false);
         mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
             @Override
             public void onMusicCatalogReady(boolean success) {
-
+                sendMusicProviderStatusBroadcast(success);
             }
         });
 
@@ -390,11 +393,12 @@ public class MusicService extends MediaBrowserServiceCompat {
             if (ACTION_REFRESH.equals(action)) {
                 mMusicProvider = new MusicProvider(getApplicationContext());
                 mPlayback.setmMusicProvider(mMusicProvider);
+                sendMusicProviderStatusBroadcast(false);
                 mMusicProvider.retrieveMediaAsync(
                         new MusicProvider.Callback() {
                             @Override
                             public void onMusicCatalogReady(boolean success) {
-                                Log.d(TAG, "onMusicCatalogReady");
+                                sendMusicProviderStatusBroadcast(success);
                             }
                         });
             }
@@ -628,4 +632,11 @@ public class MusicService extends MediaBrowserServiceCompat {
             }
         }
     }
+
+    private void sendMusicProviderStatusBroadcast(boolean done) {
+        Intent intentBroadcast = new Intent(BROADCAST_RETRIEVE_ASYNC);
+        intentBroadcast.putExtra(MSG_RETRIEVE_DONE, done);
+        sendBroadcast(intentBroadcast);
+    }
+
 }

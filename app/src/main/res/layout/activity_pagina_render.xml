@@ -148,17 +148,30 @@
                         android:layout_gravity="center_vertical"
                         android:layout_height="match_parent"/>
 
-                    <ImageButton
+                    <!--<ImageButton-->
+                        <!--android:id="@+id/play_song"-->
+                        <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
+                        <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
+                        <!--android:paddingLeft="@dimen/button_playbar_padding"-->
+                        <!--android:paddingRight="@dimen/button_playbar_padding"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--android:background="?attr/customSelectorRoundAccent"-->
+                        <!--android:soundEffectsEnabled="true"-->
+                        <!--android:contentDescription="@null" />-->
+                    <ImageView
                         android:id="@+id/play_song"
                         android:layout_width="@dimen/abc_action_bar_default_height_material"
                         android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
+                        android:paddingLeft="@dimen/play_pause_padding"
+                        android:paddingRight="@dimen/play_pause_padding"
                         android:layout_gravity="center_vertical"
-                        android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
+                        android:clickable="true"
+                        android:scaleType="fitCenter"
                         android:soundEffectsEnabled="true"
-                        android:contentDescription="@null" />
+                        android:focusable="true"
+                        android:contentDescription="@null"/>
 
                 </LinearLayout>
 
