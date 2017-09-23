@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.3.0" changeDate="Maggio 2017">
+    <changelogversion versionName="4.3.0" changeDate="Ottobre 2017">
         <changelogimprovement>Compatibilità con Android O</changelogimprovement>
         <changelogimprovement>Nuova icona dell'applicazione ispirata al cristogramma Chi Rho ([a href="https://it.wikipedia.org/wiki/Monogramma_di_Cristo"]Wikipedia[/a])</changelogimprovement>
         <changelogimprovement>Implementata l'icona Adattiva per Android O ([a href="https://developer.android.com/preview/features/adaptive-icons.html"]Android Developer[/a])</changelogimprovement>
@@ -15,6 +15,7 @@
         <changelogimprovement>Modificato stile di indici ed elenchi</changelogimprovement>
         <changelogimprovement>Nuovo layout per tablet</changelogimprovement>
         <changelogimprovement>Il testo ricercato viene evidenziato nei risultati della ricerca veloce</changelogimprovement>
+        <changelogimprovement>Riscritta la parte del lettore musicale</changelogimprovement>
     </changelogversion>
 
 </changelog>
