@@ -387,6 +387,12 @@ public class MainActivity extends ThemeableActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        hideProgressDialog();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 //        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //add the values which need to be saved from the drawer to the bundle

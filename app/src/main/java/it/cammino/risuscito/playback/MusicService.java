@@ -373,9 +373,9 @@ public class MusicService extends MediaBrowserServiceCompat {
         @Override
         public void onSkipToPrevious() {
             Log.d(TAG, "skip to previous. current state=" + mPlayback.getState());
-            mPlayback.seekTo(0);
             if (mPlayback.getState() == PlaybackStateCompat.STATE_PAUSED)
                 handlePlayRequest();
+            mPlayback.seekTo(0);
         }
 
         @Override

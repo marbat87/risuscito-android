@@ -74,11 +74,16 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         }
     };
 
-    @BindView(R.id.imageView1) ImageView mCover;
     @BindView(R.id.sign_in_button) SignInButton mSignInButton;
+
     @OnClick(R.id.imageView1)
     public void closeDrawer() {
         mMainActivity.getDrawer().openDrawer();
+    }
+    @OnClick(R.id.sign_in_button)
+    public void signIn() {
+        mMainActivity.setShowSnackbar();
+        mMainActivity.signIn();
     }
 
     @Override
@@ -137,13 +142,13 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
         listaCanti.close();
 
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
-        mSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMainActivity.setShowSnackbar();
-                mMainActivity.signIn();
-            }
-        });
+//        mSignInButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mMainActivity.setShowSnackbar();
+//                mMainActivity.signIn();
+//            }
+//        });
 
         Log.d(TAG, "onCreateView: signed in = " + PreferenceManager
                 .getDefaultSharedPreferences(getActivity())
