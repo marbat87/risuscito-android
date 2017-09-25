@@ -117,7 +117,7 @@ class MediaNotificationHelper {
         CharSequence name = "Media playback";
         // The user-visible description of the channel.
         String description = "Media playback controls";
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
         // Configure the notification channel.
         mChannel.setDescription(description);
         mChannel.setShowBadge(false);
