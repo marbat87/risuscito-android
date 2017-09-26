@@ -242,11 +242,8 @@
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
     <string name="barre_al_tasto">Barrè al %1$s tasto</string>
-    <!--<string name="external_storage_title">Accesso alla memoria pubblica</string>-->
-    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
     <string name="external_storage_denied">Memoria pubblica non disponibile.</string>
     <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
-    <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
     <string name="forced_private">Forzato download in memoria privata</string>
     <string name="connected_as">Sei connesso come %1$s</string>
     <string name="gplus_signout">Disconnetti account</string>
