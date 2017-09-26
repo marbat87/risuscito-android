@@ -355,7 +355,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved)
-                        , getString(android.R.string.cancel)
+                        , getString(android.R.string.cancel).toUpperCase()
                         , Snackbar.LENGTH_SHORT
                         , cantoAdapter.getSelections());
                 cantoAdapter.deselect();
