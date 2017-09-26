@@ -53,8 +53,8 @@ public class ColorPickerPreference extends Preference {
                         .allowUserColorInput(false)
                         .customColors(getTitle().equals(getPrefActivity().getString(R.string.primary_color)) ? ColorPalette.PRIMARY_COLORS : ColorPalette.ACCENT_COLORS
                                 , getTitle().equals(getPrefActivity().getString(R.string.primary_color)) ? ColorPalette.PRIMARY_COLORS_SUB : ColorPalette.ACCENT_COLORS_SUB)
-                        .doneButton(R.string.single_choice_ok)  // changes label of the done button
-                        .cancelButton(R.string.cancel)  // changes label of the cancel button
+                        .doneButton(android.R.string.ok)  // changes label of the done button
+                        .cancelButton(android.R.string.cancel)  // changes label of the cancel button
                         .backButton(R.string.dialog_back)  // changes label of the back button
                         .preselect(mCurrentValue)  // optional color int, preselects a color
                         .accentMode(getTitle().equals(getPrefActivity().getString(R.string.accent_color)))

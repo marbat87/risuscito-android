@@ -488,8 +488,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                                 cursor.close();
                                 db.close();
@@ -576,8 +576,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
 
             }

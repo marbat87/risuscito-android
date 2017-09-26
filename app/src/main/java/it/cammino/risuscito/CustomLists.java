@@ -87,15 +87,15 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                     new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "RESET_LIST")
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
-                            .positiveButton(R.string.confirm)
-                            .negativeButton(R.string.dismiss)
+                            .positiveButton(android.R.string.yes)
+                            .negativeButton(android.R.string.no)
                             .show();
                     break;
                 case BottomSheetFabListe.ADD_LIST:
                     new InputTextDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "NEW_LIST")
                             .title(R.string.lista_add_desc)
-                            .positiveButton(R.string.dialog_chiudi)
-                            .negativeButton(R.string.cancel)
+                            .positiveButton(android.R.string.ok)
+                            .negativeButton(android.R.string.cancel)
                             .show();
                     break;
                 case BottomSheetFabListe.SHARE_TEXT:
@@ -131,8 +131,8 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                     new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), CustomLists.this, "DELETE_LIST")
                             .title(R.string.action_remove_list)
                             .content(R.string.delete_list_dialog)
-                            .positiveButton(R.string.confirm)
-                            .negativeButton(R.string.dismiss)
+                            .positiveButton(android.R.string.yes)
+                            .negativeButton(android.R.string.no)
                             .show();
                     break;
                 case BottomSheetFabListe.SHARE_FILE:
@@ -479,7 +479,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                 };
                 myHandler.postDelayed(mMyRunnable2, 200);
                 Snackbar.make(getActivity().findViewById(R.id.main_content), getString(R.string.list_removed) + titoloDaCanc + "'!", Snackbar.LENGTH_LONG)
-                        .setAction(R.string.cancel, new View.OnClickListener() {
+                        .setAction(android.R.string.cancel, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
 //					    	Log.i("INDICE DA CANC", listaDaCanc+" ");

@@ -102,8 +102,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), HistoryFragment.this, "RESET_HISTORY")
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
         });
@@ -349,7 +349,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved)
-                        , getString(R.string.cancel)
+                        , getString(android.R.string.cancel)
                         , Snackbar.LENGTH_SHORT
                         , cantoAdapter.getSelections());
                 cantoAdapter.deselect();

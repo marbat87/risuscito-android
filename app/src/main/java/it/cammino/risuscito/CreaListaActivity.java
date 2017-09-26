@@ -104,7 +104,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "ADD_POSITION")
                 .title(R.string.posizione_add_desc)
                 .positiveButton(R.string.aggiungi_confirm)
-                .negativeButton(R.string.aggiungi_dismiss)
+                .negativeButton(android.R.string.cancel)
                 .show();
     }
 
@@ -232,7 +232,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                         .title(R.string.posizione_rename)
                         .prefill(item.getName().getText().toString())
                         .positiveButton(R.string.aggiungi_rename)
-                        .negativeButton(R.string.aggiungi_dismiss)
+                        .negativeButton(android.R.string.cancel)
                         .show();
                 return false;
             }
@@ -365,7 +365,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.confirm)
                             .negativeButton(R.string.dismiss)
-                            .neutralButton(R.string.cancel)
+                            .neutralButton(android.R.string.cancel)
                             .show();
                     return true;
                 }
@@ -388,7 +388,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                     .content(R.string.save_list_question)
                     .positiveButton(R.string.confirm)
                     .negativeButton(R.string.dismiss)
-                    .neutralButton(R.string.cancel)
+                    .neutralButton(android.R.string.cancel)
                     .show();
         }
         else {

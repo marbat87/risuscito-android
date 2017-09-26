@@ -443,8 +443,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                                     .title(R.string.gdrive_backup)
                                     .content(R.string.gdrive_backup_content)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -452,8 +452,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                                     .title(R.string.gdrive_restore)
                                     .content(R.string.gdrive_restore_content)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -461,8 +461,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                                     .title(R.string.gplus_signout)
                                     .content(R.string.dialog_acc_disconn_text)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -470,8 +470,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                                     .title(R.string.gplus_revoke)
                                     .content(R.string.dialog_acc_revoke_text)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -1524,7 +1524,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
                             .title(R.string.general_message)
                             .content(R.string.gdrive_restore_success)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
             };
@@ -1553,7 +1553,7 @@ public class MainActivity extends ThemeableActivity
                 else {
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
                             .content(R.string.no_connection)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
                 break;
@@ -1571,7 +1571,7 @@ public class MainActivity extends ThemeableActivity
                 else {
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
                             .content(R.string.no_connection)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
                 break;

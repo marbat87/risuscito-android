@@ -45,7 +45,6 @@
     <string name="dialog_delete_mp3">Are you sure you want to delete the song from the memory of your device?</string>
     <string name="confirm">YES</string>
     <string name="dismiss">NO</string>
-    <string name="cancel">CANCEL</string>
     <string name="save_location_title">Predefined memory</string>
     <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader).</string>
     <string name="favorite_added">Added favourites</string>
@@ -70,14 +69,12 @@
     <string name="add_position">Add element</string>
     <string name="content_drag">drag element</string>
     <string name="aggiungi_confirm">ADD</string>
-    <string name="aggiungi_dismiss">CANCEL</string>
     <string name="posizione_add_desc">Title of the new element</string>
     <string name="lista_pers_piena">The maximum number of allowed elements is 30</string>
     <string name="lista_pers_vuota">The list is empty</string>
     <string name="lista_add_desc">Title of the new list:</string>
     <string name="save_list_question">You are exiting from the creation of the personalized list. Do you want to save the modifications?</string>
     <string name="action_help">Help</string>
-    <string name="dialog_chiudi">OK</string>
     <string name="dialog_change_title">News</string>
     <string name="action_tonalita">Key</string>
     <string name="action_trasporta">Change</string>
@@ -137,7 +134,6 @@ You can add up to 30 elements.</string>
     <string name="list_elements">ELEMENTS OF THE LIST:</string>
     <string name="no_title_edited">The title has not been modified because it is empty</string>
     <string name="no_elements_added">You haven\'t yet added any elements.</string>
-    <string name="single_choice_ok">CONFIRM</string>
     <string name="dialog_replace_title">Substitute the song</string>
     <string name="dialog_reset_list_title">Reset the list</string>
     <string name="aggiungi_rename">RENAME</string>

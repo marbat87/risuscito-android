@@ -45,7 +45,6 @@
     <string name="dialog_delete_mp3">Ти впевнений, що хочеш видалити пісню з пам\'яті пристрою?</string>
     <string name="confirm">ТАК</string>
     <string name="dismiss">НІ</string>
-    <string name="cancel">ВІДМІНИТИ</string>
     <string name="save_location_title">Стандартна пам\'ять</string>
     <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач).</string>
     <string name="favorite_added">Додано до закладок</string>
@@ -70,14 +69,12 @@
     <string name="add_position">Додати елемент</string>
     <string name="content_drag">перенести елемент</string>
     <string name="aggiungi_confirm">ДОДАТИ</string>
-    <string name="aggiungi_dismiss">СКАСУВАТИ</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
     <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
     <string name="lista_add_desc">Назва нового списку:</string>
     <string name="save_list_question">Ти виходиш з створення особистого списку. Хочеш зберегти зміни?</string>
     <string name="action_help">Допомога</string>
-    <string name="dialog_chiudi">OK</string>
     <string name="dialog_change_title">Новини</string>
     <string name="action_tonalita">Тональність</string>
     <string name="action_trasporta">Змінити</string>
@@ -137,7 +134,6 @@
     <string name="list_elements">ЕЛЕМЕНТИ СПИСКУ:</string>
     <string name="no_title_edited">Не можна замінити на пустий заголовок</string>
     <string name="no_elements_added">Не додано ще жодного елементу.</string>
-    <string name="single_choice_ok">ПІДТВЕРДИТИ</string>
     <string name="dialog_replace_title">Замінити пісню</string>
     <string name="dialog_reset_list_title">Відновити список</string>
     <string name="aggiungi_rename">ПЕРЕЙМЕНУВАТИ</string>

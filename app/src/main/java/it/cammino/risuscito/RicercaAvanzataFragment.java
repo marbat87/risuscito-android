@@ -489,8 +489,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                                 cursor.close();
                                 db.close();
@@ -577,8 +577,8 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
             return;

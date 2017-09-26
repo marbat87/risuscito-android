@@ -626,7 +626,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
                 Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.cancel, new View.OnClickListener() {
+                        .setAction(android.R.string.cancel, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 db = listaCanti.getReadableDatabase();

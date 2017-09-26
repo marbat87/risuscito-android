@@ -530,8 +530,8 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                                 cursor.close();
                             }
@@ -617,8 +617,8 @@ public class ArgumentsSectionFragment extends HFFragment implements View.OnCreat
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
             return;

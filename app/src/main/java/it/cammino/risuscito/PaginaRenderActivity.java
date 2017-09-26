@@ -300,16 +300,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
                                         .title(R.string.dialog_delete_mp3_title)
                                         .content(R.string.dialog_delete_mp3)
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                             }
                             else {
                                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
                                         .title(R.string.dialog_delete_link_title)
                                         .content(R.string.dialog_delete_link)
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                             }
                         }
@@ -319,7 +319,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                     .content(R.string.downlink_message)
                                     .positiveButton(R.string.downlink_download)
                                     .negativeButton(R.string.downlink_choose)
-                                    .neutralButton(R.string.cancel)
+                                    .neutralButton(android.R.string.cancel)
                                     .show();
                         }
                     }
@@ -329,16 +329,16 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
                                     .title(R.string.dialog_delete_link_title)
                                     .content(R.string.dialog_delete_link)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
                         }
                         else {
                             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "ONLY_LINK")
                                     .title(R.string.only_link_title)
                                     .content(R.string.only_link)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
                         }
                     }
@@ -800,8 +800,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
-                            .positiveButton(R.string.confirm)
-                            .negativeButton(R.string.dismiss)
+                            .positiveButton(android.R.string.yes)
+                            .negativeButton(android.R.string.no)
                             .show();
                     break;
                 }
@@ -968,8 +968,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "SAVE_TAB")
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
-                    .positiveButton(R.string.confirm)
-                    .negativeButton(R.string.dismiss)
+                    .positiveButton(android.R.string.yes)
+                    .negativeButton(android.R.string.no)
                     .show();
         }
     }
@@ -1402,7 +1402,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
                     .title(R.string.download_running)
                     .showProgress()
-                    .positiveButton(R.string.cancel)
+                    .positiveButton(android.R.string.cancel)
                     .progressIndeterminate(false)
                     .progressMax(100)
                     .show();
@@ -1426,7 +1426,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DOWNLOAD_MP3")
                 .title(R.string.download_running)
                 .showProgress()
-                .positiveButton(R.string.cancel)
+                .positiveButton(android.R.string.cancel)
                 .progressIndeterminate(false)
                 .progressMax(100)
                 .show();

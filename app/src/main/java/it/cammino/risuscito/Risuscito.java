@@ -122,7 +122,7 @@ public class Risuscito extends Fragment implements SimpleDialogFragment.SimpleCa
             new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), Risuscito.this, "CHANGELOG")
                     .title(R.string.dialog_change_title)
                     .setCustomView(R.layout.dialog_changelogview)
-                    .positiveButton(R.string.dialog_chiudi)
+                    .positiveButton(android.R.string.ok)
                     .setHasCancelListener()
                     .setCanceable()
                     .show();

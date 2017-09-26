@@ -51,8 +51,8 @@ public class ImportActivity extends AppCompatActivity {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
                     .title(R.string.app_name)
                     .content(R.string.dialog_import)
-                    .positiveText(R.string.confirm)
-                    .negativeText(R.string.dismiss)
+                    .positiveText(android.R.string.yes)
+                    .negativeText(android.R.string.no)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {

@@ -105,8 +105,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), FavouritesActivity.this, "FAVORITES_RESET")
                         .title(R.string.dialog_reset_favorites_title)
                         .content(R.string.dialog_reset_favorites_desc)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
         });
@@ -355,7 +355,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved)
-                        , getString(R.string.cancel)
+                        , getString(android.R.string.cancel)
                         , Snackbar.LENGTH_SHORT
                         , cantoAdapter.getSelections());
                 cantoAdapter.deselect();
