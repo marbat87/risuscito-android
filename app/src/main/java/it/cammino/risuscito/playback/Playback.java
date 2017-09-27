@@ -29,6 +29,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import it.cammino.risuscito.LUtils;
@@ -117,9 +118,8 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
         giveUpAudioFocus();
         // Relax all resources
         relaxResources(true);
-        if (mWifiLock.isHeld()) {
+        if (mWifiLock.isHeld())
             mWifiLock.release();
-        }
     }
 
     public int getState() {
@@ -175,7 +175,17 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
                 setStreamType();
 
                 Log.d(TAG, "play: " + source);
-                mMediaPlayer.setDataSource(source);
+
+                if (source.startsWith("http"))
+                    mMediaPlayer.setDataSource(source);
+                else {
+                    FileInputStream fileInputStream = new FileInputStream(source);
+                    mMediaPlayer.setDataSource(fileInputStream.getFD());
+                    fileInputStream.close();
+                }
+
+//                Log.d(TAG, "play: " + source);
+//                mMediaPlayer.setDataSource(source);
 
                 // Starts preparing the media player in the background. When
                 // it's done, it will call our OnPreparedListener (that is,
@@ -187,7 +197,12 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
                 // If we are streaming from the internet, we want to hold a
                 // Wifi lock, which prevents the Wifi radio from going to
                 // sleep while the song is playing.
-                mWifiLock.acquire();
+                if (source.startsWith("http"))
+                    mWifiLock.acquire();
+                else {
+                    if (mWifiLock.isHeld())
+                        mWifiLock.release();
+                }
 
                 if (mCallback != null) {
                     mCallback.onPlaybackStatusChanged(mState);
@@ -447,9 +462,8 @@ public class Playback implements AudioManager.OnAudioFocusChangeListener,
         }
 
         // we can also release the Wifi lock, if we're holding it
-        if (mWifiLock.isHeld()) {
+        if (mWifiLock.isHeld())
             mWifiLock.release();
-        }
     }
 
     public long getDuration() {
