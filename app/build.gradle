@@ -36,9 +36,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.2'
     implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
     implementation 'com.itextpdf:itextpdf:5.5.11'
-    implementation ('com.afollestad.material-dialogs:commons:0.9.4.7') {
-        exclude module: 'support-v13'
-    }
+    implementation 'com.afollestad.material-dialogs:commons:0.9.4.7'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'com.stephentuso:welcome:1.4.1'
     implementation('com.mikepenz:materialdrawer:5.9.5@aar') { transitive = true }
@@ -67,6 +65,7 @@ dependencies {
     implementation 'pub.devrel:easypermissions:1.0.1'
     implementation 'com.blunderer:easy-animated-vector-drawable:1.0.0'
     implementation 'com.android.billingclient:billing:1.0'
+    implementation 'com.android.support:support-v13:26.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
