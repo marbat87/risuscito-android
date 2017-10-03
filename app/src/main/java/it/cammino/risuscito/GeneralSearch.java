@@ -14,6 +14,8 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
@@ -22,17 +24,18 @@ public class GeneralSearch extends Fragment {
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
-
         mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
-        LUtils mLUtils = LUtils.getInstance(getActivity());
+//        LUtils mLUtils = LUtils.getInstance(getActivity());
 
 //        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
@@ -40,20 +43,27 @@ public class GeneralSearch extends Fragment {
 //        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         return rootView;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -76,7 +86,8 @@ public class GeneralSearch extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getActivity().getResources().getConfiguration().locale;
+//            Locale l = getActivity().getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.fast_search_title).toUpperCase(l);

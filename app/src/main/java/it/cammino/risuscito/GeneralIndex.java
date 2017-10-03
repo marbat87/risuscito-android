@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +16,13 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralIndex extends Fragment {
 
-//    private ViewPager mViewPager;
+    final String TAG = getClass().getCanonicalName();
 
     private static final String PAGE_VIEWED = "pageViewed";
 
@@ -28,54 +30,47 @@ public class GeneralIndex extends Fragment {
 
     @BindView(R.id.view_pager) ViewPager mViewPager;
 
-    final String TAG = getClass().getCanonicalName();
+    private Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
         mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
-        LUtils mLUtils = LUtils.getInstance(getActivity());
+//        LUtils mLUtils = LUtils.getInstance(getActivity());
 
-//        mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-//        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         final TabLayout tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
+        mMainActivity.enableFab(false);
         if (!mMainActivity.isOnTablet()) {
-            mMainActivity.enableFab(false);
+//            mMainActivity.enableFab(false);
             mMainActivity.enableBottombar(false);
         }
         if (savedInstanceState == null) {
             SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
             mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-//            try {
-//                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-//                Log.d(TAG, "onCreateView: DEFAULT_INDEX STRING");
-//            }
-//            catch (ClassCastException e) {
-//                Log.d(TAG, "onCreateView: DEFAULT_INDEX INTEGER >> CONVERTO");
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(getActivity())
-//                        .edit();
-//                editor.putString(Utility.DEFAULT_INDEX, String.valueOf(pref.getInt(Utility.DEFAULT_INDEX, 0)));
-//                editor.apply();
-//                mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-//            }
         }
         else
             mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
-        tabs.setBackgroundColor(getThemeUtils().primaryColor());
+        if (!mMainActivity.isOnTablet())
+            tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-        mLUtils.applyFontedTab(mViewPager, tabs);
+//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         return rootView;
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -84,9 +79,9 @@ public class GeneralIndex extends Fragment {
         outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -115,7 +110,8 @@ public class GeneralIndex extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = getActivity().getResources().getConfiguration().locale;
+//            Locale l = getActivity().getResources().getConfiguration().locale;
+            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
                     return getString(R.string.letter_order_text).toUpperCase(l);

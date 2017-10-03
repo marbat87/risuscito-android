@@ -3,6 +3,7 @@
 
     <PreferenceCategory android:title="@string/theme">
 
+        <!--suppress AndroidElementNotAllowed -->
         <it.cammino.risuscito.preferences.ColorPickerPreference
             android:defaultValue="@color/theme_primary"
             android:key="primary_color"
@@ -10,6 +11,7 @@
             android:title="@string/primary_color"
             android:summary="@string/primary_color_desc"/>
 
+        <!--suppress AndroidElementNotAllowed -->
         <it.cammino.risuscito.preferences.ColorPickerPreference
             android:defaultValue="@color/theme_accent"
             android:key="accent_color"
@@ -21,24 +23,28 @@
 
     <PreferenceCategory android:title="@string/lists_pref">
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_seconda_lettura"
             android:title="@string/show_seconda_title"
             android:summary="@string/show_seconda_summary"/>
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_offertorio"
             android:title="@string/show_offertorio_title"
             android:summary="@string/show_offertorio_summary"/>
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_santo"
             android:title="@string/show_santo_title"
             android:summary="@string/show_santo_summary"/>
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_pace"
@@ -57,12 +63,14 @@
 
     <PreferenceCategory android:title="@string/system">
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="sempre_acceso"
             android:title="@string/always_on"
             android:summary="@string/always_on_summary"/>
 
+        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostra_audio"
@@ -78,7 +86,6 @@
             android:key="memoria_salvataggio_scelta" />
 
         <ListPreference
-            android:defaultValue="it"
             android:title="@string/language_title"
             android:summary="@string/language_summary"
             android:entries="@array/pref_languages_entries"

@@ -3,14 +3,20 @@
 
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_it_value" translatable="false">it</string>
+    <string name="lang_uk_value" translatable="false">uk</string>
+    <string name="lang_en_value" translatable="false">en</string>
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
-    <!--<string name="test_name" translatable="false">Test</string>-->
-    <!--<string name="test_email" translatable="false">Test@gmail.com</string>-->
-    <!--<string name="navigation_drawer_open" translatable="false">Open Navdrawer</string>-->
-    <!--<string name="navigation_drawer_close" translatable="false">Close Navdrawer</string>-->
+    <string name="label_pause" translatable="false">Pause</string>
+    <string name="label_play" translatable="false">Play</string>
+    <string name="label_restart" translatable="false">Restart</string>
+    <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
 
 
+    <string name="private_memory">Memoria privata</string>
+    <string name="public_memory">Memoria pubblica</string>
     <string name="app_name">Risuscit&#242;</string>
     <string name="action_favourites">Preferiti</string>
     <string name="action_share">Condividi</string>
@@ -44,7 +50,7 @@
     <string name="title_activity_custom_lists">Liste personalizzate</string>
     <string name="copertina">copertina</string>
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
-    <string name="title_activity_about">Changelog</string>
+    <string name="title_activity_about">About</string>
     <string name="save_file">Salva in locale</string>
     <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
@@ -53,7 +59,6 @@
     <string name="dialog_delete_mp3">Sei sicuro di voler cancellare il brano dalla memoria del dispositivo?</string>
     <string name="confirm">SI</string>
     <string name="dismiss">NO</string>
-    <string name="cancel">ANNULLA</string>
     <string name="save_location_title">Memoria predefinita</string>
     <string name="save_location_summary">Indica se vuoi rendere i file scaricati visibili alle altre applicazioni (per es. lettore musicale).</string>
     <string name="favorite_added">Aggiunto ai preferiti</string>
@@ -61,8 +66,8 @@
     <string name="file_delete">File cancellato</string>
     <string name="download_completed">File salvato</string>
     <string name="download_running">Download in corso&#8230;</string>
-    <string name="present_yet">Canto già presente</string>
-    <string name="dialog_present_yet">&#200; già presente il canto: </string>
+    <string name="present_yet">Canto gi&#224; presente</string>
+    <string name="dialog_present_yet">&#200; gi&#224; presente il canto: </string>
     <string name="dialog_wonna_replace">. Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
@@ -74,19 +79,16 @@
     <string name="action_add_list">Nuova lista</string>
     <string name="action_remove_list">Elimina lista</string>
     <string name="action_edit_list">Modifica lista</string>
-    <string name="title_activity_nuova_lista">Nuova lista</string>
     <string name="list_save_exit">Salva ed esci</string>
     <string name="add_position">Aggiungi elemento</string>
     <string name="content_drag">trascina elemento</string>
     <string name="aggiungi_confirm">AGGIUNGI</string>
-    <string name="aggiungi_dismiss">ANNULLA</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
     <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>
     <string name="save_list_question">Stai per uscire dalla creazione della lista personalizzata. Vuoi salvare le modifiche?</string>
     <string name="action_help">Aiuto</string>
-    <string name="dialog_chiudi">OK</string>
     <string name="dialog_change_title">Novit&#224;</string>
     <string name="action_tonalita">Tonalit&#224;</string>
     <string name="action_trasporta">Cambia</string>
@@ -113,14 +115,10 @@
     <string name="showcase_end_title">Fine</string>
     <string name="list_added">Aggiunto alla lista</string>
     <string name="posizione_rename">Rinomina elemento</string>
-    <string name="showcase_welcome_crea">Benvenuto. Da qui puoi creare/modificare la tua lista personalizzata per qualsiasi celebrazione.</string>
     <string name="showcase_add_pos_desc">Con questo pulsante puoi aggiungere un nuovo elemento a piacere (es. \"Canto iniziale\", \"prima lettura\", etc.).
         Puoi aggiungere fino a 30 elementi.</string>
-    <string name="posizione_reorder">Riordina gli elementi</string>
-    <string name="showcase_reorder_desc">Una volta creati pi&#249; elementi, trascinandoli verso l\'alto o verso il basso, puoi riordinarli come preferisci.</string>
     <string name="showcase_rename_desc">Tieni premuto sul nome di un elemento per rinominarlo.</string>
     <string name="showcase_saveexit_desc">Una volta finito, premi qui per salvare e vedere la tua lista assieme alle altre.</string>
-    <string name="posizione_delete">Elimina l\'elemento</string>
     <string name="showcase_delete_desc">Fai scorrere a destra o a sinistra per rimuovere un elemento.</string>
     <string name="action_barre">Barr&#232;</string>
     <string name="action_reset_barre">Predefinito</string>
@@ -139,7 +137,7 @@
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
     <string name="salmi_musica_index">Indice salmi musicati</string>
-    <string name="downlink_message">Desideri utilizzare la funzione di donwload della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
+    <string name="downlink_message">Desideri utilizzare la funzione di download della registrazione da internet per poterla riascoltare senza connessione, oppure associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="downlink_download">DOWNLOAD</string>
     <string name="downlink_choose">ASSOCIA</string>
     <string name="only_link">Vuoi associare un file mp3 presente nella memoria del tuo dispositivo?</string>
@@ -150,7 +148,6 @@
     <string name="list_elements">ELEMENTI DELLA LISTA:</string>
     <string name="no_title_edited">Il titolo non è stato modificato in quanto vuoto</string>
     <string name="no_elements_added">Non hai ancora aggiunto nessun elemento.</string>
-    <string name="single_choice_ok">CONFERMA</string>
     <string name="dialog_replace_title">Sostituisci canto</string>
     <string name="dialog_reset_list_title">Resetta lista</string>
     <string name="aggiungi_rename">RINOMINA</string>
@@ -197,7 +194,6 @@
     <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
     <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
     <string name="title_activity_consegnati">Canti consegnati</string>
-    <string name="showcase_consegnati_desc">Benvenuto, qui puoi segnarti i canti che ti sono stati consegnati dai catechisti.</string>
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
@@ -205,14 +201,12 @@
     <string name="title_activity_history">Cronologia</string>
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_empty">La cronologia è vuota.</string>
-    <string name="last_open_date">ULTIMA APERTURA: %1$s</string>
     <string name="dialog_reset_history_title">Svuota cronologia</string>
     <string name="dialog_reset_history_desc">Vuoi svuotare la cronologia dei canti visualizzati?</string>
     <string name="canto_title_activity">Canto</string>
     <string name="dialog_reset_favorites_title">Svuota preferiti</string>
     <string name="dialog_reset_favorites_desc">Vuoi svuotare l\'elenco dei preferiti?</string>
     <string name="action_remove">Rimuovi</string>
-    <string name="history_removed">Rimosso dalla cronologia</string>
     <string name="action_switch_to">Scambia con&#8230;</string>
     <string name="song_removed">Canto rimosso</string>
     <string name="switch_done">Scambio effettuato</string>
@@ -220,10 +214,14 @@
     <string name="switch_tooltip">Fai tap su un canto o una posizione vuota della stessa lista con cui vuoi effettaure lo scambio</string>
     <string name="switch_started">Scambio in corso&#8230;</string>
     <string name="list_removed">Rimossa la lista \'</string>
-    <string name="favorites_removed">% rimossi dai preferiti</string>
-    <string name="histories_removed">% rimossi dalla cronologia</string>
-    <string name="sc_pagina_render_title">Pagina del canto</string>
-    <string name="sc_pagina_render_desc">Benvenuto nel nuovo layout della pagina del canto. \nEcco le principali funzioni:</string>
+    <plurals name="favorites_removed">
+        <item quantity="one">%1$d rimosso dai preferiti</item>
+        <item quantity="other">%1$d rimossi dai preferiti</item>
+    </plurals>
+    <plurals name="histories_removed">
+        <item quantity="one">%1$d rimosso dalla cronologia</item>
+        <item quantity="other">%1$d rimossi dalla cronologia</item>
+    </plurals>
     <string name="sc_tonalita_desc">Da questo men&#249; puoi gestire il cambio tonalit&#224; con le seguenti funzioni: trasporto degli accordi,
          salvataggio della tonalit&#224; impostata e reset di quella predefinita.</string>
     <string name="sc_barre_desc">Da questo men&#249; puoi gestire il cambio barr&#232; con le stesse tre funzioni della tonalit&#224;.</string>
@@ -239,13 +237,9 @@
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
-    <string name="barre_al_tasto_I">Barrè al</string>
-    <string name="barre_al_tasto_II">tasto</string>
-    <string name="external_storage_title">Accesso alla memoria pubblica</string>
-    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
+    <string name="barre_al_tasto">Barrè al %1$s tasto</string>
     <string name="external_storage_denied">Memoria pubblica non disponibile.</string>
     <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
-    <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
     <string name="forced_private">Forzato download in memoria privata</string>
     <string name="connected_as">Sei connesso come %1$s</string>
     <string name="gplus_signout">Disconnetti account</string>
@@ -287,10 +281,25 @@
     <string name="favorite_on">Aggiungi preferito</string>
     <string name="favorite_off">Rimuovi preferito</string>
     <string name="showcase_listepers_title">Esportazione/Importazione liste</string>
-    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive&#8230;</string>
-    <string name="showcase_listepers_desc2">&#8230;E seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
+    <string name="showcase_listepers_desc1">Da questa versione è possibile esportare ed importare scheletro e canti scelti delle liste create (non quelle predefinite).\nClicca sul pulsante flottante per le opzioni aggiuntive e seleziona la nuova opzione di Invio file per scegliere come e a chi inviare la lista</string>
     <string name="showcase_listepers_desc3">Per importare una lista, apri il file in formato \".risuscito\" che hai ricevuto, direttamente dal programma tramite cui l\'hai ricevuto o da un file manager.</string>
     <string name="show_offertorio_title">Eucarestia - Offertorio</string>
     <string name="show_offertorio_summary">Abilita il canto all\'offertorio per l\'Eucarestia</string>
     <string name="canto_offertorio">All\'offertorio</string>
+    <string name="title_activity_donate">Ringrazia</string>
+    <string name="purchase_success" >Pagamento effettuato correttamente</string>
+    <string name="user_canceled" >Transazione annullata dall\'utente</string>
+    <string name="service_unavailable">Servizio non disponibile</string>
+    <string name="object_invalid" >Oggetto non disponibile</string>
+    <string name="object_owned">Oggetto gi&#224; posseduto</string>
+    <string name="generic_removed">%1$s rimosso</string>
+    <string name="title_trabar_I">I</string>
+    <string name="title_trabar_II">II</string>
+    <string name="title_trabar_III">III</string>
+    <string name="title_trabar_IV">IV</string>
+    <string name="title_trabar_V">V</string>
+    <string name="title_trabar_VI">VI</string>
+    <string name="title_trabar_VII">VII</string>
+    <string name="consegnati_only">Cerca solo nei consegnati</string>
+    <string name="permission_ok">Permesso concesso</string>
 </resources>

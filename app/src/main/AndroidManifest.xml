@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.cammino.risuscito" android:installLocation="auto">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="it.cammino.risuscito"
+    android:installLocation="auto">
 
 	<!-- Some Chromebooks don't support touch. Although not essential,
          it's a good idea to explicitly include this declaration. -->
@@ -11,60 +14,69 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="20" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <application android:name="it.cammino.risuscito.ui.RisuscitoApplication" android:allowBackup="false"
-        android:fullBackupContent="false" android:icon="@mipmap/ic_launcher" android:label="@string/app_name"
-        android:theme="@style/RisuscitoTheme">
+        android:supportsRtl="true"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/RisuscitoTheme"
+        tools:replace="android:allowBackup">
         <activity android:name="it.cammino.risuscito.MainActivity" android:theme="@style/RisuscitoTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="it.cammino.risuscito.PaginaRenderActivity" android:label=""></activity>
-        <activity android:name="it.cammino.risuscito.PaginaRenderFullScreen" android:label=""></activity>
-        <activity android:name="it.cammino.risuscito.GeneralInsertSearch" android:label=""></activity>
-        <activity android:name="it.cammino.risuscito.CreaListaActivity" android:label=""></activity>
-        <activity android:name="it.cammino.risuscito.AboutActivity" android:label=""></activity>
+        <activity
+            android:name="it.cammino.risuscito.PaginaRenderActivity"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.PaginaRenderFullScreen"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.GeneralInsertSearch"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.CreaListaActivity"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.ChangelogActivity"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.DonateActivity"
+            android:label="" />
         <activity android:name="it.cammino.risuscito.slides.IntroMainNew" android:label=""
             android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroPaginaRenderNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroCreaListaNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroConsegnatiNew" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-        <activity android:name="it.cammino.risuscito.slides.IntroListePers" android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
 
-        <service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">
-            <intent-filter>
-                <action android:name="it.cammino.risuscito.music.action.TOGGLE_PLAYBACK" />
-                <action android:name="it.cammino.risuscito.music.action.PLAY" />
-                <action android:name="it.cammino.risuscito.music.action.PAUSE" />
-                <action android:name="it.cammino.risuscito.music.action.SKIP" />
-                <action android:name="it.cammino.risuscito.music.action.REWIND" />
-                <action android:name="it.cammino.risuscito.music.action.STOP" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="it.cammino.risuscito.music.action.URL" />
-                <data android:scheme="http" />
-            </intent-filter>
-        </service>
-        <receiver android:name="it.cammino.risuscito.music.MusicIntentReceiver">
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
+        <!--<service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="it.cammino.risuscito.music.action.TOGGLE_PLAYBACK" />-->
+                <!--<action android:name="it.cammino.risuscito.music.action.PLAY" />-->
+                <!--<action android:name="it.cammino.risuscito.music.action.PAUSE" />-->
+                <!--<action android:name="it.cammino.risuscito.music.action.SKIP" />-->
+                <!--<action android:name="it.cammino.risuscito.music.action.REWIND" />-->
+                <!--<action android:name="it.cammino.risuscito.music.action.STOP" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="it.cammino.risuscito.music.action.URL" />-->
+                <!--<data android:scheme="http" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<receiver android:name="it.cammino.risuscito.music.MusicIntentReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.media.AUDIO_BECOMING_NOISY" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MEDIA_BUTTON" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <service android:enabled="true" android:exported="false"
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService" />
         <service android:enabled="true" android:exported="false"
             android:name="it.cammino.risuscito.services.DownloadService" />
-        <service android:enabled="true" android:exported="false"
-            android:name="it.cammino.risuscito.services.ConsegnatiSaverService" />
         <service android:enabled="true" android:exported="false"
             android:name="it.cammino.risuscito.services.PdfExportService" />
         <service android:enabled="true" android:exported="false"
@@ -78,22 +90,41 @@
         <activity
             android:name="it.cammino.risuscito.ImportActivity"
             android:theme="@style/RisuscitoTheme.Invisibile"
+            android:exported="true"
             android:excludeFromRecents="true">
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <android:data android:mimeType="application/octet-stream" android:host="*"
-                    android:pathPattern=".*\\.risuscito" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <android:data android:mimeType="text/xml" android:host="*"
-                    android:pathPattern=".*\\.risuscito" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:mimeType="application/octet-stream"
+                    android:host="*"
+                    android:pathPattern=".*\\.risuscito"
+                    tools:ignore="GoogleAppIndexingUrlError" />
             </intent-filter>
         </activity>
+
+        <!-- Main music service, provides media browsing and media playback services to
+         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
+         MediaBrowser (for browsing) and MediaController (for play session control) -->
+        <service
+            android:name="it.cammino.risuscito.playback.MusicService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <!-- A receiver that will receive media buttons and send as
+            intents to your MediaBrowserServiceCompat implementation.
+            Required on pre-Lollipop. More information at
+            http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

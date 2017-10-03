@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="ic_launcher_background">#A24444</color>
+
     <color name="BlueGrey">#607d8b</color>
     <color name="Teal">#009688</color>
     <color name="BlueGreyDark">#455a64</color>
 
-    <color name="navdrawer_background">#ffffffff</color>
+    <!--<color name="navdrawer_background">#ffffffff</color>-->
 
     <color name="theme_primary">@color/BlueGrey</color>
     <color name="theme_accent">@color/Teal</color>
@@ -16,9 +18,14 @@
     <color name="dialtacts_secondary_text_color">#737373</color>
 
     <color name="icon_ative_black">#8A000000</color>
+    <color name="icon_inative_black">#61000000</color>
 
     <color name="intro_background">#00BCD4</color>
 
     <color name="material_drawer_header_selection_text">#FFFFFF</color>
+
+    <color name="material_text_color_white_text">#deffffff</color>
+    <!--<color name="grey_500">#9E9E9E</color>-->
+    <!--<color name="grey_hint">#CCCCCC</color>-->
 
 </resources> 

@@ -7,14 +7,13 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,24 +28,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.itemanimators.SlideDownAlphaAnimator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoExpandableAdapter;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
-import it.cammino.risuscito.objects.ExpandableGroup;
+import it.cammino.risuscito.items.SimpleSubExpandableItem;
+import it.cammino.risuscito.items.SimpleSubItem;
+import it.cammino.risuscito.ui.HFFragment;
+import it.cammino.risuscito.utils.ThemeUtils;
 
-public class ArgumentsSectionFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+public class ArgumentsSectionFragment extends HFFragment implements View.OnCreateContextMenuListener
+        , SimpleDialogFragment.SimpleCallback {
 
-    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+    //    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+//    private final String TAG = getClass().getCanonicalName();
 
     // create boolean for fetching data
     private boolean isViewShown = true;
@@ -63,24 +68,46 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     private View rootView;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
+//    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
-//    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mWrappedAdapter;
-    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
+    //    private RecyclerView mRecyclerView;
+//    private RecyclerView.LayoutManager mLayoutManager;
+//    private RecyclerView.Adapter mWrappedAdapter;
+//    private RecyclerViewExpandableItemManager mRecyclerViewExpandableItemManager;
+
+    //    private FlexibleAdapter mAdapter;
+    private FastItemAdapter<IItem> mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     private long mLastClickTime = 0;
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
+
+        FastAdapter.OnClickListener<SimpleSubItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleSubItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleSubItem> iAdapter, SimpleSubItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return false;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putCharSequence("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, view);
+                return true;
+            }
+        };
 
         //crea un istanza dell'oggetto DatabaseCanti
         if (listaCanti == null)
@@ -99,11 +126,11 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         int total = arguments.getCount();
         arguments.moveToFirst();
 
-        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
+        //        List<Pair<ExpandableGroup, List<CantoRecycled>>> dataItems = new ArrayList<>();
+        List<IItem> mItems = new ArrayList<>();
 
         for (int i = 0; i < total; i++) {
-
-            int argId =  arguments.getInt(0);
+            String argId =  String.valueOf(arguments.getInt(0));
 
             query = "SELECT B._id, B.titolo, B.color, B.pagina, B.source" +
                     "		FROM ARGOMENTI A, ELENCO B " +
@@ -116,21 +143,70 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             int totCanti = argCanti.getCount();
             argCanti.moveToFirst();
 
-            List<CantoRecycled> children =  new ArrayList<>();
+//            List<CantoRecycled> children =  new ArrayList<>();
+//
+//            for (int j = 0; j < totCanti; j++) {
+//                children.add(new CantoRecycled(argCanti.getString(1)
+//                        , argCanti.getInt(3)
+//                        , argCanti.getString(2)
+//                        , argCanti.getInt(0)
+//                        , argCanti.getString(4)));
+//                argCanti.moveToNext();
+//            }
+//            argCanti.close();
+//
+//            dataItems.add(new Pair(
+//                    new ExpandableGroup(arguments.getString(1), arguments.getInt(0))
+//                    , children));
 
-            for (int j = 0; j < totCanti; j++) {
-                children.add(new CantoRecycled(argCanti.getString(1)
-                        , argCanti.getInt(3)
-                        , argCanti.getString(2)
-                        , argCanti.getInt(0)
-                        , argCanti.getString(4)));
+//            ExpandableHeaderItem expandableItem = new ExpandableHeaderItem(argId, arguments.getString(1));
+//            expandableItem.setSubtitle("(" + totCanti + ")");
+//            expandableItem.setActiveColor(getThemeUtils().primaryColorDark());
+
+            SimpleSubExpandableItem expandableItem = new SimpleSubExpandableItem();
+            expandableItem
+                    .withTitle(arguments.getString(1) + " (" + totCanti + ")")
+                    .withColor(getThemeUtils().primaryColorDark())
+                    .withOnClickListener(new FastAdapter.OnClickListener<SimpleSubExpandableItem>() {
+                        @Override
+                        public boolean onClick(View view, IAdapter<SimpleSubExpandableItem> iAdapter, SimpleSubExpandableItem item, int i) {
+                            if (item.isExpanded())
+                                mLayoutManager.scrollToPositionWithOffset(i, 0);
+                            return false;
+                        }
+                    })
+                    .withIdentifier(Integer.parseInt(argId));
+            List<SimpleSubItem> subItems = new LinkedList<>();
+
+            for (int j = 1; j <= totCanti; j++) {
+//                Log.d(getClass().getName(), "onCreateView: " + argCanti.getString(1));
+//                SubItem subItem = new SubItem(argId + argCanti.getInt(0), argCanti.getString(1));
+//                subItem.setCantoId(argCanti.getInt(0));
+//                subItem.setColor(argCanti.getString(2));
+//                subItem.setPage(String.valueOf(argCanti.getInt(3)));
+//                subItem.setSource(argCanti.getString(4));
+//                subItem.setActiveColor(getThemeUtils().accentColor());
+                //In this case the Header is the same parent: ExpandableHeaderItem instance
+//                subItem.setHeader(expandableItem);
+//                expandableItem.addSubItem(subItem);
+                SimpleSubItem simpleItem = new SimpleSubItem()
+                        .withTitle(argCanti.getString(1))
+                        .withPage(String.valueOf(argCanti.getInt(3)))
+                        .withSource(argCanti.getString(4))
+                        .withColor(argCanti.getString(2))
+                        .withId(argCanti.getInt(0));
+                //noinspection unchecked
+                simpleItem.withContextMenuListener(ArgumentsSectionFragment.this)
+                        .withOnItemClickListener(mOnClickListener);
+                simpleItem.withIdentifier(Integer.parseInt(argId) * 1000 + j);
+                subItems.add(simpleItem);
                 argCanti.moveToNext();
             }
             argCanti.close();
+            //noinspection unchecked
+            expandableItem.withSubItems(subItems);
 
-            dataItems.add(new Pair(
-                    new ExpandableGroup(arguments.getString(1), arguments.getInt(0))
-                    , children));
+            mItems.add(expandableItem);
 
             arguments.moveToNext();
 
@@ -138,51 +214,68 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
         arguments.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
-                mLastClickTime = SystemClock.elapsedRealtime();
-                // recupera il titolo della voce cliccata
-                String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
-                        .getText());
-                String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
-                        .getText());
+//        View.OnClickListener clickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                // recupera il titolo della voce cliccata
+//                String idCanto = String.valueOf(((TextView) v.findViewById(R.id.text_id_canto))
+//                        .getText());
+//                String source = String.valueOf(((TextView) v.findViewById(R.id.text_source_canto))
+//                        .getText());
+//
+//                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
+//                Bundle bundle = new Bundle();
+//                bundle.putString("pagina", source);
+//                bundle.putInt("idCanto", Integer.parseInt(idCanto));
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, v);
+//            }
+//        };
 
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
-                Bundle bundle = new Bundle();
-                bundle.putString("pagina", source);
-                bundle.putInt("idCanto", Integer.parseInt(idCanto));
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
-            }
-        };
-
-        //noinspection ConstantConditions
 //        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+//        mLayoutManager = new LinearLayoutManager(getActivity());
 
-        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
-        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+//        final Parcelable eimSavedState = (savedInstnceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+//        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
         //adapter
-        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, ArgumentsSectionFragment.this);
+//        CantoExpandableAdapter myItemAdapter = new CantoExpandableAdapter(getActivity(), dataItems, clickListener, ArgumentsSectionFragment.this);
+//        mAdapter = new FlexibleAdapter(mItems, ArgumentsSectionFragment.this);
+        mAdapter = new FastItemAdapter<>();
+        mAdapter.add(mItems);
+        mAdapter.withOnlyOneExpandedItem(true);
+//                .withOnClickListener(mOnClickListener);
+//        registerForContextMenu(mRecyclerView);
 
-        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true); //Size of RV will not change
+        mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), mLayoutManager.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
+
+        //restore selections (this has to be done after the items were added
+        mAdapter.withSavedInstanceState(savedInstanceState);
+//        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Need to disable them when using animation indicator.
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-        animator.setSupportsChangeAnimations(false);
+//        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+//        animator.setSupportsChangeAnimations(false);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        mRecyclerView.setItemAnimator(animator);
-        mRecyclerView.setHasFixedSize(false);
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+//        mRecyclerView.setItemAnimator(animator);
+//        mRecyclerView.setHasFixedSize(true);
 
-        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+//        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -193,10 +286,12 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE").setmCallback(ArgumentsSectionFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2").setmCallback(ArgumentsSectionFragment.this);
+            SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE");
+            if (fragment != null)
+                fragment.setmCallback(ArgumentsSectionFragment.this);
+            fragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "ARGUMENT_REPLACE_2");
+            if (fragment != null)
+                fragment.setmCallback(ArgumentsSectionFragment.this);
         }
 
         if (!isViewShown) {
@@ -217,10 +312,17 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
             }
 
             lista.close();
-            db.close();
         }
 
+        db.close();
+
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     /**
@@ -272,44 +374,39 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        if (getUserVisibleHint()) {
+            outState = mAdapter.saveInstanceState(outState);
+            outState.putInt("idDaAgg", idDaAgg);
+            outState.putInt("idPosizioneClick", idPosizioneClick);
+            outState.putInt("idListaClick", idListaClick);
+            outState.putInt("idListaDaAgg", idListaDaAgg);
+            outState.putInt("posizioneDaAgg", posizioneDaAgg);
+        }
         super.onSaveInstanceState(outState);
-
-        outState.putInt("idDaAgg", idDaAgg);
-        outState.putInt("idPosizioneClick", idPosizioneClick);
-        outState.putInt("idListaClick", idListaClick);
-        outState.putInt("idListaDaAgg", idListaDaAgg);
-        outState.putInt("posizioneDaAgg", posizioneDaAgg);
-
-        // save current state to support screen rotation, etc...
-        if (mRecyclerViewExpandableItemManager != null) {
-            outState.putParcelable(
-                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
-                    mRecyclerViewExpandableItemManager.getSavedState());
-        }
     }
 
-    @Override
-    public void onDestroyView() {
-        if (mRecyclerViewExpandableItemManager != null) {
-            mRecyclerViewExpandableItemManager.release();
-            mRecyclerViewExpandableItemManager = null;
-        }
-
-        if (mRecyclerView != null) {
-            mRecyclerView.setItemAnimator(null);
-            mRecyclerView.setAdapter(null);
-            mRecyclerView = null;
-        }
-
-        if (mWrappedAdapter != null) {
-            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
-            mWrappedAdapter = null;
-        }
+//    @Override
+//    public void onDestroyView() {
+//        if (mRecyclerViewExpandableItemManager != null) {
+//            mRecyclerViewExpandableItemManager.release();
+//            mRecyclerViewExpandableItemManager = null;
+//        }
+//
+//        if (mRecyclerView != null) {
+//            mRecyclerView.setItemAnimator(null);
+//            mRecyclerView.setAdapter(null);
+//            mRecyclerView = null;
+//        }
+//
+//        if (mWrappedAdapter != null) {
+//            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+//            mWrappedAdapter = null;
+//        }
 //        mAdapter = null;
-        mLayoutManager = null;
-
-        super.onDestroyView();
-    }
+//        mLayoutManager = null;
+//
+//        super.onDestroyView();
+//    }
 
     @Override
     public void onDestroy() {
@@ -328,7 +425,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
         titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
         idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
         menu.setHeaderTitle("Aggiungi canto a:");
@@ -336,7 +432,7 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
         for (int i = 0; i < idListe.length; i++) {
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10+i, listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++)
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
         }
 
         MenuInflater inflater = getActivity().getMenuInflater();
@@ -434,8 +530,8 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                                 cursor.close();
                             }
@@ -521,8 +617,8 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
             return;
@@ -544,7 +640,6 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
 
     @Override
     public void onPositive(@NonNull String tag) {
-        Log.d(getClass().getName(), "onPositive: " + tag);
         switch (tag) {
             case "ARGUMENT_REPLACE":
                 SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -575,4 +670,33 @@ public class ArgumentsSectionFragment extends Fragment implements View.OnCreateC
     @Override
     public void onNeutral(@NonNull String tag) {}
 
+//    @Override
+//    public boolean onItemClick(int i) {
+//        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//            return false;
+//        mLastClickTime = SystemClock.elapsedRealtime();
+//        IFlexible flexibleItem = mAdapter.getItem(i);
+//        if (flexibleItem instanceof SubItem) {
+//            SubItem subItem = (SubItem) flexibleItem;
+//            Bundle bundle = new Bundle();
+//            bundle.putString("pagina", subItem.getSource());
+//            bundle.putInt("idCanto", subItem.getCantoId());
+//
+//            // lancia l'activity che visualizza il canto passando il parametro creato
+//            startSubActivity(bundle);
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public void onItemLongClick(int i) {
+//        mContextIndex = i;
+//        if (mAdapter.getItem(i) instanceof  SubItem)
+//            ((Activity) getContext()).openContextMenu(mRecyclerView);
+//    }
+
+    private ThemeUtils getThemeUtils() {
+        return ((MainActivity)getActivity()).getThemeUtils();
+    }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="donate_long_text">
+    	<![CDATA[
+<p>
+Ciao caro fratello utente,<br/>
+</p>
+<p>
+Sono passati ormai pi&#249; di 17 mesi dal debutto dell\'applicazione Risuscit&#242; sul PlayStore di Android.<br/>
+&#200; costantemente aggiornata, nei limiti del tempo a disposizione, e si cerca il pi&#249; possibile di adattarla alle tue richieste.
+</p>
+<p>
+Se questo programma ti &#232; stato utile e ti &#232; piacuto, puoi ringraziare materialmente tramite PlayStore, usando i pulsanti a fondo pagina (NOTA: il 30&#37; va a Google).
+</p>
+<p>
+Va precisato che l\'applicazione NON &#232; diventata a pagamento e non avrai accesso a nessuna funzione aggiuntiva,
+effettuando la donazione.<br/>
+&#200; semplicemente un metodo per riconoscere l\'utilit&#224; dell\'applicazione e premiare un po\' il tempo trascorso a migliorarla
+giorno dopo giorno.
+</p>
+<p>Ti ringrazio in anticipo per la tua generosit&#224;.</p>
+<p>
+La pace.<br/><i>MARBAT87</i>
+</p>
+ 		]]>
+	</string>
+
+</resources>

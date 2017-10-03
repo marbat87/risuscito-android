@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:minHeight="@dimen/myListPreferredItemHeightMedium"
+    android:layout_gravity="center_vertical">
+
+    <FrameLayout
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:layout_marginStart="@dimen/myListPreferredItemMargin">
+
+        <TextView
+            android:id="@+id/text_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="16sp"
+            android:background="@drawable/page_oval_bkg"
+            android:gravity="center"
+            tools:text="15"/>
+
+        <ImageView
+            android:id="@+id/selected_mark"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            risuscito:ico_icon="cmd-check"
+            risuscito:ico_size="24dp"
+            risuscito:ico_padding="7dp"
+            risuscito:ico_color="@android:color/white"
+            android:background="@drawable/page_oval_bkg_selected"
+            android:visibility="invisible"
+            tools:ignore="MissingPrefix"
+            android:contentDescription="@null" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="16sp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
+
+    <TextView
+        android:id="@+id/text_id_canto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

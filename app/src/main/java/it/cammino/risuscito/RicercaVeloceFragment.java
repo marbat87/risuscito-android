@@ -13,7 +13,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,15 +36,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
+import butterknife.OnEditorAction;
+import butterknife.OnTextChanged;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.items.SimpleItem;
 
 public class RicercaVeloceFragment extends Fragment implements View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -50,11 +58,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private boolean isViewShown = true;
 
     private DatabaseCanti listaCanti;
-    private List<CantoRecycled> titoli;
-//    private EditText searchPar;
     private View rootView;
-//    RecyclerView recyclerView;
-    CantoRecyclerAdapter cantoAdapter;
+    FastItemAdapter<SimpleItem> cantoAdapter;
 
     private String titoloDaAgg;
     private int idDaAgg;
@@ -66,7 +71,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private int idPosizioneClick;
 
     private final int ID_FITTIZIO = 99999999;
-    private final int ID_BASE = 100;
 
     private LUtils mLUtils;
 
@@ -75,6 +79,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     @BindView(R.id.matchedList) RecyclerView mRecyclerView;
     @BindView(R.id.textfieldRicerca) EditText searchPar;
     @BindView(R.id.search_no_results) View mNoResults;
+    @BindView(R.id.consegnati_only_view) View mConsegnatiOnly;
 
     @OnClick(R.id.pulisci_ripple)
     public void pulisciRisultati() {
@@ -82,134 +87,154 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         mNoResults.setVisibility(View.GONE);
     }
 
+    @OnEditorAction(R.id.textfieldRicerca)
+    public boolean nascondiTastiera(TextView v, int actionId, KeyEvent evemt) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            //to hide soft keyboard
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+            return true;
+        }
+        return false;
+    }
+
+    @OnTextChanged(value = R.id.textfieldRicerca, callback = OnTextChanged.Callback.TEXT_CHANGED)
+    void ricercaCambiata(CharSequence s, int start, int before, int count) {
+        ricercaStringa(s.toString());
+    }
+
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         if (listaCanti == null)
             listaCanti = new DatabaseCanti(getActivity());
 
-//        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.matchedList);
+        mConsegnatiOnly.setVisibility(View.GONE);
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
+                    return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                // crea un bundle e ci mette il parametro "pagina",
-                // contente il nome del file della pagina da
-                // visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                bundle.putInt("idCanto", Integer.valueOf(
-                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
-                // lancia l'activity che visualizza il canto
-                // passando il parametro creato
-                startSubActivity(bundle, v);
+                bundle.putCharSequence("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, view);
+                return true;
             }
         };
 
-        // Creating new adapter object
-        titoli = new ArrayList<>();
-        cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener, this);
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.setHasStableIds(true);
+        cantoAdapter.withOnClickListener(mOnClickListener);
+
         mRecyclerView.setAdapter(cantoAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
 
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        searchPar.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before,
+//                                      int count) {
+//
+//                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
+//                if (!tempText.equals(s.toString()))
+//                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
+//
+//
+//                if (s.length() >= 3) {
+//                    mNoResults.setVisibility(View.GONE);
+//
+//                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
+//                    String titoloTemp;
+//                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
+//
+//                    // crea un manipolatore per il Database in modalità READ
+//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//                    // lancia la ricerca di tutti i titoli presenti in DB e li
+//                    // dispone in ordine alfabetico
+//                    String query = "SELECT titolo, color, pagina, _id, source"
+//                            + "		FROM ELENCO ORDER BY titolo ASC";
+//                    Cursor lista = db.rawQuery(query, null);
+//
+//                    // recupera il numero di record trovati
+//                    int total = lista.getCount();
+//
+//                    // crea un array e ci memorizza i titoli estratti
+//                    List<SimpleItem> titoli = new ArrayList<>();
+//                    cantoAdapter.clear();
+//
+//                    lista.moveToFirst();
+//                    for (int i = 0; i < total; i++) {
+//                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+//                        if (titoloTemp.contains(stringa)) {
+//                            SimpleItem simpleItem = new SimpleItem();
+//                            simpleItem.withTitle(lista.getString(0))
+//                                    .withColor(lista.getString(1))
+//                                    .withPage(String.valueOf(lista.getInt(2)))
+//                                    .withId(lista.getInt(3))
+//                                    .withSource(lista.getString(4))
+//                                    .withContextMenuListener(RicercaVeloceFragment.this);
+//                            titoli.add(simpleItem);
+//                        }
+//                        lista.moveToNext();
+//                    }
+//
+//                    // chiude il cursore
+//                    lista.close();
+//
+//                    cantoAdapter.add(titoli);
+//                    cantoAdapter.notifyDataSetChanged();
+//
+//                    if (total == 0)
+////                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+//                        mNoResults.setVisibility(View.VISIBLE);
+//                } else {
+//                    if (s.length() == 0) {
+//                        cantoAdapter.clear();
+//                        mNoResults.setVisibility(View.GONE);
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count,
+//                                          int after) {
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//
+//        });
 
-//        searchPar = (EditText) rootView.findViewById(R.id.textfieldRicerca);
-        searchPar.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-
-                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
-                if (!tempText.equals(s.toString()))
-                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
-
-
-                if (s.length() >= 3) {
-
-//                    rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                    mNoResults.setVisibility(View.GONE);
-
-//                    String titolo = Utility.duplicaApostrofi(s.toString());
-                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
-                    String titoloTemp;
-                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
-
-                    // crea un manipolatore per il Database in modalità READ
-                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-                    // lancia la ricerca di tutti i titoli presenti in DB e li
-                    // dispone in ordine alfabetico
-                    String query = "SELECT titolo, color, pagina, _id, source"
-                            + "		FROM ELENCO ORDER BY titolo ASC";
-                    Cursor lista = db.rawQuery(query, null);
-
-                    // recupera il numero di record trovati
-                    int total = lista.getCount();
-
-                    // crea un array e ci memorizza i titoli estratti
-                    titoli.clear();
-                    lista.moveToFirst();
-                    for (int i = 0; i < total; i++) {
-                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
-                        if (titoloTemp.contains(stringa))
-                            titoli.add(new CantoRecycled(lista.getString(0)
-                                    , lista.getInt(2)
-                                    , lista.getString(1)
-                                    , lista.getInt(3)
-                                    , lista.getString(4)));
-                        lista.moveToNext();
-                    }
-
-                    // chiude il cursore
-                    lista.close();
-
-                    cantoAdapter.notifyDataSetChanged();
-
-                    if (total == 0)
-//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-                        mNoResults.setVisibility(View.VISIBLE);
-                } else {
-                    if (s.length() == 0) {
-                        titoli.clear();
-                        cantoAdapter.notifyDataSetChanged();
-//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-                        mNoResults.setVisibility(View.GONE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-
-        });
-
-        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //to hide soft keyboard
-                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
-            }
-        });
+//        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                    //to hide soft keyboard
+//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -229,15 +254,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         });
 
-//        rootView.findViewById(R.id.pulisci_ripple).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                searchPar.setText("");
-//                rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                mNoResults.setVisibility(View.GONE);
-//            }
-//        });
-
         mLUtils = LUtils.getInstance(getActivity());
 
         if (savedInstanceState != null) {
@@ -247,10 +263,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             idListaClick = savedInstanceState.getInt("idListaClick", 0);
             idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
             posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE").setmCallback(RicercaVeloceFragment.this);
-            if (SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2") != null)
-                SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2").setmCallback(RicercaVeloceFragment.this);
+            SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaVeloceFragment.this);
+            sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "VELOCE_REPLACE_2");
+            if (sFragment != null)
+                sFragment.setmCallback(RicercaVeloceFragment.this);
         }
 
         if (!isViewShown) {
@@ -278,6 +296,12 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
     /**
      *
      * @param outState Bundle in which to place your saved state.
@@ -285,7 +309,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.putString("titoloDaAgg", titoloDaAgg);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
         outState.putInt("idListaClick", idListaClick);
@@ -364,7 +387,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
             SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i,
                     listePers[i].getName());
             for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-                subMenu.add(ID_BASE + i, k, k, listePers[i].getNomePosizione(k));
+                subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
             }
         }
 
@@ -465,8 +488,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                                         .content(getString(R.string.dialog_present_yet) + " "
                                                 + cursor.getString(0)
                                                 + getString(R.string.dialog_wonna_replace))
-                                        .positiveButton(R.string.confirm)
-                                        .negativeButton(R.string.dismiss)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
                                         .show();
                                 cursor.close();
                                 db.close();
@@ -553,8 +576,8 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
                         .title(R.string.dialog_replace_title)
                         .content(getString(R.string.dialog_present_yet) + " " + titoloPresente
                                 + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
 
             }
@@ -613,5 +636,70 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    private void ricercaStringa(String s) {
+        String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
+        if (!tempText.equals(s))
+            ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
+
+        if (s.length() >= 3) {
+            mNoResults.setVisibility(View.GONE);
+
+            String stringa = Utility.removeAccents(s).toLowerCase();
+            String titoloTemp;
+            Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
+
+            // crea un manipolatore per il Database in modalità READ
+            SQLiteDatabase db = listaCanti.getReadableDatabase();
+
+            // lancia la ricerca di tutti i titoli presenti in DB e li
+            // dispone in ordine alfabetico
+            String query = "SELECT titolo, color, pagina, _id, source"
+                    + "		FROM ELENCO ORDER BY titolo ASC";
+            Cursor lista = db.rawQuery(query, null);
+
+            // recupera il numero di record trovati
+            int total = lista.getCount();
+
+            // crea un array e ci memorizza i titoli estratti
+            List<SimpleItem> titoli = new ArrayList<>();
+            cantoAdapter.clear();
+
+            lista.moveToFirst();
+            for (int i = 0; i < total; i++) {
+                titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
+//                Log.d(getClass().getName(), "ricercaStringa: " + titoloTemp);
+//                Log.d(getClass().getName(), "ricercaStringa: " + stringa);
+                if (titoloTemp.contains(stringa)) {
+                    SimpleItem simpleItem = new SimpleItem();
+                    simpleItem.withTitle(lista.getString(0))
+                            .withColor(lista.getString(1))
+                            .withPage(String.valueOf(lista.getInt(2)))
+                            .withId(lista.getInt(3))
+                            .withSource(lista.getString(4))
+                            .withNormalizedTitle(titoloTemp)
+                            .withFilter(stringa)
+                            .withContextMenuListener(RicercaVeloceFragment.this);
+                    titoli.add(simpleItem);
+                }
+                lista.moveToNext();
+            }
+
+            // chiude il cursore
+            lista.close();
+
+            cantoAdapter.add(titoli);
+            cantoAdapter.notifyDataSetChanged();
+
+            if (total == 0)
+//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
+                mNoResults.setVisibility(View.VISIBLE);
+        } else {
+            if (s.isEmpty()) {
+                cantoAdapter.clear();
+                mNoResults.setVisibility(View.GONE);
+            }
+        }
+    }
 
 }

@@ -8,4 +8,13 @@
         <attr name="toolbar_shadow" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="FontTabLayout">
+        <attr name="fontPath" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BoundedCardView">
+        <attr name="bounded_width" format="dimension" />
+        <attr name="bounded_height" format="dimension" />
+    </declare-styleable>
+
 </resources>

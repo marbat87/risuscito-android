@@ -1,15 +1,19 @@
 package it.cammino.risuscito.services;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.util.Xml;
 
@@ -22,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import it.cammino.risuscito.DatabaseCanti;
+import it.cammino.risuscito.LUtils;
 import it.cammino.risuscito.ListaPersonalizzata;
 import it.cammino.risuscito.R;
 
@@ -32,6 +37,8 @@ public class XmlImportService extends IntentService {
     final int NOTIFICATION_ID = 2;
 
     final String TAG = getClass().getCanonicalName();
+
+    private static final String CHANNEL_ID = "itcr_import_channel";
 
     // We don't use namespaces
     private static final String ns = null;
@@ -64,13 +71,17 @@ public class XmlImportService extends IntentService {
 
     private void importData(Uri data) {
         Log.d(TAG, "importData: data = " + data.toString());
+        Log.d(TAG, "importData:  data.getScheme = " + data.getScheme());
         final String scheme = data.getScheme();
 
         NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(this);
         mNotificationManager.cancelAll();
         Notification mNotification;
 
-        mNotification = new NotificationCompat.Builder(this)
+        if (LUtils.hasO())
+            createChannel();
+
+        mNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(getString(R.string.app_name))
@@ -98,7 +109,7 @@ public class XmlImportService extends IntentService {
 
                     db.close();
 
-                    mNotification = new NotificationCompat.Builder(this)
+                    mNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_stat_action_done)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
@@ -113,12 +124,14 @@ public class XmlImportService extends IntentService {
 
                     Intent i = getBaseContext().getPackageManager()
                             .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    if (i != null) {
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    }
                     startActivity(i);
                     stopSelf();
                 }
                 else {
-                    mNotification = new NotificationCompat.Builder(this)
+                    mNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_stat_alert_error)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
@@ -134,46 +147,10 @@ public class XmlImportService extends IntentService {
                     stopSelf();
                 }
             }
-            catch (XmlPullParserException e) {
+            catch (XmlPullParserException | SecurityException | IOException e) {
                 Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
                 FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_alert_error)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setTicker(getString(R.string.import_error))
-                        .setContentText(getString(R.string.import_error))
-                        .build();
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
-                Intent intentBroadcast = new Intent(ACTION_FINISH);
-                sendBroadcast(intentBroadcast);
-
-                stopSelf();
-            }
-            catch (IOException e) {
-                Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
-                FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_alert_error)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setTicker(getString(R.string.import_error))
-                        .setContentText(getString(R.string.import_error))
-                        .build();
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification);
-
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH");
-                Intent intentBroadcast = new Intent(ACTION_FINISH);
-                sendBroadcast(intentBroadcast);
-
-                stopSelf();
-            }
-            catch (SecurityException e) {
-                Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
-                FirebaseCrash.log("importData: " + e.getMessage());
-                mNotification = new NotificationCompat.Builder(this)
+                mNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_stat_alert_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setContentTitle(getString(R.string.app_name))
@@ -273,7 +250,7 @@ public class XmlImportService extends IntentService {
         }
     }
 
-    static class Position {
+    private static class Position {
         String name;
         String canto;
 
@@ -291,6 +268,25 @@ public class XmlImportService extends IntentService {
 
         public void setCanto(String canto) {
             this.canto = canto;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // The id of the channel.
+//        String id = CHANNEL_ID;
+        // The user-visible name of the channel.
+        CharSequence name = "XML Import";
+        // The user-visible description of the channel.
+        String description = "Importing selected XML";
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        if (mNotificationManager != null) {
+            mNotificationManager.createNotificationChannel(mChannel);
         }
     }
 

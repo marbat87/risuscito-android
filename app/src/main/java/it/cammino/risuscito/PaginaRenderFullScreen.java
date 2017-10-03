@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -20,6 +20,8 @@ import butterknife.OnClick;
 import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class PaginaRenderFullScreen extends ThemeableActivity {
+
+    private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
     private static String urlCanto;
@@ -100,14 +102,21 @@ public class PaginaRenderFullScreen extends ThemeableActivity {
 
     }
 
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            saveZoom();
+//            mLUtils.closeActivityWithFadeOut();
+//            return true;
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
+
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            saveZoom();
-            mLUtils.closeActivityWithFadeOut();
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
+        saveZoom();
+        mLUtils.closeActivityWithFadeOut();
     }
 
     @Override

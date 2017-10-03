@@ -2,14 +2,14 @@
 <resources>
 
     <dimen name="activity_min_margin">5dip</dimen>
-    <dimen name="settings_min_margin">10dip</dimen>
+    <!--<dimen name="settings_min_margin">10dip</dimen>-->
     <!--<dimen name="list_preferred_item_height_small">40dip</dimen>-->
     <!--<dimen name="default_padding_selectable">5dip</dimen>-->
     <!--<dimen name="list_preferred_item_height_medium">50dip</dimen>-->
     <dimen name="myListPreferredItemMargin">16dip</dimen>
     <!--<dimen name="myListPreferredExpTextMargin">40dip</dimen>-->
     <dimen name="myListPreferredTextMarginStart">72dip</dimen>
-    <!--<dimen name="myListPreferredItemHeightSmall">48dip</dimen>-->
+    <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <!--<dimen name="about_image_width">100dip</dimen>-->
@@ -51,7 +51,7 @@
     <!--<dimen name="tabs_height">48dip</dimen>-->
     <!--<dimen name="tabs_text_size">13sp</dimen>-->
 
-    <dimen name="text_min_margin">20dip</dimen>
+    <!--<dimen name="text_min_margin">20dip</dimen>-->
 
     <dimen name="cardListPreferredItemMargin">10dip</dimen>
     <dimen name="cardListPreferredTextMarginStart">60dip</dimen>
@@ -64,7 +64,7 @@
     <!--<dimen name="floating_margin_lateral_minus_shadow">4dp</dimen>-->
     <!--<dimen name="toolbar_expansion_height">85dip</dimen>-->
     <!--<dimen name="toolbar_fab_margintop">-45dp</dimen>-->
-    <dimen name="toolbar_fab_margin_lateral">8dp</dimen>
+    <!--<dimen name="toolbar_fab_margin_lateral">8dp</dimen>-->
 
     <!--<dimen name="raise_elevation">8dp</dimen>-->
 
@@ -79,5 +79,7 @@
     <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
 
     <dimen name="about_appbarlayout_height">200dp</dimen>
+
+    <dimen name="play_pause_padding">18dp</dimen>
 
 </resources>

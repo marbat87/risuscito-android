@@ -10,29 +10,46 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.cammino.risuscito.ui.ThemeableActivity;
+
 public class CambioAccordi {
 
-    public static final String[] accordi_it =
+    private static final String TAG = "CambioAccordi";
+
+    static final String[] accordi_it =
             {"Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si"};
 
-    public static final String[] accordi_uk =
+    static final String[] accordi_uk =
             {"C", "Cis", "D","Eb", "E", "F", "Fis", "G", "Gis", "A", "B","H"};
 
-    public static final String[] accordi_uk_lower =
+    private static final String[] accordi_uk_lower =
             {"c", "cis", "d","eb", "e", "f", "fis", "g", "gis", "a", "b","h"};
 
-    private Context context;
+    static final String[] accordi_en =
+            {"C", "C#", "D","Eb", "E", "F", "F#", "G", "G#", "A", "Bb","B"};
 
-    public CambioAccordi(Context context) {
+    static final String[] barre_it = {"I", "II", "III", "IV", "V", "VI", "VII"};
+    static final String[] barre_uk = {"I", "II", "III", "IV", "V", "VI", "VII"};
+    static final String[] barre_en = {"1", "2", "3", "4", "5", "6", "7"};
+
+    private Context context;
+    private String mLanguage;
+
+    CambioAccordi(Context context) {
         this.context = context;
     }
 
-    public static String recuperaPrimoAccordo(InputStream canto) {
+    public CambioAccordi(Context context, String language) {
+        this.context = context;
+        this.mLanguage = language;
+    }
+
+    static String recuperaPrimoAccordo(InputStream canto, String language) {
 
         if (canto == null)
             return "";
 
-        String primaNota = "";
+        StringBuilder primaNota = new StringBuilder();
 
         try {
             BufferedReader br = new BufferedReader(
@@ -44,32 +61,46 @@ public class CambioAccordi {
 
             while (line != null && !found) {
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-//                    Log.i("RIGA", line);
+                    Log.v(TAG, "recuperaPrimoAccordo - RIGA: " + line);
                     int inizioRiga = line.indexOf("A13F3C") + 8;
 
                     if (inizioRiga < line.length()) {
-//                        Log.i("inizioRiga", inizioRiga + "");
-//                        Log.i("carattere", line.charAt(inizioRiga) + "");
+                        Log.v(TAG, "recuperaPrimoAccordo - inizioRiga: " + inizioRiga);
+                        Log.v(TAG, "recuperaPrimoAccordo - carattere: " + line.charAt(inizioRiga));
                         int i = inizioRiga;
                         while (i < line.length()) {
-//                            Log.i("LETTERA", line.charAt(i) + "");
+                            Log.v(TAG, "recuperaPrimoAccordo - LETTERA: " + line.charAt(i));
                             if (line.charAt(i) != ' ') {
                                 found = true;
                                 break;
                             }
                             i++;
                         }
-//                        Log.i("inizio Nota", i + "");
-//                        Log.i("lunghezza stringa", line.length() + "");
-                        primaNota += line.charAt(i);
-//                        Log.i("prima lettera", primaNota);
+                        Log.v(TAG, "recuperaPrimoAccordo - inizio Nota: " + i);
+                        Log.v(TAG, "recuperaPrimoAccordo - lunghezza stringa: " + line.length());
+                        primaNota.append(line.charAt(i));
+                        Log.v(TAG, "recuperaPrimoAccordo - prima lettera: " + primaNota);
                         for (int j = i+1; j < line.length(); j++) {
-//                            Log.i("DA ISP", line.charAt(j) + " ");
-                            Matcher myMatcher = Pattern.compile("[a-z]|#]")
-                                    .matcher(String.valueOf(line.charAt(j)));
+                            Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line.charAt(j));
+//                            Matcher myMatcher = Pattern.compile("[a-z]|#]")
+//                                    .matcher(String.valueOf(line.charAt(j)));
+//                            if (language.equalsIgnoreCase("en"))
+//                                myMatcher = Pattern.compile("[^m][a-z]|#]")
+//                                        .matcher(String.valueOf(line.charAt(j)));
+                            Matcher myMatcher;
+                            switch (language) {
+                                case "en":
+                                    myMatcher = Pattern.compile("[^m][a-z]|#]")
+                                            .matcher(String.valueOf(line.charAt(j)));
+                                    break;
+                                default:
+                                    myMatcher = Pattern.compile("[a-z]|#]")
+                                            .matcher(String.valueOf(line.charAt(j)));
+                                    break;
+                            }
                             if (myMatcher.find()) {
-//                                Log.i("matchato", "OK");
-                                primaNota += line.charAt(j);
+                                Log.v(TAG, "recuperaPrimoAccordo - matchato OK");
+                                primaNota.append(line.charAt(j));
                             }
                             else
                                 break;
@@ -80,8 +111,8 @@ public class CambioAccordi {
                 line = br.readLine();
             }
             br.close();
-//            Log.i("risultato", primaNota);
-            return primaNota;
+            Log.v(TAG, "recuperaPrimoAccordo - risultato: " + primaNota);
+            return primaNota.toString();
         }
         catch (Exception ex)
         {
@@ -90,7 +121,7 @@ public class CambioAccordi {
         }
     }
 
-    public String recuperaBarre(InputStream canto) {
+    String recuperaBarre(InputStream canto, String language) {
 
         if (canto == null)
             return "";
@@ -108,40 +139,27 @@ public class CambioAccordi {
             boolean found = false;
 
             while (line != null && !found) {
-//                if (language.equalsIgnoreCase(context.getResources().getString(R.string.barre_search_string))) {
-                    if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
-//	        		Log.i("RIGA", line);
-                        found = true;
-                        int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
+                int start = line.indexOf(context.getResources().getString(R.string.barre_search_string));
+//                if (line.contains(context.getResources().getString(R.string.barre_search_string))) {
+                if (start >= 0) {
+                    Log.v(TAG, "recuperaBarre - RIGA: " + line);
+                    found = true;
 
-                        primoBarre = "";
-                        for (int i = start; i < line.length(); i++) {
-                            if (line.charAt(i) == ' ')
-                                break;
-                            else
-                                primoBarre += line.charAt(i);
-                        }
+//                    int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
+                    start = language.equalsIgnoreCase("en")? start + 5 : (line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3);
+
+                    primoBarre = "";
+                    for (int i = start; i < line.length(); i++) {
+                        if (line.charAt(i) == ' ' || line.charAt(i) == '<')
+                            break;
+                        else
+                            primoBarre += line.charAt(i);
                     }
-//                }
-//                else {
-//                    if (line.contains("Barrè") || line.contains("Barr&#232;")) {
-////	        		Log.i("RIGA", line);
-//                        found = true;
-//                        int start = line.indexOf("al") + 3;
-//
-//                        primoBarre = "";
-//                        for (int i = start; i < line.length(); i++) {
-//                            if (line.charAt(i) == ' ')
-//                                break;
-//                            else
-//                                primoBarre += line.charAt(i);
-//                        }
-//                    }
-//                }
+                }
                 line = br.readLine();
             }
             br.close();
-//            Log.i("risultato", primoBarre);
+            Log.v(TAG, "recuperaBarre - risultato: " + primoBarre);
             return primoBarre;
         }
         catch (Exception ex) {
@@ -153,29 +171,62 @@ public class CambioAccordi {
     public HashMap<String, String> diffSemiToni(String primaNota, String notaCambio) {
 
 //		if (primaNota.equals(notaCambio))
+        Log.v(TAG, "diffSemiToni - primaNota: " + primaNota);
+        Log.v(TAG, "diffSemiToni - notaCambio: " + notaCambio);
 //			return null;
 
         if (primaNota == null || primaNota.equals("")
                 || notaCambio == null || notaCambio.equals(""))
             return null;
 
-        String language = context.getResources().getConfiguration().locale.getLanguage();
-        Log.d(getClass().getName(), "diffSemiToni: language " + language);
+//        String language = context.getResources().getConfiguration().locale.getLanguage();
+        String language = ThemeableActivity.getSystemLocalWrapper(context.getResources().getConfiguration()).getLanguage();
+        if (mLanguage != null && !mLanguage.isEmpty())
+            language = mLanguage;
+
+        Log.v(TAG, "diffSemiToni: language " + language);
 
         String primoAccordo = primaNota;
         String cambioAccordo = notaCambio;
 
-        String[] accordi = accordi_it;
-        if (language.equalsIgnoreCase("uk")) {
-            accordi = accordi_uk;
-            if (primoAccordo.length() == 1)
-                primoAccordo = primoAccordo.toUpperCase();
-            else
-                primoAccordo = primoAccordo.substring(0,1).toUpperCase() + primoAccordo.substring(1);
-            if (cambioAccordo.length() == 1)
-                cambioAccordo = cambioAccordo.toUpperCase();
-            else
-                cambioAccordo = cambioAccordo.substring(0,1).toUpperCase() + cambioAccordo.substring(1);
+        String[] accordi;
+//        String[] accordi = accordi_it;
+//        if (language.equalsIgnoreCase("uk")) {
+//            accordi = accordi_uk;
+//            if (primoAccordo.length() == 1)
+//                primoAccordo = primoAccordo.toUpperCase();
+//            else
+//                primoAccordo = primoAccordo.substring(0,1).toUpperCase() + primoAccordo.substring(1);
+//            if (cambioAccordo.length() == 1)
+//                cambioAccordo = cambioAccordo.toUpperCase();
+//            else
+//                cambioAccordo = cambioAccordo.substring(0,1).toUpperCase() + cambioAccordo.substring(1);
+//        }
+//
+//        if (language.equalsIgnoreCase("en"))
+//            accordi = accordi_en;
+
+        switch (language) {
+            case "it":
+                accordi = accordi_it;
+                break;
+            case "uk":
+                accordi = accordi_uk;
+                if (primoAccordo.length() == 1)
+                    primoAccordo = primoAccordo.toUpperCase();
+                else
+                    primoAccordo = primoAccordo.substring(0,1).toUpperCase() + primoAccordo.substring(1);
+                if (cambioAccordo.length() == 1)
+                    cambioAccordo = cambioAccordo.toUpperCase();
+                else
+                    cambioAccordo = cambioAccordo.substring(0,1).toUpperCase() + cambioAccordo.substring(1);
+                break;
+            case "en":
+                accordi = accordi_en;
+                break;
+            default:
+                accordi = accordi_it;
+                break;
         }
 
         int start;
@@ -185,7 +236,7 @@ public class CambioAccordi {
         }
         if (start == accordi.length)
             return null;
-//		Log.i("posizionePrimaNota", start + "");
+        Log.v(TAG, "diffSemiToni - posizionePrimaNota: " + start);
         int end;
         for (end = 0; end < accordi.length; end++) {
             if (cambioAccordo.equals(accordi[end]))
@@ -193,7 +244,7 @@ public class CambioAccordi {
         }
         if (end == accordi.length)
             return null;
-//		Log.i("posizioneNotaCambio", end + "");	
+        Log.v(TAG, "diffSemiToni - posizioneNotaCambio: " + end);
         int differenza;
         if (end > start)
             differenza = (end - start);
@@ -202,14 +253,16 @@ public class CambioAccordi {
 
         HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi.length; i++) {
-//			Log.i("NUOVO", (i+differenza)%12 + "");
-//			Log.i("CONVE", accordi[i] + " in " + accordi[(i+differenza)%12]);
+            Log.v(TAG, "diffSemiToni - NUOVO: " + (i+differenza)%12);
+            Log.v(TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i+differenza)%12]);
             mappa.put(accordi[i], accordi[(i+differenza)%12]);
         }
         return mappa;
     }
 
     public HashMap<String, String> diffSemiToniMin(String primaNota, String notaCambio) {
+
+        Log.v(TAG, "diffSemiToniMin");
 
         if (primaNota == null || primaNota.equals("")
                 || notaCambio == null || primaNota.equals(""))
@@ -233,7 +286,7 @@ public class CambioAccordi {
         }
         if (start == accordi_uk_lower.length)
             return null;
-//		Log.i("posizionePrimaNota", start + "");
+        Log.v(TAG, "diffSemiToniMin - posizionePrimaNota: " + start);
         int end;
         for (end = 0; end < accordi_uk_lower.length; end++) {
             if (cambioAccordo.equals(accordi_uk_lower[end]))
@@ -241,7 +294,7 @@ public class CambioAccordi {
         }
         if (end == accordi_uk_lower.length)
             return null;
-//		Log.i("posizioneNotaCambio", end + "");
+        Log.v(TAG, "diffSemiToniMin - posizioneNotaCambio: " + end);
         int differenza;
         if (end > start)
             differenza = (end - start);
@@ -250,8 +303,8 @@ public class CambioAccordi {
 
         HashMap<String, String> mappa = new HashMap<>();
         for (int i = 0; i < accordi_uk_lower.length; i++) {
-//			Log.i("NUOVO", (i+differenza)%12 + "");
-//			Log.i("CONVE", accordi_uk_lower[i] + " in " + accordi_uk_lower[(i + differenza) % 12]);
+            Log.v(TAG, "diffSemiToniMin - NUOVO: " + (i+differenza)%12);
+            Log.v(TAG, "diffSemiToniMin - CONVE: " + accordi_uk_lower[i] + " in " + accordi_uk_lower[(i + differenza) % 12]);
             mappa.put(accordi_uk_lower[i], accordi_uk_lower[(i+differenza)%12]);
         }
         return mappa;

@@ -4,16 +4,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,24 +29,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.stephentuso.welcome.WelcomeHelper;
+import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import it.cammino.risuscito.adapters.CantoRecyclerAdapter;
-import it.cammino.risuscito.adapters.CantoSelezionabileAdapter;
+import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.objects.Canto;
-import it.cammino.risuscito.objects.CantoRecycled;
+import it.cammino.risuscito.items.CheckableItem;
+import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.services.ConsegnatiSaverService;
-import it.cammino.risuscito.slides.IntroConsegnatiNew;
 import it.cammino.risuscito.utils.ThemeUtils;
 
 public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment.SimpleCallback {
@@ -49,9 +58,9 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private final String TAG = getClass().getCanonicalName();
 
     private DatabaseCanti listaCanti;
-    private List<Canto> titoliChoose;
+    private List<CheckableItem> titoliChoose;
     private View rootView;
-    private CantoSelezionabileAdapter selectableAdapter;
+    private FastItemAdapter<CheckableItem> selectableAdapter;
     private FloatingActionButton mFab;
     private View mBottomBar;
 
@@ -65,7 +74,6 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private LUtils mLUtils;
 
     private long mLastClickTime = 0;
-    private WelcomeHelper mWelcomeScreen;
 
     private BroadcastReceiver positionBRec = new BroadcastReceiver() {
         @Override
@@ -74,10 +82,9 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             try {
                 Log.d(getClass().getName(), "BROADCAST_SINGLE_COMPLETED");
                 Log.d(getClass().getName(), "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
-                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null) {
-                    SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "CONSEGNATI_SAVING")
-                            .setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
-                }
+                SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING");
+                if (fragment != null)
+                    fragment.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0));
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -91,22 +98,19 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             //Implement UI change code here once notification is received
             try {
                 Log.d(getClass().getName(), "BROADCAST_SAVING_COMPLETED");
-                if (SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING") != null)
-                    SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING").dismiss();
-                updateConsegnatiList(true);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+                SimpleDialogFragment fragment = SimpleDialogFragment.findVisible((AppCompatActivity)getActivity(), "CONSEGNATI_SAVING");
+                if (fragment != null)
+                    fragment.dismiss();
+//                updateConsegnatiList(true);
+                updateConsegnatiList();
                 mChoosedRecyclerView.setVisibility(View.GONE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(false);
-                else
-                    mMainActivity.enableBottombar(false);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+                enableBottombar(false);
+//                if (mMainActivity.isOnTablet())
+//                    enableBottombar(false);
+//                else
+//                    mMainActivity.enableBottombar(false);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                if (mMainActivity.isOnTablet())
-//                    showFab();
-                    getFab().show();
-                else
-                    mMainActivity.enableFab(true);
+                mMainActivity.enableFab(true);
             }
             catch (IllegalArgumentException e) {
                 Log.e(getClass().getName(), e.getLocalizedMessage(), e);
@@ -118,26 +122,24 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     @BindView(R.id.chooseRecycler) RecyclerView mChoosedRecyclerView;
     @BindView(R.id.no_consegnati) View mNoConsegnati;
 
+    private Unbinder mUnbinder;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mMainActivity = (MainActivity) getActivity();
 
-        ((MainActivity) getActivity()).setupToolbarTitle(R.string.title_activity_consegnati);
-
-//        Log.d(TAG, "onCreateView: isOnTablet " + isOnTablet);
+        mMainActivity.setupToolbarTitle(R.string.title_activity_consegnati);
 
         mBottomBar = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.bottom_bar):
                 getActivity().findViewById(R.id.bottom_bar);
 
-//        getActivity().findViewById(R.id.material_tabs).setVisibility(View.GONE);
         mMainActivity.mTabLayout.setVisibility(View.GONE);
-        if (!mMainActivity.isOnTablet())
-            mMainActivity.enableFab(true);
+        mMainActivity.enableFab(true);
 
         mLUtils = LUtils.getInstance(getActivity());
 
@@ -154,51 +156,14 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             }
         }
 
-        if (editMode) {
-//            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
-            mChoosedRecyclerView.setVisibility(View.VISIBLE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(true);
-            else
-                mMainActivity.enableBottombar(true);
-//            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-//            rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
-            mNoConsegnati.setVisibility(View.INVISIBLE);
-            if (mMainActivity.isOnTablet())
-//                hideFab();
-                getFab().hide();
-            else
-                mMainActivity.enableFab(false);
-
-            updateChooseList(false);
-        }
-        else {
-//            rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
-            mChoosedRecyclerView.setVisibility(View.GONE);
-            if (mMainActivity.isOnTablet())
-                enableBottombar(false);
-            else
-                mMainActivity.enableBottombar(false);
-//            rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-            if (mMainActivity.isOnTablet())
-//                showFab();
-                getFab().show();
-            else
-                mMainActivity.enableFab(true);
-            updateConsegnatiList(true);
-        }
+        Log.d(TAG, "onCreateView - editMode: "+ editMode);
         View mSelectNone = mMainActivity.isOnTablet() ?
                 rootView.findViewById(R.id.select_none):
                 getActivity().findViewById(R.id.select_none);
         mSelectNone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Canto canto: titoliChoose) {
-                    canto.setSelected(false);
-                    selectableAdapter.notifyDataSetChanged();
-                }
+                selectableAdapter.deselect();
             }
         });
 
@@ -208,10 +173,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mSelectAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (Canto canto: titoliChoose) {
-                    canto.setSelected(true);
-                    selectableAdapter.notifyDataSetChanged();
-                }
+                selectableAdapter.select();
             }
         });
 
@@ -222,20 +184,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             @Override
             public void onClick(View view) {
                 editMode = false;
-                updateConsegnatiList(true);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.INVISIBLE);
+//                updateConsegnatiList(true);
+                updateConsegnatiList();
                 mChoosedRecyclerView.setVisibility(View.INVISIBLE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(false);
-                else
-                    mMainActivity.enableBottombar(false);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.VISIBLE);
+                enableBottombar(false);
+//                if (mMainActivity.isOnTablet())
+//                    enableBottombar(false);
+//                else
+//                    mMainActivity.enableBottombar(false);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                if (mMainActivity.isOnTablet())
-//                    showFab();
-                    getFab().show();
-                else
-                    mMainActivity.enableFab(true);
+                mMainActivity.enableFab(true);
             }
         });
 
@@ -248,12 +206,19 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 editMode = false;
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), ConsegnatiFragment.this, "CONSEGNATI_SAVING")
                         .content(R.string.save_consegnati_running)
-                        .showProgress(true)
+                        .showProgress()
                         .progressIndeterminate(false)
                         .progressMax(selectableAdapter.getItemCount())
                         .show();
+
+                Set<CheckableItem> mSelected = selectableAdapter.getSelectedItems();
+                ArrayList<Integer> mSelectedId = new ArrayList<>();
+                for (CheckableItem item: mSelected) {
+                    mSelectedId.add(item.getId());
+                }
+
                 Intent intent = new Intent(getActivity().getApplicationContext(), ConsegnatiSaverService.class);
-                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, selectableAdapter.getChoosedIds());
+                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId);
                 getActivity().getApplicationContext().startService(intent);
             }
         });
@@ -263,27 +228,30 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             public void onClick(View v) {
                 editMode = true;
                 updateChooseList(true);
-//                rootView.findViewById(R.id.cantiRecycler).setVisibility(View.INVISIBLE);
                 mRecyclerView.setVisibility(View.GONE);
-//                rootView.findViewById(R.id.no_consegnati).setVisibility(View.INVISIBLE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
-//                rootView.findViewById(R.id.chooseRecycler).setVisibility(View.VISIBLE);
                 mChoosedRecyclerView.setVisibility(View.VISIBLE);
-                if (mMainActivity.isOnTablet())
-                    enableBottombar(true);
-                else
-                    mMainActivity.enableBottombar(true);
-                if (mMainActivity.isOnTablet())
-//                    hideFab();
-                    getFab().hide();
-                else
-                    mMainActivity.enableFab(false);
+                enableBottombar(true);
+//                if (mMainActivity.isOnTablet())
+//                    enableBottombar(true);
+//                else
+//                    mMainActivity.enableBottombar(true);
+                mMainActivity.enableFab(false);
+                SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Log.d(TAG, "onClick - INTRO_CONSEGNATI_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false));
+                if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+                    managerIntro();
+                }
             }
         });
 
-        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroConsegnatiNew.class);
-        mWelcomeScreen.show(savedInstanceState);
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -294,6 +262,37 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED));
         getActivity().registerReceiver(completedBRec, new IntentFilter(
                 ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED));
+        if (editMode) {
+            mChoosedRecyclerView.setVisibility(View.VISIBLE);
+            enableBottombar(true);
+//            if (mMainActivity.isOnTablet())
+//                enableBottombar(true);
+//            else
+//                mMainActivity.enableBottombar(true);
+            mRecyclerView.setVisibility(View.GONE);
+            mNoConsegnati.setVisibility(View.INVISIBLE);
+            mMainActivity.enableFab(false);
+
+            updateChooseList(false);
+        }
+        else {
+            mChoosedRecyclerView.setVisibility(View.GONE);
+            enableBottombar(false);
+//            if (mMainActivity.isOnTablet())
+//                enableBottombar(false);
+//            else
+//                mMainActivity.enableBottombar(false);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mMainActivity.enableFab(true);
+//            updateConsegnatiList(true);
+            updateConsegnatiList();
+        }
+        SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Log.d(TAG, "onCreateView - INTRO_CONSEGNATI: " + mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false));
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
+            fabIntro();
+        }
+
     }
 
     @Override
@@ -308,18 +307,18 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(EDIT_MODE, editMode);
         super.onSaveInstanceState(savedInstanceState);
-        mWelcomeScreen.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onDestroy() {
         if (listaCanti != null)
             listaCanti.close();
+        enableBottombar(false);
+//        if (mMainActivity.isOnTablet())
+//            enableBottombar(false);
+//        else
+//            mMainActivity.enableBottombar(false);
         super.onDestroy();
-        if (mMainActivity.isOnTablet())
-            enableBottombar(false);
-        else
-            mMainActivity.enableBottombar(false);
     }
 
     @Override
@@ -343,7 +342,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-                mWelcomeScreen.forceShow();
+                if (editMode)
+                    managerIntro();
+                else
+                    fabIntro();
                 return true;
         }
         return false;
@@ -355,7 +357,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private void updateConsegnatiList(boolean updateView) {
+    //    private void updateConsegnatiList(boolean updateView) {
+    private void updateConsegnatiList() {
 
         // crea un manipolatore per il Database in modalità READ
         listaCanti = new DatabaseCanti(getActivity());
@@ -372,19 +375,21 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         int totalConsegnati = lista.getCount();
 
         //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        if (updateView)
-//            rootView.findViewById(R.id.no_consegnati).setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
-            mNoConsegnati.setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
+//        if (updateView)
+        mNoConsegnati.setVisibility(totalConsegnati > 0 ? View.INVISIBLE: View.VISIBLE);
 
         // crea un array e ci memorizza i titoli estratti
-        List<CantoRecycled> titoli = new ArrayList<>();
+        List<SimpleItem> titoli = new ArrayList<>();
         lista.moveToFirst();
         for (int i = 0; i < totalConsegnati; i++) {
-            titoli.add(new CantoRecycled(lista.getString(0)
-                    , lista.getInt(2)
-                    , lista.getString(1)
-                    , lista.getInt(3)
-                    , lista.getString(4)));
+            SimpleItem sampleItem = new SimpleItem();
+            sampleItem
+                    .withTitle(lista.getString(0))
+                    .withPage(String.valueOf(lista.getInt(2)))
+                    .withSource(lista.getString(4))
+                    .withColor(lista.getString(1))
+                    .withId(lista.getInt(3));
+            titoli.add(sampleItem);
             lista.moveToNext();
         }
 
@@ -394,34 +399,35 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         if (listaCanti != null)
             listaCanti.close();
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
+        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return;
+                    return true;
                 mLastClickTime = SystemClock.elapsedRealtime();
-
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da visualizzare
                 Bundle bundle = new Bundle();
-                bundle.putString("pagina", String.valueOf(((TextView) v.findViewById(R.id.text_source_canto)).getText()));
-                bundle.putInt("idCanto", Integer.valueOf(
-                        String.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText())));
+                bundle.putCharSequence("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
 
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, v);
+                startSubActivity(bundle, view);
+                return true;
             }
         };
 
-//        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cantiRecycler);
-
         // Creating new adapter object
-        CantoRecyclerAdapter cantoAdapter = new CantoRecyclerAdapter(getActivity(), titoli, clickListener);
+        FastItemAdapter<SimpleItem> cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.withOnClickListener(mOnClickListener);
+        cantoAdapter.add(titoli);
+
         mRecyclerView.setAdapter(cantoAdapter);
-
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
-
-        // Setting the layoutManager
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mRecyclerView.addItemDecoration(insetDivider);
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
     }
 
@@ -446,9 +452,13 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 //            Log.i(getClass().toString(), "CANTO: " + Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0));
 //            Log.i(getClass().toString(), "ID: " + lista.getInt(3));
 //            Log.i(getClass().toString(), "SELEZIONATO: " + lista.getInt(4));
-                titoliChoose.add(new Canto(Utility.intToString(lista.getInt(2), 3) + lista.getString(1) + lista.getString(0)
-                        , lista.getInt(3)
-                        , lista.getInt(4) > 0));
+                CheckableItem checkableItem = new CheckableItem();
+                checkableItem.withTitle(lista.getString(0))
+                        .withPage(String.valueOf(lista.getInt(2)))
+                        .withColor(lista.getString(1))
+                        .withSetSelected(lista.getInt(4) > 0)
+                        .withId(lista.getInt(3));
+                titoliChoose.add(checkableItem);
                 lista.moveToNext();
             }
 
@@ -459,17 +469,31 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 listaCanti.close();
         }
 
-//        RecyclerView mChoosedRecyclerView = (RecyclerView) rootView.findViewById(R.id.chooseRecycler);
-
         // Creating new adapter object
-        selectableAdapter = new CantoSelezionabileAdapter(getActivity(), titoliChoose);
+        selectableAdapter = new FastItemAdapter<>();
+        selectableAdapter.withSelectable(true)
+                .setHasStableIds(true);
+
+        //init the ClickListenerHelper which simplifies custom click listeners on views of the Adapter
+        selectableAdapter.withOnPreClickListener(new FastAdapter.OnClickListener<CheckableItem>() {
+            @Override
+            public boolean onClick(View v, IAdapter<CheckableItem> adapter, CheckableItem item, int position) {
+                selectableAdapter.getAdapterItem(position).withSetSelected(!selectableAdapter.getAdapterItem(position).isSelected());
+                selectableAdapter.notifyAdapterItemChanged(position);
+                return true;
+            }
+        });
+        selectableAdapter.withEventHook(new CheckableItem.CheckBoxClickEvent());
+        selectableAdapter.add(titoliChoose);
+
         mChoosedRecyclerView.setAdapter(selectableAdapter);
-
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mChoosedRecyclerView.setLayoutManager(llm);
         mChoosedRecyclerView.setHasFixedSize(true);
-
-        // Setting the layoutManager
-        mChoosedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        mChoosedRecyclerView.addItemDecoration(insetDivider);
+        mChoosedRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
     }
 
     private ThemeUtils getThemeUtils() {
@@ -479,7 +503,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public static class RetainedFragment extends Fragment {
 
         // data object we want to retain
-        private List<Canto> data;
+        private List<CheckableItem> data;
 
         // this method is only called once for this fragment
         @Override
@@ -489,23 +513,22 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             setRetainInstance(true);
         }
 
-        public void setData(List<Canto> data) {
+        public void setData(List<CheckableItem> data) {
             this.data = data;
         }
 
-        public List<Canto> getData() {
+        public List<CheckableItem> getData() {
             return data;
         }
     }
 
-    public List<Canto> getTitoliChoose() {
+    public List<CheckableItem> getTitoliChoose() {
         return titoliChoose;
     }
 
     private FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
+            mFab = getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
                     .icon(CommunityMaterial.Icon.cmd_pencil)
@@ -517,25 +540,12 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         return mFab;
     }
 
-//    private void hideFab() {
-//        getFab().hide();
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-//        params.setBehavior(null);
-//        getFab().requestLayout();
-//    }
-//
-//    private void showFab() {
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getFab().getLayoutParams();
-//        params.setBehavior(new ScrollAwareFABBehavior(getContext(), null));
-//        getFab().requestLayout();
-//        getFab().show();
-//    }
-
     private void enableBottombar(boolean enabled) {
-        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mBottomBar.getLayoutParams();
-//        params.setBehavior(enabled ? new QuickReturnFooterBehavior(getContext(), null) : null);
-//        mBottomBar.requestLayout();
+//        mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        if (mMainActivity.isOnTablet())
+            mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
+        else
+            mMainActivity.enableBottombar(enabled);
     }
 
     @Override
@@ -544,5 +554,67 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     public void onNegative(@NonNull String tag) {}
     @Override
     public void onNeutral(@NonNull String tag) {}
+
+    private void fabIntro() {
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(getFab(), getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_howto))
+                        .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                        .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                        .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                        .tintTarget(false)                   // Whether to tint the target view's color
+                , new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        Log.d(TAG, "onTargetDismissed: ");
+                        SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                        prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true);
+                        prefEditor.apply();
+                    }
+                });
+    }
+
+    private void managerIntro() {
+        new TapTargetSequence(getActivity())
+                .continueOnCancel(true)
+                .targets(
+                        TapTarget.forView(mMainActivity.isOnTablet() ?
+                                        (ImageButton) rootView.findViewById(R.id.confirm_changes):
+                                        (ImageButton) getActivity().findViewById(R.id.confirm_changes)
+                                , getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_confirm))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                        ,
+                        TapTarget.forView(mMainActivity.isOnTablet() ?
+                                        (ImageButton) rootView.findViewById(R.id.cancel_change):
+                                        (ImageButton) getActivity().findViewById(R.id.cancel_change)
+                                , getString(R.string.title_activity_consegnati), getString(R.string.showcase_consegnati_cancel))
+                                .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
+                                .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                )
+                .listener(
+                        new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onSequenceFinish() {
+                                Log.d(TAG, "onSequenceFinish: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true);
+                                prefEditor.apply();
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget tapTarget, boolean b) {}
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget tapTarget) {
+                                Log.d(TAG, "onSequenceCanceled: ");
+                                SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true);
+                                prefEditor.apply();
+                            }
+                        }).start();
+    }
 
 }

@@ -11,7 +11,7 @@
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:elevation="@dimen/design_appbar_elevation">
+        risuscito:elevation="@dimen/design_appbar_elevation">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
@@ -83,10 +83,16 @@
         android:layout_marginRight="@dimen/activity_min_margin">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_min_margin"
-            android:text="@string/list_elements" />
+            android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:gravity="start|center_vertical"
+            android:background="@color/material_grey_100"
+            android:text="@string/list_elements"/>
 
         <TextView
             android:id="@+id/noElementsAdded"
@@ -94,7 +100,16 @@
             android:layout_height="wrap_content"
             android:text="@string/no_elements_added" />
 
-        <include layout="@layout/layout_recycler" />
+        <include layout="@layout/hint_layout" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
 
@@ -102,7 +117,7 @@
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:background="@drawable/toolbar_shadow" />
 
     <android.support.design.widget.FloatingActionButton
@@ -111,8 +126,8 @@
         android:layout_alignParentRight="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/toolbar_fab_margin_lateral"
-        android:layout_marginRight="@dimen/toolbar_fab_margin_lateral"
+        android:layout_marginEnd="@dimen/fab_margin_coord"
+        android:layout_marginRight="@dimen/fab_margin_coord"
         risuscito:layout_anchor="@id/appbarlayout"
         risuscito:layout_anchorGravity="bottom|right|end" />
 

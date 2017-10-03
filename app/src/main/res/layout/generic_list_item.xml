@@ -29,18 +29,19 @@
         <LinearLayout
             android:id="@+id/list"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <RelativeLayout
             android:id="@+id/addCantoGenerico"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:minHeight="@dimen/myListPreferredItemHeightMedium"
             android:orientation="horizontal"
-            android:background="?attr/customSelector" >
+            android:background="?attr/customSelector"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/text_id_posizione"

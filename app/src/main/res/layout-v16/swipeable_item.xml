@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/myListPreferredItemHeightMedium">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_result_content"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:gravity="center_vertical"
+        android:visibility="visible"
+        android:background="@color/md_red_900">
+
+        <TextView
+            android:id="@+id/swiped_text"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|start"
+            android:lines="1"
+            android:maxLines="1"
+            android:textDirection="anyRtl"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="@dimen/material_drawer_item_primary_text"
+            tools:text="@string/generic_removed"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/swiped_action"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|start"
+            android:lines="1"
+            android:maxLines="1"
+            android:textDirection="anyRtl"
+            android:textAllCaps="true"
+            android:textColor="@android:color/primary_text_dark"
+            android:textStyle="bold"
+            android:textSize="@dimen/material_drawer_item_primary_description"
+            android:text="@android:string/cancel"
+            tools:ignore="UnusedAttribute" />
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/container"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="?customSelector"
+        android:layout_marginTop="-5dp"
+        android:layout_marginBottom="-5dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_marginStart="-3dp"
+        android:layout_marginRight="-3dp"
+        android:layout_marginEnd="-3dp"
+        risuscito:cardElevation="3dp">
+
+        <ImageView
+            android:id="@+id/drag_image"
+            android:contentDescription="@string/content_drag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            risuscito:ico_color="@color/icon_ative_black"
+            risuscito:ico_icon="cmd-reorder-horizontal"
+            risuscito:ico_size="24dp"
+            risuscito:ico_padding="2dp"
+            tools:ignore="MissingPrefix" />
+
+        <TextView
+            android:id="@android:id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="56dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:textColor="#000000"
+            android:gravity="center_vertical|start"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="RtlHardcoded" />
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>
