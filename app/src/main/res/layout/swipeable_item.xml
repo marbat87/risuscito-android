@@ -69,7 +69,7 @@
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="@dimen/myListPreferredItemMargin"
             android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-            risuscito:ico_color="@color/icon_ative_black"
+            risuscito:ico_color="@color/secondary_text_default_material_dark"
             risuscito:ico_icon="cmd-reorder-horizontal"
             risuscito:ico_size="24dp"
             risuscito:ico_padding="2dp"
@@ -83,7 +83,7 @@
             android:layout_marginEnd="56dp"
             android:layout_marginLeft="@dimen/myListPreferredItemMargin"
             android:layout_marginStart="@dimen/myListPreferredItemMargin"
-            android:textColor="#000000"
+            android:textColor="@color/primary_text_default_material_dark"
             android:gravity="center_vertical|start"
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:ignore="RtlHardcoded" />

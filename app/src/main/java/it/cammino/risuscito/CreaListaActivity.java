@@ -114,13 +114,13 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         setContentView(R.layout.activity_crea_lista);
         ButterKnife.bind(this);
 
-        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (mTabletBG != null)
-            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
-        mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
+//        if (mTabletBG != null)
+//            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+//        mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
 
@@ -641,7 +641,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 , getString(R.string.add_position), getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .tintTarget(false)
                                 .id(1)
                         ,
@@ -651,6 +654,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2)
                         ,
                         TapTarget.forToolbarMenuItem(mToolbar, R.id.action_help
@@ -659,6 +664,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3)
                 )
                 .listener(

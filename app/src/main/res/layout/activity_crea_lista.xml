@@ -4,7 +4,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
+    android:fitsSystemWindows="true"
     android:focusableInTouchMode="true">
 
     <android.support.design.widget.AppBarLayout
@@ -60,7 +60,7 @@
                 android:id="@+id/risuscito_toolbar"
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/ActionBarThemeOverlay"
-                risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                risuscito:popupTheme="@style/RisuscitoToolbarPopup"
                 android:layout_width="match_parent"
                 android:background="?attr/colorPrimary"
                 risuscito:layout_collapseMode="pin" />
@@ -85,7 +85,7 @@
             android:layout_height="48dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:gravity="start|center_vertical"
-            android:background="@color/material_grey_100"
+            android:background="?colorBackgroundFloating"
             android:text="@string/list_elements"/>
 
         <TextView

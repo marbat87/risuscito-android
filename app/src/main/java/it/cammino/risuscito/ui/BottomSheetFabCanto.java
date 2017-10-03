@@ -13,6 +13,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.marverenic.colors.Colors;
+import com.marverenic.colors.NightMode;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -77,7 +79,6 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         TextView titleView = view.findViewById(R.id.sheet_title);
         if (showTitle) {
-//            int title = getArguments().getInt("title");
             titleView.setText(getArguments().getInt("title"));
             view.findViewById(R.id.sheet_title_area).setVisibility(View.VISIBLE);
         }
@@ -85,14 +86,16 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
             view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
         }
 
+        int iconColorId = R.color.secondary_text_default_material_light;
+        if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
+            iconColorId = R.color.secondary_text_default_material_dark;
+
         View mView = view.findViewById(R.id.fab_fullscreen_on);
         ImageView mImage = mView.findViewById(R.id.app_icon);
-//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(), R.drawable.ic_fullscreen_48dp));
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//        mImage.setImageDrawable(drawable);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_fullscreen)
-                .colorRes(R.color.icon_ative_black)
+//                .colorRes(R.color.icon_ative_black)
+                .colorRes(iconColorId)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -112,12 +115,10 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_sound_off);
         mImage = mView.findViewById(R.id.app_icon);
-//        Drawable drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mSound ? R.drawable.ic_queue_music_off_white_48dp: R.drawable.ic_queue_music_48dp));
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//        mImage.setImageDrawable(drawable);
         icon = new IconicsDrawable(getActivity())
                 .icon(mSound ? CommunityMaterial.Icon.cmd_headset_off : CommunityMaterial.Icon.cmd_headset)
-                .colorRes(R.color.icon_ative_black)
+//                .colorRes(R.color.icon_ative_black)
+                .colorRes(iconColorId)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -137,12 +138,9 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.save_file);
         mImage = mView.findViewById(R.id.app_icon);
-//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mDownload ? R.drawable.ic_delete_48dp: R.drawable.ic_file_download_48dp));
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//        mImage.setImageDrawable(drawable);
         icon = new IconicsDrawable(getActivity())
-//                .icon(mDownload ? CommunityMaterial.Icon.cmd_delete : CommunityMaterial.Icon.cmd_download)
-                .colorRes(R.color.icon_ative_black)
+//                .colorRes(R.color.icon_ative_black)
+                .colorRes(iconColorId)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -184,12 +182,10 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
 
         mView = view.findViewById(R.id.fab_favorite);
         mImage = mView.findViewById(R.id.app_icon);
-//        drawable = DrawableCompat.wrap(ContextCompat.getDrawable(getContext(),mFavorite? R.drawable.ic_favorite_48dp: R.drawable.ic_favorite_outline_48dp));
-//        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.icon_ative_black));
-//        mImage.setImageDrawable(drawable);
         icon = new IconicsDrawable(getActivity())
                 .icon(mFavorite ? CommunityMaterial.Icon.cmd_heart : CommunityMaterial.Icon.cmd_heart_outline)
-                .colorRes(R.color.icon_ative_black)
+//                .colorRes(R.color.icon_ative_black)
+                .colorRes(iconColorId)
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);

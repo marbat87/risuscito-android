@@ -4,7 +4,7 @@
     <style name="Widget.Design.TabLayout.Risuscito">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="android:background">@android:color/white</item>
+        <item name="android:background">?colorBackgroundFloating</item>
         <item name="colorControlHighlight">#3fff</item>
         <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
         <item name="android:theme">@style/ActionBarThemeOverlay</item>
@@ -12,7 +12,7 @@
     </style>
 
     <style name="TextAppearance.Design.Tab.Risuscito">
-        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
 

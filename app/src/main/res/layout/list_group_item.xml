@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
+            android:textColor="@color/primary_text_default_material_dark"
             tools:text="Header"/>
 
         <TextView
@@ -37,7 +38,7 @@
             android:maxLines="1"
             android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/material_text_color_white_text"
+            android:textColor="@color/secondary_text_default_material_dark"
             tools:text=""/>
 
     </LinearLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chg_row"
+    android:layout_width="match_parent"
+    android:minHeight="@dimen/chglib_material_minHeight"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+
+        <!-- ChangeLog Row [Bullet Point] You have to use the id="chg_textbullet" -->
+        <TextView
+            android:id="@+id/chg_textbullet"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/chglib_material_keyline1"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textColor="?android:textColorPrimary"
+            android:text="@string/changelog_row_bulletpoint"
+            android:paddingStart="@dimen/chglib_material_keyline1"
+            tools:ignore="RtlSymmetry" />
+
+
+        <!-- ChangeLog Row [Text] You have to use the id="chg_text" -->
+        <TextView
+            android:id="@+id/chg_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="@dimen/chglib_material_keyline1"
+            tools:text="Use DashClock with Android 4.2's Daydream feature; great for use with desktop docks!"
+            android:minHeight="?android:attr/listPreferredItemHeightSmall"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="@dimen/chglib_material_list_fontsize"
+            />
+    </LinearLayout>
+
+</LinearLayout>

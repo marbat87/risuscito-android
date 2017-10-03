@@ -302,4 +302,6 @@
     <string name="title_trabar_VII">VII</string>
     <string name="consegnati_only">Cerca solo nei consegnati</string>
     <string name="permission_ok">Permesso concesso</string>
+    <string name="night_theme_title">Tema Scuro</string>
+    <string name="night_theme_desc">Abilita il tema scuro</string>
 </resources>

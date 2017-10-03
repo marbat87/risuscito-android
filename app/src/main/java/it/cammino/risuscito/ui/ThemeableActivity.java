@@ -12,12 +12,14 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
+import com.marverenic.colors.Colors;
+import com.marverenic.colors.NightMode;
+import com.marverenic.colors.activity.ColorsAppCompatActivity;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import java.io.IOException;
@@ -30,11 +32,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import it.cammino.risuscito.LUtils;
+import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public abstract class ThemeableActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public abstract class ThemeableActivity extends ColorsAppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ThemeUtils mThemeUtils;
     protected boolean hasNavDrawer = false;
@@ -74,7 +77,11 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         mThemeUtils = new ThemeUtils(this);
         LUtils mLUtils = LUtils.getInstance(this);
         mLUtils.convertIntPreferences();
-        setTheme(mThemeUtils.getCurrent());
+//        setTheme(mThemeUtils.getCurrent());
+        Colors.setTheme(mThemeUtils.primaryColorNew(), mThemeUtils.accentColorNew(), mThemeUtils.isDarkMode() ? NightMode.NIGHT : NightMode.DAY);
+        setTheme(R.style.RisuscitoTheme);
+//        Colors.setTheme(mThemeUtils.primaryColorNew(), mThemeUtils.accentColorNew(), mThemeUtils.isDarkMode() ? NightMode.NIGHT : NightMode.DAY);
+
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
 
@@ -265,8 +272,8 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
     }
 
     @SuppressWarnings({ "unchecked" })
-    protected boolean loadSharedPreferencesFromFile(InputStream in) {
-        boolean res = false;
+    protected void loadSharedPreferencesFromFile(InputStream in) {
+//        boolean res = false;
         ObjectInputStream input = null;
         try {
             input = new ObjectInputStream(in);
@@ -303,7 +310,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             try {
                 if (input != null) {
                     input.close();
-                    res = true;
+//                    res = true;
                 }
             } catch (IOException e) {
                 String error = "loadSharedPreferencesFromFile - IOException: " + e.getLocalizedMessage();
@@ -311,7 +318,6 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                 Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
             }
         }
-        return res;
     }
 
     @SuppressWarnings("deprecation")

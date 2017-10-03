@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +60,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 //        checkStoragePermissions();
 //        else
 //            loadExternalStorage();
+
+        final SwitchPreferenceCompat darkTheme = (SwitchPreferenceCompat) findPreference("night_theme");
+        darkTheme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getActivity().recreate();
+                return true;
+            }
+        });
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

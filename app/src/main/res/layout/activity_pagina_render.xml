@@ -23,18 +23,8 @@
                 android:id="@+id/music_controls"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
-                android:background="@color/material_grey_50"
+                android:background="?colorBackgroundFloating"
                 android:layout_height="@dimen/abc_action_bar_default_height_material">
-
-                <!--<TextView-->
-                    <!--android:id="@+id/no_record"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:textAppearance="@style/TextAppearance.AppCompat.Title"-->
-                    <!--android:gravity="center"-->
-                    <!--android:padding="@dimen/activity_min_margin"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:text="@string/no_record"-->
-                    <!--tools:visibility="invisible" />-->
 
                 <RelativeLayout
                     android:id="@+id/no_record"
@@ -55,7 +45,7 @@
                         risuscito:ico_icon="cmd-music-note-off"
                         risuscito:ico_size="24dp"
                         risuscito:ico_padding="5dp"
-                        risuscito:ico_color="@color/icon_inative_black"
+                        risuscito:ico_color="?android:textColorSecondary"
                         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
                         tools:ignore="MissingPrefix"
@@ -97,7 +87,7 @@
                         risuscito:ico_icon="cmd-cloud-off-outline"
                         risuscito:ico_size="24dp"
                         risuscito:ico_padding="5dp"
-                        risuscito:ico_color="@color/icon_inative_black"
+                        risuscito:ico_color="?android:textColorSecondary"
                         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
                         tools:ignore="MissingPrefix"
@@ -136,6 +126,7 @@
                         android:layout_height="wrap_content"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat"
+                        android:textColor="?android:textColorPrimary"
                         tools:ignore="HardcodedText,RtlSymmetry" />
 
                     <SeekBar
@@ -148,17 +139,6 @@
                         android:layout_gravity="center_vertical"
                         android:layout_height="match_parent"/>
 
-                    <!--<ImageButton-->
-                        <!--android:id="@+id/play_song"-->
-                        <!--android:layout_width="@dimen/abc_action_bar_default_height_material"-->
-                        <!--android:layout_height="@dimen/abc_action_bar_default_height_material"-->
-                        <!--android:paddingLeft="@dimen/button_playbar_padding"-->
-                        <!--android:paddingRight="@dimen/button_playbar_padding"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--android:scaleType="fitCenter"-->
-                        <!--android:background="?attr/customSelectorRoundAccent"-->
-                        <!--android:soundEffectsEnabled="true"-->
-                        <!--android:contentDescription="@null" />-->
                     <ImageView
                         android:id="@+id/play_song"
                         android:layout_width="@dimen/abc_action_bar_default_height_material"
@@ -181,7 +161,7 @@
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
                 android:layout_alignParentBottom="true"
-                android:background="@color/theme_primary"
+                android:background="?colorPrimary"
                 android:divider="?attr/dividerVertical"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:orientation="horizontal">
@@ -196,6 +176,7 @@
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
+                    android:textColor="@color/primary_text_default_material_dark"
                     tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <SeekBar

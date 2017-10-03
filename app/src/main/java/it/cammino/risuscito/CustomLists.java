@@ -530,14 +530,19 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .descriptionTextSize(15)
                                 .tintTarget(false)                   // Whether to tint the target view's color
                         ,
                         TapTarget.forView(getFab()
                                 , getString(R.string.showcase_listepers_title), getString(R.string.showcase_listepers_desc3))
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .icon(doneDrawable)
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                 )
                 .listener(
                         new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels

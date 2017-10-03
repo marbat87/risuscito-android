@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -24,6 +26,7 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -36,6 +39,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +55,8 @@ import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blunderer.easyanimatedvectordrawable.EasyAnimatedVectorDrawable;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.marverenic.colors.Colors;
+import com.marverenic.colors.NightMode;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -367,8 +373,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 Log.d(TAG, "MSG_RETRIEVE_DONE: " + done);
                 showPlaying(false);
                 play_button.setEnabled(done);
+
                 Drawable playDrawable  = play_button.getDrawable();
-                playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.icon_ative_black : R.color.icon_inative_black), PorterDuff.Mode.SRC_IN);
+                if (Colors.getTheme().getNightMode() == NightMode.DAY)
+                    playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.secondary_text_default_material_light : R.color.secondary_text_disabled_material_light), PorterDuff.Mode.SRC_IN);
+                else
+                    playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.secondary_text_default_material_dark : R.color.secondary_text_disabled_material_dark), PorterDuff.Mode.SRC_IN);
+
             }
             catch (IllegalArgumentException e) {
                 Log.e(TAG, e.getLocalizedMessage(), e);
@@ -577,11 +588,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         ButterKnife.bind(this);
 
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
-        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+//        findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
 
@@ -710,56 +721,71 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.canto, menu);
+
+        int iconColorId = R.color.secondary_text_default_material_light;
+        if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
+            iconColorId = R.color.secondary_text_default_material_dark;
+
         menu.findItem(R.id.tonalita).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note).actionBar()
                         .sizeDp(24)
                         .paddingDp(2)
-                        .color(Color.WHITE));
+                        .color(Color.WHITE)
+        );
         menu.findItem(R.id.action_trasporta).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.action_save_tab).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.action_reset_tab).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar_electric)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .color(Color.WHITE));
+                        .color(Color.WHITE)
+        );
         menu.findItem(R.id.action_trasporta_barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.action_save_barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.action_reset_barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(R.color.icon_ative_black));
+                        .colorRes(iconColorId)
+        );
         menu.findItem(R.id.action_exp_pdf).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_file_pdf_box)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .color(Color.WHITE));
+                        .color(Color.WHITE)
+        );
         menu.findItem(R.id.action_help_canto).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_help_circle)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .color(Color.WHITE));
+                        .color(Color.WHITE)
+        );
         SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false));
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
@@ -1449,7 +1475,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 //        play_button.setImageDrawable(icon);
         EasyAnimatedVectorDrawable.setImageType(play_button
                 , started ? EasyAnimatedVectorDrawable.Type.PAUSE : EasyAnimatedVectorDrawable.Type.PLAY
-                , ContextCompat.getColor(PaginaRenderActivity.this, R.color.icon_ative_black));
+                , ContextCompat.getColor(PaginaRenderActivity.this,
+                        Colors.getTheme().getNightMode() == NightMode.DAY ? R.color.secondary_text_default_material_light : R.color.secondary_text_default_material_dark));
     }
 
     private void showScrolling(boolean scrolling) {
@@ -1613,6 +1640,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1)
                         ,
                         TapTarget.forToolbarMenuItem(mToolbar, R.id.barre
@@ -1621,6 +1650,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2)
                         ,
                         TapTarget.forView(play_scroll
@@ -1629,6 +1660,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3)
                         ,
                         TapTarget.forToolbarOverflow(mToolbar
@@ -1637,6 +1670,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4)
                 )
                 .listener(
@@ -1676,6 +1711,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1)
                         ,
                         TapTarget.forToolbarMenuItem(mToolbar, R.id.barre
@@ -1684,13 +1721,18 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2)
                         ,
                         TapTarget.forView(play_button
                                 , getString(R.string.sc_audio_title), getString(R.string.sc_audio_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3)
                         ,
                         TapTarget.forView(play_scroll
@@ -1699,6 +1741,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4)
                         ,
                         TapTarget.forToolbarOverflow(mToolbar
@@ -1707,6 +1751,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(5)
                 )
                 .listener(
@@ -1776,7 +1822,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     }
 
     private void refreshCatalog() {
-    Log.d(TAG, "refreshCatalog");
+        Log.d(TAG, "refreshCatalog");
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.getTransportControls().sendCustomAction(MusicService.ACTION_REFRESH, null);

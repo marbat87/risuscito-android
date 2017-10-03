@@ -20,6 +20,8 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.marverenic.colors.Colors;
+import com.marverenic.colors.NightMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -120,7 +122,7 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
     mBillingClient = BillingClient.newBuilder(this).setListener(this).build();
 
     ((TextView) findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
-    mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+//    mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
     setSupportActionBar(mToolbar);
     // noinspection ConstantConditions
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -128,9 +130,13 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
     mDonateView.setBackgroundColor(0);
     mBottomBar.setBackgroundColor(getThemeUtils().primaryColor());
 
+    String textColor = "#000000";
+    if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
+      textColor = "#ffffff";
+
     String text =
         "<html><head>"
-            + "<style type=\"text/css\">body{color: #000000; opacity: 0.87;}"
+            + "<style type=\"text/css\">body{color: " + textColor + "; opacity: 0.87;}"
             + "</style></head>"
             + "<body>"
             + getString(R.string.donate_long_text)

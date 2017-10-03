@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 26
         multiDexEnabled true
-        versionCode 4315
+        versionCode 4316
         versionName '4.3.0'
     }
     lintOptions {
@@ -66,6 +66,7 @@ dependencies {
     implementation 'com.blunderer:easy-animated-vector-drawable:1.0.0'
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.android.support:support-v13:26.1.0'
+    implementation 'com.marverenic.colors:colors:1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

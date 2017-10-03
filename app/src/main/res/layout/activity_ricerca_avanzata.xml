@@ -8,12 +8,14 @@
 
     <TextView
         android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
         android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:gravity="start|center_vertical"
-        android:background="@color/material_grey_100"
+        android:background="?colorBackgroundFloating"
         android:text="@string/advanced_search_subtitle"/>
 
     <include layout="@layout/design_navigation_item_separator" />

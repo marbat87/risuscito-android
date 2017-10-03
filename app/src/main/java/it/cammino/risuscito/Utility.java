@@ -30,6 +30,7 @@ public class Utility {
     public static final String SYSTEM_LANGUAGE = "lingua_sistema";
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
+    public static final String NIGHT_THEME = "night_theme";
     static final String SIGNED_IN = "signed_id";
     static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
     static final String PREFERITI_OPEN = "preferiti_open";
@@ -44,6 +45,7 @@ public class Utility {
     static final String INTRO_CREALISTA = "intro_crealista_test";
     static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
     static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
+
 
 
 //    public static final String GENERATE_XML = "generate_xml";
@@ -130,7 +132,7 @@ public class Utility {
     }
 
     /* Checks if external storage is available for read and write */
-    public static boolean isExternalStorageWritable() {
+    static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
@@ -267,7 +269,7 @@ public class Utility {
 //        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 //    }
 
-    public static boolean isLowerCase(char ch) {
+    static boolean isLowerCase(char ch) {
         return ch >= 'a' && ch <= 'z';
     }
 

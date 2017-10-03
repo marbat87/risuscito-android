@@ -287,4 +287,6 @@ Do you want to proceed?</string>
     <string name="title_trabar_VII">7</string>
     <string name="consegnati_only">Look only for those delivered</string>
     <string name="permission_ok">Permission granted</string>
+    <string name="night_theme_title">Tema Scuro</string>
+    <string name="night_theme_desc">Abilita il tema scuro</string>
 </resources>
