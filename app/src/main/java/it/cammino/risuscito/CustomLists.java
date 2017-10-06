@@ -64,18 +64,11 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private int listaDaCanc, idDaCanc, indDaModif;
     private ListaPersonalizzata celebrazioneDaCanc;
     private String titoloDaCanc;
-    //    private ViewPager mViewPager;
     private FloatingActionButton mFab;
-    private View rootView;
     private static final String PAGE_EDITED = "pageEdited";
     public static final int TAG_CREA_LISTA = 111;
     public static final int TAG_MODIFICA_LISTA = 222;
     private TabLayout tabs;
-//    private LUtils mLUtils;
-
-//    private WelcomeHelper mWelcomeScreen;
-
-    private MainActivity mMainActivity;
 
     private BroadcastReceiver fabBRec = new BroadcastReceiver() {
         @Override
@@ -155,10 +148,10 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.tabs_layout, container, false);
+        View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
-        mMainActivity = (MainActivity) getActivity();
+        MainActivity mMainActivity = (MainActivity) getActivity();
 
         mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists);
 
@@ -180,17 +173,12 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             indDaModif = 0;
 
         mMainActivity.enableFab(true);
-        if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(true);
+        if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        }
 
-//        tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
         tabs = mMainActivity.mTabLayout;
         tabs.setVisibility(View.VISIBLE);
-//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
         tabs.setupWithViewPager(mViewPager);
-//        mLUtils.applyFontedTab(mViewPager, tabs);
 
         getFab().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,9 +208,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
         getActivity().registerReceiver(fabBRec, new IntentFilter(
                 BottomSheetFabListe.CHOOSE_DONE));
-
-//        mWelcomeScreen = new WelcomeHelper(getActivity(), IntroListePers.class);
-//        mWelcomeScreen.show(savedInstanceState);
 
         SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Log.d(TAG, "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false));
@@ -259,7 +244,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_help:
-//                mWelcomeScreen.forceShow();
                 playIntro();
                 return true;
         }
@@ -278,7 +262,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         outState.putInt("idDaCanc", idDaCanc);
         outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
         outState.putInt("listaDaCanc", listaDaCanc);
-//        mWelcomeScreen.onSaveInstanceState(outState);
     }
 
     @Override
@@ -296,7 +279,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             updateLista();
             mSectionsPagerAdapter.notifyDataSetChanged();
             tabs.setupWithViewPager(mViewPager);
-//            mLUtils.applyFontedTab(mViewPager, tabs);
             Handler myHandler = new Handler();
             final Runnable mMyRunnable2 = new Runnable() {
                 @SuppressWarnings("ConstantConditions")
@@ -317,8 +299,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
     public FloatingActionButton getFab() {
         if (mFab == null) {
-//            mFab = mMainActivity.isOnTablet() ? (FloatingActionButton) rootView.findViewById(R.id.fab_pager) :
-//                    (FloatingActionButton) getActivity().findViewById(R.id.fab_pager);
             mFab = getActivity().findViewById(R.id.fab_pager);
             mFab.setVisibility(View.VISIBLE);
             IconicsDrawable icon = new IconicsDrawable(getActivity())
@@ -408,7 +388,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
 
         @Override
         public CharSequence getPageTitle(int position) {
-//            Locale l = getActivity().getResources().getConfiguration().locale;
             Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
             switch (position) {
                 case 0:
@@ -468,7 +447,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                 updateLista();
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 tabs.setupWithViewPager(mViewPager);
-//                mLUtils.applyFontedTab(mViewPager, tabs);
                 Handler myHandler = new Handler();
                 final Runnable mMyRunnable2 = new Runnable() {
                     @SuppressWarnings("ConstantConditions")
@@ -494,7 +472,6 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
                                 updateLista();
                                 mSectionsPagerAdapter.notifyDataSetChanged();
                                 tabs.setupWithViewPager(mViewPager);
-//                                mLUtils.applyFontedTab(mViewPager, tabs);
                                 Handler myHandler = new Handler();
                                 final Runnable mMyRunnable2 = new Runnable() {
                                     @Override

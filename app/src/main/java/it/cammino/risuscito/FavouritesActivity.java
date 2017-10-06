@@ -55,7 +55,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     private DatabaseCanti listaCanti;
     private FastItemAdapter<SimpleItem> cantoAdapter;
-    private FloatingActionButton fabClear;
     private boolean actionModeOk;
 
     private MainActivity mMainActivity;
@@ -92,7 +91,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mMainActivity.enableFab(true);
         if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        fabClear = getActivity().findViewById(R.id.fab_pager);
+        FloatingActionButton fabClear = getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .color(Color.WHITE)

@@ -77,7 +77,6 @@ import it.cammino.risuscito.playback.MusicService;
 import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
-import it.cammino.risuscito.ui.BottomSheetFabListe;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -372,7 +371,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     };
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
-    @BindView(R.id.cantoView) @Nullable  WebView paginaView;
+    @BindView(R.id.cantoView) WebView paginaView;
     @BindView(R.id.play_song) ImageView play_button;
     @BindView(R.id.no_record) View no_records_text;
     @BindView(R.id.music_buttons) View music_buttons;
