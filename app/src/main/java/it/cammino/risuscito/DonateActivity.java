@@ -20,8 +20,6 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
-import com.marverenic.colors.Colors;
-import com.marverenic.colors.NightMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,30 +30,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import it.cammino.risuscito.utils.ThemeUtils;
 
 public class DonateActivity extends ThemeableActivity implements PurchasesUpdatedListener {
-
-  //    BillingProcessor bp;
-
-  /* base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
-   * (that you got from the Google Play developer console). This is not your
-   * developer public key, it's the *app-specific* public key.
-   *
-   * Instead of just storing the entire literal string here embedded in the
-   * program,  construct the key at runtime from pieces or
-   * use bit manipulation (for example, XOR with some other string) to hide
-   * the actual key.  The key itself is not secret information, but we don't
-   * want to make it easy for an attacker to replace the public key with one
-   * of their own and then fake messages from the server.
-   */
-  //    String base64EncodedPublicKey1 =
-  // "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyc5DMy0PDup7vuO0Twitg7vMHIrN996cchDCGpRDgQSB8+LvnZ";
-  //    String base64EncodedPublicKey2 =
-  // "7ji7tOaXFxKiMffXB72dUtLV6dLkM8CosfguQikmRSsDTjLc4TR47pwLbQ4bGsyQwl2bwjilBlxVrcfI2QFTwniWNS8mY3";
-  //    String base64EncodedPublicKey3 =
-  // "a5TB+OZEZaLbOqcId4Pl87RW9/oonw+x/u7sVLAmxB+Skqgji3/ExJW/dztPTdjAj0Vu/vqdph0sAV8C++mDKt19IHkX/U";
-  //    String base64EncodedPublicKey4 =
-  // "9I2+xqJsQEKyruPR3d5cZkfWCVQ0lfXjQqg4YtuTP3v9rShYBJn2K3sGy2byt4ykSFNoBO6RGZLBlyu1Gyv2a5WDfmvqqPe+HY0BVbPQIDAQAB";
 
   private final String TAG = getClass().getCanonicalName();
   private final String SKU_1_EURO = "sku_consumable_1_euro";
@@ -97,19 +74,19 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
 
   @OnClick(R.id.donate_1)
   public void donate1Euro() {
-//    initiatePurchaseFlow(SKU_1_EURO, null, BillingClient.SkuType.INAPP);
+    //    initiatePurchaseFlow(SKU_1_EURO, null, BillingClient.SkuType.INAPP);
     initiatePurchaseFlow(SKU_1_EURO, BillingClient.SkuType.INAPP);
   }
 
   @OnClick(R.id.donate_5)
   public void donate5Euro() {
-//    initiatePurchaseFlow(SKU_5_EURO, null, BillingClient.SkuType.INAPP);
+    //    initiatePurchaseFlow(SKU_5_EURO, null, BillingClient.SkuType.INAPP);
     initiatePurchaseFlow(SKU_5_EURO, BillingClient.SkuType.INAPP);
   }
 
   @OnClick(R.id.donate_10)
   public void donate10Euro() {
-//    initiatePurchaseFlow(SKU_10_EURO, null, BillingClient.SkuType.INAPP);
+    //    initiatePurchaseFlow(SKU_10_EURO, null, BillingClient.SkuType.INAPP);
     initiatePurchaseFlow(SKU_10_EURO, BillingClient.SkuType.INAPP);
   }
 
@@ -122,7 +99,7 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
     mBillingClient = BillingClient.newBuilder(this).setListener(this).build();
 
     ((TextView) findViewById(R.id.main_toolbarTitle)).setText(R.string.title_activity_donate);
-//    mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+    mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
     setSupportActionBar(mToolbar);
     // noinspection ConstantConditions
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -131,12 +108,13 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
     mBottomBar.setBackgroundColor(getThemeUtils().primaryColor());
 
     String textColor = "#000000";
-    if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
-      textColor = "#ffffff";
+    if (ThemeUtils.isDarkMode(this)) textColor = "#ffffff";
 
     String text =
         "<html><head>"
-            + "<style type=\"text/css\">body{color: " + textColor + "; opacity: 0.87;}"
+            + "<style type=\"text/css\">body{color: "
+            + textColor
+            + "; opacity: 0.87;}"
             + "</style></head>"
             + "<body>"
             + getString(R.string.donate_long_text)
@@ -276,21 +254,20 @@ public class DonateActivity extends ThemeableActivity implements PurchasesUpdate
   /** Start a purchase or subscription replace flow */
   public void initiatePurchaseFlow(
       final String skuId,
-//      final ArrayList<String> oldSkus,
-      final @BillingClient.SkuType String billingType) {
+          //      final ArrayList<String> oldSkus,
+          final @BillingClient.SkuType String billingType) {
     Log.d(TAG, "initiatePurchaseFlow: ");
     mLoadingBar.setVisibility(View.VISIBLE);
     Runnable purchaseFlowRequest =
         new Runnable() {
           @Override
           public void run() {
-//            Log.d(TAG, "Launching in-app purchase flow. Replace old SKU? " + (oldSkus != null));
             Log.d(TAG, "Launching in-app purchase flow.");
             BillingFlowParams purchaseParams =
                 BillingFlowParams.newBuilder()
                     .setSku(skuId)
                     .setType(billingType)
-//                    .setOldSkus(oldSkus)
+                    //                    .setOldSkus(oldSkus)
                     .build();
             mBillingClient.launchBillingFlow(DonateActivity.this, purchaseParams);
           }

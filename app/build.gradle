@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
@@ -35,7 +35,7 @@ android {
 dependencies {
     implementation 'com.android.support:multidex:1.0.2'
     implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
-    implementation 'com.itextpdf:itextpdf:5.5.11'
+    implementation 'com.itextpdf:itextpdf:5.5.12'
     implementation 'com.afollestad.material-dialogs:commons:0.9.4.7'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'com.stephentuso:welcome:1.4.1'
@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:11.4.0'
     implementation 'com.google.firebase:firebase-crash:11.4.0'
     implementation 'com.afollestad:material-cab:0.1.12'
-    implementation 'com.github.jrvansuita:MaterialAbout:0.1.7'
+    implementation 'com.github.jrvansuita:MaterialAbout:0.1.8'
     implementation 'com.github.keepsafe:TapTargetView:-SNAPSHOT'
     implementation 'com.mikepenz:fastadapter-commons:2.6.3@aar'
     implementation 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
@@ -66,7 +66,6 @@ dependencies {
     implementation 'com.blunderer:easy-animated-vector-drawable:1.0.0'
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.android.support:support-v13:26.1.0'
-    implementation 'com.marverenic.colors:colors:1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

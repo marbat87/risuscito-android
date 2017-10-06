@@ -61,7 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 //        else
 //            loadExternalStorage();
 
-        final SwitchPreferenceCompat darkTheme = (SwitchPreferenceCompat) findPreference("night_theme");
+        final SwitchPreferenceCompat darkTheme = (SwitchPreferenceCompat) findPreference("dark_mode");
         darkTheme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {

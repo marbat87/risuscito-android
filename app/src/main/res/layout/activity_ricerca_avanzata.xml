@@ -74,6 +74,7 @@
         android:text="@string/button_pulisci"
         fontPath="fonts/Roboto-Medium.ttf"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:textColor="@color/primary_text_default_material_dark"
         risuscito:elevation="@dimen/raised_button_default_elevation"
         risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
         tools:ignore="MissingPrefix" />

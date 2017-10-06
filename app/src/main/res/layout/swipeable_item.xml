@@ -27,7 +27,7 @@
             android:lines="1"
             android:maxLines="1"
             android:textDirection="anyRtl"
-            android:textColor="@android:color/primary_text_dark"
+            android:textColor="?android:textColorPrimary"
             android:textSize="@dimen/material_drawer_item_primary_text"
             tools:text="@string/generic_removed"
             tools:ignore="UnusedAttribute" />
@@ -41,7 +41,7 @@
             android:maxLines="1"
             android:textDirection="anyRtl"
             android:textAllCaps="true"
-            android:textColor="@android:color/primary_text_dark"
+            android:textColor="?android:textColorPrimary"
             android:textStyle="bold"
             android:textSize="@dimen/material_drawer_item_primary_description"
             android:text="@android:string/cancel"

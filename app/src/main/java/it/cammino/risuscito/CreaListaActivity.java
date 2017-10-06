@@ -114,13 +114,13 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         setContentView(R.layout.activity_crea_lista);
         ButterKnife.bind(this);
 
-//        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        if (mTabletBG != null)
-//            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
-//        mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
+        if (mTabletBG != null)
+            mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
+        mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
 
         listaCanti = new DatabaseCanti(this);
 

@@ -12,14 +12,13 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
-import com.marverenic.colors.Colors;
-import com.marverenic.colors.NightMode;
-import com.marverenic.colors.activity.ColorsAppCompatActivity;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import java.io.IOException;
@@ -32,12 +31,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import it.cammino.risuscito.LUtils;
-import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
 import it.cammino.risuscito.utils.ThemeUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public abstract class ThemeableActivity extends ColorsAppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public abstract class ThemeableActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ThemeUtils mThemeUtils;
     protected boolean hasNavDrawer = false;
@@ -77,13 +75,15 @@ public abstract class ThemeableActivity extends ColorsAppCompatActivity implemen
         mThemeUtils = new ThemeUtils(this);
         LUtils mLUtils = LUtils.getInstance(this);
         mLUtils.convertIntPreferences();
-//        setTheme(mThemeUtils.getCurrent());
-        Colors.setTheme(mThemeUtils.primaryColorNew(), mThemeUtils.accentColorNew(), mThemeUtils.isDarkMode() ? NightMode.NIGHT : NightMode.DAY);
-        setTheme(R.style.RisuscitoTheme);
-//        Colors.setTheme(mThemeUtils.primaryColorNew(), mThemeUtils.accentColorNew(), mThemeUtils.isDarkMode() ? NightMode.NIGHT : NightMode.DAY);
+        Log.d(TAG, "onCreate: 1");
+        setTheme(mThemeUtils.getCurrent());
+        Log.d(TAG, "onCreate: 2");
+        AppCompatDelegate.setDefaultNightMode(ThemeUtils.isDarkMode(this) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        Log.d(TAG, "onCreate: 3");
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
+        Log.d(TAG, "onCreate: 4");
 
         if (LUtils.hasL()) {
             // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
@@ -100,13 +100,11 @@ public abstract class ThemeableActivity extends ColorsAppCompatActivity implemen
         //Iconic
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         checkScreenAwake();
 
         PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this)

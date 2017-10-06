@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -26,7 +24,6 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -39,7 +36,6 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,8 +51,6 @@ import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.blunderer.easyanimatedvectordrawable.EasyAnimatedVectorDrawable;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.marverenic.colors.Colors;
-import com.marverenic.colors.NightMode;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -146,9 +140,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     public final CambioAccordi cambioAccordi = new CambioAccordi(this);
 
-//    private CastContext mCastContext;
-//    private MenuItem mMediaRouteMenuItem;
-
     private BroadcastReceiver downloadPosBRec = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -195,7 +186,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 stopMedia();
                 refreshCatalog();
                 checkRecordsState();
-//                recreate();
             }
             catch (IllegalArgumentException e) {
                 Log.e(TAG, e.getLocalizedMessage(), e);
@@ -277,7 +267,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         @Override
         public void onReceive(Context context, Intent intent) {
             //Implement UI change code here once notification is received
-            int clickedId = intent.getIntExtra(BottomSheetFabListe.DATA_ITEM_ID, 0);
+            int clickedId = intent.getIntExtra(BottomSheetFabCanto.DATA_ITEM_ID, 0);
             switch (clickedId) {
                 case BottomSheetFabCanto.FULLSCREEN:
                     mHandler.removeCallbacks(mScrollDown);
@@ -298,10 +288,8 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     mostraAudio = String.valueOf(mostraAudioBool);
                     break;
                 case BottomSheetFabCanto.SAVE_FILE:
-//                    if (!url.equalsIgnoreCase("")) {
                     if (!url.isEmpty()) {
                         if (mDownload) {
-//                            if (personalUrl.equalsIgnoreCase("")) {
                             if (personalUrl.isEmpty()) {
                                 new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_MP3")
                                         .title(R.string.dialog_delete_mp3_title)
@@ -331,7 +319,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                     }
                     else {
                         if (mDownload) {
-//                            new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK_2")
                             new SimpleDialogFragment.Builder(PaginaRenderActivity.this, PaginaRenderActivity.this, "DELETE_LINK")
                                     .title(R.string.dialog_delete_link_title)
                                     .content(R.string.dialog_delete_link)
@@ -375,10 +362,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 play_button.setEnabled(done);
 
                 Drawable playDrawable  = play_button.getDrawable();
-                if (Colors.getTheme().getNightMode() == NightMode.DAY)
-                    playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.secondary_text_default_material_light : R.color.secondary_text_disabled_material_light), PorterDuff.Mode.SRC_IN);
-                else
-                    playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.secondary_text_default_material_dark : R.color.secondary_text_disabled_material_dark), PorterDuff.Mode.SRC_IN);
+                    playDrawable.setColorFilter(ContextCompat.getColor(PaginaRenderActivity.this, done ? R.color.text_color_secondary : R.color.text_color_secondary_disabled), PorterDuff.Mode.SRC_IN);
 
             }
             catch (IllegalArgumentException e) {
@@ -388,7 +372,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
     };
 
     @BindView(R.id.risuscito_toolbar) Toolbar mToolbar;
-    @BindView(R.id.cantoView) WebView paginaView;
+    @BindView(R.id.cantoView) @Nullable  WebView paginaView;
     @BindView(R.id.play_song) ImageView play_button;
     @BindView(R.id.no_record) View no_records_text;
     @BindView(R.id.music_buttons) View music_buttons;
@@ -448,14 +432,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             mMediaBrowser.connect();
         }
     }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (mCastContext != null) {
-//            mCastContext.removeCastStateListener(mCastStateListener);
-//        }
-//    }
 
     @Override
     protected void onStop() {
@@ -588,11 +564,11 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         ButterKnife.bind(this);
 
         ((TextView)findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
-//        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
+        mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
         setSupportActionBar(mToolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
+        findViewById(R.id.bottom_bar).setBackgroundColor(getThemeUtils().primaryColor());
 
         mLUtils = LUtils.getInstance(PaginaRenderActivity.this);
 
@@ -684,9 +660,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
-//        sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DELETE_LINK_2");
-//        if (sFragment != null)
-//            sFragment.setmCallback(PaginaRenderActivity.this);
         sFragment = SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLINK_CHOOSE");
         if (sFragment != null)
             sFragment.setmCallback(PaginaRenderActivity.this);
@@ -707,14 +680,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this,
                         MusicService.class), mConnectionCallback, null);
-
-//        int playServicesAvailable =
-//                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-
-//        if (playServicesAvailable == ConnectionResult.SUCCESS) {
-//            mCastContext = CastContext.getSharedInstance(this);
-//        }
-
     }
 
     @Override
@@ -722,9 +687,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.canto, menu);
 
-        int iconColorId = R.color.secondary_text_default_material_light;
-        if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
-            iconColorId = R.color.secondary_text_default_material_dark;
+        int iconColorId = R.color.text_color_secondary;
 
         menu.findItem(R.id.tonalita).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note).actionBar()
@@ -736,19 +699,22 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.action_save_tab).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.action_reset_tab).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar_electric)
@@ -760,19 +726,22 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.action_save_barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.action_reset_barre).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(iconColorId)
+//                        .colorRes(iconColorId)
+                        .color(ContextCompat.getColor(this, iconColorId))
         );
         menu.findItem(R.id.action_exp_pdf).setIcon(
                 new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_file_pdf_box)
@@ -1466,21 +1435,13 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     private void showPlaying(boolean started) {
         Log.d(TAG, "showPlaying: ");
-//        play_button.setSelected(started);
-//        IconicsDrawable icon = new IconicsDrawable(PaginaRenderActivity.this)
-//                .icon(started ? CommunityMaterial.Icon.cmd_pause : CommunityMaterial.Icon.cmd_play)
-//                .colorRes(R.color.icon_ative_black)
-//                .sizeDp(24)
-//                .paddingDp(4);
-//        play_button.setImageDrawable(icon);
         EasyAnimatedVectorDrawable.setImageType(play_button
                 , started ? EasyAnimatedVectorDrawable.Type.PAUSE : EasyAnimatedVectorDrawable.Type.PLAY
                 , ContextCompat.getColor(PaginaRenderActivity.this,
-                        Colors.getTheme().getNightMode() == NightMode.DAY ? R.color.secondary_text_default_material_light : R.color.secondary_text_default_material_dark));
+                        R.color.text_color_secondary));
     }
 
     private void showScrolling(boolean scrolling) {
-//        play_scroll.setSelected(scrolling);
         IconicsDrawable icon = new IconicsDrawable(PaginaRenderActivity.this)
                 .icon(scrolling ? CommunityMaterial.Icon.cmd_pause_circle_outline : CommunityMaterial.Icon.cmd_play_circle_outline)
                 .color(Color.WHITE)
@@ -1507,7 +1468,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 db.close();
                 refreshCatalog();
                 checkRecordsState();
-//                recreate();
                 break;
             case "DELETE_MP3":
                 File fileToDelete = new File(localUrl);
@@ -1529,7 +1489,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 stopMedia();
                 refreshCatalog();
                 checkRecordsState();
-//                recreate();
                 break;
             case "DOWNLINK_CHOOSE":
                 SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
@@ -1555,17 +1514,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 else
                     startInternalDownload();
                 break;
-//            case "DELETE_LINK_2":
-//                Snackbar.make(findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
-//                        .show();
-//                stopMedia();
-//                db = listaCanti.getReadableDatabase();
-//                sql = "DELETE FROM LOCAL_LINKS" +
-//                        "  WHERE _id =  " + idCanto;
-//                db.execSQL(sql);
-//                db.close();
-//                recreate();
-//                break;
             case "ONLY_LINK":
                 new FileChooserDialog.Builder(PaginaRenderActivity.this)
                         .mimeType("audio/*") // Optional MIME type filter
@@ -1921,37 +1869,4 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
             no_records_text.setVisibility(mDownload ? View.INVISIBLE : View.VISIBLE);
         }
     }
-
-//    private CastStateListener mCastStateListener = new CastStateListener() {
-//        @Override
-//        public void onCastStateChanged(int newState) {
-//            if (newState != CastState.NO_DEVICES_AVAILABLE) {
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (mMediaRouteMenuItem.isVisible()) {
-//                            LogHelper.d(TAG, "Cast Icon is visible");
-//                            showFtu();
-//                        }
-//                    }
-//                }, DELAY_MILLIS);
-//            }
-//        }
-//    };
-//
-//    /**
-//     * Shows the Cast First Time User experience to the user (an overlay that explains what is
-//     * the Cast icon)
-//     */
-//    private void showFtu() {
-//        Menu menu = mToolbar.getMenu();
-//        View view = menu.findItem(R.id.media_route_menu_item).getActionView();
-//        if (view != null && view instanceof MediaRouteButton) {
-//            IntroductoryOverlay overlay = new IntroductoryOverlay.Builder(this, mMediaRouteMenuItem)
-//                    .setTitleText(R.string.touch_to_cast)
-//                    .setSingleTime()
-//                    .build();
-//            overlay.show();
-//        }
-//    }
 }

@@ -69,7 +69,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
     private long mLastClickTime = 0;
 
-    public static final int TAG_INSERT_PAROLA = 333;
+    private static final int TAG_INSERT_PAROLA = 333;
 
     private LUtils mLUtils;
 
@@ -475,7 +475,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         return result.toString();
     }
 
-    public void snackBarRimuoviCanto(View view) {
+    private void snackBarRimuoviCanto(View view) {
         if (mMainActivity.getMaterialCab().isActive())
             mMainActivity.getMaterialCab().finish();
         View parent = (View) view.getParent().getParent();

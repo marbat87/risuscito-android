@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.marverenic.colors.Colors;
-import com.marverenic.colors.NightMode;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -86,16 +85,14 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
             view.findViewById(R.id.sheet_title_area).setVisibility(View.GONE);
         }
 
-        int iconColorId = R.color.secondary_text_default_material_light;
-        if (Colors.getTheme().getNightMode() == NightMode.NIGHT)
-            iconColorId = R.color.secondary_text_default_material_dark;
+        int iconColorId = R.color.text_color_secondary;
 
         View mView = view.findViewById(R.id.fab_fullscreen_on);
         ImageView mImage = mView.findViewById(R.id.app_icon);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_fullscreen)
 //                .colorRes(R.color.icon_ative_black)
-                .colorRes(iconColorId)
+                .color(ContextCompat.getColor(getContext(), iconColorId))
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -118,7 +115,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         icon = new IconicsDrawable(getActivity())
                 .icon(mSound ? CommunityMaterial.Icon.cmd_headset_off : CommunityMaterial.Icon.cmd_headset)
 //                .colorRes(R.color.icon_ative_black)
-                .colorRes(iconColorId)
+                .color(ContextCompat.getColor(getContext(), iconColorId))
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -140,7 +137,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         mImage = mView.findViewById(R.id.app_icon);
         icon = new IconicsDrawable(getActivity())
 //                .colorRes(R.color.icon_ative_black)
-                .colorRes(iconColorId)
+                .color(ContextCompat.getColor(getContext(), iconColorId))
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);
@@ -185,7 +182,7 @@ public class BottomSheetFabCanto extends BottomSheetDialogFragment {
         icon = new IconicsDrawable(getActivity())
                 .icon(mFavorite ? CommunityMaterial.Icon.cmd_heart : CommunityMaterial.Icon.cmd_heart_outline)
 //                .colorRes(R.color.icon_ative_black)
-                .colorRes(iconColorId)
+                .color(ContextCompat.getColor(getContext(), iconColorId))
                 .sizeDp(48)
                 .paddingDp(4);
         mImage.setImageDrawable(icon);

@@ -66,7 +66,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
 
     private MainActivity mMainActivity;
 
-    public static final int TAG_INSERT_EUCARESTIA = 444;
+    private static final int TAG_INSERT_EUCARESTIA = 444;
 
     private LUtils mLUtils;
 
@@ -508,7 +508,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         return result.toString();
     }
 
-    public void snackBarRimuoviCanto(View view) {
+    private void snackBarRimuoviCanto(View view) {
 //        if (mMode != null)
 //            mMode.finish();
         if (mMainActivity.getMaterialCab().isActive())

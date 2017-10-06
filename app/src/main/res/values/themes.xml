@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.MyTheme" parent="@style/PreferenceFixTheme.DayNight.NoActionBar">
-        <!-- Set AppCompat’s actionBarStyle -->
-        <!--     <item name="actionBarStyle">@style/MyActionBarStyle</item> -->
-
         <!-- Set AppCompat’s color theming attrs -->
         <item name="colorPrimary">@color/theme_primary</item>
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>
@@ -15,7 +12,6 @@
         <item name="colorButtonNormal">?colorAccent</item>
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
-        <!--<item name="colorControlActivated">#12000000</item>-->
 
         <!-- The rest of your attributes -->
         <item name="customSelector">@drawable/custom_list_selector</item>
@@ -26,8 +22,6 @@
         <item name="md_regular_font">Roboto-Regular.ttf</item>
         <item name="md_btn_ripple_color">@color/ripple_color_light</item>
         <item name="windowActionModeOverlay">true</item>
-        <!--<item name="actionModeCloseDrawable">@drawable/ic_clear_active_24dp</item>-->
-        <!--<item name="actionModeBackground">@color/background_material_light</item>-->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
@@ -41,6 +35,14 @@
         <item name="material_drawer_selected">@color/material_drawer_selected</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
+
+        <!-- fix per poter applicare correttamente il tema notturno -->
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        <item name="colorBackgroundFloating">@color/floating_background</item>
+        <item name="cardBackgroundColor">@color/floating_background</item>
+        <item name="android:colorBackgroundFloating" tools:ignore="NewApi">@color/floating_background</item>
+        <item name="android:textColorHint" tools:ignore="NewApi">@color/text_color_secondary</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >

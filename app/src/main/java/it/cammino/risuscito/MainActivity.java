@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -22,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialcab.MaterialCab;
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -52,8 +53,6 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.marverenic.colors.AccentColor;
-import com.marverenic.colors.PrimaryColor;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.crossfader.Crossfader;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -84,7 +83,6 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.preferences.ColorChooserDialog;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
@@ -430,7 +428,8 @@ public class MainActivity extends ThemeableActivity
                 .withActivity(MainActivity.this)
                 .withTranslucentStatusBar(!isOnTablet)
                 .withSelectionListEnabledForSingleProfile(false)
-                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
+//                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
+                .withHeaderBackground(isOnTablet ? new ColorDrawable(ContextCompat.getColor(this, R.color.floating_background)) : new ColorDrawable(getThemeUtils().primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
 //                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
@@ -655,37 +654,6 @@ public class MainActivity extends ThemeableActivity
 
     }
 
-//    @Override
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (isOnTablet) {
-//                if (crossFader != null && crossFader.isCrossFaded()) {
-//                    crossFader.crossFade();
-//                    return true;
-//                }
-//            }
-//            else {
-//                if (mDrawer != null && mDrawer.isDrawerOpen()) {
-//                    mDrawer.closeDrawer();
-//                    return true;
-//                }
-//            }
-//
-//            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
-//            if (myFragment != null && myFragment.isVisible()) {
-//                finish();
-//                return true;
-//            }
-//
-//            if (isOnTablet)
-//                mMiniDrawer.setSelection(R.id.navigation_home);
-//            mDrawer.setSelection(R.id.navigation_home);
-//            appBarLayout.setExpanded(true, true);
-//            return true;
-//        }
-//        return super.onKeyUp(keyCode, event);
-//    }
-
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: ");
@@ -719,12 +687,11 @@ public class MainActivity extends ThemeableActivity
     }
 
     @Override
-    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, Parcelable color) {
+    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, @ColorInt int color) {
         if (colorChooserDialog.isAccentMode())
-            getThemeUtils().accentColor((AccentColor)color);
-
+            getThemeUtils().accentColor(color);
         else
-            getThemeUtils().primaryColor((PrimaryColor)color);
+            getThemeUtils().primaryColor(color);
 
         recreate();
     }

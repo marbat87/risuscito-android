@@ -59,6 +59,6 @@
         risuscito:ico_color="@android:color/white"
         risuscito:ico_size="24dp"
         risuscito:ico_padding="5dp"
-        tools:ignore="MissingPrefix" />
+        tools:ignore="ContentDescription,MissingPrefix" />
 
 </RelativeLayout>
