@@ -158,7 +158,7 @@ You can add up to 30 elements.</string>
     <string name="lists_pref">Lists</string>
     <string name="system">System</string>
     <string name="show_audio_title">Diplay audio reproduction</string>
-    <string name="show_audio_summary">Display of default the bar of audio reproduction in the page of the songs</string>
+    <string name="show_audio_summary">Shows by default the bar of audio reproduction in the page of the songs</string>
     <string name="indice_liturgico_index">Liturgical index</string>
     <string name="title_trasporta_do">C</string>
     <string name="title_trasporta_dod">C#</string>
