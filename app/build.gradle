@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 26
         multiDexEnabled true
-        versionCode 4316
+        versionCode 4317
         versionName '4.3.0'
     }
     lintOptions {

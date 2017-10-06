@@ -16,6 +16,7 @@
         <changelogimprovement>Nuovo layout per tablet</changelogimprovement>
         <changelogimprovement>Il testo ricercato viene evidenziato nei risultati della ricerca veloce</changelogimprovement>
         <changelogimprovement>Riscritta la parte del lettore musicale</changelogimprovement>
+        <changelogimprovement>Aggiunto il tema scuro</changelogimprovement>
     </changelogversion>
 
     <changelogversion versionName="4.2.1" changeDate="Febbraio 2017">

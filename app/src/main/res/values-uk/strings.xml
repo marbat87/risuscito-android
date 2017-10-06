@@ -292,6 +292,6 @@
     <string name="title_trabar_VII">VII</string>
     <string name="consegnati_only">Look only for those delivered</string>
     <string name="permission_ok">Permission granted</string>
-    <string name="night_theme_title">Tema Scuro</string>
-    <string name="night_theme_desc">Abilita il tema scuro</string>
+    <string name="night_theme_title">Dark Theme</string>
+    <string name="night_theme_desc">Enables the Dark Theme</string>
 </resources>

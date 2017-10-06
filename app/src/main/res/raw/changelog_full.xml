@@ -16,6 +16,7 @@
         <changelogimprovement>New tablet layout</changelogimprovement>
         <changelogimprovement>Searched text is bold in the results list of fast search</changelogimprovement>
         <changelogimprovement>Completely refactored music playback</changelogimprovement>
+        <changelogimprovement>Added Dark Theme</changelogimprovement>
     </changelogversion>
 
     <changelogversion versionName="4.2.1" changeDate="February 2017">
