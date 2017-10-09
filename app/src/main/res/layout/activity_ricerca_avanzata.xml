@@ -14,11 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:gravity="start|center_vertical"
-        android:background="?colorBackgroundFloating"
+        android:gravity="center"
         android:text="@string/advanced_search_subtitle"/>
-
-    <include layout="@layout/design_navigation_item_separator" />
 
     <EditText
         android:id="@+id/textfieldRicerca"
