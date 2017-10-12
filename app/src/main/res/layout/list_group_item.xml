@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-            android:textColor="@color/primary_text_default_material_dark"
+            android:textColor="?android:textColorPrimary"
             tools:text="Header"/>
 
         <TextView
@@ -38,7 +38,7 @@
             android:maxLines="1"
             android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/secondary_text_default_material_dark"
+            android:textColor="?android:textColorSecondary"
             tools:text=""/>
 
     </LinearLayout>
@@ -55,8 +55,8 @@
         android:layout_marginLeft="@dimen/myListPreferredItemMargin"
         android:layout_marginRight="@dimen/myListPreferredItemMargin"
         android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        risuscito:ico_icon="cmd-chevron-down"
-        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd-chevron-up"
+        risuscito:ico_color="?android:textColorSecondary"
         risuscito:ico_size="24dp"
         risuscito:ico_padding="5dp"
         tools:ignore="ContentDescription,MissingPrefix" />

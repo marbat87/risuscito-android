@@ -197,7 +197,7 @@ public class InsertVeloceFragment extends Fragment {
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
 
         Bundle bundle = getArguments();

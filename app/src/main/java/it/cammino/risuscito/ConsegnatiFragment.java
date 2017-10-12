@@ -425,7 +425,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
@@ -491,7 +491,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mChoosedRecyclerView.setLayoutManager(llm);
         mChoosedRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mChoosedRecyclerView.addItemDecoration(insetDivider);
         mChoosedRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
     }

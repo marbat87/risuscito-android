@@ -1447,6 +1447,7 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 .sizeDp(24)
                 .paddingDp(2);
         play_scroll.setImageDrawable(icon);
+        play_scroll.setSelected(scrolling);
     }
 
     @Override

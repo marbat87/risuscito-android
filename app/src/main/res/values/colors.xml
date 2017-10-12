@@ -34,9 +34,9 @@
     <color name="text_color_primary">@color/primary_text_default_material_light</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>
     <color name="floating_background">@color/background_floating_material_light</color>
-    <!--<color name="text_color_primary_inverse">@color/primary_text_default_material_dark</color>-->
     <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_light</color>
     <color name="chglib_material_color_text_1">@color/primary_text_default_material_light</color>
+    <color name="material_divider">@color/md_light_dividers</color>
 
 
 </resources>
