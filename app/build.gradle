@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 26
         multiDexEnabled true
-        versionCode 4317
+        versionCode 4318
         versionName '4.3.0'
     }
     lintOptions {
@@ -59,11 +59,11 @@ dependencies {
     implementation 'com.mikepenz:fastadapter-commons:2.6.3@aar'
     implementation 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
     implementation 'com.github.turing-tech:MaterialScrollBar:13.0.1'
-    implementation 'com.github.bumptech.glide:glide:4.0.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
     implementation 'pub.devrel:easypermissions:1.0.1'
-    implementation 'com.blunderer:easy-animated-vector-drawable:1.0.0'
+    implementation 'com.blunderer:easy-animated-vector-drawable:1.0.2'
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.android.support:support-v13:26.1.0'
 }
