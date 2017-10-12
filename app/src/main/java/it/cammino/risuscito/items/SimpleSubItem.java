@@ -135,7 +135,7 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
    */
   @Override
   public int getLayoutRes() {
-    return hasDivider ? R.layout.simple_sub_item : R.layout.simple_row_item;
+    return R.layout.simple_sub_item;
   }
 
   /**
@@ -174,6 +174,8 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
 
     viewHolder.mId.setText(String.valueOf(id));
 
+    viewHolder.mItemDivider.setVisibility(hasDivider ? View.VISIBLE : View.INVISIBLE);
+
     if (createContextMenuListener != null) {
       ((Activity) viewHolder.itemView.getContext()).registerForContextMenu(viewHolder.itemView);
       viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener);
@@ -208,6 +210,9 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
 
     @BindView(R.id.text_id_canto)
     TextView mId;
+
+    @BindView(R.id.item_divider)
+    View mItemDivider;
 
     public ViewHolder(View view) {
       super(view);

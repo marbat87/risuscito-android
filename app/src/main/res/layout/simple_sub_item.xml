@@ -63,6 +63,7 @@
         android:visibility="gone" />
 
     <FrameLayout
+        android:id="@+id/item_divider"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
