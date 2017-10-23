@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crash:11.4.0'
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.jrvansuita:MaterialAbout:0.1.8'
-    implementation 'com.github.keepsafe:TapTargetView:-SNAPSHOT'
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
     implementation 'com.mikepenz:fastadapter-commons:2.6.3@aar'
     implementation 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
     implementation 'com.github.turing-tech:MaterialScrollBar:13.0.1'
