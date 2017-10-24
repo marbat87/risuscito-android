@@ -12,6 +12,7 @@ android {
         versionName '4.3.0'
     }
     lintOptions {
+        abortOnError false
         disable 'PrivateResource'
     }
     buildTypes {
