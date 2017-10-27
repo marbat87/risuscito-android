@@ -13,16 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompatDividers {
 
     CharSequence[] mEntries;
     CharSequence[] mEntryValues;
 
     private final String TAG = getClass().getCanonicalName();
+
+    MainActivity mMainActivity;
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -32,8 +34,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        MainActivity mMainActivity = (MainActivity) getActivity();
-        mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
+        mMainActivity = (MainActivity) getActivity();
+        if (mMainActivity != null)
+            mMainActivity.setupToolbarTitle(R.string.title_activity_settings);
 
         mMainActivity.mTabLayout.setVisibility(View.GONE);
         mMainActivity.enableFab(false);
@@ -65,7 +68,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         darkTheme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getActivity().recreate();
+//                getActivity().recreate();
+                if (mMainActivity != null)
+                    mMainActivity.recreate();
                 return true;
             }
         });
