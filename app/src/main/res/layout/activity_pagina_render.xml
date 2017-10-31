@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pagina_render_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true">
 
     <include layout="@layout/risuscito_toolbar" />
 
@@ -22,18 +23,92 @@
                 android:id="@+id/music_controls"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
-                android:background="@color/material_grey_50"
+                android:background="?colorBackgroundFloating"
                 android:layout_height="@dimen/abc_action_bar_default_height_material">
 
-                <TextView
+                <RelativeLayout
                     android:id="@+id/no_record"
                     android:layout_width="match_parent"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:gravity="center"
-                    android:padding="@dimen/activity_min_margin"
+                    android:visibility="invisible"
                     android:layout_height="match_parent"
-                    android:text="@string/no_record"
-                    tools:visibility="invisible" />
+                    android:background="@android:color/transparent"
+                    android:minHeight="@dimen/myListPreferredItemHeightMedium">
+
+                    <ImageView
+                        android:translationZ="1dp"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:gravity="center"
+                        risuscito:ico_icon="cmd-music-note-off"
+                        risuscito:ico_size="24dp"
+                        risuscito:ico_padding="5dp"
+                        risuscito:ico_color="?android:textColorSecondary"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        tools:ignore="MissingPrefix"
+                        tools:targetApi="lollipop"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:layout_centerInParent="true"
+                        android:text="@string/no_record"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/no_connection"
+                    android:visibility="invisible"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:minHeight="@dimen/myListPreferredItemHeightMedium">
+
+                    <ImageView
+                        android:translationZ="1dp"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:gravity="center"
+                        risuscito:ico_icon="cmd-cloud-off-outline"
+                        risuscito:ico_size="24dp"
+                        risuscito:ico_padding="5dp"
+                        risuscito:ico_color="?android:textColorSecondary"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        tools:ignore="MissingPrefix"
+                        tools:targetApi="lollipop"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:layout_centerInParent="true"
+                        android:text="@string/no_connection"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/music_buttons"
@@ -51,6 +126,7 @@
                         android:layout_height="wrap_content"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat"
+                        android:textColor="?android:textColorPrimary"
                         tools:ignore="HardcodedText,RtlSymmetry" />
 
                     <SeekBar
@@ -63,17 +139,19 @@
                         android:layout_gravity="center_vertical"
                         android:layout_height="match_parent"/>
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/play_song"
                         android:layout_width="@dimen/abc_action_bar_default_height_material"
                         android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:paddingLeft="@dimen/button_playbar_padding"
-                        android:paddingRight="@dimen/button_playbar_padding"
+                        android:paddingLeft="@dimen/play_pause_padding"
+                        android:paddingRight="@dimen/play_pause_padding"
                         android:layout_gravity="center_vertical"
-                        android:scaleType="fitCenter"
                         android:background="?attr/customSelectorRoundAccent"
+                        android:clickable="true"
+                        android:scaleType="fitCenter"
                         android:soundEffectsEnabled="true"
-                        android:contentDescription="@null" />
+                        android:focusable="true"
+                        android:contentDescription="@null"/>
 
                 </LinearLayout>
 
@@ -83,7 +161,7 @@
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
                 android:layout_alignParentBottom="true"
-                android:background="@color/theme_primary"
+                android:background="?colorPrimary"
                 android:divider="?attr/dividerVertical"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:orientation="horizontal">
@@ -98,6 +176,7 @@
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
+                    android:textColor="@color/primary_text_default_material_dark"
                     tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <SeekBar

@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
@@ -51,11 +53,13 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                     .equalsIgnoreCase(sharedPreferences.getString(s, "it"))) {
                 Intent i = getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.putExtra(Utility.DB_RESET, true);
-                String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
-                i.putExtra(Utility.CHANGE_LANGUAGE,
-                        currentLang + "-" + sharedPreferences.getString(s, ""));
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.putExtra(Utility.DB_RESET, true);
+                    String currentLang = ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration()).getLanguage();
+                    i.putExtra(Utility.CHANGE_LANGUAGE,
+                            currentLang + "-" + sharedPreferences.getString(s, ""));
+                }
                 startActivity(i);
             }
         }
@@ -71,20 +75,36 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
         mThemeUtils = new ThemeUtils(this);
         LUtils mLUtils = LUtils.getInstance(this);
         mLUtils.convertIntPreferences();
+        Log.d(TAG, "onCreate: 1");
         setTheme(mThemeUtils.getCurrent());
+        Log.d(TAG, "onCreate: 2");
+        AppCompatDelegate.setDefaultNightMode(ThemeUtils.isDarkMode(this) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        Log.d(TAG, "onCreate: 3");
+
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(ThemeableActivity.this, mThemeUtils.primaryColorDark(), hasNavDrawer);
+        Log.d(TAG, "onCreate: 4");
+
+        if (LUtils.hasL()) {
+            // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
+            // list gets weird. We need to change either the icon or the color
+            // of the TaskDescription.
+            ActivityManager.TaskDescription taskDesc =
+                    new ActivityManager.TaskDescription(
+                            null,
+                            null,
+                            mThemeUtils.primaryColor());
+            setTaskDescription(taskDesc);
+        }
 
         //Iconic
         LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         checkScreenAwake();
 
         PreferenceManager.getDefaultSharedPreferences(ThemeableActivity.this)
@@ -250,8 +270,8 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
     }
 
     @SuppressWarnings({ "unchecked" })
-    protected boolean loadSharedPreferencesFromFile(InputStream in) {
-        boolean res = false;
+    protected void loadSharedPreferencesFromFile(InputStream in) {
+//        boolean res = false;
         ObjectInputStream input = null;
         try {
             input = new ObjectInputStream(in);
@@ -288,7 +308,7 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
             try {
                 if (input != null) {
                     input.close();
-                    res = true;
+//                    res = true;
                 }
             } catch (IOException e) {
                 String error = "loadSharedPreferencesFromFile - IOException: " + e.getLocalizedMessage();
@@ -296,7 +316,6 @@ public abstract class ThemeableActivity extends AppCompatActivity implements Sha
                 Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
             }
         }
-        return res;
     }
 
     @SuppressWarnings("deprecation")

@@ -42,7 +42,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         risuscito:imageState="@drawable/ic_sad_heart"
-        risuscito:subTitleStyle="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+        risuscito:subTitleStyle="@style/SuperStateViewSubTitle"
         risuscito:setSubTitleText="@string/no_favourites_short"
         risuscito:setSubTitleFont="Roboto-Light.ttf" />
 

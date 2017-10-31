@@ -7,4 +7,6 @@
 
     <dimen name="custom_peek_height">260dp</dimen>
 
+    <dimen name="play_pause_padding">14dp</dimen>
+
 </resources>

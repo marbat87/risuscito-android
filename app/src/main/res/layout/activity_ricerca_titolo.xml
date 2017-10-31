@@ -8,15 +8,14 @@
 
     <TextView
         android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
         android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:gravity="start|center_vertical"
-        android:background="@color/material_grey_100"
+        android:gravity="center"
         android:text="@string/fast_search_subtitle"/>
-
-    <include layout="@layout/design_navigation_item_separator" />
 
     <EditText
         android:id="@+id/textfieldRicerca"
@@ -72,6 +71,7 @@
         android:text="@string/button_pulisci"
         fontPath="fonts/Roboto-Medium.ttf"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:textColor="@color/primary_text_default_material_dark"
         risuscito:elevation="@dimen/raised_button_default_elevation"
         risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
         tools:ignore="MissingPrefix" />

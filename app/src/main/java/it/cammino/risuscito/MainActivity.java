@@ -21,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -387,6 +388,12 @@ public class MainActivity extends ThemeableActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        hideProgressDialog();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
 //        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
         //add the values which need to be saved from the drawer to the bundle
@@ -421,7 +428,8 @@ public class MainActivity extends ThemeableActivity
                 .withActivity(MainActivity.this)
                 .withTranslucentStatusBar(!isOnTablet)
                 .withSelectionListEnabledForSingleProfile(false)
-                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
+//                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) : new ColorDrawable(getThemeUtils().primaryColor()))
+                .withHeaderBackground(isOnTablet ? new ColorDrawable(ContextCompat.getColor(this, R.color.floating_background)) : new ColorDrawable(getThemeUtils().primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
 //                .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
@@ -437,8 +445,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_ASK")
                                     .title(R.string.gdrive_backup)
                                     .content(R.string.gdrive_backup_content)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -446,8 +454,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_ASK")
                                     .title(R.string.gdrive_restore)
                                     .content(R.string.gdrive_restore_content)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -455,8 +463,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "SIGNOUT")
                                     .title(R.string.gplus_signout)
                                     .content(R.string.dialog_acc_disconn_text)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -464,8 +472,8 @@ public class MainActivity extends ThemeableActivity
                             new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "REVOKE")
                                     .title(R.string.gplus_revoke)
                                     .content(R.string.dialog_acc_revoke_text)
-                                    .positiveButton(R.string.confirm)
-                                    .negativeButton(R.string.dismiss)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
                                     .show();
 //                            return true;
                         }
@@ -645,37 +653,6 @@ public class MainActivity extends ThemeableActivity
         }
 
     }
-
-//    @Override
-//    public boolean onKeyUp(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (isOnTablet) {
-//                if (crossFader != null && crossFader.isCrossFaded()) {
-//                    crossFader.crossFade();
-//                    return true;
-//                }
-//            }
-//            else {
-//                if (mDrawer != null && mDrawer.isDrawerOpen()) {
-//                    mDrawer.closeDrawer();
-//                    return true;
-//                }
-//            }
-//
-//            Fragment myFragment = getSupportFragmentManager().findFragmentByTag(String.valueOf(R.id.navigation_home));
-//            if (myFragment != null && myFragment.isVisible()) {
-//                finish();
-//                return true;
-//            }
-//
-//            if (isOnTablet)
-//                mMiniDrawer.setSelection(R.id.navigation_home);
-//            mDrawer.setSelection(R.id.navigation_home);
-//            appBarLayout.setExpanded(true, true);
-//            return true;
-//        }
-//        return super.onKeyUp(keyCode, event);
-//    }
 
     @Override
     public void onBackPressed() {
@@ -1518,7 +1495,7 @@ public class MainActivity extends ThemeableActivity
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
                             .title(R.string.general_message)
                             .content(R.string.gdrive_restore_success)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
             };
@@ -1547,7 +1524,7 @@ public class MainActivity extends ThemeableActivity
                 else {
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
                             .content(R.string.no_connection)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
                 break;
@@ -1565,7 +1542,7 @@ public class MainActivity extends ThemeableActivity
                 else {
                     new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
                             .content(R.string.no_connection)
-                            .positiveButton(R.string.dialog_chiudi)
+                            .positiveButton(android.R.string.ok)
                             .show();
                 }
                 break;

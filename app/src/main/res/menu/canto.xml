@@ -89,7 +89,7 @@
 
     <item
         android:id="@+id/action_exp_pdf"
-        android:orderInCategory="96"
+        android:orderInCategory="97"
         risuscito:showAsAction="never"
         android:title="@string/action_exp_pdf" />
 

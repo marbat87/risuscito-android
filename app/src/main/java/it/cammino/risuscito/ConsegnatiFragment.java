@@ -425,7 +425,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
@@ -491,7 +491,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mChoosedRecyclerView.setLayoutManager(llm);
         mChoosedRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mChoosedRecyclerView.addItemDecoration(insetDivider);
         mChoosedRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
     }
@@ -561,6 +561,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                         .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                         .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
                         .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                        .titleTextColor(R.color.primary_text_default_material_dark)
+                        .textColor(R.color.secondary_text_default_material_dark)
                         .tintTarget(false)                   // Whether to tint the target view's color
                 , new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
@@ -585,6 +587,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                         ,
                         TapTarget.forView(mMainActivity.isOnTablet() ?
                                         (ImageButton) rootView.findViewById(R.id.cancel_change):
@@ -593,6 +597,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE)   // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                 )
                 .listener(
                         new TapTargetSequence.Listener() {          // The listener can listen for regular clicks, long clicks or cancels

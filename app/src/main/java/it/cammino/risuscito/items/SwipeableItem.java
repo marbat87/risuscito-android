@@ -118,7 +118,7 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
         CharSequence swipedAction = null;
         CharSequence swipedText = null;
         if (swipedDirection != 0) {
-            swipedAction = viewHolder.itemView.getContext().getString(R.string.cancel);
+            swipedAction = viewHolder.itemView.getContext().getString(android.R.string.cancel);
 //            swipedText = swipedDirection == ItemTouchHelper.LEFT ? "Removed" : "Archived";
             swipedText = viewHolder.itemView.getContext().getString(R.string.generic_removed, name.getText());
             viewHolder.swipeResultContent.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.getContext(), swipedDirection == ItemTouchHelper.LEFT ? R.color.md_red_900 : R.color.md_red_900));

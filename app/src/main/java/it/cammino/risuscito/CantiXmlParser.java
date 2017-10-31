@@ -13,7 +13,7 @@ import java.io.InputStream;
  * Given an InputStream representation of a feed, it returns a List of entries,
  * where each list element represents a single entry (post) in the XML feed.
  */
-public class CantiXmlParser {
+class CantiXmlParser {
     private static final String ns = null;
 
     private String[][] entries;
@@ -24,7 +24,7 @@ public class CantiXmlParser {
     
     // We don't use namespaces
 
-    public String[][] parse(InputStream in) throws XmlPullParserException, IOException {
+    String[][] parse(InputStream in) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);

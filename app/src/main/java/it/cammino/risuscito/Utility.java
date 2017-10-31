@@ -30,6 +30,7 @@ public class Utility {
     public static final String SYSTEM_LANGUAGE = "lingua_sistema";
     public static final String DB_RESET = "db_reset";
     public static final String CHANGE_LANGUAGE = "changed";
+    public static final String NIGHT_THEME = "night_theme";
     static final String SIGNED_IN = "signed_id";
     static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
     static final String PREFERITI_OPEN = "preferiti_open";
@@ -44,6 +45,7 @@ public class Utility {
     static final String INTRO_CREALISTA = "intro_crealista_test";
     static final String INTRO_CREALISTA_2 = "intro_crealista_2_test";
     static final String INTRO_CUSTOMLISTS = "intro_customlists_test_2";
+
 
 
 //    public static final String GENERATE_XML = "generate_xml";
@@ -130,7 +132,7 @@ public class Utility {
     }
 
     /* Checks if external storage is available for read and write */
-    public static boolean isExternalStorageWritable() {
+    static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
@@ -180,11 +182,15 @@ public class Utility {
         }
     }
 
-    static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
+    public static String retrieveMediaFileLink(Context activity, String link, boolean cercaEsterno) {
+
+        if (link.isEmpty())
+            return "";
 
         if (isExternalStorageReadable() && cercaEsterno) {
-//			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
-//			File fileExt = new File(fileArray[0], filterMediaLink(link));
+            //			File[] fileArray = ContextCompat.getExternalFilesDirs(activity, null);
+            //			File fileExt = new File(fileArray[0], filterMediaLink(link));
+            Log.v("Utility.java", "retrieveMediaFileLink: " + filterMediaLinkNew(link));
             //cerca file esterno con nuovi path e nome
             File fileExt = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_MUSIC), "/Risuscitò/" + filterMediaLinkNew(link));
@@ -200,11 +206,11 @@ public class Utility {
                     return fileExt.getAbsolutePath();
                 }
                 else
-                    Log.d("Utility.java", "FILE ESTERNO NON TROVATO");
+                    Log.v("Utility.java", "FILE ESTERNO NON TROVATO");
             }
         }
         else {
-            Log.d("Utility.java", "isExternalStorageReadable: FALSE");
+            Log.v("Utility.java", "isExternalStorageReadable: FALSE");
         }
 
         File fileInt = new File(activity.getFilesDir(), filterMediaLink(link));
@@ -213,7 +219,7 @@ public class Utility {
             return fileInt.getAbsolutePath();
         }
         else
-            Log.d("Utility.java", "FILE INTERNO NON TROVATO");
+            Log.v("Utility.java", "FILE INTERNO NON TROVATO");
 //		Log.i("FILE INTERNO:", "NON TROVATO");
         return "";
     }
@@ -259,11 +265,11 @@ public class Utility {
         return ((new Random()).nextInt(end - start + 1) + start);
     }
 
-    static boolean hasMarshmallow() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    }
+//    static boolean hasMarshmallow() {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+//    }
 
-    public static boolean isLowerCase(char ch) {
+    static boolean isLowerCase(char ch) {
         return ch >= 'a' && ch <= 'z';
     }
 

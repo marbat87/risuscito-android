@@ -55,7 +55,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     private DatabaseCanti listaCanti;
     private FastItemAdapter<SimpleItem> cantoAdapter;
-    private FloatingActionButton fabClear;
     private boolean actionModeOk;
 
     private MainActivity mMainActivity;
@@ -92,7 +91,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mMainActivity.enableFab(true);
         if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        fabClear = getActivity().findViewById(R.id.fab_pager);
+        FloatingActionButton fabClear = getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .color(Color.WHITE)
@@ -105,8 +104,8 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), FavouritesActivity.this, "FAVORITES_RESET")
                         .title(R.string.dialog_reset_favorites_title)
                         .content(R.string.dialog_reset_favorites_desc)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
         });
@@ -282,7 +281,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
@@ -355,7 +354,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                 Log.d(TAG, "onCabItemClicked: " + iRemoved);
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved)
-                        , getString(R.string.cancel)
+                        , getString(android.R.string.cancel).toUpperCase()
                         , Snackbar.LENGTH_SHORT
                         , cantoAdapter.getSelections());
                 cantoAdapter.deselect();

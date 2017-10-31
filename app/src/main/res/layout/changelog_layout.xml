@@ -47,7 +47,7 @@
                 android:id="@+id/risuscito_toolbar"
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/ActionBarThemeOverlay"
-                risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                risuscito:popupTheme="@style/RisuscitoToolbarPopup"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
                 risuscito:elevation="1dp"

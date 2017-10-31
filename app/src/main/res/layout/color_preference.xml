@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/color_selection"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/color_selection"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -11,7 +12,7 @@
     android:paddingEnd="20dp"
     android:clickable="true"
     android:background="?attr/customSelector"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/color_circle"
@@ -38,14 +39,14 @@
             android:id="@android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@color/primary_text_default_material_light"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="?android:textColorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
         <TextView
             android:id="@android:id/summary"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@color/secondary_text_default_material_light"
+            android:textColor="?android:textColorSecondary"
             android:textAppearance="@style/TextAppearance.AppCompat.Small" />
     </LinearLayout>
 

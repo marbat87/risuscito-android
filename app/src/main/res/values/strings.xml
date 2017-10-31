@@ -9,6 +9,10 @@
     <string name="lang_en_value" translatable="false">en</string>
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
+    <string name="label_pause" translatable="false">Pause</string>
+    <string name="label_play" translatable="false">Play</string>
+    <string name="label_restart" translatable="false">Restart</string>
+    <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
 
 
     <string name="private_memory">Memoria privata</string>
@@ -55,7 +59,6 @@
     <string name="dialog_delete_mp3">Sei sicuro di voler cancellare il brano dalla memoria del dispositivo?</string>
     <string name="confirm">SI</string>
     <string name="dismiss">NO</string>
-    <string name="cancel">ANNULLA</string>
     <string name="save_location_title">Memoria predefinita</string>
     <string name="save_location_summary">Indica se vuoi rendere i file scaricati visibili alle altre applicazioni (per es. lettore musicale).</string>
     <string name="favorite_added">Aggiunto ai preferiti</string>
@@ -80,14 +83,12 @@
     <string name="add_position">Aggiungi elemento</string>
     <string name="content_drag">trascina elemento</string>
     <string name="aggiungi_confirm">AGGIUNGI</string>
-    <string name="aggiungi_dismiss">ANNULLA</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
     <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
     <string name="lista_add_desc">Titolo della nuova lista:</string>
     <string name="save_list_question">Stai per uscire dalla creazione della lista personalizzata. Vuoi salvare le modifiche?</string>
     <string name="action_help">Aiuto</string>
-    <string name="dialog_chiudi">OK</string>
     <string name="dialog_change_title">Novit&#224;</string>
     <string name="action_tonalita">Tonalit&#224;</string>
     <string name="action_trasporta">Cambia</string>
@@ -147,7 +148,6 @@
     <string name="list_elements">ELEMENTI DELLA LISTA:</string>
     <string name="no_title_edited">Il titolo non è stato modificato in quanto vuoto</string>
     <string name="no_elements_added">Non hai ancora aggiunto nessun elemento.</string>
-    <string name="single_choice_ok">CONFERMA</string>
     <string name="dialog_replace_title">Sostituisci canto</string>
     <string name="dialog_reset_list_title">Resetta lista</string>
     <string name="aggiungi_rename">RINOMINA</string>
@@ -238,11 +238,8 @@
     <string name="barre_search_string">Barrè</string>
     <string name="barre_add_al">al</string>
     <string name="barre_al_tasto">Barrè al %1$s tasto</string>
-    <string name="external_storage_title">Accesso alla memoria pubblica</string>
-    <string name="external_storage_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per rendere visible il file scaricato alle altri applicazioni. Se non accetterai, il file sarà scaricato nella memoria privata dell\'applicazione.</string>
     <string name="external_storage_denied">Memoria pubblica non disponibile.</string>
     <string name="external_storage_pref_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario abilitare il salvataggio nella memoria pubblica. Se non accetterai, l\'opzione non sarà visibile.</string>
-    <string name="external_file_rationale">Risuscitò ti sta per chiedere il permesso di accedere alla memoria esterna. Ciò è necessario per vedere se hai scaricato la registrazione nella memoria pubblica. Se non accetterai, la ricerca verrà effettuata solo nella memoria privata.</string>
     <string name="forced_private">Forzato download in memoria privata</string>
     <string name="connected_as">Sei connesso come %1$s</string>
     <string name="gplus_signout">Disconnetti account</string>
@@ -304,4 +301,7 @@
     <string name="title_trabar_VI">VI</string>
     <string name="title_trabar_VII">VII</string>
     <string name="consegnati_only">Cerca solo nei consegnati</string>
+    <string name="permission_ok">Permesso concesso</string>
+    <string name="night_theme_title">Tema Scuro</string>
+    <string name="night_theme_desc">Abilita il tema scuro</string>
 </resources>

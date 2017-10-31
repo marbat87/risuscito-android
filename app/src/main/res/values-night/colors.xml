@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- OVERWRITE THESE COLORS FOR A DARK THEME -->
+    <!-- MaterialDrawer DEFAULT DARK colors -->
+    <color name="material_drawer_background">#303030</color>
+    <!-- MaterialDrawer DEFAULT DARK text / items colors -->
+    <color name="material_drawer_primary_text">@color/primary_text_default_material_dark</color>
+    <color name="material_drawer_primary_icon">@color/secondary_text_default_material_dark</color>
+    <color name="material_drawer_secondary_text">@color/secondary_text_default_material_dark</color>
+    <color name="material_drawer_hint_text">#42FFFFFF</color>
+    <color name="material_drawer_divider">#1FFFFFFF</color>
+    <!-- MaterialDrawer DEFAULT DARK drawer colors -->
+    <color name="material_drawer_selected">#202020</color>
+    <color name="material_drawer_selected_text">@color/material_drawer_primary</color>
+    <color name="material_drawer_header_selection_text">#FFF</color>
+
+    <color name="text_color_primary">@color/primary_text_default_material_dark</color>
+    <color name="text_color_secondary">@color/secondary_text_default_material_dark</color>
+    <color name="floating_background">@color/background_floating_material_dark</color>
+    <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_dark</color>
+    <color name="chglib_material_color_text_1">@color/primary_text_default_material_dark</color>
+    <color name="material_divider">@color/md_dark_dividers</color>
+
+</resources>

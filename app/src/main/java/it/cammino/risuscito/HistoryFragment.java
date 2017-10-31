@@ -54,7 +54,6 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
     private DatabaseCanti listaCanti;
     private FastItemAdapter<SimpleHistoryItem> cantoAdapter;
-    private FloatingActionButton fabClear;
     private boolean actionModeOk;
 
     private MainActivity mMainActivity;
@@ -89,7 +88,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mMainActivity.enableFab(true);
         if (!mMainActivity.isOnTablet())
             mMainActivity.enableBottombar(false);
-        fabClear = getActivity().findViewById(R.id.fab_pager);
+        FloatingActionButton fabClear = getActivity().findViewById(R.id.fab_pager);
         IconicsDrawable icon = new IconicsDrawable(getActivity())
                 .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                 .color(Color.WHITE)
@@ -102,8 +101,8 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
                 new SimpleDialogFragment.Builder((AppCompatActivity)getActivity(), HistoryFragment.this, "RESET_HISTORY")
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
-                        .positiveButton(R.string.confirm)
-                        .negativeButton(R.string.dismiss)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
                         .show();
             }
         });
@@ -277,7 +276,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.inset_divider_light));
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
         mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
@@ -349,7 +348,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
 
                 mUndoHelper.remove(getActivity().findViewById(R.id.main_content)
                         , getResources().getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved)
-                        , getString(R.string.cancel)
+                        , getString(android.R.string.cancel).toUpperCase()
                         , Snackbar.LENGTH_SHORT
                         , cantoAdapter.getSelections());
                 cantoAdapter.deselect();

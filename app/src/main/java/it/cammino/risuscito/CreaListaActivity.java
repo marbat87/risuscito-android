@@ -104,7 +104,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         new InputTextDialogFragment.Builder(CreaListaActivity.this, CreaListaActivity.this, "ADD_POSITION")
                 .title(R.string.posizione_add_desc)
                 .positiveButton(R.string.aggiungi_confirm)
-                .negativeButton(R.string.aggiungi_dismiss)
+                .negativeButton(android.R.string.cancel)
                 .show();
     }
 
@@ -232,7 +232,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                         .title(R.string.posizione_rename)
                         .prefill(item.getName().getText().toString())
                         .positiveButton(R.string.aggiungi_rename)
-                        .negativeButton(R.string.aggiungi_dismiss)
+                        .negativeButton(android.R.string.cancel)
                         .show();
                 return false;
             }
@@ -365,7 +365,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.confirm)
                             .negativeButton(R.string.dismiss)
-                            .neutralButton(R.string.cancel)
+                            .neutralButton(android.R.string.cancel)
                             .show();
                     return true;
                 }
@@ -388,7 +388,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                     .content(R.string.save_list_question)
                     .positiveButton(R.string.confirm)
                     .negativeButton(R.string.dismiss)
-                    .neutralButton(R.string.cancel)
+                    .neutralButton(android.R.string.cancel)
                     .show();
         }
         else {
@@ -641,7 +641,10 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 , getString(R.string.add_position), getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
+                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .tintTarget(false)
                                 .id(1)
                         ,
@@ -651,6 +654,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2)
                         ,
                         TapTarget.forToolbarMenuItem(mToolbar, R.id.action_help
@@ -659,6 +664,8 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                                 .outerCircleColorInt(getThemeUtils().primaryColor())     // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(Typeface.createFromAsset(getResources().getAssets(),"fonts/Roboto-Regular.ttf"))  // Specify a typeface for the text
+                                .titleTextColor(R.color.primary_text_default_material_dark)
+                                .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3)
                 )
                 .listener(

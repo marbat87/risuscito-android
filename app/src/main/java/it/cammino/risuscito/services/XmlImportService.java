@@ -38,7 +38,7 @@ public class XmlImportService extends IntentService {
 
     final String TAG = getClass().getCanonicalName();
 
-    private static final String CHANNEL_ID = "risuscito_import_channel";
+    private static final String CHANNEL_ID = "itcr_import_channel";
 
     // We don't use namespaces
     private static final String ns = null;
@@ -280,8 +280,7 @@ public class XmlImportService extends IntentService {
         CharSequence name = "XML Import";
         // The user-visible description of the channel.
         String description = "Importing selected XML";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
         // Configure the notification channel.
         mChannel.setDescription(description);
         mChannel.setShowBadge(false);

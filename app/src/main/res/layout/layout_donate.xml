@@ -10,7 +10,7 @@
         android:id="@+id/risuscito_toolbar"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ActionBarThemeOverlay"
-        risuscito:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        risuscito:popupTheme="@style/RisuscitoToolbarPopup"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/main_toolbarTitle"
-            android:textAppearance="@style/ActionBar.TitleText"
+            android:textAppearance="@style/ActionBar.TitleText.Collapsed"
             android:ellipsize="end"
             fontPath="fonts/Roboto-Medium.ttf"
             android:gravity="start"
@@ -40,7 +40,7 @@
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:background="?colorPrimary"
+        android:background="?colorBackgroundFloating"
         android:divider="?attr/dividerVertical"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/min_button_margin"
@@ -62,6 +62,7 @@
             android:text=""
             fontPath="fonts/Roboto-Medium.ttf"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:textColor="@color/primary_text_default_material_dark"
             risuscito:elevation="@dimen/raised_button_default_elevation"
             risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
             tools:ignore="MissingPrefix" />
@@ -76,6 +77,7 @@
             android:text=""
             fontPath="fonts/Roboto-Medium.ttf"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:textColor="@color/primary_text_default_material_dark"
             risuscito:elevation="@dimen/raised_button_default_elevation"
             risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
             tools:ignore="MissingPrefix" />
@@ -90,6 +92,7 @@
             android:text=""
             fontPath="fonts/Roboto-Medium.ttf"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:textColor="@color/primary_text_default_material_dark"
             risuscito:elevation="@dimen/raised_button_default_elevation"
             risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
             tools:ignore="MissingPrefix" />
