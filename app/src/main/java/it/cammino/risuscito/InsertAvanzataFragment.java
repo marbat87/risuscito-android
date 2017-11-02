@@ -36,6 +36,7 @@ import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.listeners.ClickEventHook;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -113,14 +114,14 @@ public class InsertAvanzataFragment extends Fragment {
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
         listaCanti = new DatabaseCanti(getActivity());
 
-        FastAdapter.OnClickListener<InsertItem> mOnClickListener = new FastAdapter.OnClickListener<InsertItem>() {
+        OnClickListener<InsertItem> mOnClickListener = new OnClickListener<InsertItem>() {
             @Override
             public boolean onClick(View view, IAdapter<InsertItem> iAdapter, InsertItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)

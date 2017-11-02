@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
@@ -18,9 +19,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import butterknife.ButterKnife;
 import it.cammino.risuscito.R;
 import it.cammino.risuscito.items.BottomSheetItem;
 
+@SuppressWarnings("unused")
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
     public static BottomSheetFragment newInstance(Intent intent) {
@@ -62,7 +64,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     @BindView(R.id.shareList) RecyclerView mRecyclerView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet, container, false);
         ButterKnife.bind(this, view);
 
@@ -94,7 +96,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         for (ResolveInfo item: list)
             mList.add(new BottomSheetItem().withItem(item));
 
-        FastAdapter.OnClickListener<BottomSheetItem> mOnClickListener = new FastAdapter.OnClickListener<BottomSheetItem>() {
+        OnClickListener<BottomSheetItem> mOnClickListener = new OnClickListener<BottomSheetItem>() {
             @Override
             public boolean onClick(View view, IAdapter<BottomSheetItem> iAdapter, BottomSheetItem item, int i) {
                 SharedPreferences.Editor editor = PreferenceManager

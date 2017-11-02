@@ -34,6 +34,8 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
+import com.mikepenz.fastadapter.listeners.OnLongClickListener;
 import com.mikepenz.fastadapter_extensions.UndoHelper;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
@@ -71,7 +73,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_favourites, container, false);
         mUnbinder  = ButterKnife.bind(this, rootView);
@@ -217,7 +219,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         lista.close();
         db.close();
 
-        FastAdapter.OnClickListener<SimpleItem> mOnPreClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+        OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 Log.d(TAG, "onClick: 2");
@@ -235,7 +237,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }
         };
 
-        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
@@ -251,7 +253,7 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }
         };
 
-        FastAdapter.OnLongClickListener<SimpleItem> mOnPreLongClickListener = new FastAdapter.OnLongClickListener<SimpleItem>() {
+        OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
             @Override
             public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (mMainActivity.getMaterialCab().isActive())

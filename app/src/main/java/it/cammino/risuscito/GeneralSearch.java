@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.ui.ThemeableActivity;
-import it.cammino.risuscito.utils.ThemeUtils;
 
 public class GeneralSearch extends Fragment {
 
@@ -27,7 +27,7 @@ public class GeneralSearch extends Fragment {
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
@@ -97,10 +97,6 @@ public class GeneralSearch extends Fragment {
                     return "";
             }
         }
-    }
-
-    private ThemeUtils getThemeUtils() {
-        return mMainActivity.getThemeUtils();
     }
 
 }

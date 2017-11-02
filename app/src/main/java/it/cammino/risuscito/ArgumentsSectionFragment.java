@@ -26,10 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.expandable.ExpandableExtension;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator;
 
 import java.util.ArrayList;
@@ -71,12 +72,12 @@ public class ArgumentsSectionFragment extends HFFragment
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.layout_recycler, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
-    FastAdapter.OnClickListener<SimpleSubItem> mOnClickListener =
-        new FastAdapter.OnClickListener<SimpleSubItem>() {
+    OnClickListener<SimpleSubItem> mOnClickListener =
+        new OnClickListener<SimpleSubItem>() {
           @Override
           public boolean onClick(
               View view, IAdapter<SimpleSubItem> iAdapter, SimpleSubItem item, int i) {
@@ -129,7 +130,7 @@ public class ArgumentsSectionFragment extends HFFragment
           .withTitle(arguments.getString(1) + " (" + totCanti + ")")
           //                    .withColor(getThemeUtils().primaryColorDark())
           .withOnClickListener(
-              new FastAdapter.OnClickListener<SimpleSubExpandableItem>() {
+              new OnClickListener<SimpleSubExpandableItem>() {
                 @Override
                 public boolean onClick(
                     View view,
@@ -179,7 +180,10 @@ public class ArgumentsSectionFragment extends HFFragment
     // adapter
     mAdapter = new FastItemAdapter<>();
     mAdapter.add(mItems);
-    mAdapter.withOnlyOneExpandedItem(true);
+    ExpandableExtension<IItem> itemExpandableExtension = new ExpandableExtension<>();
+    itemExpandableExtension.withOnlyOneExpandedItem(true);
+    mAdapter.addExtension(itemExpandableExtension);
+//    mAdapter.withOnlyOneExpandedItem(true);
 
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setHasFixedSize(true); // Size of RV will not change
@@ -282,7 +286,7 @@ public class ArgumentsSectionFragment extends HFFragment
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     if (getUserVisibleHint()) {
       outState = mAdapter.saveInstanceState(outState);
       outState.putInt("idDaAgg", idDaAgg);

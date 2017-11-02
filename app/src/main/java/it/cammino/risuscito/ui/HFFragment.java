@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +19,7 @@ public class HFFragment extends Fragment {
     private boolean mIsVisibleToUser = false;
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mViewCreated = true;
         if (savedInstanceState != null && savedInstanceState.containsKey("android:user_visible_hint")) {

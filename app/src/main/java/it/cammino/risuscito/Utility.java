@@ -35,9 +35,9 @@ public class Utility {
     static final String SHOW_OFFERTORIO = "mostra_canto_offertorio";
     static final String PREFERITI_OPEN = "preferiti_open";
     static final String HISTORY_OPEN = "history_open";
-    static final String SMALL_DONATIONS_COUNT = "small_donations_count";
-    static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
-    static final String LARGE_DONATIONS_COUNT = "large_donations_count";
+//    static final String SMALL_DONATIONS_COUNT = "small_donations_count";
+//    static final String MEDIUM_DONATIONS_COUNT = "medium_donations_count";
+//    static final String LARGE_DONATIONS_COUNT = "large_donations_count";
 
     static final String INTRO_CONSEGNATI = "intro_consegnati_test";
     static final String INTRO_CONSEGNATI_2 = "intro_consegnati_2_test";

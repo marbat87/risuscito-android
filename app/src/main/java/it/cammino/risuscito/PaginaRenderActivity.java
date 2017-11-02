@@ -53,6 +53,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -769,11 +770,6 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
                 }
             }, 1500);
         }
-
-//        if (mCastContext != null) {
-//            mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
-//                    menu, R.id.media_route_menu_item);
-//        }
 
         return true;
     }

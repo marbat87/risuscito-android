@@ -42,7 +42,8 @@
         <item name="colorBackgroundFloating">@color/floating_background</item>
         <item name="cardBackgroundColor">@color/floating_background</item>
         <item name="android:colorBackgroundFloating" tools:ignore="NewApi">@color/floating_background</item>
-        <item name="android:textColorHint" tools:ignore="NewApi">@color/text_color_secondary</item>
+        <item name="android:textColorHint">@color/text_color_secondary</item>
+        <item name="android:contextPopupMenuStyle" tools:targetApi="n">@style/PopupMenuStyle</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme" >

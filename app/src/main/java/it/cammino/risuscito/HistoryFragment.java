@@ -33,6 +33,8 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
+import com.mikepenz.fastadapter.listeners.OnLongClickListener;
 import com.mikepenz.fastadapter_extensions.UndoHelper;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
@@ -70,7 +72,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_history, container, false);
         mUnbinder  = ButterKnife.bind(this, rootView);
@@ -212,7 +214,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
         lista.close();
         db.close();
 
-        FastAdapter.OnClickListener<SimpleHistoryItem> mOnPreClickListener = new FastAdapter.OnClickListener<SimpleHistoryItem>() {
+        OnClickListener<SimpleHistoryItem> mOnPreClickListener = new OnClickListener<SimpleHistoryItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
                 Log.d(TAG, "onClick: 2");
@@ -230,7 +232,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
             }
         };
 
-        FastAdapter.OnClickListener<SimpleHistoryItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleHistoryItem>() {
+        OnClickListener<SimpleHistoryItem> mOnClickListener = new OnClickListener<SimpleHistoryItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
@@ -246,7 +248,7 @@ public class HistoryFragment extends Fragment implements SimpleDialogFragment.Si
             }
         };
 
-        FastAdapter.OnLongClickListener<SimpleHistoryItem> mOnPreLongClickListener = new FastAdapter.OnLongClickListener<SimpleHistoryItem>() {
+        OnLongClickListener<SimpleHistoryItem> mOnPreLongClickListener = new OnLongClickListener<SimpleHistoryItem>() {
             @Override
             public boolean onLongClick(View view, IAdapter<SimpleHistoryItem> iAdapter, SimpleHistoryItem item, int i) {
                 if (mMainActivity.getMaterialCab().isActive())

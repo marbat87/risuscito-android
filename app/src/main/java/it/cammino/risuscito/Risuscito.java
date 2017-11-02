@@ -88,7 +88,7 @@ public class Risuscito extends Fragment
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
@@ -214,7 +214,7 @@ public class Risuscito extends Fragment
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     mWelcomeScreen.onSaveInstanceState(outState);
   }

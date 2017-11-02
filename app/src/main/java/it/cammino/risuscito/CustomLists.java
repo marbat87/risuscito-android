@@ -145,7 +145,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
@@ -255,7 +255,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
      * @param outState Bundle in which to place your saved state.
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(PAGE_EDITED, indDaModif);
         outState.putString("titoloDaCanc", titoloDaCanc);
@@ -364,6 +364,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
             }
         }
 
+        @NonNull
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Fragment fragment = (Fragment) super.instantiateItem(container, position);
@@ -400,7 +401,7 @@ public class CustomLists extends Fragment implements InputTextDialogFragment.Sim
         }
 
         @Override
-        public int getItemPosition(Object object){
+        public int getItemPosition(@NonNull Object object){
             return PagerAdapter.POSITION_NONE;
         }
     }
