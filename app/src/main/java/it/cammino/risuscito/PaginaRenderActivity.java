@@ -684,77 +684,78 @@ public class PaginaRenderActivity extends ThemeableActivity implements SimpleDia
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        IconicsMenuInflaterUtil.inflate(getMenuInflater(), PaginaRenderActivity.this, R.menu.canto, menu, true);
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.canto, menu);
-
-        int iconColorId = R.color.text_color_secondary;
-
-        menu.findItem(R.id.tonalita).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note).actionBar()
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE)
-        );
-        menu.findItem(R.id.action_trasporta).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.action_save_tab).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.action_reset_tab).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.barre).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar_electric)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE)
-        );
-        menu.findItem(R.id.action_trasporta_barre).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.action_save_barre).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.action_reset_barre).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
-                        .sizeDp(24)
-                        .paddingDp(2)
-//                        .colorRes(iconColorId)
-                        .color(ContextCompat.getColor(this, iconColorId))
-        );
-        menu.findItem(R.id.action_exp_pdf).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_file_pdf_box)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE)
-        );
-        menu.findItem(R.id.action_help_canto).setIcon(
-                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_help_circle)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE)
-        );
+//        getMenuInflater().inflate(R.menu.canto, menu);
+//
+//        int iconColorId = R.color.text_color_secondary;
+//
+//        menu.findItem(R.id.tonalita).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_music_note).actionBar()
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE)
+//        );
+//        menu.findItem(R.id.action_trasporta).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.action_save_tab).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.action_reset_tab).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.barre).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_guitar_electric)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE)
+//        );
+//        menu.findItem(R.id.action_trasporta_barre).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_swap_vertical)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.action_save_barre).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_content_save)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.action_reset_barre).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_refresh)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+////                        .colorRes(iconColorId)
+//                        .color(ContextCompat.getColor(this, iconColorId))
+//        );
+//        menu.findItem(R.id.action_exp_pdf).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_file_pdf_box)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE)
+//        );
+//        menu.findItem(R.id.action_help_canto).setIcon(
+//                new IconicsDrawable(PaginaRenderActivity.this, CommunityMaterial.Icon.cmd_help_circle)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE)
+//        );
         SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(PaginaRenderActivity.this);
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false));
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
