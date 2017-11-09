@@ -34,10 +34,11 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.layout_consegnati, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
@@ -304,7 +305,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         savedInstanceState.putBoolean(EDIT_MODE, editMode);
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -329,13 +330,14 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        IconicsMenuInflaterUtil.inflate(getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-        menu.findItem(R.id.action_help).setIcon(
-                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE));
+//        getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+//        menu.findItem(R.id.action_help).setIcon(
+//                new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE));
     }
 
     @Override
@@ -398,8 +400,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         db.close();
         if (listaCanti != null)
             listaCanti.close();
-
-        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
@@ -475,7 +476,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 .setHasStableIds(true);
 
         //init the ClickListenerHelper which simplifies custom click listeners on views of the Adapter
-        selectableAdapter.withOnPreClickListener(new FastAdapter.OnClickListener<CheckableItem>() {
+        selectableAdapter.withOnPreClickListener(new OnClickListener<CheckableItem>() {
             @Override
             public boolean onClick(View v, IAdapter<CheckableItem> adapter, CheckableItem item, int position) {
                 selectableAdapter.getAdapterItem(position).withSetSelected(!selectableAdapter.getAdapterItem(position).isSelected());

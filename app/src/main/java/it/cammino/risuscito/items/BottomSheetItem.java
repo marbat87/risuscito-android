@@ -78,14 +78,14 @@ public class BottomSheetItem extends AbstractItem<BottomSheetItem, BottomSheetIt
      * our ViewHolder
      */
     protected static class ViewHolder extends RecyclerView.ViewHolder {
-        protected View view;
+//        protected View view;
         @BindView(R.id.app_icon) ImageView mIcon;
         @BindView(R.id.app_label) TextView mLabel;
 
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-            this.view = view;
+//            this.view = view;
         }
     }
 }

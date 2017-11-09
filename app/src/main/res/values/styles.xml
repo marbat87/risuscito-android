@@ -106,4 +106,8 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
+    <style name="PopupMenuStyle" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:popupBackground">@color/floating_background</item>
+    </style>
+
 </resources>

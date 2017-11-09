@@ -10,6 +10,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class ListaPersonalizzata implements Serializable {
 
     final static long serialVersionUID = 123456789L;
@@ -116,7 +117,8 @@ public class ListaPersonalizzata implements Serializable {
     }
 
     //rimuove il canto alla posizione indicata
-    public int removeCanto(int posizione) {
+    @SuppressWarnings("UnusedReturnValue")
+    int removeCanto(int posizione) {
         if (posizione < 0 || posizione >= MAX_POSIZIONI)
             return -1;
 

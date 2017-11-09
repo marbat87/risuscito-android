@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.0'
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 14
@@ -40,9 +40,9 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:commons:0.9.5.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'com.stephentuso:welcome:1.4.1'
-    implementation('com.mikepenz:materialdrawer:5.9.5@aar') { transitive = true }
+    implementation('com.mikepenz:materialdrawer:6.0.1@aar') { transitive = true }
     implementation 'com.mikepenz:crossfader:1.5.0@aar'
-    implementation 'com.mikepenz:community-material-typeface:1.9.32.2@aar'
+    implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
     implementation 'com.mikepenz:itemanimators:1.0.0@aar'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -57,14 +57,15 @@ dependencies {
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.jrvansuita:MaterialAbout:0.1.9'
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
-    implementation 'com.mikepenz:fastadapter-commons:2.6.3@aar'
-    implementation 'com.mikepenz:fastadapter-extensions:2.6.3@aar'
+    implementation 'com.mikepenz:fastadapter-commons:3.0.1@aar'
+    implementation 'com.mikepenz:fastadapter-extensions-expandable:3.0.0@aar'
+    implementation 'com.mikepenz:fastadapter-extensions:3.0.0@aar'
     implementation 'com.github.turing-tech:MaterialScrollBar:13.0.1'
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.3.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
     implementation 'pub.devrel:easypermissions:1.0.1'
-    implementation 'com.blunderer:easy-animated-vector-drawable:1.0.2'
+    implementation 'com.blunderer:easy-animated-vector-drawable:1.0.3'
     implementation 'com.android.billingclient:billing:1.0'
 }
 

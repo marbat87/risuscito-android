@@ -38,14 +38,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnLongClickListener;
 import com.mikepenz.fastadapter_extensions.drag.ItemTouchCallback;
 import com.mikepenz.fastadapter_extensions.drag.SimpleDragCallback;
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback;
 import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeDragCallback;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -223,7 +224,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 collapsingToolbarLayout.setTitle(titoloLista);
         }
 
-        FastAdapter.OnLongClickListener<SwipeableItem> mLongClickListener = new FastAdapter.OnLongClickListener<SwipeableItem>() {
+        OnLongClickListener<SwipeableItem> mLongClickListener = new OnLongClickListener<SwipeableItem>() {
             @Override
             public boolean onLongClick(View view, IAdapter<SwipeableItem> iAdapter, SwipeableItem item, int i) {
                 Log.d(TAG, "onItemLongClick: " + i);
@@ -314,18 +315,19 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        IconicsMenuInflaterUtil.inflate(getMenuInflater(), CreaListaActivity.this, R.menu.crea_lista_menu, menu);
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.crea_lista_menu, menu);
-        menu.findItem(R.id.action_save_list).setIcon(
-                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_content_save)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE));
-        menu.findItem(R.id.action_help).setIcon(
-                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_help_circle)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .color(Color.WHITE));
+//        getMenuInflater().inflate(R.menu.crea_lista_menu, menu);
+//        menu.findItem(R.id.action_save_list).setIcon(
+//                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_content_save)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE));
+//        menu.findItem(R.id.action_help).setIcon(
+//                new IconicsDrawable(CreaListaActivity.this, CommunityMaterial.Icon.cmd_help_circle)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                        .color(Color.WHITE));
         SharedPreferences mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(CreaListaActivity.this);
         Log.d(TAG, "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false));
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {

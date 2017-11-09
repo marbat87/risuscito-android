@@ -2,6 +2,7 @@ package it.cammino.risuscito.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
@@ -19,6 +20,7 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 import it.cammino.risuscito.R;
 
+@SuppressWarnings("unused")
 public class BottomSheetFabListe extends BottomSheetDialogFragment {
 
     public final static String CHOOSE_DONE = "choose_done";
@@ -60,7 +62,7 @@ public class BottomSheetFabListe extends BottomSheetDialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_fablist, container, false);
 
         Boolean showTitle = getArguments().getBoolean("showTitle");

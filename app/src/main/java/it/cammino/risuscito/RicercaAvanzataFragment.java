@@ -38,9 +38,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -121,7 +121,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
@@ -131,7 +131,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
 
         mConsegnatiOnly.setVisibility(View.GONE);
 
-        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
@@ -161,11 +161,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         mRecyclerView.addItemDecoration(insetDivider);
 
         try {
-//            InputStream in = getActivity().getAssets().open("fileout_new.xml");
-//            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("uk"))
-//                in = getActivity().getAssets().open("fileout_uk.xml");
-//            if (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage().equalsIgnoreCase("en"))
-//                in = getActivity().getAssets().open("fileout_en.xml");
             InputStream in;
             switch (ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration()).getLanguage()) {
                 case "uk":
@@ -186,51 +181,6 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
         }
 
         searchPar.setText("");
-//        searchPar.addTextChangedListener(new TextWatcher() {
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
-//                if (!tempText.equals(s.toString()))
-//                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
-//
-//                //abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-//                if (s.toString().trim().length() >= 3) {
-//                    if (searchTask != null && searchTask.getStatus() == Status.RUNNING)
-//                        searchTask.cancel(true);
-//                    searchTask = new SearchTask();
-//                    searchTask.execute(searchPar.getText().toString());
-//                }
-//                else {
-//                    if (s.length() == 0) {
-//                        rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-//                        cantoAdapter.clear();
-//                        progress.setVisibility(View.INVISIBLE);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) { }
-//
-//        });
-
-//        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    //to hide soft keyboard
-//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
 
         ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -305,7 +255,7 @@ public class RicercaAvanzataFragment extends Fragment implements View.OnCreateCo
      * @param outState Bundle in which to place your saved state.
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);

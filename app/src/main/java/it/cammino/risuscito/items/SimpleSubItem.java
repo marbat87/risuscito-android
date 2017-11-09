@@ -16,8 +16,8 @@ import com.mikepenz.fastadapter.IClickable;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.ISubItem;
-import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils;
+import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem;
 import com.mikepenz.materialize.holder.ColorHolder;
 import com.mikepenz.materialize.holder.StringHolder;
 
@@ -89,6 +89,7 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
     return this;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public SimpleSubItem<Parent> withHasDivider(boolean hasDivider) {
     this.hasDivider = hasDivider;
     return this;
@@ -114,6 +115,7 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
     return id;
   }
 
+  @SuppressWarnings("unused")
   public boolean isHasDivider() {
     return hasDivider;
   }

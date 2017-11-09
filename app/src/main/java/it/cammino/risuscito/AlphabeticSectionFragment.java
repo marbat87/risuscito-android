@@ -28,8 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
@@ -73,7 +73,7 @@ public class AlphabeticSectionFragment extends HFFragment
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.fragment_alphanum_index, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
@@ -109,8 +109,8 @@ public class AlphabeticSectionFragment extends HFFragment
     // chiude il cursore
     lista.close();
 
-    FastAdapter.OnClickListener<SimpleItem> mOnClickListener =
-        new FastAdapter.OnClickListener<SimpleItem>() {
+    OnClickListener<SimpleItem> mOnClickListener =
+        new OnClickListener<SimpleItem>() {
           @Override
           public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return false;
@@ -188,7 +188,7 @@ public class AlphabeticSectionFragment extends HFFragment
 
   /** @param outState Bundle in which to place your saved state. */
   @Override
-  public void onSaveInstanceState(Bundle outState) {
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putInt("idDaAgg", idDaAgg);
     outState.putInt("idPosizioneClick", idPosizioneClick);

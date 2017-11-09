@@ -18,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class SimpleDialogFragment extends DialogFragment {
 
     protected SimpleCallback mCallback;
@@ -151,7 +152,7 @@ public class SimpleDialogFragment extends DialogFragment {
 
         @NonNull
         final transient AppCompatActivity mContext;
-        protected int mTitle = 0;
+        int mTitle = 0;
         boolean mShowProgress = false;
         boolean mProgressIndeterminate;
         int mProgressMax;

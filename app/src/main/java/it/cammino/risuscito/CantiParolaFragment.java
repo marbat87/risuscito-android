@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -97,7 +98,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
@@ -590,7 +591,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
                 Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
-                        .setAction(android.R.string.cancel, new View.OnClickListener() {
+                        .setAction(getString(android.R.string.cancel).toUpperCase(), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 db = listaCanti.getReadableDatabase();

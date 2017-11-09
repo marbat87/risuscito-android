@@ -106,8 +106,12 @@
                 android:layout_height="48dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:gravity="start|center_vertical"
-                android:background="?colorBackgroundFloating"
                 android:text="@string/list_elements"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/toolbar_shadow" />
 
             <TextView
                 android:id="@+id/noElementsAdded"

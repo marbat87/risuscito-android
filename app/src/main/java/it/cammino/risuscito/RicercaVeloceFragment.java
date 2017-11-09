@@ -36,9 +36,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
     private Unbinder mUnbinder;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
@@ -116,7 +116,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
 
         mConsegnatiOnly.setVisibility(View.GONE);
 
-        FastAdapter.OnClickListener<SimpleItem> mOnClickListener = new FastAdapter.OnClickListener<SimpleItem>() {
+        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
             @Override
             public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
@@ -143,98 +143,6 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
         DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
         insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
         mRecyclerView.addItemDecoration(insetDivider);
-
-//        searchPar.addTextChangedListener(new TextWatcher() {
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before,
-//                                      int count) {
-//
-//                String tempText = ((EditText) getActivity().findViewById(R.id.tempTextField)).getText().toString();
-//                if (!tempText.equals(s.toString()))
-//                    ((EditText) getActivity().findViewById(R.id.tempTextField)).setText(s);
-//
-//
-//                if (s.length() >= 3) {
-//                    mNoResults.setVisibility(View.GONE);
-//
-//                    String stringa = Utility.removeAccents(s.toString()).toLowerCase();
-//                    String titoloTemp;
-//                    Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
-//
-//                    // crea un manipolatore per il Database in modalità READ
-//                    SQLiteDatabase db = listaCanti.getReadableDatabase();
-//
-//                    // lancia la ricerca di tutti i titoli presenti in DB e li
-//                    // dispone in ordine alfabetico
-//                    String query = "SELECT titolo, color, pagina, _id, source"
-//                            + "		FROM ELENCO ORDER BY titolo ASC";
-//                    Cursor lista = db.rawQuery(query, null);
-//
-//                    // recupera il numero di record trovati
-//                    int total = lista.getCount();
-//
-//                    // crea un array e ci memorizza i titoli estratti
-//                    List<SimpleItem> titoli = new ArrayList<>();
-//                    cantoAdapter.clear();
-//
-//                    lista.moveToFirst();
-//                    for (int i = 0; i < total; i++) {
-//                        titoloTemp = Utility.removeAccents(lista.getString(0).toLowerCase());
-//                        if (titoloTemp.contains(stringa)) {
-//                            SimpleItem simpleItem = new SimpleItem();
-//                            simpleItem.withTitle(lista.getString(0))
-//                                    .withColor(lista.getString(1))
-//                                    .withPage(String.valueOf(lista.getInt(2)))
-//                                    .withId(lista.getInt(3))
-//                                    .withSource(lista.getString(4))
-//                                    .withContextMenuListener(RicercaVeloceFragment.this);
-//                            titoli.add(simpleItem);
-//                        }
-//                        lista.moveToNext();
-//                    }
-//
-//                    // chiude il cursore
-//                    lista.close();
-//
-//                    cantoAdapter.add(titoli);
-//                    cantoAdapter.notifyDataSetChanged();
-//
-//                    if (total == 0)
-////                        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-//                        mNoResults.setVisibility(View.VISIBLE);
-//                } else {
-//                    if (s.length() == 0) {
-//                        cantoAdapter.clear();
-//                        mNoResults.setVisibility(View.GONE);
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count,
-//                                          int after) {
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//            }
-//
-//        });
-
-//        searchPar.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    //to hide soft keyboard
-//                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-//                            .hideSoftInputFromWindow(searchPar.getWindowToken(), 0);
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
 
         ((EditText) getActivity().findViewById(R.id.tempTextField)).addTextChangedListener(new TextWatcher() {
 
@@ -307,7 +215,7 @@ public class RicercaVeloceFragment extends Fragment implements View.OnCreateCont
      * @param outState Bundle in which to place your saved state.
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("idDaAgg", idDaAgg);
         outState.putInt("idPosizioneClick", idPosizioneClick);
