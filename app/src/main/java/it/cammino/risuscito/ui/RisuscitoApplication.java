@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerUIUtils;
 
 import it.cammino.risuscito.R;
+import it.cammino.risuscito.database.RisuscitoDatabase;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class RisuscitoApplication extends MultiDexApplication {
@@ -19,6 +21,7 @@ public class RisuscitoApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                         .setDefaultFontPath("fonts/Roboto-Regular.ttf")
                         .setFontAttrId(R.attr.fontPath)

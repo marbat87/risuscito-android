@@ -1,10 +1,9 @@
 package it.cammino.risuscito;
 
-import android.content.ContentValues;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -47,13 +46,19 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import it.cammino.risuscito.database.Canto;
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.viewmodels.FavoritesViewModel;
 
 public class FavouritesActivity extends Fragment implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
+
+    private FavoritesViewModel mFavoritesViewModel;
 
     private DatabaseCanti listaCanti;
     private FastItemAdapter<SimpleItem> cantoAdapter;
@@ -170,7 +175,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     @Override
     public void onResume() {
-        updateFavouritesList();
+        mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
+        populateDb();
+        subscribeUiFavorites();
+//        updateFavouritesList();
         super.onResume();
     }
 
@@ -187,146 +195,177 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
         mLUtils.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER);
     }
 
-    private void updateFavouritesList() {
-
-        // crea un manipolatore per il Database in modalità READ
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-        // lancia la ricerca dei preferiti
-        String query = "SELECT titolo, color, pagina, _id, source" +
-                "		FROM ELENCO" +
-                "		WHERE favourite = 1" +
-                "		ORDER BY TITOLO ASC";
-        Cursor lista = db.rawQuery(query, null);
-
-        // crea un array e ci memorizza i titoli estratti
-        List<SimpleItem> titoli = new ArrayList<>();
-        lista.moveToFirst();
-        for (int i = 0; i < lista.getCount(); i++) {
-            SimpleItem sampleItem = new SimpleItem();
-            sampleItem
-                    .withTitle(lista.getString(0))
-                    .withPage(String.valueOf(lista.getInt(2)))
-                    .withSource(lista.getString(4))
-                    .withColor(lista.getString(1))
-                    .withId(lista.getInt(3))
-                    .withSelectedColor(getThemeUtils().primaryColorDark());
-            titoli.add(sampleItem);
-            lista.moveToNext();
-        }
-
-        // chiude il cursore
-        lista.close();
-        db.close();
-
-        OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
-            @Override
-            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                Log.d(TAG, "onClick: 2");
-                if (mMainActivity.getMaterialCab().isActive()) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
-                        return true;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
-                    cantoAdapter.notifyAdapterItemChanged(i);
-                    if (cantoAdapter.getSelectedItems().size() == 0)
-                        mMainActivity.getMaterialCab().finish();
-                    return true;
-                }
-                return false;
-            }
-        };
-
-        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
-            @Override
-            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                    return true;
-                mLastClickTime = SystemClock.elapsedRealtime();
-                Bundle bundle = new Bundle();
-                bundle.putCharSequence("pagina", item.getSource().getText());
-                bundle.putInt("idCanto", item.getId());
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle, view);
-                return true;
-            }
-        };
-
-        OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
-            @Override
-            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                if (mMainActivity.getMaterialCab().isActive())
-                    return true;
-                if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
-                    mMainActivity.getAppBarLayout().setExpanded(true, true);
-                mMainActivity.getMaterialCab().start(FavouritesActivity.this);
-//                cantoAdapter.select(i);
-                cantoAdapter.getAdapterItem(i).withSetSelected(true);
-                cantoAdapter.notifyAdapterItemChanged(i);
-                return true;
-            }
-        };
-
-        cantoAdapter = new FastItemAdapter<>();
-        cantoAdapter.withSelectable(true)
-                .withMultiSelect(true)
-                .withSelectOnLongClick(true)
-                .withOnPreClickListener(mOnPreClickListener)
-                .withOnClickListener(mOnClickListener)
-                .withOnPreLongClickListener(mOnPreLongClickListener)
-                .setHasStableIds(true);
-        cantoAdapter.add(titoli);
-
-        mRecyclerView.setAdapter(cantoAdapter);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(llm);
-        mRecyclerView.setHasFixedSize(true);
-        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
-        mRecyclerView.addItemDecoration(insetDivider);
-        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
-
-        //noinspection unchecked
-        mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
-            @Override
-            public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
-                Log.d(TAG, "commitRemove: " + arrayList.size());
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                for (Object item: arrayList) {
-                    SimpleItem mItem = (SimpleItem) ((FastAdapter.RelativeInfo)item).item;
-                    ContentValues values = new ContentValues();
-                    values.put("favourite", 0);
-                    db.update("ELENCO", values, "_id =  " + mItem.getId(), null);
-                }
-                db.close();
-                mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-                mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
-//                if (cantoAdapter.getAdapterItemCount() == 0)
-//                    mMainActivity.enableFab(false);
-            }
-        });
-
-        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
-        mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-        mMainActivity.enableFab(titoli.size() != 0);
-//        if (titoli.size() == 0)
-//            mMainActivity.enableFab(false);
-//        else
-//            mMainActivity.enableFab(true);
-    }
+//    private void updateFavouritesList(List<Canto> data) {
+//
+//        // crea un manipolatore per il Database in modalità READ
+////        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//        // lancia la ricerca dei preferiti
+////        String query = "SELECT titolo, color, pagina, _id, source" +
+////                "		FROM ELENCO" +
+////                "		WHERE favourite = 1" +
+////                "		ORDER BY TITOLO ASC";
+//
+////        CantoDao mDao = RisuscitoDatabase.getInstance(getContext()).cantoDao();
+//
+////        Cursor lista = db.rawQuery(query, null);
+//
+////        List<Canto> favorites = mDao.getFavorites();
+//
+//        // crea un array e ci memorizza i titoli estratti
+//        List<SimpleItem> titoli = new ArrayList<>();
+////        lista.moveToFirst();
+////        for (int i = 0; i < lista.getCount(); i++) {
+////            SimpleItem sampleItem = new SimpleItem();
+////            sampleItem
+////                    .withTitle(lista.getString(0))
+////                    .withPage(String.valueOf(lista.getInt(2)))
+////                    .withSource(lista.getString(4))
+////                    .withColor(lista.getString(1))
+////                    .withId(lista.getInt(3))
+////                    .withSelectedColor(getThemeUtils().primaryColorDark());
+////            titoli.add(sampleItem);
+////            lista.moveToNext();
+////        }
+////
+////        // chiude il cursore
+////        lista.close();
+////        db.close();
+//
+//        for (Canto canto: data) {
+//            SimpleItem sampleItem = new SimpleItem();
+//            sampleItem
+//                    .withTitle(canto.titolo)
+//                    .withPage(String.valueOf(canto.pagina))
+//                    .withSource(canto.source)
+//                    .withColor(canto.color)
+//                    .withId(canto.id)
+//                    .withSelectedColor(getThemeUtils().primaryColorDark());
+//            titoli.add(sampleItem);
+//        }
+//
+//        OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
+//            @Override
+//            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+//                Log.d(TAG, "onClick: 2");
+//                if (mMainActivity.getMaterialCab().isActive()) {
+//                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
+//                        return true;
+//                    mLastClickTime = SystemClock.elapsedRealtime();
+//                    cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
+//                    cantoAdapter.notifyAdapterItemChanged(i);
+//                    if (cantoAdapter.getSelectedItems().size() == 0)
+//                        mMainActivity.getMaterialCab().finish();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        };
+//
+//        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
+//            @Override
+//            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+//                    return true;
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//                Bundle bundle = new Bundle();
+//                bundle.putCharSequence("pagina", item.getSource().getText());
+//                bundle.putInt("idCanto", item.getId());
+//
+//                // lancia l'activity che visualizza il canto passando il parametro creato
+//                startSubActivity(bundle, view);
+//                return true;
+//            }
+//        };
+//
+//        OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
+//            @Override
+//            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+//                if (mMainActivity.getMaterialCab().isActive())
+//                    return true;
+//                if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+//                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+//                mMainActivity.getMaterialCab().start(FavouritesActivity.this);
+////                cantoAdapter.select(i);
+//                cantoAdapter.getAdapterItem(i).withSetSelected(true);
+//                cantoAdapter.notifyAdapterItemChanged(i);
+//                return true;
+//            }
+//        };
+//
+//        cantoAdapter = new FastItemAdapter<>();
+//        cantoAdapter.withSelectable(true)
+//                .withMultiSelect(true)
+//                .withSelectOnLongClick(true)
+//                .withOnPreClickListener(mOnPreClickListener)
+//                .withOnClickListener(mOnClickListener)
+//                .withOnPreLongClickListener(mOnPreLongClickListener)
+//                .setHasStableIds(true);
+//        cantoAdapter.add(titoli);
+//
+//        mRecyclerView.setAdapter(cantoAdapter);
+//        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+//        mRecyclerView.setLayoutManager(llm);
+//        mRecyclerView.setHasFixedSize(true);
+//        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+//        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
+//        mRecyclerView.addItemDecoration(insetDivider);
+//        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+//
+//        //noinspection unchecked
+//        mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
+//            @Override
+//            public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
+//                Log.d(TAG, "commitRemove: " + arrayList.size());
+////                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                for (Object item: arrayList) {
+//                    SimpleItem mItem = (SimpleItem) ((FastAdapter.RelativeInfo)item).item;
+////                    ContentValues values = new ContentValues();
+////                    values.put("favourite", 0);
+////                    db.update("ELENCO", values, "_id =  " + mItem.getId(), null);
+//                    CantoDao mDao = RisuscitoDatabase.getInstance(getContext()).cantoDao();
+//                    Canto cantoToUpdate = mDao.getCantoById(mItem.getId());
+//                    cantoToUpdate.favorite = 0;
+//                    mDao.updateCanto(cantoToUpdate);
+//
+//
+//                }
+////                db.close();
+//                mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+//                mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
+////                if (cantoAdapter.getAdapterItemCount() == 0)
+////                    mMainActivity.enableFab(false);
+//            }
+//        });
+//
+//        //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
+//        mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+//        mMainActivity.enableFab(titoli.size() != 0);
+////        if (titoli.size() == 0)
+////            mMainActivity.enableFab(false);
+////        else
+////            mMainActivity.enableFab(true);
+//    }
 
     @Override
     public void onPositive(@NonNull String tag) {
         Log.d(getClass().getName(), "onPositive: " + tag);
         switch (tag) {
             case "FAVORITES_RESET":
-                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                ContentValues  values = new  ContentValues();
-                values.put("favourite" , 0);
-                db.update("ELENCO", values,  null, null);
-                db.close();
-                updateFavouritesList();
+//                SQLiteDatabase db = listaCanti.getReadableDatabase();
+//                ContentValues  values = new  ContentValues();
+//                values.put("favourite" , 0);
+//                db.update("ELENCO", values,  null, null);
+//                db.close();
+                // run the sentence in a new thread
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
+                        mDao.resetFavorites();
+                    }
+                }).start();
+//                updateFavouritesList();
                 break;
         }
     }
@@ -383,6 +422,124 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     private ThemeUtils getThemeUtils() {
         return ((MainActivity)getActivity()).getThemeUtils();
+    }
+
+    private void populateDb() {
+        mFavoritesViewModel.createDb();
+    }
+
+    private void subscribeUiFavorites() {
+        mFavoritesViewModel.getmFavoritesResult().observe(this, new Observer<List<Canto>>() {
+            @Override
+            public void onChanged(@Nullable final List<Canto> canti) {
+                // crea un array e ci memorizza i titoli estratti
+                List<SimpleItem> titoli = new ArrayList<>();
+
+                for (Canto canto: canti) {
+                    SimpleItem sampleItem = new SimpleItem();
+                    sampleItem
+                            .withTitle(canto.titolo)
+                            .withPage(String.valueOf(canto.pagina))
+                            .withSource(canto.source)
+                            .withColor(canto.color)
+                            .withId(canto.id)
+                            .withSelectedColor(getThemeUtils().primaryColorDark());
+                    titoli.add(sampleItem);
+                }
+
+                OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
+                    @Override
+                    public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                        Log.d(TAG, "onClick: 2");
+                        if (mMainActivity.getMaterialCab().isActive()) {
+                            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
+                                return true;
+                            mLastClickTime = SystemClock.elapsedRealtime();
+                            cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
+                            cantoAdapter.notifyAdapterItemChanged(i);
+                            if (cantoAdapter.getSelectedItems().size() == 0)
+                                mMainActivity.getMaterialCab().finish();
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+
+                OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
+                    @Override
+                    public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                            return true;
+                        mLastClickTime = SystemClock.elapsedRealtime();
+                        Bundle bundle = new Bundle();
+                        bundle.putCharSequence("pagina", item.getSource().getText());
+                        bundle.putInt("idCanto", item.getId());
+
+                        // lancia l'activity che visualizza il canto passando il parametro creato
+                        startSubActivity(bundle, view);
+                        return true;
+                    }
+                };
+
+                OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
+                    @Override
+                    public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                        if (mMainActivity.getMaterialCab().isActive())
+                            return true;
+                        if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+                            mMainActivity.getAppBarLayout().setExpanded(true, true);
+                        mMainActivity.getMaterialCab().start(FavouritesActivity.this);
+                        cantoAdapter.getAdapterItem(i).withSetSelected(true);
+                        cantoAdapter.notifyAdapterItemChanged(i);
+                        return true;
+                    }
+                };
+
+                cantoAdapter = new FastItemAdapter<>();
+                cantoAdapter.withSelectable(true)
+                        .withMultiSelect(true)
+                        .withSelectOnLongClick(true)
+                        .withOnPreClickListener(mOnPreClickListener)
+                        .withOnClickListener(mOnClickListener)
+                        .withOnPreLongClickListener(mOnPreLongClickListener)
+                        .setHasStableIds(true);
+                cantoAdapter.add(titoli);
+
+                mRecyclerView.setAdapter(cantoAdapter);
+                LinearLayoutManager llm = new LinearLayoutManager(getContext());
+                mRecyclerView.setLayoutManager(llm);
+                mRecyclerView.setHasFixedSize(true);
+                DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+                insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
+                mRecyclerView.addItemDecoration(insetDivider);
+                mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+
+                //noinspection unchecked
+                mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
+                    @Override
+                    public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
+                        Log.d(TAG, "commitRemove: " + arrayList.size());
+                        final FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
+                        for (FastAdapter.RelativeInfo<SimpleItem> item: arrayList) {
+                            final SimpleItem mItem = item.item;
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mDao.removeFavorite(mItem.getId());
+                                }
+                            }).start();
+
+                        }
+                        mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                        mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
+                    }
+                });
+
+                //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
+                mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                mMainActivity.enableFab(titoli.size() != 0);
+            }
+        });
     }
 
 }
