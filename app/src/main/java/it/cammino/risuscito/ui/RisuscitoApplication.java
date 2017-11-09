@@ -22,6 +22,8 @@ public class RisuscitoApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+        RisuscitoDatabase.getInstance(this);
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                         .setDefaultFontPath("fonts/Roboto-Regular.ttf")
                         .setFontAttrId(R.attr.fontPath)

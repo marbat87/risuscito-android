@@ -134,6 +134,93 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }, 250);
         }
 
+        OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                Log.d(TAG, "onClick: 2");
+                if (mMainActivity.getMaterialCab().isActive()) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
+                        return true;
+                    mLastClickTime = SystemClock.elapsedRealtime();
+                    cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
+                    cantoAdapter.notifyAdapterItemChanged(i);
+                    if (cantoAdapter.getSelectedItems().size() == 0)
+                        mMainActivity.getMaterialCab().finish();
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
+            @Override
+            public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                    return true;
+                mLastClickTime = SystemClock.elapsedRealtime();
+                Bundle bundle = new Bundle();
+                bundle.putCharSequence("pagina", item.getSource().getText());
+                bundle.putInt("idCanto", item.getId());
+
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle, view);
+                return true;
+            }
+        };
+
+        OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
+            @Override
+            public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
+                if (mMainActivity.getMaterialCab().isActive())
+                    return true;
+                if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
+                    mMainActivity.getAppBarLayout().setExpanded(true, true);
+                mMainActivity.getMaterialCab().start(FavouritesActivity.this);
+                cantoAdapter.getAdapterItem(i).withSetSelected(true);
+                cantoAdapter.notifyAdapterItemChanged(i);
+                return true;
+            }
+        };
+
+        cantoAdapter = new FastItemAdapter<>();
+        cantoAdapter.withSelectable(true)
+                .withMultiSelect(true)
+                .withSelectOnLongClick(true)
+                .withOnPreClickListener(mOnPreClickListener)
+                .withOnClickListener(mOnClickListener)
+                .withOnPreLongClickListener(mOnPreLongClickListener)
+                .setHasStableIds(true);
+
+        mRecyclerView.setAdapter(cantoAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setHasFixedSize(true);
+        DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
+        insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
+        mRecyclerView.addItemDecoration(insetDivider);
+        mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+
+        //noinspection unchecked
+        mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
+            @Override
+            public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
+                Log.d(TAG, "commitRemove: " + arrayList.size());
+                final FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
+                for (FastAdapter.RelativeInfo<SimpleItem> item: arrayList) {
+                    final SimpleItem mItem = item.item;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDao.removeFavorite(mItem.getId());
+                        }
+                    }).start();
+
+                }
+                mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
+            }
+        });
+
         SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET");
         if (sFragment != null)
             sFragment.setmCallback(FavouritesActivity.this);
@@ -447,93 +534,9 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
                     titoli.add(sampleItem);
                 }
 
-                OnClickListener<SimpleItem> mOnPreClickListener = new OnClickListener<SimpleItem>() {
-                    @Override
-                    public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                        Log.d(TAG, "onClick: 2");
-                        if (mMainActivity.getMaterialCab().isActive()) {
-                            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
-                                return true;
-                            mLastClickTime = SystemClock.elapsedRealtime();
-                            cantoAdapter.getAdapterItem(i).withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
-                            cantoAdapter.notifyAdapterItemChanged(i);
-                            if (cantoAdapter.getSelectedItems().size() == 0)
-                                mMainActivity.getMaterialCab().finish();
-                            return true;
-                        }
-                        return false;
-                    }
-                };
-
-                OnClickListener<SimpleItem> mOnClickListener = new OnClickListener<SimpleItem>() {
-                    @Override
-                    public boolean onClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                            return true;
-                        mLastClickTime = SystemClock.elapsedRealtime();
-                        Bundle bundle = new Bundle();
-                        bundle.putCharSequence("pagina", item.getSource().getText());
-                        bundle.putInt("idCanto", item.getId());
-
-                        // lancia l'activity che visualizza il canto passando il parametro creato
-                        startSubActivity(bundle, view);
-                        return true;
-                    }
-                };
-
-                OnLongClickListener<SimpleItem> mOnPreLongClickListener = new OnLongClickListener<SimpleItem>() {
-                    @Override
-                    public boolean onLongClick(View view, IAdapter<SimpleItem> iAdapter, SimpleItem item, int i) {
-                        if (mMainActivity.getMaterialCab().isActive())
-                            return true;
-                        if (!mMainActivity.isOnTablet() && mMainActivity.getAppBarLayout() != null)
-                            mMainActivity.getAppBarLayout().setExpanded(true, true);
-                        mMainActivity.getMaterialCab().start(FavouritesActivity.this);
-                        cantoAdapter.getAdapterItem(i).withSetSelected(true);
-                        cantoAdapter.notifyAdapterItemChanged(i);
-                        return true;
-                    }
-                };
-
-                cantoAdapter = new FastItemAdapter<>();
-                cantoAdapter.withSelectable(true)
-                        .withMultiSelect(true)
-                        .withSelectOnLongClick(true)
-                        .withOnPreClickListener(mOnPreClickListener)
-                        .withOnClickListener(mOnClickListener)
-                        .withOnPreLongClickListener(mOnPreLongClickListener)
-                        .setHasStableIds(true);
+                cantoAdapter.clear();
                 cantoAdapter.add(titoli);
-
-                mRecyclerView.setAdapter(cantoAdapter);
-                LinearLayoutManager llm = new LinearLayoutManager(getContext());
-                mRecyclerView.setLayoutManager(llm);
-                mRecyclerView.setHasFixedSize(true);
-                DividerItemDecoration insetDivider = new DividerItemDecoration(getContext(), llm.getOrientation());
-                insetDivider.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
-                mRecyclerView.addItemDecoration(insetDivider);
-                mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
-
-                //noinspection unchecked
-                mUndoHelper = new UndoHelper(cantoAdapter, new UndoHelper.UndoListener<SimpleItem>() {
-                    @Override
-                    public void commitRemove(Set<Integer> set, ArrayList<FastAdapter.RelativeInfo<SimpleItem>> arrayList) {
-                        Log.d(TAG, "commitRemove: " + arrayList.size());
-                        final FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
-                        for (FastAdapter.RelativeInfo<SimpleItem> item: arrayList) {
-                            final SimpleItem mItem = item.item;
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mDao.removeFavorite(mItem.getId());
-                                }
-                            }).start();
-
-                        }
-                        mNoFavorites.setVisibility(cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-                        mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
-                    }
-                });
+                cantoAdapter.notifyAdapterDataSetChanged();
 
                 //nel caso sia presente almeno un preferito, viene nascosto il testo di nessun canto presente
                 mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);

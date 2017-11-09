@@ -20,4 +20,7 @@ public interface FavoritesDao {
     @Query("UPDATE canto SET favorite = 0 WHERE id = :favorited_id")
     void removeFavorite(int favorited_id);
 
+    @Query("UPDATE canto SET favorite = 1 WHERE id = :favorite_id")
+    void setFavorite(int favorite_id);
+
 }

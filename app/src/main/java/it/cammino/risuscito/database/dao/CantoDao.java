@@ -12,8 +12,8 @@ import it.cammino.risuscito.database.Canto;
 @Dao
 public interface CantoDao {
 
-    @Query("SELECT * FROM canto")
-    List<Canto> getAll();
+    @Query("SELECT * FROM canto ORDER BY titolo ASC")
+    List<Canto> getAllByName();
 
     @Query("SELECT * FROM canto WHERE id = :id")
     Canto getCantoById(int id);
