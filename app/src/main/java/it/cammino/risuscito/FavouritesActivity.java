@@ -221,6 +221,10 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
             }
         });
 
+        mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
+        populateDb();
+        subscribeUiFavorites();
+
         SimpleDialogFragment sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET");
         if (sFragment != null)
             sFragment.setmCallback(FavouritesActivity.this);
@@ -262,9 +266,6 @@ public class FavouritesActivity extends Fragment implements SimpleDialogFragment
 
     @Override
     public void onResume() {
-        mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
-        populateDb();
-        subscribeUiFavorites();
 //        updateFavouritesList();
         super.onResume();
     }

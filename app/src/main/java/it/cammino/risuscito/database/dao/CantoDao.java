@@ -1,5 +1,6 @@
 package it.cammino.risuscito.database.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -15,6 +16,9 @@ public interface CantoDao {
     @Query("SELECT * FROM canto ORDER BY titolo ASC")
     List<Canto> getAllByName();
 
+    @Query("SELECT * FROM canto ORDER BY titolo ASC")
+    LiveData<List<Canto>> getLiveAllByName();
+
     @Query("SELECT * FROM canto WHERE id = :id")
     Canto getCantoById(int id);
 
@@ -22,7 +26,7 @@ public interface CantoDao {
     int count();
 
     @Insert
-    long[] insertCanto(List<Canto> cantiLists);
+    void insertCanto(List<Canto> cantiLists);
 
     @Update
     int updateCanto(Canto canto);

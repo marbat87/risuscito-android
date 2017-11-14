@@ -1,13 +1,11 @@
 package it.cammino.risuscito;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -55,6 +53,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import it.cammino.risuscito.database.ListaPers;
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SwipeableItem;
@@ -69,7 +70,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
     private final String TAG = getClass().getCanonicalName();
 
     private ListaPersonalizzata celebrazione;
-    private DatabaseCanti listaCanti;
+//    private DatabaseCanti listaCanti;
     private String titoloLista;
     private boolean modifica;
     private int idModifica;
@@ -123,7 +124,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
             mTabletBG.setBackgroundColor(getThemeUtils().primaryColor());
         mActionTitleBar.setBackgroundColor(getThemeUtils().primaryColor());
 
-        listaCanti = new DatabaseCanti(this);
+//        listaCanti = new DatabaseCanti(this);
 
         textFieldTitle.addTextChangedListener(new TextWatcher() {
             @Override
@@ -160,69 +161,69 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         touchHelper = new ItemTouchHelper(touchCallback); // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
-        Bundle bundle = this.getIntent().getExtras();
-        modifica = bundle != null && bundle.getBoolean("modifica");
-
-        if (modifica) {
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-
-            idModifica = bundle.getInt("idDaModif");
-
-            String query = "SELECT titolo_lista, lista"
-                    + "  FROM LISTE_PERS"
-                    + "  WHERE _id = " + idModifica;
-            Cursor cursor = db.rawQuery(query, null);
-
-            cursor.moveToFirst();
-            titoloLista = cursor.getString(0);
-            celebrazione = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
-            cursor.close();
-            db.close();
-        }
-        else
-            titoloLista = bundle != null ? bundle.getString("titolo") : null;
-
-        dataFragment = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiElementi");
-        if (dataFragment != null) {
-            elementi = dataFragment.getDataFrag();
-            for (SwipeableItem elemento: elementi)
-                elemento.withTouchHelper(touchHelper);
-        }
-        else {
-            elementi = new ArrayList<>();
-            if (modifica) {
-                for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
-                    elementi.add(new SwipeableItem().withName(celebrazione.getNomePosizione(i)).withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
-                }
-            }
-        }
-
-        if (modifica) {
-            dataFragment2 = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiCanti");
-            if (dataFragment2 != null) {
-                nomiCanti = dataFragment2.getData();
-            }
-            else {
-                nomiCanti = new ArrayList<>();
-                if (modifica) {
-                    for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
-//		        		Log.i("CANTO", celebrazione.getCantoPosizione(i));
-                        nomiCanti.add(celebrazione.getCantoPosizione(i));
-                    }
-                }
-            }
-        }
-
-        if (savedInstanceState != null) {
-            textFieldTitle.setText(savedInstanceState.getCharSequence(TEMP_TITLE));
-            if (collapsingToolbarLayout != null)
-                collapsingToolbarLayout.setTitle(savedInstanceState.getCharSequence(TEMP_TITLE));
-        }
-        else {
-            textFieldTitle.setText(titoloLista);
-            if (collapsingToolbarLayout != null)
-                collapsingToolbarLayout.setTitle(titoloLista);
-        }
+//        Bundle bundle = this.getIntent().getExtras();
+//        modifica = bundle != null && bundle.getBoolean("modifica");
+//
+//        if (modifica) {
+//            SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//            idModifica = bundle.getInt("idDaModif");
+//
+//            String query = "SELECT titolo_lista, lista"
+//                    + "  FROM LISTE_PERS"
+//                    + "  WHERE _id = " + idModifica;
+//            Cursor cursor = db.rawQuery(query, null);
+//
+//            cursor.moveToFirst();
+//            titoloLista = cursor.getString(0);
+//            celebrazione = (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(cursor.getBlob(1));
+//            cursor.close();
+//            db.close();
+//        }
+//        else
+//            titoloLista = bundle != null ? bundle.getString("titolo") : null;
+//
+//        dataFragment = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiElementi");
+//        if (dataFragment != null) {
+//            elementi = dataFragment.getDataFrag();
+//            for (SwipeableItem elemento: elementi)
+//                elemento.withTouchHelper(touchHelper);
+//        }
+//        else {
+//            elementi = new ArrayList<>();
+//            if (modifica) {
+//                for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
+//                    elementi.add(new SwipeableItem().withName(celebrazione.getNomePosizione(i)).withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
+//                }
+//            }
+//        }
+//
+//        if (modifica) {
+//            dataFragment2 = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiCanti");
+//            if (dataFragment2 != null) {
+//                nomiCanti = dataFragment2.getData();
+//            }
+//            else {
+//                nomiCanti = new ArrayList<>();
+//                if (modifica) {
+//                    for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
+////		        		Log.i("CANTO", celebrazione.getCantoPosizione(i));
+//                        nomiCanti.add(celebrazione.getCantoPosizione(i));
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (savedInstanceState != null) {
+//            textFieldTitle.setText(savedInstanceState.getCharSequence(TEMP_TITLE));
+//            if (collapsingToolbarLayout != null)
+//                collapsingToolbarLayout.setTitle(savedInstanceState.getCharSequence(TEMP_TITLE));
+//        }
+//        else {
+//            textFieldTitle.setText(titoloLista);
+//            if (collapsingToolbarLayout != null)
+//                collapsingToolbarLayout.setTitle(titoloLista);
+//        }
 
         OnLongClickListener<SwipeableItem> mLongClickListener = new OnLongClickListener<SwipeableItem>() {
             @Override
@@ -240,6 +241,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         };
 
         mAdapter = new FastItemAdapter<>();
+        elementi = new ArrayList<>();
         mAdapter.add(elementi);
         mAdapter.withOnLongClickListener(mLongClickListener);
 
@@ -255,15 +257,14 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
         touchHelper.attachToRecyclerView(mRecyclerView); // Attach ItemTouchHelper to RecyclerView
 
+        new SearchTask().execute(savedInstanceState);
+
         IconicsDrawable icon = new IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4);
         fabCreaLista.setImageDrawable(icon);
-
-        if (elementi.size() > 0)
-            mNoElementsAdded.setVisibility(View.GONE);
 
         mTitleDescr.requestFocus();
 
@@ -306,12 +307,12 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
 
     }
 
-    @Override
-    public void onDestroy() {
-        if (listaCanti != null)
-            listaCanti.close();
-        super.onDestroy();
-    }
+//    @Override
+//    public void onDestroy() {
+//        if (listaCanti != null)
+//            listaCanti.close();
+//        super.onDestroy();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -354,11 +355,23 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                     mMainHintLayout.setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_save_list:
-                if (saveList()) {
-                    setResult(Activity.RESULT_OK);
-                    finish();
-                    overridePendingTransition(0, R.anim.slide_out_bottom);
-                }
+//                if (saveList()) {
+//                    setResult(Activity.RESULT_OK);
+//                    finish();
+//                    overridePendingTransition(0, R.anim.slide_out_bottom);
+//                }
+                new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                if (saveList()) {
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+                                    overridePendingTransition(0, R.anim.slide_out_bottom);
+                                }
+                            }
+                        })
+                        .start();
                 return true;
             case android.R.id.home:
                 if (mAdapter.getAdapterItems().size() > 0) {
@@ -373,7 +386,7 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                 }
                 else {
                     setResult(Activity.RESULT_CANCELED);
-                    finish();
+          finish();
                     overridePendingTransition(0, R.anim.slide_out_bottom);
                 }
                 return true;
@@ -441,18 +454,30 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
             }
         }
 
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//        ContentValues  values = new  ContentValues();
+//        values.put("titolo_lista" , titoloLista);
+//        values.put("lista" , ListaPersonalizzata.serializeObject(celebrazione));
+//
+//        if (modifica)
+//            db.update("LISTE_PERS", values, "_id = " + idModifica, null);
+//        else
+//            db.insert("LISTE_PERS" , "" , values);
+//
+//        db.close();
 
-        ContentValues  values = new  ContentValues();
-        values.put("titolo_lista" , titoloLista);
-        values.put("lista" , ListaPersonalizzata.serializeObject(celebrazione));
-
-        if (modifica)
-            db.update("LISTE_PERS", values, "_id = " + idModifica, null);
+        ListePersDao mDao = RisuscitoDatabase.getInstance(CreaListaActivity.this).listePersDao();
+        ListaPers listaToUpdate = new ListaPers();
+        listaToUpdate.lista = celebrazione;
+        listaToUpdate.titolo = titoloLista;
+        if (modifica) {
+            listaToUpdate.id = idModifica;
+            mDao.updateLista(listaToUpdate);
+        }
         else
-            db.insert("LISTE_PERS" , "" , values);
+            mDao.insertLista(listaToUpdate);
 
-        db.close();
         return true;
     }
 
@@ -550,11 +575,23 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
         Log.d(getClass().getName(), "onPositive: " + tag);
         switch (tag) {
             case "SAVE_LIST":
-                if (saveList()) {
-                    setResult(Activity.RESULT_OK);
-                    finish();
-                    overridePendingTransition(0, R.anim.slide_out_bottom);
-                }
+                new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                if (saveList()) {
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+                                    overridePendingTransition(0, R.anim.slide_out_bottom);
+                                }
+                            }
+                        })
+                        .start();
+//                if (saveList()) {
+//                    setResult(Activity.RESULT_OK);
+//                    finish();
+//                    overridePendingTransition(0, R.anim.slide_out_bottom);
+//                }
                 break;
         }
     }
@@ -693,4 +730,83 @@ public class CreaListaActivity extends ThemeableActivity implements InputTextDia
                             }
                         }).start();
     }
+
+    private class SearchTask extends AsyncTask<Bundle, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Bundle... savedInstanceState) {
+
+            Bundle bundle = CreaListaActivity.this.getIntent().getExtras();
+            modifica = bundle != null && bundle.getBoolean("modifica");
+
+            if (modifica) {
+                idModifica = bundle.getInt("idDaModif");
+                ListePersDao mDao = RisuscitoDatabase.getInstance(CreaListaActivity.this).listePersDao();
+                ListaPers lista = mDao.getListById(idModifica);
+                titoloLista = lista.titolo;
+                celebrazione = lista.lista;
+            }
+            else
+                titoloLista = bundle != null ? bundle.getString("titolo") : null;
+
+            dataFragment = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiElementi");
+            if (dataFragment != null) {
+                elementi = dataFragment.getDataFrag();
+                for (SwipeableItem elemento: elementi)
+                    elemento.withTouchHelper(touchHelper);
+            }
+            else {
+                elementi = new ArrayList<>();
+                if (modifica) {
+                    for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
+                        elementi.add(new SwipeableItem().withName(celebrazione.getNomePosizione(i)).withTouchHelper(touchHelper).withIdentifier(Utility.random(0, 5000)));
+                    }
+                }
+            }
+
+            if (modifica) {
+                dataFragment2 = (RetainedFragment) getSupportFragmentManager().findFragmentByTag("nomiCanti");
+                if (dataFragment2 != null) {
+                    nomiCanti = dataFragment2.getData();
+                }
+                else {
+                    nomiCanti = new ArrayList<>();
+                    if (modifica) {
+                        for (int i = 0; i < celebrazione.getNumPosizioni(); i++) {
+//		        		Log.i("CANTO", celebrazione.getCantoPosizione(i));
+                            nomiCanti.add(celebrazione.getCantoPosizione(i));
+                        }
+                    }
+                }
+            }
+
+            if (savedInstanceState[0] != null) {
+                textFieldTitle.setText(savedInstanceState[0].getCharSequence(TEMP_TITLE));
+                if (collapsingToolbarLayout != null)
+                    collapsingToolbarLayout.setTitle(savedInstanceState[0].getCharSequence(TEMP_TITLE));
+            }
+            else {
+                textFieldTitle.setText(titoloLista);
+                if (collapsingToolbarLayout != null)
+                    collapsingToolbarLayout.setTitle(titoloLista);
+            }
+
+            return 0;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mAdapter.clear();
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            mAdapter.add(elementi);
+            mAdapter.notifyAdapterDataSetChanged();
+            if (elementi.size() > 0)
+                mNoElementsAdded.setVisibility(View.GONE);
+        }
+    }
+
 }

@@ -1,12 +1,9 @@
 package it.cammino.risuscito;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -37,11 +34,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +49,13 @@ import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 import it.cammino.risuscito.database.Canto;
+import it.cammino.risuscito.database.CustomList;
+import it.cammino.risuscito.database.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.CantoDao;
+import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
+import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
@@ -80,15 +82,16 @@ public class RicercaVeloceFragment extends Fragment
   MaterialProgressBar progress;
   // create boolean for fetching data
   private boolean isViewShown = true;
-  private DatabaseCanti listaCanti;
+  //  private DatabaseCanti listaCanti;
   private View rootView;
   private List<SimpleItem> titoli;
   private String titoloDaAgg;
   private int idDaAgg;
   private int idListaDaAgg;
   private int posizioneDaAgg;
-  private ListaPersonalizzata[] listePers;
-  private int[] idListe;
+  //  private ListaPersonalizzata[] listePers;
+  //  private int[] idListe;
+  private List<ListaPers> listePersonalizzate;
   private int idListaClick;
   private int idPosizioneClick;
   private SearchTask searchTask;
@@ -124,7 +127,7 @@ public class RicercaVeloceFragment extends Fragment
     rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
-    if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
+    //    if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
 
     mConsegnatiOnly.setVisibility(View.GONE);
 
@@ -194,23 +197,32 @@ public class RicercaVeloceFragment extends Fragment
     }
 
     if (!isViewShown) {
-      SQLiteDatabase db = listaCanti.getReadableDatabase();
-      String query = "SELECT _id, lista" + "		FROM LISTE_PERS" + "		ORDER BY _id ASC";
-      Cursor lista = db.rawQuery(query, null);
-
-      listePers = new ListaPersonalizzata[lista.getCount()];
-      idListe = new int[lista.getCount()];
-
-      lista.moveToFirst();
-      for (int i = 0; i < lista.getCount(); i++) {
-        idListe[i] = lista.getInt(0);
-        listePers[i] =
-            (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(lista.getBlob(1));
-        lista.moveToNext();
-      }
-
-      lista.close();
-      db.close();
+      final ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
+      new Thread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  listePersonalizzate = mDao.getAll();
+                }
+              })
+          .start();
+      //      SQLiteDatabase db = listaCanti.getReadableDatabase();
+      //      String query = "SELECT _id, lista" + "		FROM LISTE_PERS" + "		ORDER BY _id ASC";
+      //      Cursor lista = db.rawQuery(query, null);
+      //
+      //      listePers = new ListaPersonalizzata[lista.getCount()];
+      //      idListe = new int[lista.getCount()];
+      //
+      //      lista.moveToFirst();
+      //      for (int i = 0; i < lista.getCount(); i++) {
+      //        idListe[i] = lista.getInt(0);
+      //        listePers[i] =
+      //            (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(lista.getBlob(1));
+      //        lista.moveToNext();
+      //      }
+      //
+      //      lista.close();
+      //      db.close();
     }
 
     return rootView;
@@ -255,24 +267,35 @@ public class RicercaVeloceFragment extends Fragment
       if (getView() != null) {
         isViewShown = true;
         Log.d(getClass().getName(), "VISIBLE");
-        if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        String query = "SELECT _id, lista" + "		FROM LISTE_PERS" + "		ORDER BY _id ASC";
-        Cursor lista = db.rawQuery(query, null);
+        //        if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
+        //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        //        String query = "SELECT _id, lista" + "		FROM LISTE_PERS" + "		ORDER BY _id ASC";
+        //        Cursor lista = db.rawQuery(query, null);
+        //
+        //        listePers = new ListaPersonalizzata[lista.getCount()];
+        //        idListe = new int[lista.getCount()];
+        //
+        //        lista.moveToFirst();
+        //        for (int i = 0; i < lista.getCount(); i++) {
+        //          idListe[i] = lista.getInt(0);
+        //          listePers[i] =
+        //              (ListaPersonalizzata)
+        // ListaPersonalizzata.deserializeObject(lista.getBlob(1));
+        //          lista.moveToNext();
+        //        }
+        //
+        //        lista.close();
+        //        db.close();
 
-        listePers = new ListaPersonalizzata[lista.getCount()];
-        idListe = new int[lista.getCount()];
-
-        lista.moveToFirst();
-        for (int i = 0; i < lista.getCount(); i++) {
-          idListe[i] = lista.getInt(0);
-          listePers[i] =
-              (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(lista.getBlob(1));
-          lista.moveToNext();
-        }
-
-        lista.close();
-        db.close();
+        new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
+                    listePersonalizzate = mDao.getAll();
+                  }
+                })
+            .start();
 
         // to hide soft keyboard
         if (searchPar != null)
@@ -282,11 +305,11 @@ public class RicercaVeloceFragment extends Fragment
     }
   }
 
-  @Override
-  public void onDestroy() {
-    if (listaCanti != null) listaCanti.close();
-    super.onDestroy();
-  }
+  //  @Override
+  //  public void onDestroy() {
+  //    if (listaCanti != null) listaCanti.close();
+  //    super.onDestroy();
+  //  }
 
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -295,10 +318,16 @@ public class RicercaVeloceFragment extends Fragment
     idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
     menu.setHeaderTitle("Aggiungi canto a:");
 
-    for (int i = 0; i < idListe.length; i++) {
-      SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i, listePers[i].getName());
-      for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
-        subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
+    //    for (int i = 0; i < idListe.length; i++) {
+    for (int i = 0; i < listePersonalizzate.size(); i++) {
+      //      SubMenu subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i,
+      // listePers[i].getName());
+      SubMenu subMenu =
+          menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate.get(i).titolo);
+      //      for (int k = 0; k < listePers[i].getNumPosizioni(); k++) {
+      for (int k = 0; k < listePersonalizzate.get(i).lista.getNumPosizioni(); k++) {
+        //        subMenu.add(100 + i, k, k, listePers[i].getNomePosizione(k));
+        subMenu.add(100 + i, k, k, listePersonalizzate.get(i).lista.getNomePosizione(k));
       }
     }
 
@@ -369,46 +398,99 @@ public class RicercaVeloceFragment extends Fragment
             idListaClick -= 100;
 
             // recupero ID del canto cliccato
-            SQLiteDatabase db = listaCanti.getReadableDatabase();
-            if (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals("")) {
-              listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-              ContentValues values = new ContentValues();
-              values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-              db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-              db.close();
-
-              Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+            //            SQLiteDatabase db = listaCanti.getReadableDatabase();
+            //            if
+            // (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals("")) {
+            if (listePersonalizzate
+                .get(idListaClick)
+                .lista
+                .getCantoPosizione(idPosizioneClick)
+                .equals("")) {
+              //              listePers[idListaClick].addCanto(String.valueOf(idDaAgg),
+              // idPosizioneClick);
+              //              ContentValues values = new ContentValues();
+              //              values.put("lista",
+              // ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+              //              db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick],
+              // null);
+              //              db.close();
+              listePersonalizzate
+                  .get(idListaClick)
+                  .lista
+                  .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+              new Thread(
+                      new Runnable() {
+                        @Override
+                        public void run() {
+                          ListePersDao mDao =
+                              RisuscitoDatabase.getInstance(getContext()).listePersDao();
+                          mDao.updateLista(listePersonalizzate.get(idListaClick));
+                          Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
+                              .show();
+                        }
+                      })
+                  .start();
             } else {
-              if (listePers[idListaClick]
+              //              if (listePers[idListaClick]
+              if (listePersonalizzate
+                  .get(idListaClick)
+                  .lista
                   .getCantoPosizione(idPosizioneClick)
                   .equals(String.valueOf(idDaAgg)))
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
               else {
                 // recupero titolo del canto presente
-                String query =
-                    "SELECT titolo"
-                        + "		FROM ELENCO"
-                        + "		WHERE _id = "
-                        + listePers[idListaClick].getCantoPosizione(idPosizioneClick);
-                Cursor cursor = db.rawQuery(query, null);
-                cursor.moveToFirst();
-                new SimpleDialogFragment.Builder(
-                        (AppCompatActivity) getActivity(),
-                        RicercaVeloceFragment.this,
-                        "VELOCE_REPLACE")
-                    .title(R.string.dialog_replace_title)
-                    .content(
-                        getString(R.string.dialog_present_yet)
-                            + " "
-                            + cursor.getString(0)
-                            + getString(R.string.dialog_wonna_replace))
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
-                    .show();
-                cursor.close();
-                db.close();
-                cursor.close();
-                db.close();
+                //                String query =
+                //                    "SELECT titolo"
+                //                        + "		FROM ELENCO"
+                //                        + "		WHERE _id = "
+                //                        +
+                // listePers[idListaClick].getCantoPosizione(idPosizioneClick);
+                //                Cursor cursor = db.rawQuery(query, null);
+                //                cursor.moveToFirst();
+                //                new SimpleDialogFragment.Builder(
+                //                        (AppCompatActivity) getActivity(),
+                //                        RicercaVeloceFragment.this,
+                //                        "VELOCE_REPLACE")
+                //                    .title(R.string.dialog_replace_title)
+                //                    .content(
+                //                        getString(R.string.dialog_present_yet)
+                //                            + " "
+                //                            + cursor.getString(0)
+                //                            + getString(R.string.dialog_wonna_replace))
+                //                    .positiveButton(android.R.string.yes)
+                //                    .negativeButton(android.R.string.no)
+                //                    .show();
+                //                cursor.close();
+                //                db.close();
+                new Thread(
+                        new Runnable() {
+                          @Override
+                          public void run() {
+                            CantoDao mDao = RisuscitoDatabase.getInstance(getContext()).cantoDao();
+                            Canto cantoPresente =
+                                mDao.getCantoById(
+                                    Integer.parseInt(
+                                        listePersonalizzate
+                                            .get(idListaClick)
+                                            .lista
+                                            .getCantoPosizione(idPosizioneClick)));
+                            new SimpleDialogFragment.Builder(
+                                    (AppCompatActivity) getActivity(),
+                                    RicercaVeloceFragment.this,
+                                    "VELOCE_REPLACE")
+                                .title(R.string.dialog_replace_title)
+                                .content(
+                                    getString(R.string.dialog_present_yet)
+                                        + " "
+                                        + cantoPresente.titolo
+                                        + getString(R.string.dialog_wonna_replace))
+                                .positiveButton(android.R.string.yes)
+                                .negativeButton(android.R.string.no)
+                                .show();
+                          }
+                        })
+                    .start();
               }
             }
             return true;
@@ -424,11 +506,11 @@ public class RicercaVeloceFragment extends Fragment
     //    db.execSQL(sql);
     //    db.close();
     //    Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
-    final FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
     new Thread(
             new Runnable() {
               @Override
               public void run() {
+                FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
                 mDao.setFavorite(idDaAgg);
                 Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
               }
@@ -438,84 +520,137 @@ public class RicercaVeloceFragment extends Fragment
 
   // aggiunge il canto premuto ad una lista e in una posizione che ammetta
   // duplicati
-  public void addToListaDup(int idLista, int listPosition) {
+  public void addToListaDup(final int idLista, final int listPosition) {
 
-    SQLiteDatabase db = listaCanti.getReadableDatabase();
+    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
 
-    String sql = "INSERT INTO CUST_LISTS ";
-    sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ", CURRENT_TIMESTAMP)";
+    //        String sql = "INSERT INTO CUST_LISTS ";
+    //        sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ",
+    // CURRENT_TIMESTAMP)";
 
-    try {
-      db.execSQL(sql);
-      Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-    } catch (SQLException e) {
-      Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-    }
-
-    db.close();
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+                  CustomList position = new CustomList();
+                  position.id = idLista;
+                  position.position = listPosition;
+                  position.idCanto = idDaAgg;
+                  position.timestamp = new Date(System.currentTimeMillis());
+                  mDao.insertPosition(position);
+                  Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+                } catch (SQLException e) {
+                  Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
+                }
+              }
+            })
+        .start();
+    //    db.close();
   }
 
   // aggiunge il canto premuto ad una lista e in una posizione che NON ammetta
   // duplicati
-  public void addToListaNoDup(int idLista, int listPosition) {
+  public void addToListaNoDup(final int idLista, final int listPosition) {
 
-    SQLiteDatabase db = listaCanti.getReadableDatabase();
+    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
+    //
+    //    // cerca se la posizione nella lista è già occupata
+    //    String query =
+    //        "SELECT B.titolo"
+    //            + "		FROM CUST_LISTS A"
+    //            + "		   , ELENCO B"
+    //            + "		WHERE A._id = "
+    //            + idLista
+    //            + "         AND A.position = "
+    //            + listPosition
+    //            + "         AND A.id_canto = B._id";
+    //    Cursor lista = db.rawQuery(query, null);
+    //
+    //    int total = lista.getCount();
+    //
+    //    if (total > 0) {
+    //      lista.moveToFirst();
+    //      String titoloPresente = lista.getString(0);
+    //      lista.close();
+    //      db.close();
+    //
+    //      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
+    //        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
+    //      } else {
+    //        idListaDaAgg = idLista;
+    //        posizioneDaAgg = listPosition;
+    //        new SimpleDialogFragment.Builder(
+    //                (AppCompatActivity) getActivity(), RicercaVeloceFragment.this,
+    // "VELOCE_REPLACE_2")
+    //            .title(R.string.dialog_replace_title)
+    //            .content(
+    //                getString(R.string.dialog_present_yet)
+    //                    + " "
+    //                    + titoloPresente
+    //                    + getString(R.string.dialog_wonna_replace))
+    //            .positiveButton(android.R.string.yes)
+    //            .negativeButton(android.R.string.no)
+    //            .show();
+    //      }
+    //      return;
+    //    }
+    //
+    //    lista.close();
 
-    // cerca se la posizione nella lista è già occupata
-    String query =
-        "SELECT B.titolo"
-            + "		FROM CUST_LISTS A"
-            + "		   , ELENCO B"
-            + "		WHERE A._id = "
-            + idLista
-            + "         AND A.position = "
-            + listPosition
-            + "         AND A.id_canto = B._id";
-    Cursor lista = db.rawQuery(query, null);
+    //    String sql =
+    //        "INSERT INTO CUST_LISTS "
+    //            + "VALUES ("
+    //            + idLista
+    //            + ", "
+    //            + listPosition
+    //            + ", "
+    //            + idDaAgg
+    //            + ", CURRENT_TIMESTAMP)";
+    //    db.execSQL(sql);
+    //    db.close();
 
-    int total = lista.getCount();
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+                String titoloPresente = mDao.getTitoloByPosition(idLista, listPosition);
+                if (titoloPresente != null && !titoloPresente.isEmpty()) {
+                  if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
+                    Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
+                  } else {
+                    idListaDaAgg = idLista;
+                    posizioneDaAgg = listPosition;
+                    new SimpleDialogFragment.Builder(
+                            (AppCompatActivity) getActivity(),
+                            RicercaVeloceFragment.this,
+                            "VELOCE_REPLACE_2")
+                        .title(R.string.dialog_replace_title)
+                        .content(
+                            getString(R.string.dialog_present_yet)
+                                + " "
+                                + titoloPresente
+                                + getString(R.string.dialog_wonna_replace))
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
+                        .show();
+                  }
+                  return;
+                }
 
-    if (total > 0) {
-      lista.moveToFirst();
-      String titoloPresente = lista.getString(0);
-      lista.close();
-      db.close();
+                CustomList position = new CustomList();
+                position.id = idLista;
+                position.position = listPosition;
+                position.idCanto = idDaAgg;
+                position.timestamp = new Date(System.currentTimeMillis());
+                mDao.insertPosition(position);
 
-      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-      } else {
-        idListaDaAgg = idLista;
-        posizioneDaAgg = listPosition;
-        new SimpleDialogFragment.Builder(
-                (AppCompatActivity) getActivity(), RicercaVeloceFragment.this, "VELOCE_REPLACE_2")
-            .title(R.string.dialog_replace_title)
-            .content(
-                getString(R.string.dialog_present_yet)
-                    + " "
-                    + titoloPresente
-                    + getString(R.string.dialog_wonna_replace))
-            .positiveButton(android.R.string.yes)
-            .negativeButton(android.R.string.no)
-            .show();
-      }
-      return;
-    }
-
-    lista.close();
-
-    String sql =
-        "INSERT INTO CUST_LISTS "
-            + "VALUES ("
-            + idLista
-            + ", "
-            + listPosition
-            + ", "
-            + idDaAgg
-            + ", CURRENT_TIMESTAMP)";
-    db.execSQL(sql);
-    db.close();
-
-    Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+              }
+            })
+        .start();
   }
 
   private void startSubActivity(Bundle bundle, View view) {
@@ -529,28 +664,52 @@ public class RicercaVeloceFragment extends Fragment
     Log.d(getClass().getName(), "onPositive: " + tag);
     switch (tag) {
       case "VELOCE_REPLACE":
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
-
-        ContentValues values = new ContentValues();
-        values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-        db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
-        db.close();
-        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+        //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+        //        listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+        //
+        //        ContentValues values = new ContentValues();
+        //        values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
+        //        db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+        //        db.close();
+        listePersonalizzate
+            .get(idListaClick)
+            .lista
+            .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+        new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
+                    mDao.updateLista(listePersonalizzate.get(idListaClick));
+                    Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+                  }
+                })
+            .start();
         break;
       case "VELOCE_REPLACE_2":
-        db = listaCanti.getReadableDatabase();
-        String sql =
-            "UPDATE CUST_LISTS "
-                + " SET id_canto = "
-                + idDaAgg
-                + " WHERE _id = "
-                + idListaDaAgg
-                + " AND position = "
-                + posizioneDaAgg;
-        db.execSQL(sql);
-        db.close();
-        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+        //        db = listaCanti.getReadableDatabase();
+        //        String sql =
+        //            "UPDATE CUST_LISTS "
+        //                + " SET id_canto = "
+        //                + idDaAgg
+        //                + " WHERE _id = "
+        //                + idListaDaAgg
+        //                + " AND position = "
+        //                + posizioneDaAgg;
+        //        db.execSQL(sql);
+        //        db.close();
+        //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+        new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    CustomListDao mDao =
+                        RisuscitoDatabase.getInstance(getContext()).customListDao();
+                    mDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg);
+                    Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+                  }
+                })
+            .start();
         break;
     }
   }

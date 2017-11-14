@@ -1,15 +1,14 @@
 package it.cammino.risuscito;
 
-import android.app.Activity;
-import android.content.ContentValues;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -32,6 +31,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,25 +41,33 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
+import it.cammino.risuscito.database.CustomList;
+import it.cammino.risuscito.database.Posizione;
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.viewmodels.CantiParolaViewModel;
 
 public class CantiParolaFragment extends Fragment implements MaterialCab.Callback {
 
     private final String TAG = getClass().getCanonicalName();
 
+    private CantiParolaViewModel mCantiViewModel;
+
     // create boolean for fetching data
     private boolean isViewShown = true;
+
 
     private int posizioneDaCanc;
     private int idDaCanc;
     private String timestampDaCanc;
     private View rootView;
-    private DatabaseCanti listaCanti;
-    private SQLiteDatabase db;
+    //    private DatabaseCanti listaCanti;
+//    private SQLiteDatabase db;
     private boolean mSwhitchMode;
     private List<Pair<PosizioneTitleItem, List<PosizioneItem>>> posizioniList;
     private int longclickedPos, longClickedChild;
@@ -79,13 +87,22 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     @OnClick(R.id.button_pulisci)
     public void pulisciLista() {
 //                Log.i(getClass().toString(), "cantiparola");
-        db = listaCanti.getReadableDatabase();
-        String sql = "DELETE FROM CUST_LISTS" +
-                " WHERE _id =  1 ";
-        db.execSQL(sql);
-        db.close();
-        updateLista();
-        cantoAdapter.notifyDataSetChanged();
+//        db = listaCanti.getReadableDatabase();
+//        String sql = "DELETE FROM CUST_LISTS" +
+//                " WHERE _id =  1 ";
+//        db.execSQL(sql);
+//        db.close();
+//        updateLista();
+//        cantoAdapter.notifyDataSetChanged();
+        new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+                        mDao.deleteListById(1);
+                    }
+                })
+                .start();
     }
 
     @OnClick(R.id.button_condividi)
@@ -106,23 +123,35 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         mMainActivity = (MainActivity) getActivity();
 
         //crea un istanza dell'oggetto DatabaseCanti
-        listaCanti = new DatabaseCanti(getActivity());
+//        listaCanti = new DatabaseCanti(getActivity());
 
         mLUtils = LUtils.getInstance(getActivity());
         mSwhitchMode = false;
 
-        updateLista();
+//        updateLista();
 
         OnClickListener click = new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                     return;
                 mLastClickTime = SystemClock.elapsedRealtime();
-                View parent = (View) v.getParent().getParent();
+                final View parent = (View) v.getParent().getParent();
                 if (parent.findViewById(R.id.addCantoGenerico).getVisibility() == View.VISIBLE) {
-                    if (mSwhitchMode)
-                        scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                    if (mSwhitchMode) {
+                        mSwhitchMode = false;
+                        actionModeOk = true;
+                        mMainActivity.getMaterialCab().finish();
+                        new Thread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                                    }
+                                })
+                                .start();
+//                        scambioConVuoto(parent, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                    }
                     else {
                         if (!mMainActivity.getMaterialCab().isActive()) {
                             Bundle bundle = new Bundle();
@@ -144,7 +173,18 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
                         else
                             openPagina(v);
                     else {
-                        scambioCanto(v, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                        mSwhitchMode = false;
+                        actionModeOk = true;
+                        mMainActivity.getMaterialCab().finish();
+                        new Thread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        scambioCanto(v, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
+                                    }
+                                })
+                                .start();
+//                        scambioCanto(v, Integer.valueOf(((TextView) parent.findViewById(R.id.text_id_posizione)).getText().toString()));
                     }
                 }
             }
@@ -163,11 +203,16 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         };
 
         // Creating new adapter object
+        posizioniList = new ArrayList<>();
         cantoAdapter = new PosizioneRecyclerAdapter(getThemeUtils().primaryColorDark(), posizioniList, click, longClick);
         mRecyclerView.setAdapter(cantoAdapter);
 
         // Setting the layoutManager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mCantiViewModel = ViewModelProviders.of(this).get(CantiParolaViewModel.class);
+        populateDb();
+        subscribeUiFavorites();
 
         if (!isViewShown) {
             if (mMainActivity.getMaterialCab().isActive())
@@ -201,20 +246,20 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.i(getClass().getName(), "requestCode: " + requestCode);
-        if (requestCode == TAG_INSERT_PAROLA && resultCode == Activity.RESULT_OK) {
-            updateLista();
-            cantoAdapter.notifyDataSetChanged();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+////        Log.i(getClass().getName(), "requestCode: " + requestCode);
+//        if (requestCode == TAG_INSERT_PAROLA && resultCode == Activity.RESULT_OK) {
+//            updateLista();
+//            cantoAdapter.notifyDataSetChanged();
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     @Override
     public void onDestroy() {
-        if (listaCanti != null)
-            listaCanti.close();
+//        if (listaCanti != null)
+//            listaCanti.close();
         if (mMainActivity.getMaterialCab().isActive())
             mMainActivity.getMaterialCab().finish();
         super.onDestroy();
@@ -227,27 +272,27 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
         return intent;
     }
 
-    private void updateLista() {
-
-        if (posizioniList == null)
-            posizioniList = new ArrayList<>();
-        else
-            posizioniList.clear();
-
-        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, 0));
-        posizioniList.add(getCantofromPosition(getString(R.string.prima_lettura), 2, 1));
-        posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 3, 2));
-        posizioniList.add(getCantofromPosition(getString(R.string.terza_lettura), 4, 3));
-
-        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (pref.getBoolean(Utility.SHOW_PACE, false)) {
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 6, 4));
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
-        }
-        else
-            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 4));
-
-    }
+//    private void updateLista() {
+//
+//        if (posizioniList == null)
+//            posizioniList = new ArrayList<>();
+//        else
+//            posizioniList.clear();
+//
+//        posizioniList.add(getCantofromPosition(getString(R.string.canto_iniziale), 1, 0));
+//        posizioniList.add(getCantofromPosition(getString(R.string.prima_lettura), 2, 1));
+//        posizioniList.add(getCantofromPosition(getString(R.string.seconda_lettura), 3, 2));
+//        posizioniList.add(getCantofromPosition(getString(R.string.terza_lettura), 4, 3));
+//
+//        SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        if (pref.getBoolean(Utility.SHOW_PACE, false)) {
+//            posizioniList.add(getCantofromPosition(getString(R.string.canto_pace), 6, 4));
+//            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 5));
+//        }
+//        else
+//            posizioniList.add(getCantofromPosition(getString(R.string.canto_fine), 5, 4));
+//
+//    }
 
     private void startSubActivity(Bundle bundle) {
         Intent intent = new Intent(getActivity(), GeneralInsertSearch.class);
@@ -268,133 +313,103 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     }
 
     //recupera il titolo del canto in posizione "position" nella lista
-    private Pair<PosizioneTitleItem, List<PosizioneItem>> getCantofromPosition(String titoloPosizione, int position, int tag) {
+//    private Pair<PosizioneTitleItem, List<PosizioneItem>> getCantofromPosition(String titoloPosizione, int position, int tag) {
+    private Pair<PosizioneTitleItem, List<PosizioneItem>> getCantofromPosition(List<Posizione> posizioni, String titoloPosizione, int position, int tag) {
 
-        db = listaCanti.getReadableDatabase();
+//        db = listaCanti.getReadableDatabase();
+//
+//        String query = "SELECT B.titolo, B.color, B.pagina, B.source, B._id, A.timestamp" +
+//                "  FROM CUST_LISTS A" +
+//                "  	   , ELENCO B" +
+//                "  WHERE A._id = 1" +
+//                "  AND   A.position = " + position +
+//                "  AND   A.id_canto = B._id";
+//        Cursor cursor = db.rawQuery(query, null);
 
-        String query = "SELECT B.titolo, B.color, B.pagina, B.source, B._id, A.timestamp" +
-                "  FROM CUST_LISTS A" +
-                "  	   , ELENCO B" +
-                "  WHERE A._id = 1" +
-                "  AND   A.position = " + position +
-                "  AND   A.id_canto = B._id";
-        Cursor cursor = db.rawQuery(query, null);
-
-        int total = cursor.getCount();
+//        int total = cursor.getCount();
 
         List<PosizioneItem> list = new ArrayList<>();
-        if (total > 0) {
-            cursor.moveToFirst();
+//        if (total > 0) {
+//            cursor.moveToFirst();
+//
+//            list.add(new PosizioneItem(
+//                    cursor.getInt(2)
+//                    , cursor.getString(0)
+//                    , cursor.getString(1)
+//                    , cursor.getInt(4)
+//                    , cursor.getString(3)
+//                    , cursor.getString(5)));
+//
+//            while (cursor.moveToNext()) {
+//                list.add(new PosizioneItem(
+//                        cursor.getInt(2)
+//                        , cursor.getString(0)
+//                        , cursor.getString(1)
+//                        , cursor.getInt(4)
+//                        , cursor.getString(3)
+//                        , cursor.getString(5)));
+//            }
+//        }
 
-            list.add(new PosizioneItem(
-                    cursor.getInt(2)
-                    , cursor.getString(0)
-                    , cursor.getString(1)
-                    , cursor.getInt(4)
-                    , cursor.getString(3)
-                    , cursor.getString(5)));
-
-            while (cursor.moveToNext()) {
+        for (Posizione posizione: posizioni) {
+            if (posizione.position == position) {
                 list.add(new PosizioneItem(
-                        cursor.getInt(2)
-                        , cursor.getString(0)
-                        , cursor.getString(1)
-                        , cursor.getInt(4)
-                        , cursor.getString(3)
-                        , cursor.getString(5)));
+                        posizione.pagina
+                        , posizione.titolo
+                        , posizione.color
+                        , posizione.id
+                        , posizione.source
+                        , String.valueOf(posizione.timestamp.getTime())));
             }
+
         }
 
         //noinspection unchecked
-        Pair<PosizioneTitleItem, List<PosizioneItem>> result = new Pair(new PosizioneTitleItem(titoloPosizione
+        return new Pair(new PosizioneTitleItem(titoloPosizione
                 , 1
                 , position
                 , tag
                 , false), list);
 
-        cursor.close();
-        db.close();
+//        cursor.close();
+//        db.close();
 
-        return result;
+//        return result;
 
     }
 
     private String getTitlesList() {
 
-//        Locale l = getActivity().getResources().getConfiguration().locale;
         Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
         StringBuilder result = new StringBuilder();
-//        String temp;
 
         //titolo
-//        result +=  "-- " + getString(R.string.title_activity_canti_parola).toUpperCase(l) + " --\n";
         result.append("-- ").append(getString(R.string.title_activity_canti_parola).toUpperCase(l)).append(" --\n");
 
-        //canto iniziale
-//        temp = getTitoloToSendFromPosition(0);
-
-//        result += getResources().getString(R.string.canto_iniziale).toUpperCase(l);
-//        result += "\n";
         result.append(getResources().getString(R.string.canto_iniziale).toUpperCase(l));
         result.append("\n");
 
-//        if (temp.equalsIgnoreCase(""))
-//            result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//        else
-//            result += temp;
-
-//        result += "\n";
         result.append(getTitoloToSendFromPosition(0));
         result.append("\n");
 
         //prima lettura
-//        temp = getTitoloToSendFromPosition(1);
-
-//        result += getResources().getString(R.string.prima_lettura).toUpperCase(l);
-//        result += "\n";
         result.append(getResources().getString(R.string.prima_lettura).toUpperCase(l));
         result.append("\n");
 
-//        if (temp.equalsIgnoreCase(""))
-//            result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//        else
-//            result += temp;
-//
-//        result += "\n";
         result.append(getTitoloToSendFromPosition(1));
         result.append("\n");
 
         //seconda lettura
-//        temp = getTitoloToSendFromPosition(2);
-
-//        result += getResources().getString(R.string.seconda_lettura).toUpperCase(l);
-//        result += "\n";
         result.append(getResources().getString(R.string.seconda_lettura).toUpperCase(l));
         result.append("\n");
 
-//        if (temp.equalsIgnoreCase(""))
-//            result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//        else
-//            result += temp;
-//
-//        result += "\n";
         result.append(getTitoloToSendFromPosition(2));
         result.append("\n");
 
         //terza lettura
-//        temp = getTitoloToSendFromPosition(3);
-
-//        result += getResources().getString(R.string.terza_lettura).toUpperCase(l);
-//        result += "\n";
         result.append(getResources().getString(R.string.terza_lettura).toUpperCase(l));
         result.append("\n");
 
-//        if (temp.equalsIgnoreCase(""))
-//            result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//        else
-//            result += temp;
-//
-//        result += "\n";
         result.append(getTitoloToSendFromPosition(3));
         result.append("\n");
 
@@ -403,54 +418,25 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 
         if (pref.getBoolean(Utility.SHOW_PACE, false)) {
             //canto alla pace
-//            temp = getTitoloToSendFromPosition(4);
-
-//            result += getResources().getString(R.string.canto_pace).toUpperCase(l);
-//            result += "\n";
             result.append(getResources().getString(R.string.canto_pace).toUpperCase(l));
             result.append("\n");
 
-
-//            if (temp.equalsIgnoreCase(""))
-//                result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//            else
-//                result += temp;
-//
-//            result += "\n";
             result.append(getTitoloToSendFromPosition(4));
             result.append("\n");
 
             //canto finale
-//            temp = getTitoloToSendFromPosition(5);
-
-//            result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-//            result += "\n";
             result.append(getResources().getString(R.string.canto_fine).toUpperCase(l));
             result.append("\n");
 
-//            if (temp.equalsIgnoreCase(""))
-//                result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//            else
-//                result += temp;
             result.append(getTitoloToSendFromPosition(5));
         }
         else {
             //canto finale
-//            temp = getTitoloToSendFromPosition(4);
-
-//            result += getResources().getString(R.string.canto_fine).toUpperCase(l);
-//            result += "\n";
             result.append(getResources().getString(R.string.canto_fine).toUpperCase(l));
             result.append("\n");
 
-//            if (temp.equalsIgnoreCase(""))
-//                result += ">> " + getString(R.string.to_be_chosen) + " <<";
-//            else
-//                result += temp;
             result.append(getTitoloToSendFromPosition(4));
         }
-//		else
-//			Log.i("CANTO ALLA PACE", "IGNORATO");
 
         return result.toString();
 
@@ -492,38 +478,42 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     }
 
     private void scambioCanto(View v, int position) {
-        db = listaCanti.getReadableDatabase();
+//        db = listaCanti.getReadableDatabase();
         int idNew = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto_card)).getText().toString());
         String timestampNew = ((TextView) v.findViewById(R.id.text_timestamp)).getText().toString();
-//        Log.i(getClass().toString(), "positionNew: " + position);
-//        Log.i(getClass().toString(), "idNew: " + idNew);
-//        Log.i(getClass().toString(), "timestampNew: " + timestampNew);
-//        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
-//        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
-//        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
         if (idNew != idDaCanc || posizioneDaCanc != position) {
 
-            db.delete("CUST_LISTS", "_id = 1 AND position = " + position + " AND id_canto = " + idNew, null);
+//            db.delete("CUST_LISTS", "_id = 1 AND position = " + position + " AND id_canto = " + idNew, null);
 
-            ContentValues values = new ContentValues();
-            values.put("id_canto", idNew);
-            db.update("CUST_LISTS", values, "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+            CustomList positionToDelete = new CustomList();
+            positionToDelete.id = 1;
+            positionToDelete.position = position;
+            positionToDelete.idCanto = idNew;
+            CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+            mDao.deletePosition(positionToDelete);
 
-            values = new ContentValues();
-            values.put("id_canto", idDaCanc);
-            values.put("timestamp", timestampNew);
-            values.put("_id", 1);
-            values.put("position", position);
-            db.insert("CUST_LISTS", null, values);
-            db.close();
+//            ContentValues values = new ContentValues();
+//            values.put("id_canto", idNew);
+//            db.update("CUST_LISTS", values, "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+            mDao.updatePositionNoTimestamp(idNew, 1, posizioneDaCanc, idDaCanc);
 
-            mSwhitchMode = false;
-            actionModeOk = true;
-            mMainActivity.getMaterialCab().finish();
-            updateLista();
-            View parent = (View) v.getParent().getParent();
-            cantoAdapter.notifyItemChanged(longclickedPos);
-            cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
+//            values = new ContentValues();
+//            values.put("id_canto", idDaCanc);
+//            values.put("timestamp", timestampNew);
+//            values.put("_id", 1);
+//            values.put("position", position);
+//            db.insert("CUST_LISTS", null, values);
+//            db.close();
+            CustomList positionToInsert = new CustomList();
+            positionToInsert.id = 1;
+            positionToInsert.position = position;
+            positionToInsert.idCanto = idDaCanc;
+            positionToInsert.timestamp = new Date(Long.parseLong(timestampNew));
+            mDao.insertPosition(positionToInsert);
+//            updateLista();
+//            View parent = (View) v.getParent().getParent();
+//            cantoAdapter.notifyItemChanged(longclickedPos);
+//            cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
             Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -537,23 +527,34 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
 //        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
 //        Log.i(getClass().toString(), "idDaCanc: " + idDaCanc);
 //        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
-        db = listaCanti.getReadableDatabase();
-        db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+//        db = listaCanti.getReadableDatabase();
+//        db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
 
-        ContentValues values = new ContentValues();
-        values.put("id_canto", idDaCanc);
-        values.put("timestamp", timestampDaCanc);
-        values.put("_id", 1);
-        values.put("position", position);
-        db.insert("CUST_LISTS", null, values);
-        db.close();
+        CustomList positionToDelete = new CustomList();
+        positionToDelete.id = 1;
+        positionToDelete.position = posizioneDaCanc;
+        positionToDelete.idCanto = idDaCanc;
+        CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+        mDao.deletePosition(positionToDelete);
 
-        mSwhitchMode = false;
-        actionModeOk = true;
-        mMainActivity.getMaterialCab().finish();
-        updateLista();
-        cantoAdapter.notifyItemChanged(longclickedPos);
-        cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
+//        ContentValues values = new ContentValues();
+//        values.put("id_canto", idDaCanc);
+//        values.put("timestamp", timestampDaCanc);
+//        values.put("_id", 1);
+//        values.put("position", position);
+//        db.insert("CUST_LISTS", null, values);
+//        db.close();
+
+        CustomList positionToInsert = new CustomList();
+        positionToInsert.id = 1;
+        positionToInsert.position = position;
+        positionToInsert.idCanto = idDaCanc;
+        positionToInsert.timestamp = new Date(Long.parseLong(timestampDaCanc));
+        mDao.insertPosition(positionToInsert);
+
+//        updateLista();
+//        cantoAdapter.notifyItemChanged(longclickedPos);
+//        cantoAdapter.notifyItemChanged(Integer.valueOf(((TextView) parent.findViewById(R.id.tag)).getText().toString()));
         Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT)
                 .show();
     }
@@ -583,27 +584,81 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     public boolean onCabItemClicked(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_remove_item:
-                db = listaCanti.getReadableDatabase();
-                db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
-                db.close();
-                updateLista();
-                cantoAdapter.notifyItemChanged(longclickedPos);
+//                db = listaCanti.getReadableDatabase();
+//                db.delete("CUST_LISTS", "_id = 1 AND position = " + posizioneDaCanc + " AND id_canto = " + idDaCanc, null);
+//                db.close();
+//                updateLista();
+//                cantoAdapter.notifyItemChanged(longclickedPos);
+                new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                CustomList positionToDelete = new CustomList();
+                                positionToDelete.id = 1;
+                                positionToDelete.position = posizioneDaCanc;
+                                positionToDelete.idCanto = idDaCanc;
+                                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+                                mDao.deletePosition(positionToDelete);
+                            }
+                        })
+                        .start();
+
+//                CustomList positionToDelete = new CustomList();
+//                positionToDelete.id = 1;
+//                positionToDelete.position = posizioneDaCanc;
+//                positionToDelete.idCanto = idDaCanc;
+//                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+//                mDao.deletePosition(positionToDelete);
+//
+//                actionModeOk = true;
+//                mMainActivity.getMaterialCab().finish();
+//                Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
+//                        .setAction(getString(android.R.string.cancel).toUpperCase(), new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+////                                db = listaCanti.getReadableDatabase();
+////                                ContentValues values = new ContentValues();
+////                                values.put("_id", 1);
+////                                values.put("position", posizioneDaCanc);
+////                                values.put("id_canto", idDaCanc);
+////                                values.put("timestamp", timestampDaCanc);
+////                                db.insert("CUST_LISTS", null, values);
+////                                db.close();
+////                                updateLista();
+////                                cantoAdapter.notifyItemChanged(longclickedPos);
+//                                CustomList positionToInsert = new CustomList();
+//                                positionToInsert.id = 1;
+//                                positionToInsert.position = posizioneDaCanc;
+//                                positionToInsert.idCanto = idDaCanc;
+//                                positionToInsert.timestamp = new Date(Long.parseLong(timestampDaCanc));
+//                                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+//                                mDao.insertPosition(positionToInsert);
+//
+//                            }
+//                        })
+//                        .setActionTextColor(getThemeUtils().accentColor())
+//                        .show();
                 actionModeOk = true;
                 mMainActivity.getMaterialCab().finish();
                 Snackbar.make(getActivity().findViewById(R.id.main_content), R.string.song_removed, Snackbar.LENGTH_LONG)
                         .setAction(getString(android.R.string.cancel).toUpperCase(), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                db = listaCanti.getReadableDatabase();
-                                ContentValues values = new ContentValues();
-                                values.put("_id", 1);
-                                values.put("position", posizioneDaCanc);
-                                values.put("id_canto", idDaCanc);
-                                values.put("timestamp", timestampDaCanc);
-                                db.insert("CUST_LISTS", null, values);
-                                db.close();
-                                updateLista();
-                                cantoAdapter.notifyItemChanged(longclickedPos);
+                                new Thread(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                CustomList positionToInsert = new CustomList();
+                                                positionToInsert.id = 1;
+                                                positionToInsert.position = posizioneDaCanc;
+                                                positionToInsert.idCanto = idDaCanc;
+                                                positionToInsert.timestamp = new Date(Long.parseLong(timestampDaCanc));
+                                                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
+                                                mDao.insertPosition(positionToInsert);
+                                            }
+                                        })
+                                        .start();
+
                             }
                         })
                         .setActionTextColor(getThemeUtils().accentColor())
@@ -635,5 +690,32 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
             }
         }
         return true;
+    }
+
+    private void populateDb() {
+        mCantiViewModel.createDb();
+    }
+
+    private void subscribeUiFavorites() {
+        mCantiViewModel.getCantiParolaResult().observe(this, new Observer<List<Posizione>>() {
+            @Override
+            public void onChanged(@Nullable final List<Posizione> canti) {
+                posizioniList.clear();
+                posizioniList.add(getCantofromPosition(canti, getString(R.string.canto_iniziale), 1, 0));
+                posizioniList.add(getCantofromPosition(canti, getString(R.string.prima_lettura), 2, 1));
+                posizioniList.add(getCantofromPosition(canti, getString(R.string.seconda_lettura), 3, 2));
+                posizioniList.add(getCantofromPosition(canti, getString(R.string.terza_lettura), 4, 3));
+
+                SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (pref.getBoolean(Utility.SHOW_PACE, false)) {
+                    posizioniList.add(getCantofromPosition(canti, getString(R.string.canto_pace), 6, 4));
+                    posizioniList.add(getCantofromPosition(canti, getString(R.string.canto_fine), 5, 5));
+                }
+                else
+                    posizioniList.add(getCantofromPosition(canti, getString(R.string.canto_fine), 5, 4));
+
+                cantoAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }

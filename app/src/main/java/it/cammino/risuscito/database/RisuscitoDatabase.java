@@ -4,6 +4,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.database.Cursor;
@@ -17,13 +18,16 @@ import java.util.List;
 
 import it.cammino.risuscito.DatabaseCanti;
 import it.cammino.risuscito.database.dao.CantoDao;
+import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
+import it.cammino.risuscito.database.dao.ListePersDao;
 
 @Database(
-  entities = {Canto.class},
-  version = 2,
+  entities = {Canto.class, ListaPers.class, CustomList.class},
+  version = 4,
   exportSchema = false
 )
+@TypeConverters({Converters.class})
 public abstract class RisuscitoDatabase extends RoomDatabase {
 
   private static final String TAG = "RisuscitoDatabase";
@@ -35,9 +39,7 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   //    private static final String GRIGIO = "#CAC8BC";
   // For Singleton instantiation
   private static final Object LOCK = new Object();
-  /** The only instance */
-  private static RisuscitoDatabase sInstance;
-  private static final Migration MIGRATION_2_3=
+  private static final Migration MIGRATION_2_3 =
       new Migration(4, 6) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
@@ -45,6 +47,8 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
           database.execSQL("DELETE FROM canto");
         }
       };
+  /** The only instance */
+  private static RisuscitoDatabase sInstance;
 
   /**
    * Gets the singleton instance of RisuscitoDatabase.
@@ -58,7 +62,7 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
       synchronized (LOCK) {
         sInstance =
             Room.databaseBuilder(context.getApplicationContext(), RisuscitoDatabase.class, "ex")
-                    .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration()
                 .build();
         populateAsync(sInstance, context);
       }
@@ -136,6 +140,10 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract CantoDao cantoDao();
 
   public abstract FavoritesDao favoritesDao();
+
+  public abstract ListePersDao listePersDao();
+
+  public abstract CustomListDao customListDao();
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override
