@@ -20,7 +20,7 @@ public interface CustomListDao {
   List<CustomList> getAll();
 
   @Query(
-      "SELECT B.*, A.timestamp, A.position FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id")
+      "SELECT B.*, A.timestamp, A.position FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id ORDER BY A.timestamp ASC")
   LiveData<List<Posizione>> getList(int id);
 
   @Query(

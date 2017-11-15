@@ -19,6 +19,9 @@ public interface CantoDao {
     @Query("SELECT * FROM canto ORDER BY titolo ASC")
     LiveData<List<Canto>> getLiveAllByName();
 
+    @Query("SELECT * FROM canto ORDER BY pagina ASC, titolo ASC")
+    LiveData<List<Canto>> getLiveAllByPage();
+
     @Query("SELECT * FROM canto WHERE id = :id")
     Canto getCantoById(int id);
 

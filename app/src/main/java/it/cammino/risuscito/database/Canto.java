@@ -21,8 +21,6 @@ public class Canto {
 
     public String link;
 
-    public String text;
-
     public int zoom;
 
     public int scrollX;

@@ -17,14 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.DatabaseCanti;
+import it.cammino.risuscito.database.dao.ArgomentiDao;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
 
 @Database(
-  entities = {Canto.class, ListaPers.class, CustomList.class},
-  version = 4,
+  entities = {Canto.class, ListaPers.class, CustomList.class, Argomento.class, NomeArgomento.class},
+  version = 6,
   exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -102,7 +103,7 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
         List<Canto> elenco = new ArrayList<>();
 
         while (!result.isAfterLast()) {
-          Log.d(TAG, "populateInitialData - id:  " + result.getInt(0));
+          Log.d(TAG, "populateInitialData - ELENCO id:  " + result.getInt(0));
           Canto canto = new Canto();
           canto.id = result.getInt(0);
           canto.pagina = result.getInt(1);
@@ -121,10 +122,48 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
           result.moveToNext();
         }
         result.close();
+        mDb.cantoDao().insertCanto(elenco);
+
+        // ARGOMENTI
+        String[] columns2 = {"_id", "id_canto"};
+
+        result = db.query("ARGOMENTI", columns2, null, null, null, null, null);
+        result.moveToFirst();
+
+        List<Argomento> argomenti = new ArrayList<>();
+
+        while (!result.isAfterLast()) {
+          Log.d(TAG, "populateInitialData - ARGOMENTI id:  " + result.getInt(0));
+          Argomento argomento = new Argomento();
+          argomento.idArgomento = result.getInt(0);
+          argomento.idCanto = result.getInt(1);
+          argomenti.add(argomento);
+          result.moveToNext();
+        }
+        result.close();
+        mDb.argomentiDao().insertArgomento(argomenti);
+
+        // ARG_NAMES
+        String[] columns3 = {"_id", "nome"};
+
+        result = db.query("ARG_NAMES", columns3, null, null, null, null, null);
+        result.moveToFirst();
+
+        List<NomeArgomento> nomiArgomenti = new ArrayList<>();
+
+        while (!result.isAfterLast()) {
+          Log.d(TAG, "populateInitialData - ARG_NAMES id:  " + result.getInt(0));
+          NomeArgomento argomento = new NomeArgomento();
+          argomento.idArgomento = result.getInt(0);
+          argomento.nomeArgomento = result.getString(1);
+          nomiArgomenti.add(argomento);
+          result.moveToNext();
+        }
+        result.close();
+        mDb.argomentiDao().insertNomeArgomento(nomiArgomenti);
+
         db.close();
         listaCanti.close();
-
-        mDb.cantoDao().insertCanto(elenco);
         mDb.setTransactionSuccessful();
       } finally {
         mDb.endTransaction();
@@ -144,6 +183,8 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract ListePersDao listePersDao();
 
   public abstract CustomListDao customListDao();
+
+  public abstract ArgomentiDao argomentiDao();
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override

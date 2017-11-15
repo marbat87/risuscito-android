@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -33,7 +32,6 @@ import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,16 +40,15 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
 import it.cammino.risuscito.database.Canto;
-import it.cammino.risuscito.database.CustomList;
 import it.cammino.risuscito.database.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
-import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.ui.HFFragment;
+import it.cammino.risuscito.utils.ListeUtils;
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel;
 
 public class AlphabeticSectionFragment extends HFFragment
@@ -143,7 +140,7 @@ public class AlphabeticSectionFragment extends HFFragment
     mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
     List<SimpleItem> mItems = new ArrayList<>();
-    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(0);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
     mAdapter.add(mItems);
@@ -330,7 +327,7 @@ public class AlphabeticSectionFragment extends HFFragment
     if (getUserVisibleHint()) {
       switch (item.getItemId()) {
         case R.id.add_to_favorites:
-          addToFavorites();
+          ListeUtils.addToFavorites(getContext(), rootView, idDaAgg);
           return true;
         case R.id.add_to_p_iniziale:
           addToListaNoDup(1, 1);
@@ -366,10 +363,12 @@ public class AlphabeticSectionFragment extends HFFragment
           addToListaNoDup(2, 7);
           return true;
         case R.id.add_to_e_pane:
-          addToListaDup(2, 3);
+          //          addToListaDup(2, 3);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 3, idDaAgg);
           return true;
         case R.id.add_to_e_vino:
-          addToListaDup(2, 4);
+          //          addToListaDup(2, 4);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 4, idDaAgg);
           return true;
         case R.id.add_to_e_fine:
           addToListaNoDup(2, 5);
@@ -487,168 +486,98 @@ public class AlphabeticSectionFragment extends HFFragment
   }
 
   // aggiunge il canto premuto ai preferiti
-  public void addToFavorites() {
-
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id =  " + idDaAgg;
-    //    db.execSQL(sql);
-    //    db.close();
-
-    //    Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                FavoritesDao mDao = RisuscitoDatabase.getInstance(getContext()).favoritesDao();
-                mDao.setFavorite(idDaAgg);
-                Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
-              }
-            })
-        .start();
-  }
+  //  public void addToFavorites() {
+  //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+  //
+  //        String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id =  " + idDaAgg;
+  //        db.execSQL(sql);
+  //        db.close();
+  //
+  //        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
+  //  }
 
   // aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
-  public void addToListaDup(final int idLista, final int listPosition) {
-
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    String sql = "INSERT INTO CUST_LISTS ";
-    //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ",
-    // CURRENT_TIMESTAMP)";
-    //
-    //    try {
-    //      db.execSQL(sql);
-    //      Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-    //    } catch (SQLException e) {
-    //      Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-    //    }
-    //
-    //    db.close();
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
-                  CustomList position = new CustomList();
-                  position.id = idLista;
-                  position.position = listPosition;
-                  position.idCanto = idDaAgg;
-                  position.timestamp = new Date(System.currentTimeMillis());
-                  mDao.insertPosition(position);
-                  Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-                } catch (SQLException e) {
-                  Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-                }
-              }
-            })
-        .start();
-  }
+  //  public void addToListaDup(final int idLista, final int listPosition) {
+  //
+  //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+  //
+  //        String sql = "INSERT INTO CUST_LISTS ";
+  //        sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ",
+  //     CURRENT_TIMESTAMP)";
+  //
+  //        try {
+  //          db.execSQL(sql);
+  //          Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+  //        } catch (SQLException e) {
+  //          Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
+  //        }
+  //
+  //        db.close();
+  //  }
 
   // aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
-  public void addToListaNoDup(final int idLista, final int listPosition) {
-
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    // cerca se la posizione nella lista è già occupata
-    //    String query =
-    //            "SELECT B.titolo"
-    //                    + "		FROM CUST_LISTS A"
-    //                    + "		   , ELENCO B"
-    //                    + "		WHERE A._id = "
-    //                    + idLista
-    //                    + "         AND A.position = "
-    //                    + listPosition
-    //                    + "         AND A.id_canto = B._id";
-    //    Cursor lista = db.rawQuery(query, null);
-    //
-    //    int total = lista.getCount();
-    //
-    //    if (total > 0) {
-    //      lista.moveToFirst();
-    //      String titoloPresente = lista.getString(0);
-    //      lista.close();
-    //      db.close();
-    //
-    //      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-    //        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-    //      } else {
-    //        idListaDaAgg = idLista;
-    //        posizioneDaAgg = listPosition;
-    //        new SimpleDialogFragment.Builder(
-    //                (AppCompatActivity) getActivity(),
-    //                AlphabeticSectionFragment.this,
-    //                "ALPHA_REPLACE_2")
-    //                .title(R.string.dialog_replace_title)
-    //                .content(
-    //                        getString(R.string.dialog_present_yet)
-    //                                + " "
-    //                                + titoloPresente
-    //                                + getString(R.string.dialog_wonna_replace))
-    //                .positiveButton(android.R.string.yes)
-    //                .negativeButton(android.R.string.no)
-    //                .show();
-    //      }
-    //      return;
-    //    }
-    //
-    //    lista.close();
-    //
-    //    String sql =
-    //            "INSERT INTO CUST_LISTS "
-    //                    + "VALUES ("
-    //                    + idLista
-    //                    + ", "
-    //                    + listPosition
-    //                    + ", "
-    //                    + idDaAgg
-    //                    + ", CURRENT_TIMESTAMP)";
-    //    db.execSQL(sql);
-    //    db.close();
-    //
-    //    Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                CustomListDao mDao = RisuscitoDatabase.getInstance(getContext()).customListDao();
-                String titoloPresente = mDao.getTitoloByPosition(idLista, listPosition);
-                if (titoloPresente != null && !titoloPresente.isEmpty()) {
-                  if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-                    Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-                  } else {
-                    idListaDaAgg = idLista;
-                    posizioneDaAgg = listPosition;
-                    new SimpleDialogFragment.Builder(
-                            (AppCompatActivity) getActivity(),
-                            AlphabeticSectionFragment.this,
-                            "ALPHA_REPLACE_2")
-                        .title(R.string.dialog_replace_title)
-                        .content(
-                            getString(R.string.dialog_present_yet)
-                                + " "
-                                + titoloPresente
-                                + getString(R.string.dialog_wonna_replace))
-                        .positiveButton(android.R.string.yes)
-                        .negativeButton(android.R.string.no)
-                        .show();
-                  }
-                  return;
-                }
-
-                CustomList position = new CustomList();
-                position.id = idLista;
-                position.position = listPosition;
-                position.idCanto = idDaAgg;
-                position.timestamp = new Date(System.currentTimeMillis());
-                mDao.insertPosition(position);
-
-                Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-              }
-            })
-        .start();
-  }
+  //  public void addToListaNoDup(final int idLista, final int listPosition) {
+  //
+  //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+  //
+  //        // cerca se la posizione nella lista è già occupata
+  //        String query =
+  //                "SELECT B.titolo"
+  //                        + "		FROM CUST_LISTS A"
+  //                        + "		   , ELENCO B"
+  //                        + "		WHERE A._id = "
+  //                        + idLista
+  //                        + "         AND A.position = "
+  //                        + listPosition
+  //                        + "         AND A.id_canto = B._id";
+  //        Cursor lista = db.rawQuery(query, null);
+  //
+  //        int total = lista.getCount();
+  //
+  //        if (total > 0) {
+  //          lista.moveToFirst();
+  //          String titoloPresente = lista.getString(0);
+  //          lista.close();
+  //          db.close();
+  //
+  //          if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
+  //            Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
+  //          } else {
+  //            idListaDaAgg = idLista;
+  //            posizioneDaAgg = listPosition;
+  //            new SimpleDialogFragment.Builder(
+  //                    (AppCompatActivity) getActivity(),
+  //                    AlphabeticSectionFragment.this,
+  //                    "ALPHA_REPLACE_2")
+  //                    .title(R.string.dialog_replace_title)
+  //                    .content(
+  //                            getString(R.string.dialog_present_yet)
+  //                                    + " "
+  //                                    + titoloPresente
+  //                                    + getString(R.string.dialog_wonna_replace))
+  //                    .positiveButton(android.R.string.yes)
+  //                    .negativeButton(android.R.string.no)
+  //                    .show();
+  //          }
+  //          return;
+  //        }
+  //
+  //        lista.close();
+  //
+  //        String sql =
+  //                "INSERT INTO CUST_LISTS "
+  //                        + "VALUES ("
+  //                        + idLista
+  //                        + ", "
+  //                        + listPosition
+  //                        + ", "
+  //                        + idDaAgg
+  //                        + ", CURRENT_TIMESTAMP)";
+  //        db.execSQL(sql);
+  //        db.close();
+  //
+  //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
+  //  }
 
   @Override
   public void onPositive(@NonNull String tag) {
@@ -710,6 +639,36 @@ public class AlphabeticSectionFragment extends HFFragment
   @Override
   public void onNeutral(@NonNull String tag) {}
 
+  private void addToListaNoDup(final int idLista, final int listPosition) {
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                String titoloPresente =
+                    ListeUtils.addToListaNoDup(
+                        getActivity(), rootView, idLista, listPosition, titoloDaAgg, idDaAgg);
+                if (!titoloPresente.isEmpty()) {
+                  idListaDaAgg = idLista;
+                  posizioneDaAgg = listPosition;
+                  new SimpleDialogFragment.Builder(
+                          (AppCompatActivity) getActivity(),
+                          AlphabeticSectionFragment.this,
+                          "NUMERIC_REPLACE_2")
+                      .title(R.string.dialog_replace_title)
+                      .content(
+                          getString(R.string.dialog_present_yet)
+                              + " "
+                              + titoloPresente
+                              + getString(R.string.dialog_wonna_replace))
+                      .positiveButton(android.R.string.yes)
+                      .negativeButton(android.R.string.no)
+                      .show();
+                }
+              }
+            })
+        .start();
+  }
+
   private void populateDb() {
     mCantiViewModel.createDb();
   }
@@ -722,6 +681,7 @@ public class AlphabeticSectionFragment extends HFFragment
             new Observer<List<Canto>>() {
               @Override
               public void onChanged(@Nullable final List<Canto> canti) {
+                Log.d(TAG, "onChanged: ");
                 List<SimpleItem> titoli = new ArrayList<>();
                 for (Canto canto : canti) {
                   SimpleItem sampleItem = new SimpleItem();
