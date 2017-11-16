@@ -53,7 +53,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import it.cammino.risuscito.database.ListaPers;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;

@@ -1,4 +1,4 @@
-package it.cammino.risuscito.database;
+package it.cammino.risuscito.database.entities;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;

@@ -6,8 +6,7 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.Canto;
-import it.cammino.risuscito.database.Posizione;
+import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 
 

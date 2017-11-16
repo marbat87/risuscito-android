@@ -8,7 +8,7 @@ import android.view.View;
 import java.sql.Date;
 
 import it.cammino.risuscito.R;
-import it.cammino.risuscito.database.CustomList;
+import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;

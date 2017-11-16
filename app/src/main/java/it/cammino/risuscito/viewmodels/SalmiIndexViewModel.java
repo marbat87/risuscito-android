@@ -6,22 +6,22 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.Canto;
-import it.cammino.risuscito.database.CantoArgomento;
 import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.SalmoCanto;
+import it.cammino.risuscito.database.entities.Canto;
 
 
-public class ArgumentsIndexViewModel extends AndroidViewModel {
+public class SalmiIndexViewModel extends AndroidViewModel {
 
-    private LiveData<List<CantoArgomento>> mIndexResult;
+    private LiveData<List<SalmoCanto>> mIndexResult;
 
     private RisuscitoDatabase mDb;
 
-    public ArgumentsIndexViewModel(Application application) {
+    public SalmiIndexViewModel(Application application) {
         super(application);
     }
 
-    public LiveData<List<CantoArgomento>> getIndexResult() {
+    public LiveData<List<SalmoCanto>> getIndexResult() {
         return mIndexResult;
     }
 
@@ -32,6 +32,6 @@ public class ArgumentsIndexViewModel extends AndroidViewModel {
     }
 
     private void subscribeToDbChanges() {
-        mIndexResult = mDb.argomentiDao().getLiveAll();
+        mIndexResult = mDb.salmiDao().getLiveAll();
     }
 }

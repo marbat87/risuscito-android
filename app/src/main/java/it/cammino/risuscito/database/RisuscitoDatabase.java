@@ -22,10 +22,24 @@ import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.dao.SalmiDao;
+import it.cammino.risuscito.database.entities.Argomento;
+import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.CustomList;
+import it.cammino.risuscito.database.entities.ListaPers;
+import it.cammino.risuscito.database.entities.NomeArgomento;
+import it.cammino.risuscito.database.entities.Salmo;
 
 @Database(
-  entities = {Canto.class, ListaPers.class, CustomList.class, Argomento.class, NomeArgomento.class},
-  version = 6,
+  entities = {
+    Canto.class,
+    ListaPers.class,
+    CustomList.class,
+    Argomento.class,
+    NomeArgomento.class,
+    Salmo.class
+  },
+  version = 7,
   exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -162,6 +176,26 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
         result.close();
         mDb.argomentiDao().insertNomeArgomento(nomiArgomenti);
 
+        // SALMI_MUSICA
+        String[] columns4 = {"_id", "num_salmo", "titolo_salmo"};
+
+        result = db.query("SALMI_MUSICA", columns4, null, null, null, null, null);
+        result.moveToFirst();
+
+        List<Salmo> salmi = new ArrayList<>();
+
+        while (!result.isAfterLast()) {
+          Log.d(TAG, "populateInitialData - SALMI_MUSICA id:  " + result.getInt(0));
+          Salmo salmo = new Salmo();
+          salmo.id = result.getInt(0);
+          salmo.numSalmo = result.getString(1);
+          salmo.titoloSalmo = result.getString(2);
+          salmi.add(salmo);
+          result.moveToNext();
+        }
+        result.close();
+        mDb.salmiDao().insertSalmo(salmi);
+
         db.close();
         listaCanti.close();
         mDb.setTransactionSuccessful();
@@ -185,6 +219,8 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract CustomListDao customListDao();
 
   public abstract ArgomentiDao argomentiDao();
+
+  public abstract SalmiDao salmiDao();
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override

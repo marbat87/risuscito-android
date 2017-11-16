@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
-import it.cammino.risuscito.database.CustomList;
+import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.Posizione;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CustomListDao;

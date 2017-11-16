@@ -36,14 +36,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import it.cammino.risuscito.database.Canto;
 import it.cammino.risuscito.database.CantoArgomento;
-import it.cammino.risuscito.database.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.ArgomentiDao;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleSubExpandableItem;
 import it.cammino.risuscito.items.SimpleSubItem;
@@ -209,9 +209,6 @@ public class ArgumentsSectionFragment extends HFFragment
             int totCanti = 0;
 
             for (int i = 0; i < canti.size(); i++) {
-              Log.d(
-                  "ArgumentSetcionFragment",
-                  "onChanged: " + canti.get(i).idArgomento + " - " + canti.get(i).titolo);
               SimpleSubItem simpleItem =
                   new SimpleSubItem()
                       .withTitle(canti.get(i).titolo)

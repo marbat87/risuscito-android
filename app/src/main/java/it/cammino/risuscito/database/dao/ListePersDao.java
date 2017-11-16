@@ -9,8 +9,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import it.cammino.risuscito.ListaPersonalizzata;
-import it.cammino.risuscito.database.ListaPers;
+import it.cammino.risuscito.database.entities.ListaPers;
 
 @Dao
 public interface ListePersDao {

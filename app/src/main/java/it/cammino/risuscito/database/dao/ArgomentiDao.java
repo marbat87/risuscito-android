@@ -8,10 +8,9 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.Argomento;
-import it.cammino.risuscito.database.Canto;
+import it.cammino.risuscito.database.entities.Argomento;
 import it.cammino.risuscito.database.CantoArgomento;
-import it.cammino.risuscito.database.NomeArgomento;
+import it.cammino.risuscito.database.entities.NomeArgomento;
 
 @Dao
 public interface ArgomentiDao {

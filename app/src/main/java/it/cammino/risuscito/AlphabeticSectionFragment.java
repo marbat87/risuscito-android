@@ -39,12 +39,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
-import it.cammino.risuscito.database.Canto;
-import it.cammino.risuscito.database.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.ui.HFFragment;
@@ -140,7 +140,7 @@ public class AlphabeticSectionFragment extends HFFragment
     mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
     List<SimpleItem> mItems = new ArrayList<>();
-//    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    //    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(0);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
     mAdapter.add(mItems);
@@ -681,22 +681,23 @@ public class AlphabeticSectionFragment extends HFFragment
             new Observer<List<Canto>>() {
               @Override
               public void onChanged(@Nullable final List<Canto> canti) {
-                Log.d(TAG, "onChanged: ");
-                List<SimpleItem> titoli = new ArrayList<>();
-                for (Canto canto : canti) {
-                  SimpleItem sampleItem = new SimpleItem();
-                  sampleItem
-                      .withTitle(canto.titolo)
-                      .withPage(String.valueOf(canto.pagina))
-                      .withSource(canto.source)
-                      .withColor(canto.color)
-                      .withId(canto.id)
-                      .withContextMenuListener(AlphabeticSectionFragment.this);
-                  titoli.add(sampleItem);
+                if (canti != null) {
+                  List<SimpleItem> titoli = new ArrayList<>();
+                  for (Canto canto : canti) {
+                    SimpleItem sampleItem = new SimpleItem();
+                    sampleItem
+                        .withTitle(canto.titolo)
+                        .withPage(String.valueOf(canto.pagina))
+                        .withSource(canto.source)
+                        .withColor(canto.color)
+                        .withId(canto.id)
+                        .withContextMenuListener(AlphabeticSectionFragment.this);
+                    titoli.add(sampleItem);
+                  }
+                  mAdapter.clear();
+                  mAdapter.add(titoli);
+                  mAdapter.notifyAdapterDataSetChanged();
                 }
-                mAdapter.clear();
-                mAdapter.add(titoli);
-                mAdapter.notifyAdapterDataSetChanged();
               }
             });
   }

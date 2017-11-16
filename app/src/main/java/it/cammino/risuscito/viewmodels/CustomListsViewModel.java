@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.ListaPers;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 
 

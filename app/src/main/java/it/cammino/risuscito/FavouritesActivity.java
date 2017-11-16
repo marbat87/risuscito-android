@@ -46,7 +46,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import it.cammino.risuscito.database.Canto;
+import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;

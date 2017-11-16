@@ -13,7 +13,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,9 +47,9 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import it.cammino.risuscito.database.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.dialogs.InputTextDialogFragment;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.BottomSheetFabListe;
@@ -74,6 +73,7 @@ public class CustomLists extends Fragment
   private String[] titoliListe;
   private int[] idListe;
   private int indexToShow;
+  private boolean movePage;
   //    protected DatabaseCanti listaCanti;
   private int listaDaCanc, idDaCanc, indDaModif;
   private ListaPersonalizzata celebrazioneDaCanc;
@@ -207,9 +207,15 @@ public class CustomLists extends Fragment
     mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
     mViewPager.setAdapter(mSectionsPagerAdapter);
 
-    if (savedInstanceState != null) indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
-    else indDaModif = 0;
-    indexToShow = indDaModif;
+    if (savedInstanceState != null) {
+      indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
+      movePage = true;
+      indexToShow = savedInstanceState.getInt("indexToShow", 0);
+    } else {
+      indDaModif = 0;
+      movePage = false;
+      indexToShow = indDaModif;
+    }
 
     mMainActivity.enableFab(true);
     if (!mMainActivity.isOnTablet()) mMainActivity.enableBottombar(false);
@@ -306,6 +312,7 @@ public class CustomLists extends Fragment
     outState.putInt("idDaCanc", idDaCanc);
     outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
     outState.putInt("listaDaCanc", listaDaCanc);
+    outState.putInt("indexToShow", mViewPager.getCurrentItem());
   }
 
   @Override
@@ -323,6 +330,7 @@ public class CustomLists extends Fragment
     if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA)
         && resultCode == Activity.RESULT_OK) {
       indexToShow = indDaModif;
+      movePage = true;
     }
     //              updateLista();
     //              mSectionsPagerAdapter.notifyDataSetChanged();
@@ -481,6 +489,7 @@ public class CustomLists extends Fragment
                     listToDelete.id = idDaCanc;
                     mDao.deleteList(listToDelete);
                     indexToShow = 0;
+                    movePage = true;
                     Snackbar.make(
                             getActivity().findViewById(R.id.main_content),
                             getString(R.string.list_removed) + titoloDaCanc + "'!",
@@ -491,6 +500,7 @@ public class CustomLists extends Fragment
                               @Override
                               public void onClick(View view) {
                                 indexToShow = listaDaCanc + 2;
+                                movePage = true;
                                 new Thread(
                                         new Runnable() {
                                           @Override
@@ -610,16 +620,19 @@ public class CustomLists extends Fragment
                 }
                 mSectionsPagerAdapter.notifyDataSetChanged();
                 tabs.setupWithViewPager(mViewPager);
-                Handler myHandler = new Handler();
-                final Runnable mMyRunnable2 =
-                    new Runnable() {
-                      @Override
-                      public void run() {
-                        tabs.getTabAt(indexToShow).select();
-                        indexToShow = 0;
-                      }
-                    };
-                myHandler.postDelayed(mMyRunnable2, 200);
+                if (movePage) {
+                  Handler myHandler = new Handler();
+                  final Runnable mMyRunnable2 =
+                      new Runnable() {
+                        @Override
+                        public void run() {
+                          tabs.getTabAt(indexToShow).select();
+                          indexToShow = 0;
+                          movePage = false;
+                        }
+                      };
+                  myHandler.postDelayed(mMyRunnable2, 200);
+                }
               }
             });
   }

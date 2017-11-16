@@ -8,7 +8,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.Canto;
+import it.cammino.risuscito.database.entities.Canto;
 
 @Dao
 public interface CantoDao {

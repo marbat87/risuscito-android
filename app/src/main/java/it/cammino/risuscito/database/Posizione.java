@@ -1,6 +1,8 @@
 package it.cammino.risuscito.database;
 
-public class Posizione extends Canto{
+import it.cammino.risuscito.database.entities.Canto;
+
+public class Posizione extends Canto {
 
     public java.sql.Date timestamp;
 

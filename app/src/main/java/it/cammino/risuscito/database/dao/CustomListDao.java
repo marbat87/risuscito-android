@@ -10,7 +10,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.CustomList;
+import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.Posizione;
 
 @Dao
