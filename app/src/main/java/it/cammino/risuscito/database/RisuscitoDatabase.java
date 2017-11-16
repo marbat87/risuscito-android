@@ -21,13 +21,16 @@ import it.cammino.risuscito.database.dao.ArgomentiDao;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
+import it.cammino.risuscito.database.dao.IndiceLiturgicoDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.database.dao.SalmiDao;
 import it.cammino.risuscito.database.entities.Argomento;
 import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.database.entities.CustomList;
+import it.cammino.risuscito.database.entities.IndiceLiturgico;
 import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.database.entities.NomeArgomento;
+import it.cammino.risuscito.database.entities.NomeLiturgico;
 import it.cammino.risuscito.database.entities.Salmo;
 
 @Database(
@@ -37,9 +40,11 @@ import it.cammino.risuscito.database.entities.Salmo;
     CustomList.class,
     Argomento.class,
     NomeArgomento.class,
-    Salmo.class
+    Salmo.class,
+    IndiceLiturgico.class,
+    NomeLiturgico.class
   },
-  version = 7,
+  version = 8,
   exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -196,6 +201,44 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
         result.close();
         mDb.salmiDao().insertSalmo(salmi);
 
+        // INDICE_LIT
+        String[] columns5 = {"_id", "id_canto"};
+
+        result = db.query("INDICE_LIT", columns5, null, null, null, null, null);
+        result.moveToFirst();
+
+        List<IndiceLiturgico> indiceLit = new ArrayList<>();
+
+        while (!result.isAfterLast()) {
+          Log.d(TAG, "populateInitialData - INDICE_LIT id:  " + result.getInt(0));
+          IndiceLiturgico indice = new IndiceLiturgico();
+          indice.idIndice = result.getInt(0);
+          indice.idCanto = result.getInt(1);
+          indiceLit.add(indice);
+          result.moveToNext();
+        }
+        result.close();
+        mDb.indiceLiturgicoDao().insertIndice(indiceLit);
+
+        // INDICE_LIT_NAMES
+        String[] columns6 = {"_id", "nome"};
+
+        result = db.query("INDICE_LIT_NAMES", columns6, null, null, null, null, null);
+        result.moveToFirst();
+
+        List<NomeLiturgico> nomiLiturgici = new ArrayList<>();
+
+        while (!result.isAfterLast()) {
+          Log.d(TAG, "populateInitialData - INDICE_LIT_NAMES id:  " + result.getInt(0));
+          NomeLiturgico nomeIndice = new NomeLiturgico();
+          nomeIndice.idIndice = result.getInt(0);
+          nomeIndice.nome = result.getString(1);
+          nomiLiturgici.add(nomeIndice);
+          result.moveToNext();
+        }
+        result.close();
+        mDb.indiceLiturgicoDao().insertNomeIndice(nomiLiturgici);
+
         db.close();
         listaCanti.close();
         mDb.setTransactionSuccessful();
@@ -221,6 +264,8 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract ArgomentiDao argomentiDao();
 
   public abstract SalmiDao salmiDao();
+
+  public abstract IndiceLiturgicoDao indiceLiturgicoDao();
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override

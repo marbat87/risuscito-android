@@ -12,6 +12,7 @@ import it.cammino.risuscito.database.entities.Argomento;
 import it.cammino.risuscito.database.CantoArgomento;
 import it.cammino.risuscito.database.entities.NomeArgomento;
 
+@SuppressWarnings("unused")
 @Dao
 public interface ArgomentiDao {
 
@@ -34,10 +35,4 @@ public interface ArgomentiDao {
 
   @Insert
   void insertNomeArgomento(List<NomeArgomento> nomeArgomentoList);
-
-  @Update
-  void updateArgomento(Argomento argomento);
-
-  @Update
-  int updateNomeArgomento(NomeArgomento nomeArgomento);
 }
