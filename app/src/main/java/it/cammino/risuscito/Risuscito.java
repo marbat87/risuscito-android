@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.common.SignInButton;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.List;
@@ -193,14 +194,15 @@ public class Risuscito extends Fragment
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    IconicsMenuInflaterUtil.inflate(getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
     super.onCreateOptionsMenu(menu, inflater);
-    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-    menu.findItem(R.id.action_help)
-        .setIcon(
-            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                .sizeDp(24)
-                .paddingDp(2)
-                .color(Color.WHITE));
+//    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+//    menu.findItem(R.id.action_help)
+//        .setIcon(
+//            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .color(Color.WHITE));
   }
 
   @Override

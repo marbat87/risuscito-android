@@ -59,6 +59,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.CronologiaDao;
+import it.cammino.risuscito.database.entities.Cronologia;
+
 public class LUtils {
 
     final String TAG = getClass().getCanonicalName();
@@ -85,7 +89,7 @@ public class LUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
-    public void startActivityWithTransition(Intent intent, final View clickedView,
+    public void startActivityWithTransition(final Intent intent, final View clickedView,
                                             final String transitionName) {
 //        ActivityOptions options = null;
 //        if (hasL() && clickedView != null && !TextUtils.isEmpty(transitionName)) {
@@ -98,30 +102,41 @@ public class LUtils {
 //        }
 
         //aggiorno la cronologia
-        DatabaseCanti listaCanti = new DatabaseCanti(mActivity);
-        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//        DatabaseCanti listaCanti = new DatabaseCanti(mActivity);
+//        SQLiteDatabase db = listaCanti.getReadableDatabase();
+//
+//        String select = "SELECT COUNT(*) FROM CRONOLOGIA" +
+//                "        WHERE id_canto = " + intent.getExtras().getInt("idCanto");
+//        Cursor lista = db.rawQuery(select, null);
+//        lista.moveToFirst();
+//
+//        switch (lista.getInt(0)) {
+//            case 1:
+//                String update = "UPDATE CRONOLOGIA" +
+//                        " SET ultima_visita = CURRENT_TIMESTAMP" +
+//                        " WHERE id_canto = " + intent.getExtras().getInt("idCanto");
+//                db.execSQL(update);
+//                break;
+//            case 0:
+//                ContentValues values = new ContentValues();
+//                values.put("id_canto", intent.getExtras().getInt("idCanto"));
+//                db.insert("CRONOLOGIA", null, values);
+//                break;
+//        }
+//
+//        lista.close();
+//        db.close();
 
-        String select = "SELECT COUNT(*) FROM CRONOLOGIA" +
-                "        WHERE id_canto = " + intent.getExtras().getInt("idCanto");
-        Cursor lista = db.rawQuery(select, null);
-        lista.moveToFirst();
-
-        switch (lista.getInt(0)) {
-            case 1:
-                String update = "UPDATE CRONOLOGIA" +
-                        " SET ultima_visita = CURRENT_TIMESTAMP" +
-                        " WHERE id_canto = " + intent.getExtras().getInt("idCanto");
-                db.execSQL(update);
-                break;
-            case 0:
-                ContentValues values = new ContentValues();
-                values.put("id_canto", intent.getExtras().getInt("idCanto"));
-                db.insert("CRONOLOGIA", null, values);
-                break;
-        }
-
-        lista.close();
-        db.close();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CronologiaDao mDao =
+                        RisuscitoDatabase.getInstance(mActivity).cronologiaDao();
+                Cronologia cronologia = new Cronologia();
+                cronologia.idCanto =  intent.getExtras().getInt("idCanto");
+                mDao.insertCronologia(cronologia);
+            }
+        }).start();
 
     }
 

@@ -699,7 +699,7 @@ public class CantiParolaFragment extends Fragment implements MaterialCab.Callbac
     private void subscribeUiFavorites() {
         mCantiViewModel.getCantiParolaResult().observe(this, new Observer<List<Posizione>>() {
             @Override
-            public void onChanged(@Nullable final List<Posizione> canti) {
+            public void onChanged(@Nullable List<Posizione> canti) {
                 posizioniList.clear();
                 posizioniList.add(getCantofromPosition(canti, getString(R.string.canto_iniziale), 1, 0));
                 posizioniList.add(getCantofromPosition(canti, getString(R.string.prima_lettura), 2, 1));

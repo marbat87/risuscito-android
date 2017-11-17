@@ -40,6 +40,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -283,14 +284,15 @@ public class CustomLists extends Fragment
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    IconicsMenuInflaterUtil.inflate(getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
     super.onCreateOptionsMenu(menu, inflater);
-    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-    menu.findItem(R.id.action_help)
-        .setIcon(
-            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                .sizeDp(24)
-                .paddingDp(2)
-                .color(Color.WHITE));
+//    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+//    menu.findItem(R.id.action_help)
+//        .setIcon(
+//            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .color(Color.WHITE));
   }
 
   @Override
@@ -610,7 +612,7 @@ public class CustomLists extends Fragment
             this,
             new Observer<List<ListaPers>>() {
               @Override
-              public void onChanged(@Nullable final List<ListaPers> list) {
+              public void onChanged(@Nullable List<ListaPers> list) {
                 titoliListe = new String[list.size()];
                 idListe = new int[list.size()];
 

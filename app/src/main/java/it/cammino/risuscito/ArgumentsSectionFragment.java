@@ -115,7 +115,7 @@ public class ArgumentsSectionFragment extends HFFragment
     //    int total = arguments.getCount();
     //    arguments.moveToFirst();
     //
-    List<IItem> mItems = new ArrayList<>();
+    //    List<IItem> mItems = new ArrayList<>();
     //
     //        for (int i = 0; i < total; i++) {
     //            String argId = String.valueOf(arguments.getInt(0));
@@ -189,7 +189,7 @@ public class ArgumentsSectionFragment extends HFFragment
 
     // adapter
     mAdapter = new FastItemAdapter<>();
-    mAdapter.add(mItems);
+    //    mAdapter.add(mItems);
     ExpandableExtension<IItem> itemExpandableExtension = new ExpandableExtension<>();
     itemExpandableExtension.withOnlyOneExpandedItem(true);
     mAdapter.addExtension(itemExpandableExtension);
@@ -198,76 +198,79 @@ public class ArgumentsSectionFragment extends HFFragment
     mRecyclerView.setHasFixedSize(true); // Size of RV will not change
     mRecyclerView.setItemAnimator(new SlideDownAlphaAnimator());
 
-    new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            ArgomentiDao mDao = RisuscitoDatabase.getInstance(getContext()).argomentiDao();
-            List<CantoArgomento> canti = mDao.getAll();
-            List<IItem> titoli = new ArrayList<>();
-            List<SimpleSubItem> subItems = new LinkedList<>();
-            int totCanti = 0;
-
-            for (int i = 0; i < canti.size(); i++) {
-              SimpleSubItem simpleItem =
-                  new SimpleSubItem()
-                      .withTitle(canti.get(i).titolo)
-                      .withPage(String.valueOf(canti.get(i).pagina))
-                      .withSource(canti.get(i).source)
-                      .withColor(canti.get(i).color)
-                      .withId(canti.get(i).id);
-              // noinspection unchecked
-              simpleItem
-                  .withContextMenuListener(ArgumentsSectionFragment.this)
-                  .withOnItemClickListener(mOnClickListener);
-              simpleItem.withIdentifier(i * 1000);
-              subItems.add(simpleItem);
-              totCanti++;
-
-              if (i == (canti.size() - 1)
-                  || canti.get(i).idArgomento != canti.get(i + 1).idArgomento) {
-                // serve a non mettere il divisore sull'ultimo elemento della lista
-                simpleItem.withHasDivider(false);
-                SimpleSubExpandableItem expandableItem = new SimpleSubExpandableItem();
-                expandableItem
-                    .withTitle(canti.get(i).nomeArgomento + " (" + totCanti + ")")
-                    .withOnClickListener(
-                        new OnClickListener<SimpleSubExpandableItem>() {
-                          @Override
-                          public boolean onClick(
-                              View view,
-                              IAdapter<SimpleSubExpandableItem> iAdapter,
-                              SimpleSubExpandableItem item,
-                              int i) {
-                            if (item.isExpanded()) {
-                              Log.d(TAG, "onClick: " + mRecyclerView.getChildAdapterPosition(view));
-                              mLayoutManager.scrollToPositionWithOffset(
-                                  mRecyclerView.getChildAdapterPosition(view), 0);
-                            }
-                            return false;
-                          }
-                        })
-                    .withIdentifier(canti.get(i).idArgomento);
-                // noinspection unchecked
-                expandableItem.withSubItems(subItems);
-                titoli.add(expandableItem);
-                subItems = new LinkedList<>();
-                totCanti = 0;
-              } else {
-                simpleItem.withHasDivider(true);
-              }
-            }
-
-            mAdapter.clear();
-            mAdapter.add(titoli);
-            mAdapter.notifyAdapterDataSetChanged();
-            // restore selections (this has to be done after the items were added
-            mAdapter.withSavedInstanceState(savedInstanceState);
-          }
-        }).start();
-
     // restore selections (this has to be done after the items were added
     //    mAdapter.withSavedInstanceState(savedInstanceState);
+
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                ArgomentiDao mDao = RisuscitoDatabase.getInstance(getContext()).argomentiDao();
+                List<CantoArgomento> canti = mDao.getAll();
+                List<IItem> titoli = new ArrayList<>();
+                List<SimpleSubItem> subItems = new LinkedList<>();
+                int totCanti = 0;
+
+                for (int i = 0; i < canti.size(); i++) {
+                  SimpleSubItem simpleItem =
+                      new SimpleSubItem()
+                          .withTitle(canti.get(i).titolo)
+                          .withPage(String.valueOf(canti.get(i).pagina))
+                          .withSource(canti.get(i).source)
+                          .withColor(canti.get(i).color)
+                          .withId(canti.get(i).id);
+                  // noinspection unchecked
+                  simpleItem
+                      .withContextMenuListener(ArgumentsSectionFragment.this)
+                      .withOnItemClickListener(mOnClickListener);
+                  simpleItem.withIdentifier(i * 1000);
+                  subItems.add(simpleItem);
+                  totCanti++;
+
+                  if (i == (canti.size() - 1)
+                      || canti.get(i).idArgomento != canti.get(i + 1).idArgomento) {
+                    // serve a non mettere il divisore sull'ultimo elemento della lista
+                    simpleItem.withHasDivider(false);
+                    SimpleSubExpandableItem expandableItem = new SimpleSubExpandableItem();
+                    expandableItem
+                        .withTitle(canti.get(i).nomeArgomento + " (" + totCanti + ")")
+                        .withOnClickListener(
+                            new OnClickListener<SimpleSubExpandableItem>() {
+                              @Override
+                              public boolean onClick(
+                                  View view,
+                                  IAdapter<SimpleSubExpandableItem> iAdapter,
+                                  SimpleSubExpandableItem item,
+                                  int i) {
+                                if (item.isExpanded()) {
+                                  Log.d(
+                                      TAG,
+                                      "onClick: " + mRecyclerView.getChildAdapterPosition(view));
+                                  mLayoutManager.scrollToPositionWithOffset(
+                                      mRecyclerView.getChildAdapterPosition(view), 0);
+                                }
+                                return false;
+                              }
+                            })
+                        .withIdentifier(canti.get(i).idArgomento);
+                    // noinspection unchecked
+                    expandableItem.withSubItems(subItems);
+                    titoli.add(expandableItem);
+                    subItems = new LinkedList<>();
+                    totCanti = 0;
+                  } else {
+                    simpleItem.withHasDivider(true);
+                  }
+                }
+
+                mAdapter.clear();
+                mAdapter.add(titoli);
+                mAdapter.notifyAdapterDataSetChanged();
+                // restore selections (this has to be done after the items were added
+                mAdapter.withSavedInstanceState(savedInstanceState);
+              }
+            })
+        .start();
 
     mLUtils = LUtils.getInstance(getActivity());
 

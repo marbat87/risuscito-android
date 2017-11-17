@@ -107,7 +107,7 @@ public class SalmiSectionFragment extends HFFragment
     //    int total = lista.getCount();
 
     // crea un array e ci memorizza i titoli estratti
-    List<SimpleItem> mItems = new ArrayList<>();
+    //    List<SimpleItem> mItems = new ArrayList<>();
 
     //    lista.moveToFirst();
     //    for (int i = 0; i < total; i++) {
@@ -148,7 +148,7 @@ public class SalmiSectionFragment extends HFFragment
     //    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(2);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
-    mAdapter.add(mItems);
+    //    mAdapter.add(mItems);
     mRecyclerView.setAdapter(mAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
     mRecyclerView.setLayoutManager(llm);
@@ -675,7 +675,7 @@ public class SalmiSectionFragment extends HFFragment
             this,
             new Observer<List<SalmoCanto>>() {
               @Override
-              public void onChanged(@Nullable final List<SalmoCanto> canti) {
+              public void onChanged(@Nullable List<SalmoCanto> canti) {
                 if (canti != null) {
                   List<SimpleItem> titoli = new ArrayList<>();
                   for (SalmoCanto canto : canti) {

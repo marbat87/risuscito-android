@@ -10,14 +10,6 @@ public class Converters {
 
     @TypeConverter
     public static ListaPersonalizzata fromBlob(byte[] blobAsBytes) {
-//        try {
-//            int blobLength = (int) blob.length();
-//            byte[] blobAsBytes = blob.getBytes(1, blobLength);
-//            return (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(blobAsBytes);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
         return (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(blobAsBytes);
     }
 

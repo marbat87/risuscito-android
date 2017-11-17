@@ -141,11 +141,10 @@ public class NumericSectionFragment extends HFFragment
 
     mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
-    List<SimpleItem> mItems = new ArrayList<>();
     mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(1);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
-    mAdapter.add(mItems);
+//    mAdapter.add(mItems);
     mRecyclerView.setAdapter(mAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
     mRecyclerView.setLayoutManager(llm);
@@ -675,7 +674,7 @@ public class NumericSectionFragment extends HFFragment
             this,
             new Observer<List<Canto>>() {
               @Override
-              public void onChanged(@Nullable final List<Canto> canti) {
+              public void onChanged(@Nullable List<Canto> canti) {
                 List<SimpleItem> titoli = new ArrayList<>();
                 for (Canto canto : canti) {
                   SimpleItem sampleItem = new SimpleItem();

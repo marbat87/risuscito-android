@@ -139,11 +139,11 @@ public class AlphabeticSectionFragment extends HFFragment
 
     mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
-    List<SimpleItem> mItems = new ArrayList<>();
+//    List<SimpleItem> mItems = new ArrayList<>();
     //    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(0);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
-    mAdapter.add(mItems);
+//    mAdapter.add(mItems);
     mRecyclerView.setAdapter(mAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
     mRecyclerView.setLayoutManager(llm);
@@ -680,7 +680,7 @@ public class AlphabeticSectionFragment extends HFFragment
             this,
             new Observer<List<Canto>>() {
               @Override
-              public void onChanged(@Nullable final List<Canto> canti) {
+              public void onChanged(@Nullable List<Canto> canti) {
                 if (canti != null) {
                   List<SimpleItem> titoli = new ArrayList<>();
                   for (Canto canto : canti) {

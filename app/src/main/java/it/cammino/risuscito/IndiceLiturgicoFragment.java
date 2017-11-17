@@ -1,11 +1,7 @@
 package it.cammino.risuscito;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -40,10 +36,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import it.cammino.risuscito.database.CantoArgomento;
 import it.cammino.risuscito.database.CantoLiturgico;
 import it.cammino.risuscito.database.RisuscitoDatabase;
-import it.cammino.risuscito.database.dao.ArgomentiDao;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.IndiceLiturgicoDao;
@@ -122,7 +116,7 @@ public class IndiceLiturgicoFragment extends HFFragment
     //        int total = arguments.getCount();
     //        arguments.moveToFirst();
 
-    List<IItem> mItems = new ArrayList<>();
+//    List<IItem> mItems = new ArrayList<>();
 
     //        for (int i = 0; i < total; i++) {
     //            String argId = String.valueOf(arguments.getInt(0));
@@ -194,7 +188,7 @@ public class IndiceLiturgicoFragment extends HFFragment
     mRecyclerView.setLayoutManager(mLayoutManager);
 
     mAdapter = new FastItemAdapter<>();
-    mAdapter.add(mItems);
+//    mAdapter.add(mItems);
     ExpandableExtension<IItem> itemExpandableExtension = new ExpandableExtension<>();
     itemExpandableExtension.withOnlyOneExpandedItem(true);
     mAdapter.addExtension(itemExpandableExtension);
