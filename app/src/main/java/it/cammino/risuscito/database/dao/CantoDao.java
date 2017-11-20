@@ -13,31 +13,33 @@ import it.cammino.risuscito.database.entities.Canto;
 @Dao
 public interface CantoDao {
 
-    @Query("SELECT * FROM canto ORDER BY titolo ASC")
-    List<Canto> getAllByName();
+  @Query("SELECT * FROM canto ORDER BY titolo ASC")
+  List<Canto> getAllByName();
 
-    @Query("SELECT * FROM canto ORDER BY titolo ASC")
-    LiveData<List<Canto>> getLiveAllByName();
+  @Query("SELECT * FROM canto ORDER BY titolo ASC")
+  LiveData<List<Canto>> getLiveAllByName();
 
-    @Query("SELECT * FROM canto ORDER BY pagina ASC, titolo ASC")
-    LiveData<List<Canto>> getLiveAllByPage();
+  @Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY titolo ASC")
+  List<Canto> getAllByNameOnlyConsegnati();
 
-    @Query("SELECT * FROM canto WHERE id = :id")
-    Canto getCantoById(int id);
+  @Query("SELECT * FROM canto ORDER BY pagina ASC, titolo ASC")
+  LiveData<List<Canto>> getLiveAllByPage();
 
-    @Query("SELECT * from canto WHERE source = :src")
-    List<Canto> getCantiWithSource(String src);
+  @Query("SELECT * FROM canto WHERE id = :id")
+  Canto getCantoById(int id);
 
-    @Query("SELECT COUNT(*) FROM canto")
-    int count();
+  @Query("SELECT * from canto WHERE source = :src")
+  List<Canto> getCantiWithSource(String src);
 
-    @Insert
-    void insertCanto(List<Canto> cantiLists);
+  @Query("SELECT COUNT(*) FROM canto")
+  int count();
 
-    @Update
-    int updateCanto(Canto canto);
+  @Insert
+  void insertCanto(List<Canto> cantiLists);
 
-    @Update
-    int updateCanti(List<Canto> cantiList);
+  @Update
+  int updateCanto(Canto canto);
 
+  @Update
+  int updateCanti(List<Canto> cantiList);
 }
