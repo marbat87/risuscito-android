@@ -25,6 +25,9 @@ public interface CantoDao {
     @Query("SELECT * FROM canto WHERE id = :id")
     Canto getCantoById(int id);
 
+    @Query("SELECT * from canto WHERE source = :src")
+    List<Canto> getCantiWithSource(String src);
+
     @Query("SELECT COUNT(*) FROM canto")
     int count();
 

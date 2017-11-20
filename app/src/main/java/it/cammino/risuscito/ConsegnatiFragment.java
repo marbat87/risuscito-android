@@ -122,7 +122,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             enableBottombar(false);
             mRecyclerView.setVisibility(View.VISIBLE);
             mMainActivity.enableFab(true);
-              titoliChoose.clear();titoliChoose.clear();
+            titoliChoose.clear();
+            titoliChoose.clear();
           } catch (IllegalArgumentException e) {
             Log.e(getClass().getName(), e.getLocalizedMessage(), e);
           }
@@ -152,8 +153,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
 
     mBottomBar.setBackgroundColor(getThemeUtils().primaryColor());
 
-    if (savedInstanceState == null)
-      editMode = false;
+    if (savedInstanceState == null) editMode = false;
     else {
       editMode = savedInstanceState.getBoolean(EDIT_MODE, false);
       if (editMode) {
@@ -164,8 +164,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
       }
     }
 
-    if (titoliChoose == null)
-        titoliChoose = new ArrayList<>();
+    if (titoliChoose == null) titoliChoose = new ArrayList<>();
 
     Log.d(TAG, "onCreateView - editMode: " + editMode);
     View mSelectNone =
@@ -206,7 +205,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
             enableBottombar(false);
             mRecyclerView.setVisibility(View.VISIBLE);
             mMainActivity.enableFab(true);
-              titoliChoose.clear();
+            titoliChoose.clear();
           }
         });
 
@@ -246,7 +245,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
               @Override
               public void onClick(View v) {
                 editMode = true;
-//                updateChooseList(true);
+                //                updateChooseList(true);
                 updateChooseList();
                 mRecyclerView.setVisibility(View.GONE);
                 mNoConsegnati.setVisibility(View.INVISIBLE);
@@ -572,31 +571,33 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
   //        mChoosedRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
   //    }
 
-    private void updateChooseList() {
-      new Thread(new Runnable() {
-          @Override
-          public void run() {
-              ConsegnatiDao mDao = RisuscitoDatabase.getInstance(getActivity()).consegnatiDao();
-              List<CantoConsegnato> canti = mDao.getChoosen();
-              if (canti != null && titoliChoose.size() == 0) {
+  private void updateChooseList() {
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                ConsegnatiDao mDao = RisuscitoDatabase.getInstance(getActivity()).consegnatiDao();
+                List<CantoConsegnato> canti = mDao.getChoosen();
+                if (canti != null && titoliChoose.size() == 0) {
                   titoliChoose.clear();
                   for (CantoConsegnato canto : canti) {
-                      CheckableItem checkableItem = new CheckableItem();
-                      checkableItem
-                              .withTitle(canto.titolo)
-                              .withPage(String.valueOf(canto.pagina))
-                              .withColor(canto.color)
-                              .withSetSelected(canto.consegnato > 0)
-                              .withId(canto.id);
-                      titoliChoose.add(checkableItem);
+                    CheckableItem checkableItem = new CheckableItem();
+                    checkableItem
+                        .withTitle(canto.titolo)
+                        .withPage(String.valueOf(canto.pagina))
+                        .withColor(canto.color)
+                        .withSetSelected(canto.consegnato > 0)
+                        .withId(canto.id);
+                    titoliChoose.add(checkableItem);
                   }
                   selectableAdapter.clear();
                   selectableAdapter.add(titoliChoose);
                   selectableAdapter.notifyAdapterDataSetChanged();
+                }
               }
-          }
-      }).start();
-    }
+            })
+        .start();
+  }
 
   private ThemeUtils getThemeUtils() {
     return ((MainActivity) getActivity()).getThemeUtils();

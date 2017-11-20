@@ -197,11 +197,11 @@ public class RicercaVeloceFragment extends Fragment
     }
 
     if (!isViewShown) {
-      final ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
       new Thread(
               new Runnable() {
                 @Override
                 public void run() {
+                  ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
                   listePersonalizzate = mDao.getAll();
                 }
               })
@@ -231,8 +231,6 @@ public class RicercaVeloceFragment extends Fragment
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    if (searchTask != null && searchTask.getStatus() == AsyncTask.Status.RUNNING)
-      searchTask.cancel(true);
     mUnbinder.unbind();
   }
 
@@ -305,11 +303,13 @@ public class RicercaVeloceFragment extends Fragment
     }
   }
 
-  //  @Override
-  //  public void onDestroy() {
-  //    if (listaCanti != null) listaCanti.close();
-  //    super.onDestroy();
-  //  }
+  @Override
+  public void onDestroy() {
+    //      if (listaCanti != null) listaCanti.close();
+    if (searchTask != null && searchTask.getStatus() == AsyncTask.Status.RUNNING)
+      searchTask.cancel(true);
+    super.onDestroy();
+  }
 
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
