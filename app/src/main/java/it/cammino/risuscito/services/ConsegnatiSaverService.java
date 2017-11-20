@@ -3,13 +3,23 @@ package it.cammino.risuscito.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import it.cammino.risuscito.DatabaseCanti;
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.CantoDao;
+import it.cammino.risuscito.database.dao.ConsegnatiDao;
+import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.Consegnato;
+import it.cammino.risuscito.database.entities.ListaPers;
+import it.cammino.risuscito.objects.PosizioneItem;
+import it.cammino.risuscito.objects.PosizioneTitleItem;
 
 public class ConsegnatiSaverService extends IntentService {
     // The tag we put on debug messages
@@ -42,32 +52,37 @@ public class ConsegnatiSaverService extends IntentService {
 
     void startSaving(Intent intent) {
         ArrayList<Integer> ids = intent.getIntegerArrayListExtra(IDS_CONSEGNATI);
-        DatabaseCanti privateListaCanti = new DatabaseCanti(getApplicationContext());
-        SQLiteDatabase db = privateListaCanti.getReadableDatabase();
-        db.delete("CANTI_CONSEGNATI", "", null);
+//        DatabaseCanti privateListaCanti = new DatabaseCanti(getApplicationContext());
+//        SQLiteDatabase db = privateListaCanti.getReadableDatabase();
+//        db.delete("CANTI_CONSEGNATI", "", null);
         int i = 0;
+        ConsegnatiDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).consegnatiDao();
+        mDao.emptyConsegnati();
 
         for (Integer id: ids) {
-            String sql = "INSERT INTO CANTI_CONSEGNATI" +
-                    "       (_id, id_canto)" +
-                    "   SELECT COALESCE(MAX(_id) + 1,1), " + id +
-                    "             FROM CANTI_CONSEGNATI";
-
+//            String sql = "INSERT INTO CANTI_CONSEGNATI" +
+//                    "       (_id, id_canto)" +
+//                    "   SELECT COALESCE(MAX(_id) + 1,1), " + id +
+//                    "             FROM CANTI_CONSEGNATI";
+            Consegnato tempConsegnato = new Consegnato();
+            tempConsegnato.idConsegnato = ++i;
+            tempConsegnato.idCanto = id;
             try {
-                db.execSQL(sql);
-                i++;
+//                db.execSQL(sql);
+                mDao.insertConsegnati(tempConsegnato);
+//                i++;
                 Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SINGLE_COMPLETED);
-                Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SINGLE_COMPLETED + " - DONE = " + i);
+                Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SINGLE_COMPLETED + " - DONE = " + i + " - " + id);
                 Intent intentBroadcast = new Intent(BROADCAST_SINGLE_COMPLETED);
                 intentBroadcast.putExtra(DATA_DONE, i);
                 sendBroadcast(intentBroadcast);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Log.e(getClass().toString(), "ERRORE INSERT:");
                 e.printStackTrace();
             }
         }
-        db.close();
-        privateListaCanti.close();
+//        db.close();
+//        privateListaCanti.close();
         Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SAVING_COMPLETED);
         sendBroadcast(new Intent(BROADCAST_SAVING_COMPLETED));
     }

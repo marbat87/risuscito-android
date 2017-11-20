@@ -19,6 +19,7 @@ import java.util.List;
 import it.cammino.risuscito.DatabaseCanti;
 import it.cammino.risuscito.database.dao.ArgomentiDao;
 import it.cammino.risuscito.database.dao.CantoDao;
+import it.cammino.risuscito.database.dao.ConsegnatiDao;
 import it.cammino.risuscito.database.dao.CronologiaDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
@@ -27,6 +28,7 @@ import it.cammino.risuscito.database.dao.ListePersDao;
 import it.cammino.risuscito.database.dao.SalmiDao;
 import it.cammino.risuscito.database.entities.Argomento;
 import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.Consegnato;
 import it.cammino.risuscito.database.entities.Cronologia;
 import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.entities.IndiceLiturgico;
@@ -45,9 +47,10 @@ import it.cammino.risuscito.database.entities.Salmo;
     Salmo.class,
     IndiceLiturgico.class,
     NomeLiturgico.class,
-    Cronologia.class
+    Cronologia.class,
+    Consegnato.class
   },
-  version = 9,
+  version = 10,
   exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -271,6 +274,8 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract IndiceLiturgicoDao indiceLiturgicoDao();
 
   public abstract CronologiaDao cronologiaDao();
+
+  public abstract ConsegnatiDao consegnatiDao();
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override
