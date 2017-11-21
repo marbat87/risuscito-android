@@ -33,6 +33,7 @@ import it.cammino.risuscito.database.entities.Cronologia;
 import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.entities.IndiceLiturgico;
 import it.cammino.risuscito.database.entities.ListaPers;
+import it.cammino.risuscito.database.entities.LocalLink;
 import it.cammino.risuscito.database.entities.NomeArgomento;
 import it.cammino.risuscito.database.entities.NomeLiturgico;
 import it.cammino.risuscito.database.entities.Salmo;
@@ -48,9 +49,10 @@ import it.cammino.risuscito.database.entities.Salmo;
     IndiceLiturgico.class,
     NomeLiturgico.class,
     Cronologia.class,
-    Consegnato.class
+    Consegnato.class,
+    LocalLink.class
   },
-  version = 10,
+  version = 11,
   exportSchema = false
 )
 @TypeConverters({Converters.class})

@@ -31,6 +31,9 @@ public interface CantoDao {
   @Query("SELECT * from canto WHERE source = :src")
   List<Canto> getCantiWithSource(String src);
 
+  @Query("SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, coalesce(B.localPath, A.link) as link, A.zoom, A.scrollX, A.scrollY, A.savedTab, A.savedTab, A.savedSpeed FROM canto A LEFT JOIN locallink B ON (A.id = b.idCanto)")
+  List<Canto> getAllByWithLink();
+
   @Query("SELECT COUNT(*) FROM canto")
   int count();
 
