@@ -25,6 +25,7 @@ import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.FavoritesDao;
 import it.cammino.risuscito.database.dao.IndiceLiturgicoDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.dao.LocalLinksDao;
 import it.cammino.risuscito.database.dao.SalmiDao;
 import it.cammino.risuscito.database.entities.Argomento;
 import it.cammino.risuscito.database.entities.Canto;
@@ -52,13 +53,15 @@ import it.cammino.risuscito.database.entities.Salmo;
     Consegnato.class,
     LocalLink.class
   },
-  version = 11,
+  version = 1,
   exportSchema = false
 )
 @TypeConverters({Converters.class})
 public abstract class RisuscitoDatabase extends RoomDatabase {
 
   private static final String TAG = "RisuscitoDatabase";
+
+  private static final String DB_NAME = "RisuscitoDB";
 
   //    private static final String GIALLO = "#EBD0A5";
   //    private static final String BIANCO = "#FCFCFC";
@@ -89,7 +92,7 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
     if (sInstance == null) {
       synchronized (LOCK) {
         sInstance =
-            Room.databaseBuilder(context.getApplicationContext(), RisuscitoDatabase.class, "ex")
+            Room.databaseBuilder(context.getApplicationContext(), RisuscitoDatabase.class, DB_NAME)
                 .fallbackToDestructiveMigration()
                 .build();
         populateAsync(sInstance, context);
@@ -278,6 +281,12 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
   public abstract CronologiaDao cronologiaDao();
 
   public abstract ConsegnatiDao consegnatiDao();
+
+  public abstract LocalLinksDao localLinksDao();
+
+  public String getDbName() {
+    return DB_NAME;
+  }
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {
     @Override
