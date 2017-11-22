@@ -16,6 +16,12 @@ import it.cammino.risuscito.database.entities.NomeArgomento;
 @Dao
 public interface ArgomentiDao {
 
+  @Query("DELETE FROM argomento")
+  void truncateArgomento();
+
+  @Query("DELETE FROM nomeargomento")
+  void truncateNomeArgomento();
+
   @Query(
       "SELECT C.id, C.pagina, C.titolo, C.source, C.color, C.link, B.idArgomento, A.nomeArgomento FROM nomeargomento A, argomento B, canto c WHERE A.idArgomento = B.idArgomento AND b.idCanto = c.id ORDER BY A.nomeArgomento ASC, C.titolo ASC")
   LiveData<List<CantoArgomento>> getLiveAll();

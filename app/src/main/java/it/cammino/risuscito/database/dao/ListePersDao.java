@@ -14,10 +14,13 @@ import it.cammino.risuscito.database.entities.ListaPers;
 @Dao
 public interface ListePersDao {
 
-    @Query("SELECT * FROM ListaPers ORDER BY id ASC")
+    @Query("DELETE FROM listapers")
+    void truncateTable();
+
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
     LiveData<List<ListaPers>> getLiveAll();
 
-    @Query("SELECT * FROM ListaPers ORDER BY id ASC")
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
     List<ListaPers> getAll();
 
     @Update

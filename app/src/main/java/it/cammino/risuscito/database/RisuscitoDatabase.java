@@ -264,6 +264,10 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
     task.execute(db, context);
   }
 
+  public static String getDbName() {
+    return DB_NAME;
+  }
+
   public abstract CantoDao cantoDao();
 
   public abstract FavoritesDao favoritesDao();
@@ -284,8 +288,43 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
 
   public abstract LocalLinksDao localLinksDao();
 
-  public String getDbName() {
-    return DB_NAME;
+  private void truncateDB() {
+    cantoDao().truncateTable();
+    argomentiDao().truncateArgomento();
+    argomentiDao().truncateNomeArgomento();
+    indiceLiturgicoDao().truncateIndiceLiturgico();
+    indiceLiturgicoDao().truncateNomeIndiceLiturgico();
+    salmiDao().truncateTable();
+  }
+
+  public void recreateDB(Context mContext) {
+    List<CantoDao.Backup> backupCanti = cantoDao().getBackup();
+
+    truncateDB();
+
+    populateInitialData(sInstance, mContext);
+
+    // reinserisce il backup
+    for (CantoDao.Backup backupCanto : backupCanti)
+      cantoDao()
+          .setBackup(
+              backupCanto.id,
+              backupCanto.zoom,
+              backupCanto.scrollX,
+              backupCanto.scrollY,
+              backupCanto.favorite,
+              backupCanto.savedTab,
+              backupCanto.savedBarre,
+              backupCanto.savedSpeed);
+
+    // cancella dalle liste predefinite i canti inesistenti
+    List<CustomList> customLists = customListDao().getAll();
+    for (CustomList position : customLists) {
+      Canto canto = cantoDao().getCantoById(position.idCanto);
+      if (canto == null && canto.id == 0) {
+        customListDao().deletePosition(position);
+      }
+    }
   }
 
   private static class PopulateDbAsync extends AsyncTask<Object, Void, Void> {

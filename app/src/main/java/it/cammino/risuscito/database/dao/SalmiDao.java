@@ -14,6 +14,9 @@ import it.cammino.risuscito.database.entities.Salmo;
 @Dao
 public interface SalmiDao {
 
+    @Query("DELETE FROM salmo")
+    void truncateTable();
+
     @Query("SELECT B.*, A.numSalmo, A.titoloSalmo FROM salmo A, canto B WHERE A.id = B.id ORDER BY A.numSalmo ASC, A.titoloSalmo ASC")
     LiveData<List<SalmoCanto>> getLiveAll();
 

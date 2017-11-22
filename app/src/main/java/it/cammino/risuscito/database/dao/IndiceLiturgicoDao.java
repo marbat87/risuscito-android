@@ -15,12 +15,18 @@ import it.cammino.risuscito.database.entities.NomeLiturgico;
 @Dao
 public interface IndiceLiturgicoDao {
 
+  @Query("DELETE FROM indiceliturgico")
+  void truncateIndiceLiturgico();
+
+  @Query("DELETE FROM nomeliturgico")
+  void truncateNomeIndiceLiturgico();
+
   @Query(
       "SELECT C.*, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
   LiveData<List<CantoLiturgico>> getLiveAll();
 
   @Query(
-          "SELECT C.*, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
+      "SELECT C.*, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
   List<CantoLiturgico> getAll();
 
   @Insert

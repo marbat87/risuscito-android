@@ -79,9 +79,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.cammino.risuscito.database.RisuscitoDatabase;
+import it.cammino.risuscito.database.dao.CantoDao;
+import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.ThemeableActivity;
@@ -186,8 +190,9 @@ public class MainActivity extends ThemeableActivity
             return;
           }
 
-          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
-          listaCanti.close();
+//          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+//          listaCanti.close();
+          RisuscitoDatabase.getInstance(MainActivity.this);
 
           File db_file = getDbPath();
           String path = db_file.getPath();
@@ -257,10 +262,11 @@ public class MainActivity extends ThemeableActivity
             return;
           }
 
-          listaCanti = new DatabaseCanti(MainActivity.this);
-          SQLiteDatabase db = listaCanti.getReadableDatabase();
-          db.close();
-          listaCanti.close();
+//          listaCanti = new DatabaseCanti(MainActivity.this);
+//          SQLiteDatabase db = listaCanti.getReadableDatabase();
+//          db.close();
+//          listaCanti.close();
+            RisuscitoDatabase.getInstance(MainActivity.this);
           contents.discard(mGoogleApiClient);
 
           dbRestoreRunning = false;
@@ -442,7 +448,8 @@ public class MainActivity extends ThemeableActivity
             .show();
         saveCheckDupl(
             Drive.DriveApi.getAppFolder(mGoogleApiClient),
-            DatabaseCanti.getDbName(),
+//            DatabaseCanti.getDbName(),
+            RisuscitoDatabase.getDbName(),
             "application/x-sqlite3",
             getDbPath(),
             true);
@@ -511,7 +518,8 @@ public class MainActivity extends ThemeableActivity
                     .show();
                 saveCheckDupl(
                     Drive.DriveApi.getAppFolder(mGoogleApiClient),
-                    DatabaseCanti.getDbName(),
+//                    DatabaseCanti.getDbName(),
+                        RisuscitoDatabase.getDbName(),
                     "application/x-sqlite3",
                     getDbPath(),
                     true);
@@ -921,7 +929,8 @@ public class MainActivity extends ThemeableActivity
   public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {}
 
   // converte gli accordi salvati dalla lingua vecchia alla nuova
-  private void convertTabs(SQLiteDatabase db, String conversion) {
+//  private void convertTabs(SQLiteDatabase db, String conversion) {
+  private void convertTabs(String conversion) {
     //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
     //        HashMap<String, String> mappa = null;
     //        if (conversion.equalsIgnoreCase("it-uk")) {
@@ -959,39 +968,55 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.accordi_it.length; i++) mappa.put(accordi1[i], accordi2[i]);
 
-    //        if (mappa != null) {
-    String query = "SELECT _id, saved_tab" + "  FROM ELENCO";
-    Cursor cursor = db.rawQuery(query, null);
-
-    cursor.moveToFirst();
-    while (!cursor.isAfterLast()) {
-      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-        Log.d(
-            TAG,
-            "convertTabs: "
-                + "ID "
-                + cursor.getInt(0)
-                + " -> CONVERTO DA "
-                + cursor.getString(1)
-                + " A "
-                + mappa.get(cursor.getString(1)));
-        query =
-            "UPDATE ELENCO"
-                + "  SET saved_tab = \'"
-                + mappa.get(cursor.getString(1))
-                + "\' "
-                + "  WHERE _id =  "
-                + cursor.getInt(0);
-        db.execSQL(query);
+//    String query = "SELECT _id, saved_tab" + "  FROM ELENCO";
+//    Cursor cursor = db.rawQuery(query, null);
+//
+//    cursor.moveToFirst();
+//    while (!cursor.isAfterLast()) {
+//      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+//        Log.d(
+//            TAG,
+//            "convertTabs: "
+//                + "ID "
+//                + cursor.getInt(0)
+//                + " -> CONVERTO DA "
+//                + cursor.getString(1)
+//                + " A "
+//                + mappa.get(cursor.getString(1)));
+//        query =
+//            "UPDATE ELENCO"
+//                + "  SET saved_tab = \'"
+//                + mappa.get(cursor.getString(1))
+//                + "\' "
+//                + "  WHERE _id =  "
+//                + cursor.getInt(0);
+//        db.execSQL(query);
+//      }
+//      cursor.moveToNext();
+//    }
+//    cursor.close();
+      CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
+      List<Canto> canti = mDao.getAllByName();
+      for (Canto canto: canti) {
+          if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+              Log.d(
+                      TAG,
+                      "convertTabs: "
+                              + "ID "
+                              + canto.id
+                              + " -> CONVERTO DA "
+                              + canto.savedTab
+                              + " A "
+                              + mappa.get(canto.savedTab));
+              canto.savedTab = mappa.get(canto.savedTab);
+              mDao.updateCanto(canto);
+          }
       }
-      cursor.moveToNext();
-    }
-    cursor.close();
-    //        }
   }
 
   // converte gli accordi salvati dalla lingua vecchia alla nuova
-  private void convertiBarre(SQLiteDatabase db, String conversion) {
+//  private void convertiBarre(SQLiteDatabase db, String conversion) {
+  private void convertiBarre(String conversion) {
     String[] barre1 = CambioAccordi.barre_it;
     Log.d(TAG, "convertiBarre - from: " + conversion.substring(0, 2));
     switch (conversion.substring(0, 2)) {
@@ -1017,33 +1042,50 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.barre_it.length; i++) mappa.put(barre1[i], barre2[i]);
 
-    String query = "SELECT _id, saved_barre" + "  FROM ELENCO";
-    Cursor cursor = db.rawQuery(query, null);
-
-    cursor.moveToFirst();
-    while (!cursor.isAfterLast()) {
-      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-        Log.d(
-            TAG,
-            "convertiBarre: "
-                + "ID "
-                + cursor.getInt(0)
-                + " -> CONVERTO DA "
-                + cursor.getString(1)
-                + " A "
-                + mappa.get(cursor.getString(1)));
-        query =
-            "UPDATE ELENCO"
-                + "  SET saved_barre = \'"
-                + mappa.get(cursor.getString(1))
-                + "\' "
-                + "  WHERE _id =  "
-                + cursor.getInt(0);
-        db.execSQL(query);
+//    String query = "SELECT _id, saved_barre" + "  FROM ELENCO";
+//    Cursor cursor = db.rawQuery(query, null);
+//
+//    cursor.moveToFirst();
+//    while (!cursor.isAfterLast()) {
+//      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+//        Log.d(
+//            TAG,
+//            "convertiBarre: "
+//                + "ID "
+//                + cursor.getInt(0)
+//                + " -> CONVERTO DA "
+//                + cursor.getString(1)
+//                + " A "
+//                + mappa.get(cursor.getString(1)));
+//        query =
+//            "UPDATE ELENCO"
+//                + "  SET saved_barre = \'"
+//                + mappa.get(cursor.getString(1))
+//                + "\' "
+//                + "  WHERE _id =  "
+//                + cursor.getInt(0);
+//        db.execSQL(query);
+//      }
+//      cursor.moveToNext();
+//    }
+//    cursor.close();
+      CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
+      List<Canto> canti = mDao.getAllByName();
+      for (Canto canto: canti) {
+          if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+              Log.d(
+                      TAG,
+                      "convertiBarre: "
+                              + "ID "
+                              + canto.id
+                              + " -> CONVERTO DA "
+                              + canto.savedBarre
+                              + " A "
+                              + mappa.get(canto.savedBarre));
+              canto.savedBarre = mappa.get(canto.savedBarre);
+              mDao.updateCanto(canto);
+          }
       }
-      cursor.moveToNext();
-    }
-    cursor.close();
   }
 
   public void setupToolbarTitle(int titleResId) {
@@ -1615,16 +1657,20 @@ public class MainActivity extends ThemeableActivity
   }
 
   private File getDbPath() {
-    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
-    return getDatabasePath(DatabaseCanti.getDbName());
+//    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
+//    return getDatabasePath(DatabaseCanti.getDbName());
+    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(RisuscitoDatabase.getDbName()));
+    return getDatabasePath(RisuscitoDatabase.getDbName());
   }
 
   void restoreDriveBackup() {
     dbRestoreRunning = true;
-    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
+//    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
+    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + RisuscitoDatabase.getDbName());
     Query query =
         new Query.Builder()
-            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
+//            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
+            .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.getDbName()))
             .build();
 
     Drive.DriveApi.query(mGoogleApiClient, query)
@@ -1739,7 +1785,8 @@ public class MainActivity extends ThemeableActivity
               .show();
           saveCheckDupl(
               Drive.DriveApi.getAppFolder(mGoogleApiClient),
-              DatabaseCanti.getDbName(),
+//              DatabaseCanti.getDbName(),
+                  RisuscitoDatabase.getDbName(),
               "application/x-sqlite3",
               getDbPath(),
               true);
@@ -1857,21 +1904,24 @@ public class MainActivity extends ThemeableActivity
 
     TranslationTask() {}
 
-    @Override
-    protected Integer doInBackground(String... sUrl) {
-      getIntent().removeExtra(Utility.DB_RESET);
-      DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
-      SQLiteDatabase db = listaCanti.getReadableDatabase();
-      DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
-      DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db);
-      listaCanti.reCreateDatabse(db);
-      listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
-      convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-      convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-      db.close();
-      listaCanti.close();
-      return 0;
-    }
+      @Override
+      protected Integer doInBackground(String... sUrl) {
+          getIntent().removeExtra(Utility.DB_RESET);
+          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+          SQLiteDatabase db = listaCanti.getReadableDatabase();
+//      DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
+//      DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db);
+          listaCanti.reCreateDatabse(db);
+//      listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+//      convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+//      convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+          db.close();
+          listaCanti.close();
+          RisuscitoDatabase.getInstance(MainActivity.this).recreateDB(MainActivity.this);
+          convertTabs(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+          convertiBarre(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+          return 0;
+      }
 
     @Override
     protected void onPreExecute() {
