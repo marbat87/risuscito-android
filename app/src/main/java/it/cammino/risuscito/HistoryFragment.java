@@ -1,9 +1,10 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -32,6 +33,7 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.fastadapter.listeners.OnLongClickListener;
 import com.mikepenz.fastadapter_extensions.UndoHelper;
@@ -53,6 +55,7 @@ import it.cammino.risuscito.database.entities.Cronologia;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleHistoryItem;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.viewmodels.CronologiaViewModel;
 
 public class HistoryFragment extends Fragment
     implements SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
@@ -65,8 +68,8 @@ public class HistoryFragment extends Fragment
   @BindView(R.id.no_history)
   View mNoHistory;
 
-  //  private CronologiaViewModel mCronologiaViewModel;
-  private List<SimpleHistoryItem> titoli;
+  private CronologiaViewModel mCronologiaViewModel;
+  //    private List<SimpleHistoryItem> titoli;
   //    private DatabaseCanti listaCanti;
   private FastItemAdapter<SimpleHistoryItem> cantoAdapter;
 
@@ -83,6 +86,8 @@ public class HistoryFragment extends Fragment
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.layout_history, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
+
+    mCronologiaViewModel = ViewModelProviders.of(this).get(CronologiaViewModel.class);
 
     mMainActivity = (MainActivity) getActivity();
     mMainActivity.setupToolbarTitle(R.string.title_activity_history);
@@ -191,7 +196,7 @@ public class HistoryFragment extends Fragment
           }
         };
 
-    titoli = new ArrayList<>();
+    //        titoli = new ArrayList<>();
     // Creating new adapter object
     cantoAdapter = new FastItemAdapter<>();
     cantoAdapter
@@ -202,7 +207,9 @@ public class HistoryFragment extends Fragment
         .withOnClickListener(mOnClickListener)
         .withOnPreLongClickListener(mOnPreLongClickListener)
         .setHasStableIds(true);
-    //        cantoAdapter.add(titoli);
+    //    cantoAdapter.set(mCronologiaViewModel.titoli);
+    FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel.titoli);
+    cantoAdapter.deleteAllSelectedItems();
 
     mRecyclerView.setAdapter(cantoAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -215,6 +222,8 @@ public class HistoryFragment extends Fragment
     mRecyclerView.addItemDecoration(insetDivider);
     mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
+    //    cantoAdapter.saveInstanceState(savedInstanceState);
+
     //noinspection unchecked
     mUndoHelper =
         new UndoHelper(
@@ -225,6 +234,21 @@ public class HistoryFragment extends Fragment
                   Set<Integer> set,
                   ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>> arrayList) {
                 Log.d(TAG, "commitRemove: " + arrayList.size());
+                for (FastAdapter.RelativeInfo<SimpleHistoryItem> item : arrayList) {
+                  final SimpleHistoryItem mItem = item.item;
+                  new Thread(
+                          new Runnable() {
+                            @Override
+                            public void run() {
+                              CronologiaDao mDao =
+                                  RisuscitoDatabase.getInstance(getContext()).cronologiaDao();
+                              Cronologia cronTemp = new Cronologia();
+                              cronTemp.idCanto = mItem.getId();
+                              mDao.deleteCronologia(cronTemp);
+                            }
+                          })
+                      .start();
+                }
                 //                SQLiteDatabase db = listaCanti.getReadableDatabase();
                 //                for (Object item : arrayList) {
                 //                  SimpleHistoryItem mItem =
@@ -262,22 +286,18 @@ public class HistoryFragment extends Fragment
                 //                        })
                 //                    .start();
                 //noinspection unchecked
-                new RemoveHistoryTask().execute(arrayList);
+                //                new RemoveHistoryTask().execute(arrayList);
               }
             });
-
-    //    mCronologiaViewModel = ViewModelProviders.of(this).get(CronologiaViewModel.class);
-    //    populateDb();
-    //    subscribeUiFavorites();
 
     return rootView;
   }
 
-  @Override
-  public void onResume() {
-    updateHistoryList();
-    super.onResume();
-  }
+  //  @Override
+  //  public void onResume() {
+  //    updateHistoryList();
+  //    super.onResume();
+  //  }
 
   //    @Override
   //    public void onDestroy() {
@@ -435,14 +455,12 @@ public class HistoryFragment extends Fragment
   ////            mMainActivity.enableFab(true);
   //    }
 
-  private void updateHistoryList() {
-    new UpdateHistoryTask().execute();
-  }
-
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     setHasOptionsMenu(true);
+    populateDb();
+    subscribeUiHistory();
   }
 
   @Override
@@ -491,7 +509,6 @@ public class HistoryFragment extends Fragment
                     CronologiaDao mDao =
                         RisuscitoDatabase.getInstance(getContext()).cronologiaDao();
                     mDao.emptyCronologia();
-                    updateHistoryList();
                   }
                 })
             .start();
@@ -559,114 +576,40 @@ public class HistoryFragment extends Fragment
     return ((MainActivity) getActivity()).getThemeUtils();
   }
 
-  //  private void populateDb() {
-  //    mCronologiaViewModel.createDb();
-  //  }
-  //
-  //  private void subscribeUiFavorites() {
-  //    mCronologiaViewModel
-  //        .getCronologiaResult()
-  //        .observe(
-  //            this,
-  //            new Observer<List<CantoCronologia>>() {
-  //              @Override
-  //              public void onChanged(@Nullable List<CantoCronologia> canti) {
-  //                Log.d(TAG, "onChanged: ");
-  //                if (canti != null) {
-  //                  List<SimpleHistoryItem> titoli = new ArrayList<>();
-  //                  for (CantoCronologia canto : canti) {
-  //                    SimpleHistoryItem sampleItem = new SimpleHistoryItem();
-  //                    sampleItem
-  //                        .withTitle(canto.titolo)
-  //                        .withPage(String.valueOf(canto.pagina))
-  //                        .withSource(canto.source)
-  //                        .withColor(canto.color)
-  //                        .withTimestamp(String.valueOf(canto.ultimaVisita.getTime()))
-  //                        .withId(canto.id)
-  //                        .withSelectedColor(getThemeUtils().primaryColorDark());
-  //                    titoli.add(sampleItem);
-  //                  }
-  //
-  //                  cantoAdapter.clear();
-  //                  cantoAdapter.add(titoli);
-  //                  cantoAdapter.notifyAdapterDataSetChanged();
-  //
-  //                  mNoHistory.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-  //                  mMainActivity.enableFab(titoli.size() != 0);
-  //                }
-  //              }
-  //            });
-  //  }
-
-  private class UpdateHistoryTask extends AsyncTask<Void, Void, Integer> {
-
-    @Override
-    protected Integer doInBackground(Void... sSearchText) {
-
-      CronologiaDao mDao = RisuscitoDatabase.getInstance(getContext()).cronologiaDao();
-      List<CantoCronologia> canti = mDao.getCronologia();
-      if (canti != null) {
-        titoli = new ArrayList<>();
-        for (CantoCronologia canto : canti) {
-          SimpleHistoryItem sampleItem = new SimpleHistoryItem();
-          sampleItem
-              .withTitle(canto.titolo)
-              .withPage(String.valueOf(canto.pagina))
-              .withSource(canto.source)
-              .withColor(canto.color)
-              .withTimestamp(String.valueOf(canto.ultimaVisita.getTime()))
-              .withId(canto.id)
-              .withSelectedColor(getThemeUtils().primaryColorDark());
-          titoli.add(sampleItem);
-        }
-      }
-      return 0;
-    }
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      titoli.clear();
-      cantoAdapter.clear();
-    }
-
-    @Override
-    protected void onPostExecute(Integer result) {
-      super.onPostExecute(result);
-      cantoAdapter.add(titoli);
-      cantoAdapter.notifyAdapterDataSetChanged();
-      mNoHistory.setVisibility(
-          cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-      mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
-    }
+  private void populateDb() {
+    mCronologiaViewModel.createDb();
   }
 
-  private class RemoveHistoryTask
-      extends AsyncTask<ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>>, Void, Integer> {
-
-    @SafeVarargs
-    @Override
-    protected final Integer doInBackground(
-            ArrayList<FastAdapter.RelativeInfo<SimpleHistoryItem>>... object) {
-
-      List<Cronologia> removeList = new ArrayList<>();
-      for (FastAdapter.RelativeInfo<SimpleHistoryItem> item : object[0]) {
-        SimpleHistoryItem mItem = item.item;
-        Cronologia cronologia = new Cronologia();
-        cronologia.idCanto = mItem.getId();
-        removeList.add(cronologia);
-      }
-      CronologiaDao mDao = RisuscitoDatabase.getInstance(getContext()).cronologiaDao();
-      mDao.deleteCronologia(removeList);
-      return 0;
-    }
-
-    @Override
-    protected void onPostExecute(Integer result) {
-      super.onPostExecute(result);
-      mNoHistory.setVisibility(
-          cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
-      mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
-    }
+  private void subscribeUiHistory() {
+    mCronologiaViewModel
+        .getCronologiaCanti()
+        .observe(
+            this,
+            new Observer<List<CantoCronologia>>() {
+              @Override
+              public void onChanged(@Nullable List<CantoCronologia> canti) {
+                Log.d(TAG, "onChanged: ");
+                if (canti != null) {
+                  //                  List<SimpleHistoryItem> titoli = new ArrayList<>();
+                  mCronologiaViewModel.titoli.clear();
+                  for (CantoCronologia canto : canti) {
+                    SimpleHistoryItem sampleItem = new SimpleHistoryItem();
+                    sampleItem
+                        .withTitle(canto.titolo)
+                        .withPage(String.valueOf(canto.pagina))
+                        .withSource(canto.source)
+                        .withColor(canto.color)
+                        .withTimestamp(String.valueOf(canto.ultimaVisita.getTime()))
+                        .withId(canto.id)
+                        .withSelectedColor(getThemeUtils().primaryColorDark());
+                    mCronologiaViewModel.titoli.add(sampleItem);
+                  }
+                  FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel.titoli);
+                  mNoHistory.setVisibility(
+                      cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                  mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
+                }
+              }
+            });
   }
 }

@@ -500,7 +500,7 @@ public class InsertAvanzataFragment extends Fragment {
     protected void onPostExecute(String result) {
       super.onPostExecute(result);
       cantoAdapter.add(titoli);
-      cantoAdapter.notifyAdapterDataSetChanged();
+//      cantoAdapter.notifyAdapterDataSetChanged();
       progress.setVisibility(View.INVISIBLE);
       if (titoli.size() == 0) mNoResults.setVisibility(View.VISIBLE);
       else mNoResults.setVisibility(View.GONE);

@@ -28,23 +28,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.turingtechnologies.materialscrollbar.CustomIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter;
-import it.cammino.risuscito.database.entities.Canto;
-import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.CustomListDao;
 import it.cammino.risuscito.database.dao.ListePersDao;
+import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.database.entities.ListaPers;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.ui.HFFragment;
@@ -69,14 +69,14 @@ public class NumericSectionFragment extends HFFragment
   private boolean isViewShown = true;
   //  private DatabaseCanti listaCanti;
   private String titoloDaAgg;
-  private int idDaAgg;
-  private int idListaDaAgg;
-  private int posizioneDaAgg;
+  //  private int idDaAgg;
+  //  private int idListaDaAgg;
+  //  private int posizioneDaAgg;
   //  private ListaPersonalizzata[] listePers;
   //  private int[] idListe;
   private List<ListaPers> listePersonalizzate;
-  private int idListaClick;
-  private int idPosizioneClick;
+  //  private int idListaClick;
+  //  private int idPosizioneClick;
   private View rootView;
   private LUtils mLUtils;
   private long mLastClickTime = 0;
@@ -88,6 +88,7 @@ public class NumericSectionFragment extends HFFragment
     rootView = inflater.inflate(R.layout.fragment_numeric_index, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
+    mCantiViewModel = ViewModelProviders.of(this).get(NumericIndexViewModel.class);
     //    // crea un istanza dell'oggetto DatabaseCanti
     //    if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
     //
@@ -144,7 +145,7 @@ public class NumericSectionFragment extends HFFragment
     mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(1);
     mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true);
-//    mAdapter.add(mItems);
+    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel.titoli);
     mRecyclerView.setAdapter(mAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
     mRecyclerView.setLayoutManager(llm);
@@ -157,24 +158,20 @@ public class NumericSectionFragment extends HFFragment
 
     mLUtils = LUtils.getInstance(getActivity());
 
-    mCantiViewModel = ViewModelProviders.of(this).get(NumericIndexViewModel.class);
-    populateDb();
-    subscribeUiFavorites();
-
-    if (savedInstanceState != null) {
-      Log.d(getClass().getName(), "onCreateView: RESTORING");
-      idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
-      idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
-      idListaClick = savedInstanceState.getInt("idListaClick", 0);
-      idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
-      posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-      SimpleDialogFragment sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE");
-      if (sFragment != null) sFragment.setmCallback(NumericSectionFragment.this);
-      sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2");
-      if (sFragment != null) sFragment.setmCallback(NumericSectionFragment.this);
-    }
+    //    if (savedInstanceState != null) {
+    //      Log.d(getClass().getName(), "onCreateView: RESTORING");
+    //      idDaAgg = savedInstanceState.getInt("mCantiViewModel.idDaAgg", 0);
+    //      idPosizioneClick = savedInstanceState.getInt("mCantiViewModel.idPosizioneClick", 0);
+    //      idListaClick = savedInstanceState.getInt("mCantiViewModel.idListaClick", 0);
+    //      idListaDaAgg = savedInstanceState.getInt("mCantiViewModel.idListaDaAgg", 0);
+    //      posizioneDaAgg = savedInstanceState.getInt("mCantiViewModel.posizioneDaAgg", 0);
+    SimpleDialogFragment sFragment =
+        SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE");
+    if (sFragment != null) sFragment.setmCallback(NumericSectionFragment.this);
+    sFragment =
+        SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "NUMERIC_REPLACE_2");
+    if (sFragment != null) sFragment.setmCallback(NumericSectionFragment.this);
+    //    }
 
     if (!isViewShown) {
       //      query = "SELECT _id, lista" + "		FROM LISTE_PERS" + "		ORDER BY _id ASC";
@@ -208,21 +205,28 @@ public class NumericSectionFragment extends HFFragment
   }
 
   @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    populateDb();
+    subscribeUiFavorites();
+  }
+
+  @Override
   public void onDestroyView() {
     super.onDestroyView();
     mUnbinder.unbind();
   }
 
-  /** @param outState Bundle in which to place your saved state. */
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putInt("idDaAgg", idDaAgg);
-    outState.putInt("idPosizioneClick", idPosizioneClick);
-    outState.putInt("idListaClick", idListaClick);
-    outState.putInt("idListaDaAgg", idListaDaAgg);
-    outState.putInt("posizioneDaAgg", posizioneDaAgg);
-  }
+  //  /** @param outState Bundle in which to place your saved state. */
+  //  @Override
+  //  public void onSaveInstanceState(@NonNull Bundle outState) {
+  //    super.onSaveInstanceState(outState);
+  //    outState.putInt("mCantiViewModel.idDaAgg", mCantiViewModel.idDaAgg);
+  //    outState.putInt("mCantiViewModel.idPosizioneClick", mCantiViewModel.idPosizioneClick);
+  //    outState.putInt("mCantiViewModel.idListaClick", mCantiViewModel.idListaClick);
+  //    outState.putInt("mCantiViewModel.idListaDaAgg", mCantiViewModel.idListaDaAgg);
+  //    outState.putInt("mCantiViewModel.posizioneDaAgg", mCantiViewModel.posizioneDaAgg);
+  //  }
 
   /**
    * Set a hint to the system about whether this fragment's UI is currently visible to the user.
@@ -292,7 +296,8 @@ public class NumericSectionFragment extends HFFragment
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
     titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-    idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+    mCantiViewModel.idDaAgg =
+        Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
     menu.setHeaderTitle("Aggiungi canto a:");
 
     //    for (int i = 0; i < idListe.length; i++) {
@@ -328,8 +333,8 @@ public class NumericSectionFragment extends HFFragment
     if (getUserVisibleHint()) {
       switch (item.getItemId()) {
         case R.id.add_to_favorites:
-//          addToFavorites();
-          ListeUtils.addToFavorites(getContext(), rootView, idDaAgg);
+          //          addToFavorites();
+          ListeUtils.addToFavorites(getContext(), rootView, mCantiViewModel.idDaAgg);
           return true;
         case R.id.add_to_p_iniziale:
           addToListaNoDup(1, 1);
@@ -366,60 +371,63 @@ public class NumericSectionFragment extends HFFragment
           return true;
         case R.id.add_to_e_pane:
           //          F(2, 3);
-          ListeUtils.addToListaDup(getContext(), rootView, 2, 3, idDaAgg);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 3, mCantiViewModel.idDaAgg);
           return true;
         case R.id.add_to_e_vino:
           //          addToListaDup(2, 4);
-          ListeUtils.addToListaDup(getContext(), rootView, 2, 4, idDaAgg);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 4, mCantiViewModel.idDaAgg);
           return true;
         case R.id.add_to_e_fine:
           addToListaNoDup(2, 5);
           return true;
         default:
-          idListaClick = item.getGroupId();
-          idPosizioneClick = item.getItemId();
-          if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
-            idListaClick -= 100;
+          mCantiViewModel.idListaClick = item.getGroupId();
+          mCantiViewModel.idPosizioneClick = item.getItemId();
+          if (mCantiViewModel.idListaClick != ID_FITTIZIO && mCantiViewModel.idListaClick >= 100) {
+            mCantiViewModel.idListaClick -= 100;
             //            SQLiteDatabase db = listaCanti.getReadableDatabase();
             //            if
-            // (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals("")) {
+            // (listePers[mCantiViewModel.idListaClick].getCantoPosizione(mCantiViewModel.idPosizioneClick).equals("")) {
             if (listePersonalizzate
-                .get(idListaClick)
+                .get(mCantiViewModel.idListaClick)
                 .lista
-                .getCantoPosizione(idPosizioneClick)
+                .getCantoPosizione(mCantiViewModel.idPosizioneClick)
                 .equals("")) {
-              //              listePers[idListaClick].addCanto(String.valueOf(idDaAgg),
-              // idPosizioneClick);
+              //
+              // listePers[mCantiViewModel.idListaClick].addCanto(String.valueOf(mCantiViewModel.idDaAgg),
+              // mCantiViewModel.idPosizioneClick);
               //              ContentValues values = new ContentValues();
               //              values.put("lista",
-              // ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-              //              db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick],
+              // ListaPersonalizzata.serializeObject(listePers[mCantiViewModel.idListaClick]));
+              //              db.update("LISTE_PERS", values, "_id = " +
+              // idListe[mCantiViewModel.idListaClick],
               // null);
               //              Snackbar.make(rootView, R.string.list_added,
               // Snackbar.LENGTH_SHORT).show();
               listePersonalizzate
-                  .get(idListaClick)
+                  .get(mCantiViewModel.idListaClick)
                   .lista
-                  .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+                  .addCanto(
+                      String.valueOf(mCantiViewModel.idDaAgg), mCantiViewModel.idPosizioneClick);
               new Thread(
                       new Runnable() {
                         @Override
                         public void run() {
                           ListePersDao mDao =
                               RisuscitoDatabase.getInstance(getContext()).listePersDao();
-                          mDao.updateLista(listePersonalizzate.get(idListaClick));
+                          mDao.updateLista(listePersonalizzate.get(mCantiViewModel.idListaClick));
                           Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                               .show();
                         }
                       })
                   .start();
             } else {
-              //              if (listePers[idListaClick]
+              //              if (listePers[mCantiViewModel.idListaClick]
               if (listePersonalizzate
-                  .get(idListaClick)
+                  .get(mCantiViewModel.idListaClick)
                   .lista
-                  .getCantoPosizione(idPosizioneClick)
-                  .equals(String.valueOf(idDaAgg))) {
+                  .getCantoPosizione(mCantiViewModel.idPosizioneClick)
+                  .equals(String.valueOf(mCantiViewModel.idDaAgg))) {
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
               } else {
                 // recupero titolo del canto presente
@@ -428,7 +436,7 @@ public class NumericSectionFragment extends HFFragment
                 //                                + "		FROM ELENCO"
                 //                                + "		WHERE _id = "
                 //                                +
-                // listePers[idListaClick].getCantoPosizione(idPosizioneClick);
+                // listePers[mCantiViewModel.idListaClick].getCantoPosizione(mCantiViewModel.idPosizioneClick);
                 //                Cursor cursor = db.rawQuery(query, null);
                 //                cursor.moveToFirst();
                 //                new SimpleDialogFragment.Builder(
@@ -458,9 +466,9 @@ public class NumericSectionFragment extends HFFragment
                                 mDao.getCantoById(
                                     Integer.parseInt(
                                         listePersonalizzate
-                                            .get(idListaClick)
+                                            .get(mCantiViewModel.idListaClick)
                                             .lista
-                                            .getCantoPosizione(idPosizioneClick)));
+                                            .getCantoPosizione(mCantiViewModel.idPosizioneClick)));
                             new SimpleDialogFragment.Builder(
                                     (AppCompatActivity) getActivity(),
                                     NumericSectionFragment.this,
@@ -486,20 +494,22 @@ public class NumericSectionFragment extends HFFragment
   }
 
   // aggiunge il canto premuto ai preferiti
-//  public void addToFavorites() {
-//        SQLiteDatabase db = listaCanti.getReadableDatabase();
-//        String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id = " + idDaAgg;
-//        db.execSQL(sql);
-//        db.close();
-//        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
-//  }
+  //  public void addToFavorites() {
+  //        SQLiteDatabase db = listaCanti.getReadableDatabase();
+  //        String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id = " +
+  // mCantiViewModel.idDaAgg;
+  //        db.execSQL(sql);
+  //        db.close();
+  //        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
+  //  }
 
   // aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
   //  public void addToListaDup(int idLista, int listPosition) {
   //    SQLiteDatabase db = listaCanti.getReadableDatabase();
   //
   //    String sql = "INSERT INTO CUST_LISTS ";
-  //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ", CURRENT_TIMESTAMP)";
+  //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + mCantiViewModel.idDaAgg + ",
+  // CURRENT_TIMESTAMP)";
   //
   //    try {
   //      db.execSQL(sql);
@@ -538,8 +548,8 @@ public class NumericSectionFragment extends HFFragment
   //      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
   //        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
   //      } else {
-  //        idListaDaAgg = idLista;
-  //        posizioneDaAgg = listPosition;
+  //        mCantiViewModel.idListaDaAgg = idLista;
+  //        mCantiViewModel.posizioneDaAgg = listPosition;
   //        new SimpleDialogFragment.Builder(
   //                (AppCompatActivity) getActivity(), NumericSectionFragment.this,
   // "NUMERIC_REPLACE_2")
@@ -565,7 +575,7 @@ public class NumericSectionFragment extends HFFragment
   //                    + ", "
   //                    + listPosition
   //                    + ", "
-  //                    + idDaAgg
+  //                    + mCantiViewModel.idDaAgg
   //                    + ", CURRENT_TIMESTAMP)";
   //    db.execSQL(sql);
   //    db.close();
@@ -578,22 +588,26 @@ public class NumericSectionFragment extends HFFragment
     switch (tag) {
       case "NUMERIC_REPLACE":
         //        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        //        listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+        //
+        // listePers[mCantiViewModel.idListaClick].addCanto(String.valueOf(mCantiViewModel.idDaAgg),
+        // mCantiViewModel.idPosizioneClick);
         //        ContentValues values = new ContentValues();
-        //        values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-        //        db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+        //        values.put("lista",
+        // ListaPersonalizzata.serializeObject(listePers[mCantiViewModel.idListaClick]));
+        //        db.update("LISTE_PERS", values, "_id = " + idListe[mCantiViewModel.idListaClick],
+        // null);
         //        db.close();
         //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
         listePersonalizzate
-            .get(idListaClick)
+            .get(mCantiViewModel.idListaClick)
             .lista
-            .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+            .addCanto(String.valueOf(mCantiViewModel.idDaAgg), mCantiViewModel.idPosizioneClick);
         new Thread(
                 new Runnable() {
                   @Override
                   public void run() {
                     ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
-                    mDao.updateLista(listePersonalizzate.get(idListaClick));
+                    mDao.updateLista(listePersonalizzate.get(mCantiViewModel.idListaClick));
                     Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
                   }
                 })
@@ -604,11 +618,11 @@ public class NumericSectionFragment extends HFFragment
         //        String sql =
         //                "UPDATE CUST_LISTS "
         //                        + "    SET id_canto = "
-        //                        + idDaAgg
+        //                        + mCantiViewModel.idDaAgg
         //                        + "    WHERE _id = "
-        //                        + idListaDaAgg
+        //                        + mCantiViewModel.idListaDaAgg
         //                        + "    AND position = "
-        //                        + posizioneDaAgg;
+        //                        + mCantiViewModel.posizioneDaAgg;
         //        db.execSQL(sql);
         //        db.close();
         //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
@@ -618,7 +632,10 @@ public class NumericSectionFragment extends HFFragment
                   public void run() {
                     CustomListDao mCustomListDao =
                         RisuscitoDatabase.getInstance(getContext()).customListDao();
-                    mCustomListDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg);
+                    mCustomListDao.updatePositionNoTimestamp(
+                        mCantiViewModel.idDaAgg,
+                        mCantiViewModel.idListaDaAgg,
+                        mCantiViewModel.posizioneDaAgg);
                     Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
                   }
                 })
@@ -640,10 +657,15 @@ public class NumericSectionFragment extends HFFragment
               public void run() {
                 String titoloPresente =
                     ListeUtils.addToListaNoDup(
-                        getActivity(), rootView, idLista, listPosition, titoloDaAgg, idDaAgg);
+                        getActivity(),
+                        rootView,
+                        idLista,
+                        listPosition,
+                        titoloDaAgg,
+                        mCantiViewModel.idDaAgg);
                 if (!titoloPresente.isEmpty()) {
-                  idListaDaAgg = idLista;
-                  posizioneDaAgg = listPosition;
+                  mCantiViewModel.idListaDaAgg = idLista;
+                  mCantiViewModel.posizioneDaAgg = listPosition;
                   new SimpleDialogFragment.Builder(
                           (AppCompatActivity) getActivity(),
                           NumericSectionFragment.this,
@@ -675,7 +697,7 @@ public class NumericSectionFragment extends HFFragment
             new Observer<List<Canto>>() {
               @Override
               public void onChanged(@Nullable List<Canto> canti) {
-                List<SimpleItem> titoli = new ArrayList<>();
+                mCantiViewModel.titoli.clear();
                 for (Canto canto : canti) {
                   SimpleItem sampleItem = new SimpleItem();
                   sampleItem
@@ -685,11 +707,9 @@ public class NumericSectionFragment extends HFFragment
                       .withColor(canto.color)
                       .withId(canto.id)
                       .withContextMenuListener(NumericSectionFragment.this);
-                  titoli.add(sampleItem);
+                  mCantiViewModel.titoli.add(sampleItem);
                 }
-                mAdapter.clear();
-                mAdapter.add(titoli);
-                mAdapter.notifyAdapterDataSetChanged();
+                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel.titoli);
               }
             });
   }

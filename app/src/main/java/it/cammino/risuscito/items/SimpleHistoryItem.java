@@ -145,6 +145,11 @@ public class SimpleHistoryItem
     return R.id.fastadapter_history_item_id;
   }
 
+  @Override
+  public long getIdentifier() {
+    return id;
+  }
+
   /**
    * defines the layout which will be used for this item in the list
    *

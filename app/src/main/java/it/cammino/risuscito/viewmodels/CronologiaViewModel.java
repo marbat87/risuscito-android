@@ -7,22 +7,22 @@ import android.arch.lifecycle.LiveData;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.cammino.risuscito.database.CantoCronologia;
 import it.cammino.risuscito.database.RisuscitoDatabase;
-import it.cammino.risuscito.database.entities.Canto;
-import it.cammino.risuscito.items.SimpleItem;
+import it.cammino.risuscito.items.SimpleHistoryItem;
 
-public class FavoritesViewModel extends AndroidViewModel {
+public class CronologiaViewModel extends AndroidViewModel {
 
-  public List<SimpleItem> titoli = new ArrayList<>();
-  private LiveData<List<Canto>> mFavoritesResult;
+  public List<SimpleHistoryItem> titoli = new ArrayList<>();
+  private LiveData<List<CantoCronologia>> mCanti;
   private RisuscitoDatabase mDb;
 
-  public FavoritesViewModel(Application application) {
+  public CronologiaViewModel(Application application) {
     super(application);
   }
 
-  public LiveData<List<Canto>> getmFavoritesResult() {
-    return mFavoritesResult;
+  public LiveData<List<CantoCronologia>> getCronologiaCanti() {
+    return mCanti;
   }
 
   public void createDb() {
@@ -32,6 +32,6 @@ public class FavoritesViewModel extends AndroidViewModel {
   }
 
   private void subscribeToDbChanges() {
-    mFavoritesResult = mDb.favoritesDao().getLiveFavorites();
+    mCanti = mDb.cronologiaDao().getLiveCronologia();
   }
 }

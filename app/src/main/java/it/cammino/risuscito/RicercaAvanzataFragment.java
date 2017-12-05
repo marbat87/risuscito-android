@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,6 +64,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.items.SimpleItem;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ListeUtils;
+import it.cammino.risuscito.viewmodels.GenericIndexViewModel;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class RicercaAvanzataFragment extends Fragment
@@ -90,18 +92,20 @@ public class RicercaAvanzataFragment extends Fragment
   private List<SimpleItem> titoli;
   private View rootView;
   private String titoloDaAgg;
-  private int idDaAgg;
-  private int idListaDaAgg;
-  private int posizioneDaAgg;
+  //  private int idDaAgg;
+  //  private int idListaDaAgg;
+  //  private int posizioneDaAgg;
   //    private ListaPersonalizzata[] listePers;
   //    private int[] idListe;
   private List<ListaPers> listePersonalizzate;
-  private int idListaClick;
-  private int idPosizioneClick;
+  //  private int idListaClick;
+  //  private int idPosizioneClick;
   private LUtils mLUtils;
   private SearchTask searchTask;
   private long mLastClickTime = 0;
   private Unbinder mUnbinder;
+
+  private GenericIndexViewModel mViewModel;
 
   @OnClick(R.id.pulisci_ripple)
   public void pulisciRisultati() {
@@ -130,6 +134,7 @@ public class RicercaAvanzataFragment extends Fragment
     rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
+    mViewModel = ViewModelProviders.of(this).get(GenericIndexViewModel.class);
     //    if (listaCanti == null) listaCanti = new DatabaseCanti(getActivity());
 
     mConsegnatiOnly.setVisibility(View.GONE);
@@ -208,20 +213,20 @@ public class RicercaAvanzataFragment extends Fragment
 
     mLUtils = LUtils.getInstance(getActivity());
 
-    if (savedInstanceState != null) {
-      Log.d(getClass().getName(), "onCreateView: RESTORING");
-      idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
-      idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
-      idListaClick = savedInstanceState.getInt("idListaClick", 0);
-      idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
-      posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
-      SimpleDialogFragment sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE");
-      if (sFragment != null) sFragment.setmCallback(RicercaAvanzataFragment.this);
-      sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2");
-      if (sFragment != null) sFragment.setmCallback(RicercaAvanzataFragment.this);
-    }
+    //    if (savedInstanceState != null) {
+    //      Log.d(getClass().getName(), "onCreateView: RESTORING");
+    //      idDaAgg = savedInstanceState.getInt("idDaAgg", 0);
+    //      idPosizioneClick = savedInstanceState.getInt("idPosizioneClick", 0);
+    //      idListaClick = savedInstanceState.getInt("idListaClick", 0);
+    //      idListaDaAgg = savedInstanceState.getInt("idListaDaAgg", 0);
+    //      posizioneDaAgg = savedInstanceState.getInt("posizioneDaAgg", 0);
+    SimpleDialogFragment sFragment =
+        SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE");
+    if (sFragment != null) sFragment.setmCallback(RicercaAvanzataFragment.this);
+    sFragment =
+        SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "AVANZATA_REPLACE_2");
+    if (sFragment != null) sFragment.setmCallback(RicercaAvanzataFragment.this);
+    //    }
 
     if (!isViewShown) {
       //      SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -261,16 +266,16 @@ public class RicercaAvanzataFragment extends Fragment
     mUnbinder.unbind();
   }
 
-  /** @param outState Bundle in which to place your saved state. */
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putInt("idDaAgg", idDaAgg);
-    outState.putInt("idPosizioneClick", idPosizioneClick);
-    outState.putInt("idListaClick", idListaClick);
-    outState.putInt("idListaDaAgg", idListaDaAgg);
-    outState.putInt("posizioneDaAgg", posizioneDaAgg);
-  }
+  //  /** @param outState Bundle in which to place your saved state. */
+  //  @Override
+  //  public void onSaveInstanceState(@NonNull Bundle outState) {
+  //    super.onSaveInstanceState(outState);
+  //    outState.putInt("idDaAgg", idDaAgg);
+  //    outState.putInt("idPosizioneClick", idPosizioneClick);
+  //    outState.putInt("idListaClick", idListaClick);
+  //    outState.putInt("idListaDaAgg", idListaDaAgg);
+  //    outState.putInt("posizioneDaAgg", posizioneDaAgg);
+  //  }
 
   /**
    * Set a hint to the system about whether this fragment's UI is currently visible to the user.
@@ -342,7 +347,8 @@ public class RicercaAvanzataFragment extends Fragment
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
     titoloDaAgg = ((TextView) v.findViewById(R.id.text_title)).getText().toString();
-    idDaAgg = Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
+    mViewModel.idDaAgg =
+        Integer.valueOf(((TextView) v.findViewById(R.id.text_id_canto)).getText().toString());
     menu.setHeaderTitle("Aggiungi canto a:");
 
     //    for (int i = 0; i < idListe.length; i++) {
@@ -378,7 +384,7 @@ public class RicercaAvanzataFragment extends Fragment
       switch (item.getItemId()) {
         case R.id.add_to_favorites:
           //          addToFavorites();
-          ListeUtils.addToFavorites(getContext(), rootView, idDaAgg);
+          ListeUtils.addToFavorites(getContext(), rootView, mViewModel.idDaAgg);
           return true;
         case R.id.add_to_p_iniziale:
           addToListaNoDup(1, 1);
@@ -415,62 +421,64 @@ public class RicercaAvanzataFragment extends Fragment
           return true;
         case R.id.add_to_e_pane:
           //          addToListaDup(2, 3);
-          ListeUtils.addToListaDup(getContext(), rootView, 2, 3, idDaAgg);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 3, mViewModel.idDaAgg);
           return true;
         case R.id.add_to_e_vino:
           //          addToListaDup(2, 4);
-          ListeUtils.addToListaDup(getContext(), rootView, 2, 4, idDaAgg);
+          ListeUtils.addToListaDup(getContext(), rootView, 2, 4, mViewModel.idDaAgg);
           return true;
         case R.id.add_to_e_fine:
           addToListaNoDup(2, 5);
           return true;
         default:
-          idListaClick = item.getGroupId();
-          idPosizioneClick = item.getItemId();
-          if (idListaClick != ID_FITTIZIO && idListaClick >= 100) {
-            idListaClick -= 100;
+          mViewModel.idListaClick = item.getGroupId();
+          mViewModel.idPosizioneClick = item.getItemId();
+          if (mViewModel.idListaClick != ID_FITTIZIO && mViewModel.idListaClick >= 100) {
+            mViewModel.idListaClick -= 100;
 
             // recupero ID del canto cliccato
             //            if
-            // (listePers[idListaClick].getCantoPosizione(idPosizioneClick).equals("")) {
+            // (listePers[mViewModel.idListaClick].getCantoPosizione(mViewModel.idPosizioneClick).equals("")) {
             //              SQLiteDatabase db = listaCanti.getReadableDatabase();
-            //              listePers[idListaClick].addCanto(String.valueOf(idDaAgg),
-            // idPosizioneClick);
+            //
+            // listePers[mViewModel.idListaClick].addCanto(String.valueOf(mViewModel.idDaAgg),
+            // mViewModel.idPosizioneClick);
             //              ContentValues values = new ContentValues();
             //              values.put("lista",
-            // ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-            //              db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+            // ListaPersonalizzata.serializeObject(listePers[mViewModel.idListaClick]));
+            //              db.update("LISTE_PERS", values, "_id = " +
+            // idListe[mViewModel.idListaClick], null);
             //              db.close();
             //              Snackbar.make(rootView, R.string.list_added,
             // Snackbar.LENGTH_SHORT).show();
             if (listePersonalizzate
-                .get(idListaClick)
+                .get(mViewModel.idListaClick)
                 .lista
-                .getCantoPosizione(idPosizioneClick)
+                .getCantoPosizione(mViewModel.idPosizioneClick)
                 .equals("")) {
               listePersonalizzate
-                  .get(idListaClick)
+                  .get(mViewModel.idListaClick)
                   .lista
-                  .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+                  .addCanto(String.valueOf(mViewModel.idDaAgg), mViewModel.idPosizioneClick);
               new Thread(
                       new Runnable() {
                         @Override
                         public void run() {
                           ListePersDao mDao =
                               RisuscitoDatabase.getInstance(getContext()).listePersDao();
-                          mDao.updateLista(listePersonalizzate.get(idListaClick));
+                          mDao.updateLista(listePersonalizzate.get(mViewModel.idListaClick));
                           Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT)
                               .show();
                         }
                       })
                   .start();
             } else {
-              //              if (listePers[idListaClick]
+              //              if (listePers[mViewModel.idListaClick]
               if (listePersonalizzate
-                  .get(idListaClick)
+                  .get(mViewModel.idListaClick)
                   .lista
-                  .getCantoPosizione(idPosizioneClick)
-                  .equals(String.valueOf(idDaAgg))) {
+                  .getCantoPosizione(mViewModel.idPosizioneClick)
+                  .equals(String.valueOf(mViewModel.idDaAgg))) {
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
               } else {
                 // recupero titolo del canto presente
@@ -480,7 +488,7 @@ public class RicercaAvanzataFragment extends Fragment
                 //                        + "		FROM ELENCO"
                 //                        + "		WHERE _id = "
                 //                        +
-                // listePers[idListaClick].getCantoPosizione(idPosizioneClick);
+                // listePers[mViewModel.idListaClick].getCantoPosizione(mViewModel.idPosizioneClick);
                 //                Cursor cursor = db.rawQuery(query, null);
                 //                cursor.moveToFirst();
                 //                new SimpleDialogFragment.Builder(
@@ -507,9 +515,9 @@ public class RicercaAvanzataFragment extends Fragment
                                 mDao.getCantoById(
                                     Integer.parseInt(
                                         listePersonalizzate
-                                            .get(idListaClick)
+                                            .get(mViewModel.idListaClick)
                                             .lista
-                                            .getCantoPosizione(idPosizioneClick)));
+                                            .getCantoPosizione(mViewModel.idPosizioneClick)));
                             new SimpleDialogFragment.Builder(
                                     (AppCompatActivity) getActivity(),
                                     RicercaAvanzataFragment.this,
@@ -537,7 +545,8 @@ public class RicercaAvanzataFragment extends Fragment
   // aggiunge il canto premuto ai preferiti
   //  public void addToFavorites() {
   //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-  //    String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id =  " + idDaAgg;
+  //    String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id =  " +
+  // mViewModel.idDaAgg;
   //    db.execSQL(sql);
   //    db.close();
   //    Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
@@ -549,7 +558,8 @@ public class RicercaAvanzataFragment extends Fragment
   //    SQLiteDatabase db = listaCanti.getReadableDatabase();
   //
   //    String sql = "INSERT INTO CUST_LISTS ";
-  //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + idDaAgg + ", CURRENT_TIMESTAMP)";
+  //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + mViewModel.idDaAgg + ",
+  // CURRENT_TIMESTAMP)";
   //
   //    try {
   //      db.execSQL(sql);
@@ -589,8 +599,8 @@ public class RicercaAvanzataFragment extends Fragment
   //      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
   //        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
   //      } else {
-  //        idListaDaAgg = idLista;
-  //        posizioneDaAgg = listPosition;
+  //        mViewModel.idListaDaAgg = idLista;
+  //        mViewModel.posizioneDaAgg = listPosition;
   //
   //        new SimpleDialogFragment.Builder(
   //                (AppCompatActivity) getActivity(),
@@ -618,7 +628,7 @@ public class RicercaAvanzataFragment extends Fragment
   //            + ", "
   //            + listPosition
   //            + ", "
-  //            + idDaAgg
+  //            + mViewModel.idDaAgg
   //            + ", CURRENT_TIMESTAMP)";
   //    db.execSQL(sql);
   //    db.close();
@@ -638,23 +648,26 @@ public class RicercaAvanzataFragment extends Fragment
     switch (tag) {
       case "AVANZATA_REPLACE":
         //        SQLiteDatabase db = listaCanti.getReadableDatabase();
-        //        listePers[idListaClick].addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+        //        listePers[mViewModel.idListaClick].addCanto(String.valueOf(mViewModel.idDaAgg),
+        // mViewModel.idPosizioneClick);
         //
         //        ContentValues values = new ContentValues();
-        //        values.put("lista", ListaPersonalizzata.serializeObject(listePers[idListaClick]));
-        //        db.update("LISTE_PERS", values, "_id = " + idListe[idListaClick], null);
+        //        values.put("lista",
+        // ListaPersonalizzata.serializeObject(listePers[mViewModel.idListaClick]));
+        //        db.update("LISTE_PERS", values, "_id = " + idListe[mViewModel.idListaClick],
+        // null);
         //        db.close();
         //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
         listePersonalizzate
-            .get(idListaClick)
+            .get(mViewModel.idListaClick)
             .lista
-            .addCanto(String.valueOf(idDaAgg), idPosizioneClick);
+            .addCanto(String.valueOf(mViewModel.idDaAgg), mViewModel.idPosizioneClick);
         new Thread(
                 new Runnable() {
                   @Override
                   public void run() {
                     ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
-                    mDao.updateLista(listePersonalizzate.get(idListaClick));
+                    mDao.updateLista(listePersonalizzate.get(mViewModel.idListaClick));
                     Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
                   }
                 })
@@ -665,11 +678,11 @@ public class RicercaAvanzataFragment extends Fragment
         //        String sql =
         //            "UPDATE CUST_LISTS "
         //                + " SET id_canto = "
-        //                + idDaAgg
+        //                + mViewModel.idDaAgg
         //                + " WHERE _id = "
-        //                + idListaDaAgg
+        //                + mViewModel.idListaDaAgg
         //                + " AND position = "
-        //                + posizioneDaAgg;
+        //                + mViewModel.posizioneDaAgg;
         //        db.execSQL(sql);
         //        db.close();
         //        Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
@@ -679,7 +692,8 @@ public class RicercaAvanzataFragment extends Fragment
                   public void run() {
                     CustomListDao mCustomListDao =
                         RisuscitoDatabase.getInstance(getContext()).customListDao();
-                    mCustomListDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg);
+                    mCustomListDao.updatePositionNoTimestamp(
+                        mViewModel.idDaAgg, mViewModel.idListaDaAgg, mViewModel.posizioneDaAgg);
                     Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
                   }
                 })
@@ -720,10 +734,15 @@ public class RicercaAvanzataFragment extends Fragment
               public void run() {
                 String titoloPresente =
                     ListeUtils.addToListaNoDup(
-                        getActivity(), rootView, idLista, listPosition, titoloDaAgg, idDaAgg);
+                        getActivity(),
+                        rootView,
+                        idLista,
+                        listPosition,
+                        titoloDaAgg,
+                        mViewModel.idDaAgg);
                 if (!titoloPresente.isEmpty()) {
-                  idListaDaAgg = idLista;
-                  posizioneDaAgg = listPosition;
+                  mViewModel.idListaDaAgg = idLista;
+                  mViewModel.posizioneDaAgg = listPosition;
                   new SimpleDialogFragment.Builder(
                           (AppCompatActivity) getActivity(),
                           RicercaAvanzataFragment.this,
@@ -845,7 +864,7 @@ public class RicercaAvanzataFragment extends Fragment
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
       cantoAdapter.add(titoli);
-      cantoAdapter.notifyAdapterDataSetChanged();
+      //      cantoAdapter.notifyAdapterDataSetChanged();
       progress.setVisibility(View.INVISIBLE);
       if (titoli.size() == 0)
         rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);

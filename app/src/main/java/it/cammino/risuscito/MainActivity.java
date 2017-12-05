@@ -1,8 +1,8 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -89,6 +89,7 @@ import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.ui.CrossfadeWrapper;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import it.cammino.risuscito.viewmodels.MainActivityViewModel;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends ThemeableActivity
@@ -106,18 +107,26 @@ public class MainActivity extends ThemeableActivity
   private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
   private final String TAG = getClass().getCanonicalName();
   private final long PROF_ID = 5428471L;
+
   @BindView(R.id.risuscito_toolbar)
   Toolbar mToolbar;
+
   @BindView(R.id.loadingBar)
   MaterialProgressBar mCircleProgressBar;
+
   @BindView(R.id.toolbar_layout)
   @Nullable
   AppBarLayout appBarLayout;
+
   @BindView(R.id.material_tabs)
   TabLayout mTabLayout;
+
   @BindView(R.id.tabletToolbarBackground)
   @Nullable
   View mTabletBG;
+
+  private MainActivityViewModel mViewModel;
+
   private LUtils mLUtils;
   private MaterialCab materialCab;
   private Drawer mDrawer;
@@ -125,12 +134,12 @@ public class MainActivity extends ThemeableActivity
   private Crossfader crossFader;
   private AccountHeader mAccountHeader;
   private boolean isOnTablet;
-  private boolean showSnackbar;
+  //  private boolean showSnackbar;
   private GoogleSignInAccount acct;
   //    private FirebaseAnalytics mFirebaseAnalytics;
   private GoogleApiClient mGoogleApiClient;
-  private boolean dbRestoreRunning;
-  private boolean prefRestoreRunning;
+  //  private boolean dbRestoreRunning;
+  //  private boolean prefRestoreRunning;
   private final ResultCallback<DriveApi.DriveContentsResult> restoreContentsPrefCallback =
       new ResultCallback<DriveApi.DriveContentsResult>() {
         @Override
@@ -142,7 +151,7 @@ public class MainActivity extends ThemeableActivity
                     + " - "
                     + result.getStatus().getStatusMessage();
             Log.e(getClass().getName(), error);
-            prefRestoreRunning = false;
+            mViewModel.prefRestoreRunning = false;
             //                        if (SimpleDialogFragment.findVisible(MainActivity.this,
             // "RESTORE_RUNNING") != null)
             //                            SimpleDialogFragment.findVisible(MainActivity.this,
@@ -156,7 +165,7 @@ public class MainActivity extends ThemeableActivity
 
           loadSharedPreferencesFromFile(contents.getInputStream());
           contents.discard(mGoogleApiClient);
-          prefRestoreRunning = false;
+          mViewModel.prefRestoreRunning = false;
           //                    if (SimpleDialogFragment.findVisible(MainActivity.this,
           // "RESTORE_RUNNING") != null)
           //                        SimpleDialogFragment.findVisible(MainActivity.this,
@@ -180,7 +189,7 @@ public class MainActivity extends ThemeableActivity
                     + " - "
                     + result.getStatus().getStatusMessage();
             Log.e(getClass().getName(), error);
-            dbRestoreRunning = false;
+            mViewModel.dbRestoreRunning = false;
             //                        if (SimpleDialogFragment.findVisible(MainActivity.this,
             // "RESTORE_RUNNING") != null)
             //                            SimpleDialogFragment.findVisible(MainActivity.this,
@@ -190,8 +199,8 @@ public class MainActivity extends ThemeableActivity
             return;
           }
 
-//          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
-//          listaCanti.close();
+          //          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+          //          listaCanti.close();
           RisuscitoDatabase.getInstance(MainActivity.this);
 
           File db_file = getDbPath();
@@ -236,7 +245,7 @@ public class MainActivity extends ThemeableActivity
                 "restoreContentsCallback - Exception3: " + e.getLocalizedMessage(),
                 e);
             contents.discard(mGoogleApiClient);
-            dbRestoreRunning = false;
+            mViewModel.dbRestoreRunning = false;
             //                        if (SimpleDialogFragment.findVisible(MainActivity.this,
             // "RESTORE_RUNNING") != null)
             //                            SimpleDialogFragment.findVisible(MainActivity.this,
@@ -251,7 +260,7 @@ public class MainActivity extends ThemeableActivity
                 "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(),
                 e);
             contents.discard(mGoogleApiClient);
-            dbRestoreRunning = false;
+            mViewModel.dbRestoreRunning = false;
             //                        if (SimpleDialogFragment.findVisible(MainActivity.this,
             // "RESTORE_RUNNING") != null)
             //                            SimpleDialogFragment.findVisible(MainActivity.this,
@@ -262,22 +271,22 @@ public class MainActivity extends ThemeableActivity
             return;
           }
 
-//          listaCanti = new DatabaseCanti(MainActivity.this);
-//          SQLiteDatabase db = listaCanti.getReadableDatabase();
-//          db.close();
-//          listaCanti.close();
-            RisuscitoDatabase.getInstance(MainActivity.this);
+          //          listaCanti = new DatabaseCanti(MainActivity.this);
+          //          SQLiteDatabase db = listaCanti.getReadableDatabase();
+          //          db.close();
+          //          listaCanti.close();
+          RisuscitoDatabase.getInstance(MainActivity.this);
           contents.discard(mGoogleApiClient);
 
-          dbRestoreRunning = false;
+          mViewModel.dbRestoreRunning = false;
           SimpleDialogFragment sFragment =
               SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING");
           if (sFragment != null) sFragment.setContent(R.string.restoring_settings);
           restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
         }
       };
-  private boolean dbBackupRunning;
-  private boolean prefBackupRunning;
+  //  private boolean dbBackupRunning;
+  //  private boolean prefBackupRunning;
   private Typeface mRegularFont;
   private Typeface mMediumFont;
 
@@ -287,6 +296,8 @@ public class MainActivity extends ThemeableActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
+
+    mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
     //        mSavedInstance = savedInstanceState;
 
@@ -332,7 +343,8 @@ public class MainActivity extends ThemeableActivity
             .setContentInsetStartRes(R.dimen.mcab_default_content_inset);
     //                .setCloseDrawableRes(android.R.drawable.ic_menu_close_clear_cancel);
 
-    showSnackbar = savedInstanceState == null || savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
+    //    mViewModel.showSnackbar = savedInstanceState == null ||
+    // savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
 
     if (savedInstanceState == null) {
       getSupportFragmentManager()
@@ -340,15 +352,15 @@ public class MainActivity extends ThemeableActivity
           .replace(R.id.content_frame, new Risuscito(), String.valueOf(R.id.navigation_home))
           .commit();
       //            AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.toolbar_layout);
-      if (!isOnTablet && appBarLayout != null) appBarLayout.setExpanded(true, true);
     }
+    if (!isOnTablet && appBarLayout != null) appBarLayout.setExpanded(true, false);
 
-    if (savedInstanceState != null) {
-      dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
-      dbBackupRunning = savedInstanceState.getBoolean(DB_BACKUP_RUNNING);
-      prefRestoreRunning = savedInstanceState.getBoolean(PREF_RESTORE_RUNNING);
-      prefBackupRunning = savedInstanceState.getBoolean(PREF_BACKUP_RUNNING);
-    }
+    //    if (savedInstanceState != null) {
+    //      dbRestoreRunning = savedInstanceState.getBoolean(DB_RESTORE_RUNNING);
+    //      dbBackupRunning = savedInstanceState.getBoolean(DB_BACKUP_RUNNING);
+    //      prefRestoreRunning = savedInstanceState.getBoolean(PREF_RESTORE_RUNNING);
+    //      prefBackupRunning = savedInstanceState.getBoolean(PREF_BACKUP_RUNNING);
+    //    }
 
     // [START configure_signin]
     // Configure sign-in to request the user's ID, email address, and basic
@@ -414,11 +426,12 @@ public class MainActivity extends ThemeableActivity
       Log.d(getClass().getName(), "Got cached sign-in");
       GoogleSignInResult result = opr.get();
       handleSignInResult(result);
-      Log.d(getClass().getName(), "dbRestoreRunning: " + dbRestoreRunning);
-      Log.d(getClass().getName(), "prefRestoreRunning: " + prefRestoreRunning);
-      Log.d(getClass().getName(), "dbBackupRunning: " + dbBackupRunning);
-      Log.d(getClass().getName(), "prefBackupRunning: " + prefBackupRunning);
-      if (dbRestoreRunning) {
+      Log.d(getClass().getName(), "mViewModel.dbRestoreRunning: " + mViewModel.dbRestoreRunning);
+      Log.d(
+          getClass().getName(), "mViewModel.prefRestoreRunning: " + mViewModel.prefRestoreRunning);
+      Log.d(getClass().getName(), "mViewModel.dbBackupRunning: " + mViewModel.dbBackupRunning);
+      Log.d(getClass().getName(), "mViewModel.prefBackupRunning: " + mViewModel.prefBackupRunning);
+      if (mViewModel.dbRestoreRunning) {
         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
             .title(R.string.restore_running)
             .content(R.string.restoring_database)
@@ -428,7 +441,7 @@ public class MainActivity extends ThemeableActivity
             .show();
         restoreDriveBackup();
       }
-      if (prefRestoreRunning) {
+      if (mViewModel.prefRestoreRunning) {
         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
             .title(R.string.restore_running)
             .content(R.string.restoring_settings)
@@ -438,7 +451,7 @@ public class MainActivity extends ThemeableActivity
             .show();
         restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
       }
-      if (dbBackupRunning) {
+      if (mViewModel.dbBackupRunning) {
         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
             .title(R.string.backup_running)
             .content(R.string.backup_database)
@@ -448,13 +461,13 @@ public class MainActivity extends ThemeableActivity
             .show();
         saveCheckDupl(
             Drive.DriveApi.getAppFolder(mGoogleApiClient),
-//            DatabaseCanti.getDbName(),
+            //            DatabaseCanti.getDbName(),
             RisuscitoDatabase.getDbName(),
             "application/x-sqlite3",
             getDbPath(),
             true);
       }
-      if (prefBackupRunning) {
+      if (mViewModel.prefBackupRunning) {
         new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
             .title(R.string.backup_running)
             .content(R.string.backup_settings)
@@ -481,11 +494,19 @@ public class MainActivity extends ThemeableActivity
               Log.d(getClass().getName(), "Reconnected");
               //                    hideProgressDialog();
               handleSignInResult(googleSignInResult);
-              Log.d(getClass().getName(), "dbRestoreRunning: " + dbRestoreRunning);
-              Log.d(getClass().getName(), "prefRestoreRunning: " + prefRestoreRunning);
-              Log.d(getClass().getName(), "dbBackupRunning: " + dbBackupRunning);
-              Log.d(getClass().getName(), "prefBackupRunning: " + prefBackupRunning);
-              if (dbRestoreRunning) {
+              Log.d(
+                  getClass().getName(),
+                  "mViewModel.dbRestoreRunning: " + mViewModel.dbRestoreRunning);
+              Log.d(
+                  getClass().getName(),
+                  "mViewModel.prefRestoreRunning: " + mViewModel.prefRestoreRunning);
+              Log.d(
+                  getClass().getName(),
+                  "mViewModel.dbBackupRunning: " + mViewModel.dbBackupRunning);
+              Log.d(
+                  getClass().getName(),
+                  "mViewModel.prefBackupRunning: " + mViewModel.prefBackupRunning);
+              if (mViewModel.dbRestoreRunning) {
                 new SimpleDialogFragment.Builder(
                         MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                     .title(R.string.restore_running)
@@ -496,7 +517,7 @@ public class MainActivity extends ThemeableActivity
                     .show();
                 restoreDriveBackup();
               }
-              if (prefRestoreRunning) {
+              if (mViewModel.prefRestoreRunning) {
                 new SimpleDialogFragment.Builder(
                         MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
                     .title(R.string.restore_running)
@@ -507,7 +528,7 @@ public class MainActivity extends ThemeableActivity
                     .show();
                 restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
               }
-              if (dbBackupRunning) {
+              if (mViewModel.dbBackupRunning) {
                 new SimpleDialogFragment.Builder(
                         MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                     .title(R.string.backup_running)
@@ -518,13 +539,13 @@ public class MainActivity extends ThemeableActivity
                     .show();
                 saveCheckDupl(
                     Drive.DriveApi.getAppFolder(mGoogleApiClient),
-//                    DatabaseCanti.getDbName(),
-                        RisuscitoDatabase.getDbName(),
+                    //                    DatabaseCanti.getDbName(),
+                    RisuscitoDatabase.getDbName(),
                     "application/x-sqlite3",
                     getDbPath(),
                     true);
               }
-              if (prefBackupRunning) {
+              if (mViewModel.prefBackupRunning) {
                 new SimpleDialogFragment.Builder(
                         MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
                     .title(R.string.backup_running)
@@ -558,26 +579,27 @@ public class MainActivity extends ThemeableActivity
     savedInstanceState = mDrawer.saveInstanceState(savedInstanceState);
     // questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si
     // ruota lo schermo
-    ConsegnatiFragment consegnatiFragment =
-        (ConsegnatiFragment)
-            getSupportFragmentManager()
-                .findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
-    if (consegnatiFragment != null
-        && consegnatiFragment.isVisible()
-        && consegnatiFragment.getTitoliChoose() != null) {
-      ConsegnatiFragment.RetainedFragment dataFragment = new ConsegnatiFragment.RetainedFragment();
-      getSupportFragmentManager()
-          .beginTransaction()
-          .add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE)
-          .commit();
-      dataFragment.setData(consegnatiFragment.getTitoliChoose());
-    }
+    //    ConsegnatiFragment consegnatiFragment =
+    //        (ConsegnatiFragment)
+    //            getSupportFragmentManager()
+    //                .findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
+    //    if (consegnatiFragment != null
+    //        && consegnatiFragment.isVisible()
+    //        && consegnatiFragment.getTitoliChoose() != null) {
+    //      ConsegnatiFragment.RetainedFragment dataFragment = new
+    // ConsegnatiFragment.RetainedFragment();
+    //      getSupportFragmentManager()
+    //          .beginTransaction()
+    //          .add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE)
+    //          .commit();
+    //      dataFragment.setData(consegnatiFragment.getTitoliChoose());
+    //    }
 
-    savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
-    savedInstanceState.putBoolean(DB_RESTORE_RUNNING, dbRestoreRunning);
-    savedInstanceState.putBoolean(PREF_RESTORE_RUNNING, prefRestoreRunning);
-    savedInstanceState.putBoolean(DB_BACKUP_RUNNING, dbBackupRunning);
-    savedInstanceState.putBoolean(PREF_BACKUP_RUNNING, prefBackupRunning);
+    //    savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
+    //    savedInstanceState.putBoolean(DB_RESTORE_RUNNING, dbRestoreRunning);
+    //    savedInstanceState.putBoolean(PREF_RESTORE_RUNNING, prefRestoreRunning);
+    //    savedInstanceState.putBoolean(DB_BACKUP_RUNNING, dbBackupRunning);
+    //    savedInstanceState.putBoolean(PREF_BACKUP_RUNNING, mViewModel.prefBackupRunning);
 
     super.onSaveInstanceState(savedInstanceState);
   }
@@ -929,7 +951,7 @@ public class MainActivity extends ThemeableActivity
   public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {}
 
   // converte gli accordi salvati dalla lingua vecchia alla nuova
-//  private void convertTabs(SQLiteDatabase db, String conversion) {
+  //  private void convertTabs(SQLiteDatabase db, String conversion) {
   private void convertTabs(String conversion) {
     //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
     //        HashMap<String, String> mappa = null;
@@ -968,54 +990,54 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.accordi_it.length; i++) mappa.put(accordi1[i], accordi2[i]);
 
-//    String query = "SELECT _id, saved_tab" + "  FROM ELENCO";
-//    Cursor cursor = db.rawQuery(query, null);
-//
-//    cursor.moveToFirst();
-//    while (!cursor.isAfterLast()) {
-//      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-//        Log.d(
-//            TAG,
-//            "convertTabs: "
-//                + "ID "
-//                + cursor.getInt(0)
-//                + " -> CONVERTO DA "
-//                + cursor.getString(1)
-//                + " A "
-//                + mappa.get(cursor.getString(1)));
-//        query =
-//            "UPDATE ELENCO"
-//                + "  SET saved_tab = \'"
-//                + mappa.get(cursor.getString(1))
-//                + "\' "
-//                + "  WHERE _id =  "
-//                + cursor.getInt(0);
-//        db.execSQL(query);
-//      }
-//      cursor.moveToNext();
-//    }
-//    cursor.close();
-      CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
-      List<Canto> canti = mDao.getAllByName();
-      for (Canto canto: canti) {
-          if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
-              Log.d(
-                      TAG,
-                      "convertTabs: "
-                              + "ID "
-                              + canto.id
-                              + " -> CONVERTO DA "
-                              + canto.savedTab
-                              + " A "
-                              + mappa.get(canto.savedTab));
-              canto.savedTab = mappa.get(canto.savedTab);
-              mDao.updateCanto(canto);
-          }
+    //    String query = "SELECT _id, saved_tab" + "  FROM ELENCO";
+    //    Cursor cursor = db.rawQuery(query, null);
+    //
+    //    cursor.moveToFirst();
+    //    while (!cursor.isAfterLast()) {
+    //      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+    //        Log.d(
+    //            TAG,
+    //            "convertTabs: "
+    //                + "ID "
+    //                + cursor.getInt(0)
+    //                + " -> CONVERTO DA "
+    //                + cursor.getString(1)
+    //                + " A "
+    //                + mappa.get(cursor.getString(1)));
+    //        query =
+    //            "UPDATE ELENCO"
+    //                + "  SET saved_tab = \'"
+    //                + mappa.get(cursor.getString(1))
+    //                + "\' "
+    //                + "  WHERE _id =  "
+    //                + cursor.getInt(0);
+    //        db.execSQL(query);
+    //      }
+    //      cursor.moveToNext();
+    //    }
+    //    cursor.close();
+    CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
+    List<Canto> canti = mDao.getAllByName();
+    for (Canto canto : canti) {
+      if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+        Log.d(
+            TAG,
+            "convertTabs: "
+                + "ID "
+                + canto.id
+                + " -> CONVERTO DA "
+                + canto.savedTab
+                + " A "
+                + mappa.get(canto.savedTab));
+        canto.savedTab = mappa.get(canto.savedTab);
+        mDao.updateCanto(canto);
       }
+    }
   }
 
   // converte gli accordi salvati dalla lingua vecchia alla nuova
-//  private void convertiBarre(SQLiteDatabase db, String conversion) {
+  //  private void convertiBarre(SQLiteDatabase db, String conversion) {
   private void convertiBarre(String conversion) {
     String[] barre1 = CambioAccordi.barre_it;
     Log.d(TAG, "convertiBarre - from: " + conversion.substring(0, 2));
@@ -1042,50 +1064,50 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.barre_it.length; i++) mappa.put(barre1[i], barre2[i]);
 
-//    String query = "SELECT _id, saved_barre" + "  FROM ELENCO";
-//    Cursor cursor = db.rawQuery(query, null);
-//
-//    cursor.moveToFirst();
-//    while (!cursor.isAfterLast()) {
-//      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-//        Log.d(
-//            TAG,
-//            "convertiBarre: "
-//                + "ID "
-//                + cursor.getInt(0)
-//                + " -> CONVERTO DA "
-//                + cursor.getString(1)
-//                + " A "
-//                + mappa.get(cursor.getString(1)));
-//        query =
-//            "UPDATE ELENCO"
-//                + "  SET saved_barre = \'"
-//                + mappa.get(cursor.getString(1))
-//                + "\' "
-//                + "  WHERE _id =  "
-//                + cursor.getInt(0);
-//        db.execSQL(query);
-//      }
-//      cursor.moveToNext();
-//    }
-//    cursor.close();
-      CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
-      List<Canto> canti = mDao.getAllByName();
-      for (Canto canto: canti) {
-          if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
-              Log.d(
-                      TAG,
-                      "convertiBarre: "
-                              + "ID "
-                              + canto.id
-                              + " -> CONVERTO DA "
-                              + canto.savedBarre
-                              + " A "
-                              + mappa.get(canto.savedBarre));
-              canto.savedBarre = mappa.get(canto.savedBarre);
-              mDao.updateCanto(canto);
-          }
+    //    String query = "SELECT _id, saved_barre" + "  FROM ELENCO";
+    //    Cursor cursor = db.rawQuery(query, null);
+    //
+    //    cursor.moveToFirst();
+    //    while (!cursor.isAfterLast()) {
+    //      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
+    //        Log.d(
+    //            TAG,
+    //            "convertiBarre: "
+    //                + "ID "
+    //                + cursor.getInt(0)
+    //                + " -> CONVERTO DA "
+    //                + cursor.getString(1)
+    //                + " A "
+    //                + mappa.get(cursor.getString(1)));
+    //        query =
+    //            "UPDATE ELENCO"
+    //                + "  SET saved_barre = \'"
+    //                + mappa.get(cursor.getString(1))
+    //                + "\' "
+    //                + "  WHERE _id =  "
+    //                + cursor.getInt(0);
+    //        db.execSQL(query);
+    //      }
+    //      cursor.moveToNext();
+    //    }
+    //    cursor.close();
+    CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
+    List<Canto> canti = mDao.getAllByName();
+    for (Canto canto : canti) {
+      if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+        Log.d(
+            TAG,
+            "convertiBarre: "
+                + "ID "
+                + canto.id
+                + " -> CONVERTO DA "
+                + canto.savedBarre
+                + " A "
+                + mappa.get(canto.savedBarre));
+        canto.savedBarre = mappa.get(canto.savedBarre);
+        mDao.updateCanto(canto);
       }
+    }
   }
 
   public void setupToolbarTitle(int titleResId) {
@@ -1214,13 +1236,13 @@ public class MainActivity extends ThemeableActivity
           PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
       editor.putBoolean(Utility.SIGNED_IN, true);
       editor.apply();
-      if (showSnackbar) {
+      if (mViewModel.showSnackbar) {
         Snackbar.make(
                 findViewById(R.id.main_content),
                 getString(R.string.connected_as, acct.getDisplayName()),
                 Snackbar.LENGTH_SHORT)
             .show();
-        showSnackbar = false;
+        mViewModel.showSnackbar = false;
       }
       updateUI(true);
       //            firebaseAuthWithGoogle();
@@ -1340,7 +1362,7 @@ public class MainActivity extends ThemeableActivity
   //    }
 
   public void setShowSnackbar() {
-    this.showSnackbar = true;
+    this.mViewModel.showSnackbar = true;
   }
 
   /**
@@ -1358,8 +1380,8 @@ public class MainActivity extends ThemeableActivity
       final String mime,
       final File file,
       final boolean dataBase) {
-    if (dataBase) dbBackupRunning = true;
-    else prefBackupRunning = true;
+    if (dataBase) mViewModel.dbBackupRunning = true;
+    else mViewModel.prefBackupRunning = true;
     if (mGoogleApiClient != null
         && pFldr != null
         && titl != null
@@ -1412,8 +1434,8 @@ public class MainActivity extends ThemeableActivity
                                             + "-"
                                             + status.getStatusMessage();
                                     Log.e(getClass().getName(), "saveCheckDupl - " + errore);
-                                    if (dataBase) dbBackupRunning = false;
-                                    else prefBackupRunning = false;
+                                    if (dataBase) mViewModel.dbBackupRunning = false;
+                                    else mViewModel.prefBackupRunning = false;
                                     //                                        SimpleDialogFragment
                                     // sFragment =
                                     // SimpleDialogFragment.findVisible(MainActivity.this,
@@ -1436,8 +1458,8 @@ public class MainActivity extends ThemeableActivity
                 });
       } catch (Exception e) {
         Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
-        if (dataBase) dbBackupRunning = false;
-        else prefBackupRunning = false;
+        if (dataBase) mViewModel.dbBackupRunning = false;
+        else mViewModel.prefBackupRunning = false;
         //                SimpleDialogFragment sFragment =
         // SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING");
         //                if (sFragment != null)
@@ -1498,7 +1520,7 @@ public class MainActivity extends ThemeableActivity
                               getClass().getName(),
                               "saveToDrive - Exception1: " + e.getLocalizedMessage(),
                               e);
-                          dbBackupRunning = false;
+                          mViewModel.dbBackupRunning = false;
                           //                                    SimpleDialogFragment sFragment =
                           // SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING");
                           //                                    if (sFragment != null)
@@ -1512,7 +1534,7 @@ public class MainActivity extends ThemeableActivity
                         }
                       } else {
                         if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
-                          prefBackupRunning = false;
+                          mViewModel.prefBackupRunning = false;
                           //                                    SimpleDialogFragment sFragment =
                           // SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING");
                           //                                    if (sFragment != null)
@@ -1559,7 +1581,7 @@ public class MainActivity extends ThemeableActivity
                                                                 .getStatusCode();
                                                     Log.d(getClass().getName(), error);
                                                     if (dataBase) {
-                                                      dbBackupRunning = false;
+                                                      mViewModel.dbBackupRunning = false;
                                                       SimpleDialogFragment sFragment =
                                                           SimpleDialogFragment.findVisible(
                                                               MainActivity.this, "BACKUP_RUNNING");
@@ -1574,7 +1596,7 @@ public class MainActivity extends ThemeableActivity
                                                           null,
                                                           false);
                                                     } else {
-                                                      prefBackupRunning = false;
+                                                      mViewModel.prefBackupRunning = false;
                                                       //
                                                       //                SimpleDialogFragment
                                                       // sFragment =
@@ -1596,8 +1618,8 @@ public class MainActivity extends ThemeableActivity
                                     }
                                   } else {
                                     /* report error */
-                                    if (dataBase) dbBackupRunning = false;
-                                    else prefBackupRunning = false;
+                                    if (dataBase) mViewModel.dbBackupRunning = false;
+                                    else mViewModel.prefBackupRunning = false;
                                     //                                        SimpleDialogFragment
                                     // sFragment =
                                     // SimpleDialogFragment.findVisible(MainActivity.this,
@@ -1622,8 +1644,8 @@ public class MainActivity extends ThemeableActivity
                               });
                     } else {
                       /* report error */
-                      if (dataBase) dbBackupRunning = false;
-                      else prefBackupRunning = false;
+                      if (dataBase) mViewModel.dbBackupRunning = false;
+                      else mViewModel.prefBackupRunning = false;
                       //                            if
                       // (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING") !=
                       // null)
@@ -1644,8 +1666,8 @@ public class MainActivity extends ThemeableActivity
                 });
       } catch (Exception e) {
         Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
-        if (dataBase) dbBackupRunning = false;
-        else prefBackupRunning = false;
+        if (dataBase) mViewModel.dbBackupRunning = false;
+        else mViewModel.prefBackupRunning = false;
         //                if (SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING")
         // != null)
         //                    SimpleDialogFragment.findVisible(MainActivity.this,
@@ -1657,19 +1679,19 @@ public class MainActivity extends ThemeableActivity
   }
 
   private File getDbPath() {
-//    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
-//    return getDatabasePath(DatabaseCanti.getDbName());
+    //    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
+    //    return getDatabasePath(DatabaseCanti.getDbName());
     Log.d(getClass().getName(), "dbpath:" + getDatabasePath(RisuscitoDatabase.getDbName()));
     return getDatabasePath(RisuscitoDatabase.getDbName());
   }
 
   void restoreDriveBackup() {
-    dbRestoreRunning = true;
-//    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
+    mViewModel.dbRestoreRunning = true;
+    //    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
     Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + RisuscitoDatabase.getDbName());
     Query query =
         new Query.Builder()
-//            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
+            //            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
             .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.getDbName()))
             .build();
 
@@ -1701,7 +1723,7 @@ public class MainActivity extends ThemeableActivity
                           })
                       .setResultCallback(restoreContentsCallback);
                 } else {
-                  dbRestoreRunning = false;
+                  mViewModel.dbRestoreRunning = false;
                   //                    if (SimpleDialogFragment.findVisible(MainActivity.this,
                   // "RESTORE_RUNNING") != null)
                   //                        SimpleDialogFragment.findVisible(MainActivity.this,
@@ -1718,7 +1740,7 @@ public class MainActivity extends ThemeableActivity
   }
 
   void restoreDrivePrefBackup(String title) {
-    prefRestoreRunning = true;
+    mViewModel.prefRestoreRunning = true;
     Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
     Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build();
 
@@ -1754,7 +1776,7 @@ public class MainActivity extends ThemeableActivity
                           })
                       .setResultCallback(restoreContentsPrefCallback);
                 } else {
-                  prefRestoreRunning = false;
+                  mViewModel.prefRestoreRunning = false;
                   //                    if (SimpleDialogFragment.findVisible(MainActivity.this,
                   // "RESTORE_RUNNING") != null)
                   //                        SimpleDialogFragment.findVisible(MainActivity.this,
@@ -1785,8 +1807,8 @@ public class MainActivity extends ThemeableActivity
               .show();
           saveCheckDupl(
               Drive.DriveApi.getAppFolder(mGoogleApiClient),
-//              DatabaseCanti.getDbName(),
-                  RisuscitoDatabase.getDbName(),
+              //              DatabaseCanti.getDbName(),
+              RisuscitoDatabase.getDbName(),
               "application/x-sqlite3",
               getDbPath(),
               true);
@@ -1904,24 +1926,25 @@ public class MainActivity extends ThemeableActivity
 
     TranslationTask() {}
 
-      @Override
-      protected Integer doInBackground(String... sUrl) {
-          getIntent().removeExtra(Utility.DB_RESET);
-          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
-          SQLiteDatabase db = listaCanti.getReadableDatabase();
-//      DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
-//      DatabaseCanti.BackupLocalLink[] backupLink = listaCanti.backupLocalLink(db.getVersion(), db);
-          listaCanti.reCreateDatabse(db);
-//      listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
-//      convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-//      convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-          db.close();
-          listaCanti.close();
-          RisuscitoDatabase.getInstance(MainActivity.this).recreateDB(MainActivity.this);
-          convertTabs(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-          convertiBarre(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-          return 0;
-      }
+    @Override
+    protected Integer doInBackground(String... sUrl) {
+      getIntent().removeExtra(Utility.DB_RESET);
+      DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
+      SQLiteDatabase db = listaCanti.getReadableDatabase();
+      //      DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
+      //      DatabaseCanti.BackupLocalLink[] backupLink =
+      // listaCanti.backupLocalLink(db.getVersion(), db);
+      listaCanti.reCreateDatabse(db);
+      //      listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
+      //      convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+      //      convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+      db.close();
+      listaCanti.close();
+      RisuscitoDatabase.getInstance(MainActivity.this).recreateDB(MainActivity.this);
+      convertTabs(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+      convertiBarre(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
+      return 0;
+    }
 
     @Override
     protected void onPreExecute() {

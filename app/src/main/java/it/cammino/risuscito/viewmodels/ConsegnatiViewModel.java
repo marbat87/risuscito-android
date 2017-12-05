@@ -3,13 +3,20 @@ package it.cammino.risuscito.viewmodels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.entities.Canto;
+import it.cammino.risuscito.items.CheckableItem;
 
 public class ConsegnatiViewModel extends AndroidViewModel {
+
+  public boolean editMode;
+
+  public List<CheckableItem> titoliChoose = new ArrayList<>();
 
   private LiveData<List<Canto>> mIndexResult;
 
@@ -20,6 +27,7 @@ public class ConsegnatiViewModel extends AndroidViewModel {
   }
 
   public LiveData<List<Canto>> getIndexResult() {
+    if (mIndexResult == null) mIndexResult = new MutableLiveData<>();
     return mIndexResult;
   }
 

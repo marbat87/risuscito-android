@@ -479,7 +479,7 @@ public class InsertVeloceFragment extends Fragment {
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
       cantoAdapter.add(titoli);
-      cantoAdapter.notifyAdapterDataSetChanged();
+//      cantoAdapter.notifyAdapterDataSetChanged();
       progress.setVisibility(View.INVISIBLE);
       if (titoli.size() == 0) mNoResults.setVisibility(View.VISIBLE);
       else mNoResults.setVisibility(View.GONE);

@@ -1,6 +1,7 @@
 package it.cammino.risuscito;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -74,7 +75,6 @@ import butterknife.OnClick;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.LocalLinksDao;
-import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.database.entities.LocalLink;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.playback.MusicService;
@@ -82,6 +82,7 @@ import it.cammino.risuscito.services.DownloadService;
 import it.cammino.risuscito.services.PdfExportService;
 import it.cammino.risuscito.ui.BottomSheetFabCanto;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import it.cammino.risuscito.viewmodels.PaginaRenderViewModel;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class PaginaRenderActivity extends ThemeableActivity
@@ -89,13 +90,6 @@ public class PaginaRenderActivity extends ThemeableActivity
 
   private static final long PROGRESS_UPDATE_INTERNAL = 1000;
   private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
-  //    private String notaSalvata;
-  public static String notaCambio;
-  public static String speedValue;
-  public static boolean scrollPlaying;
-  public static String mostraAudio;
-  //    private String barreSalvato;
-  private static String barreCambio;
   public final CambioAccordi cambioAccordi = new CambioAccordi(this);
   final String TAG = getClass().getCanonicalName();
   private final ScheduledExecutorService mExecutorService =
@@ -132,8 +126,16 @@ public class PaginaRenderActivity extends ThemeableActivity
 
   @BindView(R.id.fab_canti)
   FloatingActionButton mFab;
+  //    private String notaSalvata;
+  //  public static String notaCambio;
+  //  public static String speedValue;
+  //  public static boolean scrollPlaying;
+  //  public static String mostraAudio;
+  //    private String barreSalvato;
+  //  private static String barreCambio;
+  private PaginaRenderViewModel mViewModel;
   //    private DatabaseCanti listaCanti;
-  private Canto mCurrentCanto;
+  //  private Canto mCurrentCanto;
   private String pagina;
   private int idCanto;
   private String url;
@@ -156,9 +158,9 @@ public class PaginaRenderActivity extends ThemeableActivity
   final Runnable mScrollDown =
       new Runnable() {
         public void run() {
-          if (paginaView != null && speedValue != null) {
+          if (paginaView != null && mViewModel.speedValue != null) {
             try {
-              paginaView.scrollBy(0, Integer.valueOf(speedValue));
+              paginaView.scrollBy(0, Integer.valueOf(mViewModel.speedValue));
             } catch (NumberFormatException e) {
               paginaView.scrollBy(0, 0);
             }
@@ -433,7 +435,7 @@ public class PaginaRenderActivity extends ThemeableActivity
               Bundle bundle = new Bundle();
               bundle.putString(Utility.URL_CANTO, paginaView.getUrl());
               bundle.putInt(Utility.SPEED_VALUE, scroll_speed_bar.getProgress());
-              bundle.putBoolean(Utility.SCROLL_PLAYING, scrollPlaying);
+              bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying);
               bundle.putInt(Utility.ID_CANTO, idCanto);
 
               Intent intent2 = new Intent(PaginaRenderActivity.this, PaginaRenderFullScreen.class);
@@ -444,7 +446,7 @@ public class PaginaRenderActivity extends ThemeableActivity
               findViewById(R.id.music_controls)
                   .setVisibility(mostraAudioBool ? View.GONE : View.VISIBLE);
               mostraAudioBool = !mostraAudioBool;
-              mostraAudio = String.valueOf(mostraAudioBool);
+              mViewModel.mostraAudio = String.valueOf(mostraAudioBool);
               break;
             case BottomSheetFabCanto.SAVE_FILE:
               if (!url.isEmpty()) {
@@ -498,13 +500,14 @@ public class PaginaRenderActivity extends ThemeableActivity
               break;
             case BottomSheetFabCanto.FAVORITE:
               //              boolean favoriteYet = selectFavouriteFromSource() == 1;
-              boolean favoriteYet = mCurrentCanto.favorite == 1;
+              boolean favoriteYet = mViewModel.mCurrentCanto.favorite == 1;
               updateFavouriteFlag(favoriteYet ? 0 : 1);
-//              Snackbar.make(
-//                      findViewById(android.R.id.content),
-//                      !favoriteYet ? R.string.favorite_added : R.string.favorite_removed,
-//                      Snackbar.LENGTH_SHORT)
-//                  .show();
+              //              Snackbar.make(
+              //                      findViewById(android.R.id.content),
+              //                      !favoriteYet ? R.string.favorite_added :
+              // R.string.favorite_removed,
+              //                      Snackbar.LENGTH_SHORT)
+              //                  .show();
               break;
             default:
               break;
@@ -558,11 +561,11 @@ public class PaginaRenderActivity extends ThemeableActivity
   public void playPauseScroll(View v) {
     if (v.isSelected()) {
       showScrolling(false);
-      scrollPlaying = false;
+      mViewModel.scrollPlaying = false;
       mHandler.removeCallbacks(mScrollDown);
     } else {
       showScrolling(true);
-      scrollPlaying = true;
+      mViewModel.scrollPlaying = true;
       mScrollDown.run();
     }
   }
@@ -574,7 +577,7 @@ public class PaginaRenderActivity extends ThemeableActivity
             mostraAudioBool,
             mDownload,
             //            selectFavouriteFromSource() == 1,
-            mCurrentCanto.favorite == 1,
+            mViewModel.mCurrentCanto.favorite == 1,
             !url.equals(""),
             !personalUrl.equals(""));
     bottomSheetDialog.show(getSupportFragmentManager(), null);
@@ -605,6 +608,8 @@ public class PaginaRenderActivity extends ThemeableActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_pagina_render);
     ButterKnife.bind(this);
+
+    mViewModel = ViewModelProviders.of(this).get(PaginaRenderViewModel.class);
 
     ((TextView) findViewById(R.id.main_toolbarTitle)).setText(R.string.canto_title_activity);
     mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
@@ -693,10 +698,10 @@ public class PaginaRenderActivity extends ThemeableActivity
         new SeekBar.OnSeekBarChangeListener() {
           @Override
           public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            speedValue = String.valueOf(progress);
+            mViewModel.speedValue = String.valueOf(progress);
             ((TextView) findViewById(R.id.slider_text))
                 .setText(getString(R.string.percent_progress, progress));
-            Log.d(getClass().toString(), "speedValue cambiato! " + speedValue);
+            Log.d(getClass().toString(), "speedValue cambiato! " + mViewModel.speedValue);
           }
 
           @Override
@@ -708,11 +713,11 @@ public class PaginaRenderActivity extends ThemeableActivity
 
     showScrolling(false);
 
-    if (mostraAudio == null) {
+    if (mViewModel.mostraAudio == null) {
       SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-      mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
+      mViewModel.mostraAudio = String.valueOf(pref.getBoolean(Utility.SHOW_AUDIO, true));
     }
-    mostraAudioBool = Boolean.parseBoolean(mostraAudio);
+    mostraAudioBool = Boolean.parseBoolean(mViewModel.mostraAudio);
 
     SimpleDialogFragment sFragment =
         SimpleDialogFragment.findVisible(PaginaRenderActivity.this, "DOWNLOAD_MP3");
@@ -853,13 +858,18 @@ public class PaginaRenderActivity extends ThemeableActivity
         //                        || barreCambio == null || barreSalvato == null
         //                        || (notaCambio.equals(notaSalvata)
         //                        && barreCambio.equals(barreSalvato))) {
-        if (notaCambio == null
-            || mCurrentCanto.savedTab == null
-            || barreCambio == null
-            || mCurrentCanto.savedBarre == null
-            || (notaCambio.equals(mCurrentCanto.savedTab)
-                && barreCambio.equals(mCurrentCanto.savedBarre))) {
-          pulisciVars(false);
+        if (mViewModel.notaCambio == null
+            || mViewModel.mCurrentCanto.savedTab == null
+            || mViewModel.barreCambio == null
+            || mViewModel.mCurrentCanto.savedBarre == null
+            || (mViewModel.notaCambio.equals(mViewModel.mCurrentCanto.savedTab)
+                && mViewModel.barreCambio.equals(mViewModel.mCurrentCanto.savedBarre))) {
+          if (mViewModel.scrollPlaying) {
+            showScrolling(false);
+            mHandler.removeCallbacks(mScrollDown);
+          }
+          saveZoom(true, false);
+          //          pulisciVars(false);
           mLUtils.closeActivityWithTransition();
           return true;
         } else {
@@ -883,9 +893,9 @@ public class PaginaRenderActivity extends ThemeableActivity
             .setCancelable(true);
         Intent i = new Intent(getApplicationContext(), PdfExportService.class);
         i.putExtra(PdfExportService.DATA_PRIMA_NOTA, primaNota);
-        i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, notaCambio);
+        i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, mViewModel.notaCambio);
         i.putExtra(PdfExportService.DATA_PRIMO_BARRE, primoBarre);
-        i.putExtra(PdfExportService.DATA_BARRE_CAMBIO, barreCambio);
+        i.putExtra(PdfExportService.DATA_BARRE_CAMBIO, mViewModel.barreCambio);
         i.putExtra(PdfExportService.DATA_PAGINA, pagina);
         i.putExtra(
             PdfExportService.DATA_LINGUA,
@@ -910,15 +920,15 @@ public class PaginaRenderActivity extends ThemeableActivity
         //                            , R.string.tab_saved
         //                            , Snackbar.LENGTH_SHORT)
         //                            .show();
-        if (!mCurrentCanto.savedTab.equalsIgnoreCase(notaCambio)) {
-          mCurrentCanto.savedTab = notaCambio;
+        if (!mViewModel.mCurrentCanto.savedTab.equalsIgnoreCase(mViewModel.notaCambio)) {
+          mViewModel.mCurrentCanto.savedTab = mViewModel.notaCambio;
           new Thread(
                   new Runnable() {
                     @Override
                     public void run() {
                       CantoDao mDao =
                           RisuscitoDatabase.getInstance(PaginaRenderActivity.this).cantoDao();
-                      mDao.updateCanto(mCurrentCanto);
+                      mDao.updateCanto(mViewModel.mCurrentCanto);
                       Snackbar.make(
                               findViewById(android.R.id.content),
                               R.string.tab_saved,
@@ -934,21 +944,24 @@ public class PaginaRenderActivity extends ThemeableActivity
         }
         return true;
       case R.id.action_reset_tab:
-        notaCambio = primaNota;
-        HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+        mViewModel.notaCambio = primaNota;
+        HashMap<String, String> convMap =
+            cambioAccordi.diffSemiToni(primaNota, mViewModel.notaCambio);
         HashMap<String, String> convMin = null;
         if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration())
             .getLanguage()
-            .equalsIgnoreCase("uk")) convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
+            .equalsIgnoreCase("uk"))
+          convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel.notaCambio);
         saveZoom(false, false);
         if (convMap != null) {
-          String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin, true);
+          String nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true);
           if (nuovoFile != null) paginaView.loadUrl("file://" + nuovoFile);
         } else {
           paginaView.loadUrl("file:///android_asset/" + pagina + ".htm");
         }
         //        if (defaultZoomLevel > 0) paginaView.setInitialScale(defaultZoomLevel);
-        if (mCurrentCanto.zoom > 0) paginaView.setInitialScale(mCurrentCanto.zoom);
+        if (mViewModel.mCurrentCanto.zoom > 0)
+          paginaView.setInitialScale(mViewModel.mCurrentCanto.zoom);
         paginaView.setWebViewClient(new MyWebViewClient());
         return true;
       case R.id.action_save_barre:
@@ -968,15 +981,15 @@ public class PaginaRenderActivity extends ThemeableActivity
         //                  findViewById(android.R.id.content), R.string.barre_saved,
         // Snackbar.LENGTH_SHORT)
         //              .show();
-        if (!mCurrentCanto.savedBarre.equalsIgnoreCase(barreCambio)) {
-          mCurrentCanto.savedBarre = barreCambio;
+        if (!mViewModel.mCurrentCanto.savedBarre.equalsIgnoreCase(mViewModel.barreCambio)) {
+          mViewModel.mCurrentCanto.savedBarre = mViewModel.barreCambio;
           new Thread(
                   new Runnable() {
                     @Override
                     public void run() {
                       CantoDao mDao =
                           RisuscitoDatabase.getInstance(PaginaRenderActivity.this).cantoDao();
-                      mDao.updateCanto(mCurrentCanto);
+                      mDao.updateCanto(mViewModel.mCurrentCanto);
                       Snackbar.make(
                               findViewById(android.R.id.content),
                               R.string.barre_saved,
@@ -994,62 +1007,68 @@ public class PaginaRenderActivity extends ThemeableActivity
         }
         return true;
       case R.id.action_reset_barre:
-        barreCambio = primoBarre;
-        HashMap<String, String> convMap1 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+        mViewModel.barreCambio = primoBarre;
+        HashMap<String, String> convMap1 =
+            cambioAccordi.diffSemiToni(primaNota, mViewModel.notaCambio);
         HashMap<String, String> convMin1 = null;
         if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration())
             .getLanguage()
             .equalsIgnoreCase("uk"))
-          convMin1 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
+          convMin1 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel.notaCambio);
         saveZoom(false, false);
         if (convMap1 != null) {
-          String nuovoFile = cambiaAccordi(convMap1, barreCambio, convMin1, true);
+          String nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1, true);
           if (nuovoFile != null) paginaView.loadUrl("file://" + nuovoFile);
         } else {
           paginaView.loadUrl("file:///android_asset/" + pagina + ".htm");
         }
         //        if (defaultZoomLevel > 0) paginaView.setInitialScale(defaultZoomLevel);
-        if (mCurrentCanto.zoom > 0) paginaView.setInitialScale(mCurrentCanto.zoom);
+        if (mViewModel.mCurrentCanto.zoom > 0)
+          paginaView.setInitialScale(mViewModel.mCurrentCanto.zoom);
         paginaView.setWebViewClient(new MyWebViewClient());
         return true;
       default:
         if (item.getGroupId() == R.id.menu_gruppo_note) {
-          notaCambio = String.valueOf(item.getTitleCondensed());
-          HashMap<String, String> convMap2 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+          mViewModel.notaCambio = String.valueOf(item.getTitleCondensed());
+          HashMap<String, String> convMap2 =
+              cambioAccordi.diffSemiToni(primaNota, mViewModel.notaCambio);
           HashMap<String, String> convMin2 = null;
           if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration())
               .getLanguage()
               .equalsIgnoreCase("uk"))
-            convMin2 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
+            convMin2 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel.notaCambio);
           saveZoom(false, false);
           if (convMap2 != null) {
-            String nuovoFile = cambiaAccordi(convMap2, barreCambio, convMin2, true);
+            String nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2, true);
             if (nuovoFile != null) paginaView.loadUrl("file://" + nuovoFile);
           } else {
             paginaView.loadUrl("file:///android_asset/" + pagina + ".htm");
           }
           //          if (defaultZoomLevel > 0) paginaView.setInitialScale(defaultZoomLevel);
-          if (mCurrentCanto.zoom > 0) paginaView.setInitialScale(mCurrentCanto.zoom);
+          if (mViewModel.mCurrentCanto.zoom > 0)
+            paginaView.setInitialScale(mViewModel.mCurrentCanto.zoom);
           paginaView.setWebViewClient(new MyWebViewClient());
           return true;
         }
         if (item.getGroupId() == R.id.menu_gruppo_barre) {
-          barreCambio = String.valueOf(item.getTitleCondensed());
-          HashMap<String, String> convMap3 = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+          mViewModel.barreCambio = String.valueOf(item.getTitleCondensed());
+          HashMap<String, String> convMap3 =
+              cambioAccordi.diffSemiToni(primaNota, mViewModel.notaCambio);
           HashMap<String, String> convMin3 = null;
           if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration())
               .getLanguage()
               .equalsIgnoreCase("uk"))
-            convMin3 = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
+            convMin3 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel.notaCambio);
           saveZoom(false, false);
           if (convMap3 != null) {
-            String nuovoFile = cambiaAccordi(convMap3, barreCambio, convMin3, true);
+            String nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3, true);
             if (nuovoFile != null) paginaView.loadUrl("file://" + nuovoFile);
           } else {
             paginaView.loadUrl("file:///android_asset/" + pagina + ".htm");
           }
           //          if (defaultZoomLevel > 0) paginaView.setInitialScale(defaultZoomLevel);
-          if (mCurrentCanto.zoom > 0) paginaView.setInitialScale(mCurrentCanto.zoom);
+          if (mViewModel.mCurrentCanto.zoom > 0)
+            paginaView.setInitialScale(mViewModel.mCurrentCanto.zoom);
           paginaView.setWebViewClient(new MyWebViewClient());
           return true;
         }
@@ -1065,13 +1084,18 @@ public class PaginaRenderActivity extends ThemeableActivity
     //        || barreCambio == null
     //        || barreSalvato == null
     //        || (notaCambio.equals(notaSalvata) && barreCambio.equals(barreSalvato))) {
-    if (notaCambio == null
-        || mCurrentCanto.savedTab == null
-        || barreCambio == null
-        || mCurrentCanto.savedBarre == null
-        || (notaCambio.equals(mCurrentCanto.savedTab)
-            && barreCambio.equals(mCurrentCanto.savedBarre))) {
-      pulisciVars(false);
+    if (mViewModel.notaCambio == null
+        || mViewModel.mCurrentCanto.savedTab == null
+        || mViewModel.barreCambio == null
+        || mViewModel.mCurrentCanto.savedBarre == null
+        || (mViewModel.notaCambio.equals(mViewModel.mCurrentCanto.savedTab)
+            && mViewModel.barreCambio.equals(mViewModel.mCurrentCanto.savedBarre))) {
+      if (mViewModel.scrollPlaying) {
+        showScrolling(false);
+        mHandler.removeCallbacks(mScrollDown);
+      }
+      saveZoom(true, false);
+      //      pulisciVars(false);
       mLUtils.closeActivityWithTransition();
     } else {
       new SimpleDialogFragment.Builder(
@@ -1088,6 +1112,7 @@ public class PaginaRenderActivity extends ThemeableActivity
   public void onResume() {
     super.onResume();
 
+    Log.d(TAG, "onResume: ");
     new DataRetrieverTask().execute(idCanto);
 
     //        if (mCastContext != null) {
@@ -1166,13 +1191,12 @@ public class PaginaRenderActivity extends ThemeableActivity
     registerReceiver(exportError, new IntentFilter(PdfExportService.BROADCAST_EXPORT_ERROR));
     registerReceiver(fabBRec, new IntentFilter(BottomSheetFabCanto.CHOOSE_DONE));
     registerReceiver(catalogReadyBR, new IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC));
-
-    Log.d(TAG, "onResume: ");
   }
 
   @Override
   public void onDestroy() {
-    Log.d(TAG, "onDestroy()");
+    super.onDestroy();
+    Log.d(TAG, "onDestroy(): " + isFinishing());
     try {
       unregisterReceiver(downloadPosBRec);
       unregisterReceiver(downloadCompletedBRec);
@@ -1184,29 +1208,28 @@ public class PaginaRenderActivity extends ThemeableActivity
     } catch (IllegalArgumentException e) {
       Log.e(TAG, e.getLocalizedMessage(), e);
     }
-    saveZoom(false, false);
+    //    saveZoom(false, false);
     //    if (listaCanti != null) listaCanti.close();
-    super.onDestroy();
     if (isFinishing()) stopMedia();
     stopSeekbarUpdate();
     mExecutorService.shutdown();
   }
 
-  public void pulisciVars(boolean andSaveTabAlso) {
-    saveZoom(true, andSaveTabAlso);
+  //  public void pulisciVars(boolean andSaveTabAlso) {
+  //    saveZoom(true, andSaveTabAlso);
 
-    notaCambio = null;
-    barreCambio = null;
+  //    notaCambio = null;
+  //    barreCambio = null;
 
-    //    SaveSpeed();
-    if (scrollPlaying) {
-      showScrolling(false);
-      scrollPlaying = false;
-      mHandler.removeCallbacks(mScrollDown);
-    }
-    speedValue = null;
-    mostraAudio = null;
-  }
+  //    SaveSpeed();
+  //    if (scrollPlaying) {
+  //      showScrolling(false);
+  //      scrollPlaying = false;
+  //      mHandler.removeCallbacks(mScrollDown);
+  //    }
+  //    speedValue = null;
+  //    mostraAudio = null;
+  //  }
 
   // recupera il flag preferito per la pagina
   //  public int selectFavouriteFromSource() {
@@ -1239,8 +1262,8 @@ public class PaginaRenderActivity extends ThemeableActivity
               @Override
               public void run() {
                 CantoDao mDao = RisuscitoDatabase.getInstance(PaginaRenderActivity.this).cantoDao();
-                mCurrentCanto.favorite = favouriteFlag;
-                mDao.updateCanto(mCurrentCanto);
+                mViewModel.mCurrentCanto.favorite = favouriteFlag;
+                mDao.updateCanto(mViewModel.mCurrentCanto);
                 Snackbar.make(
                         findViewById(android.R.id.content),
                         favouriteFlag == 1 ? R.string.favorite_added : R.string.favorite_removed,
@@ -1262,7 +1285,8 @@ public class PaginaRenderActivity extends ThemeableActivity
     //    cursor.moveToFirst();
     //    if (cursor.getString(0) != null && !cursor.getString(0).equals("")) url =
     // cursor.getString(0);
-    if (mCurrentCanto.link != null && !mCurrentCanto.link.equals("")) url = mCurrentCanto.link;
+    if (mViewModel.mCurrentCanto.link != null && !mViewModel.mCurrentCanto.link.equals(""))
+      url = mViewModel.mCurrentCanto.link;
     else url = "";
 
     //    cursor.close();
@@ -1310,15 +1334,15 @@ public class PaginaRenderActivity extends ThemeableActivity
     //    defaultZoomLevel = (int) (paginaView.getScale() * 100);
     //    defaultScrollX = paginaView.getScrollX();
     //    defaultScrollY = paginaView.getScrollY();
-    mCurrentCanto.zoom = (int) (paginaView.getScale() * 100);
-    mCurrentCanto.scrollX = paginaView.getScrollX();
-    mCurrentCanto.scrollY = paginaView.getScrollY();
+    mViewModel.mCurrentCanto.zoom = (int) (paginaView.getScale() * 100);
+    mViewModel.mCurrentCanto.scrollX = paginaView.getScrollX();
+    mViewModel.mCurrentCanto.scrollY = paginaView.getScrollY();
 
-    if (andSpeedAlso) mCurrentCanto.savedSpeed = speedValue;
+    if (andSpeedAlso) mViewModel.mCurrentCanto.savedSpeed = mViewModel.speedValue;
 
     if (andSaveTabAlso) {
-      mCurrentCanto.savedBarre = barreCambio;
-      mCurrentCanto.savedTab = notaCambio;
+      mViewModel.mCurrentCanto.savedBarre = mViewModel.barreCambio;
+      mViewModel.mCurrentCanto.savedTab = mViewModel.notaCambio;
     }
 
     //    SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -1344,7 +1368,7 @@ public class PaginaRenderActivity extends ThemeableActivity
               @Override
               public void run() {
                 CantoDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).cantoDao();
-                mDao.updateCanto(mCurrentCanto);
+                mDao.updateCanto(mViewModel.mCurrentCanto);
               }
             })
         .start();
@@ -1427,9 +1451,9 @@ public class PaginaRenderActivity extends ThemeableActivity
             //                        Log.d(TAG, "notaCambio: " + notaCambio);
             //                        Log.d(TAG, "primaNota: " + primaNota);
             if (!notaHighlighed) {
-              if (!primaNota.equalsIgnoreCase(notaCambio)) {
+              if (!primaNota.equalsIgnoreCase(mViewModel.notaCambio)) {
                 if (Utility.isLowerCase(primaNota.charAt(0))) {
-                  String notaCambioMin = notaCambio;
+                  String notaCambioMin = mViewModel.notaCambio;
                   if (notaCambioMin.length() == 1) notaCambioMin = notaCambioMin.toLowerCase();
                   else
                     notaCambioMin =
@@ -1441,8 +1465,10 @@ public class PaginaRenderActivity extends ThemeableActivity
                 } else
                   line =
                       line.replaceFirst(
-                          notaCambio,
-                          "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">" + notaCambio + "</SPAN>");
+                          mViewModel.notaCambio,
+                          "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
+                              + mViewModel.notaCambio
+                              + "</SPAN>");
                 notaHighlighed = true;
               }
             }
@@ -1453,11 +1479,13 @@ public class PaginaRenderActivity extends ThemeableActivity
           } else {
             line = sb.toString();
             if (!notaHighlighed) {
-              if (!primaNota.equalsIgnoreCase(notaCambio)) {
+              if (!primaNota.equalsIgnoreCase(mViewModel.notaCambio)) {
                 line =
                     line.replaceFirst(
-                        notaCambio,
-                        "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">" + notaCambio + "</SPAN>");
+                        mViewModel.notaCambio,
+                        "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
+                            + mViewModel.notaCambio
+                            + "</SPAN>");
                 notaHighlighed = true;
               }
             }
@@ -1672,7 +1700,12 @@ public class PaginaRenderActivity extends ThemeableActivity
         //                + idCanto;
         //        db.execSQL(sql);
         //        db.close();
-        pulisciVars(true);
+        if (mViewModel.scrollPlaying) {
+          showScrolling(false);
+          mHandler.removeCallbacks(mScrollDown);
+        }
+        saveZoom(true, true);
+        //        pulisciVars(true);
         mLUtils.closeActivityWithTransition();
         break;
     }
@@ -1690,7 +1723,12 @@ public class PaginaRenderActivity extends ThemeableActivity
             .show(PaginaRenderActivity.this);
         break;
       case "SAVE_TAB":
-        pulisciVars(false);
+        if (mViewModel.scrollPlaying) {
+          showScrolling(false);
+          mHandler.removeCallbacks(mScrollDown);
+        }
+        saveZoom(true, false);
+        //        pulisciVars(false);
         mLUtils.closeActivityWithTransition();
         break;
     }
@@ -2082,8 +2120,9 @@ public class PaginaRenderActivity extends ThemeableActivity
             public void run() {
               //              if (defaultScrollX > 0 || defaultScrollY > 0)
               //                paginaView.scrollTo(defaultScrollX, defaultScrollY);
-              if (mCurrentCanto.scrollX > 0 || mCurrentCanto.scrollY > 0)
-                paginaView.scrollTo(mCurrentCanto.scrollX, mCurrentCanto.scrollY);
+              if (mViewModel.mCurrentCanto.scrollX > 0 || mViewModel.mCurrentCanto.scrollY > 0)
+                paginaView.scrollTo(
+                    mViewModel.mCurrentCanto.scrollX, mViewModel.mCurrentCanto.scrollY);
             }
             // Delay the scrollTo to make it work
           },
@@ -2095,8 +2134,9 @@ public class PaginaRenderActivity extends ThemeableActivity
   private class DataRetrieverTask extends AsyncTask<Integer, Void, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
+      Log.d(TAG, "doInBackground: ");
       CantoDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).cantoDao();
-      mCurrentCanto = mDao.getCantoById(params[0]);
+      mViewModel.mCurrentCanto = mDao.getCantoById(params[0]);
       getRecordLink();
       return 0;
     }
@@ -2104,30 +2144,36 @@ public class PaginaRenderActivity extends ThemeableActivity
     @Override
     protected void onPostExecute(Integer integer) {
       super.onPostExecute(integer);
-      if (mCurrentCanto.savedTab == null) {
-        if (notaCambio == null) mCurrentCanto.savedTab = notaCambio = primaNota;
-        else mCurrentCanto.savedTab = primaNota;
-      } else if (notaCambio == null) notaCambio = mCurrentCanto.savedTab;
+      if (mViewModel.mCurrentCanto.savedTab == null) {
+        if (mViewModel.notaCambio == null)
+          mViewModel.mCurrentCanto.savedTab = mViewModel.notaCambio = primaNota;
+        else mViewModel.mCurrentCanto.savedTab = primaNota;
+      } else if (mViewModel.notaCambio == null)
+        mViewModel.notaCambio = mViewModel.mCurrentCanto.savedTab;
 
-      if (mCurrentCanto.savedBarre == null) {
-        if (barreCambio == null) mCurrentCanto.savedBarre = barreCambio = primoBarre;
-        else mCurrentCanto.savedBarre = primoBarre;
+      if (mViewModel.mCurrentCanto.savedBarre == null) {
+        if (mViewModel.barreCambio == null)
+          mViewModel.mCurrentCanto.savedBarre = mViewModel.barreCambio = primoBarre;
+        else mViewModel.mCurrentCanto.savedBarre = primoBarre;
       } else {
         //	    	Log.i("BARRESALVATO", barreSalvato);
-        if (barreCambio == null) barreCambio = mCurrentCanto.savedBarre;
+        if (mViewModel.barreCambio == null)
+          mViewModel.barreCambio = mViewModel.mCurrentCanto.savedBarre;
       }
 
       // fix per crash su android 4.1
       if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
         paginaView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-      HashMap<String, String> convMap = cambioAccordi.diffSemiToni(primaNota, notaCambio);
+      HashMap<String, String> convMap =
+          cambioAccordi.diffSemiToni(primaNota, mViewModel.notaCambio);
       HashMap<String, String> convMin = null;
       if (ThemeableActivity.getSystemLocalWrapper(getResources().getConfiguration())
           .getLanguage()
-          .equalsIgnoreCase("uk")) convMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio);
+          .equalsIgnoreCase("uk"))
+        convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel.notaCambio);
       if (convMap != null) {
-        String nuovoFile = cambiaAccordi(convMap, barreCambio, convMin, true);
+        String nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true);
         if (nuovoFile != null) paginaView.loadUrl("file://" + nuovoFile);
       } else paginaView.loadUrl("file:///android_asset/" + pagina + ".htm");
 
@@ -2139,19 +2185,20 @@ public class PaginaRenderActivity extends ThemeableActivity
       webSettings.setBuiltInZoomControls(true);
       webSettings.setDisplayZoomControls(false);
 
-      if (mCurrentCanto.zoom > 0) paginaView.setInitialScale(mCurrentCanto.zoom);
+      if (mViewModel.mCurrentCanto.zoom > 0)
+        paginaView.setInitialScale(mViewModel.mCurrentCanto.zoom);
       paginaView.setWebViewClient(new MyWebViewClient());
 
-      if (speedValue == null) {
+      if (mViewModel.speedValue == null) {
         //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-        scroll_speed_bar.setProgress(Integer.valueOf(mCurrentCanto.savedSpeed));
+        scroll_speed_bar.setProgress(Integer.valueOf(mViewModel.mCurrentCanto.savedSpeed));
       } else {
         //	    	Log.i("ROTAZIONE", "setto " + speedValue);
-        scroll_speed_bar.setProgress(Integer.valueOf(speedValue));
+        scroll_speed_bar.setProgress(Integer.valueOf(mViewModel.speedValue));
       }
 
       //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
-      if (scrollPlaying) {
+      if (mViewModel.scrollPlaying) {
         showScrolling(true);
         mScrollDown.run();
       }

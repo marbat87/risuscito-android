@@ -132,10 +132,10 @@ public class Risuscito extends Fragment
           .show();
     }
 
-    PaginaRenderActivity.notaCambio = null;
-    PaginaRenderActivity.speedValue = null;
-    PaginaRenderActivity.scrollPlaying = false;
-    PaginaRenderActivity.mostraAudio = null;
+    //    PaginaRenderActivity.notaCambio = null;
+    //    PaginaRenderActivity.speedValue = null;
+    //    PaginaRenderActivity.scrollPlaying = false;
+    //    PaginaRenderActivity.mostraAudio = null;
 
     // apertura e chiusura database per consentire eventuale aggiornamento
     //    DatabaseCanti listaCanti = new DatabaseCanti(getActivity());

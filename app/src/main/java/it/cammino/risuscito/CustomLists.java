@@ -63,7 +63,7 @@ public class CustomLists extends Fragment
 
   public static final int TAG_CREA_LISTA = 111;
   public static final int TAG_MODIFICA_LISTA = 222;
-  private static final String PAGE_EDITED = "pageEdited";
+  //  private static final String PAGE_EDITED = "pageEdited";
 
   @BindView(R.id.view_pager)
   ViewPager mViewPager;
@@ -73,12 +73,12 @@ public class CustomLists extends Fragment
   private SectionsPagerAdapter mSectionsPagerAdapter;
   private String[] titoliListe;
   private int[] idListe;
-  private int indexToShow;
+  //  private int indexToShow;
   private boolean movePage;
   //    protected DatabaseCanti listaCanti;
-  private int listaDaCanc, idDaCanc, indDaModif;
-  private ListaPersonalizzata celebrazioneDaCanc;
-  private String titoloDaCanc;
+  //  private int listaDaCanc, idDaCanc, indDaModif;
+  //  private ListaPersonalizzata celebrazioneDaCanc;
+  //  private String titoloDaCanc;
   private FloatingActionButton mFab;
   private TabLayout tabs;
   private BroadcastReceiver fabBRec =
@@ -116,15 +116,15 @@ public class CustomLists extends Fragment
               Bundle bundle = new Bundle();
               bundle.putInt("idDaModif", idListe[mViewPager.getCurrentItem() - 2]);
               bundle.putBoolean("modifica", true);
-              indDaModif = mViewPager.getCurrentItem();
+              mCustomListsViewModel.indDaModif = mViewPager.getCurrentItem();
               startActivityForResult(
                   new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle),
                   TAG_MODIFICA_LISTA);
               getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
               break;
             case BottomSheetFabListe.DELETE_LIST:
-              listaDaCanc = mViewPager.getCurrentItem() - 2;
-              idDaCanc = idListe[listaDaCanc];
+              mCustomListsViewModel.listaDaCanc = mViewPager.getCurrentItem() - 2;
+              mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc];
               //                    SQLiteDatabase db = listaCanti.getReadableDatabase();
               //
               //                    String query = "SELECT titolo_lista, lista"
@@ -153,9 +153,9 @@ public class CustomLists extends Fragment
                         public void run() {
                           ListePersDao mDao =
                               RisuscitoDatabase.getInstance(getContext()).listePersDao();
-                          ListaPers lista = mDao.getListById(idDaCanc);
-                          titoloDaCanc = lista.titolo;
-                          celebrazioneDaCanc = lista.lista;
+                          ListaPers lista = mDao.getListById(mCustomListsViewModel.idDaCanc);
+                          mCustomListsViewModel.titoloDaCanc = lista.titolo;
+                          mCustomListsViewModel.celebrazioneDaCanc = lista.lista;
                           new SimpleDialogFragment.Builder(
                                   (AppCompatActivity) getActivity(),
                                   CustomLists.this,
@@ -186,9 +186,10 @@ public class CustomLists extends Fragment
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
     View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
+
+    mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel.class);
 
     MainActivity mMainActivity = (MainActivity) getActivity();
 
@@ -208,15 +209,16 @@ public class CustomLists extends Fragment
     mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
     mViewPager.setAdapter(mSectionsPagerAdapter);
 
-    if (savedInstanceState != null) {
-      indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
-      movePage = true;
-      indexToShow = savedInstanceState.getInt("indexToShow", 0);
-    } else {
-      indDaModif = 0;
-      movePage = false;
-      indexToShow = indDaModif;
-    }
+    //    if (savedInstanceState != null) {
+    //      indDaModif = savedInstanceState.getInt(PAGE_EDITED, 0);
+    //      movePage = true;
+    //      indexToShow = savedInstanceState.getInt("indexToShow", 0);
+    //    } else {
+    //      indDaModif = 0;
+    //      movePage = false;
+    //      indexToShow = mCustomListsViewModel.indDaModif;
+    //    }
+    movePage = savedInstanceState != null;
 
     mMainActivity.enableFab(true);
     if (!mMainActivity.isOnTablet()) mMainActivity.enableBottombar(false);
@@ -225,7 +227,6 @@ public class CustomLists extends Fragment
     tabs.setVisibility(View.VISIBLE);
     tabs.setupWithViewPager(mViewPager);
 
-    mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel.class);
     populateDb();
     subscribeUiFavorites();
 
@@ -240,23 +241,22 @@ public class CustomLists extends Fragment
               }
             });
 
-    if (savedInstanceState != null) {
-      Log.d(TAG, "onCreateView: RESTORING");
-      idDaCanc = savedInstanceState.getInt("idDaCanc", 0);
-      titoloDaCanc = savedInstanceState.getString("titoloDaCanc");
-      listaDaCanc = savedInstanceState.getInt("listaDaCanc", 0);
-      celebrazioneDaCanc =
-          (ListaPersonalizzata) savedInstanceState.getSerializable("celebrazioneDaCanc");
-      InputTextDialogFragment iFragment =
-          InputTextDialogFragment.findVisible((AppCompatActivity) getActivity(), "NEW_LIST");
-      if (iFragment != null) iFragment.setmCallback(CustomLists.this);
-      SimpleDialogFragment sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "RESET_LIST");
-      if (sFragment != null) sFragment.setmCallback(CustomLists.this);
-      sFragment =
-          SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST");
-      if (sFragment != null) sFragment.setmCallback(CustomLists.this);
-    }
+    //    if (savedInstanceState != null) {
+    //      Log.d(TAG, "onCreateView: RESTORING");
+    //      idDaCanc = savedInstanceState.getInt("idDaCanc", 0);
+    //      titoloDaCanc = savedInstanceState.getString("titoloDaCanc");
+    //      listaDaCanc = savedInstanceState.getInt("listaDaCanc", 0);
+    //      celebrazioneDaCanc =
+    //          (ListaPersonalizzata) savedInstanceState.getSerializable("celebrazioneDaCanc");
+    InputTextDialogFragment iFragment =
+        InputTextDialogFragment.findVisible((AppCompatActivity) getActivity(), "NEW_LIST");
+    if (iFragment != null) iFragment.setmCallback(CustomLists.this);
+    SimpleDialogFragment sFragment =
+        SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "RESET_LIST");
+    if (sFragment != null) sFragment.setmCallback(CustomLists.this);
+    sFragment = SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "DELETE_LIST");
+    if (sFragment != null) sFragment.setmCallback(CustomLists.this);
+    //    }
 
     getActivity().registerReceiver(fabBRec, new IntentFilter(BottomSheetFabListe.CHOOSE_DONE));
 
@@ -284,15 +284,16 @@ public class CustomLists extends Fragment
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    IconicsMenuInflaterUtil.inflate(getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
+    IconicsMenuInflaterUtil.inflate(
+        getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
     super.onCreateOptionsMenu(menu, inflater);
-//    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-//    menu.findItem(R.id.action_help)
-//        .setIcon(
-//            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .color(Color.WHITE));
+    //    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+    //    menu.findItem(R.id.action_help)
+    //        .setIcon(
+    //            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+    //                .sizeDp(24)
+    //                .paddingDp(2)
+    //                .color(Color.WHITE));
   }
 
   @Override
@@ -309,12 +310,13 @@ public class CustomLists extends Fragment
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putInt(PAGE_EDITED, indDaModif);
-    outState.putString("titoloDaCanc", titoloDaCanc);
-    outState.putInt("idDaCanc", idDaCanc);
-    outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
-    outState.putInt("listaDaCanc", listaDaCanc);
-    outState.putInt("indexToShow", mViewPager.getCurrentItem());
+    //    outState.putInt(PAGE_EDITED, indDaModif);
+    //    outState.putString("titoloDaCanc", titoloDaCanc);
+    //    outState.putInt("idDaCanc", idDaCanc);
+    //    outState.putSerializable("celebrazioneDaCanc", celebrazioneDaCanc);
+    //    outState.putInt("listaDaCanc", listaDaCanc);
+    mCustomListsViewModel.indexToShow = mViewPager.getCurrentItem();
+    //    outState.putInt("indexToShow", mViewPager.getCurrentItem());
   }
 
   @Override
@@ -331,7 +333,7 @@ public class CustomLists extends Fragment
     super.onActivityResult(requestCode, resultCode, data);
     if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA)
         && resultCode == Activity.RESULT_OK) {
-      indexToShow = indDaModif;
+      mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif;
       movePage = true;
     }
     //              updateLista();
@@ -412,7 +414,7 @@ public class CustomLists extends Fragment
         bundle.putString(
             "titolo", mEditText != null ? dialog.getInputEditText().getText().toString() : "NULL");
         bundle.putBoolean("modifica", false);
-        indDaModif = 2 + idListe.length;
+        mCustomListsViewModel.indDaModif = 2 + idListe.length;
         startActivityForResult(
             new Intent(getActivity(), CreaListaActivity.class).putExtras(bundle), TAG_CREA_LISTA);
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on);
@@ -488,20 +490,23 @@ public class CustomLists extends Fragment
                   public void run() {
                     ListePersDao mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao();
                     ListaPers listToDelete = new ListaPers();
-                    listToDelete.id = idDaCanc;
+                    listToDelete.id = mCustomListsViewModel.idDaCanc;
                     mDao.deleteList(listToDelete);
-                    indexToShow = 0;
+                    mCustomListsViewModel.indexToShow = 0;
                     movePage = true;
                     Snackbar.make(
                             getActivity().findViewById(R.id.main_content),
-                            getString(R.string.list_removed) + titoloDaCanc + "'!",
+                            getString(R.string.list_removed)
+                                + mCustomListsViewModel.titoloDaCanc
+                                + "'!",
                             Snackbar.LENGTH_LONG)
                         .setAction(
                             getString(android.R.string.cancel).toUpperCase(),
                             new View.OnClickListener() {
                               @Override
                               public void onClick(View view) {
-                                indexToShow = listaDaCanc + 2;
+                                mCustomListsViewModel.indexToShow =
+                                    mCustomListsViewModel.listaDaCanc + 2;
                                 movePage = true;
                                 new Thread(
                                         new Runnable() {
@@ -511,9 +516,11 @@ public class CustomLists extends Fragment
                                                 RisuscitoDatabase.getInstance(getContext())
                                                     .listePersDao();
                                             ListaPers listaToRestore = new ListaPers();
-                                            listaToRestore.id = idDaCanc;
-                                            listaToRestore.titolo = titoloDaCanc;
-                                            listaToRestore.lista = celebrazioneDaCanc;
+                                            listaToRestore.id = mCustomListsViewModel.idDaCanc;
+                                            listaToRestore.titolo =
+                                                mCustomListsViewModel.titoloDaCanc;
+                                            listaToRestore.lista =
+                                                mCustomListsViewModel.celebrazioneDaCanc;
                                             mDao.insertLista(listaToRestore);
                                           }
                                         })
@@ -628,8 +635,8 @@ public class CustomLists extends Fragment
                       new Runnable() {
                         @Override
                         public void run() {
-                          tabs.getTabAt(indexToShow).select();
-                          indexToShow = 0;
+                          tabs.getTabAt(mCustomListsViewModel.indexToShow).select();
+                          mCustomListsViewModel.indexToShow = 0;
                           movePage = false;
                         }
                       };

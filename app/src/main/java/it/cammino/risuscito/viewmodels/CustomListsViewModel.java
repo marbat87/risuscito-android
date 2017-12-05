@@ -6,31 +6,43 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import it.cammino.risuscito.database.entities.ListaPers;
+import it.cammino.risuscito.ListaPersonalizzata;
 import it.cammino.risuscito.database.RisuscitoDatabase;
-
+import it.cammino.risuscito.database.entities.ListaPers;
 
 public class CustomListsViewModel extends AndroidViewModel {
 
-    private LiveData<List<ListaPers>> mCustomListResult;
+  public int indDaModif = 0;
 
-    private RisuscitoDatabase mDb;
+  public int idDaCanc;
 
-    public CustomListsViewModel(Application application) {
-        super(application);
-    }
+  public int listaDaCanc;
 
-    public LiveData<List<ListaPers>> getCustomListResult() {
-        return mCustomListResult;
-    }
+  public String titoloDaCanc;
 
-    public void createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication());
-        // Receive changes
-        subscribeToDbChanges();
-    }
+  public int indexToShow = 0;
 
-    private void subscribeToDbChanges() {
-        mCustomListResult = mDb.listePersDao().getLiveAll();
-    }
+  public ListaPersonalizzata celebrazioneDaCanc;
+
+  private LiveData<List<ListaPers>> mCustomListResult;
+
+  private RisuscitoDatabase mDb;
+
+  public CustomListsViewModel(Application application) {
+    super(application);
+  }
+
+  public LiveData<List<ListaPers>> getCustomListResult() {
+    return mCustomListResult;
+  }
+
+  public void createDb() {
+    mDb = RisuscitoDatabase.getInstance(getApplication());
+    // Receive changes
+    subscribeToDbChanges();
+  }
+
+  private void subscribeToDbChanges() {
+    mCustomListResult = mDb.listePersDao().getLiveAll();
+  }
 }

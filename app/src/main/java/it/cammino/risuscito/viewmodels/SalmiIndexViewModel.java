@@ -1,37 +1,33 @@
 package it.cammino.risuscito.viewmodels;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.SalmoCanto;
-import it.cammino.risuscito.database.entities.Canto;
+
+public class SalmiIndexViewModel extends GenericIndexViewModel {
+
+  private LiveData<List<SalmoCanto>> mIndexResult;
 
 
-public class SalmiIndexViewModel extends AndroidViewModel {
+  public SalmiIndexViewModel(Application application) {
+    super(application);
+  }
 
-    private LiveData<List<SalmoCanto>> mIndexResult;
+  public LiveData<List<SalmoCanto>> getIndexResult() {
+    return mIndexResult;
+  }
 
-    private RisuscitoDatabase mDb;
+  public void createDb() {
+    mDb = RisuscitoDatabase.getInstance(getApplication());
+    // Receive changes
+    subscribeToDbChanges();
+  }
 
-    public SalmiIndexViewModel(Application application) {
-        super(application);
-    }
-
-    public LiveData<List<SalmoCanto>> getIndexResult() {
-        return mIndexResult;
-    }
-
-    public void createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication());
-        // Receive changes
-        subscribeToDbChanges();
-    }
-
-    private void subscribeToDbChanges() {
-        mIndexResult = mDb.salmiDao().getLiveAll();
-    }
+  private void subscribeToDbChanges() {
+    mIndexResult = mDb.salmiDao().getLiveAll();
+  }
 }

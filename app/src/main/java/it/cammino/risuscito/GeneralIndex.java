@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,21 +21,28 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.viewmodels.GeneralIndexViewModel;
 
 public class GeneralIndex extends Fragment {
 
-  private static final String PAGE_VIEWED = "pageViewed";
+  //  private static final String PAGE_VIEWED = "pageViewed";
   final String TAG = getClass().getCanonicalName();
+
   @BindView(R.id.view_pager)
   ViewPager mViewPager;
+
   private MainActivity mMainActivity;
   private Unbinder mUnbinder;
+
+  private GeneralIndexViewModel mViewModel;
 
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
+
+    mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel.class);
 
     mMainActivity = (MainActivity) getActivity();
     mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
@@ -48,7 +56,8 @@ public class GeneralIndex extends Fragment {
     if (savedInstanceState == null) {
       SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
       mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-    } else mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
+      //    } else mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
+    } else mViewPager.setCurrentItem(mViewModel.pageViewed);
     if (!mMainActivity.isOnTablet()) tabs.setBackgroundColor(getThemeUtils().primaryColor());
     tabs.setupWithViewPager(mViewPager);
 
@@ -64,7 +73,8 @@ public class GeneralIndex extends Fragment {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
+    //    outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
+    mViewModel.pageViewed = mViewPager.getCurrentItem();
   }
 
   private ThemeUtils getThemeUtils() {

@@ -33,6 +33,7 @@ import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.fastadapter.listeners.OnLongClickListener;
 import com.mikepenz.fastadapter_extensions.UndoHelper;
@@ -81,6 +82,8 @@ public class FavouritesActivity extends Fragment
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_favourites, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
+
+    mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
 
     mMainActivity = (MainActivity) getActivity();
     Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity.isOnTablet());
@@ -197,6 +200,8 @@ public class FavouritesActivity extends Fragment
         .withOnClickListener(mOnClickListener)
         .withOnPreLongClickListener(mOnPreLongClickListener)
         .setHasStableIds(true);
+    FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel.titoli);
+    cantoAdapter.deleteAllSelectedItems();
 
     mRecyclerView.setAdapter(cantoAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -208,6 +213,8 @@ public class FavouritesActivity extends Fragment
         ContextCompat.getDrawable(getContext(), R.drawable.material_inset_divider));
     mRecyclerView.addItemDecoration(insetDivider);
     mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
+
+//    cantoAdapter.saveInstanceState(savedInstanceState);
 
     //noinspection unchecked
     mUndoHelper =
@@ -237,10 +244,6 @@ public class FavouritesActivity extends Fragment
               }
             });
 
-    mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
-    populateDb();
-    subscribeUiFavorites();
-
     SimpleDialogFragment sFragment =
         SimpleDialogFragment.findVisible((AppCompatActivity) getActivity(), "FAVORITES_RESET");
     if (sFragment != null) sFragment.setmCallback(FavouritesActivity.this);
@@ -257,6 +260,8 @@ public class FavouritesActivity extends Fragment
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     setHasOptionsMenu(true);
+    populateDb();
+    subscribeUiFavorites();
   }
 
   @Override
@@ -510,6 +515,12 @@ public class FavouritesActivity extends Fragment
     return true;
   }
 
+//  @Override
+//  public void onSaveInstanceState(@NonNull Bundle outState) {
+//    outState = cantoAdapter.saveInstanceState(outState);
+//    super.onSaveInstanceState(outState);
+//  }
+
   @Override
   public boolean onCabItemClicked(MenuItem item) {
     switch (item.getItemId()) {
@@ -561,7 +572,8 @@ public class FavouritesActivity extends Fragment
               public void onChanged(@Nullable List<Canto> canti) {
                 Log.d(TAG, "onChanged: a");
                 if (canti != null) {
-                  List<SimpleItem> titoli = new ArrayList<>();
+                  //                  List<SimpleItem> titoli = new ArrayList<>();
+                  mFavoritesViewModel.titoli.clear();
                   for (Canto canto : canti) {
                     SimpleItem sampleItem = new SimpleItem();
                     sampleItem
@@ -571,15 +583,12 @@ public class FavouritesActivity extends Fragment
                         .withColor(canto.color)
                         .withId(canto.id)
                         .withSelectedColor(getThemeUtils().primaryColorDark());
-                    titoli.add(sampleItem);
+                    mFavoritesViewModel.titoli.add(sampleItem);
                   }
-
-                  cantoAdapter.clear();
-                  cantoAdapter.add(titoli);
-                  cantoAdapter.notifyAdapterDataSetChanged();
-
-                  mNoFavorites.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
-                  mMainActivity.enableFab(titoli.size() != 0);
+                  FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel.titoli);
+                  mNoFavorites.setVisibility(
+                      cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
+                  mMainActivity.enableFab(cantoAdapter.getAdapterItemCount() != 0);
                 }
               }
             });
