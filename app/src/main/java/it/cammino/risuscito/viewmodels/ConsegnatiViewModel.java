@@ -11,12 +11,15 @@ import java.util.List;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.items.CheckableItem;
+import it.cammino.risuscito.items.SimpleItem;
 
 public class ConsegnatiViewModel extends AndroidViewModel {
 
   public boolean editMode;
 
   public List<CheckableItem> titoliChoose = new ArrayList<>();
+
+  public List<SimpleItem> titoli = new ArrayList<>();
 
   private LiveData<List<Canto>> mIndexResult;
 

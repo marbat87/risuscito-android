@@ -36,6 +36,7 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
@@ -79,8 +80,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
   View mSelectedView;
 
   private ConsegnatiViewModel mCantiViewModel;
-  //    private DatabaseCanti listaCanti;
-  //  private List<CheckableItem> mCantiViewModel.titoliChoose;
+  //    private DatabaseCanti listaCanti;//  private List<CheckableItem>
+  // mCantiViewModel.titoliChoose;
   private View rootView;
   private FastItemAdapter<CheckableItem> selectableAdapter;
   private FloatingActionButton mFab;
@@ -201,6 +202,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         mMainActivity.isOnTablet()
             ? (ImageButton) rootView.findViewById(R.id.cancel_change)
             : (ImageButton) getActivity().findViewById(R.id.cancel_change);
+
     cancel_change.setOnClickListener(
         new View.OnClickListener() {
           @Override
@@ -291,6 +293,7 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
     // Creating new adapter object
     cantoAdapter = new FastItemAdapter<>();
     cantoAdapter.withOnClickListener(mOnClickListener);
+    FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel.titoli);
 
     mRecyclerView.setAdapter(cantoAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -321,7 +324,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
           }
         });
     selectableAdapter.withEventHook(new CheckableItem.CheckBoxClickEvent());
-    selectableAdapter.add(mCantiViewModel.titoliChoose);
+    //    selectableAdapter.add(mCantiViewModel.titoliChoose);
+    FastAdapterDiffUtil.set(selectableAdapter, mCantiViewModel.titoliChoose);
 
     mChoosedRecyclerView.setAdapter(selectableAdapter);
     LinearLayoutManager llm2 = new LinearLayoutManager(getContext());
@@ -601,9 +605,10 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                         .withId(canto.id);
                     mCantiViewModel.titoliChoose.add(checkableItem);
                   }
-//                  selectableAdapter.clear();
-//                  selectableAdapter.add(mCantiViewModel.titoliChoose);
-                    selectableAdapter.set(mCantiViewModel.titoliChoose);
+                  //                  selectableAdapter.clear();
+                  //                  selectableAdapter.add(mCantiViewModel.titoliChoose);
+                  //                  selectableAdapter.set(mCantiViewModel.titoliChoose);
+                  FastAdapterDiffUtil.set(selectableAdapter, mCantiViewModel.titoliChoose);
                   //                  selectableAdapter.notifyAdapterDataSetChanged();
                 }
               }
@@ -752,7 +757,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
               public void onChanged(@Nullable List<Canto> cantos) {
                 Log.d(TAG, "onChanged: " + (cantos != null));
                 if (cantos != null) {
-                  List<SimpleItem> titoli = new ArrayList<>();
+                  //                  List<SimpleItem> titoli = new ArrayList<>();
+                  mCantiViewModel.titoli.clear();
                   for (Canto canto : cantos) {
                     SimpleItem sampleItem = new SimpleItem();
                     sampleItem
@@ -761,13 +767,16 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                         .withSource(canto.source)
                         .withColor(canto.color)
                         .withId(canto.id);
-                    titoli.add(sampleItem);
+                    //                    titoli.add(sampleItem);
+                    mCantiViewModel.titoli.add(sampleItem);
                   }
-//                  cantoAdapter.clear();
-//                  cantoAdapter.add(titoli);
-                  cantoAdapter.set(titoli);
+                  cantoAdapter.set(mCantiViewModel.titoli);
+                  //                  FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel.titoli);
                   //                  cantoAdapter.notifyAdapterDataSetChanged();
-                  mNoConsegnati.setVisibility(titoli.size() > 0 ? View.INVISIBLE : View.VISIBLE);
+                  //                  mNoConsegnati.setVisibility(titoli.size() > 0 ? View.INVISIBLE
+                  // : View.VISIBLE);
+                  mNoConsegnati.setVisibility(
+                      cantoAdapter.getAdapterItemCount() > 0 ? View.INVISIBLE : View.VISIBLE);
                 }
               }
             });

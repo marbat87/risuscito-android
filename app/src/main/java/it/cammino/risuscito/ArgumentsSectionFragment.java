@@ -181,7 +181,7 @@ public class ArgumentsSectionFragment extends HFFragment
     final ExpandableExtension<IItem> itemExpandableExtension = new ExpandableExtension<>();
     itemExpandableExtension.withOnlyOneExpandedItem(true);
     mAdapter.addExtension(itemExpandableExtension);
-//    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel.titoli);
+    //    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel.titoli);
 
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setHasFixedSize(true); // Size of RV will not change
@@ -332,13 +332,6 @@ public class ArgumentsSectionFragment extends HFFragment
     return rootView;
   }
 
-  //  @Override
-  //  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-  //    super.onActivityCreated(savedInstanceState);
-  //    populateDb();
-  //    subscribeUiFavorites(savedInstanceState);
-  //  }
-
   @Override
   public void onDestroyView() {
     super.onDestroyView();
@@ -400,7 +393,7 @@ public class ArgumentsSectionFragment extends HFFragment
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     if (getUserVisibleHint()) {
-            outState = mAdapter.saveInstanceState(outState);
+      outState = mAdapter.saveInstanceState(outState);
       //      outState.putInt("mCantiViewModel.idDaAgg", mCantiViewModel.idDaAgg);
       //      outState.putInt("mCantiViewModel.idPosizioneClick", mCantiViewModel.idPosizioneClick);
       //      outState.putInt("mCantiViewModel.idListaClick", mCantiViewModel.idListaClick);
@@ -822,101 +815,4 @@ public class ArgumentsSectionFragment extends HFFragment
             })
         .start();
   }
-
-//  private void populateDb() {
-//    mCantiViewModel.createDb();
-//  }
-//
-//  private void subscribeUiFavorites(final Bundle savedInstanceState) {
-//    mCantiViewModel
-//        .getIndexResult()
-//        .observe(
-//            this,
-//            new Observer<List<CantoArgomento>>() {
-//              @Override
-//              public void onChanged(@Nullable List<CantoArgomento> canti) {
-//                Log.d(TAG, "onChanged: ");
-//                if (canti != null) {
-//                  OnClickListener<SimpleSubItem> mOnClickListener =
-//                      new OnClickListener<SimpleSubItem>() {
-//                        @Override
-//                        public boolean onClick(
-//                            View view,
-//                            IAdapter<SimpleSubItem> iAdapter,
-//                            SimpleSubItem item,
-//                            int i) {
-//                          if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-//                            return false;
-//                          mLastClickTime = SystemClock.elapsedRealtime();
-//                          Bundle bundle = new Bundle();
-//                          bundle.putCharSequence("pagina", item.getSource().getText());
-//                          bundle.putInt("idCanto", item.getId());
-//
-//                          // lancia l'activity che visualizza il canto passando il parametro creato
-//                          startSubActivity(bundle, view);
-//                          return true;
-//                        }
-//                      };
-//
-//                  mCantiViewModel.titoli.clear();
-//                  List<SimpleSubItem> subItems = new LinkedList<>();
-//                  int totCanti = 0;
-//
-//                  for (int i = 0; i < canti.size(); i++) {
-//                    SimpleSubItem simpleItem =
-//                        new SimpleSubItem()
-//                            .withTitle(canti.get(i).titolo)
-//                            .withPage(String.valueOf(canti.get(i).pagina))
-//                            .withSource(canti.get(i).source)
-//                            .withColor(canti.get(i).color)
-//                            .withId(canti.get(i).id);
-//                    // noinspection unchecked
-//                    simpleItem
-//                        .withContextMenuListener(ArgumentsSectionFragment.this)
-//                        .withOnItemClickListener(mOnClickListener);
-//                    simpleItem.withIdentifier(i * 1000);
-//                    subItems.add(simpleItem);
-//                    totCanti++;
-//
-//                    if (i == (canti.size() - 1)
-//                        || canti.get(i).idArgomento != canti.get(i + 1).idArgomento) {
-//                      // serve a non mettere il divisore sull'ultimo elemento della lista
-//                      simpleItem.withHasDivider(false);
-//                      SimpleSubExpandableItem expandableItem = new SimpleSubExpandableItem();
-//                      expandableItem
-//                          .withTitle(canti.get(i).nomeArgomento + " (" + totCanti + ")")
-//                          .withOnClickListener(
-//                              new OnClickListener<SimpleSubExpandableItem>() {
-//                                @Override
-//                                public boolean onClick(
-//                                    View view,
-//                                    IAdapter<SimpleSubExpandableItem> iAdapter,
-//                                    SimpleSubExpandableItem item,
-//                                    int i) {
-//                                  if (item.isExpanded()) {
-//                                    Log.d(
-//                                        TAG,
-//                                        "onClick: " + mRecyclerView.getChildAdapterPosition(view));
-//                                    mLayoutManager.scrollToPositionWithOffset(
-//                                        mRecyclerView.getChildAdapterPosition(view), 0);
-//                                  }
-//                                  return false;
-//                                }
-//                              })
-//                          .withIdentifier(canti.get(i).idArgomento);
-//                      // noinspection unchecked
-//                      expandableItem.withSubItems(subItems);
-//                      mCantiViewModel.titoli.add(expandableItem);
-//                      subItems = new LinkedList<>();
-//                      totCanti = 0;
-//                    } else {
-//                      simpleItem.withHasDivider(true);
-//                    }
-//                  }
-//                  FastAdapterDiffUtil.set(mAdapter, mCantiViewModel.titoli);
-//                  mAdapter.withSavedInstanceState(savedInstanceState);
-//                }
-//              }
-//            });
-//  }
 }

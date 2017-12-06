@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -97,11 +98,11 @@ public class MainActivity extends ThemeableActivity
         GoogleApiClient.OnConnectionFailedListener,
         SimpleDialogFragment.SimpleCallback {
 
-  private static final String SHOW_SNACKBAR = "mostra_snackbar";
-  private static final String DB_RESTORE_RUNNING = "db_restore_running";
-  private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
-  private static final String DB_BACKUP_RUNNING = "db_backup_running";
-  private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
+  //  private static final String SHOW_SNACKBAR = "mostra_snackbar";
+  //  private static final String DB_RESTORE_RUNNING = "db_restore_running";
+  //  private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
+  //  private static final String DB_BACKUP_RUNNING = "db_backup_running";
+  //  private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
   /* Request code used to invoke sign in user interactions. */
   private static final int RC_SIGN_IN = 9001;
   private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
@@ -1922,12 +1923,11 @@ public class MainActivity extends ThemeableActivity
     if (sFragment != null) sFragment.setmCallback(MainActivity.this);
   }
 
-  private class TranslationTask extends AsyncTask<String, Void, Integer> {
-
-    TranslationTask() {}
+  @SuppressLint("StaticFieldLeak")
+  private class TranslationTask extends AsyncTask<Void, Void, Void> {
 
     @Override
-    protected Integer doInBackground(String... sUrl) {
+    protected Void doInBackground(Void... sUrl) {
       getIntent().removeExtra(Utility.DB_RESET);
       DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
       SQLiteDatabase db = listaCanti.getReadableDatabase();
@@ -1943,7 +1943,7 @@ public class MainActivity extends ThemeableActivity
       RisuscitoDatabase.getInstance(MainActivity.this).recreateDB(MainActivity.this);
       convertTabs(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
       convertiBarre(getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-      return 0;
+      return null;
     }
 
     @Override
@@ -1958,7 +1958,7 @@ public class MainActivity extends ThemeableActivity
     }
 
     @Override
-    protected void onPostExecute(Integer result) {
+    protected void onPostExecute(Void result) {
       super.onPostExecute(result);
       getIntent().removeExtra(Utility.CHANGE_LANGUAGE);
       try {
