@@ -38,6 +38,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.sql.Date;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -377,8 +378,10 @@ public class InsertAvanzataFragment extends Fragment {
     // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
     if (s.trim().length() >= 3) {
       if (searchTask != null && searchTask.getStatus() == Status.RUNNING) searchTask.cancel(true);
-      searchTask = new SearchTask(searchPar.getText().toString(), onlyConsegnati);
-      searchTask.execute();
+
+      //      searchTask = new SearchTask(searchPar.getText().toString(), onlyConsegnati);
+      searchTask = new SearchTask(InsertAvanzataFragment.this);
+      searchTask.execute(searchPar.getText().toString(), String.valueOf(onlyConsegnati));
     } else {
       if (s.isEmpty()) {
         mNoResults.setVisibility(View.GONE);
@@ -390,21 +393,29 @@ public class InsertAvanzataFragment extends Fragment {
 
   private class SearchTask extends AsyncTask<String, Integer, String> {
 
-    private String text;
-    private boolean onlyConsegnati;
+    //    private String text;
+    //    private boolean onlyConsegnati;
+    //
+    //    SearchTask(String text, boolean onlyConsegnati) {
+    //      this.text = text;
+    //      this.onlyConsegnati = onlyConsegnati;
+    //    }
 
-    SearchTask(String text, boolean onlyConsegnati) {
-      this.text = text;
-      this.onlyConsegnati = onlyConsegnati;
+    private final String TAG = getClass().getCanonicalName();
+
+    private WeakReference<InsertAvanzataFragment> fragmentReference;
+
+    SearchTask(InsertAvanzataFragment fragment) {
+      this.fragmentReference = new WeakReference<>(fragment);
     }
 
     @Override
     protected String doInBackground(String... params) {
 
       //            Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
-      Log.d(getClass().getName(), "STRINGA: " + text);
+      Log.d(getClass().getName(), "STRINGA: " + params[0]);
 
-      String[] words = text.split("\\W");
+      String[] words = params[0].split("\\W");
 
       String text;
 
@@ -423,7 +434,7 @@ public class InsertAvanzataFragment extends Fragment {
             text =
                 text.toLowerCase(
                     ThemeableActivity.getSystemLocalWrapper(
-                        getActivity().getResources().getConfiguration()));
+                        fragmentReference.get().getActivity().getResources().getConfiguration()));
             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
             text = pattern.matcher(nfdNormalizedString).replaceAll("");
@@ -466,8 +477,12 @@ public class InsertAvanzataFragment extends Fragment {
           //                    // chiude il cursore
           //                    lista.close();
           //                    db.close();
-          RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(getActivity());
-          List<Canto> elenco = mDb.cantoDao().getCantiWithSource(aText[0]);
+          RisuscitoDatabase mDb =
+              RisuscitoDatabase.getInstance(fragmentReference.get().getActivity());
+          List<Canto> elenco;
+          boolean onlyConsegnati = Boolean.parseBoolean(params[1]);
+          if (onlyConsegnati) elenco = mDb.cantoDao().getCantiWithSourceOnlyConsegnati(aText[0]);
+          else elenco = mDb.cantoDao().getCantiWithSource(aText[0]);
 
           if (elenco != null) {
             for (Canto canto : elenco) {
@@ -478,7 +493,7 @@ public class InsertAvanzataFragment extends Fragment {
                   .withPage(String.valueOf(canto.pagina))
                   .withId(canto.id)
                   .withSource(canto.source);
-              titoli.add(insertItem);
+              fragmentReference.get().titoli.add(insertItem);
             }
           }
         }
@@ -490,20 +505,21 @@ public class InsertAvanzataFragment extends Fragment {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-      mNoResults.setVisibility(View.GONE);
-      progress.setVisibility(View.VISIBLE);
-      titoli.clear();
-      cantoAdapter.clear();
+      fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      fragmentReference.get().progress.setVisibility(View.VISIBLE);
+      fragmentReference.get().titoli.clear();
+      fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
     protected void onPostExecute(String result) {
       super.onPostExecute(result);
-      cantoAdapter.add(titoli);
-//      cantoAdapter.notifyAdapterDataSetChanged();
-      progress.setVisibility(View.INVISIBLE);
-      if (titoli.size() == 0) mNoResults.setVisibility(View.VISIBLE);
-      else mNoResults.setVisibility(View.GONE);
+      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
+      //      cantoAdapter.notifyAdapterDataSetChanged();
+      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      if (fragmentReference.get().titoli.size() == 0)
+        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
+      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
     }
   }
 }

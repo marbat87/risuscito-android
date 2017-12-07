@@ -35,6 +35,9 @@ public interface CantoDao {
   @Query("SELECT * from canto WHERE source = :src")
   List<Canto> getCantiWithSource(String src);
 
+  @Query("SELECT A.* from canto A, consegnato B WHERE A.source = :src AND A.id = B.idCanto")
+  List<Canto> getCantiWithSourceOnlyConsegnati(String src);
+
   @Query(
       "SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, coalesce(B.localPath, A.link) as link, A.zoom, A.scrollX, A.scrollY, A.savedBarre, A.savedTab, A.savedSpeed FROM canto A LEFT JOIN locallink B ON (A.id = b.idCanto)")
   List<Canto> getAllByWithLink();

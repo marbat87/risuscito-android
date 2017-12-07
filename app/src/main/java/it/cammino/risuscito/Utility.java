@@ -69,7 +69,7 @@ public class Utility {
 //    public static final String VERDE = "#8FC490";
 //    public static final String GRIGIO = "#CAC8BC";
 
-    static final int EXTERNAL_FILE_RC = 122;
+//    static final int EXTERNAL_FILE_RC = 122;
     static final int WRITE_STORAGE_RC = 123;
 //    public static final int PHONE_LISTENER_RC = 124;
 

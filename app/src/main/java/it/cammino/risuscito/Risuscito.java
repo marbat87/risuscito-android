@@ -35,6 +35,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public class Risuscito extends Fragment
     implements SimpleDialogFragment.SimpleCallback, EasyPermissions.PermissionCallbacks {
@@ -247,29 +248,36 @@ public class Risuscito extends Fragment
     EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
   }
 
-  @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
+  @AfterPermissionGranted(Utility.WRITE_STORAGE_RC)
   private void checkStoragePermissions() {
     Log.d(TAG, "checkStoragePermissions: ");
     if (!EasyPermissions.hasPermissions(
         getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       // Ask for one permission
+      //      EasyPermissions.requestPermissions(
+      //          Risuscito.this,
+      //          getString(R.string.external_storage_pref_rationale),
+      //          Utility.WRITE_STORAGE_RC,
+      //          android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
       EasyPermissions.requestPermissions(
-          Risuscito.this,
-          getString(R.string.external_storage_pref_rationale),
-          Utility.WRITE_STORAGE_RC,
-          android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+          new PermissionRequest.Builder(
+                  this,
+                  Utility.WRITE_STORAGE_RC,
+                  android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+              .setRationale(R.string.external_storage_pref_rationale)
+              .build());
     }
   }
 
   @Override
-  public void onPermissionsGranted(int requestCode, List<String> list) {
+  public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
     // Some permissions have been
     Log.d(TAG, "onPermissionsGranted: ");
     Snackbar.make(rootView, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show();
   }
 
   @Override
-  public void onPermissionsDenied(int requestCode, List<String> list) {
+  public void onPermissionsDenied(int requestCode, @NonNull List<String> list) {
     // Some permissions have been denied
     Log.d(TAG, "onPermissionsDenied: ");
     SharedPreferences.Editor editor =
