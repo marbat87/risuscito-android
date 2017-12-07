@@ -3,23 +3,13 @@ package it.cammino.risuscito.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import it.cammino.risuscito.database.RisuscitoDatabase;
-import it.cammino.risuscito.database.dao.CantoDao;
 import it.cammino.risuscito.database.dao.ConsegnatiDao;
-import it.cammino.risuscito.database.dao.ListePersDao;
-import it.cammino.risuscito.database.entities.Canto;
 import it.cammino.risuscito.database.entities.Consegnato;
-import it.cammino.risuscito.database.entities.ListaPers;
-import it.cammino.risuscito.objects.PosizioneItem;
-import it.cammino.risuscito.objects.PosizioneTitleItem;
 
 public class ConsegnatiSaverService extends IntentService {
     // The tag we put on debug messages

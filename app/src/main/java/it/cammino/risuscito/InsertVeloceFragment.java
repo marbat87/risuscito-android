@@ -30,9 +30,11 @@ import android.widget.TextView;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.ClickEventHook;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 
+import java.lang.ref.WeakReference;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -408,8 +410,9 @@ public class InsertVeloceFragment extends Fragment {
     if (s.trim().length() >= 3) {
       if (searchTask != null && searchTask.getStatus() == AsyncTask.Status.RUNNING)
         searchTask.cancel(true);
-      searchTask = new SearchTask(searchPar.getText().toString(), onlyConsegnati);
-      searchTask.execute();
+      //      searchTask = new SearchTask(searchPar.getText().toString(), onlyConsegnati);
+      searchTask = new SearchTask(InsertVeloceFragment.this);
+      searchTask.execute(searchPar.getText().toString(), String.valueOf(onlyConsegnati));
     } else {
       if (s.isEmpty()) {
         mNoResults.setVisibility(View.GONE);
@@ -419,29 +422,34 @@ public class InsertVeloceFragment extends Fragment {
     }
   }
 
-  private class SearchTask extends AsyncTask<Void, Void, Integer> {
+  private static class SearchTask extends AsyncTask<String, Void, Integer> {
 
-    private String text;
-    private boolean onlyConsegnati;
+    //    private String text;
+    //    private boolean onlyConsegnati;
+    //
+    //    SearchTask(String text, boolean onlyConsegnati) {
+    //      this.text = text;
+    //      this.onlyConsegnati = onlyConsegnati;
+    //    }
 
-    SearchTask(String text, boolean onlyConsegnati) {
-      this.text = text;
-      this.onlyConsegnati = onlyConsegnati;
+    private WeakReference<InsertVeloceFragment> fragmentReference;
+
+    SearchTask(InsertVeloceFragment fragment) {
+      this.fragmentReference = new WeakReference<>(fragment);
     }
 
     @Override
-    protected Integer doInBackground(Void... sParam) {
+    protected Integer doInBackground(String... sParam) {
 
-      Log.d(getClass().getName(), "STRINGA: " + text);
+      Log.d(getClass().getName(), "STRINGA: " + sParam[0]);
 
-      mNoResults.setVisibility(View.GONE);
-
-      String stringa = Utility.removeAccents(text).toLowerCase();
+      String stringa = Utility.removeAccents(sParam[0]).toLowerCase();
       String titoloTemp;
       Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
 
-      RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(getActivity());
+      RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(fragmentReference.get().getActivity());
       List<Canto> elenco;
+      boolean onlyConsegnati = Boolean.parseBoolean(sParam[1]);
       if (onlyConsegnati) elenco = mDb.cantoDao().getAllByNameOnlyConsegnati();
       else elenco = mDb.cantoDao().getAllByName();
 
@@ -459,7 +467,7 @@ public class InsertVeloceFragment extends Fragment {
               .withSource(canto.source)
               .withNormalizedTitle(titoloTemp)
               .withFilter(stringa);
-          titoli.add(insertItem);
+          fragmentReference.get().titoli.add(insertItem);
         }
       }
 
@@ -469,20 +477,30 @@ public class InsertVeloceFragment extends Fragment {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-      mNoResults.setVisibility(View.GONE);
-      progress.setVisibility(View.VISIBLE);
-      titoli.clear();
-      cantoAdapter.clear();
+      fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      fragmentReference.get().progress.setVisibility(View.VISIBLE);
+      fragmentReference.get().titoli.clear();
+      //      fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
-      cantoAdapter.add(titoli);
-//      cantoAdapter.notifyAdapterDataSetChanged();
-      progress.setVisibility(View.INVISIBLE);
-      if (titoli.size() == 0) mNoResults.setVisibility(View.VISIBLE);
-      else mNoResults.setVisibility(View.GONE);
+      //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
+      //      //      cantoAdapter.notifyAdapterDataSetChanged();
+      //      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      //      if (fragmentReference.get().titoli.size() == 0)
+      //        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
+      //      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
+      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      fragmentReference
+          .get()
+          .mNoResults
+          .setVisibility(
+              fragmentReference.get().cantoAdapter.getAdapterItemCount() == 0
+                  ? View.VISIBLE
+                  : View.GONE);
     }
   }
 }

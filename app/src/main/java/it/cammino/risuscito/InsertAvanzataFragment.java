@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.ClickEventHook;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 
@@ -391,7 +392,7 @@ public class InsertAvanzataFragment extends Fragment {
     }
   }
 
-  private class SearchTask extends AsyncTask<String, Integer, String> {
+  private static class SearchTask extends AsyncTask<String, Void, Integer> {
 
     //    private String text;
     //    private boolean onlyConsegnati;
@@ -410,7 +411,7 @@ public class InsertAvanzataFragment extends Fragment {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected Integer doInBackground(String... params) {
 
       //            Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
       Log.d(getClass().getName(), "STRINGA: " + params[0]);
@@ -499,7 +500,7 @@ public class InsertAvanzataFragment extends Fragment {
         }
       }
 
-      return null;
+      return 0;
     }
 
     @Override
@@ -508,18 +509,27 @@ public class InsertAvanzataFragment extends Fragment {
       fragmentReference.get().mNoResults.setVisibility(View.GONE);
       fragmentReference.get().progress.setVisibility(View.VISIBLE);
       fragmentReference.get().titoli.clear();
-      fragmentReference.get().cantoAdapter.clear();
+//      fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
-      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
-      //      cantoAdapter.notifyAdapterDataSetChanged();
+      //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
+      //      //      cantoAdapter.notifyAdapterDataSetChanged();
+      //      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      //      if (fragmentReference.get().titoli.size() == 0)
+      //        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
+      //      else fragmentReference.get().mNoResults.setVisibility(View.GONE)
+      FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
       fragmentReference.get().progress.setVisibility(View.INVISIBLE);
-      if (fragmentReference.get().titoli.size() == 0)
-        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
-      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      fragmentReference
+          .get()
+          .mNoResults
+          .setVisibility(
+              fragmentReference.get().cantoAdapter.getAdapterItemCount() == 0
+                  ? View.VISIBLE
+                  : View.GONE);
     }
   }
 }

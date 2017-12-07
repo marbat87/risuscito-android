@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;

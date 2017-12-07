@@ -37,8 +37,10 @@ import android.widget.TextView;
 
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 
+import java.lang.ref.WeakReference;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -742,7 +744,7 @@ public class RicercaVeloceFragment extends Fragment
     if (s.trim().length() >= 3) {
       if (searchTask != null && searchTask.getStatus() == AsyncTask.Status.RUNNING)
         searchTask.cancel(true);
-      searchTask = new SearchTask();
+      searchTask = new SearchTask(RicercaVeloceFragment.this);
       searchTask.execute(searchPar.getText().toString());
     } else {
       if (s.isEmpty()) {
@@ -753,7 +755,13 @@ public class RicercaVeloceFragment extends Fragment
     }
   }
 
-  private class SearchTask extends AsyncTask<String, Void, Integer> {
+  private static class SearchTask extends AsyncTask<String, Void, Integer> {
+
+    private WeakReference<RicercaVeloceFragment> fragmentReference;
+
+    SearchTask(RicercaVeloceFragment fragment) {
+      this.fragmentReference = new WeakReference<>(fragment);
+    }
 
     @Override
     protected Integer doInBackground(String... sSearchText) {
@@ -761,13 +769,11 @@ public class RicercaVeloceFragment extends Fragment
       Log.d(getClass().getName(), "STRINGA: " + sSearchText[0]);
       String s = sSearchText[0];
 
-      mNoResults.setVisibility(View.GONE);
-
       String stringa = Utility.removeAccents(s).toLowerCase();
       String titoloTemp;
       Log.d(getClass().getName(), "onTextChanged: stringa " + stringa);
 
-      RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(getActivity());
+      RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(fragmentReference.get().getActivity());
       List<Canto> elenco = mDb.cantoDao().getAllByName();
 
       for (Canto canto : elenco) {
@@ -784,8 +790,8 @@ public class RicercaVeloceFragment extends Fragment
               .withSource(canto.source)
               .withNormalizedTitle(titoloTemp)
               .withFilter(stringa)
-              .withContextMenuListener(RicercaVeloceFragment.this);
-          titoli.add(simpleItem);
+              .withContextMenuListener(fragmentReference.get());
+          fragmentReference.get().titoli.add(simpleItem);
         }
       }
 
@@ -795,20 +801,29 @@ public class RicercaVeloceFragment extends Fragment
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-      mNoResults.setVisibility(View.GONE);
-      progress.setVisibility(View.VISIBLE);
-      titoli.clear();
-      cantoAdapter.clear();
+      fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      fragmentReference.get().progress.setVisibility(View.VISIBLE);
+      fragmentReference.get().titoli.clear();
+      //        fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
-      cantoAdapter.add(titoli);
+      //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
       //      cantoAdapter.notifyAdapterDataSetChanged();
-      progress.setVisibility(View.INVISIBLE);
-      if (titoli.size() == 0) mNoResults.setVisibility(View.VISIBLE);
-      else mNoResults.setVisibility(View.GONE);
+      FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
+      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      fragmentReference
+          .get()
+          .mNoResults
+          .setVisibility(
+              fragmentReference.get().cantoAdapter.getAdapterItemCount() == 0
+                  ? View.VISIBLE
+                  : View.GONE);
+      //      if (fragmentReference.get().titoli.size() == 0)
+      // fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
+      //      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
     }
   }
 }

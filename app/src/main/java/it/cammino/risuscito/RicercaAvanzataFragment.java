@@ -37,12 +37,14 @@ import android.widget.TextView;
 
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +85,9 @@ public class RicercaAvanzataFragment extends Fragment
 
   @BindView(R.id.search_progress)
   MaterialProgressBar progress;
+
+  @BindView(R.id.search_no_results)
+  View mNoResults;
 
   @BindView(R.id.consegnati_only_view)
   View mConsegnatiOnly;
@@ -716,7 +721,7 @@ public class RicercaAvanzataFragment extends Fragment
     // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
     if (s.trim().length() >= 3) {
       if (searchTask != null && searchTask.getStatus() == Status.RUNNING) searchTask.cancel(true);
-      searchTask = new SearchTask();
+      searchTask = new SearchTask(RicercaAvanzataFragment.this);
       searchTask.execute(searchPar.getText().toString());
     } else {
       if (s.isEmpty()) {
@@ -762,7 +767,13 @@ public class RicercaAvanzataFragment extends Fragment
         .start();
   }
 
-  private class SearchTask extends AsyncTask<String, Void, Integer> {
+  private static class SearchTask extends AsyncTask<String, Void, Integer> {
+
+    private WeakReference<RicercaAvanzataFragment> fragmentReference;
+
+    SearchTask(RicercaAvanzataFragment fragment) {
+      this.fragmentReference = new WeakReference<>(fragment);
+    }
 
     @Override
     protected Integer doInBackground(String... sSearchText) {
@@ -788,7 +799,7 @@ public class RicercaAvanzataFragment extends Fragment
             text =
                 text.toLowerCase(
                     ThemeableActivity.getSystemLocalWrapper(
-                        getActivity().getResources().getConfiguration()));
+                        fragmentReference.get().getActivity().getResources().getConfiguration()));
             String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
             Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
             text = pattern.matcher(nfdNormalizedString).replaceAll("");
@@ -812,7 +823,8 @@ public class RicercaAvanzataFragment extends Fragment
           //
           //          Cursor lista = db.rawQuery(query, null);
 
-          RisuscitoDatabase mDb = RisuscitoDatabase.getInstance(getActivity());
+          RisuscitoDatabase mDb =
+              RisuscitoDatabase.getInstance(fragmentReference.get().getActivity());
           List<Canto> elenco = mDb.cantoDao().getCantiWithSource(aText[0]);
 
           if (elenco != null) {
@@ -824,8 +836,8 @@ public class RicercaAvanzataFragment extends Fragment
                   .withPage(String.valueOf(canto.pagina))
                   .withId(canto.id)
                   .withSource(canto.source)
-                  .withContextMenuListener(RicercaAvanzataFragment.this);
-              titoli.add(simpleItem);
+                  .withContextMenuListener(fragmentReference.get());
+              fragmentReference.get().titoli.add(simpleItem);
             }
           }
 
@@ -854,21 +866,44 @@ public class RicercaAvanzataFragment extends Fragment
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-      rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
-      progress.setVisibility(View.VISIBLE);
-      titoli.clear();
-      cantoAdapter.clear();
+      //      fragmentReference
+      //          .get()
+      //          .rootView
+      //          .findViewById(R.id.search_no_results)
+      //          .setVisibility(View.GONE);
+      fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      fragmentReference.get().progress.setVisibility(View.VISIBLE);
+      fragmentReference.get().titoli.clear();
+      //      fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
-      cantoAdapter.add(titoli);
-      //      cantoAdapter.notifyAdapterDataSetChanged();
-      progress.setVisibility(View.INVISIBLE);
-      if (titoli.size() == 0)
-        rootView.findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-      else rootView.findViewById(R.id.search_no_results).setVisibility(View.GONE);
+      //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
+      //      //      cantoAdapter.notifyAdapterDataSetChanged();
+      //      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      //      if (fragmentReference.get().titoli.size() == 0)
+      //        fragmentReference
+      //            .get()
+      //            .rootView
+      //            .findViewById(R.id.search_no_results)
+      //            .setVisibility(View.VISIBLE);
+      //      else
+      //        fragmentReference
+      //            .get()
+      //            .rootView
+      //            .findViewById(R.id.search_no_results)
+      //            .setVisibility(View.GONE);
+      FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
+      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
+      fragmentReference
+          .get()
+          .mNoResults
+          .setVisibility(
+              fragmentReference.get().cantoAdapter.getAdapterItemCount() == 0
+                  ? View.VISIBLE
+                  : View.GONE);
     }
   }
 }
