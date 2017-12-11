@@ -19,7 +19,7 @@ public class GenericIndexViewModel extends AndroidViewModel {
   public List<SimpleItem> titoli = new ArrayList<>();
   RisuscitoDatabase mDb;
 
-  GenericIndexViewModel(Application application) {
+  public GenericIndexViewModel(Application application) {
     super(application);
   }
 }
