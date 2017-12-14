@@ -17,6 +17,9 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface ConsegnatiDao {
 
+  @Query("DELETE FROM consegnato")
+  void truncateTable();
+
   @Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY a.titolo ASC")
   LiveData<List<Canto>> getLiveConsegnati();
 

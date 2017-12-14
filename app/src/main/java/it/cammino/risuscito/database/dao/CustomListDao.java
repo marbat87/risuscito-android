@@ -16,6 +16,9 @@ import it.cammino.risuscito.database.Posizione;
 @Dao
 public interface CustomListDao {
 
+  @Query("DELETE FROM customlist")
+  void truncateTable();
+
   @Query("SELECT * FROM customlist")
   List<CustomList> getAll();
 

@@ -1,7 +1,11 @@
 package it.cammino.risuscito;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -30,28 +34,14 @@ import android.widget.TextView;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.DriveResource;
-import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.crossfader.Crossfader;
@@ -69,15 +59,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialize.util.UIUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
@@ -94,15 +75,8 @@ import it.cammino.risuscito.viewmodels.MainActivityViewModel;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends ThemeableActivity
-    implements ColorChooserDialog.ColorCallback,
-        GoogleApiClient.OnConnectionFailedListener,
-        SimpleDialogFragment.SimpleCallback {
+    implements ColorChooserDialog.ColorCallback, SimpleDialogFragment.SimpleCallback {
 
-  //  private static final String SHOW_SNACKBAR = "mostra_snackbar";
-  //  private static final String DB_RESTORE_RUNNING = "db_restore_running";
-  //  private static final String PREF_RESTORE_RUNNING = "pref_restore_running";
-  //  private static final String DB_BACKUP_RUNNING = "db_backup_running";
-  //  private static final String PREF_BACKUP_RUNNING = "pref_backup_running";
   /* Request code used to invoke sign in user interactions. */
   private static final int RC_SIGN_IN = 9001;
   private static final String PREF_DRIVE_FILE_NAME = "preferences_backup";
@@ -127,7 +101,6 @@ public class MainActivity extends ThemeableActivity
   View mTabletBG;
 
   private MainActivityViewModel mViewModel;
-
   private LUtils mLUtils;
   private MaterialCab materialCab;
   private Drawer mDrawer;
@@ -135,132 +108,68 @@ public class MainActivity extends ThemeableActivity
   private Crossfader crossFader;
   private AccountHeader mAccountHeader;
   private boolean isOnTablet;
-  //  private boolean showSnackbar;
   private GoogleSignInAccount acct;
-  //    private FirebaseAnalytics mFirebaseAnalytics;
-  private GoogleApiClient mGoogleApiClient;
-  //  private boolean dbRestoreRunning;
-  //  private boolean prefRestoreRunning;
-  private final ResultCallback<DriveApi.DriveContentsResult> restoreContentsPrefCallback =
-      new ResultCallback<DriveApi.DriveContentsResult>() {
-        @Override
-        public void onResult(@NonNull DriveApi.DriveContentsResult result) {
-          if (!result.getStatus().isSuccess()) {
-            String error =
-                "restoreContentsPrefCallback - restore error: "
-                    + result.getStatus().getStatusCode()
-                    + " - "
-                    + result.getStatus().getStatusMessage();
-            Log.e(getClass().getName(), error);
-            mViewModel.prefRestoreRunning = false;
-            dismissDialog("RESTORE_RUNNING");
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-            return;
-          }
-
-          DriveContents contents = result.getDriveContents();
-
-          loadSharedPreferencesFromFile(contents.getInputStream());
-          contents.discard(mGoogleApiClient);
-          mViewModel.prefRestoreRunning = false;
-          dismissDialog("RESTORE_RUNNING");
-          new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
-              .title(R.string.general_message)
-              .content(R.string.gdrive_restore_success)
-              .positiveButton(android.R.string.ok)
-              .show();
-        }
-      };
-  private final ResultCallback<DriveApi.DriveContentsResult> restoreContentsCallback =
-      new ResultCallback<DriveApi.DriveContentsResult>() {
-        @Override
-        public void onResult(@NonNull DriveApi.DriveContentsResult result) {
-          if (!result.getStatus().isSuccess()) {
-            String error =
-                "restoreContentsCallback - restore error: "
-                    + result.getStatus().getStatusCode()
-                    + " - "
-                    + result.getStatus().getStatusMessage();
-            Log.e(getClass().getName(), error);
-            mViewModel.dbRestoreRunning = false;
-            dismissDialog("RESTORE_RUNNING");
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-            return;
-          }
-
-          //          DatabaseCanti listaCanti = new DatabaseCanti(MainActivity.this);
-          //          listaCanti.close();
-          RisuscitoDatabase.getInstance(MainActivity.this);
-
-          File db_file = getOldDbPath();
-          String path = db_file.getPath();
-
-          if (!db_file.exists())
-            //noinspection ResultOfMethodCallIgnored
-            db_file.delete();
-
-          db_file = new File(path);
-
-          DriveContents contents = result.getDriveContents();
-
-          try {
-            FileOutputStream fos = new FileOutputStream(db_file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            BufferedInputStream in = new BufferedInputStream(contents.getInputStream());
-
-            byte[] buffer = new byte[1024];
-            int n;
-            while ((n = in.read(buffer)) > 0) {
-              bos.write(buffer, 0, n);
-              bos.flush();
-            }
-
-            // debug(" read done: " + cnt);
-
-            bos.close();
-
-          } catch (FileNotFoundException e) {
-            Log.e(
-                getClass().getName(),
-                "restoreContentsCallback - Exception3: " + e.getLocalizedMessage(),
-                e);
-            contents.discard(mGoogleApiClient);
-            mViewModel.dbRestoreRunning = false;
-            dismissDialog("RESTORE_RUNNING");
-            String error = "error: " + e.getLocalizedMessage();
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-            return;
-          } catch (IOException e) {
-            Log.e(
-                getClass().getName(),
-                "restoreContentsCallback - Exception4: " + e.getLocalizedMessage(),
-                e);
-            contents.discard(mGoogleApiClient);
-            mViewModel.dbRestoreRunning = false;
-            dismissDialog("RESTORE_RUNNING");
-            String error = "error: " + e.getLocalizedMessage();
-            Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-            return;
-          }
-
-          //          listaCanti = new DatabaseCanti(MainActivity.this);
-          //          SQLiteDatabase db = listaCanti.getReadableDatabase();
-          //          db.close();
-          //          listaCanti.close();
-          RisuscitoDatabase.getInstance(MainActivity.this);
-          contents.discard(mGoogleApiClient);
-
-          mViewModel.dbRestoreRunning = false;
-          SimpleDialogFragment sFragment =
-              SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING");
-          if (sFragment != null) sFragment.setContent(R.string.restoring_settings);
-          restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
-        }
-      };
-  //  private boolean dbBackupRunning;
-  //  private boolean prefBackupRunning;
+  private GoogleSignInClient mSignInClient;
   private Typeface mRegularFont;
   private Typeface mMediumFont;
+
+  private BroadcastReceiver nextStepReceiver =
+      new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          // Implement UI change code here once notification is received
+          try {
+            Log.v(TAG, "BROADCAST_NEXT_STEP");
+            if (intent.getStringExtra("WHICH") != null) {
+              String which = intent.getStringExtra("WHICH");
+              Log.v(TAG, "NEXT_STEP: " + which);
+              if (which.equalsIgnoreCase("RESTORE")) {
+                SimpleDialogFragment sFragment =
+                    SimpleDialogFragment.findVisible(MainActivity.this, "RESTORE_RUNNING");
+                if (sFragment != null) sFragment.setContent(R.string.restoring_settings);
+              } else {
+                SimpleDialogFragment sFragment =
+                    SimpleDialogFragment.findVisible(MainActivity.this, "BACKUP_RUNNING");
+                if (sFragment != null) sFragment.setContent(R.string.backup_settings);
+              }
+            }
+          } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getLocalizedMessage(), e);
+          }
+        }
+      };
+
+  private BroadcastReceiver lastStepReceiver =
+      new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          // Implement UI change code here once notification is received
+          try {
+            Log.v(TAG, "BROADCAST_LAST_STEP");
+            if (intent.getStringExtra("WHICH") != null) {
+              String which = intent.getStringExtra("WHICH");
+              Log.v(TAG, "NEXT_STEP: " + which);
+              if (which.equalsIgnoreCase("RESTORE")) {
+                dismissDialog("RESTORE_RUNNING");
+                new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTART")
+                    .title(R.string.general_message)
+                    .content(R.string.gdrive_restore_success)
+                    .positiveButton(android.R.string.ok)
+                    .show();
+              } else {
+                dismissDialog("BACKUP_RUNNING");
+                Snackbar.make(
+                        findViewById(R.id.main_content),
+                        R.string.gdrive_backup_success,
+                        Snackbar.LENGTH_LONG)
+                    .show();
+              }
+            }
+          } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getLocalizedMessage(), e);
+          }
+        }
+      };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -281,7 +190,6 @@ public class MainActivity extends ThemeableActivity
             .sizeDp(24)
             .paddingDp(2);
 
-    //        mToolbar = (Toolbar) findViewById(R.id.risuscito_toolbar);
     mToolbar.setBackgroundColor(getThemeUtils().primaryColor());
     mToolbar.setNavigationIcon(icon);
     setSupportActionBar(mToolbar);
@@ -307,11 +215,9 @@ public class MainActivity extends ThemeableActivity
 
     materialCab =
         new MaterialCab(this, R.id.cab_stub)
-            //                .setMenu(R.menu.menu_delete)
             .setBackgroundColor(getThemeUtils().primaryColorDark())
             .setPopupMenuTheme(R.style.ThemeOverlay_AppCompat_Light)
             .setContentInsetStartRes(R.dimen.mcab_default_content_inset);
-    //                .setCloseDrawableRes(android.R.drawable.ic_menu_close_clear_cancel);
 
     //    mViewModel.showSnackbar = savedInstanceState == null ||
     // savedInstanceState.getBoolean(SHOW_SNACKBAR, true);
@@ -336,21 +242,9 @@ public class MainActivity extends ThemeableActivity
     // [END configure_signin]
 
     // [START build_client]
-    // Build a GoogleApiClient with access to the Google Sign-In API and the
-    // options specified by gso.
-    mGoogleApiClient =
-        new GoogleApiClient.Builder(this)
-            .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-            .addApi(Drive.API)
-            .build();
+    mSignInClient = GoogleSignIn.getClient(this, gso);
     // [END build_client]
 
-    // Initialize FirebaseAuth
-    //        mFirebaseAuth = FirebaseAuth.getInstance();
-
-    // Initialize Firebase Measurement.
-    //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     FirebaseAnalytics.getInstance(this);
 
     setDialogCallback("BACKUP_ASK");
@@ -358,155 +252,41 @@ public class MainActivity extends ThemeableActivity
     setDialogCallback("SIGNOUT");
     setDialogCallback("REVOKE");
     setDialogCallback("RESTART");
+
+    // registra un receiver per ricevere la notifica di preparazione della registrazione
+    registerReceiver(nextStepReceiver, new IntentFilter("BROADCAST_NEXT_STEP"));
+    registerReceiver(lastStepReceiver, new IntentFilter("BROADCAST_LAST_STEP"));
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    unregisterReceiver(nextStepReceiver);
+    unregisterReceiver(lastStepReceiver);
   }
 
   @Override
   public void onStart() {
     super.onStart();
-
-    OptionalPendingResult<GoogleSignInResult> opr =
-        Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-    if (opr.isDone()) {
+    Task<GoogleSignInAccount> task = mSignInClient.silentSignIn();
+    if (task.isSuccessful()) {
       // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
       // and the GoogleSignInResult will be available instantly.
       Log.d(getClass().getName(), "Got cached sign-in");
-      GoogleSignInResult result = opr.get();
-      handleSignInResult(result);
-      Log.d(getClass().getName(), "mViewModel.dbRestoreRunning: " + mViewModel.dbRestoreRunning);
-      Log.d(
-          getClass().getName(), "mViewModel.prefRestoreRunning: " + mViewModel.prefRestoreRunning);
-      Log.d(getClass().getName(), "mViewModel.dbBackupRunning: " + mViewModel.dbBackupRunning);
-      Log.d(getClass().getName(), "mViewModel.prefBackupRunning: " + mViewModel.prefBackupRunning);
-      if (mViewModel.dbRestoreRunning) {
-        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-            .title(R.string.restore_running)
-            .content(R.string.restoring_database)
-            .showProgress()
-            .progressIndeterminate(true)
-            .progressMax(0)
-            .show();
-        restoreDriveBackup();
-      }
-      if (mViewModel.prefRestoreRunning) {
-        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-            .title(R.string.restore_running)
-            .content(R.string.restoring_settings)
-            .showProgress()
-            .progressIndeterminate(true)
-            .progressMax(0)
-            .show();
-        restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
-      }
-      if (mViewModel.dbBackupRunning) {
-        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-            .title(R.string.backup_running)
-            .content(R.string.backup_database)
-            .showProgress()
-            .progressIndeterminate(true)
-            .progressMax(0)
-            .show();
-        saveCheckDupl(
-            Drive.DriveApi.getAppFolder(mGoogleApiClient),
-            //            DatabaseCanti.getDbName(),
-            RisuscitoDatabase.getDbName(),
-            "application/x-sqlite3",
-            getOldDbPath(),
-            true);
-      }
-      if (mViewModel.prefBackupRunning) {
-        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-            .title(R.string.backup_running)
-            .content(R.string.backup_settings)
-            .showProgress()
-            .progressIndeterminate(true)
-            .progressMax(0)
-            .show();
-        saveCheckDupl(
-            Drive.DriveApi.getAppFolder(mGoogleApiClient),
-            PREF_DRIVE_FILE_NAME,
-            "application/json",
-            null,
-            false);
-      }
+      handleSignInResult(task);
     } else {
       // If the user has not previously signed in on this device or the sign-in has expired,
       // this asynchronous branch will attempt to sign in the user silently.  Cross-device
       // single sign-on will occur in this branch.
       showProgressDialog();
-      opr.setResultCallback(
-          new ResultCallback<GoogleSignInResult>() {
+      //noinspection unchecked
+      task.addOnCompleteListener(
+          new OnCompleteListener() {
             @Override
-            public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+            public void onComplete(@NonNull Task task) {
               Log.d(getClass().getName(), "Reconnected");
-              //                    hideProgressDialog();
-              handleSignInResult(googleSignInResult);
-              Log.d(
-                  getClass().getName(),
-                  "mViewModel.dbRestoreRunning: " + mViewModel.dbRestoreRunning);
-              Log.d(
-                  getClass().getName(),
-                  "mViewModel.prefRestoreRunning: " + mViewModel.prefRestoreRunning);
-              Log.d(
-                  getClass().getName(),
-                  "mViewModel.dbBackupRunning: " + mViewModel.dbBackupRunning);
-              Log.d(
-                  getClass().getName(),
-                  "mViewModel.prefBackupRunning: " + mViewModel.prefBackupRunning);
-              if (mViewModel.dbRestoreRunning) {
-                new SimpleDialogFragment.Builder(
-                        MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-                    .title(R.string.restore_running)
-                    .content(R.string.restoring_database)
-                    .showProgress()
-                    .progressIndeterminate(true)
-                    .progressMax(0)
-                    .show();
-                restoreDriveBackup();
-              }
-              if (mViewModel.prefRestoreRunning) {
-                new SimpleDialogFragment.Builder(
-                        MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-                    .title(R.string.restore_running)
-                    .content(R.string.restoring_settings)
-                    .showProgress()
-                    .progressIndeterminate(true)
-                    .progressMax(0)
-                    .show();
-                restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
-              }
-              if (mViewModel.dbBackupRunning) {
-                new SimpleDialogFragment.Builder(
-                        MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-                    .title(R.string.backup_running)
-                    .content(R.string.backup_database)
-                    .showProgress()
-                    .progressIndeterminate(true)
-                    .progressMax(0)
-                    .show();
-                saveCheckDupl(
-                    Drive.DriveApi.getAppFolder(mGoogleApiClient),
-                    //                    DatabaseCanti.getDbName(),
-                    RisuscitoDatabase.getDbName(),
-                    "application/x-sqlite3",
-                    getOldDbPath(),
-                    true);
-              }
-              if (mViewModel.prefBackupRunning) {
-                new SimpleDialogFragment.Builder(
-                        MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-                    .title(R.string.backup_running)
-                    .content(R.string.backup_settings)
-                    .showProgress()
-                    .progressIndeterminate(true)
-                    .progressMax(0)
-                    .show();
-                saveCheckDupl(
-                    Drive.DriveApi.getAppFolder(mGoogleApiClient),
-                    PREF_DRIVE_FILE_NAME,
-                    "application/json",
-                    null,
-                    false);
-              }
+              //noinspection unchecked
+              handleSignInResult(task);
             }
           });
     }
@@ -520,33 +300,7 @@ public class MainActivity extends ThemeableActivity
 
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
-    //        savedInstanceState.putInt(SELECTED_ITEM, selectedItemIndex);
-    // add the values which need to be saved from the drawer to the bundle
     savedInstanceState = mDrawer.saveInstanceState(savedInstanceState);
-    // questo pezzo salva l'elenco dei titoli checkati del fragment ConsegnatiFragment, quando si
-    // ruota lo schermo
-    //    ConsegnatiFragment consegnatiFragment =
-    //        (ConsegnatiFragment)
-    //            getSupportFragmentManager()
-    //                .findFragmentByTag(String.valueOf(R.id.navigation_consegnati));
-    //    if (consegnatiFragment != null
-    //        && consegnatiFragment.isVisible()
-    //        && consegnatiFragment.getTitoliChoose() != null) {
-    //      ConsegnatiFragment.RetainedFragment dataFragment = new
-    // ConsegnatiFragment.RetainedFragment();
-    //      getSupportFragmentManager()
-    //          .beginTransaction()
-    //          .add(dataFragment, ConsegnatiFragment.TITOLI_CHOOSE)
-    //          .commit();
-    //      dataFragment.setData(consegnatiFragment.getTitoliChoose());
-    //    }
-
-    //    savedInstanceState.putBoolean(SHOW_SNACKBAR, showSnackbar);
-    //    savedInstanceState.putBoolean(DB_RESTORE_RUNNING, dbRestoreRunning);
-    //    savedInstanceState.putBoolean(PREF_RESTORE_RUNNING, prefRestoreRunning);
-    //    savedInstanceState.putBoolean(DB_BACKUP_RUNNING, dbBackupRunning);
-    //    savedInstanceState.putBoolean(PREF_BACKUP_RUNNING, mViewModel.prefBackupRunning);
-
     super.onSaveInstanceState(savedInstanceState);
   }
 
@@ -566,18 +320,12 @@ public class MainActivity extends ThemeableActivity
             .withActivity(MainActivity.this)
             .withTranslucentStatusBar(!isOnTablet)
             .withSelectionListEnabledForSingleProfile(false)
-            //                .withHeaderBackground(isOnTablet ? new ColorDrawable(Color.WHITE) :
-            // new ColorDrawable(getThemeUtils().primaryColor()))
             .withHeaderBackground(
                 isOnTablet
                     ? new ColorDrawable(ContextCompat.getColor(this, R.color.floating_background))
                     : new ColorDrawable(getThemeUtils().primaryColor()))
             .withSavedInstance(savedInstanceState)
             .addProfiles(profile)
-            //
-            // .withNameTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
-            //
-            // .withEmailTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Regular.ttf"))
             .withNameTypeface(mMediumFont)
             .withEmailTypeface(mRegularFont)
             .withOnAccountHeaderListener(
@@ -595,7 +343,6 @@ public class MainActivity extends ThemeableActivity
                           .positiveButton(android.R.string.yes)
                           .negativeButton(android.R.string.no)
                           .show();
-                      //                            return true;
                     } else if (profile instanceof IDrawerItem
                         && profile.getIdentifier() == R.id.gdrive_restore) {
                       new SimpleDialogFragment.Builder(
@@ -605,7 +352,6 @@ public class MainActivity extends ThemeableActivity
                           .positiveButton(android.R.string.yes)
                           .negativeButton(android.R.string.no)
                           .show();
-                      //                            return true;
                     } else if (profile instanceof IDrawerItem
                         && profile.getIdentifier() == R.id.gplus_signout) {
                       new SimpleDialogFragment.Builder(
@@ -615,7 +361,6 @@ public class MainActivity extends ThemeableActivity
                           .positiveButton(android.R.string.yes)
                           .negativeButton(android.R.string.no)
                           .show();
-                      //                            return true;
                     } else if (profile instanceof IDrawerItem
                         && profile.getIdentifier() == R.id.gplus_revoke) {
                       new SimpleDialogFragment.Builder(
@@ -625,7 +370,6 @@ public class MainActivity extends ThemeableActivity
                           .positiveButton(android.R.string.yes)
                           .negativeButton(android.R.string.no)
                           .show();
-                      //                            return true;
                     }
 
                     // false if you have not consumed the event and it should close the drawer
@@ -647,8 +391,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_home)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.search_name_text)
@@ -656,8 +398,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_search)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.title_activity_general_index)
@@ -665,8 +405,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_indexes)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.title_activity_custom_lists)
@@ -674,8 +412,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navitagion_lists)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.action_favourites)
@@ -683,8 +419,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_favorites)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.title_activity_consegnati)
@@ -692,8 +426,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_consegnati)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.title_activity_history)
@@ -701,8 +433,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_history)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new PrimaryDrawerItem()
                     .withName(R.string.title_activity_settings)
@@ -710,8 +440,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_settings)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf")),
                     .withTypeface(mMediumFont),
                 new DividerDrawerItem(),
                 new PrimaryDrawerItem()
@@ -720,8 +448,6 @@ public class MainActivity extends ThemeableActivity
                     .withIdentifier(R.id.navigation_changelog)
                     .withSelectedIconColor(getThemeUtils().primaryColor())
                     .withSelectedTextColor(getThemeUtils().primaryColor())
-                    //
-                    // .withTypeface(Typeface.createFromAsset(getAssets(),"fonts/Roboto-Medium.ttf"))
                     .withTypeface(mMediumFont))
             .withOnDrawerItemClickListener(
                 new Drawer.OnDrawerItemClickListener() {
@@ -739,39 +465,17 @@ public class MainActivity extends ThemeableActivity
                         fragment = new Risuscito();
                         if (!isOnTablet && appBarLayout != null)
                           appBarLayout.setExpanded(true, true);
-                        //                                if (LUtils.hasL()) {
-                        //
-                        // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
-                        //                                }
                       } else if (drawerItem.getIdentifier() == R.id.navigation_search) {
-                        //                                if (LUtils.hasL())
-                        //                                    mToolbar.setElevation(0);
                         fragment = new GeneralSearch();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_indexes) {
-                        //                                if (LUtils.hasL())
-                        //                                    mToolbar.setElevation(0);
                         fragment = new GeneralIndex();
                       } else if (drawerItem.getIdentifier() == R.id.navitagion_lists) {
-                        //                                if (LUtils.hasL())
-                        //                                    mToolbar.setElevation(0);
                         fragment = new CustomLists();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_favorites) {
-                        //                                if (LUtils.hasL())
-                        //
-                        // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                         fragment = new FavouritesActivity();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_settings) {
-                        //                                if (LUtils.hasL())
-                        //
-                        // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                         fragment = new SettingsFragment();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_changelog) {
-                        //                                mLUtils.startActivityWithTransition(new
-                        // Intent(MainActivity.this, ChangelogActivity.class));
-                        //                                return true;
-                        //                                if (LUtils.hasL())
-                        //
-                        // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                         fragment = new AboutFragment();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_consegnati) {
                         //                                if (LUtils.hasL())
@@ -779,9 +483,6 @@ public class MainActivity extends ThemeableActivity
                         // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                         fragment = new ConsegnatiFragment();
                       } else if (drawerItem.getIdentifier() == R.id.navigation_history) {
-                        //                                if (LUtils.hasL())
-                        //
-                        // mToolbar.setElevation(getResources().getDimension(R.dimen.design_appbar_elevation));
                         fragment = new HistoryFragment();
                       } else return true;
 
@@ -881,7 +582,6 @@ public class MainActivity extends ThemeableActivity
       if (appBarLayout != null) appBarLayout.setExpanded(true, true);
     }
     mDrawer.setSelection(R.id.navigation_home);
-    //        appBarLayout.setExpanded(true, true);
   }
 
   @Override
@@ -900,18 +600,6 @@ public class MainActivity extends ThemeableActivity
   //  private void convertTabs(SQLiteDatabase db, String conversion) {
   //  private void convertTabs(String conversion) {
   private void convertTabs() {
-    //        Log.i(getClass().toString(), "CONVERSION: " + conversion);
-    //        HashMap<String, String> mappa = null;
-    //        if (conversion.equalsIgnoreCase("it-uk")) {
-    //            mappa = new HashMap<>();
-    //            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-    //                mappa.put(CambioAccordi.accordi_it[i], CambioAccordi.accordi_uk[i]);
-    //        }
-    //        if (conversion.equalsIgnoreCase("uk-it")) {
-    //            mappa = new HashMap<>();
-    //            for (int i = 0; i < CambioAccordi.accordi_it.length; i++)
-    //                mappa.put(CambioAccordi.accordi_uk[i], CambioAccordi.accordi_it[i]);
-    //        }
     String conversion = getIntent().getStringExtra(Utility.CHANGE_LANGUAGE);
 
     String[] accordi1 = CambioAccordi.accordi_it;
@@ -939,33 +627,6 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.accordi_it.length; i++) mappa.put(accordi1[i], accordi2[i]);
 
-    //    String query = "SELECT _id, saved_tab" + "  FROM ELENCO";
-    //    Cursor cursor = db.rawQuery(query, null);
-    //
-    //    cursor.moveToFirst();
-    //    while (!cursor.isAfterLast()) {
-    //      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-    //        Log.d(
-    //            TAG,
-    //            "convertTabs: "
-    //                + "ID "
-    //                + cursor.getInt(0)
-    //                + " -> CONVERTO DA "
-    //                + cursor.getString(1)
-    //                + " A "
-    //                + mappa.get(cursor.getString(1)));
-    //        query =
-    //            "UPDATE ELENCO"
-    //                + "  SET saved_tab = \'"
-    //                + mappa.get(cursor.getString(1))
-    //                + "\' "
-    //                + "  WHERE _id =  "
-    //                + cursor.getInt(0);
-    //        db.execSQL(query);
-    //      }
-    //      cursor.moveToNext();
-    //    }
-    //    cursor.close();
     CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
     List<Canto> canti = mDao.getAllByName();
     for (Canto canto : canti) {
@@ -1016,33 +677,6 @@ public class MainActivity extends ThemeableActivity
     HashMap<String, String> mappa = new HashMap<>();
     for (int i = 0; i < CambioAccordi.barre_it.length; i++) mappa.put(barre1[i], barre2[i]);
 
-    //    String query = "SELECT _id, saved_barre" + "  FROM ELENCO";
-    //    Cursor cursor = db.rawQuery(query, null);
-    //
-    //    cursor.moveToFirst();
-    //    while (!cursor.isAfterLast()) {
-    //      if (cursor.getString(1) != null && !cursor.getString(1).equals("")) {
-    //        Log.d(
-    //            TAG,
-    //            "convertiBarre: "
-    //                + "ID "
-    //                + cursor.getInt(0)
-    //                + " -> CONVERTO DA "
-    //                + cursor.getString(1)
-    //                + " A "
-    //                + mappa.get(cursor.getString(1)));
-    //        query =
-    //            "UPDATE ELENCO"
-    //                + "  SET saved_barre = \'"
-    //                + mappa.get(cursor.getString(1))
-    //                + "\' "
-    //                + "  WHERE _id =  "
-    //                + cursor.getInt(0);
-    //        db.execSQL(query);
-    //      }
-    //      cursor.moveToNext();
-    //    }
-    //    cursor.close();
     CantoDao mDao = RisuscitoDatabase.getInstance(MainActivity.this).cantoDao();
     List<Canto> canti = mDao.getAllByName();
     for (Canto canto : canti) {
@@ -1069,12 +703,6 @@ public class MainActivity extends ThemeableActivity
   public void enableFab(boolean enable) {
     Log.d(TAG, "enableFab: " + enable);
     FloatingActionButton mFab = findViewById(R.id.fab_pager);
-    //        View mScrolling = findViewById(R.id.content_frame);
-    //        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
-    // mScrolling.getLayoutParams();
-    //        params.setBehavior(enable? new FABAwareScrollingViewBehavior() : new
-    // AppBarLayout.ScrollingViewBehavior());
-    //        mFab.requestLayout();
     if (enable) mFab.show();
     else mFab.hide();
   }
@@ -1090,19 +718,20 @@ public class MainActivity extends ThemeableActivity
 
   // [START signIn]
   public void signIn() {
-    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+    //    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+    Intent signInIntent = mSignInClient.getSignInIntent();
     startActivityForResult(signInIntent, RC_SIGN_IN);
   }
   // [END signOut]
 
   // [START signOut]
   private void signOut() {
-    Auth.GoogleSignInApi.signOut(mGoogleApiClient)
-        .setResultCallback(
-            new ResultCallback<Status>() {
+    mSignInClient
+        .signOut()
+        .addOnCompleteListener(
+            new OnCompleteListener<Void>() {
               @Override
-              public void onResult(@NonNull Status status) {
-                // [START_EXCLUDE]
+              public void onComplete(@NonNull Task<Void> task) {
                 updateUI(false);
                 SharedPreferences.Editor editor =
                     PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
@@ -1113,7 +742,6 @@ public class MainActivity extends ThemeableActivity
                         R.string.disconnected,
                         Snackbar.LENGTH_SHORT)
                     .show();
-                // [END_EXCLUDE]
               }
             });
   }
@@ -1121,12 +749,12 @@ public class MainActivity extends ThemeableActivity
 
   // [START revokeAccess]
   private void revokeAccess() {
-    Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient)
-        .setResultCallback(
-            new ResultCallback<Status>() {
+    mSignInClient
+        .revokeAccess()
+        .addOnCompleteListener(
+            new OnCompleteListener<Void>() {
               @Override
-              public void onResult(@NonNull Status status) {
-                // [START_EXCLUDE]
+              public void onComplete(@NonNull Task<Void> task) {
                 updateUI(false);
                 SharedPreferences.Editor editor =
                     PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
@@ -1137,27 +765,9 @@ public class MainActivity extends ThemeableActivity
                         R.string.disconnected,
                         Snackbar.LENGTH_SHORT)
                     .show();
-                // [END_EXCLUDE]
               }
             });
   }
-
-  @Override
-  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-    // be available.
-    hideProgressDialog();
-    Snackbar.make(
-            findViewById(R.id.main_content),
-            getString(
-                R.string.login_failed,
-                connectionResult.getErrorCode(),
-                connectionResult.getErrorMessage()),
-            Snackbar.LENGTH_SHORT)
-        .show();
-    Log.d(getClass().getName(), "onConnectionFailed:" + connectionResult);
-  }
-  // [END onActivityResult]
 
   // [START onActivityResult]
   @Override
@@ -1165,25 +775,23 @@ public class MainActivity extends ThemeableActivity
     super.onActivityResult(requestCode, resultCode, data);
     Log.d(getClass().getName(), "requestCode: " + requestCode);
     // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-    if (requestCode == RC_SIGN_IN) {
-      GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-      if (null != result) handleSignInResult(result);
+    switch (requestCode) {
+      case RC_SIGN_IN:
+        handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data));
+        break;
+      default:
+        break;
     }
   }
   // [END handleSignInResult]
 
   // [START handleSignInResult]
-  private void handleSignInResult(GoogleSignInResult result) {
-    Log.d(getClass().getName(), "handleSignInResult:" + result.isSuccess());
-    Log.d(
-        getClass().getName(),
-        "signin result: "
-            + result.getStatus().getStatusCode()
-            + " - "
-            + result.getStatus().getStatusMessage());
-    if (result.isSuccess()) {
+  private void handleSignInResult(Task<GoogleSignInAccount> task) {
+    //    Log.d(getClass().getName(), "handleSignInResult:" + result.isSuccess());
+    Log.d(getClass().getName(), "handleSignInResult:" + task.isSuccessful());
+    if (task.isSuccessful()) {
       // Signed in successfully, show authenticated UI.
-      acct = result.getSignInAccount();
+      acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
       SharedPreferences.Editor editor =
           PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
       editor.putBoolean(Utility.SIGNED_IN, true);
@@ -1197,38 +805,12 @@ public class MainActivity extends ThemeableActivity
         mViewModel.showSnackbar = false;
       }
       updateUI(true);
-      //            firebaseAuthWithGoogle();
     } else {
       // Signed out, show unauthenticated UI.
       acct = null;
       updateUI(false);
     }
   }
-
-  //    private void firebaseAuthWithGoogle() {
-  //        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
-  //        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-  //        mFirebaseAuth.signInWithCredential(credential)
-  //                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-  //                    @Override
-  //                    public void onComplete(@NonNull Task<AuthResult> task) {
-  //                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-  //
-  //                        // If sign in fails, display a message to the uel1user. If sign in
-  // succeeds
-  //                        // the auth state listener will be notified and logic to handle the
-  //                        // signed in user can be handled in the listener.
-  //                        if (task.isSuccessful())
-  //                            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
-  //                        else {
-  //                            Bundle bundle = new Bundle();
-  //                            bundle.putString(FirebaseAnalytics.Param.VALUE,
-  // task.getException().toString());
-  //                            mFirebaseAnalytics.logEvent("login_fallito", bundle);
-  //                        }
-  //                    }
-  //                });
-  //    }
 
   @SuppressWarnings("deprecation")
   private void updateUI(boolean signedIn) {
@@ -1309,398 +891,8 @@ public class MainActivity extends ThemeableActivity
     mCircleProgressBar.setVisibility(View.GONE);
   }
 
-  //    public GoogleApiClient getmGoogleApiClient() {
-  //        return mGoogleApiClient;
-  //    }
-
   public void setShowSnackbar() {
     this.mViewModel.showSnackbar = true;
-  }
-
-  /**
-   * **************************************************************** controlla se il file è già
-   * esistente; se esiste lo cancella e poi lo ricrea
-   *
-   * @param pFldr parent's ID
-   * @param titl file name
-   * @param mime file mime type (application/x-sqlite3)
-   * @param file file (with content) to create
-   */
-  void saveCheckDupl(
-      final DriveFolder pFldr,
-      final String titl,
-      final String mime,
-      final File file,
-      final boolean dataBase) {
-    if (dataBase) mViewModel.dbBackupRunning = true;
-    else mViewModel.prefBackupRunning = true;
-    if (mGoogleApiClient != null
-        && pFldr != null
-        && titl != null
-        && mime != null
-        && (!dataBase || file != null))
-      try {
-        // create content from file
-        Log.d(getClass().getName(), "saveCheckDupl - dataBase? " + dataBase);
-        Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
-        Query query =
-            new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build();
-
-        Drive.DriveApi.query(mGoogleApiClient, query)
-            .setResultCallback(
-                new ResultCallback<DriveApi.MetadataBufferResult>() {
-                  @Override
-                  public void onResult(
-                      @NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
-
-                    int count = metadataBufferResult.getMetadataBuffer().getCount();
-                    Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
-                    if (count > 0) {
-                      DriveId mDriveId =
-                          metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
-                      Log.d(getClass().getName(), "saveCheckDupl - driveIdRetrieved: " + mDriveId);
-                      Log.d(
-                          getClass().getName(),
-                          "saveCheckDupl - filesize in cloud "
-                              + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
-                      metadataBufferResult.getMetadataBuffer().release();
-
-                      DriveFile mFile = mDriveId.asDriveFile();
-                      mFile
-                          .delete(mGoogleApiClient)
-                          .setResultCallback(
-                              new ResultCallback<Status>() {
-                                @Override
-                                public void onResult(@NonNull Status status) {
-                                  if (status.isSuccess()) {
-                                    Log.d(
-                                        getClass().getName(),
-                                        "saveCheckDupl - CANCELLAZIONE OK: "
-                                            + status.getStatusCode());
-                                    if (dataBase) saveToDrive(pFldr, titl, mime, file, true);
-                                    else saveToDrive(pFldr, titl, mime, file, false);
-                                  } else {
-                                    String errore =
-                                        "ERRORE CANCELLAZIONE: "
-                                            + status.getStatusCode()
-                                            + "-"
-                                            + status.getStatusMessage();
-                                    Log.e(getClass().getName(), "saveCheckDupl - " + errore);
-                                    if (dataBase) mViewModel.dbBackupRunning = false;
-                                    else mViewModel.prefBackupRunning = false;
-                                    dismissDialog("BACKUP_RUNNING");
-                                    Snackbar.make(
-                                            findViewById(R.id.main_content),
-                                            errore,
-                                            Snackbar.LENGTH_SHORT)
-                                        .show();
-                                  }
-                                }
-                              });
-                    } else if (dataBase) saveToDrive(pFldr, titl, mime, file, true);
-                    else saveToDrive(pFldr, titl, mime, file, false);
-                  }
-                });
-      } catch (Exception e) {
-        Log.e(getClass().getName(), "saveCheckDupl - ExceptionD: " + e.getLocalizedMessage(), e);
-        if (dataBase) mViewModel.dbBackupRunning = false;
-        else mViewModel.prefBackupRunning = false;
-        dismissDialog("BACKUP_RUNNING");
-        String error = "error: " + e.getLocalizedMessage();
-        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-      }
-  }
-
-  /**
-   * **************************************************************** create file in GOODrive
-   *
-   * @param pFldr parent's ID
-   * @param titl file name
-   * @param mime file mime type (application/x-sqlite3)
-   * @param file file (with content) to create
-   */
-  void saveToDrive(
-      final DriveFolder pFldr,
-      final String titl,
-      final String mime,
-      final File file,
-      final boolean dataBase) {
-    Log.d(getClass().getName(), "saveToDrive - database? " + dataBase);
-    if (mGoogleApiClient != null
-        && pFldr != null
-        && titl != null
-        && mime != null
-        && (!dataBase || file != null))
-      try {
-        // create content from file
-        Drive.DriveApi.newDriveContents(mGoogleApiClient)
-            .setResultCallback(
-                new ResultCallback<DriveApi.DriveContentsResult>() {
-                  @Override
-                  public void onResult(@NonNull DriveApi.DriveContentsResult driveContentsResult) {
-                    // write file to content, chunk by chunk
-                    if (driveContentsResult.getStatus().isSuccess()) {
-                      DriveContents cont = driveContentsResult.getDriveContents();
-                      if (dataBase) {
-                        try {
-                          OutputStream oos = cont.getOutputStream();
-                          if (oos != null)
-                            try {
-                              InputStream is = new FileInputStream(file);
-                              byte[] buf = new byte[4096];
-                              int c;
-                              while ((c = is.read(buf, 0, buf.length)) > 0) {
-                                oos.write(buf, 0, c);
-                                oos.flush();
-                              }
-                            } finally {
-                              oos.close();
-                            }
-                        } catch (Exception e) {
-                          Log.e(
-                              getClass().getName(),
-                              "saveToDrive - Exception1: " + e.getLocalizedMessage(),
-                              e);
-                          mViewModel.dbBackupRunning = false;
-                          dismissDialog("BACKUP_RUNNING");
-                          String error = "error: " + e.getLocalizedMessage();
-                          Snackbar.make(
-                                  findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT)
-                              .show();
-                          return;
-                        }
-                      } else {
-                        if (!saveSharedPreferencesToFile(cont.getOutputStream())) {
-                          mViewModel.prefBackupRunning = false;
-                          dismissDialog("BACKUP_RUNNING");
-                          return;
-                        }
-                      }
-
-                      // content's COOL, create metadata
-                      MetadataChangeSet meta =
-                          new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
-
-                      // now create file on GooDrive
-                      pFldr
-                          .createFile(mGoogleApiClient, meta, cont)
-                          .setResultCallback(
-                              new ResultCallback<DriveFolder.DriveFileResult>() {
-                                @Override
-                                public void onResult(
-                                    @NonNull DriveFolder.DriveFileResult driveFileResult) {
-                                  if (driveFileResult.getStatus().isSuccess()) {
-                                    DriveFile dFil = driveFileResult.getDriveFile();
-                                    if (dFil != null) {
-                                      // BINGO , file uploaded
-                                      dFil.getMetadata(mGoogleApiClient)
-                                          .setResultCallback(
-                                              new ResultCallback<DriveResource.MetadataResult>() {
-                                                @Override
-                                                public void onResult(
-                                                    @NonNull
-                                                        DriveResource.MetadataResult
-                                                            metadataResult) {
-                                                  if (metadataResult.getStatus().isSuccess()) {
-                                                    DriveId mDriveId =
-                                                        metadataResult.getMetadata().getDriveId();
-                                                    Log.d(
-                                                        getClass().getName(),
-                                                        "driveIdSaved: " + mDriveId);
-                                                    String error =
-                                                        "saveToDrive - FILE CARICATO - CODE: "
-                                                            + metadataResult
-                                                                .getStatus()
-                                                                .getStatusCode();
-                                                    Log.d(getClass().getName(), error);
-                                                    if (dataBase) {
-                                                      mViewModel.dbBackupRunning = false;
-                                                      SimpleDialogFragment sFragment =
-                                                          SimpleDialogFragment.findVisible(
-                                                              MainActivity.this, "BACKUP_RUNNING");
-                                                      if (sFragment != null)
-                                                        sFragment.setContent(
-                                                            R.string.backup_settings);
-                                                      saveCheckDupl(
-                                                          Drive.DriveApi.getAppFolder(
-                                                              mGoogleApiClient),
-                                                          PREF_DRIVE_FILE_NAME,
-                                                          "application/json",
-                                                          null,
-                                                          false);
-                                                    } else {
-                                                      mViewModel.prefBackupRunning = false;
-                                                      dismissDialog("BACKUP_RUNNING");
-                                                      Snackbar.make(
-                                                              findViewById(R.id.main_content),
-                                                              R.string.gdrive_backup_success,
-                                                              Snackbar.LENGTH_LONG)
-                                                          .show();
-                                                    }
-                                                  }
-                                                }
-                                              });
-                                    }
-                                  } else {
-                                    /* report error */
-                                    if (dataBase) mViewModel.dbBackupRunning = false;
-                                    else mViewModel.prefBackupRunning = false;
-                                    dismissDialog("BACKUP_RUNNING");
-                                    String error =
-                                        "saveToDrive - driveFile error: "
-                                            + driveFileResult.getStatus().getStatusCode()
-                                            + " - "
-                                            + driveFileResult.getStatus().getStatusMessage();
-                                    Log.e(getClass().getName(), error);
-                                    Snackbar.make(
-                                            findViewById(R.id.main_content),
-                                            error,
-                                            Snackbar.LENGTH_SHORT)
-                                        .show();
-                                  }
-                                }
-                              });
-                    } else {
-                      /* report error */
-                      if (dataBase) mViewModel.dbBackupRunning = false;
-                      else mViewModel.prefBackupRunning = false;
-                      dismissDialog("BACKUP_RUNNING");
-                      String error =
-                          "saveToDrive - driveFile error: "
-                              + driveContentsResult.getStatus().getStatusCode()
-                              + " - "
-                              + driveContentsResult.getStatus().getStatusMessage();
-                      Log.e(getClass().getName(), error);
-                      Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT)
-                          .show();
-                    }
-                  }
-                });
-      } catch (Exception e) {
-        Log.e(getClass().getName(), "Exception2: " + e.getLocalizedMessage(), e);
-        if (dataBase) mViewModel.dbBackupRunning = false;
-        else mViewModel.prefBackupRunning = false;
-        dismissDialog("BACKUP_RUNNING");
-        String error = "error: " + e.getLocalizedMessage();
-        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-      }
-  }
-
-  private File getNewDbPath() {
-    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(RisuscitoDatabase.getDbName()));
-    return getDatabasePath(RisuscitoDatabase.getDbName());
-  }
-
-  private File getOldDbPath() {
-    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
-    return getDatabasePath(DatabaseCanti.getDbName());
-  }
-
-  void restoreDriveBackup() {
-    mViewModel.dbRestoreRunning = true;
-    //    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + DatabaseCanti.getDbName());
-    Log.d(getClass().getName(), "restoreDriveBackup - Db name: " + RisuscitoDatabase.getDbName());
-    Query query =
-        new Query.Builder()
-            //            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
-            .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.getDbName()))
-            .build();
-
-    Drive.DriveApi.query(mGoogleApiClient, query)
-        .setResultCallback(
-            new ResultCallback<DriveApi.MetadataBufferResult>() {
-              @Override
-              public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
-                int count = metadataBufferResult.getMetadataBuffer().getCount();
-                Log.d(getClass().getName(), "restoreDriveBackup - Count files backup: " + count);
-                if (count > 0) {
-                  DriveId mDriveId =
-                      metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
-                  Log.d(getClass().getName(), "restoreDriveBackup - driveIdRetrieved: " + mDriveId);
-                  Log.d(
-                      getClass().getName(),
-                      "restoreDriveBackup - filesize in cloud "
-                          + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
-                  metadataBufferResult.getMetadataBuffer().release();
-
-                  DriveFile mFile = mDriveId.asDriveFile();
-                  mFile
-                      .open(
-                          mGoogleApiClient,
-                          DriveFile.MODE_READ_ONLY,
-                          new DriveFile.DownloadProgressListener() {
-                            @Override
-                            public void onProgress(long bytesDown, long bytesExpected) {}
-                          })
-                      .setResultCallback(restoreContentsCallback);
-                } else {
-                  mViewModel.dbRestoreRunning = false;
-                  //                    if (SimpleDialogFragment.findVisible(MainActivity.this,
-                  // "RESTORE_RUNNING") != null)
-                  //                        SimpleDialogFragment.findVisible(MainActivity.this,
-                  // "RESTORE_RUNNING").dismiss();
-                  dismissDialog("RESTORE_RUNNING");
-                  Snackbar.make(
-                          findViewById(R.id.main_content),
-                          R.string.no_restore_found,
-                          Snackbar.LENGTH_LONG)
-                      .show();
-                }
-              }
-            });
-  }
-
-  void restoreDrivePrefBackup(String title) {
-    mViewModel.prefRestoreRunning = true;
-    Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
-    Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build();
-
-    Drive.DriveApi.query(mGoogleApiClient, query)
-        .setResultCallback(
-            new ResultCallback<DriveApi.MetadataBufferResult>() {
-              @Override
-              public void onResult(@NonNull DriveApi.MetadataBufferResult metadataBufferResult) {
-
-                int count = metadataBufferResult.getMetadataBuffer().getCount();
-                Log.d(
-                    getClass().getName(), "restoreDrivePrefBackup - Count files backup: " + count);
-                if (count > 0) {
-                  DriveId mDriveId =
-                      metadataBufferResult.getMetadataBuffer().get(count - 1).getDriveId();
-                  Log.d(
-                      getClass().getName(),
-                      "restoreDrivePrefBackup - driveIdRetrieved: " + mDriveId);
-                  Log.d(
-                      getClass().getName(),
-                      "restoreDrivePrefBackup - filesize in cloud "
-                          + metadataBufferResult.getMetadataBuffer().get(0).getFileSize());
-                  metadataBufferResult.getMetadataBuffer().release();
-
-                  DriveFile mFile = mDriveId.asDriveFile();
-                  mFile
-                      .open(
-                          mGoogleApiClient,
-                          DriveFile.MODE_READ_ONLY,
-                          new DriveFile.DownloadProgressListener() {
-                            @Override
-                            public void onProgress(long bytesDown, long bytesExpected) {}
-                          })
-                      .setResultCallback(restoreContentsPrefCallback);
-                } else {
-                  mViewModel.prefRestoreRunning = false;
-                  //                    if (SimpleDialogFragment.findVisible(MainActivity.this,
-                  // "RESTORE_RUNNING") != null)
-                  //                        SimpleDialogFragment.findVisible(MainActivity.this,
-                  // "RESTORE_RUNNING").dismiss();
-                  dismissDialog("RESTORE_RUNNING");
-                  Snackbar.make(
-                          findViewById(R.id.main_content),
-                          R.string.no_restore_found,
-                          Snackbar.LENGTH_LONG)
-                      .show();
-                }
-              }
-            });
   }
 
   @Override
@@ -1708,76 +900,30 @@ public class MainActivity extends ThemeableActivity
     Log.d(getClass().getName(), "onPositive: TAG " + tag);
     switch (tag) {
       case "BACKUP_ASK":
-        if (mGoogleApiClient.isConnected()) {
-          new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
-              .title(R.string.backup_running)
-              .content(R.string.backup_database)
-              .showProgress()
-              .progressIndeterminate(true)
-              .progressMax(0)
-              .show();
-          saveCheckDupl(
-              Drive.DriveApi.getAppFolder(mGoogleApiClient),
-              //              DatabaseCanti.getDbName(),
-              RisuscitoDatabase.getDbName(),
-              "application/x-sqlite3",
-              getOldDbPath(),
-              true);
-        } else {
-          new SimpleDialogFragment.Builder(
-                  MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
-              .content(R.string.no_connection)
-              .positiveButton(android.R.string.ok)
-              .show();
-        }
+        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "BACKUP_RUNNING")
+            .title(R.string.backup_running)
+            .content(R.string.backup_database)
+            .showProgress()
+            .progressIndeterminate(true)
+            .progressMax(0)
+            .show();
+        new BackupTask().execute();
         break;
       case "RESTORE_ASK":
-        if (mGoogleApiClient.isConnected()) {
-          new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
-              .title(R.string.restore_running)
-              .content(R.string.restoring_database)
-              .showProgress()
-              .progressIndeterminate(true)
-              .progressMax(0)
-              .show();
-          restoreDriveBackup();
-        } else {
-          new SimpleDialogFragment.Builder(
-                  MainActivity.this, MainActivity.this, "NO_CONNECTION_ERROR")
-              .content(R.string.no_connection)
-              .positiveButton(android.R.string.ok)
-              .show();
-        }
+        new SimpleDialogFragment.Builder(MainActivity.this, MainActivity.this, "RESTORE_RUNNING")
+            .title(R.string.restore_running)
+            .content(R.string.restoring_database)
+            .showProgress()
+            .progressIndeterminate(true)
+            .progressMax(0)
+            .show();
+        new RestoreTask().execute();
         break;
       case "SIGNOUT":
-        if (mGoogleApiClient.isConnected()) signOut();
-        else {
-          // [START_EXCLUDE]
-          updateUI(false);
-          SharedPreferences.Editor editor =
-              PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
-          editor.putBoolean(Utility.SIGNED_IN, false);
-          editor.apply();
-          Snackbar.make(
-                  findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT)
-              .show();
-          // [END_EXCLUDE]
-        }
+        signOut();
         break;
       case "REVOKE":
-        if (mGoogleApiClient.isConnected()) revokeAccess();
-        else {
-          // [START_EXCLUDE]
-          updateUI(false);
-          SharedPreferences.Editor editor =
-              PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
-          editor.putBoolean(Utility.SIGNED_IN, false);
-          editor.apply();
-          Snackbar.make(
-                  findViewById(R.id.main_content), R.string.disconnected, Snackbar.LENGTH_SHORT)
-              .show();
-          // [END_EXCLUDE]
-        }
+        revokeAccess();
         break;
       case "RESTART":
         Intent i =
@@ -1846,13 +992,7 @@ public class MainActivity extends ThemeableActivity
       activityWeakReference.get().getIntent().removeExtra(Utility.DB_RESET);
       DatabaseCanti listaCanti = new DatabaseCanti(activityWeakReference.get());
       SQLiteDatabase db = listaCanti.getReadableDatabase();
-      //      DatabaseCanti.Backup[] backup = listaCanti.backupTables(db.getVersion(), db);
-      //      DatabaseCanti.BackupLocalLink[] backupLink =
-      // listaCanti.backupLocalLink(db.getVersion(), db);
       listaCanti.reCreateDatabse(db);
-      //      listaCanti.repopulateDB(db.getVersion(), db.getVersion(), db, backup, backupLink);
-      //      convertTabs(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
-      //      convertiBarre(db, getIntent().getStringExtra(Utility.CHANGE_LANGUAGE));
       db.close();
       listaCanti.close();
       RisuscitoDatabase.getInstance(activityWeakReference.get())
@@ -1883,6 +1023,70 @@ public class MainActivity extends ThemeableActivity
       } catch (IllegalArgumentException e) {
         Log.e(getClass().getName(), e.getLocalizedMessage(), e);
       }
+    }
+  }
+
+  @SuppressLint("StaticFieldLeak")
+  private class BackupTask extends AsyncTask<Void, Void, Void> {
+
+    BackupTask() {}
+
+    @Override
+    protected Void doInBackground(Void... sUrl) {
+      try {
+        checkDuplTosave(RisuscitoDatabase.getDbName(), "application/x-sqlite3", true);
+        Intent intentBroadcast = new Intent("BROADCAST_NEXT_STEP");
+        intentBroadcast.putExtra("WHICH", "BACKUP");
+        sendBroadcast(intentBroadcast);
+        checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false);
+      } catch (Exception e) {
+        Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
+        String error = "error: " + e.getLocalizedMessage();
+        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+      }
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+      super.onPostExecute(result);
+      Intent intentBroadcast = new Intent("BROADCAST_LAST_STEP");
+      intentBroadcast.putExtra("WHICH", "BACKUP");
+      sendBroadcast(intentBroadcast);
+    }
+  }
+
+  @SuppressLint("StaticFieldLeak")
+  private class RestoreTask extends AsyncTask<Void, Void, Void> {
+
+    RestoreTask() {}
+
+    @Override
+    protected Void doInBackground(Void... sUrl) {
+      try {
+        if (checkDupl(RisuscitoDatabase.getDbName())) restoreNewDbBackup();
+        else restoreOldDriveBackup();
+        //        if (checkDupl(DatabaseCanti.getDbName())) restoreOldDriveBackup();
+        //        else restoreNewDbBackup();
+        Intent intentBroadcast = new Intent("BROADCAST_NEXT_STEP");
+        intentBroadcast.putExtra("WHICH", "RESTORE");
+        sendBroadcast(intentBroadcast);
+        restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME);
+      } catch (Exception e) {
+        Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
+        String error = "error: " + e.getLocalizedMessage();
+        Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
+      }
+
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+      super.onPostExecute(result);
+      Intent intentBroadcast = new Intent("BROADCAST_LAST_STEP");
+      intentBroadcast.putExtra("WHICH", "RESTORE");
+      sendBroadcast(intentBroadcast);
     }
   }
 }

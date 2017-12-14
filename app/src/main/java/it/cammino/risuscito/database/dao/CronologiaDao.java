@@ -17,6 +17,9 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface CronologiaDao {
 
+  @Query("DELETE FROM cronologia")
+  void truncateTable();
+
   @Query(
       "SELECT A.*, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
   LiveData<List<CantoCronologia>> getLiveCronologia();

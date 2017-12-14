@@ -15,6 +15,9 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface LocalLinksDao {
 
+  @Query("DELETE FROM locallink")
+  void truncateTable();
+
   @Query("SELECT * FROM locallink WHERE idCanto = :id")
   LocalLink getLocalLinkByCantoId(int id);
 

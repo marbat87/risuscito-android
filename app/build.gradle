@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 4322
+        versionCode 4323
         versionName '4.3.0'
     }
     lintOptions {
@@ -65,7 +65,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.3.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     implementation 'com.cipolat.android:superstateview:1.0.3'
-    implementation 'pub.devrel:easypermissions:1.1.0'
+    implementation 'pub.devrel:easypermissions:1.1.1'
     implementation 'com.blunderer:easy-animated-vector-drawable:1.0.3'
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'android.arch.persistence.room:runtime:1.0.0'

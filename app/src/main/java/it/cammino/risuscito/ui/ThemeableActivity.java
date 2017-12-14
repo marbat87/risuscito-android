@@ -19,8 +19,29 @@ import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.Metadata;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.Tasks;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -29,9 +50,13 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import it.cammino.risuscito.DatabaseCanti;
 import it.cammino.risuscito.LUtils;
+import it.cammino.risuscito.R;
 import it.cammino.risuscito.Utility;
+import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.utils.ThemeUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -347,13 +372,388 @@ public abstract class ThemeableActivity extends AppCompatActivity
       try {
         if (input != null) {
           input.close();
-          //                    res = true;
         }
       } catch (IOException e) {
         String error = "loadSharedPreferencesFromFile - IOException: " + e.getLocalizedMessage();
         Log.e(getClass().getName(), error, e);
         Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show();
       }
+    }
+  }
+
+  /**
+   * **************************************************************** controlla se il file è già
+   * esistente; se esiste lo cancella e poi lo ricrea
+   *
+   * @param titl file name
+   * @param mime file mime type (application/x-sqlite3)
+   */
+  public void checkDuplTosave(String titl, String mime, boolean dataBase)
+      throws IOException, ExecutionException, InterruptedException, NoPermissioneException {
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+    // task di recupero la cartella applicativa
+    DriveFolder folder = Tasks.await(client.getAppFolder());
+
+    File file = getNewDbPath();
+    if (folder != null && titl != null && (!dataBase || file != null)) {
+      // create content from file
+      Log.d(getClass().getName(), "saveCheckDupl - dataBase? " + dataBase);
+      Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
+      Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build();
+
+      // task di recupero metadata del file se già presente
+      MetadataBuffer metadataBuffer = Tasks.await(client.query(query));
+
+      int count = metadataBuffer.getCount();
+      Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
+      if (count > 0) {
+        DriveId mDriveId = metadataBuffer.get(count - 1).getDriveId();
+        Log.d(getClass().getName(), "saveCheckDupl - driveIdRetrieved: " + mDriveId);
+        Log.d(
+            getClass().getName(),
+            "saveCheckDupl - filesize in cloud " + metadataBuffer.get(0).getFileSize());
+        metadataBuffer.release();
+
+        DriveFile mFile = mDriveId.asDriveFile();
+        // task di cancellazione file eventualmente già presente
+        Tasks.await(client.delete(mFile));
+          Log.d(
+                  getClass().getName(),
+                  "saveCheckDupl - deleted");
+
+        saveToDrive(folder, titl, mime, file, dataBase);
+      } else {
+        metadataBuffer.release();
+        saveToDrive(folder, titl, mime, file, dataBase);
+      }
+    }
+  }
+
+  /**
+   * **************************************************************** create file in GOODrive
+   *
+   * @param titl file name
+   * @param mime file mime type (application/x-sqlite3)
+   * @param file file (with content) to create
+   */
+  public void saveToDrive(
+      DriveFolder driveFolder,
+      final String titl,
+      final String mime,
+      final File file,
+      final boolean dataBase)
+      throws ExecutionException, InterruptedException, IOException, NoPermissioneException {
+    Log.d(getClass().getName(), "saveToDrive - database? " + dataBase);
+
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+    // task di recupero la cartella applicativa
+    if (driveFolder != null && titl != null && mime != null && (!dataBase || file != null)) {
+      // task di creazione content da file
+      DriveContents driveContents = Tasks.await(client.createContents());
+      if (dataBase) {
+        OutputStream oos = driveContents.getOutputStream();
+        if (oos != null)
+          try {
+            InputStream is = new FileInputStream(file);
+            byte[] buf = new byte[4096];
+            int c;
+            while ((c = is.read(buf, 0, buf.length)) > 0) {
+              oos.write(buf, 0, c);
+              oos.flush();
+            }
+          } finally {
+            oos.close();
+          }
+      } else {
+        if (!saveSharedPreferencesToFile(driveContents.getOutputStream())) {
+          return;
+        }
+      }
+
+      // content's COOL, create metadata
+      MetadataChangeSet meta =
+          new MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build();
+
+      // task di creazione file in Google Drive
+      DriveFile driveFile = Tasks.await(client.createFile(driveFolder, meta, driveContents));
+      if (driveFile != null) {
+        Metadata metadata = Tasks.await(client.getMetadata(driveFile));
+        DriveId mDriveId = metadata.getDriveId();
+        Log.d(getClass().getName(), "driveIdSaved: " + mDriveId);
+        String error = "saveToDrive - FILE CARICATO";
+        Log.d(getClass().getName(), error);
+      }
+    }
+  }
+
+  /**
+   * **************************************************************** controlla se il file è già
+   * esistente; se esiste lo cancella e poi lo ricrea
+   *
+   * @param titl file name
+   */
+  public boolean checkDupl(String titl)
+      throws IOException, ExecutionException, InterruptedException, NoPermissioneException {
+    boolean fileFound = false;
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+    // task di recupero la cartella applicativa
+    DriveFolder folder = Tasks.await(client.getAppFolder());
+    if (folder != null && titl != null) {
+      // create content from file
+      Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
+      Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build();
+
+      // task di recupero metadata del file se già presente
+      MetadataBuffer metadataBuffer = Tasks.await(client.query(query));
+
+      int count = metadataBuffer.getCount();
+      metadataBuffer.release();
+      Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
+      fileFound = count > 0;
+    }
+    return fileFound;
+  }
+
+  public void restoreNewDbBackup()
+      throws ExecutionException, InterruptedException, NoPermissioneException, IOException {
+    Log.d(
+        getClass().getName(), "restoreNewDriveBackup - Db name: " + RisuscitoDatabase.getDbName());
+    Query query =
+        new Query.Builder()
+            .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.getDbName()))
+            .build();
+
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+
+    MetadataBuffer metadataBuffer = Tasks.await(client.query(query));
+
+    int count = metadataBuffer.getCount();
+    Log.d(getClass().getName(), "restoreNewDriveBackup - Count files backup: " + count);
+    if (count > 0) {
+      DriveId mDriveId = metadataBuffer.get(count - 1).getDriveId();
+      Log.d(getClass().getName(), "restoreNewDriveBackup - driveIdRetrieved: " + mDriveId);
+      Log.d(
+          getClass().getName(),
+          "restoreNewDriveBackup - filesize in cloud " + metadataBuffer.get(0).getFileSize());
+      metadataBuffer.release();
+
+      DriveFile mFile = mDriveId.asDriveFile();
+
+      DriveContents driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY));
+
+      RisuscitoDatabase.getInstance(this);
+
+      File dbFile = getNewDbPath();
+      String path = dbFile.getPath();
+
+      if (!dbFile.exists())
+        //noinspection ResultOfMethodCallIgnored
+        dbFile.delete();
+
+      dbFile = new File(path);
+      try {
+        FileOutputStream fos = new FileOutputStream(dbFile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        BufferedInputStream in = new BufferedInputStream(driveContents.getInputStream());
+
+        byte[] buffer = new byte[1024];
+        int n;
+        while ((n = in.read(buffer)) > 0) {
+          bos.write(buffer, 0, n);
+          bos.flush();
+        }
+        bos.close();
+      } catch (FileNotFoundException e) {
+        client.discardContents(driveContents);
+        throw e;
+      } catch (IOException e) {
+        client.discardContents(driveContents);
+        throw e;
+      }
+      RisuscitoDatabase.getInstance(this);
+    } else {
+      metadataBuffer.release();
+      Snackbar.make(
+              findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG)
+          .show();
+    }
+  }
+
+  public void restoreOldDriveBackup()
+      throws NoPermissioneException, ExecutionException, InterruptedException, IOException {
+    Log.d(getClass().getName(), "restoreOldDriveBackup - Db name: " + DatabaseCanti.getDbName());
+    Query query =
+        new Query.Builder()
+            .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
+            .build();
+
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+
+    // esevuzione task per metadata da query
+    MetadataBuffer metadataBuffer = Tasks.await(client.query(query));
+
+    int count = metadataBuffer.getCount();
+    Log.d(getClass().getName(), "restoreOldDriveBackup - Count files backup: " + count);
+    if (count > 0) {
+      DriveId mDriveId = metadataBuffer.get(count - 1).getDriveId();
+      Log.d(getClass().getName(), "restoreOldDriveBackup - driveIdRetrieved: " + mDriveId);
+      Log.d(
+          getClass().getName(),
+          "restoreOldDriveBackup - filesize in cloud " + metadataBuffer.get(0).getFileSize());
+      metadataBuffer.release();
+
+      DriveFile mFile = mDriveId.asDriveFile();
+      // esecuzione task per recupero driveContent
+      DriveContents driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY));
+
+      DatabaseCanti listaCanti = new DatabaseCanti(this);
+      listaCanti.close();
+
+      File dbFile = getOldDbPath();
+      String path = dbFile.getPath();
+
+      if (!dbFile.exists())
+        //noinspection ResultOfMethodCallIgnored
+        dbFile.delete();
+
+      dbFile = new File(path);
+      try {
+        FileOutputStream fos = new FileOutputStream(dbFile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        BufferedInputStream in = new BufferedInputStream(driveContents.getInputStream());
+
+        byte[] buffer = new byte[1024];
+        int n;
+        while ((n = in.read(buffer)) > 0) {
+          bos.write(buffer, 0, n);
+          bos.flush();
+        }
+        bos.close();
+      } catch (FileNotFoundException e) {
+        client.discardContents(driveContents);
+        throw e;
+      } catch (IOException e) {
+        client.discardContents(driveContents);
+        throw e;
+      }
+
+      listaCanti = new DatabaseCanti(this);
+      listaCanti.close();
+      client.discardContents(driveContents);
+
+      RisuscitoDatabase.getInstance(this).importFromOldDB(this);
+
+      checkDuplTosave(RisuscitoDatabase.getDbName(), "application/x-sqlite3", true);
+    } else {
+      metadataBuffer.release();
+      restoreNewDbBackup();
+    }
+  }
+
+  public void restoreDrivePrefBackup(String title)
+      throws NoPermissioneException, ExecutionException, InterruptedException {
+    Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
+    Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build();
+
+    GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    // Synchronously check for necessary permissions
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+
+    final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
+
+    MetadataBuffer metadataBuffer = Tasks.await(client.query(query));
+
+    int count = metadataBuffer.getCount();
+    Log.d(getClass().getName(), "restoreDrivePrefBackup - Count files backup: " + count);
+    if (count > 0) {
+      DriveId mDriveId = metadataBuffer.get(count - 1).getDriveId();
+      Log.d(getClass().getName(), "restoreDrivePrefBackup - driveIdRetrieved: " + mDriveId);
+      Log.d(
+          getClass().getName(),
+          "restoreDrivePrefBackup - filesize in cloud " + metadataBuffer.get(0).getFileSize());
+      metadataBuffer.release();
+
+      DriveFile mFile = mDriveId.asDriveFile();
+      DriveContents driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY));
+
+      loadSharedPreferencesFromFile(driveContents.getInputStream());
+      client.discardContents(driveContents);
+    } else {
+      Snackbar.make(
+              findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG)
+          .show();
+    }
+  }
+
+  private File getNewDbPath() {
+    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(RisuscitoDatabase.getDbName()));
+    return getDatabasePath(RisuscitoDatabase.getDbName());
+  }
+
+  private File getOldDbPath() {
+    Log.d(getClass().getName(), "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()));
+    return getDatabasePath(DatabaseCanti.getDbName());
+  }
+
+  public class NoPermissioneException extends Exception {
+    NoPermissioneException() {
+      super("no permission for drive SCOPE_FILE");
     }
   }
 }
