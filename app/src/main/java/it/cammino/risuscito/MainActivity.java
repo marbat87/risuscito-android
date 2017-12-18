@@ -1087,7 +1087,6 @@ public class MainActivity extends ThemeableActivity
     @Override
     protected void onPostExecute(Void result) {
       super.onPostExecute(result);
-      super.onPostExecute(result);
       if (isCancelled()) return;
       Intent intentBroadcast = new Intent("BROADCAST_LAST_STEP");
       intentBroadcast.putExtra("WHICH", "RESTORE");
