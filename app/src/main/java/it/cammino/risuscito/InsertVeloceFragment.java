@@ -454,6 +454,7 @@ public class InsertVeloceFragment extends Fragment {
       else elenco = mDb.cantoDao().getAllByName();
 
       for (Canto canto : elenco) {
+        if (isCancelled()) return 0;
         titoloTemp = Utility.removeAccents(canto.titolo.toLowerCase());
         //                Log.d(getClass().getName(), "ricercaStringa: " + titoloTemp);
         //                Log.d(getClass().getName(), "ricercaStringa: " + stringa);
@@ -477,6 +478,7 @@ public class InsertVeloceFragment extends Fragment {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
+      if (isCancelled()) return;
       fragmentReference.get().mNoResults.setVisibility(View.GONE);
       fragmentReference.get().progress.setVisibility(View.VISIBLE);
       fragmentReference.get().titoli.clear();
@@ -492,6 +494,7 @@ public class InsertVeloceFragment extends Fragment {
       //      if (fragmentReference.get().titoli.size() == 0)
       //        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
       //      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
+      if (isCancelled()) return;
       FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
       fragmentReference.get().progress.setVisibility(View.INVISIBLE);
       fragmentReference

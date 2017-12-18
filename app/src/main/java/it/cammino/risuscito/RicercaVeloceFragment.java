@@ -777,6 +777,7 @@ public class RicercaVeloceFragment extends Fragment
       List<Canto> elenco = mDb.cantoDao().getAllByName();
 
       for (Canto canto : elenco) {
+        if (isCancelled()) return 0;
         titoloTemp = Utility.removeAccents(canto.titolo.toLowerCase());
         //                Log.d(getClass().getName(), "ricercaStringa: " + titoloTemp);
         //                Log.d(getClass().getName(), "ricercaStringa: " + stringa);
@@ -801,6 +802,7 @@ public class RicercaVeloceFragment extends Fragment
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
+      if (isCancelled()) return;
       fragmentReference.get().mNoResults.setVisibility(View.GONE);
       fragmentReference.get().progress.setVisibility(View.VISIBLE);
       fragmentReference.get().titoli.clear();
@@ -812,6 +814,7 @@ public class RicercaVeloceFragment extends Fragment
       super.onPostExecute(result);
       //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
       //      cantoAdapter.notifyAdapterDataSetChanged();
+      if (isCancelled()) return;
       FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
       fragmentReference.get().progress.setVisibility(View.INVISIBLE);
       fragmentReference
@@ -821,9 +824,9 @@ public class RicercaVeloceFragment extends Fragment
               fragmentReference.get().cantoAdapter.getAdapterItemCount() == 0
                   ? View.VISIBLE
                   : View.GONE);
-      //      if (fragmentReference.get().titoli.size() == 0)
-      // fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
-      //      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
     }
+    //      if (fragmentReference.get().titoli.size() == 0)
+    // fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
+    //      else fragmentReference.get().mNoResults.setVisibility(View.GONE);
   }
 }

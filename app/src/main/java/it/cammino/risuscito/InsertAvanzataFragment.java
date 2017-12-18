@@ -423,13 +423,13 @@ public class InsertAvanzataFragment extends Fragment {
       for (String[] aText : aTexts) {
 
         Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
-        if (isCancelled()) break;
+        if (isCancelled()) return 0;
 
         if (aText[0] == null || aText[0].equalsIgnoreCase("")) break;
 
         boolean found = true;
         for (String word : words) {
-          if (isCancelled()) break;
+          if (isCancelled()) return 0;
           if (word.trim().length() > 1) {
             text = word.trim();
             text =
@@ -487,6 +487,7 @@ public class InsertAvanzataFragment extends Fragment {
 
           if (elenco != null) {
             for (Canto canto : elenco) {
+              if (isCancelled()) return 0;
               InsertItem insertItem = new InsertItem();
               insertItem
                   .withTitle(canto.titolo)
@@ -506,10 +507,11 @@ public class InsertAvanzataFragment extends Fragment {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
+      if (isCancelled()) return;
       fragmentReference.get().mNoResults.setVisibility(View.GONE);
       fragmentReference.get().progress.setVisibility(View.VISIBLE);
       fragmentReference.get().titoli.clear();
-//      fragmentReference.get().cantoAdapter.clear();
+      //      fragmentReference.get().cantoAdapter.clear();
     }
 
     @Override
@@ -521,6 +523,7 @@ public class InsertAvanzataFragment extends Fragment {
       //      if (fragmentReference.get().titoli.size() == 0)
       //        fragmentReference.get().mNoResults.setVisibility(View.VISIBLE);
       //      else fragmentReference.get().mNoResults.setVisibility(View.GONE)
+      if (isCancelled()) return;
       FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
       fragmentReference.get().progress.setVisibility(View.INVISIBLE);
       fragmentReference

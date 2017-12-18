@@ -785,15 +785,13 @@ public class RicercaAvanzataFragment extends Fragment
       String text;
 
       for (String[] aText : aTexts) {
-
-        //                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
-        if (isCancelled()) break;
+        if (isCancelled()) return 0;
 
         if (aText[0] == null || aText[0].equalsIgnoreCase("")) break;
 
         boolean found = true;
         for (String word : words) {
-          if (isCancelled()) break;
+          if (isCancelled()) return 0;
           if (word.trim().length() > 1) {
             text = word.trim();
             text =
@@ -808,27 +806,14 @@ public class RicercaAvanzataFragment extends Fragment
           }
         }
 
-        //                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled());
-
         if (found && !isCancelled()) {
-          // crea un manipolatore per il Database in modalità READ
-          //          SQLiteDatabase db = listaCanti.getReadableDatabase();
-          //          // recupera il titolo colore e pagina del canto da aggiungere alla lista
-          //          String query =
-          //              "SELECT titolo, color, pagina, _id, source"
-          //                  + "		FROM ELENCO"
-          //                  + "		WHERE source = '"
-          //                  + aText[0]
-          //                  + "'";
-          //
-          //          Cursor lista = db.rawQuery(query, null);
-
           RisuscitoDatabase mDb =
               RisuscitoDatabase.getInstance(fragmentReference.get().getActivity());
           List<Canto> elenco = mDb.cantoDao().getCantiWithSource(aText[0]);
 
           if (elenco != null) {
             for (Canto canto : elenco) {
+              if (isCancelled()) return 0;
               SimpleItem simpleItem = new SimpleItem();
               simpleItem
                   .withTitle(canto.titolo)
@@ -840,23 +825,6 @@ public class RicercaAvanzataFragment extends Fragment
               fragmentReference.get().titoli.add(simpleItem);
             }
           }
-
-          //          if (lista.getCount() > 0) {
-          //            lista.moveToFirst();
-          //            SimpleItem simpleItem = new SimpleItem();
-          //            simpleItem
-          //                .withTitle(lista.getString(0))
-          //                .withColor(lista.getString(1))
-          //                .withPage(String.valueOf(lista.getInt(2)))
-          //                .withId(lista.getInt(3))
-          //                .withSource(lista.getString(4))
-          //                .withContextMenuListener(RicercaAvanzataFragment.this);
-          //            titoli.add(simpleItem);
-          //          }
-          //          // chiude il cursore
-          //          lista.close();
-          //          db.close();
-
         }
       }
 
@@ -866,11 +834,7 @@ public class RicercaAvanzataFragment extends Fragment
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
-      //      fragmentReference
-      //          .get()
-      //          .rootView
-      //          .findViewById(R.id.search_no_results)
-      //          .setVisibility(View.GONE);
+      if (isCancelled()) return;
       fragmentReference.get().mNoResults.setVisibility(View.GONE);
       fragmentReference.get().progress.setVisibility(View.VISIBLE);
       fragmentReference.get().titoli.clear();
@@ -880,21 +844,7 @@ public class RicercaAvanzataFragment extends Fragment
     @Override
     protected void onPostExecute(Integer result) {
       super.onPostExecute(result);
-      //      fragmentReference.get().cantoAdapter.add(fragmentReference.get().titoli);
-      //      //      cantoAdapter.notifyAdapterDataSetChanged();
-      //      fragmentReference.get().progress.setVisibility(View.INVISIBLE);
-      //      if (fragmentReference.get().titoli.size() == 0)
-      //        fragmentReference
-      //            .get()
-      //            .rootView
-      //            .findViewById(R.id.search_no_results)
-      //            .setVisibility(View.VISIBLE);
-      //      else
-      //        fragmentReference
-      //            .get()
-      //            .rootView
-      //            .findViewById(R.id.search_no_results)
-      //            .setVisibility(View.GONE);
+      if (isCancelled()) return;
       FastAdapterDiffUtil.set(fragmentReference.get().cantoAdapter, fragmentReference.get().titoli);
       fragmentReference.get().progress.setVisibility(View.INVISIBLE);
       fragmentReference

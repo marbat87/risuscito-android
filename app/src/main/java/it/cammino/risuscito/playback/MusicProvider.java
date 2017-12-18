@@ -17,6 +17,7 @@
 package it.cammino.risuscito.playback;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -112,6 +113,7 @@ public class MusicProvider {
    * Get the list of music tracks from a server and caches the track information for future
    * reference, keying tracks by musicId and grouping by genre.
    */
+  @SuppressLint("StaticFieldLeak")
   void retrieveMediaAsync(final Callback callback) {
     Log.d(TAG, "retrieveMediaAsync called");
     if (mCurrentState == State.INITIALIZED) {
