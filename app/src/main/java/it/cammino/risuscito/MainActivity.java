@@ -1043,7 +1043,7 @@ public class MainActivity extends ThemeableActivity
         Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
         String error = "error: " + e.getLocalizedMessage();
         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        this.cancel(true);
+        cancel(true);
       }
       return null;
     }
@@ -1078,7 +1078,7 @@ public class MainActivity extends ThemeableActivity
         Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
         String error = "error: " + e.getLocalizedMessage();
         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        this.cancel(true);
+        cancel(true);
       }
 
       return null;
