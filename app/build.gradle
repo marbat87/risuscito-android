@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 4325
+        versionCode 4326
         versionName '4.3.0'
     }
     lintOptions {
@@ -36,7 +36,7 @@ android {
 dependencies {
     implementation 'com.android.support:multidex:1.0.2'
     implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
-    implementation 'com.itextpdf:itextpdf:5.5.12'
+    implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'com.stephentuso:welcome:1.4.1'
