@@ -24,7 +24,6 @@ android:
 before_install:
 - mkdir "$ANDROID_HOME/licenses" || true
 - chmod +x gradlew
-- chmod +x addtags.sh
 
 licenses:
     - '.+'
