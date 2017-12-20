@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
@@ -51,10 +52,12 @@ dependencies {
     implementation 'com.android.support:percent:27.0.2'
     implementation 'com.takisoft.fix:preference-v7:27.0.2.0'
     implementation 'com.takisoft.fix:preference-v7-simplemenu:27.0.2.0'
-    implementation 'com.google.android.gms:play-services-auth:11.6.2'
-    implementation 'com.google.android.gms:play-services-drive:11.6.2'
-    implementation 'com.google.firebase:firebase-core:11.6.2'
-    implementation 'com.google.firebase:firebase-crash:11.6.2'
+    implementation 'com.google.android.gms:play-services-auth:11.8.0'
+    implementation 'com.google.android.gms:play-services-drive:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true
+    }
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.jrvansuita:MaterialAbout:0.1.9'
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
@@ -71,7 +74,7 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     implementation 'android.arch.lifecycle:extensions:1.0.0'
-    implementation 'android.arch.lifecycle:runtime:1.0.0'
+    implementation 'android.arch.lifecycle:runtime:1.0.3'
     annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
 }
 

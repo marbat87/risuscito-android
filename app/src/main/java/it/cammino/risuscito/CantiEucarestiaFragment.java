@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -40,10 +40,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter;
-import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.database.Posizione;
 import it.cammino.risuscito.database.RisuscitoDatabase;
 import it.cammino.risuscito.database.dao.CustomListDao;
+import it.cammino.risuscito.database.entities.CustomList;
 import it.cammino.risuscito.objects.PosizioneItem;
 import it.cammino.risuscito.objects.PosizioneTitleItem;
 import it.cammino.risuscito.ui.BottomSheetFragment;
@@ -754,7 +754,8 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
         posizioniList.get(longclickedPos).second.get(longClickedChild).setmSelected(false);
         cantoAdapter.notifyItemChanged(longclickedPos);
       } catch (Exception e) {
-        FirebaseCrash.log("Possibile crash - longclickedPos: " + longclickedPos);
+        //        FirebaseCrash.log("Possibile crash - longclickedPos: " + longclickedPos);
+        Crashlytics.logException(e);
       }
     }
     return true;

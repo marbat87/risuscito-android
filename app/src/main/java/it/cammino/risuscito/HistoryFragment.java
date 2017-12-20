@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -566,7 +566,8 @@ public class HistoryFragment extends Fragment
       try {
         cantoAdapter.deselect();
       } catch (Exception e) {
-        FirebaseCrash.log("Possibile crash");
+        //        FirebaseCrash.log("Possibile crash");
+        Crashlytics.logException(e);
       }
     }
     return true;

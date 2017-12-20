@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -214,7 +214,7 @@ public class FavouritesActivity extends Fragment
     mRecyclerView.addItemDecoration(insetDivider);
     mRecyclerView.setItemAnimator(new SlideLeftAlphaAnimator());
 
-//    cantoAdapter.saveInstanceState(savedInstanceState);
+    //    cantoAdapter.saveInstanceState(savedInstanceState);
 
     //noinspection unchecked
     mUndoHelper =
@@ -515,11 +515,11 @@ public class FavouritesActivity extends Fragment
     return true;
   }
 
-//  @Override
-//  public void onSaveInstanceState(@NonNull Bundle outState) {
-//    outState = cantoAdapter.saveInstanceState(outState);
-//    super.onSaveInstanceState(outState);
-//  }
+  //  @Override
+  //  public void onSaveInstanceState(@NonNull Bundle outState) {
+  //    outState = cantoAdapter.saveInstanceState(outState);
+  //    super.onSaveInstanceState(outState);
+  //  }
 
   @Override
   public boolean onCabItemClicked(MenuItem item) {
@@ -548,7 +548,8 @@ public class FavouritesActivity extends Fragment
       try {
         cantoAdapter.deselect();
       } catch (Exception e) {
-        FirebaseCrash.log("Possibile crash");
+        Crashlytics.logException(e);
+        //        FirebaseCrash.log("Possibile crash");
       }
     }
     return true;

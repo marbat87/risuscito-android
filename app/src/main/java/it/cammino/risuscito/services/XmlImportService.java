@@ -15,7 +15,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.util.Xml;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -152,7 +152,8 @@ public class XmlImportService extends IntentService {
         }
       } catch (XmlPullParserException | SecurityException | IOException e) {
         Log.e(TAG, "importData: " + e.getLocalizedMessage(), e);
-        FirebaseCrash.log("importData: " + e.getMessage());
+        //        FirebaseCrash.log("importData: " + e.getMessage());
+        Crashlytics.logException(e);
         mNotification =
             new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_alert_error)
@@ -194,7 +195,8 @@ public class XmlImportService extends IntentService {
     if (title != null) list.setName(parser.getAttributeValue(null, "title"));
     else {
       Log.e(TAG, "readLista: title is null");
-      FirebaseCrash.log("importData: title is null");
+      //      FirebaseCrash.log("importData: title is null");
+      Crashlytics.log("importData: title is null");
       return null;
     }
     while (parser.next() != XmlPullParser.END_TAG) {
