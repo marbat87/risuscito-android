@@ -237,7 +237,7 @@ public class MainActivity extends ThemeableActivity
         new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             //                .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
-            .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+            .requestScopes(new Scope(Scopes.DRIVE_FILE), new Scope(Scopes.DRIVE_FILE))
             .build();
     // [END configure_signin]
 

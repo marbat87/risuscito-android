@@ -635,6 +635,8 @@ public class PaginaRenderActivity extends ThemeableActivity
     pagina = bundle != null ? bundle.getCharSequence("pagina", "").toString() : null;
     idCanto = bundle != null ? bundle.getInt("idCanto") : 0;
 
+    new DataRetrieverTask().execute(idCanto);
+
     try {
       primaNota =
           CambioAccordi.recuperaPrimoAccordo(
@@ -1113,7 +1115,7 @@ public class PaginaRenderActivity extends ThemeableActivity
     super.onResume();
 
     Log.d(TAG, "onResume: ");
-    new DataRetrieverTask().execute(idCanto);
+    //    new DataRetrieverTask().execute(idCanto);
 
     //        if (mCastContext != null) {
     //            mCastContext.addCastStateListener(mCastStateListener);
@@ -1330,48 +1332,49 @@ public class PaginaRenderActivity extends ThemeableActivity
 
   @SuppressWarnings("deprecation")
   private void saveZoom(boolean andSpeedAlso, boolean andSaveTabAlso) {
-    //noinspection deprecation
     //    defaultZoomLevel = (int) (paginaView.getScale() * 100);
     //    defaultScrollX = paginaView.getScrollX();
     //    defaultScrollY = paginaView.getScrollY();
-    mViewModel.mCurrentCanto.zoom = (int) (paginaView.getScale() * 100);
-    mViewModel.mCurrentCanto.scrollX = paginaView.getScrollX();
-    mViewModel.mCurrentCanto.scrollY = paginaView.getScrollY();
+    if (mViewModel.mCurrentCanto != null) {
+      mViewModel.mCurrentCanto.zoom = (int) (paginaView.getScale() * 100);
+      mViewModel.mCurrentCanto.scrollX = paginaView.getScrollX();
+      mViewModel.mCurrentCanto.scrollY = paginaView.getScrollY();
 
-    if (andSpeedAlso) mViewModel.mCurrentCanto.savedSpeed = mViewModel.speedValue;
+      if (andSpeedAlso) mViewModel.mCurrentCanto.savedSpeed = mViewModel.speedValue;
 
-    if (andSaveTabAlso) {
-      mViewModel.mCurrentCanto.savedBarre = mViewModel.barreCambio;
-      mViewModel.mCurrentCanto.savedTab = mViewModel.notaCambio;
+      if (andSaveTabAlso) {
+        mViewModel.mCurrentCanto.savedBarre = mViewModel.barreCambio;
+        mViewModel.mCurrentCanto.savedTab = mViewModel.notaCambio;
+      }
+
+      //    SQLiteDatabase db = listaCanti.getReadableDatabase();
+      //
+      //    String sql =
+      //        "UPDATE ELENCO"
+      //            + "  SET zoom = "
+      //            + defaultZoomLevel
+      //            + " "
+      //            + ", scroll_x = "
+      //            + defaultScrollX
+      //            + " "
+      //            + ", scroll_y = "
+      //            + defaultScrollY
+      //            + " "
+      //            + "  WHERE _id =  "
+      //            + idCanto;
+      //    db.execSQL(sql);
+      //    db.close();
+
+      new Thread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  CantoDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).cantoDao();
+                  mDao.updateCanto(mViewModel.mCurrentCanto);
+                }
+              })
+          .start();
     }
-
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    String sql =
-    //        "UPDATE ELENCO"
-    //            + "  SET zoom = "
-    //            + defaultZoomLevel
-    //            + " "
-    //            + ", scroll_x = "
-    //            + defaultScrollX
-    //            + " "
-    //            + ", scroll_y = "
-    //            + defaultScrollY
-    //            + " "
-    //            + "  WHERE _id =  "
-    //            + idCanto;
-    //    db.execSQL(sql);
-    //    db.close();
-
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                CantoDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).cantoDao();
-                mDao.updateCanto(mViewModel.mCurrentCanto);
-              }
-            })
-        .start();
   }
 
   //  private void SaveSpeed() {
