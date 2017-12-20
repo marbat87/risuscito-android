@@ -108,6 +108,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
     Log.d(TAG, "onSharedPreferenceChanged: " + s);
+    if (s.equalsIgnoreCase("primary_color")) Log.d(TAG, "onSharedPreferenceChanged: primary_color" + sharedPreferences.getInt(s, 0));
     if (s.equals(Utility.SYSTEM_LANGUAGE)) {
       //            Log.d(TAG, "onSharedPreferenceChanged: cur lang" +
       // getResources().getConfiguration().locale.getLanguage());
@@ -392,13 +393,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
       throws IOException, ExecutionException, InterruptedException, NoPermissioneException {
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
     // task di recupero la cartella applicativa
@@ -427,9 +422,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
         DriveFile mFile = mDriveId.asDriveFile();
         // task di cancellazione file eventualmente già presente
         Tasks.await(client.delete(mFile));
-          Log.d(
-                  getClass().getName(),
-                  "saveCheckDupl - deleted");
+        Log.d(getClass().getName(), "saveCheckDupl - deleted");
 
         saveToDrive(folder, titl, mime, file, dataBase);
       } else {
@@ -453,17 +446,11 @@ public abstract class ThemeableActivity extends AppCompatActivity
       final File file,
       final boolean dataBase)
       throws ExecutionException, InterruptedException, IOException, NoPermissioneException {
-    Log.d(getClass().getName(), "saveToDrive - database? " + dataBase);
+    Log.d(getClass().getName(), "saveToDrive - title: " + titl + " / database? " + dataBase);
 
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
     // task di recupero la cartella applicativa
@@ -517,13 +504,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
     boolean fileFound = false;
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
     // task di recupero la cartella applicativa
@@ -555,13 +536,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
 
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
 
@@ -629,13 +604,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
 
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
 
@@ -707,13 +676,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
 
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
     // Synchronously check for necessary permissions
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
-      throw new NoPermissioneException();
-    }
+    checkDrivePermissions(account);
 
     final DriveResourceClient client = Drive.getDriveResourceClient(this, account);
 
@@ -751,9 +714,26 @@ public abstract class ThemeableActivity extends AppCompatActivity
     return getDatabasePath(DatabaseCanti.getDbName());
   }
 
+  private void checkDrivePermissions(GoogleSignInAccount account) throws NoPermissioneException {
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      throw new NoPermissioneException();
+    }
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_APPFOLDER)) {
+      // Note: this launches a sign-in flow, however the code to detect
+      // the result of the sign-in flow and retry the API call is not
+      // shown here.
+      GoogleSignIn.requestPermissions(this, 9003, account, Drive.SCOPE_APPFOLDER);
+      throw new NoPermissioneException();
+    }
+  }
+
   public class NoPermissioneException extends Exception {
     NoPermissioneException() {
-      super("no permission for drive SCOPE_FILE");
+      super("no permission for drive SCOPE_FILE or SCOPE_APPFOLDER");
     }
   }
 }

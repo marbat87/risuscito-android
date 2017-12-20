@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.3.0" changeDate="October 2017">
+    <changelogversion versionName="4.3.0" changeDate="January 2018">
         <changelogimprovement>Android Oreo compatibility</changelogimprovement>
-        <changelogimprovement>New Application Icon inspired by Chi Rho christogram ([a href="https://en.wikipedia.org/wiki/Chi_Rho"]Wikipedia[/a])</changelogimprovement>
+        <changelogimprovement>New Application Icon</changelogimprovement>
         <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a href="https://developer.android.com/preview/features/adaptive-icons.html"]Android Developer[/a])</changelogimprovement>
         <changelogimprovement>New About page (At the bottom of side menu)</changelogimprovement>
         <changelogimprovement>New style for tutorials</changelogimprovement>
