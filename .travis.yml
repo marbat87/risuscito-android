@@ -2,7 +2,7 @@ language: android
 jdk: oraclejdk8
 
 before_install:
- - mkdir "$ANDROID_HOME/licenses" || true
+ - yes | sdkmanager "platforms;android-27"
  - chmod +x gradlew
 
 android:
