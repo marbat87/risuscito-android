@@ -30,8 +30,6 @@ import android.widget.TextView;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
-import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import java.util.List;
 
@@ -59,11 +57,11 @@ public class SalmiSectionFragment extends HFFragment
 
   FastScrollIndicatorAdapter<SimpleItem> mAdapter;
 
-  @BindView(R.id.cantiList_salmi)
+  @BindView(R.id.cantiList)
   RecyclerView mRecyclerView;
 
-  @BindView(R.id.dragScrollBar_salmi)
-  DragScrollBar mDragScrollBar;
+  //  @BindView(R.id.dragScrollBar_salmi)
+  //  DragScrollBar mDragScrollBar;
 
   private SalmiIndexViewModel mCantiViewModel;
   // create boolean for fetching data
@@ -86,7 +84,7 @@ public class SalmiSectionFragment extends HFFragment
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    rootView = inflater.inflate(R.layout.fragment_salmi_index, container, false);
+    rootView = inflater.inflate(R.layout.index_fragment, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
     mCantiViewModel = ViewModelProviders.of(this).get(SalmiIndexViewModel.class);
@@ -145,7 +143,7 @@ public class SalmiSectionFragment extends HFFragment
           }
         };
 
-    mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
+    //    mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
     //    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     mAdapter = new FastScrollIndicatorAdapter<>(2);

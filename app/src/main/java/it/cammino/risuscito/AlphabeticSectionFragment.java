@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,8 +29,7 @@ import android.widget.TextView;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
-import com.turingtechnologies.materialscrollbar.CustomIndicator;
-import com.turingtechnologies.materialscrollbar.DragScrollBar;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
@@ -56,10 +54,13 @@ public class AlphabeticSectionFragment extends HFFragment
 
   private final String TAG = getClass().getCanonicalName();
   private final int ID_FITTIZIO = 99999999;
+
   @BindView(R.id.cantiList)
-  RecyclerView mRecyclerView;
-  @BindView(R.id.dragScrollBar)
-  DragScrollBar mDragScrollBar;
+  FastScrollRecyclerView mRecyclerView;
+
+  //  @BindView(R.id.dragScrollBar)
+  //  DragScrollBar mDragScrollBar;
+
   FastScrollIndicatorAdapter<SimpleItem> mAdapter;
   private AlphabeticIndexViewModel mCantiViewModel;
   // create boolean for fetching data
@@ -89,7 +90,7 @@ public class AlphabeticSectionFragment extends HFFragment
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    rootView = inflater.inflate(R.layout.fragment_alphanum_index, container, false);
+    rootView = inflater.inflate(R.layout.index_fragment, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
     mCantiViewModel = ViewModelProviders.of(this).get(AlphabeticIndexViewModel.class);
@@ -143,7 +144,7 @@ public class AlphabeticSectionFragment extends HFFragment
           }
         };
 
-    mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
+    //    mDragScrollBar.setIndicator(new CustomIndicator(getActivity()), true);
 
     //    List<SimpleItem> mItems = new ArrayList<>();
     //    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

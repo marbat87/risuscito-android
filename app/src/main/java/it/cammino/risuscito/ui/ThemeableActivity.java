@@ -108,7 +108,8 @@ public abstract class ThemeableActivity extends AppCompatActivity
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
     Log.d(TAG, "onSharedPreferenceChanged: " + s);
-    if (s.equalsIgnoreCase("primary_color")) Log.d(TAG, "onSharedPreferenceChanged: primary_color" + sharedPreferences.getInt(s, 0));
+    if (s.equalsIgnoreCase("primary_color"))
+      Log.d(TAG, "onSharedPreferenceChanged: primary_color" + sharedPreferences.getInt(s, 0));
     if (s.equals(Utility.SYSTEM_LANGUAGE)) {
       //            Log.d(TAG, "onSharedPreferenceChanged: cur lang" +
       // getResources().getConfiguration().locale.getLanguage());
@@ -511,7 +512,7 @@ public abstract class ThemeableActivity extends AppCompatActivity
     DriveFolder folder = Tasks.await(client.getAppFolder());
     if (folder != null && titl != null) {
       // create content from file
-      Log.d(getClass().getName(), "saveCheckDupl - title: " + titl);
+      Log.d(getClass().getName(), "checkDupl - title: " + titl);
       Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build();
 
       // task di recupero metadata del file se già presente
@@ -519,14 +520,15 @@ public abstract class ThemeableActivity extends AppCompatActivity
 
       int count = metadataBuffer.getCount();
       metadataBuffer.release();
-      Log.d(getClass().getName(), "saveCheckDupl - Count files old: " + count);
+      Log.d(getClass().getName(), "checkDupl - Count files old: " + count);
       fileFound = count > 0;
     }
     return fileFound;
   }
 
   public void restoreNewDbBackup()
-      throws ExecutionException, InterruptedException, NoPermissioneException, IOException {
+      throws ExecutionException, InterruptedException, NoPermissioneException, IOException,
+          NoBackupException {
     Log.d(
         getClass().getName(), "restoreNewDriveBackup - Db name: " + RisuscitoDatabase.getDbName());
     Query query =
@@ -588,14 +590,17 @@ public abstract class ThemeableActivity extends AppCompatActivity
       RisuscitoDatabase.getInstance(this);
     } else {
       metadataBuffer.release();
-      Snackbar.make(
-              findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG)
-          .show();
+      throw new NoBackupException();
+      //      Snackbar.make(
+      //              findViewById(R.id.main_content), R.string.no_restore_found,
+      // Snackbar.LENGTH_LONG)
+      //          .show();
     }
   }
 
   public void restoreOldDriveBackup()
-      throws NoPermissioneException, ExecutionException, InterruptedException, IOException {
+      throws NoPermissioneException, ExecutionException, InterruptedException, IOException,
+          NoBackupException {
     Log.d(getClass().getName(), "restoreOldDriveBackup - Db name: " + DatabaseCanti.getDbName());
     Query query =
         new Query.Builder()
@@ -665,12 +670,16 @@ public abstract class ThemeableActivity extends AppCompatActivity
       checkDuplTosave(RisuscitoDatabase.getDbName(), "application/x-sqlite3", true);
     } else {
       metadataBuffer.release();
-      restoreNewDbBackup();
+      throw new NoBackupException();
+      //      Snackbar.make(
+      //              findViewById(R.id.main_content), R.string.no_restore_found,
+      // Snackbar.LENGTH_LONG)
+      //          .show();
     }
   }
 
   public void restoreDrivePrefBackup(String title)
-      throws NoPermissioneException, ExecutionException, InterruptedException {
+      throws NoPermissioneException, ExecutionException, InterruptedException, NoBackupException {
     Log.d(getClass().getName(), "restoreDrivePrefBackup - pref title: " + title);
     Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build();
 
@@ -698,9 +707,11 @@ public abstract class ThemeableActivity extends AppCompatActivity
       loadSharedPreferencesFromFile(driveContents.getInputStream());
       client.discardContents(driveContents);
     } else {
-      Snackbar.make(
-              findViewById(R.id.main_content), R.string.no_restore_found, Snackbar.LENGTH_LONG)
-          .show();
+      throw new NoBackupException();
+      //      Snackbar.make(
+      //              findViewById(R.id.main_content), R.string.no_restore_found,
+      // Snackbar.LENGTH_LONG)
+      //          .show();
     }
   }
 
@@ -715,25 +726,32 @@ public abstract class ThemeableActivity extends AppCompatActivity
   }
 
   private void checkDrivePermissions(GoogleSignInAccount account) throws NoPermissioneException {
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)) {
+    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE)
+        || !GoogleSignIn.hasPermissions(account, Drive.SCOPE_APPFOLDER)) {
       // Note: this launches a sign-in flow, however the code to detect
       // the result of the sign-in flow and retry the API call is not
       // shown here.
-      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE);
+      GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER);
       throw new NoPermissioneException();
     }
-    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_APPFOLDER)) {
-      // Note: this launches a sign-in flow, however the code to detect
-      // the result of the sign-in flow and retry the API call is not
-      // shown here.
-      GoogleSignIn.requestPermissions(this, 9003, account, Drive.SCOPE_APPFOLDER);
-      throw new NoPermissioneException();
-    }
+    //    if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_APPFOLDER)) {
+    //      // Note: this launches a sign-in flow, however the code to detect
+    //      // the result of the sign-in flow and retry the API call is not
+    //      // shown here.
+    //      GoogleSignIn.requestPermissions(this, 9003, account, Drive.SCOPE_APPFOLDER);
+    //      throw new NoPermissioneException();
+    //    }
   }
 
   public class NoPermissioneException extends Exception {
     NoPermissioneException() {
       super("no permission for drive SCOPE_FILE or SCOPE_APPFOLDER");
+    }
+  }
+
+  public class NoBackupException extends Exception {
+    NoBackupException() {
+      super(getResources().getString(R.string.no_restore_found));
     }
   }
 }
