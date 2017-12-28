@@ -75,7 +75,7 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.0.0'
     implementation 'android.arch.lifecycle:runtime:1.0.3'
     annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
-    compile 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
+    implementation 'com.simplecityapps:recyclerview-fastscroll:1.0.16'
 }
 
 apply plugin: 'com.google.gms.google-services'
