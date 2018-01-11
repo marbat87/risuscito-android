@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.support.multidex.MultiDexApplication;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -46,13 +48,13 @@ public class RisuscitoApplication extends MultiDexApplication {
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
-                GlideApp.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+                Glide.with(imageView.getContext()).load(uri)
+                        .apply(new RequestOptions().placeholder(placeholder)).into(imageView);
             }
 
             @Override
             public void cancel(ImageView imageView) {
-                GlideRequests glideRequests = GlideApp.with(imageView.getContext());
-                glideRequests.clear(imageView);
+                Glide.with(imageView).clear(imageView);
             }
 
             @Override

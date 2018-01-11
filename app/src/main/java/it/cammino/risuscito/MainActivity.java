@@ -1029,8 +1029,6 @@ public class MainActivity extends ThemeableActivity
   @SuppressLint("StaticFieldLeak")
   private class BackupTask extends AsyncTask<Void, Void, Void> {
 
-    BackupTask() {}
-
     @Override
     protected Void doInBackground(Void... sUrl) {
       try {
@@ -1043,7 +1041,6 @@ public class MainActivity extends ThemeableActivity
         Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
         String error = "error: " + e.getLocalizedMessage();
         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        cancel(true);
       }
       return null;
     }
@@ -1051,7 +1048,6 @@ public class MainActivity extends ThemeableActivity
     @Override
     protected void onPostExecute(Void result) {
       super.onPostExecute(result);
-      if (isCancelled()) return;
       Intent intentBroadcast = new Intent("BROADCAST_LAST_STEP");
       intentBroadcast.putExtra("WHICH", "BACKUP");
       sendBroadcast(intentBroadcast);
@@ -1061,15 +1057,11 @@ public class MainActivity extends ThemeableActivity
   @SuppressLint("StaticFieldLeak")
   private class RestoreTask extends AsyncTask<Void, Void, Void> {
 
-    RestoreTask() {}
-
     @Override
     protected Void doInBackground(Void... sUrl) {
       try {
         if (checkDupl(RisuscitoDatabase.getDbName())) restoreNewDbBackup();
         else restoreOldDriveBackup();
-        //        if (checkDupl(DatabaseCanti.getDbName())) restoreOldDriveBackup();
-        //        else restoreNewDbBackup();
         Intent intentBroadcast = new Intent("BROADCAST_NEXT_STEP");
         intentBroadcast.putExtra("WHICH", "RESTORE");
         sendBroadcast(intentBroadcast);
@@ -1078,7 +1070,6 @@ public class MainActivity extends ThemeableActivity
         Log.e(getClass().getName(), "Exception: " + e.getLocalizedMessage(), e);
         String error = "error: " + e.getLocalizedMessage();
         Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show();
-        cancel(true);
       }
 
       return null;
@@ -1087,7 +1078,6 @@ public class MainActivity extends ThemeableActivity
     @Override
     protected void onPostExecute(Void result) {
       super.onPostExecute(result);
-      if (isCancelled()) return;
       Intent intentBroadcast = new Intent("BROADCAST_LAST_STEP");
       intentBroadcast.putExtra("WHICH", "RESTORE");
       sendBroadcast(intentBroadcast);

@@ -423,7 +423,7 @@ public class CantiEucarestiaFragment extends Fragment implements MaterialCab.Cal
     // titolo
     result
         .append("-- ")
-        .append(getString(R.string.title_activity_canti_parola).toUpperCase(l))
+        .append(getString(R.string.title_activity_canti_eucarestia).toUpperCase(l))
         .append(" --");
     result.append("\n");
 
