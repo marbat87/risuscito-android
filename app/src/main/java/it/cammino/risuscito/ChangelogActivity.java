@@ -1,8 +1,8 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -14,18 +14,25 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.cammino.risuscito.ui.ThemeableActivity;
+import it.cammino.risuscito.viewmodels.ChangelogViewModel;
 
 public class ChangelogActivity extends ThemeableActivity
     implements AppBarLayout.OnOffsetChangedListener {
 
   private final String TAG = getClass().getCanonicalName();
+
   @BindView(R.id.appbarlayout)
   AppBarLayout mAppBarLayout;
+
   @BindView(R.id.risuscito_toolbar)
   Toolbar mToolbar;
+
   @BindView(R.id.collapsingToolbarLayout)
   CollapsingToolbarLayout collapsingToolbarLayout;
-  private boolean appBarIsExpanded = true;
+
+//  private boolean appBarIsExpanded = true;
+
+  private ChangelogViewModel mViewModel;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,16 +40,18 @@ public class ChangelogActivity extends ThemeableActivity
     setContentView(R.layout.changelog_layout);
     ButterKnife.bind(this);
 
+    mViewModel = ViewModelProviders.of(this).get(ChangelogViewModel.class);
+
     setSupportActionBar(mToolbar);
     // noinspection ConstantConditions
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     collapsingToolbarLayout.setContentScrimColor(getThemeUtils().primaryColor());
 
-    if (savedInstanceState != null)
-      appBarIsExpanded = savedInstanceState.getBoolean("appBarIsExpanded", true);
+//    if (savedInstanceState != null)
+//      appBarIsExpanded = savedInstanceState.getBoolean("appBarIsExpanded", true);
 
-    if (appBarIsExpanded)
+    if (mViewModel.appBarIsExpanded)
       Utility.setupTransparentTints(ChangelogActivity.this, Color.TRANSPARENT, false);
     else
       Utility.setupTransparentTints(
@@ -68,11 +77,11 @@ public class ChangelogActivity extends ThemeableActivity
     }
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-    super.onSaveInstanceState(outState, outPersistentState);
-    outState.putBoolean("appBarIsExpanded", appBarIsExpanded);
-  }
+  //  @Override
+  //  public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+  //    super.onSaveInstanceState(outState, outPersistentState);
+  //    outState.putBoolean("appBarIsExpanded", appBarIsExpanded);
+  //  }
 
   @Override
   public void onResume() {
@@ -96,8 +105,8 @@ public class ChangelogActivity extends ThemeableActivity
    */
   @Override
   public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-    appBarIsExpanded = (verticalOffset >= -100);
-    if (appBarIsExpanded)
+    mViewModel.appBarIsExpanded = (verticalOffset >= -100);
+    if (mViewModel.appBarIsExpanded)
       Utility.setupTransparentTints(
           ChangelogActivity.this,
           ContextCompat.getColor(ChangelogActivity.this, android.R.color.transparent),

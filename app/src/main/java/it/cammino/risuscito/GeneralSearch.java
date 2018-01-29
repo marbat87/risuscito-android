@@ -20,83 +20,72 @@ import it.cammino.risuscito.ui.ThemeableActivity;
 
 public class GeneralSearch extends Fragment {
 
-    private MainActivity mMainActivity;
+  @BindView(R.id.view_pager)
+  ViewPager mViewPager;
 
-    @BindView(R.id.view_pager) ViewPager mViewPager;
+  private Unbinder mUnbinder;
 
-    private Unbinder mUnbinder;
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
+    mUnbinder = ButterKnife.bind(this, rootView);
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_general_search, container, false);
-        mUnbinder = ButterKnife.bind(this, rootView);
+    MainActivity mMainActivity = (MainActivity) getActivity();
+    mMainActivity.setupToolbarTitle(R.string.title_activity_search);
 
-        mMainActivity = (MainActivity) getActivity();
-        mMainActivity.setupToolbarTitle(R.string.title_activity_search);
+    mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-//        LUtils mLUtils = LUtils.getInstance(getActivity());
+    final TabLayout tabs = mMainActivity.mTabLayout;
+    tabs.setVisibility(View.VISIBLE);
+    mMainActivity.enableFab(false);
+    if (!mMainActivity.isOnTablet()) mMainActivity.enableBottombar(false);
+    tabs.setupWithViewPager(mViewPager);
 
-//        final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
-        mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
+    return rootView;
+  }
 
-//        final TabLayout tabs = (TabLayout) getActivity().findViewById(R.id.material_tabs);
-        final TabLayout tabs = mMainActivity.mTabLayout;
-        tabs.setVisibility(View.VISIBLE);
-        mMainActivity.enableFab(false);
-        if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(false);
-            mMainActivity.enableBottombar(false);
-        }
-//        tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-//        mLUtils.applyFontedTab(mViewPager, tabs);
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    mUnbinder.unbind();
+  }
 
-        return rootView;
+  private class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+    SectionsPagerAdapter(FragmentManager fm) {
+      super(fm);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
+    public Fragment getItem(int position) {
+      switch (position) {
+        case 0:
+          return new RicercaVeloceFragment();
+        case 1:
+          return new RicercaAvanzataFragment();
+        default:
+          return new RicercaVeloceFragment();
+      }
     }
 
-    private class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new RicercaVeloceFragment();
-                case 1:
-                    return new RicercaAvanzataFragment();
-                default:
-                    return new RicercaVeloceFragment();
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-//            Locale l = getActivity().getResources().getConfiguration().locale;
-            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
-            switch (position) {
-                case 0:
-                    return getString(R.string.fast_search_title).toUpperCase(l);
-                case 1:
-                    return getString(R.string.advanced_search_title).toUpperCase(l);
-                default:
-                    return "";
-            }
-        }
+    @Override
+    public int getCount() {
+      return 2;
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+      Locale l =
+          ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
+      switch (position) {
+        case 0:
+          return getString(R.string.fast_search_title).toUpperCase(l);
+        case 1:
+          return getString(R.string.advanced_search_title).toUpperCase(l);
+        default:
+          return "";
+      }
+    }
+  }
 }

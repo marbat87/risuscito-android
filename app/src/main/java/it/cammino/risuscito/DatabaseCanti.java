@@ -4324,7 +4324,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
     }
 
-    Backup[] backupTables(int oldVersion, SQLiteDatabase db) {
+    private Backup[] backupTables(int oldVersion, SQLiteDatabase db) {
 
         Backup[] backup = new Backup[300];
         if(oldVersion >= 21) {
@@ -4385,7 +4385,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         return backup;
     }
 
-    BackupLocalLink[] backupLocalLink(int oldVersion, SQLiteDatabase db) {
+    private BackupLocalLink[] backupLocalLink(int oldVersion, SQLiteDatabase db) {
 
         //dalla versionee 25 è stata introdotta la tabella di link locali. Va fatto il backup
         BackupLocalLink[] backupLink = new BackupLocalLink[300];
@@ -4406,7 +4406,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         return backupLink;
     }
 
-    void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
+    private void repopulateDB(int oldVersion, int newVersion, SQLiteDatabase db, Backup[] backup, BackupLocalLink[] backupLink) {
         ContentValues values;
 
         if (newVersion >= 43 && oldVersion >= 19 && oldVersion <= 38) {
@@ -4753,7 +4753,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
         }
     }
 
-    static String getDbName() {
+    public static String getDbName() {
         return DB_NAME;
     }
 }

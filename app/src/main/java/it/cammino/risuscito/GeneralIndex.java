@@ -1,5 +1,6 @@
 package it.cammino.risuscito;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,117 +21,113 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import it.cammino.risuscito.ui.ThemeableActivity;
 import it.cammino.risuscito.utils.ThemeUtils;
+import it.cammino.risuscito.viewmodels.GeneralIndexViewModel;
 
 public class GeneralIndex extends Fragment {
 
-    final String TAG = getClass().getCanonicalName();
+  //  private static final String PAGE_VIEWED = "pageViewed";
+  final String TAG = getClass().getCanonicalName();
 
-    private static final String PAGE_VIEWED = "pageViewed";
+  @BindView(R.id.view_pager)
+  ViewPager mViewPager;
 
-    private MainActivity mMainActivity;
+  private MainActivity mMainActivity;
+  private Unbinder mUnbinder;
 
-    @BindView(R.id.view_pager) ViewPager mViewPager;
+  private GeneralIndexViewModel mViewModel;
 
-    private Unbinder mUnbinder;
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
+    mUnbinder = ButterKnife.bind(this, rootView);
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.tabs_layout, container, false);
-        mUnbinder = ButterKnife.bind(this, rootView);
+    mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel.class);
 
-        mMainActivity = (MainActivity) getActivity();
-        mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
+    mMainActivity = (MainActivity) getActivity();
+    mMainActivity.setupToolbarTitle(R.string.title_activity_general_index);
 
-//        LUtils mLUtils = LUtils.getInstance(getActivity());
+    mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
 
-        mViewPager.setAdapter(new SectionsPagerAdapter(getChildFragmentManager()));
+    final TabLayout tabs = mMainActivity.mTabLayout;
+    tabs.setVisibility(View.VISIBLE);
+    mMainActivity.enableFab(false);
+    if (!mMainActivity.isOnTablet()) mMainActivity.enableBottombar(false);
+    if (savedInstanceState == null) {
+      SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
+      //    } else mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
+    } else mViewPager.setCurrentItem(mViewModel.pageViewed);
+    if (!mMainActivity.isOnTablet()) tabs.setBackgroundColor(getThemeUtils().primaryColor());
+    tabs.setupWithViewPager(mViewPager);
 
-        final TabLayout tabs = mMainActivity.mTabLayout;
-        tabs.setVisibility(View.VISIBLE);
-        mMainActivity.enableFab(false);
-        if (!mMainActivity.isOnTablet()) {
-//            mMainActivity.enableFab(false);
-            mMainActivity.enableBottombar(false);
-        }
-        if (savedInstanceState == null) {
-            SharedPreferences pref =  PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mViewPager.setCurrentItem(Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")));
-        }
-        else
-            mViewPager.setCurrentItem(savedInstanceState.getInt(PAGE_VIEWED, 0));
-        if (!mMainActivity.isOnTablet())
-            tabs.setBackgroundColor(getThemeUtils().primaryColor());
-        tabs.setupWithViewPager(mViewPager);
-//        mLUtils.applyFontedTab(mViewPager, tabs);
+    return rootView;
+  }
 
-        return rootView;
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    mUnbinder.unbind();
+  }
 
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    //    outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
+    mViewModel.pageViewed = mViewPager.getCurrentItem();
+  }
+
+  private ThemeUtils getThemeUtils() {
+    return mMainActivity.getThemeUtils();
+  }
+
+  private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+
+    SectionsPagerAdapter(FragmentManager fm) {
+      super(fm);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
+    public Fragment getItem(int position) {
+      switch (position) {
+        case 0:
+          return new AlphabeticSectionFragment();
+        case 1:
+          return new NumericSectionFragment();
+        case 2:
+          return new ArgumentsSectionFragment();
+        case 3:
+          return new SalmiSectionFragment();
+        case 4:
+          return new IndiceLiturgicoFragment();
+        default:
+          return new AlphabeticSectionFragment();
+      }
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(PAGE_VIEWED, mViewPager.getCurrentItem());
+    public int getCount() {
+      return 5;
     }
 
-    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-
-        SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new AlphabeticSectionFragment();
-                case 1:
-                    return new NumericSectionFragment();
-                case 2:
-                    return new ArgumentsSectionFragment();
-                case 3:
-                    return new SalmiSectionFragment();
-                case 4:
-                    return new IndiceLiturgicoFragment();
-                default:
-                    return new AlphabeticSectionFragment();
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 5;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-//            Locale l = getActivity().getResources().getConfiguration().locale;
-            Locale l = ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
-            switch (position) {
-                case 0:
-                    return getString(R.string.letter_order_text).toUpperCase(l);
-                case 1:
-                    return getString(R.string.page_order_text).toUpperCase(l);
-                case 2:
-                    return getString(R.string.arg_search_text).toUpperCase(l);
-                case 3:
-                    return getString(R.string.salmi_musica_index).toUpperCase(l);
-                case 4:
-                    return getString(R.string.indice_liturgico_index).toUpperCase(l);
-            }
-            return null;
-        }
+    @Override
+    public CharSequence getPageTitle(int position) {
+      //            Locale l = getActivity().getResources().getConfiguration().locale;
+      Locale l =
+          ThemeableActivity.getSystemLocalWrapper(getActivity().getResources().getConfiguration());
+      switch (position) {
+        case 0:
+          return getString(R.string.letter_order_text).toUpperCase(l);
+        case 1:
+          return getString(R.string.page_order_text).toUpperCase(l);
+        case 2:
+          return getString(R.string.arg_search_text).toUpperCase(l);
+        case 3:
+          return getString(R.string.salmi_musica_index).toUpperCase(l);
+        case 4:
+          return getString(R.string.indice_liturgico_index).toUpperCase(l);
+      }
+      return null;
     }
-
-    private ThemeUtils getThemeUtils() {
-        return mMainActivity.getThemeUtils();
-    }
-
+  }
 }

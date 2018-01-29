@@ -148,13 +148,14 @@ public class CambioAccordi {
 //                    int start = line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3;
                     start = language.equalsIgnoreCase("en")? start + 5 : (line.indexOf(context.getResources().getString(R.string.barre_add_al)) + 3);
 
-                    primoBarre = "";
+                    StringBuilder primoBarreBuilder = new StringBuilder();
                     for (int i = start; i < line.length(); i++) {
                         if (line.charAt(i) == ' ' || line.charAt(i) == '<')
                             break;
                         else
-                            primoBarre += line.charAt(i);
+                            primoBarreBuilder.append(line.charAt(i));
                     }
+                    primoBarre = primoBarreBuilder.toString();
                 }
                 line = br.readLine();
             }

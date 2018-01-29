@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -24,8 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.SignInButton;
-import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.List;
@@ -38,6 +35,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment;
 import it.cammino.risuscito.slides.IntroMainNew;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public class Risuscito extends Fragment
     implements SimpleDialogFragment.SimpleCallback, EasyPermissions.PermissionCallbacks {
@@ -48,9 +46,11 @@ public class Risuscito extends Fragment
   private static final String VERSION_KEY = "PREFS_VERSION_KEY";
   private static final String NO_VERSION = "";
   private final String TAG = getClass().getCanonicalName();
+
   @BindView(R.id.sign_in_button)
   @Nullable
   SignInButton mSignInButton;
+
   private WelcomeHelper mWelcomeScreen;
   private MainActivity mMainActivity;
   private Unbinder mUnbinder;
@@ -88,7 +88,7 @@ public class Risuscito extends Fragment
 
   @Override
   public View onCreateView(
-          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.activity_risuscito, container, false);
     mUnbinder = ButterKnife.bind(this, rootView);
 
@@ -133,16 +133,16 @@ public class Risuscito extends Fragment
           .show();
     }
 
-    PaginaRenderActivity.notaCambio = null;
-    PaginaRenderActivity.speedValue = null;
-    PaginaRenderActivity.scrollPlaying = false;
-    PaginaRenderActivity.mostraAudio = null;
+    //    PaginaRenderActivity.notaCambio = null;
+    //    PaginaRenderActivity.speedValue = null;
+    //    PaginaRenderActivity.scrollPlaying = false;
+    //    PaginaRenderActivity.mostraAudio = null;
 
     // apertura e chiusura database per consentire eventuale aggiornamento
-    DatabaseCanti listaCanti = new DatabaseCanti(getActivity());
-    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    db.close();
-    listaCanti.close();
+    //    DatabaseCanti listaCanti = new DatabaseCanti(getActivity());
+    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
+    //    db.close();
+    //    listaCanti.close();
 
     mSignInButton.setSize(SignInButton.SIZE_WIDE);
 
@@ -193,14 +193,16 @@ public class Risuscito extends Fragment
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    IconicsMenuInflaterUtil.inflate(
+        getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
     super.onCreateOptionsMenu(menu, inflater);
-    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-    menu.findItem(R.id.action_help)
-        .setIcon(
-            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-                .sizeDp(24)
-                .paddingDp(2)
-                .color(Color.WHITE));
+    //    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+    //    menu.findItem(R.id.action_help)
+    //        .setIcon(
+    //            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+    //                .sizeDp(24)
+    //                .paddingDp(2)
+    //                .color(Color.WHITE));
   }
 
   @Override
@@ -246,29 +248,36 @@ public class Risuscito extends Fragment
     EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
   }
 
-  @AfterPermissionGranted(Utility.EXTERNAL_FILE_RC)
+  @AfterPermissionGranted(Utility.WRITE_STORAGE_RC)
   private void checkStoragePermissions() {
     Log.d(TAG, "checkStoragePermissions: ");
     if (!EasyPermissions.hasPermissions(
         getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
       // Ask for one permission
+      //      EasyPermissions.requestPermissions(
+      //          Risuscito.this,
+      //          getString(R.string.external_storage_pref_rationale),
+      //          Utility.WRITE_STORAGE_RC,
+      //          android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
       EasyPermissions.requestPermissions(
-          Risuscito.this,
-          getString(R.string.external_storage_pref_rationale),
-          Utility.WRITE_STORAGE_RC,
-          android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+          new PermissionRequest.Builder(
+                  this,
+                  Utility.WRITE_STORAGE_RC,
+                  android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+              .setRationale(R.string.external_storage_pref_rationale)
+              .build());
     }
   }
 
   @Override
-  public void onPermissionsGranted(int requestCode, List<String> list) {
+  public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
     // Some permissions have been
     Log.d(TAG, "onPermissionsGranted: ");
     Snackbar.make(rootView, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show();
   }
 
   @Override
-  public void onPermissionsDenied(int requestCode, List<String> list) {
+  public void onPermissionsDenied(int requestCode, @NonNull List<String> list) {
     // Some permissions have been denied
     Log.d(TAG, "onPermissionsDenied: ");
     SharedPreferences.Editor editor =
