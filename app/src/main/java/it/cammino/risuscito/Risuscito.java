@@ -15,15 +15,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.SignInButton;
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
-import com.stephentuso.welcome.WelcomeHelper;
 
 import java.util.List;
 
@@ -32,7 +27,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import it.cammino.risuscito.dialogs.SimpleDialogFragment;
-import it.cammino.risuscito.slides.IntroMainNew;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
@@ -51,7 +45,7 @@ public class Risuscito extends Fragment
   @Nullable
   SignInButton mSignInButton;
 
-  private WelcomeHelper mWelcomeScreen;
+  //  private WelcomeHelper mWelcomeScreen;
   private MainActivity mMainActivity;
   private Unbinder mUnbinder;
   private String thisVersion;
@@ -120,8 +114,8 @@ public class Risuscito extends Fragment
     }
     Log.d("Changelog", "thisVersion: " + thisVersion);
 
-    mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
-    mWelcomeScreen.show(savedInstanceState);
+    //    mWelcomeScreen = new WelcomeHelper(getActivity(), IntroMainNew.class);
+    //    mWelcomeScreen.show(savedInstanceState);
     if (!thisVersion.equals(lastVersion)) {
       new SimpleDialogFragment.Builder(
               (AppCompatActivity) getActivity(), Risuscito.this, "CHANGELOG")
@@ -191,35 +185,35 @@ public class Risuscito extends Fragment
     setHasOptionsMenu(true);
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    IconicsMenuInflaterUtil.inflate(
-        getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
-    super.onCreateOptionsMenu(menu, inflater);
-    //    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
-    //    menu.findItem(R.id.action_help)
-    //        .setIcon(
-    //            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
-    //                .sizeDp(24)
-    //                .paddingDp(2)
-    //                .color(Color.WHITE));
-  }
+  //  @Override
+  //  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  //    IconicsMenuInflaterUtil.inflate(
+  //        getActivity().getMenuInflater(), getActivity(), R.menu.help_menu, menu);
+  //    super.onCreateOptionsMenu(menu, inflater);
+  //    getActivity().getMenuInflater().inflate(R.menu.help_menu, menu);
+  //    menu.findItem(R.id.action_help)
+  //        .setIcon(
+  //            new IconicsDrawable(getActivity(), CommunityMaterial.Icon.cmd_help_circle)
+  //                .sizeDp(24)
+  //                .paddingDp(2)
+  //                .color(Color.WHITE));
+  //  }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.action_help:
-        mWelcomeScreen.forceShow();
-        return true;
-    }
-    return false;
-  }
+  //  @Override
+  //  public boolean onOptionsItemSelected(MenuItem item) {
+  //    switch (item.getItemId()) {
+  //      case R.id.action_help:
+  //        mWelcomeScreen.forceShow();
+  //        return true;
+  //    }
+  //    return false;
+  //  }
 
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    mWelcomeScreen.onSaveInstanceState(outState);
-  }
+  //  @Override
+  //  public void onSaveInstanceState(@NonNull Bundle outState) {
+  //    super.onSaveInstanceState(outState);
+  //    mWelcomeScreen.onSaveInstanceState(outState);
+  //  }
 
   @Override
   public void onPositive(@NonNull String tag) {

@@ -1,5 +1,6 @@
 package it.cammino.risuscito.items;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -142,6 +143,7 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
         holder.mDragHandler = null;
     }
 
+    @NonNull
     @Override
     public ViewHolder getViewHolder(View v) {
         return new ViewHolder(v);

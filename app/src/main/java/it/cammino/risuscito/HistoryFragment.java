@@ -36,6 +36,7 @@ import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.fastadapter.listeners.OnLongClickListener;
+import com.mikepenz.fastadapter.select.SelectExtension;
 import com.mikepenz.fastadapter_extensions.UndoHelper;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
@@ -156,8 +157,11 @@ public class HistoryFragment extends Fragment
                   .getAdapterItem(i)
                   .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected());
               cantoAdapter.notifyAdapterItemChanged(i);
-              if (cantoAdapter.getSelectedItems().size() == 0)
-                mMainActivity.getMaterialCab().finish();
+              //              if (cantoAdapter.getSelectedItems().size() == 0)
+              if (((SelectExtension) cantoAdapter.getExtension(SelectExtension.class))
+                      .getSelectedItems()
+                      .size()
+                  == 0) mMainActivity.getMaterialCab().finish();
               return true;
             }
             return false;
@@ -209,7 +213,8 @@ public class HistoryFragment extends Fragment
         .setHasStableIds(true);
     //    cantoAdapter.set(mCronologiaViewModel.titoli);
     FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel.titoli);
-    cantoAdapter.deleteAllSelectedItems();
+    //    cantoAdapter.deleteAllSelectedItems();
+    ((SelectExtension) cantoAdapter.getExtension(SelectExtension.class)).deleteAllSelectedItems();
 
     mRecyclerView.setAdapter(cantoAdapter);
     LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -543,15 +548,22 @@ public class HistoryFragment extends Fragment
     Log.d(TAG, "onCabCreated: ");
     switch (item.getItemId()) {
       case R.id.action_remove_item:
-        int iRemoved = cantoAdapter.getSelectedItems().size();
+        //        int iRemoved = cantoAdapter.getSelectedItems().size();
+        int iRemoved =
+            ((SelectExtension) cantoAdapter.getExtension(SelectExtension.class))
+                .getSelectedItems()
+                .size();
         Log.d(TAG, "onCabItemClicked: " + iRemoved);
+        //noinspection unchecked
         mUndoHelper.remove(
             getActivity().findViewById(R.id.main_content),
             getResources().getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
             getString(android.R.string.cancel).toUpperCase(),
             Snackbar.LENGTH_SHORT,
-            cantoAdapter.getSelections());
-        cantoAdapter.deselect();
+            //            cantoAdapter.getSelections()
+            ((SelectExtension) cantoAdapter.getExtension(SelectExtension.class)).getSelections());
+        //        cantoAdapter.deselect();
+        ((SelectExtension) cantoAdapter.getExtension(SelectExtension.class)).deselect();
         actionModeOk = true;
         mMainActivity.getMaterialCab().finish();
         return true;
@@ -564,7 +576,8 @@ public class HistoryFragment extends Fragment
     Log.d(TAG, "onCabFinished: " + actionModeOk);
     if (!actionModeOk) {
       try {
-        cantoAdapter.deselect();
+        //        cantoAdapter.deselect();
+        ((SelectExtension) cantoAdapter.getExtension(SelectExtension.class)).deselect();
       } catch (Exception e) {
         //        FirebaseCrash.log("Possibile crash");
         Crashlytics.logException(e);

@@ -2,6 +2,7 @@ package it.cammino.risuscito.items;
 
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -69,6 +70,7 @@ public class BottomSheetItem extends AbstractItem<BottomSheetItem, BottomSheetIt
         holder.mLabel.setText(null);
     }
 
+    @NonNull
     @Override
     public ViewHolder getViewHolder(View v) {
         return new ViewHolder(v);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -192,6 +193,7 @@ public class SimpleSubItem<Parent extends IItem & IExpandable & ISubItem & IClic
     holder.mId.setText(null);
   }
 
+  @NonNull
   @Override
   public ViewHolder getViewHolder(View v) {
     return new ViewHolder(v);

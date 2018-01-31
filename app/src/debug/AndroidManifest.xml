@@ -62,11 +62,11 @@
             android:name="it.cammino.risuscito.DonateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
-        <activity
-            android:name="it.cammino.risuscito.slides.IntroMainNew"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
+        <!--<activity-->
+        <!--android:name="it.cammino.risuscito.slides.IntroMainNew"-->
+        <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+        <!--android:label=""-->
+        <!--android:theme="@style/WelcomeScreenTheme.SolidNavigation" />-->
 
         <!--<service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">-->
         <!--<intent-filter>-->

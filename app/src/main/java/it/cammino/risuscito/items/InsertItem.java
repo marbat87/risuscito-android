@@ -3,6 +3,7 @@ package it.cammino.risuscito.items;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -177,6 +178,7 @@ public class InsertItem extends AbstractItem<InsertItem, InsertItem.ViewHolder> 
         holder.mPage.setText(null);
     }
 
+    @NonNull
     @Override
     public ViewHolder getViewHolder(View v) {
         return new ViewHolder(v);

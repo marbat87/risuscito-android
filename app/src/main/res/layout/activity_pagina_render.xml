@@ -150,8 +150,13 @@
                         android:clickable="true"
                         android:scaleType="fitCenter"
                         android:soundEffectsEnabled="true"
+                        risuscito:ico_icon="cmd-play"
+                        risuscito:ico_size="24dp"
+                        risuscito:ico_padding="5dp"
+                        risuscito:ico_color="@color/text_color_secondary_disabled"
                         android:focusable="true"
-                        android:contentDescription="@null"/>
+                        android:contentDescription="@null"
+                        tools:ignore="MissingPrefix" />
 
                 </LinearLayout>
 

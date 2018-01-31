@@ -15,4 +15,6 @@ public class PaginaRenderViewModel extends ViewModel {
 
     public Canto mCurrentCanto;
 
+    public boolean retrieveDone = false;
+
 }

@@ -38,6 +38,7 @@ import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
+import com.mikepenz.fastadapter.select.SelectExtension;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator;
@@ -182,7 +183,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            selectableAdapter.deselect();
+            //            selectableAdapter.deselect();
+            ((SelectExtension) selectableAdapter.getExtension(SelectExtension.class)).deselect();
           }
         });
 
@@ -194,7 +196,8 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
         new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-            selectableAdapter.select();
+            //            selectableAdapter.select();
+            ((SelectExtension) selectableAdapter.getExtension(SelectExtension.class)).select();
           }
         });
 
@@ -235,7 +238,11 @@ public class ConsegnatiFragment extends Fragment implements SimpleDialogFragment
                 .progressMax(selectableAdapter.getItemCount())
                 .show();
 
-            Set<CheckableItem> mSelected = selectableAdapter.getSelectedItems();
+            //            Set<CheckableItem> mSelected = selectableAdapter.getSelectedItems();
+            //noinspection unchecked
+            Set<CheckableItem> mSelected =
+                ((SelectExtension) selectableAdapter.getExtension(SelectExtension.class))
+                    .getSelectedItems();
             ArrayList<Integer> mSelectedId = new ArrayList<>();
             for (CheckableItem item : mSelected) {
               mSelectedId.add(item.getId());

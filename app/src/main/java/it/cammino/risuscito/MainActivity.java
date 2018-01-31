@@ -806,7 +806,15 @@ public class MainActivity extends ThemeableActivity
       }
       updateUI(true);
     } else {
-      // Signed out, show unauthenticated UI.
+      // Sign in failed, handle failure and update UI
+      Snackbar.make(
+              findViewById(R.id.main_content),
+              getString(
+                  R.string.login_failed,
+                  -1,
+                      task.getException().getLocalizedMessage()),
+              Snackbar.LENGTH_SHORT)
+          .show();
       acct = null;
       updateUI(false);
     }

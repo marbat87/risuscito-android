@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -47,7 +45,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
-import com.blunderer.easyanimatedvectordrawable.EasyAnimatedVectorDrawable;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
@@ -523,16 +520,16 @@ public class PaginaRenderActivity extends ThemeableActivity
             Log.d(TAG, MusicService.MSG_RETRIEVE_DONE);
             Boolean done = intent.getBooleanExtra(MusicService.MSG_RETRIEVE_DONE, false);
             Log.d(TAG, "MSG_RETRIEVE_DONE: " + done);
+            mViewModel.retrieveDone = done;
             showPlaying(false);
             play_button.setEnabled(done);
-
-            Drawable playDrawable = play_button.getDrawable();
-            playDrawable.setColorFilter(
-                ContextCompat.getColor(
-                    PaginaRenderActivity.this,
-                    done ? R.color.text_color_secondary : R.color.text_color_secondary_disabled),
-                PorterDuff.Mode.SRC_IN);
-
+            //            Drawable playDrawable = play_button.getDrawable();
+            //            playDrawable.setColorFilter(
+            //                ContextCompat.getColor(
+            //                    PaginaRenderActivity.this,
+            //                    done ? R.color.text_color_secondary :
+            // R.color.text_color_secondary_disabled),
+            //                PorterDuff.Mode.SRC_IN);
           } catch (IllegalArgumentException e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
           }
@@ -1598,10 +1595,23 @@ public class PaginaRenderActivity extends ThemeableActivity
 
   private void showPlaying(boolean started) {
     Log.d(TAG, "showPlaying: ");
-    EasyAnimatedVectorDrawable.setImageType(
-        play_button,
-        started ? EasyAnimatedVectorDrawable.Type.PAUSE : EasyAnimatedVectorDrawable.Type.PLAY,
-        ContextCompat.getColor(PaginaRenderActivity.this, R.color.text_color_secondary));
+    //    EasyAnimatedVectorDrawable.setImageType(
+    //        play_button,
+    //        started ? EasyAnimatedVectorDrawable.Type.PAUSE :
+    // EasyAnimatedVectorDrawable.Type.PLAY,
+    //        ContextCompat.getColor(PaginaRenderActivity.this, R.color.text_color_secondary));
+    IconicsDrawable icon =
+        new IconicsDrawable(PaginaRenderActivity.this)
+            .icon(started ? CommunityMaterial.Icon.cmd_pause : CommunityMaterial.Icon.cmd_play)
+            .color(
+                ContextCompat.getColor(
+                    PaginaRenderActivity.this,
+                    mViewModel.retrieveDone
+                        ? R.color.text_color_secondary
+                        : R.color.text_color_secondary_disabled))
+            .sizeDp(24)
+            .paddingDp(2);
+    play_button.setImageDrawable(icon);
   }
 
   private void showScrolling(boolean scrolling) {

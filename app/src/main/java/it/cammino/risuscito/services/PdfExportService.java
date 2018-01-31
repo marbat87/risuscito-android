@@ -10,17 +10,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.pdfjet.A4;
+import com.pdfjet.Color;
+import com.pdfjet.Font;
+import com.pdfjet.PDF;
+import com.pdfjet.Page;
+import com.pdfjet.TextLine;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -54,18 +51,36 @@ public class PdfExportService extends IntentService {
       "it.cammino.risuscito.services.data.DATA_EXPORT_ERROR";
   public static final String DATA_PDF_PATH = "it.cammino.risuscito.services.data.DATA_PDF_PATH";
   public static final String DATA_LINGUA = "it.cammino.risuscito.services.data.DATA_LINGUA";
-  private static final String mFont = "assets/fonts/roboto_mono.ttf";
+  //    private static final String mFont = "assets/fonts/roboto_mono.ttf";
+  private static final String mFont = "fonts/DroidSansMono.ttf.stream";
+  private static final float START_X = 25f;
+  private static final float START_Y = 25f;
   // The tag we put on debug messages
-  final String TAG = getClass().getName();
+  final String TAG = getClass().getCanonicalName();
   String pagina;
   String primaNota;
   String notaCambio;
   String primoBarre;
   String localPDFPath;
   String mLingua;
+  private PDF pdf;
+  private Page page;
+  private float startingY;
+  private TextLine text;
 
   public PdfExportService() {
     super("PdfExportService");
+  }
+
+  private void writeString(String line) throws Exception {
+    if (startingY + START_Y >= A4.PORTRAIT[1]) {
+      page = new Page(pdf, A4.PORTRAIT);
+      startingY = START_Y;
+    }
+    text.setLocation(START_X, startingY);
+    text.setText(line);
+    text.drawOn(page);
+    startingY += 20;
   }
 
   /**
@@ -115,8 +130,8 @@ public class PdfExportService extends IntentService {
       urlHtml = "file:///android_asset/" + pagina + ".htm";
     }
     // step 1
-    Float margin = 15f;
-    Document document = new Document(PageSize.A4, margin, margin, margin, margin);
+    //    Float margin = 15f;
+    //    Document document = new Document(PageSize.A4, margin, margin, margin, margin);
     // step 2
     try {
       //            if (Utility.isExternalStorageWritable()) {
@@ -134,12 +149,20 @@ public class PdfExportService extends IntentService {
       //            localPDFPath += "/output.pdf";
       localPDFPath = getCacheDir().getAbsolutePath() + "/output.pdf";
       Log.d(getClass().toString(), "localPath:" + localPDFPath);
-      PdfWriter.getInstance(document, new FileOutputStream(localPDFPath));
+      //      PdfWriter.getInstance(document, new FileOutputStream(localPDFPath));
+      //      FileOutputStream fos = new FileOutputStream(localPDFPath);
+      //
+      //      PDF pdf = new PDF(fos);
+      pdf = new PDF(new BufferedOutputStream(new FileOutputStream(localPDFPath)));
+      page = new Page(pdf, A4.PORTRAIT);
       // step 3
-      document.open();
-      Font myFontColor =
-          FontFactory.getFont(
-              mFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL, BaseColor.BLACK);
+      //      document.open();
+      //      Font myFontColor =
+      //          FontFactory.getFont(
+      //              mFont, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 14, Font.NORMAL,
+      // BaseColor.BLACK);
+      Font f1 = new Font(pdf, getResources().getAssets().open(mFont), Font.STREAM);
+      f1.setSize(14);
       // step 4
       try {
         String line;
@@ -147,29 +170,33 @@ public class PdfExportService extends IntentService {
             new BufferedReader(new InputStreamReader(new FileInputStream(urlHtml), "UTF-8"));
 
         line = br.readLine();
+        text = new TextLine(f1);
+        startingY = START_Y;
         while (line != null) {
           //                        Log.i(getClass().toString(), "line:" + line);
           if ((line.contains("000000") || line.contains("A13F3C")) && !line.contains("BGCOLOR")) {
             if (line.contains("000000")) {
-              myFontColor =
-                  FontFactory.getFont(
-                      mFont,
-                      BaseFont.IDENTITY_H,
-                      BaseFont.EMBEDDED,
-                      14,
-                      Font.NORMAL,
-                      BaseColor.BLACK);
+              //              myFontColor =
+              //                  FontFactory.getFont(
+              //                      mFont,
+              //                      BaseFont.IDENTITY_H,
+              //                      BaseFont.EMBEDDED,
+              //                      14,
+              //                      Font.NORMAL,
+              //                      BaseColor.BLACK);
+              text.setColor(Color.black);
             }
 
             if (line.contains("A13F3C")) {
-              myFontColor =
-                  FontFactory.getFont(
-                      mFont,
-                      BaseFont.IDENTITY_H,
-                      BaseFont.EMBEDDED,
-                      14,
-                      Font.NORMAL,
-                      BaseColor.RED);
+              //              myFontColor =
+              //                  FontFactory.getFont(
+              //                      mFont,
+              //                      BaseFont.IDENTITY_H,
+              //                      BaseFont.EMBEDDED,
+              //                      14,
+              //                      Font.NORMAL,
+              //                      BaseColor.RED);
+              text.setColor(Color.red);
             }
             line = line.replaceAll("<H4>", "");
             line = line.replaceAll("</H4>", "");
@@ -194,15 +221,15 @@ public class PdfExportService extends IntentService {
             line = line.replaceAll("</B>", "");
             line = line.replaceAll("<br>", "");
 
-            if (line.equals("")) document.add(Chunk.NEWLINE);
+            //            if (line.equals("")) document.add(Chunk.NEWLINE);
+            if (line.equals("")) writeString("");
             else {
               //                                Log.i(getClass().toString(), "line filtered:" +
               // line);
-              Paragraph paragraph = new Paragraph(line, myFontColor);
-              document.add(paragraph);
+              writeString(line);
             }
           } else {
-            if (line.equals("")) document.add(Chunk.NEWLINE);
+            if (line.equals("")) writeString("");
           }
 
           line = br.readLine();
@@ -218,14 +245,25 @@ public class PdfExportService extends IntentService {
         return;
       }
       // step 5
-      document.close();
+      //      pdf.flush();
+      pdf.close();
+      //      document.close();
 
-    } catch (FileNotFoundException | DocumentException e) {
+      //    } catch (FileNotFoundException | DocumentException e) {
+    } catch (FileNotFoundException e) {
       Log.e(getClass().getName(), e.getLocalizedMessage(), e);
       Log.e(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_ERROR);
       Intent intentBroadcast = new Intent(BROADCAST_EXPORT_ERROR);
       intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.getLocalizedMessage());
       sendBroadcast(intentBroadcast);
+      return;
+    } catch (Exception e) {
+      Log.e(getClass().getName(), e.getLocalizedMessage(), e);
+      Log.e(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_ERROR);
+      Intent intentBroadcast = new Intent(BROADCAST_EXPORT_ERROR);
+      intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.getLocalizedMessage());
+      sendBroadcast(intentBroadcast);
+      return;
     }
 
     Log.d(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_COMPLETED);
