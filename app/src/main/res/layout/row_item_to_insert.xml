@@ -3,9 +3,8 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/myListPreferredItemHeightLarge"
     android:background="?attr/customSelector"
-    android:minHeight="@dimen/myListPreferredItemHeightLarge"
     android:layout_gravity="center_vertical">
 
     <TextView

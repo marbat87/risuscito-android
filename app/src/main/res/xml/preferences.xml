@@ -59,7 +59,7 @@
             android:summary="@string/show_pace_summary"/>
 
         <!--suppress AndroidElementNotAllowed -->
-        <ListPreference
+        <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/default_index_title"
             android:summary="@string/default_index_summary"
@@ -86,7 +86,7 @@
             android:summary="@string/show_audio_summary"/>
 
         <!--suppress AndroidElementNotAllowed -->
-        <ListPreference
+        <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/save_location_title"
             android:summary="@string/save_location_summary"
@@ -95,7 +95,7 @@
             android:key="memoria_salvataggio_scelta" />
 
         <!--suppress AndroidElementNotAllowed -->
-        <ListPreference
+        <SimpleMenuPreference
             android:title="@string/language_title"
             android:summary="@string/language_summary"
             android:entries="@array/pref_languages_entries"

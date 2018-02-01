@@ -11,6 +11,7 @@
         risuscito:fastScrollAutoHide="false"
         risuscito:fastScrollPopupBgColor="?colorAccent"
         risuscito:fastScrollPopupTextColor="@color/primary_text_default_material_dark"
+        risuscito:fastScrollThumbInactiveColor="true"
         risuscito:fastScrollThumbColor="?colorAccent" />
 
 </FrameLayout>
