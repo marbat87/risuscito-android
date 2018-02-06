@@ -40,9 +40,9 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation('com.mikepenz:materialdrawer:6.0.5@aar') { transitive = true }
-    implementation 'com.mikepenz:crossfader:1.5.0@aar'
+    implementation 'com.mikepenz:crossfader:1.5.2@aar'
     implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
-    implementation 'com.mikepenz:itemanimators:1.0.0@aar'
+    implementation 'com.mikepenz:itemanimators:1.0.1@aar'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.android.support:design:27.0.2'
