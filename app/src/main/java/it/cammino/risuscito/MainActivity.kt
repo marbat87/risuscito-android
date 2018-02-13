@@ -668,7 +668,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     // [START onActivityResult]
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "requestCode: " + requestCode)
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -957,11 +957,9 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         override fun setOffset(slideOffset: Float) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
-
     }
 
     companion object {
-
         /* Request code used to invoke sign in user interactions. */
         private val RC_SIGN_IN = 9001
         private val PREF_DRIVE_FILE_NAME = "preferences_backup"

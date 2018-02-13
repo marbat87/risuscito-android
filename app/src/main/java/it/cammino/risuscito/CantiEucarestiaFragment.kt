@@ -337,7 +337,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
         longclickedPos = Integer.valueOf((parent.findViewById<View>(R.id.tag) as TextView).text.toString())!!
         longClickedChild = Integer.valueOf((view.findViewById<View>(R.id.item_tag) as TextView).text.toString())!!
         if (!mMainActivity!!.isOnTablet)
-            toolbar_layout!!.setExpanded(true, true)
+            activity!!.toolbar_layout!!.setExpanded(true, true)
         mMainActivity!!.materialCab!!.start(this@CantiEucarestiaFragment)
     }
 

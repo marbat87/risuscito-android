@@ -9,17 +9,12 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import android.widget.TextView
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import butterknife.Unbinder
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
@@ -32,15 +27,15 @@ import it.cammino.risuscito.objects.PosizioneTitleItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
+import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.lang.ref.WeakReference
 
 class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
     private lateinit var cantoDaCanc: String
 
-    @BindView(R.id.recycler_list)
-    internal var mRecyclerView: RecyclerView? = null
     // create boolean for fetching data
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
@@ -57,7 +52,6 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-    private var mUnbinder: Unbinder? = null
 
     private val shareIntent: Intent
         get() = Intent(Intent.ACTION_SEND)
@@ -94,39 +88,9 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils
 
-    @OnClick(R.id.button_pulisci)
-    fun pulisciLista() {
-        for (i in 0 until listaPersonalizzata!!.numPosizioni)
-            listaPersonalizzata!!.removeCanto(i)
-        runUpdate()
-    }
-
-    @OnClick(R.id.button_condividi)
-    fun condividiLista() {
-        //                Log.i(getClass().toString(), "idLista: " + idLista);
-        val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, shareIntent)
-        bottomSheetDialog.show(fragmentManager!!, null)
-    }
-
-    @OnClick(R.id.button_invia_file)
-    fun inviaLista() {
-        val exportUri = mLUtils!!.listToXML(listaPersonalizzata!!)
-        Log.d(TAG, "onClick: exportUri = " + exportUri!!)
-        if (exportUri != null) {
-            val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri))
-            bottomSheetDialog.show(fragmentManager!!, null)
-        } else
-            Snackbar.make(
-                    activity!!.findViewById(R.id.main_content),
-                    R.string.xml_error,
-                    Snackbar.LENGTH_LONG)
-                    .show()
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
-        mUnbinder = ButterKnife.bind(this, rootView!!)
 
         mMainActivity = activity as MainActivity?
 
@@ -135,6 +99,17 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
         idLista = arguments!!.getInt("idLista")
 
+        if (!isViewShown) {
+            if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+            val fab1 = (parentFragment as CustomLists).fab
+            fab1.show()
+        }
+
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val click = OnClickListener { v ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -195,25 +170,37 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         posizioniList = ArrayList()
         cantoAdapter = PosizioneRecyclerAdapter(
                 themeUtils.primaryColorDark(), posizioniList, click, longClick)
-        mRecyclerView!!.adapter = cantoAdapter
+        recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
-        mRecyclerView!!.layoutManager = LinearLayoutManager(activity)
+        recycler_list!!.layoutManager = LinearLayoutManager(activity)
 
         UpdateListTask(this@ListaPersonalizzataFragment).execute()
 
-        if (!isViewShown) {
-            if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
-            val fab1 = (parentFragment as CustomLists).fab
-            fab1.show()
+        button_pulisci.setOnClickListener {
+            for (i in 0 until listaPersonalizzata!!.numPosizioni)
+                listaPersonalizzata!!.removeCanto(i)
+            runUpdate()
         }
 
-        return rootView
-    }
+        button_condividi.setOnClickListener {
+            val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, shareIntent)
+            bottomSheetDialog.show(fragmentManager!!, null)
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mUnbinder!!.unbind()
+        button_invia_file.setOnClickListener {
+            val exportUri = mLUtils!!.listToXML(listaPersonalizzata!!)
+            Log.d(TAG, "onClick: exportUri = " + exportUri!!)
+            if (exportUri != null) {
+                val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri))
+                bottomSheetDialog.show(fragmentManager!!, null)
+            } else
+                Snackbar.make(
+                        activity!!.findViewById(R.id.main_content),
+                        R.string.xml_error,
+                        Snackbar.LENGTH_LONG)
+                        .show()
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -261,7 +248,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         longclickedPos = Integer.valueOf((parent.findViewById<View>(R.id.tag) as TextView).text.toString())!!
         longClickedChild = Integer.valueOf((view.findViewById<View>(R.id.item_tag) as TextView).text.toString())!!
         if (!mMainActivity!!.isOnTablet)
-            toolbar_layout!!.setExpanded(true, true)
+            activity!!.toolbar_layout!!.setExpanded(true, true)
         mMainActivity!!.materialCab!!.start(this@ListaPersonalizzataFragment)
     }
 

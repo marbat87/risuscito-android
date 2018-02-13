@@ -151,7 +151,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
         val mOnPreLongClickListener = OnLongClickListener<SimpleItem> { _, _, _, i ->
             if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
             if (!mMainActivity!!.isOnTablet) {
-                toolbar_layout!!.setExpanded(true, true)
+                activity!!.toolbar_layout!!.setExpanded(true, true)
             }
             mMainActivity!!.materialCab!!.start(this@FavouritesActivity)
             cantoAdapter!!.getAdapterItem(i).withSetSelected(true)

@@ -156,7 +156,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
         val mOnPreLongClickListener = OnLongClickListener<SimpleHistoryItem> { _, _, _, i ->
             if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
             if (!mMainActivity!!.isOnTablet)
-                toolbar_layout!!.setExpanded(true, true)
+                activity!!.toolbar_layout!!.setExpanded(true, true)
             mMainActivity!!.materialCab!!.start(this@HistoryFragment)
             cantoAdapter!!.getAdapterItem(i).withSetSelected(true)
             cantoAdapter!!.notifyAdapterItemChanged(i)
