@@ -72,7 +72,7 @@ public class XmlImportService extends IntentService {
     mNotificationManager.cancelAll();
     Notification mNotification;
 
-    if (LUtils.hasO()) createChannel();
+    if (LUtils.Companion.hasO()) createChannel();
 
     mNotification =
         new NotificationCompat.Builder(this, CHANNEL_ID)

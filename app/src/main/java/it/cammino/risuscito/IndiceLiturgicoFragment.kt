@@ -52,7 +52,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
         mCantiViewModel = ViewModelProviders.of(this).get<LiturgicIndexViewModel>(LiturgicIndexViewModel::class.java)
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "LITURGICO_REPLACE")
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
@@ -77,7 +77,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mOnClickListener = OnClickListener<SimpleSubItem<*>> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleSubItem<*>> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
@@ -85,7 +85,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
             bundle.putInt("idCanto", item.getId())
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -198,10 +198,10 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         super.onSaveInstanceState(mOutState)
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {

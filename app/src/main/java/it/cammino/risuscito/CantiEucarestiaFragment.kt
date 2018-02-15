@@ -123,7 +123,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
         }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -131,7 +131,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
 
         mMainActivity = activity as MainActivity?
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
         mSwhitchMode = false
 
         if (!isViewShown) {
@@ -285,7 +285,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun getCantofromPosition(

@@ -22,7 +22,7 @@ class GeneralIndex : Fragment() {
     private var mViewModel: GeneralIndexViewModel? = null
 
     private val themeUtils: ThemeUtils
-        get() = mMainActivity!!.themeUtils
+        get() = mMainActivity!!.themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

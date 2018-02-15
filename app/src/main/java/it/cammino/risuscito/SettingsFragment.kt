@@ -61,10 +61,10 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
         Log.d(
                 TAG,
                 "loadStorageList: WRITE_EXTERNAL_STORAGE "
-                        + Utility.isExternalStorageWritable()
+                        + Utility.isExternalStorageWritable
                         + " / "
                         + external)
-        if (Utility.isExternalStorageWritable() && external) {
+        if (Utility.isExternalStorageWritable && external) {
             mEntries = resources.getStringArray(R.array.save_location_sd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_sd_values)
         } else {

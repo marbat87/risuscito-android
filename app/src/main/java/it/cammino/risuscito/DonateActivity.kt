@@ -27,13 +27,13 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
         mBillingClient = BillingClient.newBuilder(this).setListener(this).build()
 
         (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.title_activity_donate)
-        risuscito_toolbar!!.setBackgroundColor(themeUtils.primaryColor())
+        risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         donate_text!!.setBackgroundColor(0)
-        bottom_bar!!.setBackgroundColor(themeUtils.primaryColor())
+        bottom_bar!!.setBackgroundColor(themeUtils!!.primaryColor())
 
         var textColor = "#000000"
         if (ThemeUtils.isDarkMode(this)) textColor = "#ffffff"

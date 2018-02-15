@@ -52,7 +52,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,7 +65,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
 
         activity!!.material_tabs.visibility = View.GONE
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         mMainActivity!!.enableFab(true)
         if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
@@ -97,24 +97,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                     },
                     250)
         }
-
-        mUndoHelper = UndoHelper(
-                cantoAdapter,
-                UndoHelper.UndoListener { _, arrayList ->
-                    Log.d(TAG, "commitRemove: " + arrayList.size)
-                    arrayList
-                            .map { it.item }
-                            .forEach {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).cronologiaDao()
-                                            val cronTemp = Cronologia()
-                                            cronTemp.idCanto = it.id
-                                            mDao.deleteCronologia(cronTemp)
-                                        })
-                                        .start()
-                            }
-                })
 
         return rootView
     }
@@ -149,7 +131,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -184,6 +166,24 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         history_recycler!!.addItemDecoration(insetDivider)
         history_recycler!!.itemAnimator = SlideLeftAlphaAnimator()
+
+        mUndoHelper = UndoHelper(
+                cantoAdapter,
+                UndoHelper.UndoListener { _, arrayList ->
+                    Log.d(TAG, "commitRemove: " + arrayList.size)
+                    arrayList
+                            .map { it.item }
+                            .forEach {
+                                Thread(
+                                        Runnable {
+                                            val mDao = RisuscitoDatabase.getInstance(context).cronologiaDao()
+                                            val cronTemp = Cronologia()
+                                            cronTemp.idCanto = it.id
+                                            mDao.deleteCronologia(cronTemp)
+                                        })
+                                        .start()
+                            }
+                })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -210,10 +210,10 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
         return false
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onPositive(tag: String) {

@@ -143,7 +143,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 .sizeDp(24)
                 .paddingDp(2)
 
-        risuscito_toolbar!!.setBackgroundColor(themeUtils.primaryColor())
+        risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         risuscito_toolbar!!.navigationIcon = icon
         setSupportActionBar(risuscito_toolbar)
 
@@ -158,17 +158,17 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         Log.d(TAG, "onCreate: isOnTablet = " + isOnTablet)
 
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            window.statusBarColor = themeUtils.primaryColorDark()
+            window.statusBarColor = themeUtils!!.primaryColorDark()
 
         if (isOnTablet)
-            tabletToolbarBackground!!.setBackgroundColor(themeUtils.primaryColor())
+            tabletToolbarBackground!!.setBackgroundColor(themeUtils!!.primaryColor())
         else
-            material_tabs!!.setBackgroundColor(themeUtils.primaryColor())
+            material_tabs!!.setBackgroundColor(themeUtils!!.primaryColor())
 
         setupNavDrawer(savedInstanceState)
 
         materialCab = MaterialCab(this, R.id.cab_stub)
-                .setBackgroundColor(themeUtils.primaryColorDark())
+                .setBackgroundColor(themeUtils!!.primaryColorDark())
                 .setPopupMenuTheme(R.style.ThemeOverlay_AppCompat_Light)
                 .setContentInsetStartRes(R.dimen.mcab_default_content_inset)
 
@@ -262,7 +262,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                         if (isOnTablet)
                             ColorDrawable(ContextCompat.getColor(this, R.color.floating_background))
                         else
-                            ColorDrawable(themeUtils.primaryColor()))
+                            ColorDrawable(themeUtils!!.primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
                 .withNameTypeface(mMediumFont!!)
@@ -319,65 +319,65 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                                 .withName(R.string.activity_homepage)
                                 .withIcon(CommunityMaterial.Icon.cmd_home)
                                 .withIdentifier(R.id.navigation_home.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.search_name_text)
                                 .withIcon(CommunityMaterial.Icon.cmd_magnify)
                                 .withIdentifier(R.id.navigation_search.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_general_index)
                                 .withIcon(CommunityMaterial.Icon.cmd_view_list)
                                 .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_custom_lists)
                                 .withIcon(CommunityMaterial.Icon.cmd_view_carousel)
                                 .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.action_favourites)
                                 .withIcon(CommunityMaterial.Icon.cmd_heart)
                                 .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_consegnati)
                                 .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
                                 .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_history)
                                 .withIcon(CommunityMaterial.Icon.cmd_history)
                                 .withIdentifier(R.id.navigation_history.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_settings)
                                 .withIcon(CommunityMaterial.Icon.cmd_settings)
                                 .withIdentifier(R.id.navigation_settings.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         DividerDrawerItem(),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_about)
                                 .withIcon(CommunityMaterial.Icon.cmd_information_outline)
                                 .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withSelectedIconColor(themeUtils.primaryColor())
-                                .withSelectedTextColor(themeUtils.primaryColor())
+                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont))
                 .withOnDrawerItemClickListener(
                         Drawer.OnDrawerItemClickListener { _, _, drawerItem ->
@@ -472,7 +472,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                     .setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
-            drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
+            drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils!!.primaryColorDark())
         }
     }
 
@@ -507,9 +507,9 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     override fun onColorSelection(
             colorChooserDialog: ColorChooserDialog, @ColorInt color: Int) {
         if (colorChooserDialog.isAccentMode)
-            themeUtils.accentColor(color)
+            themeUtils!!.accentColor(color)
         else
-            themeUtils.primaryColor(color)
+            themeUtils!!.primaryColor(color)
 
         recreate()
     }
@@ -880,7 +880,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                     .show()
         }
 
-        override fun onPostExecute(result: Void) {
+        override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
             activityWeakReference.get()!!.intent.removeExtra(Utility.CHANGE_LANGUAGE)
             try {
@@ -911,7 +911,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             return null
         }
 
-        override fun onPostExecute(result: Void) {
+        override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "BACKUP")
@@ -941,7 +941,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             return null
         }
 
-        override fun onPostExecute(result: Void) {
+        override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "RESTORE")

@@ -230,11 +230,11 @@ public class MusicProvider {
         String url = canto.link;
         if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
-          if (!Utility.retrieveMediaFileLink(mContext, url, true).isEmpty())
-            url = Utility.retrieveMediaFileLink(mContext, url, true);
+          if (!Utility.INSTANCE.retrieveMediaFileLink(mContext, url, true).isEmpty())
+            url = Utility.INSTANCE.retrieveMediaFileLink(mContext, url, true);
         } else {
-          if (!Utility.retrieveMediaFileLink(mContext, url, false).isEmpty())
-            url = Utility.retrieveMediaFileLink(mContext, url, false);
+          if (!Utility.INSTANCE.retrieveMediaFileLink(mContext, url, false).isEmpty())
+            url = Utility.INSTANCE.retrieveMediaFileLink(mContext, url, false);
         }
 
         Log.v(TAG, "retrieveMedia: " + canto.id + " / " + canto.titolo + " / " + url);

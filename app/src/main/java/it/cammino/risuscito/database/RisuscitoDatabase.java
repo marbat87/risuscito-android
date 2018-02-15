@@ -283,7 +283,7 @@ public abstract class RisuscitoDatabase extends RoomDatabase {
           ListaPers listaPers = new ListaPers();
           listaPers.titolo = result.getString(0);
           listaPers.lista =
-              (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(result.getBlob(1));
+              (ListaPersonalizzata) ListaPersonalizzata.Companion.deserializeObject(result.getBlob(1));
           mDb.listePersDao().insertLista(listaPers);
           result.moveToNext();
         }

@@ -50,7 +50,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
         mCantiViewModel = ViewModelProviders.of(this).get<NumericIndexViewModel>(NumericIndexViewModel::class.java)
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NUMERIC_REPLACE")
         sFragment?.setmCallback(this@NumericSectionFragment)
@@ -75,7 +75,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mOnClickListener = OnClickListener<SimpleItem> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
@@ -83,7 +83,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -139,10 +139,10 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         }
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {

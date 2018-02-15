@@ -25,13 +25,13 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        collapsingToolbarLayout!!.setContentScrimColor(themeUtils.primaryColor())
+        collapsingToolbarLayout!!.setContentScrimColor(themeUtils!!.primaryColor())
 
         if (mViewModel!!.appBarIsExpanded)
             Utility.setupTransparentTints(this@ChangelogActivity, Color.TRANSPARENT, false)
         else
             Utility.setupTransparentTints(
-                    this@ChangelogActivity, themeUtils.primaryColorDark(), false)
+                    this@ChangelogActivity, themeUtils!!.primaryColorDark(), false)
     }
 
     override fun onBackPressed() {
@@ -78,7 +78,7 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
                     false)
         else
             Utility.setupTransparentTints(
-                    this@ChangelogActivity, themeUtils.primaryColorDark(), false)
+                    this@ChangelogActivity, themeUtils!!.primaryColorDark(), false)
     }
 
     companion object {

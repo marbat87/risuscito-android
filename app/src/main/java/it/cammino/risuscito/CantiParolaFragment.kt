@@ -117,7 +117,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
     private val themeUtils: ThemeUtils
         get() {
-            return (activity as MainActivity).themeUtils
+            return (activity as MainActivity).themeUtils!!
         }
 
     override fun onCreateView(
@@ -126,7 +126,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
         mMainActivity = activity as MainActivity?
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
         mSwhitchMode = false
 
         if (!isViewShown) {
@@ -281,7 +281,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun getCantofromPosition(

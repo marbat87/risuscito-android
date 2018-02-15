@@ -86,7 +86,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             e.printStackTrace()
         }
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "AVANZATA_REPLACE")
         sFragment?.setmCallback(this@RicercaAvanzataFragment)
@@ -118,7 +118,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -371,10 +371,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             false
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onPositive(tag: String) {

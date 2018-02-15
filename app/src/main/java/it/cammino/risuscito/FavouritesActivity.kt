@@ -47,7 +47,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
     private var mUndoHelper: UndoHelper<*>? = null
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,7 +62,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
         activity!!.material_tabs.visibility = View.GONE
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         mMainActivity!!.enableFab(true)
         if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
@@ -94,22 +94,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                     },
                     250)
         }
-
-        mUndoHelper = UndoHelper(
-                cantoAdapter,
-                UndoHelper.UndoListener { _, arrayList ->
-                    Log.d(TAG, "commitRemove: " + arrayList.size)
-                    arrayList
-                            .map { it.item }
-                            .forEach {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).favoritesDao()
-                                            mDao.removeFavorite(it.id)
-                                        })
-                                        .start()
-                            }
-                })
 
         val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "FAVORITES_RESET")
         sFragment?.setmCallback(this@FavouritesActivity)
@@ -144,7 +128,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -180,6 +164,22 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         favouritesList!!.addItemDecoration(insetDivider)
         favouritesList!!.itemAnimator = SlideLeftAlphaAnimator()
+
+        mUndoHelper = UndoHelper(
+                cantoAdapter,
+                UndoHelper.UndoListener { _, arrayList ->
+                    Log.d(TAG, "commitRemove: " + arrayList.size)
+                    arrayList
+                            .map { it.item }
+                            .forEach {
+                                Thread(
+                                        Runnable {
+                                            val mDao = RisuscitoDatabase.getInstance(context).favoritesDao()
+                                            mDao.removeFavorite(it.id)
+                                        })
+                                        .start()
+                            }
+                })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -206,21 +206,16 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
         return false
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onPositive(tag: String) {
         Log.d(javaClass.name, "onPositive: " + tag)
         when (tag) {
             "FAVORITES_RESET" ->
-                //                SQLiteDatabase db = listaCanti.getReadableDatabase();
-                //                ContentValues  values = new  ContentValues();
-                //                values.put("favourite" , 0);
-                //                db.update("ELENCO", values,  null, null);
-                //                db.close();
                 // run the sentence in a new thread
                 Thread(
                         Runnable {
@@ -260,9 +255,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                         resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
                         getString(android.R.string.cancel).toUpperCase(),
                         Snackbar.LENGTH_SHORT,
-                        //            cantoAdapter.getSelections());
                         (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections)
-                //        cantoAdapter.deselect();
                 (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
                 actionModeOk = true
                 mMainActivity!!.materialCab!!.finish()
@@ -276,7 +269,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
         Log.d(TAG, "onCabFinished: " + actionModeOk)
         if (!actionModeOk) {
             try {
-                //        cantoAdapter.deselect();
                 (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
             } catch (e: Exception) {
                 Crashlytics.logException(e)
@@ -298,7 +290,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                         Observer { canti ->
                             Log.d(TAG, "onChanged: a")
                             if (canti != null) {
-                                //                  List<SimpleItem> titoli = new ArrayList<>();
                                 mFavoritesViewModel!!.titoli.clear()
                                 for (canto in canti) {
                                     val sampleItem = SimpleItem()

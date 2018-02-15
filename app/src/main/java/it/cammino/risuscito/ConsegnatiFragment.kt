@@ -94,7 +94,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
 
     private val fab: FloatingActionButton
@@ -149,7 +149,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.enableFab(true)
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
 
@@ -214,7 +214,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             bundle.putCharSequence("pagina", item.source.text)
             bundle.putInt("idCanto", item.id)
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -328,10 +328,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         return false
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun updateChooseList() {

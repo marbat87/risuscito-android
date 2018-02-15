@@ -10,12 +10,12 @@ public class Converters {
 
     @TypeConverter
     public static ListaPersonalizzata fromBlob(byte[] blobAsBytes) {
-        return (ListaPersonalizzata) ListaPersonalizzata.deserializeObject(blobAsBytes);
+        return (ListaPersonalizzata) ListaPersonalizzata.Companion.deserializeObject(blobAsBytes);
     }
 
     @TypeConverter
     public static byte[] fromListaPersonalizzata (ListaPersonalizzata lista) {
-        return ListaPersonalizzata.serializeObject(lista);
+        return ListaPersonalizzata.Companion.serializeObject(lista);
 
     }
 

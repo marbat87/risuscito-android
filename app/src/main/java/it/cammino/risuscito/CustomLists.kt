@@ -132,7 +132,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -13,40 +13,14 @@ public class ThemeUtils {
 
     public ThemeUtils(Activity context) {
         mContext = context;
-//        isChanged(false); // invalidate stored booleans
     }
 
     private Context mContext;
-//    private boolean mDarkMode;
-//    private boolean mTrueBlack;
-//    private int mLastPrimaryColor;
-//    private int mLastAccentColor;
-//    private boolean mLastColoredNav;
-//    private boolean mDirectoryCount;
-
-//    public int getPopupTheme() {
-//        if (mDarkMode || mTrueBlack) {
-//            return R.style.ThemeOverlay_AppCompat_Dark;
-//        } else {
-//            return R.style.ThemeOverlay_AppCompat_Light;
-//        }
-//    }
 
     public static boolean isDarkMode(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("dark_mode", false);
     }
-
-//    private static boolean isTrueBlack(Context context) {
-//        if (!isDarkMode(context)) return false;
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//        return prefs.getBoolean("true_black", false);
-//    }
-
-//    private static boolean isDirectoryCount(Context context) {
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//        return prefs.getBoolean("directory_count", false);
-//    }
 
     public int primaryColor() {
         final int defaultColor = ContextCompat.getColor(mContext, R.color.theme_primary);
@@ -83,35 +57,6 @@ public class ThemeUtils {
     public void accentColor(int newColor) {
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).apply();
     }
-
-//    private boolean isColoredNavBar() {
-//        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("colored_navbar", true);
-//    }
-
-//    private void isChanged(boolean checkForChanged) {
-//        final boolean darkTheme = isDarkMode(mContext);
-//        final boolean blackTheme = isTrueBlack(mContext);
-//        final int primaryColor = primaryColor();
-//        final int accentColor = accentColor();
-//        final boolean coloredNav = isColoredNavBar();
-//        final boolean directoryCount = isDirectoryCount(mContext);
-//
-//        boolean changed = false;
-//        if (checkForChanged) {
-//            changed = mDarkMode != darkTheme || mTrueBlack != blackTheme ||
-//                    mLastPrimaryColor != primaryColor || mLastAccentColor != accentColor ||
-//                    coloredNav != mLastColoredNav ||
-//                    directoryCount != mDirectoryCount;
-//        }
-//
-//        mDarkMode = darkTheme;
-//        mTrueBlack = blackTheme;
-//        mLastPrimaryColor = primaryColor;
-//        mLastAccentColor = accentColor;
-//        mLastColoredNav = coloredNav;
-//        mDirectoryCount = directoryCount;
-//
-//    }
 
     public int getCurrent() {
         if (accentColor() == Color.parseColor("#FF8A80"))
@@ -267,13 +212,6 @@ public class ThemeUtils {
         hsv[2] *= 0.8f; // value component
         return Color.HSVToColor(hsv);
     }
-
-//    public static int shiftColorUp(int color) {
-//        float[] hsv = new float[3];
-//        Color.colorToHSV(color, hsv);
-//        hsv[2] = 0.2f + 0.8f * hsv[2];
-//        return Color.HSVToColor(hsv);
-//    }
 
     /**
      * Lightens a color by a given factor.

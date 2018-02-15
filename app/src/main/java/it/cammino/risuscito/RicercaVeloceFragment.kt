@@ -77,7 +77,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                             override fun afterTextChanged(s: Editable) {}
                         })
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "VELOCE_REPLACE")
         sFragment?.setmCallback(this@RicercaVeloceFragment)
@@ -108,7 +108,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -421,10 +421,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                 .start()
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onPositive(tag: String) {

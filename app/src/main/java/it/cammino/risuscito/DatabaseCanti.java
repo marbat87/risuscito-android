@@ -4417,7 +4417,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
             for (int i = 0; i < cursor.getCount(); i++) {
                 int idLista = cursor.getInt(0);
-                ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
+                ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata.Companion
                         .deserializeObject(cursor.getBlob(1));
 
                 if (lista != null) {
@@ -4426,7 +4426,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                     for (int j = 0; j < totPosiz; j++) {
                         if (!lista.getCantoPosizione(j).equals("")) {
 //						Log.i("NOME DUP", lista.getCantoPosizione(j).substring(10));
-                            String nomeCanto = Utility.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
+                            String nomeCanto = Utility.INSTANCE.duplicaApostrofi(lista.getCantoPosizione(j)).substring(10);
 //						Log.i("NOME NO-DUP", nomeCanto.substring(10));
                             sql = "SELECT _id" +
                                     "  FROM ELENCO" +
@@ -4445,7 +4445,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                         }
                     }
                     values = new ContentValues();
-                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    values.put("lista", ListaPersonalizzata.Companion.serializeObject(lista));
                     db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
                 cursor.moveToNext();
@@ -4501,7 +4501,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
 
             for (int i = 0; i < cursor.getCount(); i++) {
                 int idLista = cursor.getInt(0);
-                ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata
+                ListaPersonalizzata lista = (ListaPersonalizzata) ListaPersonalizzata.Companion
                         .deserializeObject(cursor.getBlob(1));
 
                 if (lista != null) {
@@ -4528,7 +4528,7 @@ public class DatabaseCanti extends SQLiteOpenHelper {
                         }
                     }
                     values = new ContentValues();
-                    values.put("lista", ListaPersonalizzata.serializeObject(lista));
+                    values.put("lista", ListaPersonalizzata.Companion.serializeObject(lista));
                     db.update("LISTE_PERS", values, "_id = " + idLista, null);
                 }
                 cursor.moveToNext();
@@ -4693,11 +4693,11 @@ public class DatabaseCanti extends SQLiteOpenHelper {
             this.scroll_y = scroll_y;
         }
 
-        public int getFavourite() {
+        int getFavourite() {
             return favourite;
         }
 
-        public void setFavourite(int favourite) {
+        void setFavourite(int favourite) {
             this.favourite = favourite;
         }
 

@@ -205,7 +205,7 @@ public class SimpleItem extends AbstractItem<SimpleItem, SimpleItem.ViewHolder> 
                             .substring(mPosition, mPosition + filter.length())
                         + ")",
                     "<b>$1</b>");
-        viewHolder.mTitle.setText(LUtils.fromHtmlWrapper(highlighted));
+        viewHolder.mTitle.setText(LUtils.Companion.fromHtmlWrapper(highlighted));
       } else StringHolder.applyTo(title, viewHolder.mTitle);
     } else StringHolder.applyTo(title, viewHolder.mTitle);
     // set the text for the description or hide

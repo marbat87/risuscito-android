@@ -63,7 +63,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
             val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
             val result = StringBuilder()
-            result.append("-- ").append(listaPersonalizzata!!.name.toUpperCase(l)).append(" --\n")
+            result.append("-- ").append(listaPersonalizzata!!.name!!.toUpperCase(l)).append(" --\n")
             for (i in 0 until listaPersonalizzata!!.numPosizioni) {
                 result.append(listaPersonalizzata!!.getNomePosizione(i).toUpperCase(l)).append("\n")
                 if (!listaPersonalizzata!!.getCantoPosizione(i).equals("", ignoreCase = true)) {
@@ -86,7 +86,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
+        get() = (activity as MainActivity).themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,7 +94,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
         mMainActivity = activity as MainActivity?
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
         mSwhitchMode = false
 
         idLista = arguments!!.getInt("idLista")
@@ -191,6 +191,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         button_invia_file.setOnClickListener {
             val exportUri = mLUtils!!.listToXML(listaPersonalizzata!!)
             Log.d(TAG, "onClick: exportUri = " + exportUri!!)
+            @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
                 val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri))
                 bottomSheetDialog.show(fragmentManager!!, null)
@@ -239,7 +240,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, v, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun snackBarRimuoviCanto(view: View) {

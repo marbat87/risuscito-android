@@ -50,7 +50,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
         mCantiViewModel = ViewModelProviders.of(this).get<SalmiIndexViewModel>(SalmiIndexViewModel::class.java)
 
-        mLUtils = LUtils.getInstance(activity)
+        mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "SALMI_REPLACE")
         sFragment?.setmCallback(this@SalmiSectionFragment)
@@ -75,7 +75,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mOnClickListener = OnClickListener<SimpleItem> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
@@ -83,7 +83,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle, mView)
+            startSubActivity(bundle)
             true
         }
 
@@ -132,10 +132,10 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         }
     }
 
-    private fun startSubActivity(bundle: Bundle, view: View?) {
+    private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent, view, Utility.TRANS_PAGINA_RENDER)
+        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
