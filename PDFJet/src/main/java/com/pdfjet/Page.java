@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.pdfjet;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
 
 

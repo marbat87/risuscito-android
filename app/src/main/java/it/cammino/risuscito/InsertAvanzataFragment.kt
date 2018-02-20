@@ -112,7 +112,7 @@ class InsertAvanzataFragment : Fragment() {
             if (fromAdd == 1) {
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             val position = CustomList()
                             position.id = idLista
                             position.position = listPosition
@@ -133,10 +133,10 @@ class InsertAvanzataFragment : Fragment() {
             } else {
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             val listaPers = mDao.getListById(idLista)
                             if (listaPers?.lista != null) {
-                                listaPers.lista.addCanto(item.id.toString(), listPosition)
+                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
                                 mDao.updateLista(listaPers)
                                 activity!!.setResult(Activity.RESULT_OK)
                                 activity!!.finish()
@@ -314,24 +314,24 @@ class InsertAvanzataFragment : Fragment() {
                 Log.d(TAG, "doInBackground: isCancelled? " + isCancelled)
 
                 if (found && !isCancelled) {
-                    val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity)
+                    val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
                     val elenco: List<Canto>?
                     val onlyConsegnati = java.lang.Boolean.parseBoolean(params[1])
                     elenco = if (onlyConsegnati)
-                        mDb.cantoDao().getCantiWithSourceOnlyConsegnati(aText[0])
+                        mDb.cantoDao().getCantiWithSourceOnlyConsegnati(aText[0]!!)
                     else
-                        mDb.cantoDao().getCantiWithSource(aText[0])
+                        mDb.cantoDao().getCantiWithSource(aText[0]!!)
 
                     if (elenco != null) {
                         for (canto in elenco) {
                             if (isCancelled) return 0
                             val insertItem = InsertItem()
                             insertItem
-                                    .withTitle(canto.titolo)
-                                    .withColor(canto.color)
+                                    .withTitle(canto.titolo!!)
+                                    .withColor(canto.color!!)
                                     .withPage(canto.pagina.toString())
                                     .withId(canto.id)
-                                    .withSource(canto.source)
+                                    .withSource(canto.source!!)
                             fragmentReference.get()!!.titoli!!.add(insertItem)
                         }
                     }

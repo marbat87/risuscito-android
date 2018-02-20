@@ -127,7 +127,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
@@ -176,7 +176,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                             .forEach {
                                 Thread(
                                         Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).cronologiaDao()
+                                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
                                             val cronTemp = Cronologia()
                                             cronTemp.idCanto = it.id
                                             mDao.deleteCronologia(cronTemp)
@@ -222,7 +222,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
             "RESET_HISTORY" ->
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).cronologiaDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
                             mDao.emptyCronologia()
                         })
                         .start()
@@ -298,11 +298,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                                 for (canto in canti) {
                                     val sampleItem = SimpleHistoryItem()
                                     sampleItem
-                                            .withTitle(canto.titolo)
+                                            .withTitle(canto.titolo!!)
                                             .withPage(canto.pagina.toString())
-                                            .withSource(canto.source)
-                                            .withColor(canto.color)
-                                            .withTimestamp(canto.ultimaVisita.time.toString())
+                                            .withSource(canto.source!!)
+                                            .withColor(canto.color!!)
+                                            .withTimestamp(canto.ultimaVisita?.time.toString())
                                             .withId(canto.id)
                                             .withSelectedColor(themeUtils.primaryColorDark())
                                     mCronologiaViewModel!!.titoli.add(sampleItem)

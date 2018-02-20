@@ -48,8 +48,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
     private val newDbPath: File?
         get() {
-            Log.d(javaClass.name, "dbpath:" + getDatabasePath(RisuscitoDatabase.getDbName()))
-            return getDatabasePath(RisuscitoDatabase.getDbName())
+            Log.d(javaClass.name, "dbpath:" + getDatabasePath(RisuscitoDatabase.dbName))
+            return getDatabasePath(RisuscitoDatabase.dbName)
         }
 
     private val oldDbPath: File
@@ -445,9 +445,9 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
     @Throws(ExecutionException::class, InterruptedException::class, NoPermissioneException::class, IOException::class, NoBackupException::class)
     fun restoreNewDbBackup() {
         Log.d(
-                javaClass.name, "restoreNewDriveBackup - Db name: " + RisuscitoDatabase.getDbName())
+                javaClass.name, "restoreNewDriveBackup - Db name: " + RisuscitoDatabase.dbName)
         val query = Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.getDbName()))
+                .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.dbName))
                 .build()
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -578,7 +578,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
             RisuscitoDatabase.getInstance(this).importFromOldDB(this)
 
-            checkDuplTosave(RisuscitoDatabase.getDbName(), "application/x-sqlite3", true)
+            checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
         } else {
             metadataBuffer.release()
             throw NoBackupException()

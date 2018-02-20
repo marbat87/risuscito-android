@@ -104,10 +104,10 @@ public class XmlImportService extends IntentService {
           //
           //                    db.close();
 
-          ListePersDao mDao = RisuscitoDatabase.getInstance(this).listePersDao();
+          ListePersDao mDao = RisuscitoDatabase.Companion.getInstance(this).listePersDao();
           ListaPers listaPers = new ListaPers();
-          listaPers.titolo = celebrazione.getName();
-          listaPers.lista = celebrazione;
+          listaPers.setTitolo(celebrazione.getName());
+          listaPers.setLista(celebrazione);
           mDao.insertLista(listaPers);
 
           mNotification =

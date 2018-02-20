@@ -60,7 +60,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                         listePersonalizzate = mDao.all
                     })
                     .start()
@@ -79,7 +79,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
@@ -123,7 +123,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                 Log.d(TAG, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             listePersonalizzate = mDao.all
                         })
                         .start()
@@ -146,9 +146,9 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
         for (i in listePersonalizzate!!.indices) {
             val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista.name)
-            for (k in 0 until listePersonalizzate!![i].lista.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista.getNomePosizione(k))
+                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
             }
         }
 
@@ -166,7 +166,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context, rootView, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -214,11 +214,11 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                     return true
                 }
                 R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(context, rootView, 2, 3, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(context, rootView, 2, 4, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_fine -> {
@@ -231,15 +231,15 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                     if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
                         mCantiViewModel!!.idListaClick -= 100
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista
+                                .lista!!
                                 .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                             Thread(
                                     Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                                         mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                                         Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                 .show()
@@ -247,18 +247,18 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Log.d(TAG, "id presente: " + mCantiViewModel!!.idPosizioneClick)
                                 Thread(
                                         Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).cantoDao()
+                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
                                             val cantoPresente = mDao.getCantoById(
                                                     Integer.parseInt(
                                                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                                    .lista
+                                                                    .lista!!
                                                                     .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)))
                                             SimpleDialogFragment.Builder(
                                                     (activity as AppCompatActivity?)!!,
@@ -291,11 +291,11 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         when (tag) {
             "SALMI_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                        .lista
+                        .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                             Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
                         })
@@ -304,7 +304,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
             "SALMI_REPLACE_2" ->
                 Thread(
                         Runnable {
-                            val mCustomListDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mCustomListDao.updatePositionNoTimestamp(
                                     mCantiViewModel!!.idDaAgg,
                                     mCantiViewModel!!.idListaDaAgg,
@@ -323,11 +323,11 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         Thread(
                 Runnable {
                     val titoloPresente = ListeUtils.addToListaNoDup(
-                            activity,
-                            rootView,
+                            context!!,
+                            rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg,
+                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -371,12 +371,12 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                 for (canto in canti) {
                                     val sampleItem = SimpleItem()
                                     sampleItem
-                                            .withTitle(canto.titoloSalmo)
+                                            .withTitle(canto.titoloSalmo!!)
                                             .withPage((canto.pagina).toString())
-                                            .withSource(canto.source)
-                                            .withColor(canto.color)
+                                            .withSource(canto.source!!)
+                                            .withColor(canto.color!!)
                                             .withId(canto.id)
-                                            .withNumSalmo(canto.numSalmo)
+                                            .withNumSalmo(canto.numSalmo!!)
                                             .withContextMenuListener(this@SalmiSectionFragment)
                                     mCantiViewModel!!.titoli.add(sampleItem)
                                 }

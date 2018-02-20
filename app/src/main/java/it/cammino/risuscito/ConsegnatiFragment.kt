@@ -207,11 +207,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             activity!!.applicationContext.startService(intent)
         }
 
-        val mOnClickListener = OnClickListener<SimpleItem> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
             // lancia l'activity che visualizza il canto passando il parametro creato
             startSubActivity(bundle)
@@ -337,16 +337,17 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private fun updateChooseList() {
         Thread(
                 Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(activity).consegnatiDao()
+                    val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
                     val canti = mDao.choosen
+                    @Suppress("SENSELESS_COMPARISON")
                     if (canti != null && mCantiViewModel!!.titoliChoose.size == 0) {
                         mCantiViewModel!!.titoliChoose.clear()
                         for (canto in canti) {
                             val checkableItem = CheckableItem()
                             checkableItem
-                                    .withTitle(canto.titolo)
+                                    .withTitle(canto.titolo!!)
                                     .withPage(canto.pagina.toString())
-                                    .withColor(canto.color)
+                                    .withColor(canto.color!!)
                                     .withSetSelected(canto.consegnato > 0)
                                     .withId(canto.id)
                             mCantiViewModel!!.titoliChoose.add(checkableItem)
@@ -470,10 +471,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 for (canto in cantos) {
                                     val sampleItem = SimpleItem()
                                     sampleItem
-                                            .withTitle(canto.titolo)
+                                            .withTitle(canto.titolo!!)
                                             .withPage(canto.pagina.toString())
-                                            .withSource(canto.source)
-                                            .withColor(canto.color)
+                                            .withSource(canto.source!!)
+                                            .withColor(canto.color!!)
                                             .withId(canto.id)
                                     //                    titoli.add(sampleItem);
                                     mCantiViewModel!!.titoli.add(sampleItem)

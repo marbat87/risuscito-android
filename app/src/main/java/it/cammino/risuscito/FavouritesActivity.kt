@@ -120,11 +120,11 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
             false
         }
 
-        val mOnClickListener = OnClickListener<SimpleItem> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
@@ -174,7 +174,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                             .forEach {
                                 Thread(
                                         Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).favoritesDao()
+                                            val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
                                             mDao.removeFavorite(it.id)
                                         })
                                         .start()
@@ -219,7 +219,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                 // run the sentence in a new thread
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).favoritesDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
                             mDao.resetFavorites()
                         })
                         .start()
@@ -294,10 +294,10 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                                 for (canto in canti) {
                                     val sampleItem = SimpleItem()
                                     sampleItem
-                                            .withTitle(canto.titolo)
+                                            .withTitle(canto.titolo!!)
                                             .withPage(canto.pagina.toString())
-                                            .withSource(canto.source)
-                                            .withColor(canto.color)
+                                            .withSource(canto.source!!)
+                                            .withColor(canto.color!!)
                                             .withId(canto.id)
                                             .withSelectedColor(themeUtils.primaryColorDark())
                                     mFavoritesViewModel!!.titoli.add(sampleItem)

@@ -88,10 +88,10 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
                     Thread(
                             Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(getContext()).listePersDao()
+                                val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
                                 val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
-                                mCustomListsViewModel!!.titoloDaCanc = lista.titolo
-                                mCustomListsViewModel!!.celebrazioneDaCanc = lista.lista
+                                mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
+                                mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
                                 SimpleDialogFragment.Builder(
                                         (activity as AppCompatActivity?)!!,
                                         this@CustomLists,
@@ -263,7 +263,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             "DELETE_LIST" ->
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             val listToDelete = ListaPers()
                             listToDelete.id = mCustomListsViewModel!!.idDaCanc
                             mDao.deleteList(listToDelete)
@@ -282,7 +282,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                         movePage = true
                                         Thread(
                                                 Runnable {
-                                                    val mListePersDao = RisuscitoDatabase.getInstance(context)
+                                                    val mListePersDao = RisuscitoDatabase.getInstance(context!!)
                                                             .listePersDao()
                                                     val listaToRestore = ListaPers()
                                                     listaToRestore.id = mCustomListsViewModel!!.idDaCanc

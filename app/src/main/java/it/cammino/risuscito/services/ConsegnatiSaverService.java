@@ -46,7 +46,7 @@ public class ConsegnatiSaverService extends IntentService {
 //        SQLiteDatabase db = privateListaCanti.getReadableDatabase();
 //        db.delete("CANTI_CONSEGNATI", "", null);
         int i = 0;
-        ConsegnatiDao mDao = RisuscitoDatabase.getInstance(getApplicationContext()).consegnatiDao();
+        ConsegnatiDao mDao = RisuscitoDatabase.Companion.getInstance(getApplicationContext()).consegnatiDao();
         mDao.emptyConsegnati();
 
         for (Integer id: ids) {
@@ -55,8 +55,8 @@ public class ConsegnatiSaverService extends IntentService {
 //                    "   SELECT COALESCE(MAX(_id) + 1,1), " + id +
 //                    "             FROM CANTI_CONSEGNATI";
             Consegnato tempConsegnato = new Consegnato();
-            tempConsegnato.idConsegnato = ++i;
-            tempConsegnato.idCanto = id;
+            tempConsegnato.setIdConsegnato(++i);
+            tempConsegnato.setIdCanto(id);
             try {
 //                db.execSQL(sql);
                 mDao.insertConsegnati(tempConsegnato);

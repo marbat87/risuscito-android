@@ -22,7 +22,7 @@ public class SalmiIndexViewModel extends GenericIndexViewModel {
   }
 
   public void createDb() {
-    mDb = RisuscitoDatabase.getInstance(getApplication());
+    mDb = RisuscitoDatabase.Companion.getInstance(getApplication());
     // Receive changes
     subscribeToDbChanges();
   }

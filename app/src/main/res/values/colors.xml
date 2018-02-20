@@ -15,7 +15,7 @@
 
     <color name="dialtacts_secondary_text_color">#737373</color>
 
-    <color name="intro_background">#00BCD4</color>
+    <!--<color name="intro_background">#00BCD4</color>-->
 
     <!-- OVERWRITE THESE COLORS FOR A LIGHT THEME -->
     <!-- MaterialDrawer DEFAULT colors -->

@@ -72,7 +72,7 @@ public class MusicProvider {
     mMusicListById = new LinkedHashMap<>();
     this.mContext = mContext;
     //    listaCanti = new DatabaseCanti(mContext);
-    mDao = RisuscitoDatabase.getInstance(mContext).cantoDao();
+    mDao = RisuscitoDatabase.Companion.getInstance(mContext).cantoDao();
   }
 
   Iterable<MediaMetadataCompat> getAllMusics() {
@@ -225,9 +225,9 @@ public class MusicProvider {
       //            db.close();
 
       for (Canto canto : canti) {
-        Log.d(TAG, "retrieveMedia: " + canto.id + " / " + canto.titolo + " / " + canto.link);
+        Log.d(TAG, "retrieveMedia: " + canto.getId() + " / " + canto.getTitolo() + " / " + canto.getLink());
 
-        String url = canto.link;
+        String url = canto.getLink();
         if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
           // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
           if (!Utility.INSTANCE.retrieveMediaFileLink(mContext, url, true).isEmpty())
@@ -237,12 +237,12 @@ public class MusicProvider {
             url = Utility.INSTANCE.retrieveMediaFileLink(mContext, url, false);
         }
 
-        Log.v(TAG, "retrieveMedia: " + canto.id + " / " + canto.titolo + " / " + url);
+        Log.v(TAG, "retrieveMedia: " + canto.getId() + " / " + canto.getTitolo() + " / " + url);
 
         if (!url.isEmpty()) {
           temp =
               new MediaMetadataCompat.Builder()
-                  .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, String.valueOf(canto.id))
+                  .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, String.valueOf(canto.getId()))
                   //                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
                   // cursor.getString(2))
                   .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
@@ -252,8 +252,8 @@ public class MusicProvider {
                   .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
                   .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
                   .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                  .putString(MediaMetadataCompat.METADATA_KEY_TITLE, canto.titolo)
-                  .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.id)
+                  .putString(MediaMetadataCompat.METADATA_KEY_TITLE, canto.getTitolo())
+                  .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.getId())
                   .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, canti.size())
                   // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
                   //                                // used, for example, on the lockscreen
@@ -269,7 +269,7 @@ public class MusicProvider {
                   .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
                   .build();
 
-          mMusicListById.put(String.valueOf(canto.id), temp);
+          mMusicListById.put(String.valueOf(canto.getId()), temp);
         }
       }
 

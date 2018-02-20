@@ -60,7 +60,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                         listePersonalizzate = mDao.all
                     })
                     .start()
@@ -79,7 +79,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
@@ -130,7 +130,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 Log.d(javaClass.name, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             listePersonalizzate = mDao.all
                         })
                         .start()
@@ -153,9 +153,9 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
         for (i in listePersonalizzate!!.indices) {
             val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista.name)
-            for (k in 0 until listePersonalizzate!![i].lista.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista.getNomePosizione(k))
+                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
             }
         }
 
@@ -173,7 +173,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         Log.d(TAG, "onContextItemSelected: " + item!!.itemId)
         if (userVisibleHint) when (item.itemId) {
             R.id.add_to_favorites -> {
-                ListeUtils.addToFavorites(context, rootView, mCantiViewModel!!.idDaAgg)
+                ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
                 return true
             }
             R.id.add_to_p_iniziale -> {
@@ -221,11 +221,11 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 return true
             }
             R.id.add_to_e_pane -> {
-                ListeUtils.addToListaDup(context, rootView, 2, 3, mCantiViewModel!!.idDaAgg)
+                ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
                 return true
             }
             R.id.add_to_e_vino -> {
-                ListeUtils.addToListaDup(context, rootView, 2, 4, mCantiViewModel!!.idDaAgg)
+                ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                 return true
             }
             R.id.add_to_e_fine -> {
@@ -238,15 +238,15 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
                     mCantiViewModel!!.idListaClick -= 100
                     if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                            .lista
+                            .lista!!
                             .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                         listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista
+                                .lista!!
                                 .addCanto(
                                         (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                         Thread(
                                 Runnable {
-                                    val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                                    val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                                     mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                                     Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
                                             .show()
@@ -254,17 +254,17 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                 .start()
                     } else {
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista
+                                .lista!!
                                 .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                             Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                         } else {
                             Thread(
                                     Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context).cantoDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
                                         val cantoPresente = mDao.getCantoById(
                                                 Integer.parseInt(
                                                         listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                                .lista
+                                                                .lista!!
                                                                 .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)))
                                         SimpleDialogFragment.Builder(
                                                 (activity as AppCompatActivity?)!!,
@@ -385,11 +385,11 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         when (tag) {
             "NUMERIC_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                        .lista
+                        .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                             Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
                         })
@@ -398,7 +398,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             "NUMERIC_REPLACE_2" ->
                 Thread(
                         Runnable {
-                            val mCustomListDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mCustomListDao.updatePositionNoTimestamp(
                                     mCantiViewModel!!.idDaAgg,
                                     mCantiViewModel!!.idListaDaAgg,
@@ -417,11 +417,11 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         Thread(
                 Runnable {
                     val titoloPresente = ListeUtils.addToListaNoDup(
-                            activity,
-                            rootView,
+                            context!!,
+                            rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg,
+                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -458,10 +458,10 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                             for (canto in canti!!) {
                                 val sampleItem = SimpleItem()
                                 sampleItem
-                                        .withTitle(canto.titolo)
+                                        .withTitle(canto.titolo!!)
                                         .withPage((canto.pagina).toString())
-                                        .withSource(canto.source)
-                                        .withColor(canto.color)
+                                        .withSource(canto.source!!)
+                                        .withColor(canto.color!!)
                                         .withId(canto.id)
                                         .withContextMenuListener(this@NumericSectionFragment)
                                 mCantiViewModel!!.titoli.add(sampleItem)

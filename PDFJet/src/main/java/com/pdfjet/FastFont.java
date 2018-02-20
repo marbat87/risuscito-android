@@ -31,7 +31,6 @@ package com.pdfjet;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
 
 
 class FastFont {

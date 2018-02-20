@@ -30,9 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.pdfjet;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
 
 
 /**

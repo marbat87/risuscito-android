@@ -149,11 +149,11 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 SwipeDismissTouchListener(
                         main_hint_layout, null,
                         object : SwipeDismissTouchListener.DismissCallbacks {
-                            override fun canDismiss(token: Any): Boolean {
+                            override fun canDismiss(token: Any?): Boolean {
                                 return true
                             }
 
-                            override fun onDismiss(view: View, token: Any) {
+                            override fun onDismiss(view: View, token: Any?) {
                                 main_hint_layout.visibility = View.GONE
                                 val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
                                 prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true)
@@ -540,8 +540,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 idModifica = bundle!!.getInt("idDaModif")
                 val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
                 val lista = mDao.getListById(idModifica)
-                titoloLista = lista.titolo
-                celebrazione = lista.lista
+                titoloLista = lista?.titolo
+                celebrazione = lista?.lista
             } else
                 titoloLista = bundle?.getString("titolo")
 

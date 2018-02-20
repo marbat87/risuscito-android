@@ -29,6 +29,8 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.generic_card_item.view.*
+import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.lang.ref.WeakReference
 
@@ -169,7 +171,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         // Creating new adapter object
         posizioniList = ArrayList()
         cantoAdapter = PosizioneRecyclerAdapter(
-                themeUtils.primaryColorDark(), posizioniList, click, longClick)
+                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
         recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
@@ -246,8 +248,8 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private fun snackBarRimuoviCanto(view: View) {
         if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
         val parent = view.parent.parent as View
-        longclickedPos = Integer.valueOf((parent.findViewById<View>(R.id.tag) as TextView).text.toString())!!
-        longClickedChild = Integer.valueOf((view.findViewById<View>(R.id.item_tag) as TextView).text.toString())!!
+        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())!!
+        longClickedChild = Integer.valueOf(view.item_tag.text.toString())!!
         if (!mMainActivity!!.isOnTablet)
             activity!!.toolbar_layout!!.setExpanded(true, true)
         mMainActivity!!.materialCab!!.start(this@ListaPersonalizzataFragment)
@@ -368,7 +370,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
                     listaNew.lista = listaPersonalizzata
                     listaNew.id = idLista
                     listaNew.titolo = listaPersonalizzataTitle
-                    val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                    val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                     mDao.updateLista(listaNew)
                     UpdateListTask(this@ListaPersonalizzataFragment).execute()
                 })
@@ -381,17 +383,17 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
         override fun doInBackground(vararg params: Void): Int? {
 
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity).listePersDao()
+            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity!!).listePersDao()
             val listaPers = mDao.getListById(fragmentReference.get()!!.idLista)
 
-            fragmentReference.get()!!.listaPersonalizzata = listaPers.lista
+            fragmentReference.get()!!.listaPersonalizzata = listaPers!!.lista
             fragmentReference.get()!!.listaPersonalizzataTitle = listaPers.titolo
 
             for (cantoIndex in 0 until fragmentReference.get()!!.listaPersonalizzata!!.numPosizioni) {
                 val list = ArrayList<PosizioneItem>()
                 if (fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
 
-                    val mCantoDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity).cantoDao()
+                    val mCantoDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity!!).cantoDao()
                     val cantoTemp = mCantoDao.getCantoById(
                             Integer.parseInt(
                                     fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
@@ -399,10 +401,10 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
                     list.add(
                             PosizioneItem(
                                     cantoTemp.pagina,
-                                    cantoTemp.titolo,
-                                    cantoTemp.color,
+                                    cantoTemp.titolo!!,
+                                    cantoTemp.color!!,
                                     cantoTemp.id,
-                                    cantoTemp.source,
+                                    cantoTemp.source!!,
                                     ""))
                 }
 

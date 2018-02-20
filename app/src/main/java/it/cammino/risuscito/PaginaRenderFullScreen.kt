@@ -101,7 +101,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private inner class ZoomSaverTask : AsyncTask<Void, Void, Int>() {
         override fun doInBackground(vararg params: Void): Int? {
             val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
-            mDao.updateCanto(currentCanto)
+            mDao.updateCanto(currentCanto!!)
             return 0
         }
 

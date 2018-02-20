@@ -35,7 +35,7 @@ public class ConsegnatiViewModel extends AndroidViewModel {
   }
 
   public void createDb() {
-    mDb = RisuscitoDatabase.getInstance(getApplication());
+    mDb = RisuscitoDatabase.Companion.getInstance(getApplication());
     // Receive changes
     subscribeToDbChanges();
   }

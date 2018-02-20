@@ -87,7 +87,7 @@ class InsertVeloceFragment : Fragment() {
             if (fromAdd == 1) {
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             val position = CustomList()
                             position.id = idLista
                             position.position = listPosition
@@ -108,10 +108,10 @@ class InsertVeloceFragment : Fragment() {
             } else {
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             val listaPers = mDao.getListById(idLista)
                             if (listaPers?.lista != null) {
-                                listaPers.lista.addCanto(item.id.toString(), listPosition)
+                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
                                 mDao.updateLista(listaPers)
                                 activity!!.setResult(Activity.RESULT_OK)
                                 activity!!.finish()
@@ -260,7 +260,7 @@ class InsertVeloceFragment : Fragment() {
             var titoloTemp: String
             Log.d(javaClass.name, "onTextChanged: stringa " + stringa)
 
-            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity)
+            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
             val elenco: List<Canto>
             val onlyConsegnati = java.lang.Boolean.parseBoolean(sParam[1])
             elenco = if (onlyConsegnati)
@@ -270,15 +270,15 @@ class InsertVeloceFragment : Fragment() {
 
             for (canto in elenco) {
                 if (isCancelled) return 0
-                titoloTemp = Utility.removeAccents(canto.titolo.toLowerCase())
+                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
                 if (titoloTemp.contains(stringa)) {
                     val insertItem = InsertItem()
                     insertItem
-                            .withTitle(canto.titolo)
-                            .withColor(canto.color)
+                            .withTitle(canto.titolo!!)
+                            .withColor(canto.color!!)
                             .withPage(canto.pagina.toString())
                             .withId(canto.id)
-                            .withSource(canto.source)
+                            .withSource(canto.source!!)
                             .withNormalizedTitle(titoloTemp)
                             .withFilter(stringa)
                     fragmentReference.get()!!.titoli!!.add(insertItem)

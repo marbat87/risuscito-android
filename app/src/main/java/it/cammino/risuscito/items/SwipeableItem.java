@@ -24,12 +24,6 @@ import it.cammino.risuscito.R;
 public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.ViewHolder> implements ISwipeable<SwipeableItem, IItem>, IExtendedDraggable {
 
     public StringHolder name;
-//    public StringHolder description;
-
-//    public StringHolder undoTextSwipeFromRight;
-//    public StringHolder undoTextSwipeFromLeft;
-//    public StringHolder undoTextSwipeFromTop;
-//    public StringHolder undoTextSwipeFromBottom;
 
     private int swipedDirection;
     private Runnable swipedAction;
@@ -50,16 +44,6 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
     public StringHolder getName() {
         return name;
     }
-
-    //    public SwipeableItem withDescription(String description) {
-//        this.description = new StringHolder(description);
-//        return this;
-//    }
-//
-//    public SwipeableItem withDescription(@StringRes int descriptionRes) {
-//        this.description = new StringHolder(descriptionRes);
-//        return this;
-//    }
 
     @Override
     public boolean isSwipeable() {
@@ -112,7 +96,6 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
         //set the text for the name
         StringHolder.applyTo(name, viewHolder.name);
         //set the text for the description or hide
-//        StringHolder.applyToOrHide(description, viewHolder.description);
 
         viewHolder.swipeResultContent.setVisibility(swipedDirection != 0 ? View.VISIBLE : View.GONE);
         viewHolder.itemContent.setVisibility(swipedDirection != 0 ? View.GONE : View.VISIBLE);
@@ -121,7 +104,6 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
         CharSequence swipedText = null;
         if (swipedDirection != 0) {
             swipedAction = viewHolder.itemView.getContext().getString(android.R.string.cancel);
-//            swipedText = swipedDirection == ItemTouchHelper.LEFT ? "Removed" : "Archived";
             swipedText = viewHolder.itemView.getContext().getString(R.string.generic_removed, name.getText());
             viewHolder.swipeResultContent.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.getContext(), swipedDirection == ItemTouchHelper.LEFT ? R.color.md_red_900 : R.color.md_red_900));
         }
@@ -136,7 +118,6 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
     public void unbindView(ViewHolder holder) {
         super.unbindView(holder);
         holder.name.setText(null);
-//        holder.description.setText(null);
         holder.swipedAction.setText(null);
         holder.swipedText.setText(null);
         holder.swipedActionRunnable = null;
@@ -180,7 +161,6 @@ public class SwipeableItem extends AbstractItem<SwipeableItem, SwipeableItem.Vie
      */
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(android.R.id.text1) TextView name;
-//        @BindView(R.id.material_drawer_description) TextView description;
         @BindView(R.id.swipe_result_content) View swipeResultContent;
         @BindView(R.id.container) View itemContent;
         @BindView(R.id.swiped_text) TextView swipedText;

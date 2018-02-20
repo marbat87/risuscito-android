@@ -25,7 +25,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
 import android.widget.TextView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -421,7 +420,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render)
-        ButterKnife.bind(this)
 
         mViewModel = ViewModelProviders.of(this).get(PaginaRenderViewModel::class.java)
 
@@ -860,7 +858,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(idCanto)
 
-        personalUrl = if (localLink?.localPath != null && !localLink.localPath.isEmpty())
+        personalUrl = if (localLink?.localPath != null && !localLink.localPath!!.isEmpty())
             localLink.localPath
         else
             ""

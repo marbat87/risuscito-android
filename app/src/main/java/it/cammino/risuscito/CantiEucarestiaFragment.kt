@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -31,6 +32,8 @@ import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CantiEucarestiaViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.generic_card_item.view.*
+import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.sql.Date
 
@@ -238,7 +241,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
         button_pulisci.setOnClickListener {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                         mDao.deleteListById(2)
                     })
                     .start()
@@ -295,11 +298,11 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
                 .map {
                     PosizioneItem(
                             it.pagina,
-                            it.titolo,
-                            it.color,
+                            it.titolo!!,
+                            it.color!!,
                             it.id,
-                            it.source,
-                            it.timestamp.time.toString())
+                            it.source!!,
+                            it.timestamp!!.time.toString())
                 }
 
         return Pair(
@@ -334,15 +337,14 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
     private fun snackBarRimuoviCanto(view: View) {
         if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
         val parent = view.parent.parent as View
-        longclickedPos = Integer.valueOf((parent.findViewById<View>(R.id.tag) as TextView).text.toString())!!
-        longClickedChild = Integer.valueOf((view.findViewById<View>(R.id.item_tag) as TextView).text.toString())!!
+        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())!!
+        longClickedChild = Integer.valueOf(view.item_tag.text.toString())!!
         if (!mMainActivity!!.isOnTablet)
             activity!!.toolbar_layout!!.setExpanded(true, true)
         mMainActivity!!.materialCab!!.start(this@CantiEucarestiaFragment)
     }
 
     private fun scambioCanto(v: View, position: Int) {
-        //        db = listaCanti.getReadableDatabase();
         val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!
         val timestampNew = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
         //        Log.i(getClass().toString(), "positionNew: " + position);
@@ -353,27 +355,32 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
         //        Log.i(getClass().toString(), "timestampDaCanc: " + timestampDaCanc);
         if (idNew != idDaCanc || posizioneDaCanc != position) {
 
-            val positionToDelete = CustomList()
-            positionToDelete.id = 2
-            positionToDelete.position = position
-            positionToDelete.idCanto = idNew
-            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
-            mDao.deletePosition(positionToDelete)
+            try {
+                val positionToDelete = CustomList()
+                positionToDelete.id = 2
+                positionToDelete.position = position
+                positionToDelete.idCanto = idNew
+                val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+                mDao.deletePosition(positionToDelete)
 
-            mDao.updatePositionNoTimestamp(idNew, 2, posizioneDaCanc, idDaCanc)
+                mDao.updatePositionNoTimestamp(idNew, 2, posizioneDaCanc, idDaCanc)
 
-            val positionToInsert = CustomList()
-            positionToInsert.id = 2
-            positionToInsert.position = position
-            positionToInsert.idCanto = idDaCanc
-            positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampNew))
-            mDao.insertPosition(positionToInsert)
+                val positionToInsert = CustomList()
+                positionToInsert.id = 2
+                positionToInsert.position = position
+                positionToInsert.idCanto = idDaCanc
+                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampNew))
+                mDao.insertPosition(positionToInsert)
 
-            Snackbar.make(
-                    activity!!.findViewById(R.id.main_content),
-                    R.string.switch_done,
-                    Snackbar.LENGTH_SHORT)
-                    .show()
+                Snackbar.make(
+                        activity!!.findViewById(R.id.main_content),
+                        R.string.switch_done,
+                        Snackbar.LENGTH_SHORT)
+                        .show()
+            } catch (e: SQLiteConstraintException) {
+                Snackbar.make(rootView!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
+            }
+
         } else {
             Snackbar.make(rootView!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
         }
@@ -384,7 +391,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
         positionToDelete.id = 2
         positionToDelete.position = posizioneDaCanc
         positionToDelete.idCanto = idDaCanc
-        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
         mDao.deletePosition(positionToDelete)
 
         val positionToInsert = CustomList()
@@ -429,7 +436,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
                             positionToDelete.id = 2
                             positionToDelete.position = posizioneDaCanc
                             positionToDelete.idCanto = idDaCanc
-                            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mDao.deletePosition(positionToDelete)
                         })
                         .start()
@@ -449,7 +456,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
                                         positionToInsert.position = posizioneDaCanc
                                         positionToInsert.idCanto = idDaCanc
                                         positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-                                        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                                         mDao.insertPosition(positionToInsert)
                                     })
                                     .start()

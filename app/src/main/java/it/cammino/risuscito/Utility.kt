@@ -20,7 +20,7 @@ object Utility {
     val DB_RESET = "db_reset"
     val CHANGE_LANGUAGE = "changed"
     val CLICK_DELAY: Long = 1000
-    val TRANS_PAGINA_RENDER = "paginarender"
+    //    val TRANS_PAGINA_RENDER = "paginarender"
     internal val SHOW_SECONDA = "mostra_seconda_lettura"
     internal val SHOW_PACE = "mostra_canto_pace"
     internal val SAVE_LOCATION = "memoria_salvataggio_scelta"
@@ -90,14 +90,17 @@ object Utility {
         return if (link.isEmpty())
             link
         else {
-            return if (link.indexOf(".com") > 0) {
-                val start = link.indexOf(".com/")
-                link.substring(start + 5).replace("%20".toRegex(), "_")
-            } else if (link.indexOf("ITALIANO/") > 0) {
-                val start = link.indexOf("ITALIANO/")
-                link.substring(start + 9).replace("%20".toRegex(), "_")
-            } else
-                link
+            return when {
+                link.indexOf(".com") > 0 -> {
+                    val start = link.indexOf(".com/")
+                    link.substring(start + 5).replace("%20".toRegex(), "_")
+                }
+                link.indexOf("ITALIANO/") > 0 -> {
+                    val start = link.indexOf("ITALIANO/")
+                    link.substring(start + 9).replace("%20".toRegex(), "_")
+                }
+                else -> link
+            }
         }
     }
 

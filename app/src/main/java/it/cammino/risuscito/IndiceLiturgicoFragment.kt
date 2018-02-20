@@ -62,7 +62,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                         listePersonalizzate = mDao.all
                     })
                     .start()
@@ -103,7 +103,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
         Thread(
                 Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context).indiceLiturgicoDao()
+                    val mDao = RisuscitoDatabase.getInstance(context!!).indiceLiturgicoDao()
                     val canti = mDao.all
                     mCantiViewModel!!.titoli.clear()
                     var subItems: MutableList<SimpleSubItem<*>> = LinkedList()
@@ -181,7 +181,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                 Log.d(javaClass.name, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             listePersonalizzate = mDao.all
                         })
                         .start()
@@ -212,9 +212,9 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
         for (i in listePersonalizzate!!.indices) {
             val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista.name)
-            for (k in 0 until listePersonalizzate!![i].lista.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista.getNomePosizione(k))
+                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
             }
         }
 
@@ -232,7 +232,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context, rootView, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -280,11 +280,11 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                     return true
                 }
                 R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(context, rootView, 2, 3, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(context, rootView, 2, 4, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_fine -> {
@@ -298,15 +298,15 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                         mCantiViewModel!!.idListaClick -= 100
 
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista
+                                .lista!!
                                 .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                             Thread(
                                     Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                                         mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                                         Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                 .show()
@@ -314,17 +314,17 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Thread(
                                         Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).cantoDao()
+                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
                                             val cantoPresente = mDao.getCantoById(
                                                     Integer.parseInt(
                                                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                                    .lista
+                                                                    .lista!!
                                                                     .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)))
                                             SimpleDialogFragment.Builder(
                                                     (activity as AppCompatActivity?)!!,
@@ -357,11 +357,11 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         when (tag) {
             "LITURGICO_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                        .lista
+                        .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
                             Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
                         })
@@ -370,7 +370,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
             "LITURGICO_REPLACE_2" ->
                 Thread(
                         Runnable {
-                            val mCustomListDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mCustomListDao.updatePositionNoTimestamp(
                                     mCantiViewModel!!.idDaAgg,
                                     mCantiViewModel!!.idListaDaAgg,
@@ -389,11 +389,11 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         Thread(
                 Runnable {
                     val titoloPresente = ListeUtils.addToListaNoDup(
-                            activity,
-                            rootView,
+                            context!!,
+                            rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg,
+                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista

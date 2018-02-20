@@ -32,6 +32,8 @@ import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CantiParolaViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.generic_card_item.view.*
+import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.sql.Date
 import java.util.*
@@ -219,7 +221,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         // Creating new adapter object
         posizioniList = ArrayList()
         cantoAdapter = PosizioneRecyclerAdapter(
-                themeUtils.primaryColorDark(), posizioniList, click, longClick)
+                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
         recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
@@ -232,7 +234,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         button_pulisci.setOnClickListener {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                         mDao.deleteListById(1)
                     })
                     .start()
@@ -291,11 +293,11 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                 .map {
                     PosizioneItem(
                             it.pagina,
-                            it.titolo,
-                            it.color,
+                            it.titolo!!,
+                            it.color!!,
                             it.id,
-                            it.source,
-                            (it.timestamp.time).toString())
+                            it.source!!,
+                            (it.timestamp!!.time).toString())
                 }
         return Pair(PosizioneTitleItem(titoloPosizione, 1, position, tag, false), list)
     }
@@ -326,8 +328,8 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     private fun snackBarRimuoviCanto(view: View) {
         if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
         val parent = view.parent.parent as View
-        longclickedPos = Integer.valueOf((parent.findViewById<View>(R.id.tag) as TextView).text.toString())!!
-        longClickedChild = Integer.valueOf((view.findViewById<View>(R.id.item_tag) as TextView).text.toString())!!
+        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())!!
+        longClickedChild = Integer.valueOf(view.item_tag.text.toString())!!
         if (!mMainActivity!!.isOnTablet)
             activity!!.toolbar_layout!!.setExpanded(true, true)
         mMainActivity!!.materialCab!!.start(this@CantiParolaFragment)
@@ -342,7 +344,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
             positionToDelete.id = 1
             positionToDelete.position = position
             positionToDelete.idCanto = idNew
-            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
             mDao.deletePosition(positionToDelete)
 
             mDao.updatePositionNoTimestamp(idNew, 1, posizioneDaCanc, idDaCanc)
@@ -369,7 +371,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         positionToDelete.id = 1
         positionToDelete.position = posizioneDaCanc
         positionToDelete.idCanto = idDaCanc
-        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
         mDao.deletePosition(positionToDelete)
 
         val positionToInsert = CustomList()
@@ -413,7 +415,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                             positionToDelete.id = 1
                             positionToDelete.position = posizioneDaCanc
                             positionToDelete.idCanto = idDaCanc
-                            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mDao.deletePosition(positionToDelete)
                         })
                         .start()
@@ -434,7 +436,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                                         positionToInsert.position = posizioneDaCanc
                                         positionToInsert.idCanto = idDaCanc
                                         positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-                                        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                                         mDao.insertPosition(positionToInsert)
                                     })
                                     .start()

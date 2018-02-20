@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tag"
+            android:id="@+id/generic_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
@@ -27,7 +27,7 @@
             style="@style/TitoloSezione" />
 
         <LinearLayout
-            android:id="@+id/list"
+            android:id="@+id/generic_list"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

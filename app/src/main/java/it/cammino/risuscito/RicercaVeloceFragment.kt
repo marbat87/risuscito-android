@@ -87,7 +87,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                         listePersonalizzate = mDao.all
                     })
                     .start()
@@ -100,11 +100,11 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         super.onViewCreated(view, savedInstanceState)
         consegnati_only_view.visibility = View.GONE
 
-        val mOnClickListener = OnClickListener<SimpleItem> { mView, _, item, _ ->
+        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source.text)
+            bundle.putCharSequence("pagina", item.source!!.text)
             bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
@@ -182,7 +182,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                 Log.d(TAG, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             listePersonalizzate = mDao.all
                         })
                         .start()
@@ -209,8 +209,8 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
         for (i in listePersonalizzate!!.indices) {
             val subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].titolo)
-            for (k in 0 until listePersonalizzate!![i].lista.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista.getNomePosizione(k))
+            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
             }
         }
 
@@ -294,14 +294,14 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                         mViewModel!!.idListaClick -= 100
 
                         if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                .lista
+                                .lista!!
                                 .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .addCanto((mViewModel!!.idDaAgg).toString(), mViewModel!!.idPosizioneClick)
                             Thread(
                                     Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                                         mDao.updateLista(listePersonalizzate!![mViewModel!!.idListaClick])
                                         Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
                                                 .show()
@@ -309,17 +309,17 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                                     .start()
                         } else {
                             if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                    .lista
+                                    .lista!!
                                     .getCantoPosizione(mViewModel!!.idPosizioneClick) == (mViewModel!!.idDaAgg).toString())
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             else {
                                 Thread(
                                         Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context).cantoDao()
+                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
                                             val cantoPresente = mDao.getCantoById(
                                                     Integer.parseInt(
                                                             listePersonalizzate!![mViewModel!!.idListaClick]
-                                                                    .lista
+                                                                    .lista!!
                                                                     .getCantoPosizione(mViewModel!!.idPosizioneClick)))
                                             SimpleDialogFragment.Builder(
                                                     (activity as AppCompatActivity?)!!,
@@ -351,7 +351,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     private fun addToFavorites() {
         Thread(
                 Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context).favoritesDao()
+                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
                     mDao.setFavorite(mViewModel!!.idDaAgg)
                     Snackbar.make(rootView!!, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
                 })
@@ -364,7 +364,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         Thread(
                 Runnable {
                     try {
-                        val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                         val position = CustomList()
                         position.id = idLista
                         position.position = listPosition
@@ -384,9 +384,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
         Thread(
                 Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                    val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                     val titoloPresente = mDao.getTitoloByPosition(idLista, listPosition)
-                    if (titoloPresente != null && !titoloPresente.isEmpty()) {
+                    @Suppress("UNNECESSARY_SAFE_CALL")
+                    if (!titoloPresente?.isEmpty()) {
                         if (titoloDaAgg!!.equals(titoloPresente, ignoreCase = true)) {
                             Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                         } else {
@@ -432,11 +433,11 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         when (tag) {
             "VELOCE_REPLACE" -> {
                 listePersonalizzate!![mViewModel!!.idListaClick]
-                        .lista
+                        .lista!!
                         .addCanto((mViewModel!!.idDaAgg).toString(), mViewModel!!.idPosizioneClick)
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                             mDao.updateLista(listePersonalizzate!![mViewModel!!.idListaClick])
                             Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
                         })
@@ -445,7 +446,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             "VELOCE_REPLACE_2" ->
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context).customListDao()
+                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                             mDao.updatePositionNoTimestamp(
                                     mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
                             Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
@@ -490,23 +491,23 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             var titoloTemp: String
             Log.d(TAG, "onTextChanged: stringa " + stringa)
 
-            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity)
+            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
             val elenco = mDb.cantoDao().allByName
 
             for (canto in elenco) {
                 if (isCancelled) return 0
-                titoloTemp = Utility.removeAccents(canto.titolo.toLowerCase())
+                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
                 if (titoloTemp.contains(stringa)) {
                     val simpleItem = SimpleItem()
                     simpleItem
-                            .withTitle(canto.titolo)
-                            .withColor(canto.color)
+                            .withTitle(canto.titolo!!)
+                            .withColor(canto.color!!)
                             .withPage((canto.pagina).toString())
                             .withId(canto.id)
-                            .withSource(canto.source)
+                            .withSource(canto.source!!)
                             .withNormalizedTitle(titoloTemp)
                             .withFilter(stringa)
-                            .withContextMenuListener(fragmentReference.get())
+                            .withContextMenuListener(fragmentReference.get() as RicercaVeloceFragment)
                     fragmentReference.get()!!.titoli!!.add(simpleItem)
                 }
             }

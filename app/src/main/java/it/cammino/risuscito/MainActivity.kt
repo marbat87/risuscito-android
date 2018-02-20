@@ -460,7 +460,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
             // define the crossfader to be used with the miniDrawer. This is required to be able to
             // automatically toggle open / close
-            mMiniDrawer!!.withCrossFader(CrossfadeWrapper(crossFader))
+            mMiniDrawer!!.withCrossFader(CrossfadeWrapper(crossFader as Crossfader<*>))
 
             // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
             // define the other one
@@ -542,7 +542,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
-            if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+            if (canto.savedTab != null && !canto.savedTab!!.isEmpty()) {
                 Log.d(
                         TAG,
                         "convertTabs: "
@@ -551,8 +551,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                                 + " -> CONVERTO DA "
                                 + canto.savedTab
                                 + " A "
-                                + mappa[canto.savedTab])
-                canto.savedTab = mappa[canto.savedTab]
+                                + mappa[canto.savedTab!!])
+                canto.savedTab = mappa[canto.savedTab!!]
                 mDao.updateCanto(canto)
             }
         }
@@ -584,7 +584,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
-            if (canto.savedTab != null && !canto.savedTab.isEmpty()) {
+            if (canto.savedTab != null && !canto.savedTab!!.isEmpty()) {
                 Log.d(
                         TAG,
                         "convertiBarre: "
@@ -862,8 +862,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             listaCanti.reCreateDatabse(db)
             db.close()
             listaCanti.close()
-            RisuscitoDatabase.getInstance(activityWeakReference.get())
-                    .recreateDB(activityWeakReference.get())
+            RisuscitoDatabase.getInstance(activityWeakReference.get()!!)
+                    .recreateDB(activityWeakReference.get()!!)
             activityWeakReference.get()!!.convertTabs()
             activityWeakReference.get()!!.convertiBarre()
             return null
@@ -897,7 +897,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
         override fun doInBackground(vararg sUrl: Void): Void? {
             try {
-                checkDuplTosave(RisuscitoDatabase.getDbName(), "application/x-sqlite3", true)
+                checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
                 sendBroadcast(intentBroadcast)
@@ -924,7 +924,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
         override fun doInBackground(vararg sUrl: Void): Void? {
             try {
-                if (checkDupl(RisuscitoDatabase.getDbName()))
+                if (checkDupl(RisuscitoDatabase.dbName))
                     restoreNewDbBackup()
                 else
                     restoreOldDriveBackup()
