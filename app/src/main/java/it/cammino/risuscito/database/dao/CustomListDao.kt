@@ -18,7 +18,7 @@ interface CustomListDao {
     fun getList(id: Int): LiveData<List<Posizione>>
 
     @Query("SELECT B.titolo FROM customlist A , canto B WHERE A.id = :id AND A.position = :position AND A.idCanto = B.id")
-    fun getTitoloByPosition(id: Int, position: Int): String
+    fun getTitoloByPosition(id: Int, position: Int): String?
 
     @Query("SELECT * from customlist WHERE id = :id AND position = :position")
     fun getPosition(id: Int, position: Int): CustomList

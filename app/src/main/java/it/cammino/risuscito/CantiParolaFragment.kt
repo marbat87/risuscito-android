@@ -482,7 +482,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .cantiParolaResult
+                .cantiParolaResult!!
                 .observe(
                         this,
                         Observer<List<Posizione>> { mCanti ->

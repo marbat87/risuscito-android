@@ -374,7 +374,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     }
                 }
                 BottomSheetFabCanto.FAVORITE -> {
-                    val favoriteYet = mViewModel!!.mCurrentCanto.favorite == 1
+                    val favoriteYet = mViewModel!!.mCurrentCanto!!.favorite == 1
                     updateFavouriteFlag(if (favoriteYet) 0 else 1)
                 }
                 else -> {
@@ -530,7 +530,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val bottomSheetDialog = BottomSheetFabCanto.newInstance(
                     mostraAudioBool,
                     mDownload,
-                    mViewModel!!.mCurrentCanto.favorite == 1,
+                    mViewModel!!.mCurrentCanto!!.favorite == 1,
                     url != "",
                     personalUrl != "")
             bottomSheetDialog.show(supportFragmentManager, null)
@@ -589,10 +589,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         when (item.itemId) {
             android.R.id.home ->
                 if (mViewModel!!.notaCambio == null
-                        || mViewModel!!.mCurrentCanto.savedTab == null
+                        || mViewModel!!.mCurrentCanto!!.savedTab == null
                         || mViewModel!!.barreCambio == null
-                        || mViewModel!!.mCurrentCanto.savedBarre == null
-                        || mViewModel!!.notaCambio == mViewModel!!.mCurrentCanto.savedTab && mViewModel!!.barreCambio == mViewModel!!.mCurrentCanto.savedBarre) {
+                        || mViewModel!!.mCurrentCanto!!.savedBarre == null
+                        || mViewModel!!.notaCambio == mViewModel!!.mCurrentCanto!!.savedTab && mViewModel!!.barreCambio == mViewModel!!.mCurrentCanto!!.savedBarre) {
                     if (mViewModel!!.scrollPlaying) {
                         showScrolling(false)
                         mHandler.removeCallbacks(mScrollDown)
@@ -639,12 +639,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_save_tab -> {
-                if (!mViewModel!!.mCurrentCanto.savedTab.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
-                    mViewModel!!.mCurrentCanto.savedTab = mViewModel!!.notaCambio
+                if (!mViewModel!!.mCurrentCanto!!.savedTab.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
+                    mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
                     Thread(
                             Runnable {
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto)
+                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
                                         findViewById(android.R.id.content),
                                         R.string.tab_saved,
@@ -674,18 +674,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else {
                     cantoView.loadUrl("file:///android_asset/$pagina.htm")
                 }
-                if (mViewModel!!.mCurrentCanto.zoom > 0)
-                    cantoView.setInitialScale(mViewModel!!.mCurrentCanto.zoom)
+                if (mViewModel!!.mCurrentCanto!!.zoom > 0)
+                    cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                 cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             R.id.action_save_barre -> {
-                if (!mViewModel!!.mCurrentCanto.savedBarre.equals(mViewModel!!.barreCambio, ignoreCase = true)) {
-                    mViewModel!!.mCurrentCanto.savedBarre = mViewModel!!.barreCambio
+                if (!mViewModel!!.mCurrentCanto!!.savedBarre.equals(mViewModel!!.barreCambio, ignoreCase = true)) {
+                    mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
                     Thread(
                             Runnable {
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto)
+                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
                                         findViewById(android.R.id.content),
                                         R.string.barre_saved,
@@ -717,8 +717,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else {
                     cantoView.loadUrl("file:///android_asset/$pagina.htm")
                 }
-                if (mViewModel!!.mCurrentCanto.zoom > 0)
-                    cantoView.setInitialScale(mViewModel!!.mCurrentCanto.zoom)
+                if (mViewModel!!.mCurrentCanto!!.zoom > 0)
+                    cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                 cantoView.webViewClient = MyWebViewClient()
                 return true
             }
@@ -738,8 +738,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     } else {
                         cantoView.loadUrl("file:///android_asset/$pagina.htm")
                     }
-                    if (mViewModel!!.mCurrentCanto.zoom > 0)
-                        cantoView.setInitialScale(mViewModel!!.mCurrentCanto.zoom)
+                    if (mViewModel!!.mCurrentCanto!!.zoom > 0)
+                        cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                     cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
@@ -758,8 +758,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     } else {
                         cantoView.loadUrl("file:///android_asset/$pagina.htm")
                     }
-                    if (mViewModel!!.mCurrentCanto.zoom > 0)
-                        cantoView.setInitialScale(mViewModel!!.mCurrentCanto.zoom)
+                    if (mViewModel!!.mCurrentCanto!!.zoom > 0)
+                        cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                     cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
@@ -771,10 +771,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
         if (mViewModel!!.notaCambio == null
-                || mViewModel!!.mCurrentCanto.savedTab == null
+                || mViewModel!!.mCurrentCanto!!.savedTab == null
                 || mViewModel!!.barreCambio == null
-                || mViewModel!!.mCurrentCanto.savedBarre == null
-                || mViewModel!!.notaCambio == mViewModel!!.mCurrentCanto.savedTab && mViewModel!!.barreCambio == mViewModel!!.mCurrentCanto.savedBarre) {
+                || mViewModel!!.mCurrentCanto!!.savedBarre == null
+                || mViewModel!!.notaCambio == mViewModel!!.mCurrentCanto!!.savedTab && mViewModel!!.barreCambio == mViewModel!!.mCurrentCanto!!.savedBarre) {
             if (mViewModel!!.scrollPlaying) {
                 showScrolling(false)
                 mHandler.removeCallbacks(mScrollDown)
@@ -837,8 +837,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         Thread(
                 Runnable {
                     val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                    mViewModel!!.mCurrentCanto.favorite = favouriteFlag
-                    mDao.updateCanto(mViewModel!!.mCurrentCanto)
+                    mViewModel!!.mCurrentCanto!!.favorite = favouriteFlag
+                    mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                     Snackbar.make(
                             findViewById(android.R.id.content),
                             if (favouriteFlag == 1) R.string.favorite_added else R.string.favorite_removed,
@@ -850,8 +850,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     // recupera e setta il record per la registrazione
     private fun getRecordLink() {
-        url = if (mViewModel!!.mCurrentCanto.link != null && mViewModel!!.mCurrentCanto.link != "")
-            mViewModel!!.mCurrentCanto.link
+        url = if (mViewModel!!.mCurrentCanto!!.link != null && mViewModel!!.mCurrentCanto!!.link != "")
+            mViewModel!!.mCurrentCanto!!.link
         else
             ""
 
@@ -867,21 +867,21 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
         if (mViewModel!!.mCurrentCanto != null) {
             @Suppress("DEPRECATION")
-            mViewModel!!.mCurrentCanto.zoom = (cantoView.scale * 100).toInt()
-            mViewModel!!.mCurrentCanto.scrollX = cantoView.scrollX
-            mViewModel!!.mCurrentCanto.scrollY = cantoView.scrollY
+            mViewModel!!.mCurrentCanto!!.zoom = (cantoView.scale * 100).toInt()
+            mViewModel!!.mCurrentCanto!!.scrollX = cantoView.scrollX
+            mViewModel!!.mCurrentCanto!!.scrollY = cantoView.scrollY
 
-            if (andSpeedAlso) mViewModel!!.mCurrentCanto.savedSpeed = mViewModel!!.speedValue
+            if (andSpeedAlso) mViewModel!!.mCurrentCanto!!.savedSpeed = mViewModel!!.speedValue
 
             if (andSaveTabAlso) {
-                mViewModel!!.mCurrentCanto.savedBarre = mViewModel!!.barreCambio
-                mViewModel!!.mCurrentCanto.savedTab = mViewModel!!.notaCambio
+                mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
+                mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
             }
 
             Thread(
                     Runnable {
                         val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
-                        mDao.updateCanto(mViewModel!!.mCurrentCanto)
+                        mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                     })
                     .start()
         }
@@ -949,13 +949,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             if (!primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
                                 if (Utility.isLowerCase(primaNota!![0])) {
                                     var notaCambioMin = mViewModel!!.notaCambio
-                                    notaCambioMin = if (notaCambioMin.length == 1)
+                                    notaCambioMin = if (notaCambioMin!!.length == 1)
                                         notaCambioMin.toLowerCase()
                                     else
                                         notaCambioMin.substring(0, 1).toLowerCase() + notaCambioMin.substring(1)
                                     line = line.replaceFirst(notaCambioMin.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">$notaCambioMin</SPAN>")
                                 } else
-                                    line = line.replaceFirst(mViewModel!!.notaCambio.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
+                                    line = line.replaceFirst(mViewModel!!.notaCambio!!.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
                                             + mViewModel!!.notaCambio
                                             + "</SPAN>")
                                 notaHighlighed = true
@@ -969,7 +969,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         line = sb.toString()
                         if (!notaHighlighed) {
                             if (!primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
-                                line = line.replaceFirst(mViewModel!!.notaCambio.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
+                                line = line.replaceFirst(mViewModel!!.notaCambio!!.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
                                         + mViewModel!!.notaCambio
                                         + "</SPAN>")
                                 notaHighlighed = true
@@ -1522,9 +1522,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun onPageFinished(view: WebView, url: String) {
             view.postDelayed(
                     {
-                        if (mViewModel!!.mCurrentCanto.scrollX > 0 || mViewModel!!.mCurrentCanto.scrollY > 0)
+                        if (mViewModel!!.mCurrentCanto!!.scrollX > 0 || mViewModel!!.mCurrentCanto!!.scrollY > 0)
                             cantoView.scrollTo(
-                                    mViewModel!!.mCurrentCanto.scrollX, mViewModel!!.mCurrentCanto.scrollY)
+                                    mViewModel!!.mCurrentCanto!!.scrollX, mViewModel!!.mCurrentCanto!!.scrollY)
                     },
                     // Delay the scrollTo to make it work
                     600)
@@ -1544,25 +1544,25 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         override fun onPostExecute(integer: Int?) {
             super.onPostExecute(integer)
-            if (mViewModel!!.mCurrentCanto.savedTab == null) {
+            if (mViewModel!!.mCurrentCanto!!.savedTab == null) {
                 if (mViewModel!!.notaCambio == null) {
                     mViewModel!!.notaCambio = primaNota
-                    mViewModel!!.mCurrentCanto.savedTab = mViewModel!!.notaCambio
+                    mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
                 } else
-                    mViewModel!!.mCurrentCanto.savedTab = primaNota
+                    mViewModel!!.mCurrentCanto!!.savedTab = primaNota
             } else if (mViewModel!!.notaCambio == null)
-                mViewModel!!.notaCambio = mViewModel!!.mCurrentCanto.savedTab
+                mViewModel!!.notaCambio = mViewModel!!.mCurrentCanto!!.savedTab
 
-            if (mViewModel!!.mCurrentCanto.savedBarre == null) {
+            if (mViewModel!!.mCurrentCanto!!.savedBarre == null) {
                 if (mViewModel!!.barreCambio == null) {
                     mViewModel!!.barreCambio = primoBarre
-                    mViewModel!!.mCurrentCanto.savedBarre = mViewModel!!.barreCambio
+                    mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
                 } else
-                    mViewModel!!.mCurrentCanto.savedBarre = primoBarre
+                    mViewModel!!.mCurrentCanto!!.savedBarre = primoBarre
             } else {
                 //	    	Log.i("BARRESALVATO", barreSalvato);
                 if (mViewModel!!.barreCambio == null)
-                    mViewModel!!.barreCambio = mViewModel!!.mCurrentCanto.savedBarre
+                    mViewModel!!.barreCambio = mViewModel!!.mCurrentCanto!!.savedBarre
             }
 
             // fix per crash su android 4.1
@@ -1589,13 +1589,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             webSettings.builtInZoomControls = true
             webSettings.displayZoomControls = false
 
-            if (mViewModel!!.mCurrentCanto.zoom > 0)
-                cantoView.setInitialScale(mViewModel!!.mCurrentCanto.zoom)
+            if (mViewModel!!.mCurrentCanto!!.zoom > 0)
+                cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
             cantoView.webViewClient = MyWebViewClient()
 
             if (mViewModel!!.speedValue == null) {
                 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto.savedSpeed)!!
+                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed)!!
             } else {
                 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
                 speed_seekbar.progress = Integer.valueOf(mViewModel!!.speedValue)!!

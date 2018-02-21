@@ -450,7 +450,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .indexResult
+                .indexResult!!
                 .observe(
                         this,
                         Observer<List<Canto>> { canti ->

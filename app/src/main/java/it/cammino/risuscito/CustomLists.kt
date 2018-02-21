@@ -368,7 +368,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     private fun subscribeUiFavorites() {
         mCustomListsViewModel!!
-                .customListResult
+                .customListResult!!
                 .observe(
                         this,
                         Observer { list ->

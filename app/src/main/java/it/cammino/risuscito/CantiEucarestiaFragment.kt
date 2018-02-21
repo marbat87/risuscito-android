@@ -501,7 +501,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .cantiEucarestiaResult
+                .cantiEucarestiaResult!!
                 .observe(
                         this,
                         Observer { canti ->

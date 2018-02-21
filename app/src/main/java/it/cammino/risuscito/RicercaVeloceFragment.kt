@@ -386,8 +386,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                 Runnable {
                     val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
                     val titoloPresente = mDao.getTitoloByPosition(idLista, listPosition)
-                    @Suppress("UNNECESSARY_SAFE_CALL")
-                    if (!titoloPresente?.isEmpty()) {
+                    if (!titoloPresente?.isEmpty()!!) {
                         if (titoloDaAgg!!.equals(titoloPresente, ignoreCase = true)) {
                             Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                         } else {

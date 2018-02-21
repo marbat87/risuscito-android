@@ -362,7 +362,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .indexResult
+                .indexResult!!
                 .observe(
                         this,
                         Observer<List<SalmoCanto>> { canti ->

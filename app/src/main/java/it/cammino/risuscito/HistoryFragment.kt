@@ -288,7 +288,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
 
     private fun subscribeUiHistory() {
         mCronologiaViewModel!!
-                .cronologiaCanti
+                .cronologiaCanti!!
                 .observe(
                         this,
                         Observer { canti ->

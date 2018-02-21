@@ -46,7 +46,7 @@ object ListeUtils {
             idDaAgg: Int): String {
         val mDao = RisuscitoDatabase.getInstance(mContext).customListDao()
         val titoloPresente = mDao.getTitoloByPosition(idLista, listPosition)
-        if (!titoloPresente.isEmpty()) {
+        if (titoloPresente != null && !titoloPresente.isEmpty()) {
             return if (titoloDaAgg.equals(titoloPresente, ignoreCase = true)) {
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                 ""

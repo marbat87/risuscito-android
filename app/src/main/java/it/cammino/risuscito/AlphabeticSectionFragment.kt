@@ -361,7 +361,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .indexResult
+                .indexResult!!
                 .observe(
                         this,
                         Observer<List<Canto>> { canti ->

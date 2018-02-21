@@ -45,6 +45,7 @@ import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback, ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
@@ -55,7 +56,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private var idModifica: Int = 0
     private var nomiCanti: ArrayList<String>? = null
     private var mAdapter: FastItemAdapter<SwipeableItem>? = null
-    private var elementi: MutableList<SwipeableItem>? = null
+    private var elementi: ArrayList<SwipeableItem>? = null
     // drag & drop
     private var touchHelper: ItemTouchHelper? = null
 
@@ -322,7 +323,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
         super.onSaveInstanceState(savedInstanceState)
-        mViewModel!!.dataDrag = mAdapter!!.adapterItems
+        mViewModel!!.dataDrag = mAdapter!!.adapterItems as java.util.ArrayList<SwipeableItem>
         if (modifica) mViewModel!!.data = nomiCanti
     }
 

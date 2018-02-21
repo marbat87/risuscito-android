@@ -105,7 +105,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                 Runnable {
                     val mDao = RisuscitoDatabase.getInstance(context!!).indiceLiturgicoDao()
                     val canti = mDao.all
-                    mCantiViewModel!!.titoli.clear()
+                    mCantiViewModel!!.titoliList.clear()
                     var subItems: MutableList<SimpleSubItem<*>> = LinkedList()
                     var totCanti = 0
 
@@ -144,14 +144,14 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
                             @Suppress("INACCESSIBLE_TYPE")
                             expandableItem.withSubItems(subItems)
-                            mCantiViewModel!!.titoli.add(expandableItem)
+                            mCantiViewModel!!.titoliList.add(expandableItem)
                             subItems = LinkedList()
                             totCanti = 0
                         } else {
                             simpleItem.withHasDivider(true)
                         }
                     }
-                    FastAdapterDiffUtil.set<FastItemAdapter<IItem<*, *>>, IItem<*, *>>(mAdapter!!, mCantiViewModel!!.titoli)
+                    FastAdapterDiffUtil.set<FastItemAdapter<IItem<*, *>>, IItem<*, *>>(mAdapter!!, mCantiViewModel!!.titoliList)
                     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                     mAdapter!!.withSavedInstanceState(savedInstanceState)
                 })

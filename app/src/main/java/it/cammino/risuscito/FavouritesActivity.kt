@@ -284,7 +284,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel!!
-                .getmFavoritesResult()
+                .mFavoritesResult!!
                 .observe(
                         this,
                         Observer { canti ->
