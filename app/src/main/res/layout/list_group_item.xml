@@ -8,9 +8,8 @@
     tools:ignore="UnusedAttribute">
 
     <LinearLayout
-        android:id="@+id/title_container"
-        android:layout_toLeftOf="@+id/indicator"
-        android:layout_toStartOf="@+id/indicator"
+        android:layout_toLeftOf="@+id/group_indicator"
+        android:layout_toStartOf="@+id/group_indicator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/myListPreferredItemMargin"
@@ -22,7 +21,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/group_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
@@ -30,7 +29,7 @@
             tools:text="Header"/>
 
         <TextView
-            android:id="@+id/subtitle"
+            android:id="@+id/group_subtitle"
             android:layout_marginTop="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +44,7 @@
 
 
     <ImageView
-        android:id="@+id/indicator"
+        android:id="@+id/group_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

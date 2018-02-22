@@ -25,6 +25,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.content.edit
+import androidx.net.toUri
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -1047,7 +1049,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .show()
             val i = Intent(applicationContext, DownloadService::class.java)
             i.action = DownloadService.ACTION_DOWNLOAD
-            val uri = Uri.parse(url)
+//            val uri = Uri.parse(url)
+            val uri = url!!.toUri()
             i.data = uri
             i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
             startService(i)
@@ -1071,7 +1074,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .show()
         val i = Intent(applicationContext, DownloadService::class.java)
         i.action = DownloadService.ACTION_DOWNLOAD
-        val uri = Uri.parse(url)
+//        val uri = Uri.parse(url)
+        val uri = url!!.toUri()
         i.data = uri
         i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
         startService(i)
@@ -1146,9 +1150,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     // Have permission, do the thing!
                         startExternalDownload()
                     else {
-                        val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                        editor.putString(Utility.SAVE_LOCATION, "0")
-                        editor.apply()
+//                        val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                        editor.putString(Utility.SAVE_LOCATION, "0")
+//                        editor.apply()
+                        PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
                                 findViewById(android.R.id.content),
                                 R.string.forced_private,
@@ -1280,9 +1285,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 //                                Log.d(TAG, "onSequenceFinish: ");
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
@@ -1290,9 +1296,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 //                                Log.d(TAG, "onSequenceCanceled: ");
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })
@@ -1385,9 +1392,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 //                                Log.d(TAG, "onSequenceFinish: ");
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
@@ -1489,9 +1497,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     // Have permission, do the thing!
                     Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, true)
                 } else {
-                    val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                    editor.putString(Utility.SAVE_LOCATION, "0")
-                    editor.apply()
+//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                    editor.putString(Utility.SAVE_LOCATION, "0")
+//                    editor.apply()
+                    PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
                             findViewById(android.R.id.content),
                             getString(R.string.external_storage_denied),

@@ -37,6 +37,7 @@ object Utility {
     internal val INTRO_CREALISTA = "intro_crealista_test"
     internal val INTRO_CREALISTA_2 = "intro_crealista_2_test"
     internal val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
+    internal val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
     internal val CLICK_DELAY_SELECTION: Long = 300
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     internal val URL_CANTO = "urlCanto"

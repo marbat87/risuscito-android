@@ -136,9 +136,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         Log.d(TAG, "onPositive: " + tag)
         when (tag) {
             "CHANGELOG" -> {
-                PreferenceManager.getDefaultSharedPreferences(activity).edit {
-                    putString(VERSION_KEY, thisVersion)
-                }
+                PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(VERSION_KEY, thisVersion) }
             }
         }
     }
@@ -178,9 +176,10 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
         // Some permissions have been denied
         Log.d(TAG, "onPermissionsDenied: ")
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        editor.putString(Utility.SAVE_LOCATION, "0")
-        editor.apply()
+//        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+//        editor.putString(Utility.SAVE_LOCATION, "0")
+//        editor.apply()
+        PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
         Snackbar.make(rootView!!, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT)
                 .show()
     }

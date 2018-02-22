@@ -12,9 +12,11 @@ import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.content.edit
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.items.BottomSheetItem
 import kotlinx.android.synthetic.main.bottom_sheet.*
 
@@ -44,7 +46,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
         val lastApp = PreferenceManager
                 .getDefaultSharedPreferences(activity)
-                .getString("ULTIMA_APP_USATA", "")
+                .getString(Utility.ULTIMA_APP_USATA, "")
         val lastAppInfo: ResolveInfo? = list.indices
                 .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
                 ?.let { list.removeAt(it) }
@@ -55,11 +57,12 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val mList = list.map { BottomSheetItem().withItem(it) }
 
         val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
-            val editor = PreferenceManager
-                    .getDefaultSharedPreferences(activity)
-                    .edit()
-            editor.putString("ULTIMA_APP_USATA", item.item!!.activityInfo.packageName)
-            editor.apply()
+            //            val editor = PreferenceManager
+//                    .getDefaultSharedPreferences(activity)
+//                    .edit()
+//            editor.putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName)
+//            editor.apply()
+            PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
 
             val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
             if (intent != null) {

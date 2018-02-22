@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
+import androidx.content.edit
 import it.cammino.risuscito.R
 
 @Suppress("unused")
@@ -178,7 +179,8 @@ class ThemeUtils(context: Activity) {
     }
 
     fun primaryColor(newColor: Int) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).apply()
+//        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("primary_color", newColor).apply()
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit { putInt("primary_color", newColor) }
     }
 
     fun primaryColorDark(): Int {
@@ -205,7 +207,8 @@ class ThemeUtils(context: Activity) {
     }
 
     fun accentColor(newColor: Int) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).apply()
+//        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("accent_color", newColor).apply()
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit { putInt("accent_color", newColor) }
     }
 
     companion object {

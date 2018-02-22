@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
+import androidx.content.edit
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -392,9 +393,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
-                        val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                        prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true)
-                        prefEditor.apply()
+//                        val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+//                        prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true)
+//                        prefEditor.apply()
+                        PreferenceManager.getDefaultSharedPreferences(activity).edit {putBoolean(Utility.INTRO_CONSEGNATI, true)}
                     }
                 })
     }
@@ -438,17 +440,19 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CONSEGNATI_2, true)}
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CONSEGNATI_2, true)}
                             }
                         })
                 .start()

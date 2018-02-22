@@ -94,8 +94,8 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.getSource().text)
-            bundle.putInt("idCanto", item.getId())
+            bundle.putCharSequence("pagina", item.source!!.text)
+            bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
             startSubActivity(bundle)
@@ -112,10 +112,10 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
                     for (i in canti.indices) {
                         val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(canti[i].titolo)
+                                .withTitle(canti[i].titolo!!)
                                 .withPage((canti[i].pagina).toString())
-                                .withSource(canti[i].source)
-                                .withColor(canti[i].color)
+                                .withSource(canti[i].source!!)
+                                .withColor(canti[i].color!!)
                                 .withId(canti[i].id)
 
                         simpleItem
@@ -131,17 +131,16 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                             val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
                             expandableItem
                                     .withTitle(canti[i].nomeArgomento + " ($totCanti)")
-                                    .withOnClickListener(
-                                            { view, _, item, _ ->
-                                                if (item.isExpanded()) {
-                                                    Log.d(
-                                                            TAG,
-                                                            "onClick: " + recycler_view!!.getChildAdapterPosition(view))
-                                                    mLayoutManager!!.scrollToPositionWithOffset(
-                                                            recycler_view!!.getChildAdapterPosition(view), 0)
-                                                }
-                                                false
-                                            })
+                                    .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
+                                        if (mItem.isExpanded) {
+                                            Log.d(
+                                                    TAG,
+                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView))
+                                            mLayoutManager!!.scrollToPositionWithOffset(
+                                                    recycler_view!!.getChildAdapterPosition(mView), 0)
+                                        }
+                                        false
+                                    })
                                     .withIdentifier(canti[i].idArgomento.toLong())
 
                             @Suppress("INACCESSIBLE_TYPE")
@@ -415,6 +414,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     companion object {
         private val TAG = ArgumentsSectionFragment::class.java.canonicalName
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
     }
 }

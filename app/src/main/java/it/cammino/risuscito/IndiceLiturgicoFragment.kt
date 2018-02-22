@@ -81,8 +81,8 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.getSource().text)
-            bundle.putInt("idCanto", item.getId())
+            bundle.putCharSequence("pagina", item.source!!.text)
+            bundle.putInt("idCanto", item.id)
 
             // lancia l'activity che visualizza il canto passando il parametro creato
             startSubActivity(bundle)
@@ -111,10 +111,10 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
                     for (i in canti.indices) {
                         val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(canti[i].titolo)
+                                .withTitle(canti[i].titolo!!)
                                 .withPage((canti[i].pagina).toString())
-                                .withSource(canti[i].source)
-                                .withColor(canti[i].color)
+                                .withSource(canti[i].source!!)
+                                .withColor(canti[i].color!!)
                                 .withId(canti[i].id)
 
                         simpleItem
@@ -130,16 +130,16 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                             val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
                             expandableItem
                                     .withTitle(canti[i].nome + " ($totCanti)")
-                                    .withOnClickListener { view, _, item, _ ->
-                                        if (item.isExpanded()) {
+                                    .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
+                                        if (mItem.isExpanded) {
                                             Log.d(
                                                     TAG,
-                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(view))
+                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView))
                                             mLayoutManager!!.scrollToPositionWithOffset(
-                                                    recycler_view!!.getChildAdapterPosition(view), 0)
+                                                    recycler_view!!.getChildAdapterPosition(mView), 0)
                                         }
                                         false
-                                    }
+                                    })
                                     .withIdentifier(canti[i].idIndice.toLong())
 
                             @Suppress("INACCESSIBLE_TYPE")
@@ -298,8 +298,8 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                         mCantiViewModel!!.idListaClick -= 100
 
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
+                                        .lista!!
+                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(
@@ -314,8 +314,8 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
+                                            .lista!!
+                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Thread(
@@ -418,6 +418,6 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     companion object {
         private val TAG = IndiceLiturgicoFragment::class.java.canonicalName
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
     }
 }

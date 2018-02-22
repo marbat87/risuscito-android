@@ -23,6 +23,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.content.edit
 import com.afollestad.materialdialogs.MaterialDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -156,9 +157,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
                             override fun onDismiss(view: View, token: Any?) {
                                 main_hint_layout.visibility = View.GONE
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA_2, true)}
                             }
                         }))
 
@@ -512,18 +514,20 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 Log.d(TAG, "onSequenceFinish: ")
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA, true)}
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA, true)}
                             }
                         })
                 .start()

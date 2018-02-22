@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import androidx.content.edit
 import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -157,9 +158,10 @@ class LUtils private constructor(private val mActivity: Activity) {
             Log.d(TAG, "onCreateView: $prefName STRING")
         } catch (e: ClassCastException) {
             Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
-            val editor = PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
-            editor.putString(prefName, pref.getInt(prefName, 0).toString())
-            editor.apply()
+//            val editor = PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
+//            editor.putString(prefName, pref.getInt(prefName, 0).toString())
+//            editor.apply()
+            PreferenceManager.getDefaultSharedPreferences(mActivity).edit{putString(prefName, pref.getInt(prefName, 0).toString())}
         }
 
     }

@@ -22,6 +22,7 @@ import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.content.edit
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -638,9 +639,10 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 .signOut()
                 .addOnCompleteListener {
                     updateUI(false)
-                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-                    editor.putBoolean(Utility.SIGNED_IN, false)
-                    editor.apply()
+//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
+//                    editor.putBoolean(Utility.SIGNED_IN, false)
+//                    editor.apply()
+                    PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
                     Snackbar.make(
                             findViewById(R.id.main_content),
                             R.string.disconnected,
@@ -656,9 +658,10 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 .revokeAccess()
                 .addOnCompleteListener {
                     updateUI(false)
-                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-                    editor.putBoolean(Utility.SIGNED_IN, false)
-                    editor.apply()
+//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
+//                    editor.putBoolean(Utility.SIGNED_IN, false)
+//                    editor.apply()
+                    PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
                     Snackbar.make(
                             findViewById(R.id.main_content),
                             R.string.disconnected,
@@ -687,9 +690,10 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         if (task.isSuccessful) {
             // Signed in successfully, show authenticated UI.
             acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
-            val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-            editor.putBoolean(Utility.SIGNED_IN, true)
-            editor.apply()
+//            val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
+//            editor.putBoolean(Utility.SIGNED_IN, true)
+//            editor.apply()
+            PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
             if (mViewModel!!.showSnackbar) {
                 Snackbar.make(
                         findViewById(R.id.main_content),

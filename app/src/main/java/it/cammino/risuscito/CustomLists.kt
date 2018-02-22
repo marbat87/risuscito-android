@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
+import androidx.content.edit
 import com.afollestad.materialdialogs.MaterialDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -345,18 +346,20 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 Log.d(TAG, "onSequenceFinish: ")
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
                             }
                         })
                 .start()
