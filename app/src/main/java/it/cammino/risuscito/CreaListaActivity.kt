@@ -99,7 +99,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             InputTextDialogFragment.Builder(
                     this@CreaListaActivity, this@CreaListaActivity, "RENAME")
                     .title(R.string.posizione_rename)
-                    .prefill(item.getName().text.toString())
+                    .prefill(item.name.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
                     .negativeButton(android.R.string.cancel)
                     .show()
@@ -160,7 +160,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 //                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
 //                                prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true)
 //                                prefEditor.apply()
-                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA_2, true)}
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                             }
                         }))
 
@@ -287,7 +287,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "saveList - elementi.size(): " + mAdapter!!.adapterItems.size)
         for (i in 0 until mAdapter!!.adapterItems.size) {
             mElement = mAdapter!!.getItem(i)
-            if (celebrazione!!.addPosizione(mElement.getName().text.toString()) == -2) {
+            if (celebrazione!!.addPosizione(mElement.name.text.toString()) == -2) {
                 Snackbar.make(
                         findViewById(android.R.id.content),
                         R.string.lista_pers_piena,
@@ -347,7 +347,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     elementi!!.add(
                             SwipeableItem()
                                     .withName(mEditText?.text?.toString() ?: "NULL")
-                                    .withTouchHelper(touchHelper)
+                                    .withTouchHelper(touchHelper!!)
                                     .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.add(elementi)
                     mAdapter!!.notifyItemInserted(0)
@@ -358,7 +358,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .add(
                                     SwipeableItem()
                                             .withName(mEditText?.text?.toString() ?: "NULL")
-                                            .withTouchHelper(touchHelper)
+                                            .withTouchHelper(touchHelper!!)
                                             .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.notifyAdapterItemInserted(mSize)
                 }
@@ -429,7 +429,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         // This can vary depending on direction but remove & archive simulated here both results in
         // removal from list
         val removeRunnable = Runnable {
-            item.setSwipedAction(null)
+            item.setSwipedAction(Runnable {})
             val mPosition = mAdapter!!.getAdapterPosition(item)
             if (mPosition != RecyclerView.NO_POSITION) {
                 // this sample uses a filter. If a filter is used we should use the methods provided
@@ -445,14 +445,13 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
         recycler_view!!.postDelayed(removeRunnable, 2000)
 
-        item.setSwipedAction {
+        item.setSwipedAction(Runnable {
             recycler_view!!.removeCallbacks(removeRunnable)
             item.setSwipedDirection(0)
             val mPosition = mAdapter!!.getAdapterPosition(item)
-            if (mPosition != RecyclerView.NO_POSITION) {
+            if (mPosition != RecyclerView.NO_POSITION)
                 mAdapter!!.notifyItemChanged(mPosition)
-            }
-        }
+        })
 
         mAdapter!!.notifyItemChanged(position)
     }
@@ -517,7 +516,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 //                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
 //                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
 //                                prefEditor.apply()
-                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA, true)}
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
@@ -527,7 +526,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 //                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
 //                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
 //                                prefEditor.apply()
-                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit{putBoolean(Utility.INTRO_CREALISTA, true)}
+                                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
                         })
                 .start()
@@ -553,7 +552,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             if (mViewModel!!.dataDrag != null) {
                 elementi = mViewModel!!.dataDrag
                 Log.d(TAG, "doInBackground: elementi size " + if (elementi != null) elementi!!.size else 0)
-                for (elemento in elementi!!) elemento.withTouchHelper(touchHelper)
+                for (elemento in elementi!!) elemento.withTouchHelper(touchHelper!!)
             } else {
                 elementi = ArrayList()
                 if (modifica) {
@@ -561,7 +560,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         elementi!!.add(
                                 SwipeableItem()
                                         .withName(celebrazione!!.getNomePosizione(i))
-                                        .withTouchHelper(touchHelper)
+                                        .withTouchHelper(touchHelper!!)
                                         .withIdentifier(Utility.random(0, 5000).toLong()))
                     }
                 }
