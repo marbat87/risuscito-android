@@ -69,8 +69,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
                             .language)
             Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
             if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                    .language
-                    .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
+                            .language
+                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
                 val i = baseContext
                         .packageManager
                         .getLaunchIntentForPackage(baseContext.packageName)
@@ -107,13 +107,14 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         Utility.setupTransparentTints(
                 this@ThemeableActivity, themeUtils!!.primaryColorDark(), hasNavDrawer)
 
-        if (LUtils.hasL()) {
-            // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
-            // list gets weird. We need to change either the icon or the color
-            // of the TaskDescription.
-            val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils!!.primaryColor())
-            setTaskDescription(taskDesc)
-        }
+//        if (LUtils.hasL()) {
+//            // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
+//            // list gets weird. We need to change either the icon or the color
+//            // of the TaskDescription.
+//            val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils!!.primaryColor())
+//            setTaskDescription(taskDesc)
+//        }
+        setTaskDescriptionWrapper(themeUtils!!)
 
         // Iconic
         LayoutInflaterCompat.setFactory2(
@@ -632,6 +633,17 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
     inner class NoPermissioneException internal constructor() : Exception("no permission for drive SCOPE_FILE or SCOPE_APPFOLDER")
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
+
+    private fun setTaskDescriptionWrapper(themeUtils: ThemeUtils) {
+        if (LUtils.hasL())
+            setTaskDescriptionL(themeUtils)
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun setTaskDescriptionL(themeUtils: ThemeUtils) {
+        val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils.primaryColor())
+        setTaskDescription(taskDesc)
+    }
 
     companion object {
         internal val TAG = ThemeableActivity::class.java.canonicalName
