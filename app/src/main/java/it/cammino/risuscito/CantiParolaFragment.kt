@@ -511,7 +511,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     }
 
     companion object {
-        private val TAG_INSERT_PAROLA = 333
+        private const val TAG_INSERT_PAROLA = 333
         private val TAG = CantiParolaFragment::class.java.canonicalName
     }
 }

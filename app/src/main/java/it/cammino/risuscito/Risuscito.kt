@@ -186,9 +186,9 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     companion object {
         private val TAG = Risuscito::class.java.canonicalName
-        val BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE"
-        val DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE"
-        private val VERSION_KEY = "PREFS_VERSION_KEY"
-        private val NO_VERSION = ""
+        const val BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE"
+        const val DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE"
+        private const val VERSION_KEY = "PREFS_VERSION_KEY"
+        private const val NO_VERSION = ""
     }
 }

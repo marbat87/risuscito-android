@@ -7,7 +7,6 @@ import android.content.*
 import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
@@ -666,8 +665,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val convMap = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
                 var convMin: HashMap<String, String>? = null
                 if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                        .language
-                        .equals("uk", ignoreCase = true))
+                                .language
+                                .equals("uk", ignoreCase = true))
                     convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
                 saveZoom(false, false)
                 if (convMap != null) {
@@ -709,8 +708,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val convMap1 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
                 var convMin1: HashMap<String, String>? = null
                 if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                        .language
-                        .equals("uk", ignoreCase = true))
+                                .language
+                                .equals("uk", ignoreCase = true))
                     convMin1 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
                 saveZoom(false, false)
                 if (convMap1 != null) {
@@ -730,8 +729,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val convMap2 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
                     var convMin2: HashMap<String, String>? = null
                     if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language
-                            .equals("uk", ignoreCase = true))
+                                    .language
+                                    .equals("uk", ignoreCase = true))
                         convMin2 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
                     saveZoom(false, false)
                     if (convMap2 != null) {
@@ -750,8 +749,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val convMap3 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
                     var convMin3: HashMap<String, String>? = null
                     if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language
-                            .equals("uk", ignoreCase = true))
+                                    .language
+                                    .equals("uk", ignoreCase = true))
                         convMin3 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
                     saveZoom(false, false)
                     if (convMap3 != null) {
@@ -1029,9 +1028,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK")
         if (Utility.isExternalStorageWritable) {
             if (File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-                    "Risuscitò")
-                    .mkdirs())
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                            "Risuscitò")
+                            .mkdirs())
                 Log.d(TAG, "CARTELLA RISUSCITO CREATA")
             else
                 Log.d(TAG, "CARTELLA RISUSCITO ESISTENTE")
@@ -1146,7 +1145,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"))
                 if (saveLocation == 1) {
                     if (EasyPermissions.hasPermissions(
-                            this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                                    this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE))
                     // Have permission, do the thing!
                         startExternalDownload()
                     else {
@@ -1493,7 +1492,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"))
             if (saveLocation == 1) {
                 localUrl = if (EasyPermissions.hasPermissions(
-                        this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // Have permission, do the thing!
                     Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, true)
                 } else {
@@ -1581,8 +1580,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val convMap = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
             var convMin: HashMap<String, String>? = null
             if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                    .language
-                    .equals("uk", ignoreCase = true))
+                            .language
+                            .equals("uk", ignoreCase = true))
                 convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel!!.barreCambio, convMin, true)
@@ -1671,7 +1670,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     companion object {
         internal val TAG = PaginaRenderActivity::class.java.canonicalName
-        private val PROGRESS_UPDATE_INTERNAL: Long = 1000
-        private val PROGRESS_UPDATE_INITIAL_INTERVAL: Long = 100
+        private const val PROGRESS_UPDATE_INTERNAL: Long = 1000
+        private const val PROGRESS_UPDATE_INITIAL_INTERVAL: Long = 100
     }
 }

@@ -117,7 +117,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         for (i in accordi.indices) {
             Log.v(TAG, "diffSemiToni - NUOVO: " + (i + differenza) % 12)
             Log.v(TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i + differenza) % 12])
-            mappa.put(accordi[i], accordi[(i + differenza) % 12])
+            mappa[accordi[i]] = accordi[(i + differenza) % 12]
         }
         return mappa
     }
@@ -168,7 +168,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                             + accordi_uk_lower[i]
                             + " in "
                             + accordi_uk_lower[(i + differenza) % 12])
-            mappa.put(accordi_uk_lower[i], accordi_uk_lower[(i + differenza) % 12])
+            mappa[accordi_uk_lower[i]] = accordi_uk_lower[(i + differenza) % 12]
         }
         return mappa
     }
@@ -181,7 +181,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         internal val barre_it = arrayOf("I", "II", "III", "IV", "V", "VI", "VII")
         internal val barre_uk = arrayOf("I", "II", "III", "IV", "V", "VI", "VII")
         internal val barre_en = arrayOf("1", "2", "3", "4", "5", "6", "7")
-        private val TAG = "CambioAccordi"
+        private val TAG = CambioAccordi::class.java.canonicalName
         private val accordi_uk_lower = arrayOf("c", "cis", "d", "eb", "e", "f", "fis", "g", "gis", "a", "b", "h")
 
         internal fun recuperaPrimoAccordo(canto: InputStream?, language: String): String {

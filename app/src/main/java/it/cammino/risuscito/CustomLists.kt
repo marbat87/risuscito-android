@@ -447,8 +447,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     companion object {
-        val TAG_CREA_LISTA = 111
-        val TAG_MODIFICA_LISTA = 222
+        const val TAG_CREA_LISTA = 111
+        const val TAG_MODIFICA_LISTA = 222
         private val TAG = CustomLists::class.java.canonicalName
     }
 }

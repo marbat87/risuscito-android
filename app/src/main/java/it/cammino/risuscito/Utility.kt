@@ -15,36 +15,36 @@ import java.util.*
 object Utility {
 
     // Costanti per le impostazioni
-    val SCREEN_ON = "sempre_acceso"
-    val SYSTEM_LANGUAGE = "lingua_sistema"
-    val DB_RESET = "db_reset"
-    val CHANGE_LANGUAGE = "changed"
-    val CLICK_DELAY: Long = 1000
+    const val SCREEN_ON = "sempre_acceso"
+    const val SYSTEM_LANGUAGE = "lingua_sistema"
+    const val DB_RESET = "db_reset"
+    const val CHANGE_LANGUAGE = "changed"
+    const val CLICK_DELAY: Long = 1000
     //    val TRANS_PAGINA_RENDER = "paginarender"
-    internal val SHOW_SECONDA = "mostra_seconda_lettura"
-    internal val SHOW_PACE = "mostra_canto_pace"
-    internal val SAVE_LOCATION = "memoria_salvataggio_scelta"
-    internal val DEFAULT_INDEX = "indice_predefinito"
-    internal val SHOW_SANTO = "mostra_santo"
-    internal val SHOW_AUDIO = "mostra_audio"
-    internal val SIGNED_IN = "signed_id"
-    internal val SHOW_OFFERTORIO = "mostra_canto_offertorio"
-    internal val PREFERITI_OPEN = "preferiti_open"
-    internal val HISTORY_OPEN = "history_open"
-    internal val INTRO_CONSEGNATI = "intro_consegnati_test"
-    internal val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
-    internal val INTRO_PAGINARENDER = "intro_paginarender_test"
-    internal val INTRO_CREALISTA = "intro_crealista_test"
-    internal val INTRO_CREALISTA_2 = "intro_crealista_2_test"
-    internal val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
-    internal val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
-    internal val CLICK_DELAY_SELECTION: Long = 300
+    internal const val SHOW_SECONDA = "mostra_seconda_lettura"
+    internal const val SHOW_PACE = "mostra_canto_pace"
+    internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"
+    internal const val DEFAULT_INDEX = "indice_predefinito"
+    internal const val SHOW_SANTO = "mostra_santo"
+    internal const val SHOW_AUDIO = "mostra_audio"
+    internal const val SIGNED_IN = "signed_id"
+    internal const val SHOW_OFFERTORIO = "mostra_canto_offertorio"
+    internal const val PREFERITI_OPEN = "preferiti_open"
+    internal const val HISTORY_OPEN = "history_open"
+    internal const val INTRO_CONSEGNATI = "intro_consegnati_test"
+    internal const val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
+    internal const val INTRO_PAGINARENDER = "intro_paginarender_test"
+    internal const val INTRO_CREALISTA = "intro_crealista_test"
+    internal const val INTRO_CREALISTA_2 = "intro_crealista_2_test"
+    internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
+    internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
+    internal const val CLICK_DELAY_SELECTION: Long = 300
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
-    internal val URL_CANTO = "urlCanto"
-    internal val SPEED_VALUE = "speedValue"
-    internal val SCROLL_PLAYING = "scrollPlaying"
-    internal val ID_CANTO = "idCanto"
-    const internal val WRITE_STORAGE_RC = 123
+    internal const val URL_CANTO = "urlCanto"
+    internal const val SPEED_VALUE = "speedValue"
+    internal const val SCROLL_PLAYING = "scrollPlaying"
+    internal const val ID_CANTO = "idCanto"
+    internal const val WRITE_STORAGE_RC = 123
 
     /* Checks if external storage is available for read and write */
     internal val isExternalStorageWritable: Boolean

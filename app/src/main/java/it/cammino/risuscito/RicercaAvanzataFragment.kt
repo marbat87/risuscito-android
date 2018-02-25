@@ -534,6 +534,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     companion object {
         private val TAG = RicercaAvanzataFragment::class.java.canonicalName
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
     }
 }

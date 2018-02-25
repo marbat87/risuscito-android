@@ -436,6 +436,6 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
-        private val TAG_INSERT_PERS = 555
+        private const val TAG_INSERT_PERS = 555
     }
 }

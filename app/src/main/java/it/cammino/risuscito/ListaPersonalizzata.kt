@@ -101,7 +101,7 @@ class ListaPersonalizzata : Serializable {
 
     companion object {
 
-        private val MAX_POSIZIONI = 30
+        private const val MAX_POSIZIONI = 30
         internal const val serialVersionUID = 123456789L
 
         fun serializeObject(o: Any): ByteArray? {

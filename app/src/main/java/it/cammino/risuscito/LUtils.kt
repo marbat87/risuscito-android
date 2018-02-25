@@ -182,7 +182,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     companion object {
 
         private val INTERPOLATOR = FastOutSlowInInterpolator()
-        private val FILE_FORMAT = ".risuscito"
+        private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
 
         fun getInstance(activity: Activity): LUtils {

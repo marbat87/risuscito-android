@@ -279,9 +279,9 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
 
     companion object {
         private val TAG = DonateActivity::class.java.canonicalName
-        private val SKU_1_EURO = "sku_consumable_1_euro"
-        private val SKU_5_EURO = "sku_consumable_5_euro"
-        private val SKU_10_EURO = "sku_consumable_10_euro"
+        private const val SKU_1_EURO = "sku_consumable_1_euro"
+        private const val SKU_5_EURO = "sku_consumable_5_euro"
+        private const val SKU_10_EURO = "sku_consumable_10_euro"
     }
 
 }

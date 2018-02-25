@@ -386,7 +386,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     companion object {
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
         private val TAG = SalmiSectionFragment::class.java.canonicalName
     }
 }

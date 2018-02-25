@@ -546,7 +546,7 @@ class CantiEucarestiaFragment : Fragment(), MaterialCab.Callback {
 
     companion object {
 
-        private val TAG_INSERT_EUCARESTIA = 444
+        private const val TAG_INSERT_EUCARESTIA = 444
         private val TAG = CantiEucarestiaFragment::class.java.canonicalName
     }
 }

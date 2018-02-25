@@ -120,9 +120,9 @@ internal class CantiXmlParser {
 
     companion object {
         private val ns: String? = null
-        private val CANTI = "canti"
-        private val CANTO = "canto"
-        private val TITOLO = "titolo"
-        private val TESTO = "testo"
+        private const val CANTI = "canti"
+        private const val CANTO = "canto"
+        private const val TITOLO = "titolo"
+        private const val TESTO = "testo"
     }
 }

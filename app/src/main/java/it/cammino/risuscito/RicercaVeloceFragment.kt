@@ -535,7 +535,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     }
 
     companion object {
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
         private val TAG = RicercaVeloceFragment::class.java.canonicalName
     }
 

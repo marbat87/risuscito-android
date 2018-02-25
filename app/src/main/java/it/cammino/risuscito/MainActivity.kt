@@ -538,7 +538,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         }
 
         val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.accordi_it.indices) mappa.put(accordi1[i], accordi2[i])
+        for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
@@ -580,7 +580,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         }
 
         val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.barre_it.indices) mappa.put(barre1[i], barre2[i])
+        for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
@@ -965,9 +965,9 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
     companion object {
         /* Request code used to invoke sign in user interactions. */
-        private val RC_SIGN_IN = 9001
-        private val PREF_DRIVE_FILE_NAME = "preferences_backup"
-        private val PROF_ID = 5428471L
+        private const val RC_SIGN_IN = 9001
+        private const val PREF_DRIVE_FILE_NAME = "preferences_backup"
+        private const val PROF_ID = 5428471L
         private val TAG = MainActivity::class.java.canonicalName
     }
 }

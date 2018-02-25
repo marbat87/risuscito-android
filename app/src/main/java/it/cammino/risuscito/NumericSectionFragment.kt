@@ -472,7 +472,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     companion object {
         private val TAG = NumericSectionFragment::class.java.canonicalName
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
     }
 }
 
