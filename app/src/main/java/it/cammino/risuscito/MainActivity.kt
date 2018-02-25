@@ -451,7 +451,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
             // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
             // method returns the view to be used in the crossfader)
-            crossFader = Crossfader<MyClass>()
+            crossFader = Crossfader<MyCrossfaderClass>()
                     .withContent(findViewById<View>(R.id.main_frame))
                     .withFirst(drawer!!.slider, firstWidth)
                     .withSecond(mMiniDrawer!!.build(this), secondWidth)
@@ -953,7 +953,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         }
     }
 
-    private inner class MyClass(context: Context) : SlidingPaneLayout(context), ICrossFadeSlidingPaneLayout {
+    private inner class MyCrossfaderClass(context: Context) : SlidingPaneLayout(context), ICrossFadeSlidingPaneLayout {
         override fun setCanSlide(canSlide: Boolean) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }

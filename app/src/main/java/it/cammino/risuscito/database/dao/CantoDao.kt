@@ -61,9 +61,9 @@ interface CantoDao {
             scrollX: Int,
             scrollY: Int,
             favorite: Int,
-            savedTab: String,
-            savedBarre: String,
-            savedSpeed: String)
+            savedTab: String?,
+            savedBarre: String?,
+            savedSpeed: String?)
 
     class Backup {
         var id: Int = 0

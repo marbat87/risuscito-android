@@ -80,9 +80,9 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             backupCanto.scrollX,
                             backupCanto.scrollY,
                             backupCanto.favorite,
-                            backupCanto.savedTab!!,
-                            backupCanto.savedBarre!!,
-                            backupCanto.savedSpeed!!)
+                            backupCanto.savedTab,
+                            backupCanto.savedBarre,
+                            backupCanto.savedSpeed)
         // cancella dalle liste predefinite i canti inesistenti
         val customLists = customListDao().all
         for (position in customLists) {
