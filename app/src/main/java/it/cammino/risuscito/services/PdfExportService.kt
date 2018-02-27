@@ -10,12 +10,12 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
-import com.pdfjet.*
 import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.marbat.pdfjet.lib.*
 import java.io.*
 import java.util.*
 import java.util.regex.Pattern
@@ -277,19 +277,19 @@ class PdfExportService : IntentService("PdfExportService") {
 
     companion object {
         internal val TAG = PdfExportService::class.java.canonicalName
-        val BROADCAST_EXPORT_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_ERROR"
-        val BROADCAST_EXPORT_COMPLETED = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_COMPLETED"
-        val DATA_PRIMA_NOTA = "it.cammino.risuscito.services.data.DATA_PRIMA_NOTA"
-        val DATA_NOTA_CAMBIO = "it.cammino.risuscito.services.data.DATA_NOTA_CAMBIO"
-        val DATA_BARRE_CAMBIO = "it.cammino.risuscito.services.data.DATA_BARRE_CAMBIO"
-        val DATA_PAGINA = "it.cammino.risuscito.services.data.DATA_PAGINA"
-        val DATA_PRIMO_BARRE = "it.cammino.risuscito.services.data.PRIMO_BARRE"
-        val DATA_EXPORT_ERROR = "it.cammino.risuscito.services.data.DATA_EXPORT_ERROR"
-        val DATA_PDF_PATH = "it.cammino.risuscito.services.data.DATA_PDF_PATH"
-        val DATA_LINGUA = "it.cammino.risuscito.services.data.DATA_LINGUA"
-        private val mFont = "fonts/DroidSansMono.ttf.stream"
-        private val START_X = 25f
-        private val START_Y = 25f
+        const val BROADCAST_EXPORT_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_ERROR"
+        const val BROADCAST_EXPORT_COMPLETED = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_COMPLETED"
+        const val DATA_PRIMA_NOTA = "it.cammino.risuscito.services.data.DATA_PRIMA_NOTA"
+        const val DATA_NOTA_CAMBIO = "it.cammino.risuscito.services.data.DATA_NOTA_CAMBIO"
+        const val DATA_BARRE_CAMBIO = "it.cammino.risuscito.services.data.DATA_BARRE_CAMBIO"
+        const val DATA_PAGINA = "it.cammino.risuscito.services.data.DATA_PAGINA"
+        const val DATA_PRIMO_BARRE = "it.cammino.risuscito.services.data.PRIMO_BARRE"
+        const val DATA_EXPORT_ERROR = "it.cammino.risuscito.services.data.DATA_EXPORT_ERROR"
+        const val DATA_PDF_PATH = "it.cammino.risuscito.services.data.DATA_PDF_PATH"
+        const val DATA_LINGUA = "it.cammino.risuscito.services.data.DATA_LINGUA"
+        private const val mFont = "fonts/DroidSansMono.ttf.stream"
+        private const val START_X = 25f
+        private const val START_Y = 25f
     }
 
     @Suppress("DEPRECATION")

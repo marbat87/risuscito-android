@@ -68,7 +68,7 @@ dependencies {
     // ViewModel and LiveData
     implementation 'android.arch.lifecycle:extensions:1.1.0'
     implementation 'com.simplecityapps:recyclerview-fastscroll:1.0.17'
-    implementation project(':PDFJet')
+    implementation 'it.marbat.pdfjet.lib:lib:1.0.0'
     implementation 'androidx.core:core-ktx:0.1'
 }
 

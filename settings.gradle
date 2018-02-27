@@ -1,1 +1,1 @@
-include ':app', ':PDFJet'
+include ':app'
