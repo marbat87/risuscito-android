@@ -30,11 +30,13 @@ class RisuscitoApplication : MultiDexApplication() {
         DrawerImageLoader.init(
                 object : AbstractDrawerImageLoader() {
                     override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable, tag: String?) {
-                        Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
+//                        Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
+                        Picasso.get().load(uri).placeholder(placeholder).into(imageView)
                     }
 
                     override fun cancel(imageView: ImageView?) {
-                        Picasso.with(imageView!!.context).cancelRequest(imageView)
+//                        Picasso.with(imageView!!.context).cancelRequest(imageView)
+                        Picasso.get().cancelRequest(imageView!!)
                     }
                 })
     }

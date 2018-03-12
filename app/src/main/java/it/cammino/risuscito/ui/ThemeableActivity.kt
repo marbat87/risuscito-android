@@ -59,7 +59,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-        Log.d(TAG, "onSharedPreferenceChanged: " + s)
+        Log.d(TAG, "onSharedPreferenceChanged: $s")
         if (s.equals("primary_color", ignoreCase = true))
             Log.d(TAG, "onSharedPreferenceChanged: primary_color" + sharedPreferences.getInt(s, 0))
         if (s == Utility.SYSTEM_LANGUAGE) {
@@ -207,9 +207,9 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         // fond dimension
         try {
             val actualScale = mNewBase.resources.configuration.fontScale
-            Log.d(TAG, "actualScale: " + actualScale)
+            Log.d(TAG, "actualScale: $actualScale")
             val systemScale = Settings.System.getFloat(contentResolver, Settings.System.FONT_SCALE)
-            Log.d(TAG, "systemScale: " + systemScale)
+            Log.d(TAG, "systemScale: $systemScale")
             if (actualScale != systemScale) {
                 config.fontScale = systemScale
             }
@@ -324,18 +324,18 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val file = newDbPath
         if (folder != null && titl != null && (!dataBase || file != null)) {
             // create content from file
-            Log.d(javaClass.name, "saveCheckDupl - dataBase? " + dataBase)
-            Log.d(javaClass.name, "saveCheckDupl - title: " + titl)
+            Log.d(javaClass.name, "saveCheckDupl - dataBase? $dataBase")
+            Log.d(javaClass.name, "saveCheckDupl - title: $titl")
             val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build()
 
             // task di recupero metadata del file se già presente
             val metadataBuffer = Tasks.await(client.query(query))
 
             val count = metadataBuffer.count
-            Log.d(javaClass.name, "saveCheckDupl - Count files old: " + count)
+            Log.d(javaClass.name, "saveCheckDupl - Count files old: $count")
             if (count > 0) {
                 val mDriveId = metadataBuffer.get(count - 1).driveId
-                Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: " + mDriveId)
+                Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: $mDriveId")
                 Log.d(
                         javaClass.name,
                         "saveCheckDupl - filesize in cloud " + metadataBuffer.get(0).fileSize)
@@ -404,7 +404,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             if (driveFile != null) {
                 val metadata = Tasks.await(client.getMetadata(driveFile))
                 val mDriveId = metadata.driveId
-                Log.d(javaClass.name, "driveIdSaved: " + mDriveId)
+                Log.d(javaClass.name, "driveIdSaved: $mDriveId")
                 val error = "saveToDrive - FILE CARICATO"
                 Log.d(javaClass.name, error)
             }
@@ -429,7 +429,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val folder = Tasks.await(client.appFolder)
         if (folder != null && titl != null) {
             // create content from file
-            Log.d(javaClass.name, "checkDupl - title: " + titl)
+            Log.d(javaClass.name, "checkDupl - title: $titl")
             val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build()
 
             // task di recupero metadata del file se già presente
@@ -437,7 +437,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
             val count = metadataBuffer.count
             metadataBuffer.release()
-            Log.d(javaClass.name, "checkDupl - Count files old: " + count)
+            Log.d(javaClass.name, "checkDupl - Count files old: $count")
             fileFound = count > 0
         }
         return fileFound
@@ -460,10 +460,10 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val metadataBuffer = Tasks.await(client.query(query))
 
         val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreNewDriveBackup - Count files backup: " + count)
+        Log.d(javaClass.name, "restoreNewDriveBackup - Count files backup: $count")
         if (count > 0) {
             val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreNewDriveBackup - driveIdRetrieved: " + mDriveId)
+            Log.d(javaClass.name, "restoreNewDriveBackup - driveIdRetrieved: $mDriveId")
             Log.d(
                     javaClass.name,
                     "restoreNewDriveBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
@@ -479,7 +479,6 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             val path = dbFile!!.path
 
             if (!dbFile.exists())
-
                 dbFile.delete()
 
             dbFile = File(path)
@@ -528,10 +527,10 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val metadataBuffer = Tasks.await(client.query(query))
 
         val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreOldDriveBackup - Count files backup: " + count)
+        Log.d(javaClass.name, "restoreOldDriveBackup - Count files backup: $count")
         if (count > 0) {
             val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreOldDriveBackup - driveIdRetrieved: " + mDriveId)
+            Log.d(javaClass.name, "restoreOldDriveBackup - driveIdRetrieved: $mDriveId")
             Log.d(
                     javaClass.name,
                     "restoreOldDriveBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
@@ -588,7 +587,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
     @Throws(NoPermissioneException::class, ExecutionException::class, InterruptedException::class, NoBackupException::class)
     fun restoreDrivePrefBackup(title: String) {
-        Log.d(javaClass.name, "restoreDrivePrefBackup - pref title: " + title)
+        Log.d(javaClass.name, "restoreDrivePrefBackup - pref title: $title")
         val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build()
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -600,10 +599,10 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val metadataBuffer = Tasks.await(client.query(query))
 
         val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreDrivePrefBackup - Count files backup: " + count)
+        Log.d(javaClass.name, "restoreDrivePrefBackup - Count files backup: $count")
         if (count > 0) {
             val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreDrivePrefBackup - driveIdRetrieved: " + mDriveId)
+            Log.d(javaClass.name, "restoreDrivePrefBackup - driveIdRetrieved: $mDriveId")
             Log.d(
                     javaClass.name,
                     "restoreDrivePrefBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)

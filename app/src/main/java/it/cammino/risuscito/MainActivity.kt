@@ -104,21 +104,23 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 Log.v(TAG, "BROADCAST_LAST_STEP")
                 if (intent.getStringExtra("WHICH") != null) {
                     val which = intent.getStringExtra("WHICH")
-                    Log.v(TAG, "NEXT_STEP: " + which)
+                    Log.v(TAG, "NEXT_STEP: $which")
                     if (which.equals("RESTORE", ignoreCase = true)) {
                         dismissDialog("RESTORE_RUNNING")
-                        SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
-                                .title(R.string.general_message)
-                                .content(R.string.gdrive_restore_success)
-                                .positiveButton(android.R.string.ok)
-                                .show()
+                        if (intent.getBooleanExtra("RESULT", false))
+                            SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
+                                    .title(R.string.general_message)
+                                    .content(R.string.gdrive_restore_success)
+                                    .positiveButton(android.R.string.ok)
+                                    .show()
                     } else {
                         dismissDialog("BACKUP_RUNNING")
-                        Snackbar.make(
-                                findViewById(R.id.main_content),
-                                R.string.gdrive_backup_success,
-                                Snackbar.LENGTH_LONG)
-                                .show()
+                        if (intent.getBooleanExtra("RESULT", false))
+                            Snackbar.make(
+                                    findViewById(R.id.main_content),
+                                    R.string.gdrive_backup_success,
+                                    Snackbar.LENGTH_LONG)
+                                    .show()
                     }
                 }
             } catch (e: IllegalArgumentException) {
@@ -897,36 +899,37 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class BackupTask : AsyncTask<Void, Void, Void>() {
+    private inner class BackupTask : AsyncTask<Void, Void, Boolean>() {
 
-        override fun doInBackground(vararg sUrl: Void): Void? {
+        override fun doInBackground(vararg sUrl: Void): Boolean {
             try {
                 checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
                 sendBroadcast(intentBroadcast)
                 checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false)
+                return true
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
                 val error = "error: " + e.localizedMessage
                 Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
+                return false
             }
-
-            return null
         }
 
-        override fun onPostExecute(result: Void?) {
+        override fun onPostExecute(result: Boolean) {
             super.onPostExecute(result)
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "BACKUP")
+            intentBroadcast.putExtra("RESULT", result)
             sendBroadcast(intentBroadcast)
         }
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class RestoreTask : AsyncTask<Void, Void, Void>() {
+    private inner class RestoreTask : AsyncTask<Void, Void, Boolean>() {
 
-        override fun doInBackground(vararg sUrl: Void): Void? {
+        override fun doInBackground(vararg sUrl: Void): Boolean {
             try {
                 if (checkDupl(RisuscitoDatabase.dbName))
                     restoreNewDbBackup()
@@ -936,19 +939,20 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 intentBroadcast.putExtra("WHICH", "RESTORE")
                 sendBroadcast(intentBroadcast)
                 restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME)
+                return true
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
                 val error = "error: " + e.localizedMessage
                 Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
+                return false
             }
-
-            return null
         }
 
-        override fun onPostExecute(result: Void?) {
+        override fun onPostExecute(result: Boolean) {
             super.onPostExecute(result)
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "RESTORE")
+            intentBroadcast.putExtra("RESULT", result)
             sendBroadcast(intentBroadcast)
         }
     }
