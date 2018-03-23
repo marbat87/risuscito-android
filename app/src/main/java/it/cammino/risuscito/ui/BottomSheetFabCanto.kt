@@ -56,8 +56,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
         mTextView.setText(R.string.fullscreen)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + FULLSCREEN)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $FULLSCREEN")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, FULLSCREEN)
             activity!!.sendBroadcast(intentBroadcast)
@@ -75,8 +75,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
         mTextView.setText(if (mSound) R.string.audio_off else R.string.audio_on)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + SOUND)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $SOUND")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SOUND)
             activity!!.sendBroadcast(intentBroadcast)
@@ -111,8 +111,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
 
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + SAVE_FILE)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $SAVE_FILE")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SAVE_FILE)
             activity!!.sendBroadcast(intentBroadcast)
@@ -130,8 +130,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
         mTextView.setText(if (mFavorite) R.string.favorite_off else R.string.favorite_on)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + FAVORITE)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $FAVORITE")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, FAVORITE)
             activity!!.sendBroadcast(intentBroadcast)
@@ -153,13 +153,13 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
 
     companion object {
         private val TAG = BottomSheetFabCanto::class.java.canonicalName
-        val CHOOSE_DONE = "canto_choose_done"
-        val DATA_ITEM_ID = "item_id"
+        const val CHOOSE_DONE = "canto_choose_done"
+        const val DATA_ITEM_ID = "item_id"
 
-        val FULLSCREEN = 1
-        val SOUND = 2
-        val SAVE_FILE = 3
-        val FAVORITE = 4
+        const val FULLSCREEN = 1
+        const val SOUND = 2
+        const val SAVE_FILE = 3
+        const val FAVORITE = 4
 
         fun newInstance(sound: Boolean, download: Boolean, favorite: Boolean, onlineUrl: Boolean, personalUrl: Boolean): BottomSheetFabCanto {
             val frag = BottomSheetFabCanto()

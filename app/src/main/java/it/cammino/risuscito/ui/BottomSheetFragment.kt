@@ -57,11 +57,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val mList = list.map { BottomSheetItem().withItem(it) }
 
         val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
-            //            val editor = PreferenceManager
-//                    .getDefaultSharedPreferences(activity)
-//                    .edit()
-//            editor.putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName)
-//            editor.apply()
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
 
             val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)

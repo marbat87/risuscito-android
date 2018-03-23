@@ -261,11 +261,11 @@ class XmlImportService : IntentService("XmlImportService") {
     }
 
     companion object {
-        internal val NOTIFICATION_ID = 2
+        internal const val NOTIFICATION_ID = 2
         internal val TAG = XMLFilterImpl::class.java.canonicalName
-        val ACTION_URL = "it.cammino.risuscito.import.action.URL"
-        val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
-        private val CHANNEL_ID = "itcr_import_channel"
+        const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
+        const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
+        private const val CHANNEL_ID = "itcr_import_channel"
         // We don't use namespaces
         private val ns: String? = null
     }

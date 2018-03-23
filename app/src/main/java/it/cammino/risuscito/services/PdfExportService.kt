@@ -92,7 +92,7 @@ class PdfExportService : IntentService("PdfExportService") {
         }
         try {
             localPDFPath = cacheDir.absolutePath + "/output.pdf"
-            Log.d(javaClass.toString(), "localPath:" + localPDFPath)
+            Log.d(javaClass.toString(), "localPath:$localPDFPath")
             pdf = PDF(BufferedOutputStream(FileOutputStream(localPDFPath)))
             page = Page(pdf, A4.PORTRAIT)
             val f1 = Font(pdf, resources.assets.open(mFont), Font.STREAM)
@@ -151,7 +151,7 @@ class PdfExportService : IntentService("PdfExportService") {
 
             } catch (e: IOException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
-                Log.e(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_ERROR)
+                Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
                 val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
                 intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
                 sendBroadcast(intentBroadcast)
@@ -161,21 +161,21 @@ class PdfExportService : IntentService("PdfExportService") {
             pdf!!.close()
         } catch (e: FileNotFoundException) {
             Log.e(javaClass.name, e.localizedMessage, e)
-            Log.e(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_ERROR)
+            Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
             val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
             intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
             sendBroadcast(intentBroadcast)
             return
         } catch (e: Exception) {
             Log.e(javaClass.name, e.localizedMessage, e)
-            Log.e(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_ERROR)
+            Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
             val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
             intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
             sendBroadcast(intentBroadcast)
             return
         }
 
-        Log.d(TAG, "Sending broadcast notification: " + BROADCAST_EXPORT_COMPLETED)
+        Log.d(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_COMPLETED")
         val intentBroadcast = Intent(BROADCAST_EXPORT_COMPLETED)
         intentBroadcast.putExtra(DATA_PDF_PATH, localPDFPath)
         sendBroadcast(intentBroadcast)
@@ -192,7 +192,7 @@ class PdfExportService : IntentService("PdfExportService") {
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open(pagina + ".htm"), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(assets.open("$pagina.htm"), "UTF-8"))
 
             var line: String? = br.readLine()
 
@@ -213,7 +213,7 @@ class PdfExportService : IntentService("PdfExportService") {
             }
 
             while (line != null) {
-                Log.d(javaClass.name, "RIGA DA ELAB: " + line)
+                Log.d(javaClass.name, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
                     if (mLingua.equals("uk", ignoreCase = true) || mLingua.equals("en", ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")

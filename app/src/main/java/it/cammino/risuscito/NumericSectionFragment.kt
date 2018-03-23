@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -19,6 +20,7 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
@@ -28,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.NumericIndexViewModel
-import kotlinx.android.synthetic.main.index_fragment.*
+import kotlinx.android.synthetic.main.numeric_index_fragment.*
 
 class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -46,7 +48,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.numeric_index_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<NumericIndexViewModel>(NumericIndexViewModel::class.java)
 
@@ -87,18 +89,26 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             true
         }
 
-        cantiList!!.layoutManager = LinearLayoutManager(activity)
+        val mMainActivity = activity as MainActivity?
+
+//        numeric_cantiList!!.layoutManager = LinearLayoutManager(activity)
         mAdapter = FastScrollIndicatorAdapter(1)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-        cantiList!!.adapter = mAdapter
-        val llm = LinearLayoutManager(context)
-        cantiList!!.layoutManager = llm
-        cantiList!!.setHasFixedSize(true)
+//        val llm = LinearLayoutManager(context)
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
+        numeric_cantiList!!.layoutManager = llm
+        numeric_cantiList!!.setHasFixedSize(true)
+        numeric_cantiList!!.adapter = mAdapter
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        cantiList!!.addItemDecoration(insetDivider)
+        numeric_cantiList!!.addItemDecoration(insetDivider)
+        numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
+        numeric_dragScrollBar.setAutoHide(false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -238,8 +248,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
                     mCantiViewModel!!.idListaClick -= 100
                     if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                            .lista!!
-                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
+                                    .lista!!
+                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                         listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                 .lista!!
                                 .addCanto(
@@ -254,8 +264,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                 .start()
                     } else {
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
+                                        .lista!!
+                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                             Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                         } else {
                             Thread(
@@ -381,7 +391,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
     //  }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "NUMERIC_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]

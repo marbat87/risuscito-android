@@ -266,7 +266,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val target = Intent(Intent.ACTION_VIEW)
             val pdfUri = FileProvider.getUriForFile(
                     this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file)
-            Log.d(TAG, "pdfUri: " + pdfUri)
+            Log.d(TAG, "pdfUri: $pdfUri")
             target.setDataAndType(pdfUri, "application/pdf")
             target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
             val intent2 = Intent.createChooser(target, getString(R.string.open_pdf))
@@ -389,7 +389,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, MusicService.MSG_RETRIEVE_DONE)
                 val done = intent.getBooleanExtra(MusicService.MSG_RETRIEVE_DONE, false)
-                Log.d(TAG, "MSG_RETRIEVE_DONE: " + done)
+                Log.d(TAG, "MSG_RETRIEVE_DONE: $done")
                 mViewModel!!.retrieveDone = done
                 showPlaying(false)
                 play_song.isEnabled = done
@@ -502,7 +502,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val controller = MediaControllerCompat.getMediaController(this)
             val stateObj = controller.playbackState
             val state = stateObj?.state ?: PlaybackStateCompat.STATE_NONE
-            Log.d(TAG, "playPause: Button pressed, in state " + state)
+            Log.d(TAG, "playPause: Button pressed, in state $state")
 
             if (state == PlaybackStateCompat.STATE_STOPPED || state == PlaybackStateCompat.STATE_NONE) {
                 playFromId(idCanto.toString())
@@ -671,7 +671,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(false, false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel!!.barreCambio, convMin, true)
-                    if (nuovoFile != null) cantoView.loadUrl("file://" + nuovoFile)
+                    if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
                 } else {
                     cantoView.loadUrl("file:///android_asset/$pagina.htm")
                 }
@@ -714,7 +714,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(false, false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel!!.barreCambio, convMin1, true)
-                    if (nuovoFile != null) cantoView.loadUrl("file://" + nuovoFile)
+                    if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
                 } else {
                     cantoView.loadUrl("file:///android_asset/$pagina.htm")
                 }
@@ -735,7 +735,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(false, false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel!!.barreCambio, convMin2, true)
-                        if (nuovoFile != null) cantoView.loadUrl("file://" + nuovoFile)
+                        if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
                     } else {
                         cantoView.loadUrl("file:///android_asset/$pagina.htm")
                     }
@@ -755,7 +755,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(false, false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel!!.barreCambio, convMin3, true)
-                        if (nuovoFile != null) cantoView.loadUrl("file://" + nuovoFile)
+                        if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
                     } else {
                         cantoView.loadUrl("file:///android_asset/$pagina.htm")
                     }
@@ -815,7 +815,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     public override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy(): " + isFinishing)
+        Log.d(TAG, "onDestroy(): $isFinishing")
         try {
             unregisterReceiver(downloadPosBRec)
             unregisterReceiver(downloadCompletedBRec)
@@ -925,7 +925,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             var notaHighlighed = !higlightDiff
 
             while (line != null) {
-                Log.v(TAG, "RIGA DA ELAB: " + line)
+                Log.v(TAG, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
                     if (language.equals("uk", ignoreCase = true) || language.equals("en", ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")
@@ -1111,7 +1111,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "DOWNLOAD_MP3" -> sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             "DELETE_LINK" -> {
@@ -1180,7 +1180,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     override fun onNegative(tag: String) {
-        Log.d(TAG, "onNegative: " + tag)
+        Log.d(TAG, "onNegative: $tag")
         when (tag) {
             "DOWNLINK_CHOOSE" -> FileChooserDialog.Builder(this@PaginaRenderActivity)
                     .mimeType("audio/*") // Optional MIME type filter
@@ -1585,7 +1585,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel!!.barreCambio, convMin, true)
-                if (nuovoFile != null) cantoView.loadUrl("file://" + nuovoFile)
+                if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
             } else
                 cantoView.loadUrl("file:///android_asset/$pagina.htm")
 

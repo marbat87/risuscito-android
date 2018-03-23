@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -128,7 +129,12 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
-        val llm = LinearLayoutManager(context)
+//        val llm = LinearLayoutManager(context)
+        val mMainActivity = activity as MainActivity?
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         matchedList.layoutManager = llm
         matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
@@ -378,7 +384,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "AVANZATA_REPLACE" -> {
                 listePersonalizzate!![mViewModel!!.idListaClick]

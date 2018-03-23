@@ -69,6 +69,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     private var mAccountHeader: AccountHeader? = null
     var isOnTablet: Boolean = false
         private set
+    var hasThreeColumns: Boolean = false
+        private set
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private var mRegularFont: Typeface? = null
@@ -81,7 +83,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 Log.v(TAG, "BROADCAST_NEXT_STEP")
                 if (intent.getStringExtra("WHICH") != null) {
                     val which = intent.getStringExtra("WHICH")
-                    Log.v(TAG, "NEXT_STEP: " + which)
+                    Log.v(TAG, "NEXT_STEP: $which")
                     if (which.equals("RESTORE", ignoreCase = true)) {
                         val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, "RESTORE_RUNNING")
                         sFragment?.setContent(R.string.restoring_settings)
@@ -158,7 +160,9 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
         mLUtils = LUtils.getInstance(this@MainActivity)
         isOnTablet = mLUtils!!.isOnTablet
-        Log.d(TAG, "onCreate: isOnTablet = " + isOnTablet)
+        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
+        hasThreeColumns = mLUtils!!.hasThreeColumns
+        Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
 
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = themeUtils!!.primaryColorDark()
@@ -608,7 +612,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     fun enableFab(enable: Boolean) {
-        Log.d(TAG, "enableFab: " + enable)
+        Log.d(TAG, "enableFab: $enable")
         val mFab = findViewById<FloatingActionButton>(R.id.fab_pager)
         if (enable)
             mFab.show()
@@ -617,7 +621,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     fun enableBottombar(enabled: Boolean) {
-        Log.d(TAG, "enableBottombar - enabled: " + enabled)
+        Log.d(TAG, "enableBottombar - enabled: $enabled")
         val mBottomBar = findViewById<View>(R.id.bottom_bar)
         if (enabled)
             mLUtils!!.animateIn(mBottomBar)
@@ -675,7 +679,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     // [START onActivityResult]
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "requestCode: " + requestCode)
+        Log.d(TAG, "requestCode: $requestCode")
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         when (requestCode) {
             RC_SIGN_IN -> handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
@@ -800,7 +804,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: TAG " + tag)
+        Log.d(TAG, "onPositive: TAG $tag")
         when (tag) {
             "BACKUP_ASK" -> {
                 SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "BACKUP_RUNNING")
@@ -902,18 +906,18 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     private inner class BackupTask : AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg sUrl: Void): Boolean {
-            try {
+            return try {
                 checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
                 sendBroadcast(intentBroadcast)
                 checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false)
-                return true
+                true
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
                 val error = "error: " + e.localizedMessage
                 Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
-                return false
+                false
             }
         }
 

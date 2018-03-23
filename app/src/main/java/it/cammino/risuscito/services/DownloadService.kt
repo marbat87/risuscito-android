@@ -41,8 +41,8 @@ class DownloadService : IntentService("DownloadService") {
     private fun startSaving(intent: Intent?) {
         val uri = intent!!.data!!.toString()
         val mPath = intent.getStringExtra(DATA_DESTINATION_FILE)
-        Log.d(TAG, "startSaving DATA " + uri)
-        Log.d(TAG, "startSaving: DATA_DESTINATION_FILE " + mPath)
+        Log.d(TAG, "startSaving DATA $uri")
+        Log.d(TAG, "startSaving: DATA_DESTINATION_FILE $mPath")
 
         val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
         val wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -64,7 +64,7 @@ class DownloadService : IntentService("DownloadService") {
                     unregisterReceiver(cancelBRec)
                     val erroreMessage = ("Server returned HTTP " + connection.responseCode
                             + " " + connection.responseMessage)
-                    Log.e(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_ERROR)
+                    Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
                     Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $erroreMessage")
                     val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                     intentBroadcast.putExtra(DATA_ERROR, erroreMessage)
@@ -102,7 +102,7 @@ class DownloadService : IntentService("DownloadService") {
                         @Suppress("UNNECESSARY_SAFE_CALL")
                         connection?.disconnect()
 
-                        Log.d(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_CANCELLED)
+                        Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_CANCELLED")
                         sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
                         return
                     }
@@ -110,7 +110,7 @@ class DownloadService : IntentService("DownloadService") {
                     // publishing the progress....
                     if (fileLength > 0) {// only if total length is known
                         val progress = total.toInt() * 100 / fileLength
-                        Log.v(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_PROGRESS)
+                        Log.v(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_PROGRESS")
                         Log.v(TAG, "Sending broadcast notification: $DATA_PROGRESS: $progress")
                         val intentBroadcast = Intent(BROADCAST_DOWNLOAD_PROGRESS)
                         intentBroadcast.putExtra(DATA_PROGRESS, progress)
@@ -122,7 +122,7 @@ class DownloadService : IntentService("DownloadService") {
             } catch (e: Exception) {
                 unregisterReceiver(cancelBRec)
                 Log.e(javaClass.toString(), e.localizedMessage, e)
-                Log.e(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_ERROR)
+                Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
                 Log.e(TAG, "Sending broadcast notification: " + DATA_ERROR + ": " + e.toString())
                 val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                 intentBroadcast.putExtra(DATA_ERROR, e.toString())
@@ -146,21 +146,21 @@ class DownloadService : IntentService("DownloadService") {
                 wakelock.release()
         }
         unregisterReceiver(cancelBRec)
-        Log.d(TAG, "Sending broadcast notification: " + BROADCAST_DOWNLOAD_COMPLETED)
+        Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_COMPLETED")
         sendBroadcast(Intent(BROADCAST_DOWNLOAD_COMPLETED))
     }
 
     companion object {
         internal val TAG = DownloadService::class.java.name
-        val ACTION_DOWNLOAD = "it.cammino.risuscito.services.action.ACTION_DOWNLOAD"
-        val ACTION_CANCEL = "it.cammino.risuscito.services.action.ACTION_CANCEL"
-        val BROADCAST_DOWNLOAD_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_ERROR"
-        val BROADCAST_DOWNLOAD_COMPLETED = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_COMPLETED"
-        val BROADCAST_DOWNLOAD_CANCELLED = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_CANCELLED"
-        val BROADCAST_DOWNLOAD_PROGRESS = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_PROGRESS"
-        val DATA_DESTINATION_FILE = "it.cammino.risuscito.services.data.DATA_DESTINATION_FILE"
-        val DATA_PROGRESS = "it.cammino.risuscito.services.data.DATA_PROGRESS"
-        val DATA_ERROR = "it.cammino.risuscito.services.data.DATA_ERROR"
+        const val ACTION_DOWNLOAD = "it.cammino.risuscito.services.action.ACTION_DOWNLOAD"
+        const val ACTION_CANCEL = "it.cammino.risuscito.services.action.ACTION_CANCEL"
+        const val BROADCAST_DOWNLOAD_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_ERROR"
+        const val BROADCAST_DOWNLOAD_COMPLETED = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_COMPLETED"
+        const val BROADCAST_DOWNLOAD_CANCELLED = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_CANCELLED"
+        const val BROADCAST_DOWNLOAD_PROGRESS = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_PROGRESS"
+        const val DATA_DESTINATION_FILE = "it.cammino.risuscito.services.data.DATA_DESTINATION_FILE"
+        const val DATA_PROGRESS = "it.cammino.risuscito.services.data.DATA_PROGRESS"
+        const val DATA_ERROR = "it.cammino.risuscito.services.data.DATA_ERROR"
     }
 
 }

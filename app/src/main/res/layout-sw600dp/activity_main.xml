@@ -16,8 +16,6 @@
 
     </FrameLayout>
 
-    <!--<include layout="@layout/common_circle_progress"/>-->
-
     <FrameLayout
         android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"

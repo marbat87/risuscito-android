@@ -468,7 +468,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                 posizioniList!![longclickedPos].second!![longClickedChild].setmSelected(false)
                 cantoAdapter!!.notifyItemChanged(longclickedPos)
             } catch (e: Exception) {
-                Crashlytics.log("Possibile crash - longclickedPos: " + longclickedPos)
+                Crashlytics.log("Possibile crash - longclickedPos: $longclickedPos")
                 Crashlytics.logException(e)
             }
 

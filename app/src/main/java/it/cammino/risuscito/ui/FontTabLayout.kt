@@ -40,7 +40,7 @@ class FontTabLayout : TabLayout {
         try {
             val fontPath = a.getString(R.styleable.FontTabLayout_fontPath)
             if (fontPath != null)
-                Log.d("FontTabLayout", "init: " + fontPath)
+                Log.d("FontTabLayout", "init: $fontPath")
             else
                 Log.d("FontTabLayout", "init: NULL")
             mTypeface = Typeface.createFromAsset(context.assets, if (fontPath != null && !fontPath.isEmpty()) fontPath else FONT_PATH)
@@ -61,6 +61,6 @@ class FontTabLayout : TabLayout {
     }
 
     companion object {
-        private val FONT_PATH = "fonts/Roboto-Medium.ttf"
+        private const val FONT_PATH = "fonts/Roboto-Medium.ttf"
     }
 }

@@ -27,7 +27,7 @@
             android:layout_gravity="center_horizontal"
             risuscito:cardCornerRadius="0dp"
             risuscito:cardElevation="@dimen/card_elevation"
-            risuscito:bounded_width="540dp">
+            risuscito:bounded_width="@dimen/bounded_cardview_max_width">
 
             <it.cammino.risuscito.ui.FontTabLayout
                 android:layout_height="48dp"

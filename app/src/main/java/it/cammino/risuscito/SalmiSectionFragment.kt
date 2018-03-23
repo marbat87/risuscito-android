@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -19,6 +20,7 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.SalmoCanto
@@ -28,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SalmiIndexViewModel
-import kotlinx.android.synthetic.main.index_fragment.*
+import kotlinx.android.synthetic.main.salmi_index_fragment.*
 
 class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -46,7 +48,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.salmi_index_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<SalmiIndexViewModel>(SalmiIndexViewModel::class.java)
 
@@ -87,17 +89,25 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
             true
         }
 
+        val mMainActivity = activity as MainActivity?
+
         mAdapter = FastScrollIndicatorAdapter(2)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-        cantiList!!.adapter = mAdapter
-        val llm = LinearLayoutManager(context)
-        cantiList!!.layoutManager = llm
-        cantiList!!.setHasFixedSize(true)
+//        val llm = LinearLayoutManager(context)
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
+        salmi_cantiList!!.layoutManager = llm
+        salmi_cantiList!!.setHasFixedSize(true)
+        salmi_cantiList!!.adapter = mAdapter
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        cantiList!!.addItemDecoration(insetDivider)
+        salmi_cantiList!!.addItemDecoration(insetDivider)
+        salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
+        salmi_dragScrollBar.setAutoHide(false)
     }
 
     /**
@@ -231,8 +241,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                     if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
                         mCantiViewModel!!.idListaClick -= 100
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
+                                        .lista!!
+                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(
@@ -247,8 +257,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
+                                            .lista!!
+                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Log.d(TAG, "id presente: " + mCantiViewModel!!.idPosizioneClick)
@@ -287,7 +297,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: " +
+                tag)
         when (tag) {
             "SALMI_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]

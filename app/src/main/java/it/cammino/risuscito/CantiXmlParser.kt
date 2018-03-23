@@ -16,10 +16,10 @@ internal class CantiXmlParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun parse(`in`: InputStream): Array<Array<String?>> {
-        `in`.use { `mIn` ->
+        `in`.use { mIn ->
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            parser.setInput(`mIn`, "utf-8")
+            parser.setInput(mIn, "utf-8")
             parser.nextTag()
             return readCanti(parser)
         }

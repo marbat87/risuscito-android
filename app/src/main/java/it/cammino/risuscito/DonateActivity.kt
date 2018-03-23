@@ -99,7 +99,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
                 object : BillingClientStateListener {
                     override fun onBillingSetupFinished(
                             @BillingClient.BillingResponse billingResponseCode: Int) {
-                        Log.d(TAG, "Setup finished. Response code: " + billingResponseCode)
+                        Log.d(TAG, "Setup finished. Response code: $billingResponseCode")
 
                         if (billingResponseCode == BillingClient.BillingResponse.OK) {
                             mIsServiceConnected = true
@@ -127,17 +127,17 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
             ) { responseCode, skuDetailsList ->
                 Log.d(TAG, "onSkuDetailsResponse")
                 if (responseCode != BillingClient.BillingResponse.OK) {
-                    Log.e(TAG, "Unsuccessful query. Error code: " + responseCode)
+                    Log.e(TAG, "Unsuccessful query. Error code: $responseCode")
                     Snackbar.make(
                             findViewById(R.id.main_content),
-                            "Unsuccessful query. Error code: " + responseCode,
+                            "Unsuccessful query. Error code: $responseCode",
                             Snackbar.LENGTH_SHORT)
                             .show()
                     bottom_bar!!.visibility = View.VISIBLE
                 } else if (skuDetailsList != null && skuDetailsList.size > 0) {
                     // Then fill all the other rows
                     for (details in skuDetailsList) {
-                        Log.i(TAG, "Adding sku: " + details)
+                        Log.i(TAG, "Adding sku: $details")
                         when (details.sku) {
                             SKU_1_EURO -> {
                                 donate_1!!.text = details.price
@@ -205,7 +205,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
             if (responseCode == BillingClient.BillingResponse.OK)
                 Snackbar.make(main_content!!, R.string.purchase_success, Snackbar.LENGTH_LONG).show()
             else {
-                Log.e(TAG, "onConsumeResponse ERROR: " + responseCode)
+                Log.e(TAG, "onConsumeResponse ERROR: $responseCode")
             }
         }
 
@@ -230,7 +230,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
         Log.d(TAG, "onPurchasesUpdated: ")
-        Log.d(TAG, "onBillingError: " + responseCode)
+        Log.d(TAG, "onBillingError: $responseCode")
         when (responseCode) {
             BillingClient.BillingResponse.OK -> if (purchases != null)
                 for (purchase in purchases) consumeAsync(purchase.purchaseToken)
@@ -272,7 +272,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
             }
             else -> {
                 loadingBar!!.visibility = View.GONE
-                Snackbar.make(main_content!!, "ERROR: " + responseCode, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(main_content!!, "ERROR: $responseCode", Snackbar.LENGTH_LONG).show()
             }
         }
     }

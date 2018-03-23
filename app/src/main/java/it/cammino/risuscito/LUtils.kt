@@ -33,6 +33,9 @@ class LUtils private constructor(private val mActivity: Activity) {
     val isOnTablet: Boolean
         get() = mActivity.resources.getBoolean(R.bool.is_tablet)
 
+    val hasThreeColumns: Boolean
+        get() = mActivity.resources.getBoolean(R.bool.has_three_columns)
+
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)

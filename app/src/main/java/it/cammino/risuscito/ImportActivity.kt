@@ -104,9 +104,9 @@ class ImportActivity : AppCompatActivity() {
         //fond dimension
         try {
             val actualScale = mNewBase.resources.configuration.fontScale
-            Log.d(javaClass.toString(), "actualScale: " + actualScale)
+            Log.d(javaClass.toString(), "actualScale: $actualScale")
             val systemScale = Settings.System.getFloat(contentResolver, Settings.System.FONT_SCALE)
-            Log.d(javaClass.toString(), "systemScale: " + systemScale)
+            Log.d(javaClass.toString(), "systemScale: $systemScale")
             if (actualScale != systemScale)
                 config.fontScale = systemScale
         } catch (e: Settings.SettingNotFoundException) {

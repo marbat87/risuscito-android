@@ -26,7 +26,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
             while (line != null && !found) {
                 var start = line.indexOf(mContext.resources.getString(R.string.barre_search_string))
                 if (start >= 0) {
-                    Log.v(TAG, "recuperaBarre - RIGA: " + line)
+                    Log.v(TAG, "recuperaBarre - RIGA: $line")
                     found = true
 
                     start = if (language.equals("en", ignoreCase = true))
@@ -46,7 +46,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                 line = br.readLine()
             }
             br.close()
-            Log.v(TAG, "recuperaBarre - risultato: " + primoBarre)
+            Log.v(TAG, "recuperaBarre - risultato: $primoBarre")
             return primoBarre
         } catch (ex: Exception) {
             Log.e(javaClass.name, ex.localizedMessage, ex)
@@ -60,8 +60,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         primaNota ?: return null
         notaCambio ?: return null
 
-        Log.v(TAG, "diffSemiToni - primaNota: " + primaNota)
-        Log.v(TAG, "diffSemiToni - notaCambio: " + notaCambio)
+        Log.v(TAG, "diffSemiToni - primaNota: $primaNota")
+        Log.v(TAG, "diffSemiToni - notaCambio: $notaCambio")
 
         if (primaNota == "" || notaCambio == "")
             return null
@@ -70,7 +70,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                 .language
         if (mLanguage != null && !mLanguage.isEmpty()) language = mLanguage
 
-        Log.v(TAG, "diffSemiToni: language " + language)
+        Log.v(TAG, "diffSemiToni: language $language")
 
         var primoAccordo: String = primaNota
         var cambioAccordo: String = notaCambio
@@ -99,14 +99,14 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
             start++
         }
         if (start == accordi.size) return null
-        Log.v(TAG, "diffSemiToni - posizionePrimaNota: " + start)
+        Log.v(TAG, "diffSemiToni - posizionePrimaNota: $start")
         var end = 0
         while (end < accordi.size) {
             if (cambioAccordo == accordi[end]) break
             end++
         }
         if (end == accordi.size) return null
-        Log.v(TAG, "diffSemiToni - posizioneNotaCambio: " + end)
+        Log.v(TAG, "diffSemiToni - posizioneNotaCambio: $end")
 
         val differenza = if (end > start)
             end - start
@@ -146,14 +146,14 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
             start++
         }
         if (start == accordi_uk_lower.size) return null
-        Log.v(TAG, "diffSemiToniMin - posizionePrimaNota: " + start)
+        Log.v(TAG, "diffSemiToniMin - posizionePrimaNota: $start")
         var end = 0
         while (end < accordi_uk_lower.size) {
             if (cambioAccordo == accordi_uk_lower[end]) break
             end++
         }
         if (end == accordi_uk_lower.size) return null
-        Log.v(TAG, "diffSemiToniMin - posizioneNotaCambio: " + end)
+        Log.v(TAG, "diffSemiToniMin - posizioneNotaCambio: $end")
         val differenza = if (end > start)
             end - start
         else
@@ -198,11 +198,11 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
                 while (line != null && !found) {
                     if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                        Log.v(TAG, "recuperaPrimoAccordo - RIGA: " + line)
+                        Log.v(TAG, "recuperaPrimoAccordo - RIGA: $line")
                         val inizioRiga = line.indexOf("A13F3C") + 8
 
                         if (inizioRiga < line.length) {
-                            Log.v(TAG, "recuperaPrimoAccordo - inizioRiga: " + inizioRiga)
+                            Log.v(TAG, """recuperaPrimoAccordo - inizioRiga: $inizioRiga""")
                             Log.v(TAG, "recuperaPrimoAccordo - carattere: " + line[inizioRiga])
                             var i = inizioRiga
                             while (i < line.length) {
@@ -213,10 +213,10 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                                 }
                                 i++
                             }
-                            Log.v(TAG, "recuperaPrimoAccordo - inizio Nota: " + i)
+                            Log.v(TAG, "recuperaPrimoAccordo - inizio Nota: $i")
                             Log.v(TAG, "recuperaPrimoAccordo - lunghezza stringa: " + line.length)
                             primaNota.append(line[i])
-                            Log.v(TAG, "recuperaPrimoAccordo - prima lettera: " + primaNota)
+                            Log.v(TAG, "recuperaPrimoAccordo - prima lettera: $primaNota")
                             for (j in i + 1 until line.length) {
                                 Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line[j])
                                 val myMatcher = when (language) {
@@ -234,7 +234,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                     line = br.readLine()
                 }
                 br.close()
-                Log.v(TAG, "recuperaPrimoAccordo - risultato: " + primaNota)
+                Log.v(TAG, "recuperaPrimoAccordo - risultato: $primaNota")
                 return primaNota.toString()
             } catch (ex: Exception) {
                 ex.printStackTrace()

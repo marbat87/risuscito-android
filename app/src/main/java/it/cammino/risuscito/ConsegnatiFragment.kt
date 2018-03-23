@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -225,7 +226,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
 
         cantiRecycler!!.adapter = cantoAdapter
-        val llm = LinearLayoutManager(context)
+//        val llm = LinearLayoutManager(context)
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         cantiRecycler!!.layoutManager = llm
         cantiRecycler!!.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
@@ -250,7 +255,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
 
         chooseRecycler!!.adapter = selectableAdapter
-        val llm2 = LinearLayoutManager(context)
+//        val llm2 = LinearLayoutManager(context)
+        val llm2 = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         chooseRecycler!!.layoutManager = llm2
         chooseRecycler!!.setHasFixedSize(true)
         val insetDivider2 = DividerItemDecoration(context!!, llm2.orientation)

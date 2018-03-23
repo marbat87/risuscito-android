@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -156,7 +157,11 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
         (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
 
         favouritesList!!.adapter = cantoAdapter
-        val llm = LinearLayoutManager(context)
+//        val llm = LinearLayoutManager(context)
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         favouritesList!!.layoutManager = llm
         favouritesList!!.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
@@ -213,7 +218,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
     }
 
     override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: " + tag)
+        Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
             "FAVORITES_RESET" ->
                 // run the sentence in a new thread
@@ -248,7 +253,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                 val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
                         .selectedItems
                         .size
-                Log.d(TAG, "onCabItemClicked: " + iRemoved)
+                Log.d(TAG, "onCabItemClicked: $iRemoved")
 
                 mUndoHelper!!.remove(
                         activity!!.main_content,
@@ -266,7 +271,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
     }
 
     override fun onCabFinished(cab: MaterialCab): Boolean {
-        Log.d(TAG, "onCabFinished: " + actionModeOk)
+        Log.d(TAG, "onCabFinished: $actionModeOk")
         if (!actionModeOk) {
             try {
                 (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()

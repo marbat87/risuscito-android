@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -118,7 +119,12 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
-        val llm = LinearLayoutManager(context)
+//        val llm = LinearLayoutManager(context)
+        val mMainActivity = activity as MainActivity?
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         matchedList.layoutManager = llm
         matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
@@ -428,7 +434,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "VELOCE_REPLACE" -> {
                 listePersonalizzate!![mViewModel!!.idListaClick]
@@ -488,7 +494,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
             val stringa = Utility.removeAccents(s).toLowerCase()
             var titoloTemp: String
-            Log.d(TAG, "onTextChanged: stringa " + stringa)
+            Log.d(TAG, "onTextChanged: stringa $stringa")
 
             val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
             val elenco = mDb.cantoDao().allByName

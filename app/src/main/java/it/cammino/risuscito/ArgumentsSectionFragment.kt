@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -77,14 +78,31 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mLayoutManager = LinearLayoutManager(activity)
-        recycler_view!!.layoutManager = mLayoutManager
+//        mLayoutManager = LinearLayoutManager(activity)
+//        recycler_view!!.layoutManager = mLayoutManager
 
         // adapter
         mAdapter = FastItemAdapter()
         val itemExpandableExtension = ExpandableExtension<IItem<*, *>>()
         itemExpandableExtension.withOnlyOneExpandedItem(true)
         mAdapter!!.addExtension(itemExpandableExtension)
+
+        val mMainActivity = mActivity as MainActivity?
+        if (mMainActivity!!.isOnTablet) {
+            mLayoutManager = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+            (mLayoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (mAdapter!!.getItemViewType(position)) {
+                        R.id.fastadapter_expandable_item_id -> if (mMainActivity.hasThreeColumns) 3 else 2
+                        R.id.fastadapter_sub_item_id -> 1
+                        else -> -1
+                    }
+                }
+            }
+        }
+        else
+            mLayoutManager = LinearLayoutManager(context)
+        recycler_view!!.layoutManager = mLayoutManager
 
         recycler_view!!.adapter = mAdapter
         recycler_view!!.setHasFixedSize(true) // Size of RV will not change

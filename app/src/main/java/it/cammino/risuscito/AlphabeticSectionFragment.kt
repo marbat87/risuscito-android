@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -19,6 +20,7 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
@@ -28,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
-import kotlinx.android.synthetic.main.index_fragment.*
+import kotlinx.android.synthetic.main.alpha_index_fragment.*
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -51,7 +53,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.alpha_index_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<AlphabeticIndexViewModel>(AlphabeticIndexViewModel::class.java)
 
@@ -91,17 +93,24 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
             true
         }
 
+        val mMainActivity = activity as MainActivity?
+
         mAdapter = FastScrollIndicatorAdapter(0)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-        cantiList!!.adapter = mAdapter
-        val llm = LinearLayoutManager(context)
-        cantiList!!.layoutManager = llm
-        cantiList!!.setHasFixedSize(true)
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
+        alpha_cantiList!!.layoutManager = llm
+        alpha_cantiList!!.setHasFixedSize(true)
+        alpha_cantiList!!.adapter = mAdapter
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        cantiList!!.addItemDecoration(insetDivider)
+        alpha_cantiList!!.addItemDecoration(insetDivider)
+        alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
+        alpha_dragScrollBar.setAutoHide(false)
     }
 
     /**
@@ -237,8 +246,8 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                         mCantiViewModel!!.idListaClick -= 100
 
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
+                                        .lista!!
+                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(
@@ -253,8 +262,8 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
+                                            .lista!!
+                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Thread(
@@ -292,7 +301,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
     }
 
     override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: " + tag)
+        Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
             "ALPHA_REPLACE" -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
@@ -385,7 +394,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     companion object {
         private val TAG = AlphabeticSectionFragment::class.java.canonicalName
-        private val ID_FITTIZIO = 99999999
+        private const val ID_FITTIZIO = 99999999
     }
 
 }

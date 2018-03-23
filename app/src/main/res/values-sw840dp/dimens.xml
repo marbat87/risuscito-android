@@ -2,5 +2,7 @@
 <resources>
 
     <dimen name="fab_margin_coord">48dp</dimen>
+    <dimen name="bounded_cardview_max_width">800dp</dimen>
+    <dimen name="bounded_cardview_max_width_fab">700dp</dimen>
 
 </resources>

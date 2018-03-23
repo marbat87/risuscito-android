@@ -133,7 +133,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
     }
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "CHANGELOG" -> {
                 PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(VERSION_KEY, thisVersion) }

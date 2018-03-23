@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin_frame">16dp</dimen>
+    <bool name="has_three_columns">true</bool>
 </resources>

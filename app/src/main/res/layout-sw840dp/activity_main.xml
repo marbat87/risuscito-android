@@ -16,8 +16,6 @@
 
     </FrameLayout>
 
-    <!--<include layout="@layout/common_circle_progress"/>-->
-
     <FrameLayout
         android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
@@ -57,7 +55,7 @@
                     android:layout_gravity="center_horizontal"
                     risuscito:cardCornerRadius="0dp"
                     risuscito:cardElevation="@dimen/card_elevation"
-                    risuscito:bounded_width="540dp">
+                    risuscito:bounded_width="700dp">
 
                     <it.cammino.risuscito.ui.FontTabLayout
                         android:layout_height="48dp"

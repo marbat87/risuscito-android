@@ -13,6 +13,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
+@Suppress("unused")
 class RisuscitoApplication : MultiDexApplication() {
 
     override fun onCreate() {

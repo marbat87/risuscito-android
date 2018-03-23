@@ -36,7 +36,7 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
             tempConsegnato.idCanto = id
             try {
                 mDao.insertConsegnati(tempConsegnato)
-                Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SINGLE_COMPLETED)
+                Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
                 Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
                 val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
                 intentBroadcast.putExtra(DATA_DONE, i)
@@ -47,16 +47,16 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
             }
 
         }
-        Log.d(TAG, "Sending broadcast notification: " + BROADCAST_SAVING_COMPLETED)
+        Log.d(TAG, "Sending broadcast notification: $BROADCAST_SAVING_COMPLETED")
         sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))
     }
 
     companion object {
         internal val TAG = ConsegnatiSaverService::class.java.canonicalName
-        val BROADCAST_SAVING_COMPLETED = "it.cammino.risuscito.services.broadcast.SAVING_COMPLETED"
-        val BROADCAST_SINGLE_COMPLETED = "it.cammino.risuscito.services.broadcast.SINGLE_COMPLETED"
-        val DATA_DONE = "it.cammino.risuscito.services.data.DATA_DONE"
-        val IDS_CONSEGNATI = "it.cammino.risuscito.services.data.IDS_CONSEGNATI"
+        const val BROADCAST_SAVING_COMPLETED = "it.cammino.risuscito.services.broadcast.SAVING_COMPLETED"
+        const val BROADCAST_SINGLE_COMPLETED = "it.cammino.risuscito.services.broadcast.SINGLE_COMPLETED"
+        const val DATA_DONE = "it.cammino.risuscito.services.data.DATA_DONE"
+        const val IDS_CONSEGNATI = "it.cammino.risuscito.services.data.IDS_CONSEGNATI"
     }
 
 }

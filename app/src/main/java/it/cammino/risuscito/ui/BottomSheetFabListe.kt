@@ -50,8 +50,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
         mTextView.setText(R.string.button_clean_list)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + CLEAN)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $CLEAN")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, CLEAN)
             activity!!.sendBroadcast(intentBroadcast)
@@ -69,8 +69,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
         mTextView.setText(R.string.action_share)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + SHARE_TEXT)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $SHARE_TEXT")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SHARE_TEXT)
             activity!!.sendBroadcast(intentBroadcast)
@@ -88,8 +88,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
         mTextView.setText(R.string.action_add_list)
         mView.setOnClickListener {
             dialog.dismiss()
-            Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-            Log.d(TAG, "clicked id: " + ADD_LIST)
+            Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+            Log.d(TAG, "clicked id: $ADD_LIST")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, ADD_LIST)
             activity!!.sendBroadcast(intentBroadcast)
@@ -112,8 +112,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             mTextView.setText(R.string.action_share_file)
             mView.setOnClickListener {
                 dialog.dismiss()
-                Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-                Log.d(TAG, "clicked id: " + SHARE_FILE)
+                Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+                Log.d(TAG, "clicked id: $SHARE_FILE")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, SHARE_FILE)
                 activity!!.sendBroadcast(intentBroadcast)
@@ -131,8 +131,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             mTextView.setText(R.string.action_edit_list)
             mView.setOnClickListener {
                 dialog.dismiss()
-                Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-                Log.d(TAG, "clicked id: " + EDIT_LIST)
+                Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+                Log.d(TAG, "clicked id: $EDIT_LIST")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, EDIT_LIST)
                 activity!!.sendBroadcast(intentBroadcast)
@@ -150,8 +150,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             mTextView.setText(R.string.action_remove_list)
             mView.setOnClickListener {
                 dialog.dismiss()
-                Log.d(TAG, "Sending broadcast notification: " + CHOOSE_DONE)
-                Log.d(TAG, "clicked id: " + DELETE_LIST)
+                Log.d(TAG, "Sending broadcast notification: $CHOOSE_DONE")
+                Log.d(TAG, "clicked id: $DELETE_LIST")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, DELETE_LIST)
                 activity!!.sendBroadcast(intentBroadcast)
@@ -174,15 +174,15 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
 
     companion object {
         private val TAG = BottomSheetFabListe::class.java.canonicalName
-        val CHOOSE_DONE = "choose_done"
-        val DATA_ITEM_ID = "item_id"
+        const val CHOOSE_DONE = "choose_done"
+        const val DATA_ITEM_ID = "item_id"
 
-        val CLEAN = 1
-        val SHARE_TEXT = 3
-        val SHARE_FILE = 4
-        val ADD_LIST = 2
-        val EDIT_LIST = 5
-        val DELETE_LIST = 6
+        const val CLEAN = 1
+        const val SHARE_TEXT = 3
+        const val SHARE_FILE = 4
+        const val ADD_LIST = 2
+        const val EDIT_LIST = 5
+        const val DELETE_LIST = 6
 
         fun newInstance(customList: Boolean): BottomSheetFabListe {
             val frag = BottomSheetFabListe()

@@ -94,7 +94,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
         val mLongClickListener = OnLongClickListener<SwipeableItem> { _, _, item, i ->
-            Log.d(TAG, "onItemLongClick: " + i)
+            Log.d(TAG, "onItemLongClick: $i")
             mViewModel!!.positionToRename = i
             InputTextDialogFragment.Builder(
                     this@CreaListaActivity, this@CreaListaActivity, "RENAME")
@@ -157,9 +157,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
                             override fun onDismiss(view: View, token: Any?) {
                                 main_hint_layout.visibility = View.GONE
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA_2, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                             }
                         }))
@@ -330,7 +327,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     override fun onPositive(tag: String, dialog: MaterialDialog) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RENAME" -> {
                 val mEditText = dialog.inputEditText
@@ -379,7 +376,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     override fun onNeutral(tag: String, dialog: MaterialDialog) {}
 
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: " + tag)
+        Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "SAVE_LIST" -> Thread(
                     Runnable {
@@ -394,7 +391,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     override fun onNegative(tag: String) {
-        Log.d(TAG, "onNegative: " + tag)
+        Log.d(TAG, "onNegative: $tag")
         when (tag) {
             "SAVE_LIST" -> {
                 setResult(Activity.RESULT_CANCELED)
@@ -413,7 +410,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         return true
     }
 
-    override fun itemTouchDropped(i: Int, i1: Int) {}
+    override fun itemTouchDropped(i: Int, i1: Int) = Unit
 
     override fun itemSwiped(position: Int, direction: Int) {
         // -- Option 1: Direct action --
@@ -513,9 +510,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 Log.d(TAG, "onSequenceFinish: ")
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
 
@@ -523,9 +517,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CREALISTA, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
                         })
@@ -566,7 +557,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
             }
 
-            Log.d(TAG, "doInBackground: modifica " + modifica)
+            Log.d(TAG, "doInBackground: modifica $modifica")
             if (modifica) {
                 if (mViewModel!!.data != null) {
                     nomiCanti = mViewModel!!.data

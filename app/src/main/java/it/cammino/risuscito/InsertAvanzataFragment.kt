@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -180,7 +181,12 @@ class InsertAvanzataFragment : Fragment() {
         cantoAdapter.withOnClickListener(mOnClickListener).withEventHook(hookListener)
 
         matchedList.adapter = cantoAdapter
-        val llm = LinearLayoutManager(context)
+//        val llm = LinearLayoutManager(context)
+        val mMainActivity = activity as GeneralInsertSearch?
+        val llm = if (mMainActivity!!.isOnTablet)
+            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        else
+            LinearLayoutManager(context)
         matchedList.layoutManager = llm
         matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(context!!, llm.orientation)
@@ -290,7 +296,7 @@ class InsertAvanzataFragment : Fragment() {
 
             for (aText in fragmentReference.get()!!.aTexts) {
 
-                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled)
+                Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
                 if (isCancelled) return 0
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
@@ -311,7 +317,7 @@ class InsertAvanzataFragment : Fragment() {
                     }
                 }
 
-                Log.d(TAG, "doInBackground: isCancelled? " + isCancelled)
+                Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
 
                 if (found && !isCancelled) {
                     val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
