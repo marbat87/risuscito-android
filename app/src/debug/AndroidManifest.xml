@@ -31,7 +31,6 @@
         tools:replace="android:allowBackup">
         <activity
             android:name="it.cammino.risuscito.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/RisuscitoTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,11 +47,9 @@
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.GeneralInsertSearch"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.ChangelogActivity"
