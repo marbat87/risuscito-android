@@ -284,7 +284,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                                 .content(
                                                         (getString(R.string.dialog_present_yet)
                                                                 + " "
-                                                                + cantoPresente.titolo
+                                                                + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                 + getString(R.string.dialog_wonna_replace)))
                                                 .positiveButton(android.R.string.yes)
                                                 .negativeButton(android.R.string.no)
@@ -301,96 +301,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             return false
     }
 
-    // aggiunge il canto premuto ai preferiti
-    //  public void addToFavorites() {
-    //        SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //        String sql = "UPDATE ELENCO" + "  SET favourite = 1" + "  WHERE _id = " +
-    // mCantiViewModel.idDaAgg;
-    //        db.execSQL(sql);
-    //        db.close();
-    //        Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show();
-    //  }
-
-    // aggiunge il canto premuto ad una lista e in una posizione che ammetta duplicati
-    //  public void addToListaDup(int idLista, int listPosition) {
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    String sql = "INSERT INTO CUST_LISTS ";
-    //    sql += "VALUES (" + idLista + ", " + listPosition + ", " + mCantiViewModel.idDaAgg + ",
-    // CURRENT_TIMESTAMP)";
-    //
-    //    try {
-    //      db.execSQL(sql);
-    //      Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-    //    } catch (SQLException e) {
-    //      Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-    //    }
-    //
-    //    db.close();
-    //  }
-
-    // aggiunge il canto premuto ad una lista e in una posizione che NON ammetta duplicati
-    //  public void addToListaNoDup(int idLista, int listPosition) {
-    //    SQLiteDatabase db = listaCanti.getReadableDatabase();
-    //
-    //    // cerca se la posizione nella lista è già occupata
-    //    String query =
-    //            "SELECT B.titolo"
-    //                    + "		FROM CUST_LISTS A"
-    //                    + "		   , ELENCO B"
-    //                    + "		WHERE A._id = "
-    //                    + idLista
-    //                    + "         AND A.position = "
-    //                    + listPosition
-    //                    + "         AND A.id_canto = B._id";
-    //    Cursor lista = db.rawQuery(query, null);
-    //
-    //    int total = lista.getCount();
-    //
-    //    if (total > 0) {
-    //      lista.moveToFirst();
-    //      String titoloPresente = lista.getString(0);
-    //      lista.close();
-    //      db.close();
-    //
-    //      if (titoloDaAgg.equalsIgnoreCase(titoloPresente)) {
-    //        Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show();
-    //      } else {
-    //        mCantiViewModel.idListaDaAgg = idLista;
-    //        mCantiViewModel.posizioneDaAgg = listPosition;
-    //        new SimpleDialogFragment.Builder(
-    //                (AppCompatActivity) getActivity(), NumericSectionFragment.this,
-    // "NUMERIC_REPLACE_2")
-    //                .title(R.string.dialog_replace_title)
-    //                .content(
-    //                        getString(R.string.dialog_present_yet)
-    //                                + " "
-    //                                + titoloPresente
-    //                                + getString(R.string.dialog_wonna_replace))
-    //                .positiveButton(android.R.string.yes)
-    //                .negativeButton(android.R.string.no)
-    //                .show();
-    //      }
-    //      return;
-    //    }
-    //
-    //    lista.close();
-    //
-    //    String sql =
-    //            "INSERT INTO CUST_LISTS "
-    //                    + "VALUES ("
-    //                    + idLista
-    //                    + ", "
-    //                    + listPosition
-    //                    + ", "
-    //                    + mCantiViewModel.idDaAgg
-    //                    + ", CURRENT_TIMESTAMP)";
-    //    db.execSQL(sql);
-    //    db.close();
-    //    Snackbar.make(rootView, R.string.list_added, Snackbar.LENGTH_SHORT).show();
-    //  }
-
     override fun onPositive(tag: String) {
+        Log.d(TAG, "onPositive: $tag")
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "NUMERIC_REPLACE" -> {
@@ -464,19 +376,34 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 .observe(
                         this,
                         Observer<List<Canto>> { canti ->
-                            mCantiViewModel!!.titoli.clear()
-                            for (canto in canti!!) {
-                                val sampleItem = SimpleItem()
-                                sampleItem
-                                        .withTitle(canto.titolo!!)
-                                        .withPage((canto.pagina).toString())
-                                        .withSource(canto.source!!)
-                                        .withColor(canto.color!!)
-                                        .withId(canto.id)
-                                        .withContextMenuListener(this@NumericSectionFragment)
-                                mCantiViewModel!!.titoli.add(sampleItem)
+                            if (canti != null) {
+                                val newList = ArrayList<SimpleItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.pagina, R.string::class.java)).toInt() }
+                                        .forEach {
+                                            newList.add(
+                                                    SimpleItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withId(it.id)
+                                                            .withContextMenuListener(this@NumericSectionFragment)
+                                            )
+                                        }
+//                            for (canto in canti!!) {
+//                                val sampleItem = SimpleItem()
+//                                sampleItem
+//                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+//                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+//                                        .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+//                                        .withColor(canto.color!!)
+//                                        .withId(canto.id)
+//                                        .withContextMenuListener(this@NumericSectionFragment)
+//                                newList.add(sampleItem)
+//                            }
+                                mCantiViewModel!!.titoli = newList
+                                FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
                             }
-                            FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
                         })
     }
 
@@ -484,6 +411,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         private val TAG = NumericSectionFragment::class.java.canonicalName
         private const val ID_FITTIZIO = 99999999
     }
+
 }
 
 

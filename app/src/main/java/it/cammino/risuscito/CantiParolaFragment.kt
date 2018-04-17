@@ -8,7 +8,6 @@ import android.os.SystemClock
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -19,28 +18,28 @@ import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
-import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
-import it.cammino.risuscito.viewmodels.CantiParolaViewModel
+import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.sql.Date
-import java.util.*
 
 class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
-    private var mCantiViewModel: CantiParolaViewModel? = null
+    private var mCantiViewModel: DefaultListaViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
@@ -48,10 +47,10 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     private var timestampDaCanc: String? = null
     private var rootView: View? = null
     private var mSwhitchMode: Boolean = false
-    private var posizioniList: MutableList<Pair<PosizioneTitleItem, List<PosizioneItem>>>? = null
+    private var posizioniList: ArrayList<ListaPersonalizzataItem> = ArrayList()
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
-    private var cantoAdapter: PosizioneRecyclerAdapter? = null
+    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
@@ -122,9 +121,87 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
             return (activity as MainActivity).themeUtils!!
         }
 
+    private val click = OnClickListener { v ->
+        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
+        mLastClickTime = SystemClock.elapsedRealtime()
+        val parent = v.parent.parent as View
+        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+            if (mSwhitchMode) {
+                mSwhitchMode = false
+                actionModeOk = true
+                mMainActivity!!.materialCab!!.finish()
+                Thread(
+                        Runnable {
+                            scambioConVuoto(
+                                    Integer.valueOf(
+                                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                                    .text
+                                                    .toString())!!)
+                        })
+                        .start()
+            } else {
+                if (!mMainActivity!!.materialCab!!.isActive) {
+                    val bundle = Bundle()
+                    bundle.putInt("fromAdd", 1)
+                    bundle.putInt("idLista", 1)
+                    bundle.putInt(
+                            "position",
+                            Integer.valueOf(
+                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                            .text
+                                            .toString())!!)
+                    startSubActivity(bundle)
+                }
+            }
+        } else {
+            if (!mSwhitchMode)
+                if (mMainActivity!!.materialCab!!.isActive) {
+                    posizioneDaCanc = Integer.valueOf(
+                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                    .text
+                                    .toString())!!
+                    idDaCanc = Integer.valueOf(
+                            (v.findViewById<View>(R.id.text_id_canto_card) as TextView)
+                                    .text
+                                    .toString())!!
+                    timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+                    snackBarRimuoviCanto(v)
+                } else
+                    openPagina(v)
+            else {
+                mSwhitchMode = false
+                actionModeOk = true
+                mMainActivity!!.materialCab!!.finish()
+                Thread(
+                        Runnable {
+                            scambioCanto(
+                                    v,
+                                    Integer.valueOf(
+                                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                                    .text
+                                                    .toString())!!)
+                        })
+                        .start()
+            }
+        }
+    }
+
+    private val longClick = OnLongClickListener { v ->
+        val parent = v.parent.parent as View
+        posizioneDaCanc = Integer.valueOf(
+                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())!!
+        idDaCanc = Integer.valueOf(
+                (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!
+        timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+        snackBarRimuoviCanto(v)
+        true
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
+
+        mCantiViewModel = ViewModelProviders.of(this).get(DefaultListaViewModel::class.java)
 
         mMainActivity = activity as MainActivity?
 
@@ -142,92 +219,19 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val click = OnClickListener { v ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val parent = v.parent.parent as View
-            if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
-                if (mSwhitchMode) {
-                    mSwhitchMode = false
-                    actionModeOk = true
-                    mMainActivity!!.materialCab!!.finish()
-                    Thread(
-                            Runnable {
-                                scambioConVuoto(
-                                        Integer.valueOf(
-                                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                        .text
-                                                        .toString())!!)
-                            })
-                            .start()
-                } else {
-                    if (!mMainActivity!!.materialCab!!.isActive) {
-                        val bundle = Bundle()
-                        bundle.putInt("fromAdd", 1)
-                        bundle.putInt("idLista", 1)
-                        bundle.putInt(
-                                "position",
-                                Integer.valueOf(
-                                        (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                .text
-                                                .toString())!!)
-                        startSubActivity(bundle)
-                    }
-                }
-            } else {
-                if (!mSwhitchMode)
-                    if (mMainActivity!!.materialCab!!.isActive) {
-                        posizioneDaCanc = Integer.valueOf(
-                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                        .text
-                                        .toString())!!
-                        idDaCanc = Integer.valueOf(
-                                (v.findViewById<View>(R.id.text_id_canto_card) as TextView)
-                                        .text
-                                        .toString())!!
-                        timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
-                        snackBarRimuoviCanto(v)
-                    } else
-                        openPagina(v)
-                else {
-                    mSwhitchMode = false
-                    actionModeOk = true
-                    mMainActivity!!.materialCab!!.finish()
-                    Thread(
-                            Runnable {
-                                scambioCanto(
-                                        v,
-                                        Integer.valueOf(
-                                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                        .text
-                                                        .toString())!!)
-                            })
-                            .start()
-                }
-            }
-        }
-
-        val longClick = OnLongClickListener { v ->
-            val parent = v.parent.parent as View
-            posizioneDaCanc = Integer.valueOf(
-                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())!!
-            idDaCanc = Integer.valueOf(
-                    (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!
-            timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
-            snackBarRimuoviCanto(v)
-            true
-        }
 
         // Creating new adapter object
-        posizioniList = ArrayList()
-        cantoAdapter = PosizioneRecyclerAdapter(
-                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
+//        posizioniList = ArrayList()
+//        cantoAdapter = PosizioneRecyclerAdapter(
+//                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
+        cantoAdapter = FastItemAdapter()
+        cantoAdapter!!.setHasStableIds(true)
+        cantoAdapter!!.set(posizioniList)
         recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
         recycler_list!!.layoutManager = LinearLayoutManager(activity)
 
-        mCantiViewModel = ViewModelProviders.of(this).get<CantiParolaViewModel>(CantiParolaViewModel::class.java)
         populateDb()
         subscribeUiFavorites()
 
@@ -287,26 +291,38 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     }
 
     private fun getCantofromPosition(
-            posizioni: List<Posizione>?, titoloPosizione: String, position: Int, tag: Int): Pair<PosizioneTitleItem, List<PosizioneItem>> {
+            posizioni: List<Posizione>?, titoloPosizione: String, position: Int, tag: Int): ListaPersonalizzataItem {
         val list = posizioni!!
                 .filter { it.position == position }
                 .map {
                     PosizioneItem(
-                            it.pagina,
-                            it.titolo!!,
+                            resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java)),
+                            resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java)),
                             it.color!!,
                             it.id,
-                            it.source!!,
+                            resources.getString(LUtils.getResId(it.source!!, R.string::class.java)),
                             (it.timestamp!!.time).toString())
                 }
-        return Pair(PosizioneTitleItem(titoloPosizione, 1, position, tag, false), list)
+
+        return ListaPersonalizzataItem()
+                .withTitleItem(PosizioneTitleItem(
+                        titoloPosizione,
+                        1,
+                        position,
+                        tag,
+                        false))
+                .withListItem(list)
+                .withClickListener(click)
+                .withLongClickListener(longClick)
+                .withSelectedColor(themeUtils.primaryColorDark())
+                .withId(tag)
     }
 
     // recupera il titolo del canto in posizione "position" nella lista "list"
     private fun getTitoloToSendFromPosition(position: Int): String {
         val result = StringBuilder()
 
-        val items = posizioniList!![position].second
+        val items = posizioniList[position].listItem
 
         if (items!!.isNotEmpty()) {
             for (tempItem in items) {
@@ -392,7 +408,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         Log.d(TAG, "onCabCreated: ")
         cab.setMenu(R.menu.menu_actionmode_lists)
         cab.setTitle("")
-        posizioniList!![longclickedPos].second!![longClickedChild].setmSelected(true)
+        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
         cantoAdapter!!.notifyItemChanged(longclickedPos)
         menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
                 .sizeDp(24)
@@ -465,7 +481,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         mSwhitchMode = false
         if (!actionModeOk) {
             try {
-                posizioniList!![longclickedPos].second!![longClickedChild].setmSelected(false)
+                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
                 cantoAdapter!!.notifyItemChanged(longclickedPos)
             } catch (e: Exception) {
                 Crashlytics.log("Possibile crash - longclickedPos: $longclickedPos")
@@ -477,36 +493,37 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     }
 
     private fun populateDb() {
+        mCantiViewModel!!.defaultListaId = 1
         mCantiViewModel!!.createDb()
     }
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .cantiParolaResult!!
+                .cantiResult!!
                 .observe(
                         this,
                         Observer<List<Posizione>> { mCanti ->
-                            posizioniList!!.clear()
-                            posizioniList!!.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, 0))
-                            posizioniList!!.add(
-                                    getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, 1))
-                            posizioniList!!.add(
-                                    getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, 2))
-                            posizioniList!!.add(
-                                    getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, 3))
+                            Log.d(TAG, "onChanged")
+                            var progressiveTag = 0
+                            posizioniList.clear()
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
 
                             val pref = PreferenceManager.getDefaultSharedPreferences(activity)
-                            if (pref.getBoolean(Utility.SHOW_PACE, false)) {
-                                posizioniList!!.add(
-                                        getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, 4))
-                                posizioniList!!.add(
-                                        getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, 5))
-                            } else
-                                posizioniList!!.add(
-                                        getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, 4))
+                            if (pref.getBoolean(Utility.SHOW_PACE, false))
+                                posizioniList.add(
+                                        getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
 
-                            cantoAdapter!!.notifyDataSetChanged()
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+
+                            cantoAdapter!!.set(posizioniList)
                         })
     }
 

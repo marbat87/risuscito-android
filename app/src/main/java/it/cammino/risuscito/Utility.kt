@@ -19,7 +19,7 @@ object Utility {
     const val SYSTEM_LANGUAGE = "lingua_sistema"
     const val DB_RESET = "db_reset"
     const val CHANGE_LANGUAGE = "changed"
-    const val CLICK_DELAY: Long = 1000
+    const val CLICK_DELAY: Long = 500
     internal const val SHOW_SECONDA = "mostra_seconda_lettura"
     internal const val SHOW_PACE = "mostra_canto_pace"
     internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"

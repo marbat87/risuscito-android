@@ -19,14 +19,18 @@ package it.cammino.risuscito.playback
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
+import android.preference.PreferenceManager
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
+import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
+import it.cammino.risuscito.ui.ThemeableActivity
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
@@ -72,7 +76,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
     @Synchronized fun updateMusic(musicId: String, metadata: MediaMetadataCompat) {
         val track = mMusicListById[musicId]
         if (track != null) {
-            mMusicListById.put(musicId, metadata)
+            mMusicListById[musicId] = metadata
         }
     }
 
@@ -106,8 +110,26 @@ class MusicProvider internal constructor(private val mContext: Context) {
         if (mCurrentState == State.NON_INITIALIZED) {
             mCurrentState = State.INITIALIZING
 
-            val art = BitmapFactory.decodeResource(mContext.resources, R.drawable.ic_launcher_144dp)
-            val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
+            Log.d(TAG, "LINGUA CONTEXT: " + ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration).language)
+            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
+
+            var mNewBase = mContext
+            if (ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
+                            .language != PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "")) {
+                val config = Configuration()
+                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it"))
+                Locale.setDefault(locale)
+                ThemeableActivity.setSystemLocalWrapper(config, locale)
+                if (LUtils.hasJB()) {
+                    mNewBase = mNewBase.createConfigurationContext(config)
+                } else {
+                    @Suppress("DEPRECATION")
+                    mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
+                }
+            }
+
+            val art = BitmapFactory.decodeResource(mNewBase.resources, R.drawable.ic_launcher_144dp)
+            val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
 
             val canti = mDao.allByWithLink
             Log.d(TAG, "retrieveMedia: " + canti.size)
@@ -120,11 +142,11 @@ class MusicProvider internal constructor(private val mContext: Context) {
                         "retrieveMedia: "
                                 + canto.id
                                 + " / "
-                                + canto.titolo
+                                + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))
                                 + " / "
-                                + canto.link)
+                                + if (LUtils.getResId(canto.link, R.string::class.java) != - 1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
 
-                var url = canto.link
+                var url = if (LUtils.getResId(canto.link, R.string::class.java) != - 1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
                 if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (!Utility.retrieveMediaFileLink(mContext, url!!, true).isEmpty())
@@ -134,7 +156,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
                         url = Utility.retrieveMediaFileLink(mContext, url, false)
                 }
 
-                Log.v(TAG, "retrieveMedia: " + canto.id + " / " + canto.titolo + " / " + url)
+                Log.v(TAG, "retrieveMedia: " + canto.id + " / " + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)) + " / " + url)
 
                 if (!url.isEmpty()) {
                     temp = MediaMetadataCompat.Builder()
@@ -142,12 +164,12 @@ class MusicProvider internal constructor(private val mContext: Context) {
                                     MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString())
                             .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
                             .putString(
-                                    MediaMetadataCompat.METADATA_KEY_ALBUM, mContext.getString(R.string.app_name))
+                                    MediaMetadataCompat.METADATA_KEY_ALBUM, mNewBase.getString(R.string.app_name))
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
                             .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
                             .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
                             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, canto.titolo)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
                             .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.id.toLong())
                             .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, canti.size.toLong())
                             // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
@@ -164,7 +186,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
                             .build()
 
-                    mMusicListById.put(canto.id.toString(), temp)
+                    mMusicListById[canto.id.toString()] = temp
                 }
             }
 
@@ -190,8 +212,8 @@ class MusicProvider internal constructor(private val mContext: Context) {
 
     companion object {
 
-        val MEDIA_ID_ROOT = "__ROOT__"
-        val MEDIA_ID_EMPTY_ROOT = "__EMPTY__"
+        const val MEDIA_ID_ROOT = "__ROOT__"
+        const val MEDIA_ID_EMPTY_ROOT = "__EMPTY__"
         private val TAG = MusicProvider::class.java.simpleName
     }
 }

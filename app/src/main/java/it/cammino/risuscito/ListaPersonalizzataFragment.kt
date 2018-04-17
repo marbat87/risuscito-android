@@ -1,13 +1,13 @@
 package it.cammino.risuscito
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
@@ -18,38 +18,36 @@ import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.iconics.IconicsDrawable
-import it.cammino.risuscito.adapters.PosizioneRecyclerAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.objects.PosizioneItem
-import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
-import java.lang.ref.WeakReference
 
 class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
     private lateinit var cantoDaCanc: String
 
+    private var mCantiViewModel: ListaPersonalizzataViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var rootView: View? = null
     private var idLista: Int = 0
-    private var listaPersonalizzata: ListaPersonalizzata? = null
-    private var listaPersonalizzataTitle: String? = null
     private var mSwhitchMode: Boolean = false
-    private var posizioniList: MutableList<Pair<PosizioneTitleItem, List<PosizioneItem>>>? = null
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
-    private var cantoAdapter: PosizioneRecyclerAdapter? = null
+    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -65,11 +63,11 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
             val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
             val result = StringBuilder()
-            result.append("-- ").append(listaPersonalizzata!!.name!!.toUpperCase(l)).append(" --\n")
-            for (i in 0 until listaPersonalizzata!!.numPosizioni) {
-                result.append(listaPersonalizzata!!.getNomePosizione(i).toUpperCase(l)).append("\n")
-                if (!listaPersonalizzata!!.getCantoPosizione(i).equals("", ignoreCase = true)) {
-                    for (tempItem in posizioniList!![i].second!!) {
+            result.append("-- ").append(mCantiViewModel!!.listaPersonalizzata!!.name!!.toUpperCase(l)).append(" --\n")
+            for (i in 0 until mCantiViewModel!!.listaPersonalizzata!!.numPosizioni) {
+                result.append(mCantiViewModel!!.listaPersonalizzata!!.getNomePosizione(i).toUpperCase(l)).append("\n")
+                if (!mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(i).equals("", ignoreCase = true)) {
+                    for (tempItem in mCantiViewModel!!.posizioniList[i].listItem!!) {
                         result
                                 .append(tempItem.titolo)
                                 .append(" - ")
@@ -81,7 +79,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
                     result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<")
                     result.append("\n")
                 }
-                if (i < listaPersonalizzata!!.numPosizioni - 1) result.append("\n")
+                if (i < mCantiViewModel!!.listaPersonalizzata!!.numPosizioni - 1) result.append("\n")
             }
 
             return result.toString()
@@ -90,9 +88,67 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
 
+    private val click = OnClickListener { v ->
+        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
+        mLastClickTime = SystemClock.elapsedRealtime()
+        val parent = v.parent.parent as View
+        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+            if (mSwhitchMode) {
+                scambioConVuoto(
+                        Integer.valueOf(
+                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                        .text
+                                        .toString())!!)
+            } else {
+                if (!mMainActivity!!.materialCab!!.isActive) {
+                    val bundle = Bundle()
+                    bundle.putInt("fromAdd", 0)
+                    bundle.putInt("idLista", idLista)
+                    bundle.putInt(
+                            "position",
+                            Integer.valueOf(
+                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                            .text
+                                            .toString())!!)
+                    val intent = Intent(activity, GeneralInsertSearch::class.java)
+                    intent.putExtras(bundle)
+                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
+                    activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+                }
+            }
+        } else {
+            if (!mSwhitchMode)
+                if (mMainActivity!!.materialCab!!.isActive) {
+                    posizioneDaCanc = Integer.valueOf(
+                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                    .text
+                                    .toString())!!
+                    snackBarRimuoviCanto(v)
+                } else
+                    openPagina(v)
+            else {
+                scambioCanto(
+                        Integer.valueOf(
+                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                        .text
+                                        .toString())!!)
+            }
+        }
+    }
+
+    private val longClick = OnLongClickListener { v ->
+        val parent = v.parent.parent as View
+        posizioneDaCanc = Integer.valueOf(
+                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())!!
+        snackBarRimuoviCanto(v)
+        true
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
+
+        mCantiViewModel = ViewModelProviders.of(this).get<ListaPersonalizzataViewModel>(ListaPersonalizzataViewModel::class.java)
 
         mMainActivity = activity as MainActivity?
 
@@ -112,76 +168,23 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val click = OnClickListener { v ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val parent = v.parent.parent as View
-            if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
-                if (mSwhitchMode) {
-                    scambioConVuoto(
-                            Integer.valueOf(
-                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                            .text
-                                            .toString())!!)
-                } else {
-                    if (!mMainActivity!!.materialCab!!.isActive) {
-                        val bundle = Bundle()
-                        bundle.putInt("fromAdd", 0)
-                        bundle.putInt("idLista", idLista)
-                        bundle.putInt(
-                                "position",
-                                Integer.valueOf(
-                                        (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                .text
-                                                .toString())!!)
-                        val intent = Intent(activity, GeneralInsertSearch::class.java)
-                        intent.putExtras(bundle)
-                        parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
-                        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
-                    }
-                }
-            } else {
-                if (!mSwhitchMode)
-                    if (mMainActivity!!.materialCab!!.isActive) {
-                        posizioneDaCanc = Integer.valueOf(
-                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                        .text
-                                        .toString())!!
-                        snackBarRimuoviCanto(v)
-                    } else
-                        openPagina(v)
-                else {
-                    scambioCanto(
-                            Integer.valueOf(
-                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                            .text
-                                            .toString())!!)
-                }
-            }
-        }
-
-        val longClick = OnLongClickListener { v ->
-            val parent = v.parent.parent as View
-            posizioneDaCanc = Integer.valueOf(
-                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())!!
-            snackBarRimuoviCanto(v)
-            true
-        }
 
         // Creating new adapter object
-        posizioniList = ArrayList()
-        cantoAdapter = PosizioneRecyclerAdapter(
-                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
+        cantoAdapter = FastItemAdapter()
+        cantoAdapter!!.setHasStableIds(true)
+        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
         recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
         recycler_list!!.layoutManager = LinearLayoutManager(activity)
 
-        UpdateListTask(this@ListaPersonalizzataFragment).execute()
+        populateDb()
+        subscribeUiChanges()
+//        UpdateListTask(this@ListaPersonalizzataFragment).execute()
 
         button_pulisci.setOnClickListener {
-            for (i in 0 until listaPersonalizzata!!.numPosizioni)
-                listaPersonalizzata!!.removeCanto(i)
+            for (i in 0 until mCantiViewModel!!.listaPersonalizzata!!.numPosizioni)
+                mCantiViewModel!!.listaPersonalizzata!!.removeCanto(i)
             runUpdate()
         }
 
@@ -191,7 +194,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         }
 
         button_invia_file.setOnClickListener {
-            val exportUri = mLUtils!!.listToXML(listaPersonalizzata!!)
+            val exportUri = mLUtils!!.listToXML(mCantiViewModel!!.listaPersonalizzata!!)
             Log.d(TAG, "onClick: exportUri = " + exportUri!!)
             @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
@@ -258,10 +261,10 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private fun scambioCanto(posizioneNew: Int) {
         if (posizioneNew != posizioneDaCanc) {
 
-            val cantoTmp = listaPersonalizzata!!.getCantoPosizione(posizioneNew)
-            listaPersonalizzata!!.addCanto(
-                    listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc), posizioneNew)
-            listaPersonalizzata!!.addCanto(cantoTmp, posizioneDaCanc)
+            val cantoTmp = mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(posizioneNew)
+            mCantiViewModel!!.listaPersonalizzata!!.addCanto(
+                    mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc), posizioneNew)
+            mCantiViewModel!!.listaPersonalizzata!!.addCanto(cantoTmp, posizioneDaCanc)
 
             runUpdate()
 
@@ -280,9 +283,9 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     private fun scambioConVuoto(posizioneNew: Int) {
         //        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
         //        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
-        listaPersonalizzata!!.addCanto(
-                listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc), posizioneNew)
-        listaPersonalizzata!!.removeCanto(posizioneDaCanc)
+        mCantiViewModel!!.listaPersonalizzata!!.addCanto(
+                mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc), posizioneNew)
+        mCantiViewModel!!.listaPersonalizzata!!.removeCanto(posizioneDaCanc)
 
         runUpdate()
 
@@ -299,7 +302,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         Log.d(TAG, "onCabCreated: ")
         cab.setMenu(R.menu.menu_actionmode_lists)
         cab.setTitle("")
-        posizioniList!![longclickedPos].second!![longClickedChild].setmSelected(true)
+        mCantiViewModel!!.posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
         cantoAdapter!!.notifyItemChanged(longclickedPos)
         menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
                 .sizeDp(24)
@@ -316,8 +319,8 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
     override fun onCabItemClicked(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_remove_item -> {
-                cantoDaCanc = listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc)
-                listaPersonalizzata!!.removeCanto(posizioneDaCanc)
+                cantoDaCanc = mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc)
+                mCantiViewModel!!.listaPersonalizzata!!.removeCanto(posizioneDaCanc)
                 runUpdate()
                 actionModeOk = true
                 mMainActivity!!.materialCab!!.finish()
@@ -328,7 +331,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
                         .setAction(
                                 getString(android.R.string.cancel).toUpperCase()
                         ) {
-                            listaPersonalizzata!!.addCanto(cantoDaCanc, posizioneDaCanc)
+                            mCantiViewModel!!.listaPersonalizzata!!.addCanto(cantoDaCanc, posizioneDaCanc)
                             runUpdate()
                         }
                         .setActionTextColor(themeUtils.accentColor())
@@ -337,7 +340,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
             }
             R.id.action_switch_item -> {
                 mSwhitchMode = true
-                cantoDaCanc = listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc)
+                cantoDaCanc = mCantiViewModel!!.listaPersonalizzata!!.getCantoPosizione(posizioneDaCanc)
                 mMainActivity!!.materialCab!!.setTitleRes(R.string.switch_started)
                 Toast.makeText(
                         activity,
@@ -353,7 +356,7 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         mSwhitchMode = false
         if (!actionModeOk) {
             try {
-                posizioniList!![longclickedPos].second!![longClickedChild].setmSelected(false)
+                mCantiViewModel!!.posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
                 cantoAdapter!!.notifyItemChanged(longclickedPos)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
@@ -367,71 +370,100 @@ class ListaPersonalizzataFragment : Fragment(), MaterialCab.Callback {
         Thread(
                 Runnable {
                     val listaNew = ListaPers()
-                    listaNew.lista = listaPersonalizzata
+                    listaNew.lista = mCantiViewModel!!.listaPersonalizzata
                     listaNew.id = idLista
-                    listaNew.titolo = listaPersonalizzataTitle
-                    val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+                    listaNew.titolo = mCantiViewModel!!.listaPersonalizzataTitle
+                    val mDao = RisuscitoDatabase.getInstance(this@ListaPersonalizzataFragment.mMainActivity!!).listePersDao()
                     mDao.updateLista(listaNew)
-                    UpdateListTask(this@ListaPersonalizzataFragment).execute()
+//                    UpdateListTask(this@ListaPersonalizzataFragment).execute()
                 })
                 .start()
     }
 
-    private class UpdateListTask internal constructor(fragment: ListaPersonalizzataFragment) : AsyncTask<Void, Void, Int>() {
+//    private class UpdateListTask internal constructor(fragment: ListaPersonalizzataFragment) : AsyncTask<Void, Void, Int>() {
+//
+//        private val fragmentReference: WeakReference<ListaPersonalizzataFragment> = WeakReference(fragment)
+//
+//        override fun doInBackground(vararg params: Void): Int? {
+//
+//            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.mMainActivity!!).listePersDao()
+//            val mCantoDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.mMainActivity!!).cantoDao()
+//            val listaPers = mDao.getListById(fragmentReference.get()!!.idLista)
+//
+//            fragmentReference.get()!!.listaPersonalizzata = listaPers!!.lista
+//            fragmentReference.get()!!.listaPersonalizzataTitle = listaPers.titolo
+//
+//            for (cantoIndex in 0 until fragmentReference.get()!!.listaPersonalizzata!!.numPosizioni) {
+//                val list = ArrayList<PosizioneItem>()
+//                if (fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
+//
+////                    val mCantoDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.mMainActivity!!).cantoDao()
+//                    val cantoTemp = mCantoDao.getCantoById(
+//                            Integer.parseInt(
+//                                    fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
+//
+//                    list.add(
+//                            PosizioneItem(
+//                                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoTemp.pagina!!, R.string::class.java)).toInt(),
+//                                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoTemp.titolo!!, R.string::class.java)),
+//                                    cantoTemp.color!!,
+//                                    cantoTemp.id,
+//                                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoTemp.source!!, R.string::class.java)),
+//                                    ""))
+//                }
+//
+//
+//                val result = Pair(
+//                        PosizioneTitleItem(
+//                                fragmentReference.get()!!.listaPersonalizzata!!.getNomePosizione(cantoIndex),
+//                                fragmentReference.get()!!.idLista,
+//                                cantoIndex,
+//                                cantoIndex,
+//                                false),
+//                        list as List<PosizioneItem>)
+//
+//                fragmentReference.get()!!.posizioniList!!.add(result)
+//            }
+//
+//            return 0
+//        }
+//
+//        override fun onPreExecute() {
+//            super.onPreExecute()
+//            fragmentReference.get()!!.posizioniList!!.clear()
+//        }
+//
+//        override fun onPostExecute(result: Int?) {
+//            fragmentReference.get()!!.cantoAdapter!!.notifyDataSetChanged()
+//        }
+//    }
 
-        private val fragmentReference: WeakReference<ListaPersonalizzataFragment> = WeakReference(fragment)
+    private fun populateDb() {
+        mCantiViewModel!!.listaPersonalizzataId = idLista
+        mCantiViewModel!!.createDb()
+    }
 
-        override fun doInBackground(vararg params: Void): Int? {
-
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity!!).listePersDao()
-            val listaPers = mDao.getListById(fragmentReference.get()!!.idLista)
-
-            fragmentReference.get()!!.listaPersonalizzata = listaPers!!.lista
-            fragmentReference.get()!!.listaPersonalizzataTitle = listaPers.titolo
-
-            for (cantoIndex in 0 until fragmentReference.get()!!.listaPersonalizzata!!.numPosizioni) {
-                val list = ArrayList<PosizioneItem>()
-                if (fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
-
-                    val mCantoDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity!!).cantoDao()
-                    val cantoTemp = mCantoDao.getCantoById(
-                            Integer.parseInt(
-                                    fragmentReference.get()!!.listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
-
-                    list.add(
-                            PosizioneItem(
-                                    cantoTemp.pagina,
-                                    cantoTemp.titolo!!,
-                                    cantoTemp.color!!,
-                                    cantoTemp.id,
-                                    cantoTemp.source!!,
-                                    ""))
-                }
-
-
-                val result = Pair(
-                        PosizioneTitleItem(
-                                fragmentReference.get()!!.listaPersonalizzata!!.getNomePosizione(cantoIndex),
-                                fragmentReference.get()!!.idLista,
-                                cantoIndex,
-                                cantoIndex,
-                                false),
-                        list as List<PosizioneItem>)
-
-                fragmentReference.get()!!.posizioniList!!.add(result)
-            }
-
-            return 0
-        }
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            fragmentReference.get()!!.posizioniList!!.clear()
-        }
-
-        override fun onPostExecute(result: Int?) {
-            fragmentReference.get()!!.cantoAdapter!!.notifyDataSetChanged()
-        }
+    private fun subscribeUiChanges() {
+        mCantiViewModel!!
+                .listaPersonalizzataResult
+                .observe(
+                        this,
+                        Observer { listaPersonalizzataResult ->
+                            Log.d(TAG, "onChanged")
+                            mCantiViewModel!!.posizioniList = listaPersonalizzataResult!!.map {
+                                it.withClickListener(click)
+                                        .withLongClickListener(longClick)
+                                        .withSelectedColor(themeUtils.primaryColorDark())
+                            }
+                            mCantiViewModel!!.posizioniList.forEach {
+                                it.listItem!!.forEach {
+                                    it.titolo = resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java))
+                                    it.pagina = resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java))
+                                    it.source = resources.getString(LUtils.getResId(it.source!!, R.string::class.java))
+                                }
+                            }
+                            FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
+                        })
     }
 
     companion object {

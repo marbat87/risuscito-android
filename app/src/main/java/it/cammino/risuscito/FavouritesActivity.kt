@@ -295,18 +295,19 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                         Observer { canti ->
                             Log.d(TAG, "onChanged: a")
                             if (canti != null) {
-                                mFavoritesViewModel!!.titoli.clear()
+                                val newList = ArrayList<SimpleItem>()
                                 for (canto in canti) {
-                                    val sampleItem = SimpleItem()
-                                    sampleItem
-                                            .withTitle(canto.titolo!!)
-                                            .withPage(canto.pagina.toString())
-                                            .withSource(canto.source!!)
+                                    newList.add(
+                                    SimpleItem()
+                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
                                             .withColor(canto.color!!)
                                             .withId(canto.id)
                                             .withSelectedColor(themeUtils.primaryColorDark())
-                                    mFavoritesViewModel!!.titoli.add(sampleItem)
+                                    )
                                 }
+                                mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy({ it.title.toString() }))
                                 FastAdapterDiffUtil.set(cantoAdapter!!, mFavoritesViewModel!!.titoli)
                                 no_favourites!!.visibility = if (cantoAdapter!!.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                                 mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)

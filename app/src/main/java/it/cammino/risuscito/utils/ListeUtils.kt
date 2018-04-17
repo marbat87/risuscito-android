@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.SQLException
 import android.support.design.widget.Snackbar
 import android.view.View
+import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.CustomList
@@ -45,7 +46,7 @@ object ListeUtils {
             titoloDaAgg: String,
             idDaAgg: Int): String {
         val mDao = RisuscitoDatabase.getInstance(mContext).customListDao()
-        val titoloPresente = mDao.getTitoloByPosition(idLista, listPosition)
+        val titoloPresente = if (mDao.getTitoloByPosition(idLista, listPosition) != null) mContext.resources.getString(LUtils.getResId(mDao.getTitoloByPosition(idLista, listPosition), R.string::class.java)) else null
         if (titoloPresente != null && !titoloPresente.isEmpty()) {
             return if (titoloDaAgg.equals(titoloPresente, ignoreCase = true)) {
                 Snackbar.make(rootView, R.string.present_yet, Snackbar.LENGTH_SHORT).show()

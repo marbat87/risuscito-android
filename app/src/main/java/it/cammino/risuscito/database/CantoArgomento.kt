@@ -4,7 +4,7 @@ class CantoArgomento {
 
     var id: Int = 0
 
-    var pagina: Int = 0
+    var pagina: String? = null
 
     var titolo: String? = null
 

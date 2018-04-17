@@ -303,9 +303,9 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                                 for (canto in canti) {
                                     val sampleItem = SimpleHistoryItem()
                                     sampleItem
-                                            .withTitle(canto.titolo!!)
-                                            .withPage(canto.pagina.toString())
-                                            .withSource(canto.source!!)
+                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
                                             .withColor(canto.color!!)
                                             .withTimestamp(canto.ultimaVisita?.time.toString())
                                             .withId(canto.id)

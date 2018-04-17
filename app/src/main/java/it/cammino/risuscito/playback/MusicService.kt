@@ -239,7 +239,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
     override fun onLoadChildren(parentMediaId: String,
                                 result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
-        Log.d(TAG, "OnLoadChildren: parentMediaId=" + parentMediaId)
+        Log.d(TAG, "OnLoadChildren: parentMediaId=$parentMediaId")
 
         if (!mMusicProvider!!.isInitialized) {
             // Use result.detach to allow calling result.sendResult from another thread:
@@ -277,7 +277,7 @@ class MusicService : MediaBrowserServiceCompat() {
             }
             MusicProvider.MEDIA_ID_EMPTY_ROOT -> {
             }
-            else -> Log.w(TAG, "Skipping unmatched parentMediaId: " + parentMediaId)
+            else -> Log.w(TAG, "Skipping unmatched parentMediaId: $parentMediaId")
         }// Since the client provided the empty root we'll just send back an
         // empty list
         result.sendResult(mediaItems)
@@ -310,7 +310,7 @@ class MusicService : MediaBrowserServiceCompat() {
         }
 
         override fun onSeekTo(position: Long) {
-            Log.d(TAG, "onSeekTo:" + position)
+            Log.d(TAG, "onSeekTo:$position")
             mPlayback!!.seekTo(position.toInt())
         }
 
@@ -542,18 +542,18 @@ class MusicService : MediaBrowserServiceCompat() {
         private val TAG = MusicService::class.java.simpleName
 
         // ID for our MediaNotification.
-        val NOTIFICATION_ID = 412
+        const val NOTIFICATION_ID = 412
 
         // Request code for starting the UI.
-        private val REQUEST_CODE = 99
+        private const val REQUEST_CODE = 99
 
         // Delay stopSelf by using a handler.
         private val STOP_DELAY = TimeUnit.MINUTES.toMillis(10)
-        private val STOP_CMD = 0x7c48
+        private const val STOP_CMD = 0x7c48
 
-        val ACTION_REFRESH = "itcr_media_action_refresh"
-        val BROADCAST_RETRIEVE_ASYNC = "itcr_media_broadcast_retrieve_async"
-        val MSG_RETRIEVE_DONE = "itcr_media_retrieve_done"
+        const val ACTION_REFRESH = "itcr_media_action_refresh"
+        const val BROADCAST_RETRIEVE_ASYNC = "itcr_media_broadcast_retrieve_async"
+        const val MSG_RETRIEVE_DONE = "itcr_media_retrieve_done"
     }
 
 }

@@ -43,7 +43,6 @@ import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
-import java.util.*
 
 class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
@@ -87,7 +86,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 enableBottombar(false)
                 selected_view!!.visibility = View.VISIBLE
                 mMainActivity!!.enableFab(true)
-                mCantiViewModel!!.titoliChoose.clear()
+                mCantiViewModel!!.titoliChoose = ArrayList()
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }
@@ -184,7 +183,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             enableBottombar(false)
             selected_view!!.visibility = View.VISIBLE
             mMainActivity!!.enableFab(true)
-            mCantiViewModel!!.titoliChoose.clear()
+            mCantiViewModel!!.titoliChoose = ArrayList()
         }
 
         val confirmChanges = if (mMainActivity!!.isOnTablet)
@@ -301,12 +300,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         activity!!.unregisterReceiver(completedBRec)
     }
 
-    //  @Override
-    //  public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-    //    savedInstanceState.putBoolean(EDIT_MODE, editMode);
-    //    super.onSaveInstanceState(savedInstanceState);
-    //  }
-
     override fun onDestroy() {
         enableBottombar(false)
         super.onDestroy()
@@ -350,18 +343,20 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
                     val canti = mDao.choosen
                     @Suppress("SENSELESS_COMPARISON")
-                    if (canti != null && mCantiViewModel!!.titoliChoose.size == 0) {
-                        mCantiViewModel!!.titoliChoose.clear()
+                    if (canti != null && mCantiViewModel!!.titoliChoose.isEmpty()) {
+                        val newList = ArrayList<CheckableItem>()
                         for (canto in canti) {
                             val checkableItem = CheckableItem()
-                            checkableItem
-                                    .withTitle(canto.titolo!!)
-                                    .withPage(canto.pagina.toString())
-                                    .withColor(canto.color!!)
-                                    .withSetSelected(canto.consegnato > 0)
-                                    .withId(canto.id)
-                            mCantiViewModel!!.titoliChoose.add(checkableItem)
+                            newList.add(
+                                    checkableItem
+                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                            .withColor(canto.color!!)
+                                            .withSetSelected(canto.consegnato > 0)
+                                            .withId(canto.id)
+                            )
                         }
+                        mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy({ it.title.toString() }))
                         FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
                     }
                 })
@@ -402,10 +397,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
-//                        val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-//                        prefEditor.putBoolean(Utility.INTRO_CONSEGNATI, true)
-//                        prefEditor.apply()
-                        PreferenceManager.getDefaultSharedPreferences(activity).edit {putBoolean(Utility.INTRO_CONSEGNATI, true)}
+                        PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
                     }
                 })
     }
@@ -449,19 +441,13 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
-//                                prefEditor.apply()
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CONSEGNATI_2, true)}
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CONSEGNATI_2, true)
-//                                prefEditor.apply()
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CONSEGNATI_2, true)}
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
                             }
                         })
                 .start()
@@ -479,19 +465,18 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         Observer { cantos ->
                             Log.d(TAG, "onChanged: " + (cantos != null))
                             if (cantos != null) {
-                                //                  List<SimpleItem> titoli = new ArrayList<>();
-                                mCantiViewModel!!.titoli.clear()
+                                val newList = ArrayList<SimpleItem>()
                                 for (canto in cantos) {
                                     val sampleItem = SimpleItem()
                                     sampleItem
-                                            .withTitle(canto.titolo!!)
-                                            .withPage(canto.pagina.toString())
-                                            .withSource(canto.source!!)
+                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
                                             .withColor(canto.color!!)
                                             .withId(canto.id)
-                                    //                    titoli.add(sampleItem);
-                                    mCantiViewModel!!.titoli.add(sampleItem)
+                                    newList.add(sampleItem)
                                 }
+                                mCantiViewModel!!.titoli = newList.sortedWith(compareBy({ it.title.toString() }))
                                 cantoAdapter.set(mCantiViewModel!!.titoli)
                                 no_consegnati!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                             }

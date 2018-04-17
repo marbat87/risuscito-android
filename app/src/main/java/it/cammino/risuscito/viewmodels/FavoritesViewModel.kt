@@ -10,7 +10,7 @@ import java.util.*
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
-    var titoli: ArrayList<SimpleItem> = ArrayList()
+    var titoli: List<SimpleItem> = ArrayList()
     var mFavoritesResult: LiveData<List<Canto>>? = null
         private set
     private var mDb: RisuscitoDatabase? = null

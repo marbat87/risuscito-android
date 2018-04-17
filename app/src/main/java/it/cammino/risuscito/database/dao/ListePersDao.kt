@@ -25,6 +25,9 @@ interface ListePersDao {
     @Query("SELECT * FROM listapers WHERE id = :id")
     fun getListById(id: Int): ListaPers?
 
+    @Query("SELECT * FROM listapers WHERE id = :id")
+    fun getLiveListById(id: Int): LiveData<ListaPers>?
+
     @Delete
     fun deleteList(lista: ListaPers)
 

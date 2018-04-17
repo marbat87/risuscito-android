@@ -328,19 +328,31 @@ class InsertAvanzataFragment : Fragment() {
                     else
                         mDb.cantoDao().getCantiWithSource(aText[0]!!)
 
-                    if (elenco != null) {
-                        for (canto in elenco) {
-                            if (isCancelled) return 0
-                            val insertItem = InsertItem()
-                            insertItem
-                                    .withTitle(canto.titolo!!)
-                                    .withColor(canto.color!!)
-                                    .withPage(canto.pagina.toString())
-                                    .withId(canto.id)
-                                    .withSource(canto.source!!)
-                            fragmentReference.get()!!.titoli!!.add(insertItem)
-                        }
-                    }
+                    elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                            ?.forEach {
+                                if (isCancelled) return 0
+                                fragmentReference.get()!!.titoli!!.add(
+                                        InsertItem()
+                                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                .withColor(it.color!!)
+                                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                .withId(it.id)
+                                                .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                )
+                            }
+//                    if (elenco != null) {
+//                        for (canto in elenco) {
+//                            if (isCancelled) return 0
+//                            val insertItem = InsertItem()
+//                            insertItem
+//                                    .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+//                                    .withColor(canto.color!!)
+//                                    .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+//                                    .withId(canto.id)
+//                                    .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+//                            fragmentReference.get()!!.titoli!!.add(insertItem)
+//                        }
+//                    }
                 }
             }
 

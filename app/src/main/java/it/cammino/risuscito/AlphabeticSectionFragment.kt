@@ -282,7 +282,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                                     .content(
                                                             (getString(R.string.dialog_present_yet)
                                                                     + " "
-                                                                    + cantoPresente.titolo
+                                                                    + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
                                                     .positiveButton(android.R.string.yes)
                                                     .negativeButton(android.R.string.no)
@@ -375,18 +375,31 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                         this,
                         Observer<List<Canto>> { canti ->
                             if (canti != null) {
-                                mCantiViewModel!!.titoli.clear()
-                                for (canto in canti) {
-                                    val sampleItem = SimpleItem()
-                                    sampleItem
-                                            .withTitle(canto.titolo!!)
-                                            .withPage((canto.pagina).toString())
-                                            .withSource(canto.source!!)
-                                            .withColor(canto.color!!)
-                                            .withId(canto.id)
-                                            .withContextMenuListener(this@AlphabeticSectionFragment)
-                                    mCantiViewModel!!.titoli.add(sampleItem)
-                                }
+                                val newList = ArrayList<SimpleItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                                        .forEach {
+                                            newList.add(
+                                                    SimpleItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withId(it.id)
+                                                            .withContextMenuListener(this@AlphabeticSectionFragment)
+                                            )
+                                        }
+//                                for (canto in canti) {
+//                                    val sampleItem = SimpleItem()
+//                                    sampleItem
+//                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+//                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+//                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+//                                            .withColor(canto.color!!)
+//                                            .withId(canto.id)
+//                                            .withContextMenuListener(this@AlphabeticSectionFragment)
+//                                    newList.add(sampleItem)
+//                                }
+                                mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
                             }
                         })

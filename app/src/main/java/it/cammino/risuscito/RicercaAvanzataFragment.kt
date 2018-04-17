@@ -324,8 +324,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                     if (mViewModel!!.idListaClick != ID_FITTIZIO && mViewModel!!.idListaClick >= 100) {
                         mViewModel!!.idListaClick -= 100
                         if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
+                                        .lista!!
+                                        .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
@@ -339,8 +339,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                                     .start()
                         } else {
                             if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                    .lista!!
-                                    .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
+                                            .lista!!
+                                            .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Thread(
@@ -499,20 +499,33 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                     val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
                     val elenco = mDb.cantoDao().getCantiWithSource(aText[0]!!)
 
-                    if (elenco != null) {
-                        for (canto in elenco) {
-                            if (isCancelled) return 0
-                            val simpleItem = SimpleItem()
-                            simpleItem
-                                    .withTitle(canto.titolo!!)
-                                    .withColor(canto.color!!)
-                                    .withPage(canto.pagina.toString())
-                                    .withId(canto.id)
-                                    .withSource(canto.source!!)
-                                    .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
-                            fragmentReference.get()!!.titoli!!.add(simpleItem)
-                        }
-                    }
+                    elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                            ?.forEach {
+                                if (isCancelled) return 0
+                                fragmentReference.get()!!.titoli!!.add(
+                                        SimpleItem()
+                                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                .withColor(it.color!!)
+                                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                .withId(it.id)
+                                                .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
+                                )
+                            }
+//                    if (elenco != null) {
+//                        for (canto in elenco) {
+//                            if (isCancelled) return 0
+//                            val simpleItem = SimpleItem()
+//                            simpleItem
+//                                    .withTitle(canto.titolo!!)
+//                                    .withColor(canto.color!!)
+//                                    .withPage(canto.pagina.toString())
+//                                    .withId(canto.id)
+//                                    .withSource(canto.source!!)
+//                                    .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
+//                            fragmentReference.get()!!.titoli!!.add(simpleItem)
+//                        }
+//                    }
                 }
             }
             return 0

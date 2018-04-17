@@ -4,21 +4,19 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-
-import java.util.ArrayList
-
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
+import java.util.*
 
 class ConsegnatiViewModel(application: Application) : AndroidViewModel(application) {
 
     var editMode: Boolean = false
 
-    var titoliChoose: ArrayList<CheckableItem> = ArrayList()
+    var titoliChoose: List<CheckableItem> = ArrayList()
 
-    var titoli: ArrayList<SimpleItem> = ArrayList()
+    var titoli: List<SimpleItem> = ArrayList()
 
     private var mIndexResult: LiveData<List<Canto>>? = null
 

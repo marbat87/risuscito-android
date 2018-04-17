@@ -29,7 +29,67 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.bottom_sheet, container, false)
+        return inflater.inflate(R.layout.bottom_sheet, container, false)
+
+//        val showTitle = arguments!!.getBoolean("showTitle")
+//
+//        if (showTitle)
+//            sheet_title.setText(arguments!!.getInt("title"))
+//        else
+//            sheet_title.text = ""
+//        sheet_title_area.visibility = if (showTitle) View.VISIBLE else View.GONE
+
+//        val intent = arguments!!.getParcelable<Intent>("intent")
+//        val pm = activity!!.packageManager
+//
+//        val list = pm.queryIntentActivities(intent, 0)
+//
+//        val lastApp = PreferenceManager
+//                .getDefaultSharedPreferences(activity)
+//                .getString(Utility.ULTIMA_APP_USATA, "")
+//        val lastAppInfo: ResolveInfo? = list.indices
+//                .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
+//                ?.let { list.removeAt(it) }
+//
+//        if (lastAppInfo != null)
+//            list.add(0, lastAppInfo)
+//
+//        val mList = list.map { BottomSheetItem().withItem(it) }
+//
+//        val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
+//            PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
+//
+//            val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
+//            if (intent != null) {
+//                val newIntent = intent.clone() as Intent
+//                newIntent.component = name
+//                activity!!.startActivity(newIntent)
+//                dialog.dismiss()
+//            }
+//            true
+//        }
+//
+//        val adapter = FastItemAdapter<BottomSheetItem>()
+//        adapter.add(mList)
+//        adapter.withOnClickListener(mOnClickListener)
+//        shareList.adapter = adapter
+//        shareList.layoutManager = GridLayoutManager(activity, 3)
+
+//        return view
+    }
+
+    /**
+     * Called immediately after [.onCreateView]
+     * has returned, but before any saved state has been restored in to the view.
+     * This gives subclasses a chance to initialize themselves once
+     * they know their view hierarchy has been completely created.  The fragment's
+     * view hierarchy is not however attached to its parent at this point.
+     * @param view The View returned by [.onCreateView].
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val showTitle = arguments!!.getBoolean("showTitle")
 
@@ -74,8 +134,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         adapter.withOnClickListener(mOnClickListener)
         shareList.adapter = adapter
         shareList.layoutManager = GridLayoutManager(activity, 3)
-
-        return view
     }
 
     override fun onResume() {

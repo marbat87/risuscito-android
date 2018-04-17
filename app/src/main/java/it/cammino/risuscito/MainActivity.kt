@@ -627,9 +627,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             mLUtils!!.animateIn(mBottomBar)
         else
             mBottomBar.visibility = View.GONE
-        //            mBottomBar.setVisibility(enabled ? View.VISIBLE : View.GONE);
     }
-    // [END signIn]
 
     // [START signIn]
     fun signIn() {
@@ -637,7 +635,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         val signInIntent = mSignInClient!!.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
-    // [END signOut]
 
     // [START signOut]
     private fun signOut() {
@@ -645,9 +642,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 .signOut()
                 .addOnCompleteListener {
                     updateUI(false)
-//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-//                    editor.putBoolean(Utility.SIGNED_IN, false)
-//                    editor.apply()
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
                     Snackbar.make(
                             findViewById(R.id.main_content),
@@ -656,7 +650,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                             .show()
                 }
     }
-    // [END revokeAccess]
 
     // [START revokeAccess]
     private fun revokeAccess() {
@@ -664,9 +657,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 .revokeAccess()
                 .addOnCompleteListener {
                     updateUI(false)
-//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-//                    editor.putBoolean(Utility.SIGNED_IN, false)
-//                    editor.apply()
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
                     Snackbar.make(
                             findViewById(R.id.main_content),
@@ -687,7 +677,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             }
         }
     }
-    // [END handleSignInResult]
 
     // [START handleSignInResult]
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
@@ -696,9 +685,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         if (task.isSuccessful) {
             // Signed in successfully, show authenticated UI.
             acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
-//            val editor = PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit()
-//            editor.putBoolean(Utility.SIGNED_IN, true)
-//            editor.apply()
             PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
             if (mViewModel!!.showSnackbar) {
                 Snackbar.make(
@@ -725,7 +711,6 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     private fun updateUI(signedIn: Boolean) {
-        //        AccountHeader headerResult;
         val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
@@ -872,8 +857,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             listaCanti.reCreateDatabse(db)
             db.close()
             listaCanti.close()
-            RisuscitoDatabase.getInstance(activityWeakReference.get()!!)
-                    .recreateDB(activityWeakReference.get()!!)
+//            RisuscitoDatabase.getInstance(activityWeakReference.get()!!)
+//                    .recreateDB(activityWeakReference.get()!!)
             activityWeakReference.get()!!.convertTabs()
             activityWeakReference.get()!!.convertiBarre()
             return null

@@ -263,7 +263,7 @@ class InsertVeloceFragment : Fragment() {
             Log.d(javaClass.name, "STRINGA: " + sParam[0])
 
             val stringa = Utility.removeAccents(sParam[0]).toLowerCase()
-            var titoloTemp: String
+//            var titoloTemp: String
             Log.d(javaClass.name, "onTextChanged: stringa $stringa")
 
             val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
@@ -274,22 +274,38 @@ class InsertVeloceFragment : Fragment() {
             else
                 mDb.cantoDao().allByName
 
-            for (canto in elenco) {
-                if (isCancelled) return 0
-                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
-                if (titoloTemp.contains(stringa)) {
-                    val insertItem = InsertItem()
-                    insertItem
-                            .withTitle(canto.titolo!!)
-                            .withColor(canto.color!!)
-                            .withPage(canto.pagina.toString())
-                            .withId(canto.id)
-                            .withSource(canto.source!!)
-                            .withNormalizedTitle(titoloTemp)
-                            .withFilter(stringa)
-                    fragmentReference.get()!!.titoli!!.add(insertItem)
-                }
-            }
+            elenco.filter {  Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
+                    .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))}
+                    .forEach {
+                        if (isCancelled) return 0
+                        fragmentReference.get()!!.titoli!!.add(
+                                InsertItem()
+                                        .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                        .withColor(it.color!!)
+                                        .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                        .withId(it.id)
+                                        .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                        .withNormalizedTitle(Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
+                                        .withFilter(stringa)
+                        )
+                    }
+
+//            for (canto in elenco) {
+//                if (isCancelled) return 0
+//                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
+//                if (titoloTemp.contains(stringa)) {
+//                    val insertItem = InsertItem()
+//                    insertItem
+//                            .withTitle(canto.titolo!!)
+//                            .withColor(canto.color!!)
+//                            .withPage(canto.pagina.toString())
+//                            .withId(canto.id)
+//                            .withSource(canto.source!!)
+//                            .withNormalizedTitle(titoloTemp)
+//                            .withFilter(stringa)
+//                    fragmentReference.get()!!.titoli!!.add(insertItem)
+//                }
+//            }
 
             return 0
         }

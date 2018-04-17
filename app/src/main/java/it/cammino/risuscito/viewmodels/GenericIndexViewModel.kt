@@ -15,6 +15,6 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
     var posizioneDaAgg: Int = 0
     var idListaClick: Int = 0
     var idPosizioneClick: Int = 0
-    var titoli: ArrayList<SimpleItem> = ArrayList()
+    var titoli: List<SimpleItem> = ArrayList()
     internal var mDb: RisuscitoDatabase? = null
 }

@@ -14,7 +14,7 @@ import android.arch.persistence.room.OnConflictStrategy.REPLACE
 @Dao
 interface ConsegnatiDao {
 
-    @get:Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY a.titolo ASC")
+    @get:Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto")
     val liveConsegnati: LiveData<List<Canto>>
 
     @get:Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY a.titolo ASC")
@@ -23,7 +23,7 @@ interface ConsegnatiDao {
     @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto ORDER BY A.titolo ASC")
     val liveChoosen: LiveData<List<CantoConsegnato>>
 
-    @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto ORDER BY A.titolo ASC")
+    @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto")
     val choosen: List<CantoConsegnato>
 
     @Query("DELETE FROM consegnato")

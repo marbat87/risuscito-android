@@ -1,8 +1,8 @@
 package it.cammino.risuscito.objects
 
-class PosizioneItem(pagina: Int, titolo: String, colore: String, idCanto: Int, source: String, timestamp: String) {
+class PosizioneItem(pagina: String, titolo: String, colore: String, idCanto: Int, source: String, timestamp: String) {
 
-    var pagina: Int = 0
+    var pagina: String? = null
     var titolo: String? = null
     var colore: String? = null
     var idCanto: Int = 0

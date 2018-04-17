@@ -18,6 +18,6 @@ class NumericIndexViewModel(application: Application) : GenericIndexViewModel(ap
     }
 
     private fun subscribeToDbChanges() {
-        indexResult = mDb!!.cantoDao().liveAllByPage
+        indexResult = mDb!!.cantoDao().liveAll
     }
 }

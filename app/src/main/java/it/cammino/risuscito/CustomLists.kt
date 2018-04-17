@@ -346,9 +346,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 Log.d(TAG, "onSequenceFinish: ")
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
                             }
 
@@ -356,9 +353,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(activity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_CUSTOMLISTS, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
                             }
                         })

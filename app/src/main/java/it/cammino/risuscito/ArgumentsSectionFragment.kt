@@ -130,9 +130,9 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
                     for (i in canti.indices) {
                         val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(canti[i].titolo!!)
-                                .withPage((canti[i].pagina).toString())
-                                .withSource(canti[i].source!!)
+                                .withTitle(resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
+                                .withPage(resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
+                                .withSource(resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
                                 .withColor(canti[i].color!!)
                                 .withId(canti[i].id)
 
@@ -148,7 +148,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                             simpleItem.withHasDivider(false)
                             val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
                             expandableItem
-                                    .withTitle(canti[i].nomeArgomento + " ($totCanti)")
+                                    .withTitle(resources.getString(LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)) + " ($totCanti)")
                                     .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
                                         if (mItem.isExpanded) {
                                             Log.d(
@@ -350,7 +350,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                                                     .content(
                                                             (getString(R.string.dialog_present_yet)
                                                                     + " "
-                                                                    + cantoPresente.titolo
+                                                                    + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
                                                     .positiveButton(android.R.string.yes)
                                                     .negativeButton(android.R.string.no)

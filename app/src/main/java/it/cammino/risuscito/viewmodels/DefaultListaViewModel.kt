@@ -8,10 +8,12 @@ import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.RisuscitoDatabase
 
 
-class CantiEucarestiaViewModel(application: Application) : AndroidViewModel(application) {
+class DefaultListaViewModel(application: Application) : AndroidViewModel(application) {
 
-    var cantiEucarestiaResult: LiveData<List<Posizione>>? = null
+    var cantiResult: LiveData<List<Posizione>>? = null
         private set
+
+    var defaultListaId: Int = 0
 
     private var mDb: RisuscitoDatabase? = null
 
@@ -22,6 +24,6 @@ class CantiEucarestiaViewModel(application: Application) : AndroidViewModel(appl
     }
 
     private fun subscribeToDbChanges() {
-        cantiEucarestiaResult = mDb!!.customListDao().getList(2)
+        cantiResult = mDb!!.customListDao().getList(defaultListaId)
     }
 }

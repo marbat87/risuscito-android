@@ -18,6 +18,6 @@ class AlphabeticIndexViewModel(application: Application) : GenericIndexViewModel
     }
 
     private fun subscribeToDbChanges() {
-        indexResult = mDb!!.cantoDao().liveAllByName
+        indexResult = mDb!!.cantoDao().liveAll
     }
 }

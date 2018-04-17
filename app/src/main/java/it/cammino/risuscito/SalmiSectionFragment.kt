@@ -278,7 +278,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                                     .content(
                                                             (getString(R.string.dialog_present_yet)
                                                                     + " "
-                                                                    + cantoPresente.titolo
+                                                                    + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
                                                     .positiveButton(android.R.string.yes)
                                                     .negativeButton(android.R.string.no)
@@ -378,19 +378,35 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                         this,
                         Observer<List<SalmoCanto>> { canti ->
                             if (canti != null) {
-                                mCantiViewModel!!.titoli.clear()
-                                for (canto in canti) {
-                                    val sampleItem = SimpleItem()
-                                    sampleItem
-                                            .withTitle(canto.titoloSalmo!!)
-                                            .withPage((canto.pagina).toString())
-                                            .withSource(canto.source!!)
-                                            .withColor(canto.color!!)
-                                            .withId(canto.id)
-                                            .withNumSalmo(canto.numSalmo!!)
-                                            .withContextMenuListener(this@SalmiSectionFragment)
-                                    mCantiViewModel!!.titoli.add(sampleItem)
+                                val newList = ArrayList<SimpleItem>()
+//                                for (canto in canti) {
+//                                    val sampleItem = SimpleItem()
+//                                    sampleItem
+//                                            .withTitle(resources.getString(resources.getIdentifier(canto.titoloSalmo,
+//                                                    "string", activity!!.packageName)))
+//                                            .withPage(resources.getString(resources.getIdentifier(canto.pagina,
+//                                                    "string", activity!!.packageName)))
+//                                            .withSource(resources.getString(resources.getIdentifier(canto.source,
+//                                                    "string", activity!!.packageName)))
+//                                            .withColor(canto.color!!)
+//                                            .withId(canto.id)
+//                                            .withNumSalmo(canto.numSalmo!!)
+//                                            .withContextMenuListener(this@SalmiSectionFragment)
+//                                    newList.add(sampleItem)
+//                                }
+                                canti.forEach {
+                                    newList.add(
+                                            SimpleItem()
+                                                    .withTitle(resources.getString(LUtils.getResId(it.titoloSalmo, R.string::class.java)))
+                                                    .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                    .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                    .withColor(it.color!!)
+                                                    .withId(it.id)
+                                                    .withNumSalmo(it.numSalmo!!)
+                                                    .withContextMenuListener(this@SalmiSectionFragment)
+                                    )
                                 }
+                                mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
                             }
                         })
