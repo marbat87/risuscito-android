@@ -21,5 +21,6 @@
     <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_dark</color>
     <color name="chglib_material_color_text_1">@color/primary_text_default_material_dark</color>
     <color name="material_divider">@color/md_dark_dividers</color>
+    <color name="preference_simple_menu_background">#303030</color>
 
 </resources>

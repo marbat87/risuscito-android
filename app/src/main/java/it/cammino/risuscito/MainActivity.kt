@@ -852,11 +852,11 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
         override fun doInBackground(vararg sUrl: Void): Void? {
             activityWeakReference.get()!!.intent.removeExtra(Utility.DB_RESET)
-            val listaCanti = DatabaseCanti(activityWeakReference.get())
-            val db = listaCanti.readableDatabase
-            listaCanti.reCreateDatabse(db)
-            db.close()
-            listaCanti.close()
+//            val listaCanti = DatabaseCanti(activityWeakReference.get())
+//            val db = listaCanti.readableDatabase
+//            listaCanti.reCreateDatabse(db)
+//            db.close()
+//            listaCanti.close()
 //            RisuscitoDatabase.getInstance(activityWeakReference.get()!!)
 //                    .recreateDB(activityWeakReference.get()!!)
             activityWeakReference.get()!!.convertTabs()

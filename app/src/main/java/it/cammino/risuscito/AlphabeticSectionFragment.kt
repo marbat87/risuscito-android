@@ -109,8 +109,8 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         alpha_cantiList!!.addItemDecoration(insetDivider)
-        alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
-        alpha_dragScrollBar.setAutoHide(false)
+//        alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
+//        alpha_dragScrollBar.setAutoHide(false)
     }
 
     /**
@@ -388,19 +388,10 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                                             .withContextMenuListener(this@AlphabeticSectionFragment)
                                             )
                                         }
-//                                for (canto in canti) {
-//                                    val sampleItem = SimpleItem()
-//                                    sampleItem
-//                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-//                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-//                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-//                                            .withColor(canto.color!!)
-//                                            .withId(canto.id)
-//                                            .withContextMenuListener(this@AlphabeticSectionFragment)
-//                                    newList.add(sampleItem)
-//                                }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
+                                alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                alpha_dragScrollBar.setAutoHide(false)
                             }
                         })
     }

@@ -106,8 +106,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         salmi_cantiList!!.addItemDecoration(insetDivider)
-        salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
-        salmi_dragScrollBar.setAutoHide(false)
+//        salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
+//        salmi_dragScrollBar.setAutoHide(false)
     }
 
     /**
@@ -408,6 +408,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                 }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
+                                salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                salmi_dragScrollBar.setAutoHide(false)
                             }
                         })
     }

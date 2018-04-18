@@ -129,9 +129,9 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
                     for (i in canti.indices) {
                         val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
-                                .withPage(resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
-                                .withSource(resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
+                                .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
+                                .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
+                                .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
                                 .withColor(canti[i].color!!)
                                 .withId(canti[i].id)
 
@@ -147,7 +147,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                             simpleItem.withHasDivider(false)
                             val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
                             expandableItem
-                                    .withTitle(resources.getString(LUtils.getResId(canti[i].nome, R.string::class.java)) + " ($totCanti)")
+                                    .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nome, R.string::class.java)) + " ($totCanti)")
                                     .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
                                         if (mItem.isExpanded) {
                                             Log.d(

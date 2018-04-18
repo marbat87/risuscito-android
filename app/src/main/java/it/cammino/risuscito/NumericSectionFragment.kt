@@ -107,8 +107,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         numeric_cantiList!!.addItemDecoration(insetDivider)
-        numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
-        numeric_dragScrollBar.setAutoHide(false)
+//        numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
+//        numeric_dragScrollBar.setAutoHide(false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -403,6 +403,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 //                            }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
+                                numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                numeric_dragScrollBar.setAutoHide(false)
                             }
                         })
     }
