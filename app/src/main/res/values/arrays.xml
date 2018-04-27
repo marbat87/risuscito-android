@@ -37,13 +37,13 @@
     <string-array name="pref_languages_entries">
         <item>@string/lang_it</item>
         <item>@string/lang_uk</item>
-        <item>@string/lang_en</item>
+        <!--<item>@string/lang_en</item>-->
     </string-array>
 
     <string-array name="pref_languages_values">
         <item>@string/lang_it_value</item>
         <item>@string/lang_uk_value</item>
-        <item>@string/lang_en_value</item>
+        <!--<item>@string/lang_en_value</item>-->
     </string-array>
 
 </resources>

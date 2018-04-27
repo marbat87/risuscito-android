@@ -184,18 +184,18 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
         Log.d(TAG, "attachBaseContext - language: " + language!!)
         // ho settato almeno una volta la lingua --> imposto quella
-        if (language != "") {
+        if (language.isNotEmpty() && language != "en") {
             val locale = Locale(language)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
-            //            changeConfig = true;
         } else {
             val mEditor = sp.edit()
             val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
-                "en" -> "en"
+//                "en" -> "en"
                 else -> "it"
             }
+            Log.d(TAG, "attachBaseContext - language setted: $mLanguage")
             mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
             mEditor.apply()
             val locale = Locale(mLanguage)
@@ -503,7 +503,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
                 throw e
             }
 
-            RisuscitoDatabase.getInstance(this)
+            val mDb = RisuscitoDatabase.getInstance(this)
+            mDb.recreateDB()
         } else {
             metadataBuffer.release()
             throw NoBackupException()

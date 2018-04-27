@@ -1,13 +1,8 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import android.arch.lifecycle.LiveData
-
 import com.mikepenz.fastadapter.IItem
-
-import java.util.ArrayList
-
-import it.cammino.risuscito.database.CantoArgomento
+import java.util.*
 
 class LiturgicIndexViewModel(application: Application) : GenericIndexViewModel(application) {
 

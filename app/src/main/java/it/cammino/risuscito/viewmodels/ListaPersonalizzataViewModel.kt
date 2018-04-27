@@ -40,7 +40,11 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
             listaPersonalizzataMediator.postValue(mListaPers)
         }
         listaPersonalizzataMediator.observeForever { mListaPers ->
-            listaPersonalizzata = mListaPers!!.lista
+            if (mListaPers == null) {
+                listaPersonalizzataResult.postValue(ArrayList())
+                return@observeForever
+            }
+            listaPersonalizzata = mListaPers.lista
             listaPersonalizzataTitle = mListaPers.titolo
             Thread(
                     Runnable {

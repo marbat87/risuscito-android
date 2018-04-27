@@ -54,46 +54,46 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         cronologiaDao().truncateTable()
     }
 
-//    private fun truncatePartialDB() {
-//        cantoDao().truncateTable()
-//        argomentiDao().truncateArgomento()
-//        argomentiDao().truncateNomeArgomento()
-//        indiceLiturgicoDao().truncateIndiceLiturgico()
-//        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
-//        salmiDao().truncateTable()
-//    }
+    private fun truncatePartialDB() {
+        cantoDao().truncateTable()
+        argomentiDao().truncateArgomento()
+        argomentiDao().truncateNomeArgomento()
+        indiceLiturgicoDao().truncateIndiceLiturgico()
+        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
+        salmiDao().truncateTable()
+    }
 
     fun importFromOldDB(mContext: Context) {
         truncateCompleteDB()
         populateInitialDataFromOldDB(sInstance, mContext)
     }
 
-//    fun recreateDB(mContext: Context) {
-//        val backupCanti = cantoDao().backup
-//        truncatePartialDB()
-//        repopulateFixedData(sInstance, mContext)
-//        // reinserisce il backup
-//        for (backupCanto in backupCanti)
-//            cantoDao()
-//                    .setBackup(
-//                            backupCanto.id,
-//                            backupCanto.zoom,
-//                            backupCanto.scrollX,
-//                            backupCanto.scrollY,
-//                            backupCanto.favorite,
-//                            backupCanto.savedTab,
-//                            backupCanto.savedBarre,
-//                            backupCanto.savedSpeed)
-//        // cancella dalle liste predefinite i canti inesistenti
-//        val customLists = customListDao().all
-//        for (position in customLists) {
-//            val canto = cantoDao().getCantoById(position.idCanto)
-//            @Suppress("UNNECESSARY_SAFE_CALL")
-//            if (canto?.id == 0) {
-//                customListDao().deletePosition(position)
-//            }
-//        }
-//    }
+    fun recreateDB() {
+        val backupCanti = cantoDao().backup
+        truncatePartialDB()
+        populateInitialData(sInstance)
+        // reinserisce il backup
+        for (backupCanto in backupCanti)
+            cantoDao()
+                    .setBackup(
+                            backupCanto.id,
+                            backupCanto.zoom,
+                            backupCanto.scrollX,
+                            backupCanto.scrollY,
+                            backupCanto.favorite,
+                            backupCanto.savedTab,
+                            backupCanto.savedBarre,
+                            backupCanto.savedSpeed)
+        // cancella dalle liste predefinite i canti inesistenti
+        val customLists = customListDao().all
+        for (position in customLists) {
+            val canto = cantoDao().getCantoById(position.idCanto)
+            @Suppress("UNNECESSARY_SAFE_CALL")
+            if (canto?.id == 0) {
+                customListDao().deletePosition(position)
+            }
+        }
+    }
 
     private class PopulateDbAsync : AsyncTask<Any, Void, Void>() {
         override fun doInBackground(vararg params: Any): Void? {
@@ -193,6 +193,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         fun getInstance(context: Context): RisuscitoDatabase {
             Log.d(TAG, "getInstance: ")
             if (sInstance == null) {
+                Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
                             .addMigrations(MIGRATION_1_3)
@@ -206,6 +207,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                                  */
                                 override fun onCreate(db: SupportSQLiteDatabase) {
                                     super.onCreate(db)
+                                    Log.d(TAG, "onCreate")
                                     populateAsync(sInstance as RisuscitoDatabase, context)
                                 }
                             })
@@ -213,6 +215,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 //                    populateAsync(sInstance as RisuscitoDatabase, context)
                 }
             }
+            Log.d(TAG, "getInstance: EXISTS")
             return sInstance as RisuscitoDatabase
         }
 
