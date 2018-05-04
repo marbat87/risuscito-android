@@ -36,6 +36,9 @@ class LUtils private constructor(private val mActivity: Activity) {
     val hasThreeColumns: Boolean
         get() = mActivity.resources.getBoolean(R.bool.has_three_columns)
 
+    val isGridLayout: Boolean
+        get() = mActivity.resources.getBoolean(R.bool.is_grid_layout)
+
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)

@@ -20,6 +20,8 @@ class GeneralInsertSearch : ThemeableActivity() {
         private set
     var hasThreeColumns: Boolean = false
         private set
+    var isGridLayout: Boolean = false
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +43,7 @@ class GeneralInsertSearch : ThemeableActivity() {
         val mLUtils = LUtils.getInstance(this@GeneralInsertSearch)
         isOnTablet = mLUtils.isOnTablet
         hasThreeColumns = mLUtils.hasThreeColumns
+        isGridLayout = mLUtils.isGridLayout
         if (isOnTablet)
             tabletToolbarBackground?.setBackgroundColor(themeUtils!!.primaryColor())
         else

@@ -99,7 +99,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         mAdapter!!.addExtension(itemExpandableExtension)
 
         val mMainActivity = mActivity as MainActivity?
-        if (mMainActivity!!.isOnTablet) {
+        if (mMainActivity!!.isGridLayout) {
             mLayoutManager = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
             (mLayoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {

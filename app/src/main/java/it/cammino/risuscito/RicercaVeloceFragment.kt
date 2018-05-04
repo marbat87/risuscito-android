@@ -122,7 +122,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         matchedList.adapter = cantoAdapter
 //        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as MainActivity?
-        val llm = if (mMainActivity!!.isOnTablet)
+        val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)

@@ -158,7 +158,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
         favouritesList!!.adapter = cantoAdapter
 //        val llm = LinearLayoutManager(context)
-        val llm = if (mMainActivity!!.isOnTablet)
+        val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)

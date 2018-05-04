@@ -96,7 +96,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
 //        val llm = LinearLayoutManager(context)
-        val llm = if (mMainActivity!!.isOnTablet)
+        val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)

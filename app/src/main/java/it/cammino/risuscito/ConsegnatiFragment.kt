@@ -226,7 +226,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         cantiRecycler!!.adapter = cantoAdapter
 //        val llm = LinearLayoutManager(context)
-        val llm = if (mMainActivity!!.isOnTablet)
+        val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
@@ -255,7 +255,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         chooseRecycler!!.adapter = selectableAdapter
 //        val llm2 = LinearLayoutManager(context)
-        val llm2 = if (mMainActivity!!.isOnTablet)
+        val llm2 = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)

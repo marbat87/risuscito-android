@@ -71,6 +71,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         private set
     var hasThreeColumns: Boolean = false
         private set
+    var isGridLayout: Boolean = false
+        private set
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private var mRegularFont: Typeface? = null
@@ -163,6 +165,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
         hasThreeColumns = mLUtils!!.hasThreeColumns
         Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
+        isGridLayout = mLUtils!!.isGridLayout
+        Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = themeUtils!!.primaryColorDark()
