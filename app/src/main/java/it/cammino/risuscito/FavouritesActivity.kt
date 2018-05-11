@@ -17,7 +17,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.content.edit
+import androidx.core.content.edit
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
