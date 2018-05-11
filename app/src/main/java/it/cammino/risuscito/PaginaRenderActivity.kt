@@ -24,8 +24,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.content.edit
-import androidx.net.toUri
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.afollestad.materialdialogs.folderselector.FileChooserDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence

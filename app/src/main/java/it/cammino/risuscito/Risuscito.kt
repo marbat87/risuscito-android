@@ -14,7 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.content.edit
+import androidx.core.content.edit
 import com.google.android.gms.common.SignInButton
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*

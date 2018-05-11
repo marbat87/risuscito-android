@@ -22,7 +22,7 @@ import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import androidx.content.edit
+import androidx.core.content.edit
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn

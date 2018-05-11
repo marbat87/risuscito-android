@@ -23,7 +23,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
-import androidx.content.edit
+import androidx.core.content.edit
 import com.afollestad.materialdialogs.MaterialDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
