@@ -105,7 +105,6 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
                             mIsServiceConnected = true
                             executeOnSuccess?.run()
                         }
-                        //                        mBillingClientResponseCode = billingResponseCode;
                     }
 
                     override fun onBillingServiceDisconnected() {
@@ -168,7 +167,6 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
     /** Start a purchase or subscription replace flow  */
     private fun initiatePurchaseFlow(
             skuId: String,
-            //      final ArrayList<String> oldSkus,
             @BillingClient.SkuType billingType: String) {
         Log.d(TAG, "initiatePurchaseFlow: ")
         loadingBar!!.visibility = View.VISIBLE
@@ -177,7 +175,6 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
             val purchaseParams = BillingFlowParams.newBuilder()
                     .setSku(skuId)
                     .setType(billingType)
-                    //                    .setOldSkus(oldSkus)
                     .build()
             mBillingClient!!.launchBillingFlow(this@DonateActivity, purchaseParams)
         }
