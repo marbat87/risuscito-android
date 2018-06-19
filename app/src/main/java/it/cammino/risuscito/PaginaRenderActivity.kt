@@ -12,6 +12,7 @@ import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -322,7 +323,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mLUtils!!.startActivityWithFadeIn(intent2)
                 }
                 BottomSheetFabCanto.SOUND -> {
-                    findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.GONE else View.VISIBLE
+                    music_controls.visibility = if (mostraAudioBool) View.GONE else View.VISIBLE
                     mostraAudioBool = !mostraAudioBool
                     mViewModel!!.mostraAudio = mostraAudioBool.toString()
                 }
@@ -794,36 +795,48 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     public override fun onResume() {
+//        mCastSession = mSessionManager!!.currentCastSession
+//        mSessionManager!!.addSessionManagerListener(mSessionManagerListener, CastSession::class.java)
         super.onResume()
 
         Log.d(TAG, "onResume: ")
 
-        findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+        music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+
+
+        val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
-        registerReceiver(
+        mLocalBroadcastManager.registerReceiver(
                 downloadPosBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_PROGRESS))
-        registerReceiver(
+        mLocalBroadcastManager.registerReceiver(
                 downloadCompletedBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_COMPLETED))
-        registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
-        registerReceiver(
+        mLocalBroadcastManager.registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
+        mLocalBroadcastManager.registerReceiver(
                 exportCompleted, IntentFilter(PdfExportService.BROADCAST_EXPORT_COMPLETED))
-        registerReceiver(exportError, IntentFilter(PdfExportService.BROADCAST_EXPORT_ERROR))
-        registerReceiver(fabBRec, IntentFilter(BottomSheetFabCanto.CHOOSE_DONE))
-        registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
+        mLocalBroadcastManager.registerReceiver(exportError, IntentFilter(PdfExportService.BROADCAST_EXPORT_ERROR))
+        mLocalBroadcastManager.registerReceiver(fabBRec, IntentFilter(BottomSheetFabCanto.CHOOSE_DONE))
+        mLocalBroadcastManager.registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
     }
+
+//    override fun onPause() {
+//        super.onPause()
+//        mSessionManager!!.removeSessionManagerListener(mSessionManagerListener, CastSession::class.java)
+//        mCastSession = null
+//    }
 
     public override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy(): $isFinishing")
         try {
-            unregisterReceiver(downloadPosBRec)
-            unregisterReceiver(downloadCompletedBRec)
-            unregisterReceiver(downloadErrorBRec)
-            unregisterReceiver(exportCompleted)
-            unregisterReceiver(exportError)
-            unregisterReceiver(fabBRec)
-            unregisterReceiver(catalogReadyBR)
+            val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
+            mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
+            mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
+            mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
+            mLocalBroadcastManager.unregisterReceiver(exportCompleted)
+            mLocalBroadcastManager.unregisterReceiver(exportError)
+            mLocalBroadcastManager.unregisterReceiver(fabBRec)
+            mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
         } catch (e: IllegalArgumentException) {
             Log.e(TAG, e.localizedMessage, e)
         }
@@ -852,7 +865,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     // recupera e setta il record per la registrazione
     private fun getRecordLink() {
         url = if (mViewModel!!.mCurrentCanto!!.link != null && mViewModel!!.mCurrentCanto!!.link != "")
-            mViewModel!!.mCurrentCanto!!.link
+            getString(LUtils.getResId(mViewModel!!.mCurrentCanto!!.link, R.string::class.java))
         else
             ""
 
@@ -1113,7 +1126,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "DOWNLOAD_MP3" -> sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
+            "DOWNLOAD_MP3" -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             "DELETE_LINK" -> {
                 Snackbar.make(
                         findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
@@ -1214,7 +1227,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onFileChooserDismissed(dialog: FileChooserDialog) {}
 
     private fun playIntroSmall() {
-        findViewById<View>(R.id.music_controls).visibility = View.VISIBLE
+        music_controls.visibility = View.VISIBLE
         TapTargetSequence(this@PaginaRenderActivity)
                 .continueOnCancel(true)
                 .targets(
@@ -1288,7 +1301,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
 //                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
@@ -1299,14 +1312,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
 //                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })
                 .start()
     }
 
     private fun playIntroFull() {
-        findViewById<View>(R.id.music_controls).visibility = View.VISIBLE
+        music_controls.visibility = View.VISIBLE
         TapTargetSequence(this@PaginaRenderActivity)
                 .continueOnCancel(true)
                 .targets(
@@ -1395,7 +1408,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
 //                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
@@ -1405,7 +1418,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
                                 prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
                                 prefEditor.apply()
-                                findViewById<View>(R.id.music_controls).visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })
                 .start()
@@ -1445,6 +1458,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun refreshCatalog() {
         Log.d(TAG, "refreshCatalog")
+        play_song.isEnabled = false
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.sendCustomAction(MusicService.ACTION_REFRESH, null)
     }

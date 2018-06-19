@@ -6,6 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.DialogFragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -60,7 +61,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $FULLSCREEN")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, FULLSCREEN)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         mView = view.findViewById(R.id.fab_sound_off)
@@ -79,7 +81,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $SOUND")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SOUND)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         mView = view.findViewById(R.id.save_file)
@@ -115,7 +118,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $SAVE_FILE")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SAVE_FILE)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         mView = view.findViewById(R.id.fab_favorite)
@@ -134,7 +138,8 @@ class BottomSheetFabCanto : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $FAVORITE")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, FAVORITE)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         return view

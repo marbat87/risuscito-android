@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
@@ -117,14 +118,16 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     override fun onResume() {
         super.onResume()
-        activity!!.registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
+//        activity!!.registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
+        LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
         fragment?.setmCallback(this@Risuscito)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        activity!!.unregisterReceiver(signInVisibility)
+//        activity!!.unregisterReceiver(signInVisibility)
+        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(signInVisibility)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

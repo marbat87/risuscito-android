@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
+import android.support.v4.content.LocalBroadcastManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
@@ -154,7 +155,7 @@ class PdfExportService : IntentService("PdfExportService") {
                 Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
                 val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
                 intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 return
             }
 
@@ -164,21 +165,21 @@ class PdfExportService : IntentService("PdfExportService") {
             Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
             val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
             intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
-            sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
             return
         } catch (e: Exception) {
             Log.e(javaClass.name, e.localizedMessage, e)
             Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
             val intentBroadcast = Intent(BROADCAST_EXPORT_ERROR)
             intentBroadcast.putExtra(DATA_EXPORT_ERROR, e.localizedMessage)
-            sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
             return
         }
 
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_COMPLETED")
         val intentBroadcast = Intent(BROADCAST_EXPORT_COMPLETED)
         intentBroadcast.putExtra(DATA_PDF_PATH, localPDFPath)
-        sendBroadcast(intentBroadcast)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
     }
 
     private fun cambiaAccordi(

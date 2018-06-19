@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.util.Xml
 import com.crashlytics.android.Crashlytics
@@ -90,7 +91,7 @@ class XmlImportService : IntentService("XmlImportService") {
 
                     Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                     val intentBroadcast = Intent(ACTION_FINISH)
-                    sendBroadcast(intentBroadcast)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
                     val i = baseContext
                             .packageManager
@@ -110,7 +111,7 @@ class XmlImportService : IntentService("XmlImportService") {
 
                     Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                     val intentBroadcast = Intent(ACTION_FINISH)
-                    sendBroadcast(intentBroadcast)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
                     stopSelf()
                 }
@@ -128,7 +129,7 @@ class XmlImportService : IntentService("XmlImportService") {
 
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                 val intentBroadcast = Intent(ACTION_FINISH)
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
                 stopSelf()
             } catch (e: SecurityException) {
@@ -138,7 +139,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                 val intentBroadcast = Intent(ACTION_FINISH)
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 stopSelf()
             } catch (e: IOException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
@@ -147,7 +148,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                 val intentBroadcast = Intent(ACTION_FINISH)
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 stopSelf()
             }
 

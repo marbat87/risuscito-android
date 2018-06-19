@@ -3,6 +3,7 @@ package it.cammino.risuscito.services
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
@@ -40,7 +41,7 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
                 Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
                 val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
                 intentBroadcast.putExtra(DATA_DONE, i)
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
             } catch (e: Exception) {
                 Log.e(javaClass.toString(), "ERRORE INSERT:")
                 e.printStackTrace()
@@ -48,7 +49,7 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
 
         }
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_SAVING_COMPLETED")
-        sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))
     }
 
     companion object {

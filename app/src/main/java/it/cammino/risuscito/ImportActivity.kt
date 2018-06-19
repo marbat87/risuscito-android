@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
@@ -56,7 +57,7 @@ class ImportActivity : AppCompatActivity() {
             dialog.setCancelable(false)
 
             //registra un receiver per ricevere la notifica di completamento import e potersi terminare
-            registerReceiver(importFinishBRec, IntentFilter(
+            LocalBroadcastManager.getInstance(applicationContext).registerReceiver(importFinishBRec, IntentFilter(
                     XmlImportService.ACTION_FINISH))
         }
 
@@ -64,7 +65,7 @@ class ImportActivity : AppCompatActivity() {
 
     public override fun onDestroy() {
         try {
-            unregisterReceiver(importFinishBRec)
+            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(importFinishBRec)
         } catch (e: IllegalArgumentException) {
             Log.e(javaClass.name, e.localizedMessage, e)
         }

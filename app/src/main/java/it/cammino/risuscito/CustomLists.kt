@@ -18,6 +18,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.PagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -167,7 +168,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
         if (sFragment != null) sFragment.setmCallback(this@CustomLists)
 
-        activity!!.registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
+//        activity!!.registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
+        LocalBroadcastManager.getInstance(activity!!).registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
         Log.d(
@@ -220,7 +222,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     override fun onDestroy() {
-        activity!!.unregisterReceiver(fabBRec)
+//        activity!!.unregisterReceiver(fabBRec)
+        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(fabBRec)
         super.onDestroy()
     }
 

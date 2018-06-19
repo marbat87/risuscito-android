@@ -14,6 +14,7 @@ import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
@@ -271,10 +272,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onResume() {
         super.onResume()
         //    Log.d(getClass().getName(), "onResume: ");
-        activity!!
+//        activity!!
+        LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         positionBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED))
-        activity!!
+//        activity!!
+        LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         completedBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED))
         if (mCantiViewModel!!.editMode) {
@@ -296,8 +299,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onPause() {
         super.onPause()
-        activity!!.unregisterReceiver(positionBRec)
-        activity!!.unregisterReceiver(completedBRec)
+//        activity!!.unregisterReceiver(positionBRec)
+        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(positionBRec)
+//        activity!!.unregisterReceiver(completedBRec)
+        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(completedBRec)
     }
 
     override fun onDestroy() {

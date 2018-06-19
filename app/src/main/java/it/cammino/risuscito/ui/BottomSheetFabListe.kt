@@ -6,6 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.DialogFragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -54,7 +55,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $CLEAN")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, CLEAN)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         mView = view.findViewById(R.id.fab_condividi)
@@ -73,7 +75,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $SHARE_TEXT")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, SHARE_TEXT)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         mView = view.findViewById(R.id.fab_add_lista)
@@ -92,7 +95,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
             Log.d(TAG, "clicked id: $ADD_LIST")
             val intentBroadcast = Intent(CHOOSE_DONE)
             intentBroadcast.putExtra(DATA_ITEM_ID, ADD_LIST)
-            activity!!.sendBroadcast(intentBroadcast)
+//            activity!!.sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
         }
 
         val customList = arguments!!.getBoolean("customList", false)
@@ -116,7 +120,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
                 Log.d(TAG, "clicked id: $SHARE_FILE")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, SHARE_FILE)
-                activity!!.sendBroadcast(intentBroadcast)
+//                activity!!.sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
             }
 
             mView = view.findViewById(R.id.fab_edit_lista)
@@ -135,7 +140,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
                 Log.d(TAG, "clicked id: $EDIT_LIST")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, EDIT_LIST)
-                activity!!.sendBroadcast(intentBroadcast)
+//                activity!!.sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
             }
 
             mView = view.findViewById(R.id.fab_delete_lista)
@@ -154,7 +160,8 @@ class BottomSheetFabListe : BottomSheetDialogFragment() {
                 Log.d(TAG, "clicked id: $DELETE_LIST")
                 val intentBroadcast = Intent(CHOOSE_DONE)
                 intentBroadcast.putExtra(DATA_ITEM_ID, DELETE_LIST)
-                activity!!.sendBroadcast(intentBroadcast)
+//                activity!!.sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(activity!!).sendBroadcast(intentBroadcast)
             }
         }
 

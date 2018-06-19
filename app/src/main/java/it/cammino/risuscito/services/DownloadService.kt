@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.PowerManager
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import java.io.*
 import java.net.HttpURLConnection
@@ -34,7 +35,7 @@ class DownloadService : IntentService("DownloadService") {
      */
     override fun onHandleIntent(intent: Intent?) {
         isCancelled = false
-        registerReceiver(cancelBRec, IntentFilter(ACTION_CANCEL))
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(cancelBRec, IntentFilter(ACTION_CANCEL))
         startSaving(intent)
     }
 
@@ -61,14 +62,14 @@ class DownloadService : IntentService("DownloadService") {
                 // expect HTTP 200 OK, so we don't mistakenly save error report
                 // instead of the file
                 if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-                    unregisterReceiver(cancelBRec)
+                    LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
                     val erroreMessage = ("Server returned HTTP " + connection.responseCode
                             + " " + connection.responseMessage)
                     Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
                     Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $erroreMessage")
                     val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                     intentBroadcast.putExtra(DATA_ERROR, erroreMessage)
-                    sendBroadcast(intentBroadcast)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                     return
                 }
 
@@ -87,7 +88,7 @@ class DownloadService : IntentService("DownloadService") {
                 while (count != -1) {
                     // allow canceling with back button
                     if (isCancelled) {
-                        unregisterReceiver(cancelBRec)
+                        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
                         try {
                             @Suppress("UNNECESSARY_SAFE_CALL")
                             output?.close()
@@ -103,7 +104,7 @@ class DownloadService : IntentService("DownloadService") {
                         connection?.disconnect()
 
                         Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_CANCELLED")
-                        sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
+                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
                         return
                     }
                     total += count.toLong()
@@ -114,19 +115,19 @@ class DownloadService : IntentService("DownloadService") {
                         Log.v(TAG, "Sending broadcast notification: $DATA_PROGRESS: $progress")
                         val intentBroadcast = Intent(BROADCAST_DOWNLOAD_PROGRESS)
                         intentBroadcast.putExtra(DATA_PROGRESS, progress)
-                        sendBroadcast(intentBroadcast)
+                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                     }
                     output.write(data, 0, count)
                     count = input.read(data)
                 }
             } catch (e: Exception) {
-                unregisterReceiver(cancelBRec)
+                LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
                 Log.e(javaClass.toString(), e.localizedMessage, e)
                 Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
                 Log.e(TAG, "Sending broadcast notification: " + DATA_ERROR + ": " + e.toString())
                 val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                 intentBroadcast.putExtra(DATA_ERROR, e.toString())
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 return
             } finally {
                 try {
@@ -145,9 +146,9 @@ class DownloadService : IntentService("DownloadService") {
             if (wakelock.isHeld)
                 wakelock.release()
         }
-        unregisterReceiver(cancelBRec)
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_COMPLETED")
-        sendBroadcast(Intent(BROADCAST_DOWNLOAD_COMPLETED))
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_COMPLETED))
     }
 
     companion object {
