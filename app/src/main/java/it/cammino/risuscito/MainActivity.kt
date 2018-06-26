@@ -18,6 +18,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
@@ -214,14 +215,14 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         setDialogCallback("RESTART")
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
-        registerReceiver(nextStepReceiver, IntentFilter("BROADCAST_NEXT_STEP"))
-        registerReceiver(lastStepReceiver, IntentFilter("BROADCAST_LAST_STEP"))
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter("BROADCAST_NEXT_STEP"))
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(lastStepReceiver, IntentFilter("BROADCAST_LAST_STEP"))
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(nextStepReceiver)
-        unregisterReceiver(lastStepReceiver)
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(lastStepReceiver)
     }
 
     public override fun onStart() {
@@ -718,7 +719,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
-        sendBroadcast(intentBroadcast)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         if (signedIn) {
             val profile: IProfile<*>
             val profilePhoto = acct!!.photoUrl
@@ -899,7 +900,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                 checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false)
                 true
             } catch (e: Exception) {
@@ -915,7 +916,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "BACKUP")
             intentBroadcast.putExtra("RESULT", result)
-            sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         }
     }
 
@@ -930,7 +931,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                     restoreOldDriveBackup()
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "RESTORE")
-                sendBroadcast(intentBroadcast)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME)
                 return true
             } catch (e: Exception) {
@@ -946,7 +947,7 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             val intentBroadcast = Intent("BROADCAST_LAST_STEP")
             intentBroadcast.putExtra("WHICH", "RESTORE")
             intentBroadcast.putExtra("RESULT", result)
-            sendBroadcast(intentBroadcast)
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         }
     }
 

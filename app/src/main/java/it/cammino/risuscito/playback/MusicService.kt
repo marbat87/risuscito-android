@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -535,7 +536,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private fun sendMusicProviderStatusBroadcast(done: Boolean) {
         val intentBroadcast = Intent(BROADCAST_RETRIEVE_ASYNC)
         intentBroadcast.putExtra(MSG_RETRIEVE_DONE, done)
-        sendBroadcast(intentBroadcast)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
     }
 
     companion object {

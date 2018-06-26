@@ -13,7 +13,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 4336
+        versionCode 4337
         versionName '4.3.0'
     }
     lintOptions {
@@ -41,7 +41,7 @@ android {
 ext.support_version = '27.1.1'
 ext.play_services_version = '15.0.1'
 ext.lifecycle_version = '1.1.1'
-ext.room_version = '1.1.0'
+ext.room_version = '1.1.1'
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
