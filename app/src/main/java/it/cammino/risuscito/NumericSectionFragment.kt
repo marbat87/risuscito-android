@@ -30,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.NumericIndexViewModel
-import kotlinx.android.synthetic.main.numeric_index_fragment.*
+import kotlinx.android.synthetic.main.index_list_fragment.*
 
 class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -48,7 +48,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.numeric_index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<NumericIndexViewModel>(NumericIndexViewModel::class.java)
 
@@ -91,24 +91,18 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
         val mMainActivity = activity as MainActivity?
 
-//        numeric_cantiList!!.layoutManager = LinearLayoutManager(activity)
         mAdapter = FastScrollIndicatorAdapter(1)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-//        val llm = LinearLayoutManager(context)
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
-        else
-            LinearLayoutManager(context)
-        numeric_cantiList!!.layoutManager = llm
-        numeric_cantiList!!.setHasFixedSize(true)
-        numeric_cantiList!!.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        val llm = LinearLayoutManager(context)
+        val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
+        cantiList!!.setHasFixedSize(true)
+        cantiList!!.adapter = mAdapter
+        val insetDivider = DividerItemDecoration(context!!, (if (mMainActivity.isGridLayout) glm else llm).orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        numeric_cantiList!!.addItemDecoration(insetDivider)
-//        numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
-//        numeric_dragScrollBar.setAutoHide(false)
+        cantiList!!.addItemDecoration(insetDivider)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -390,21 +384,11 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                                             .withContextMenuListener(this@NumericSectionFragment)
                                             )
                                         }
-//                            for (canto in canti!!) {
-//                                val sampleItem = SimpleItem()
-//                                sampleItem
-//                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-//                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-//                                        .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-//                                        .withColor(canto.color!!)
-//                                        .withId(canto.id)
-//                                        .withContextMenuListener(this@NumericSectionFragment)
-//                                newList.add(sampleItem)
 //                            }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-                                numeric_dragScrollBar.setIndicator(CustomIndicator(context), true)
-                                numeric_dragScrollBar.setAutoHide(false)
+                                dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                dragScrollBar.setAutoHide(false)
                             }
                         })
     }

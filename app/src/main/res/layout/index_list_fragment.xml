@@ -7,14 +7,14 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 tools:context=".MainActivity">
 
 <android.support.v7.widget.RecyclerView
-    android:id="@+id/alpha_cantiList"
+    android:id="@+id/cantiList"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 
 <com.turingtechnologies.materialscrollbar.TouchScrollBar
-    android:id="@+id/alpha_dragScrollBar"
+    android:id="@+id/dragScrollBar"
     android:layout_width="wrap_content"
-    app:msb_recyclerView="@id/alpha_cantiList"
+    app:msb_recyclerView="@id/cantiList"
     app:msb_lightOnTouch="true"
     android:layout_height="match_parent"
     android:layout_alignParentTop="true"

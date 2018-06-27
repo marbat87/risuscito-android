@@ -30,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
-import kotlinx.android.synthetic.main.alpha_index_fragment.*
+import kotlinx.android.synthetic.main.index_list_fragment.*
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -53,7 +53,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.alpha_index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<AlphabeticIndexViewModel>(AlphabeticIndexViewModel::class.java)
 
@@ -98,19 +98,15 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
         mAdapter = FastScrollIndicatorAdapter(0)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
-        else
-            LinearLayoutManager(context)
-        alpha_cantiList!!.layoutManager = llm
-        alpha_cantiList!!.setHasFixedSize(true)
-        alpha_cantiList!!.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        val llm = LinearLayoutManager(context)
+        val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
+        cantiList!!.setHasFixedSize(true)
+        cantiList!!.adapter = mAdapter
+        val insetDivider = DividerItemDecoration(context!!, (if (mMainActivity.isGridLayout) glm else llm).orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        alpha_cantiList!!.addItemDecoration(insetDivider)
-//        alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
-//        alpha_dragScrollBar.setAutoHide(false)
+        cantiList!!.addItemDecoration(insetDivider)
     }
 
     /**
@@ -390,8 +386,8 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                         }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-                                alpha_dragScrollBar.setIndicator(CustomIndicator(context), true)
-                                alpha_dragScrollBar.setAutoHide(false)
+                                dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                dragScrollBar.setAutoHide(false)
                             }
                         })
     }

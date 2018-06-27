@@ -30,7 +30,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SalmiIndexViewModel
-import kotlinx.android.synthetic.main.salmi_index_fragment.*
+import kotlinx.android.synthetic.main.index_list_fragment.*
 
 class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -48,7 +48,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.salmi_index_fragment, container, false)
+        rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get<SalmiIndexViewModel>(SalmiIndexViewModel::class.java)
 
@@ -94,20 +94,15 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         mAdapter = FastScrollIndicatorAdapter(2)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-//        val llm = LinearLayoutManager(context)
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
-        else
-            LinearLayoutManager(context)
-        salmi_cantiList!!.layoutManager = llm
-        salmi_cantiList!!.setHasFixedSize(true)
-        salmi_cantiList!!.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        val llm = LinearLayoutManager(context)
+        val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
+        cantiList!!.setHasFixedSize(true)
+        cantiList!!.adapter = mAdapter
+        val insetDivider = DividerItemDecoration(context!!, (if (mMainActivity.isGridLayout) glm else llm).orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        salmi_cantiList!!.addItemDecoration(insetDivider)
-//        salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
-//        salmi_dragScrollBar.setAutoHide(false)
+        cantiList!!.addItemDecoration(insetDivider)
     }
 
     /**
@@ -408,8 +403,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                 }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
-                                salmi_dragScrollBar.setIndicator(CustomIndicator(context), true)
-                                salmi_dragScrollBar.setAutoHide(false)
+                                dragScrollBar.setIndicator(CustomIndicator(context), true)
+                                dragScrollBar.setAutoHide(false)
                             }
                         })
     }

@@ -73,7 +73,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation 'it.marbat.pdfjet.lib:lib:1.0.0'
     implementation 'androidx.core:core-ktx:0.3'
-    implementation 'com.github.turing-tech:MaterialScrollBar:13.2.3'
+    implementation 'com.github.turing-tech:MaterialScrollBar:13.2.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
