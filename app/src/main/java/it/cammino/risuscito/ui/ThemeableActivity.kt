@@ -29,13 +29,13 @@ import com.google.android.gms.drive.query.Query
 import com.google.android.gms.drive.query.SearchableField
 import com.google.android.gms.tasks.Tasks
 import com.mikepenz.iconics.context.IconicsLayoutInflater2
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import it.cammino.risuscito.DatabaseCanti
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.utils.ThemeUtils
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.io.*
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -231,7 +231,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         }
 
         // Calligraphy
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(mNewBase))
+//        super.attachBaseContext(CalligraphyContextWrapper.wrap(mNewBase))
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
     }
 
     private fun saveSharedPreferencesToFile(out: OutputStream): Boolean {
