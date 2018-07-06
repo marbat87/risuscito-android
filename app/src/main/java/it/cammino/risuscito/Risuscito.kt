@@ -120,6 +120,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         super.onResume()
 //        activity!!.registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
+        LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
         fragment?.setmCallback(this@Risuscito)
     }

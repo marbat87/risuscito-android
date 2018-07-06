@@ -485,17 +485,21 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             dbFile = File(path)
             try {
                 val fos = FileOutputStream(dbFile)
-                val bos = BufferedOutputStream(fos)
-                val `in` = BufferedInputStream(driveContents.inputStream)
+                val mOutput = BufferedOutputStream(fos)
+//                val mInput = BufferedInputStream(driveContents.inputStream)
+                val parcelFileDescriptor = driveContents.parcelFileDescriptor
+                val mInput = FileInputStream(parcelFileDescriptor.fileDescriptor)
 
                 val buffer = ByteArray(1024)
-                var n = `in`.read(buffer)
-                while (n > 0) {
-                    bos.write(buffer, 0, n)
-                    bos.flush()
-                    n = `in`.read(buffer)
+                var length = mInput.read(buffer)
+                while (length > 0) {
+                    mOutput.write(buffer, 0, length)
+//                    mOutput.flush()
+                    length = mInput.read(buffer)
                 }
-                bos.close()
+                mOutput.flush()
+                mOutput.close()
+                mInput.close()
             } catch (e: FileNotFoundException) {
                 client.discardContents(driveContents)
                 throw e

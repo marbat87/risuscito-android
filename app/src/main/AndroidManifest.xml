@@ -55,10 +55,6 @@
         <activity
             android:name="it.cammino.risuscito.DonateActivity"
             android:label="" />
-        <!--<activity-->
-        <!--android:name="it.cammino.risuscito.slides.IntroMainNew"-->
-        <!--android:label=""-->
-        <!--android:theme="@style/WelcomeScreenTheme.SolidNavigation" />-->
 
         <service
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService"

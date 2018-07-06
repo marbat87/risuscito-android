@@ -25,7 +25,7 @@ class RisuscitoApplication : MultiDexApplication() {
         ViewPump.init(ViewPump.builder()
                 .addInterceptor(CalligraphyInterceptor(
                         CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/Roboto-RobotoRegular.ttf")
+                                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
                                 .setFontAttrId(R.attr.fontPath)
                                 .build()))
                 .build())
