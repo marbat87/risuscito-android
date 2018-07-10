@@ -470,11 +470,11 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
                     "restoreNewDriveBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
             metadataBuffer.release()
 
+            RisuscitoDatabase.getInstance(this).close()
+
             val mFile = mDriveId.asDriveFile()
 
             val driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY))
-
-            RisuscitoDatabase.getInstance(this)
 
             var dbFile = newDbPath
             val path = dbFile!!.path
@@ -508,8 +508,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
                 throw e
             }
 
-            val mDb = RisuscitoDatabase.getInstance(this)
-            mDb.recreateDB()
+            RisuscitoDatabase.resetInstance()
+            RisuscitoDatabase.getInstance(this).recreateDB()
         } else {
             metadataBuffer.release()
             throw NoBackupException()

@@ -63,17 +63,18 @@ abstract class RisuscitoDatabase : RoomDatabase() {
     @Transaction
     fun importFromOldDB(mContext: Context) {
 //        truncateCompleteDB()
-        cantoDao().truncateTable()
-        argomentiDao().truncateArgomento()
-        argomentiDao().truncateNomeArgomento()
-        indiceLiturgicoDao().truncateIndiceLiturgico()
-        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
-        salmiDao().truncateTable()
-        customListDao().truncateTable()
-        listePersDao().truncateTable()
-        localLinksDao().truncateTable()
-        consegnatiDao().truncateTable()
-        cronologiaDao().truncateTable()
+//        cantoDao().truncateTable()
+//        argomentiDao().truncateArgomento()
+//        argomentiDao().truncateNomeArgomento()
+//        indiceLiturgicoDao().truncateIndiceLiturgico()
+//        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
+//        salmiDao().truncateTable()
+//        customListDao().truncateTable()
+//        listePersDao().truncateTable()
+//        localLinksDao().truncateTable()
+//        consegnatiDao().truncateTable()
+//        cronologiaDao().truncateTable()
+        clearAllTables()
         Log.d(TAG, "importFromOldDB: " + cantoDao().count())
         if (cantoDao().count() == 0) {
             //1. POPOLO I DATI DI DEFAULT
@@ -490,6 +491,10 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
         /** The only instance  */
         private var sInstance: RisuscitoDatabase? = null
+
+        fun resetInstance() {
+            sInstance = null
+        }
 
         /**
          * Gets the singleton instance of RisuscitoDatabase.

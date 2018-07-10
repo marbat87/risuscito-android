@@ -239,10 +239,10 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
             // single sign-on will occur in this branch.
             showProgressDialog()
 
-            task.addOnCompleteListener({ mTask: Task<GoogleSignInAccount> ->
+            task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
                 Log.d(TAG, "Reconnected")
                 handleSignInResult(mTask)
-            })
+            }
         }
     }
 
@@ -814,6 +814,10 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show()
+                supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
+                        .commit()
                 RestoreTask().execute()
             }
             "SIGNOUT" -> signOut()
@@ -823,7 +827,9 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
                         .packageManager
                         .getLaunchIntentForPackage(baseContext.packageName)
                 i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                i?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(i)
+                finish()
             }
         }
     }
