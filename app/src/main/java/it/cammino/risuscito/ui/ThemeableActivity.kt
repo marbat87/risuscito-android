@@ -293,9 +293,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
         } finally {
             try {
-                if (input != null) {
-                    input.close()
-                }
+                input?.close()
             } catch (e: IOException) {
                 val error = "loadSharedPreferencesFromFile - IOException: " + e.localizedMessage
                 Log.e(javaClass.name, error, e)

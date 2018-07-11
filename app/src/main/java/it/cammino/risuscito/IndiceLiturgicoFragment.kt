@@ -110,8 +110,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                     }
                 }
             }
-        }
-        else
+        } else
             mLayoutManager = LinearLayoutManager(context)
         recycler_view!!.layoutManager = mLayoutManager
 

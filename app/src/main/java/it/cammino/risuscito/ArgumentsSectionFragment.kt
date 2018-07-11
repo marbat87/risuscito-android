@@ -99,8 +99,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                     }
                 }
             }
-        }
-        else
+        } else
             mLayoutManager = LinearLayoutManager(context)
         recycler_view!!.layoutManager = mLayoutManager
 
@@ -314,8 +313,8 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                         mCantiViewModel!!.idListaClick -= 100
 
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                .lista!!
-                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
+                                        .lista!!
+                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
                             listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(
@@ -330,8 +329,8 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                                     .start()
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
+                                            .lista!!
+                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
                                 Thread(
