@@ -71,7 +71,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         mViewModel = ViewModelProviders.of(this).get(GenericIndexViewModel::class.java)
 
         try {
-            val `in`: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
+            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
                     activity!!.resources.configuration)
                     .language) {
                 "uk" -> activity!!.assets.open("fileout_uk.xml")
@@ -79,8 +79,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 else -> activity!!.assets.open("fileout_new.xml")
             }
             val parser = CantiXmlParser()
-            aTexts = parser.parse(`in`)
-            `in`.close()
+            aTexts = parser.parse(inputStream)
+            inputStream.close()
         } catch (e: XmlPullParserException) {
             e.printStackTrace()
         } catch (e: IOException) {
@@ -512,20 +512,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                                                 .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
                                 )
                             }
-//                    if (elenco != null) {
-//                        for (canto in elenco) {
-//                            if (isCancelled) return 0
-//                            val simpleItem = SimpleItem()
-//                            simpleItem
-//                                    .withTitle(canto.titolo!!)
-//                                    .withColor(canto.color!!)
-//                                    .withPage(canto.pagina.toString())
-//                                    .withId(canto.id)
-//                                    .withSource(canto.source!!)
-//                                    .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
-//                            fragmentReference.get()!!.titoli!!.add(simpleItem)
-//                        }
-//                    }
                 }
             }
             return 0
