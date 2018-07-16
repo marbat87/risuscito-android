@@ -31,7 +31,7 @@
     <string name="acclamazioni_al_vangelo_quaresima_source">acclamazioni_al_vangelo_quaresima_en</string>
     <string name="te_deum_source">te_deum_en</string>
     <string name="padre_nostro_source">padre_nostro_en</string>
-    <string name="credo_apostolico_source">credo_apostolico</string>
+    <string name="credo_apostolico_source">credo_apostolico_en</string>
     <string name="risuscito_source">risuscito_en</string>
     <string name="verso_te_o_citta_santa_source">verso_te_o_citta_santa_en</string>
     <string name="marcia_e_dura_source">marcia_e_dura_en</string>
@@ -83,7 +83,7 @@
     <string name="venite_applaudiamo_al_signore_source">venite_applaudiamo_al_signore</string>
     <string name="dajenu_source">dajenu_en</string>
     <string name="alla_vittima_pasquale_source">alla_vittima_pasquale_en</string>
-    <string name="inno_di_pasqua_source">inno_di_pasqua</string>
+    <string name="inno_di_pasqua_source">inno_di_pasqua_en</string>
     <string name="inno_avvento_source">inno_avvento</string>
     <string name="uri_uri_ura_source">uri_uri_ura_en</string>
     <string name="gia_viene_il_mio_dio_source">gia_viene_il_mio_dio_en</string>
@@ -146,7 +146,7 @@
     <string name="un_germoglio_spunta_tronco_source">un_germoglio_spunta_tronco_en</string>
     <string name="a_te_signore_innalzo_la_mia_anima_source">a_te_signore_innalzo_la_mia_anima_en</string>
     <string name="ti_sto_chiamando_source">ti_sto_chiamando_en</string>
-    <string name="a_te_levo_i_miei_occhi_source">a_te_levo_i_miei_occhi</string>
+    <string name="a_te_levo_i_miei_occhi_source">a_te_levo_i_miei_occhi_en</string>
     <string name="signore_non_punirmi_nel_tuo_sdegno_source">signore_non_punirmi_nel_tuo_sdegno</string>
     <string name="gloria_gloria_gloria_source">gloria_gloria_gloria_en</string>
     <string name="esultate_giusti_nel_signore_source">esultate_giusti_nel_signore_en</string>
