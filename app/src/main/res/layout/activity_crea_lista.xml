@@ -59,7 +59,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/risuscito_toolbar"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ActionBarThemeOverlay"
+                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup"
                 android:layout_width="match_parent"
                 android:background="?attr/colorPrimary"

@@ -51,7 +51,6 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
         mMainActivity = activity as MainActivity?
 
-        mMainActivity!!.setupToolbarTitle(R.string.activity_homepage)
         mMainActivity!!.enableFab(false)
         if (!mMainActivity!!.isOnTablet) {
             mMainActivity!!.enableBottombar(false)
@@ -105,6 +104,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mMainActivity!!.setupToolbarTitle(R.string.activity_homepage)
         sign_in_button!!.setSize(SignInButton.SIZE_WIDE)
         activity!!.material_tabs.visibility = View.GONE
 

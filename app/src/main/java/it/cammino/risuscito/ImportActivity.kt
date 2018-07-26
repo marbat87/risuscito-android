@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
 import com.afollestad.materialdialogs.MaterialDialog
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.ThemeableActivity
 import java.util.*
@@ -124,7 +123,8 @@ class ImportActivity : AppCompatActivity() {
         }
 
         //Calligraphy
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
+//        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
+        super.attachBaseContext(mNewBase)
     }
 
     companion object {

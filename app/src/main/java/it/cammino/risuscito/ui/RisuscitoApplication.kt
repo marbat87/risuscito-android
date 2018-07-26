@@ -7,10 +7,6 @@ import android.widget.ImageView
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
-import io.github.inflationx.calligraphy3.CalligraphyConfig
-import io.github.inflationx.calligraphy3.CalligraphyInterceptor
-import io.github.inflationx.viewpump.ViewPump
-import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 
 
@@ -22,13 +18,13 @@ class RisuscitoApplication : MultiDexApplication() {
 
         RisuscitoDatabase.getInstance(this)
 
-        ViewPump.init(ViewPump.builder()
-                .addInterceptor(CalligraphyInterceptor(
-                        CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build()))
-                .build())
+//        ViewPump.init(ViewPump.builder()
+//                .addInterceptor(CalligraphyInterceptor(
+//                        CalligraphyConfig.Builder()
+//                                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
+//                                .setFontAttrId(R.attr.fontPath)
+//                                .build()))
+//                .build())
 
 //        CalligraphyConfig.initDefault(
 //                CalligraphyConfig.Builder()

@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/no_history"
@@ -20,7 +21,7 @@
 
         <TextView
             android:id="@+id/no_history_text"
-            fontPath="fonts/Roboto-Light.ttf"
+            risuscito:fontFamily="@font/googlesans_italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/no_history_image"
@@ -34,16 +35,6 @@
             tools:ignore="MissingPrefix" />
 
     </RelativeLayout>
-
-    <!--<com.cipolat.superstateview.SuperStateView-->
-    <!--android:id="@+id/no_history"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="center"-->
-    <!--risuscito:imageState="@drawable/ic_sad_history"-->
-    <!--risuscito:subTitleStyle="@style/SuperStateViewSubTitle"-->
-    <!--risuscito:setSubTitleText="@string/history_empty"-->
-    <!--risuscito:setSubTitleFont="Roboto-Light.ttf" />-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_recycler"

@@ -7,27 +7,29 @@
     android:orientation="vertical">
 
     <TextView
-        android:paddingStart="@dimen/myListPreferredItemMargin"
-        android:paddingLeft="@dimen/myListPreferredItemMargin"
-        android:paddingEnd="@dimen/myListPreferredItemMargin"
-        android:paddingRight="@dimen/myListPreferredItemMargin"
+        android:id="@+id/ricerca_subtitle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:gravity="center"
-        android:text="@string/advanced_search_subtitle"/>
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        tools:text="@string/fast_search_subtitle"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
     <EditText
         android:id="@+id/textfieldRicerca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollHorizontally="true"
         android:layout_marginLeft="@dimen/activity_min_margin"
         android:layout_marginRight="@dimen/activity_min_margin"
-        android:textColorHighlight="@color/ripple_color_light"
-        android:imeOptions="actionDone"
         android:hint="@string/search_hint"
-        android:maxLines="1" />
+        android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textColorHighlight="@color/ripple_color_light"
+        android:inputType="text" />
 
     <RelativeLayout
         android:id="@+id/consegnati_only_view"
@@ -39,39 +41,37 @@
             android:id="@+id/consegnati_only_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/myListPreferredItemMargin"
-            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-            android:layout_marginStart="@dimen/myListPreferredItemMargin"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
             android:checked="false" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textSize="16sp"
-            android:layout_toLeftOf="@id/consegnati_only_check"
-            android:layout_toStartOf="@id/consegnati_only_check"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/myListPreferredItemMargin"
             android:layout_marginStart="@dimen/myListPreferredItemMargin"
-            android:layout_centerVertical="true"
-            android:text="@string/consegnati_only" />
+            android:layout_toLeftOf="@id/consegnati_only_check"
+            android:layout_toStartOf="@id/consegnati_only_check"
+            android:text="@string/consegnati_only"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textSize="16sp" />
 
     </RelativeLayout>
 
-    <Button
+    <android.support.design.button.MaterialButton
         android:id="@+id/pulisci_ripple"
+        risuscito:fontFamily="@font/googlesans_medium"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="@dimen/min_button_margin"
-        android:layout_height="wrap_content"
         android:text="@string/button_pulisci"
-        fontPath="fonts/Roboto-Medium.ttf"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:textColor="@color/primary_text_default_material_dark"
         risuscito:elevation="@dimen/raised_button_default_elevation"
         risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
         tools:ignore="MissingPrefix" />
@@ -84,22 +84,22 @@
 
         <TextView
             android:id="@+id/search_no_results"
-            android:paddingTop="10dip"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dip"
+            android:text="@string/search_no_results"
             android:textColor="?android:textColorSecondary"
             android:textSize="15sp"
-            android:gravity="center_horizontal|top"
-            android:text="@string/search_no_results"
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
-            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/matchedList"
-            android:layout_width= "match_parent"
-            android:layout_height = "match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadeScrollbars="true"
             android:scrollbars="vertical"
-            android:fadeScrollbars="true" />
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </FrameLayout>
 

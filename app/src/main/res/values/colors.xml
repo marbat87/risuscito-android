@@ -3,13 +3,9 @@
 
     <color name="ic_launcher_background">#A24444</color>
 
-    <color name="BlueGrey">#607d8b</color>
-    <color name="Teal">#009688</color>
-    <color name="BlueGreyDark">#455a64</color>
-
-    <color name="theme_primary">@color/BlueGrey</color>
-    <color name="theme_accent">@color/Teal</color>
-    <color name="theme_primary_dark">@color/BlueGreyDark</color>
+    <color name="theme_primary">@color/md_indigo_500</color>
+    <color name="theme_accent">@color/md_orange_A200</color>
+    <color name="theme_primary_dark">@color/md_indigo_700</color>
     <color name="ripple_color">#4D000000</color>
     <color name="ripple_color_light">#12000000</color>
 
@@ -23,7 +19,8 @@
     <!-- Material DEFAULT text / items colors -->
     <color name="material_drawer_primary_text">@color/primary_text_default_material_light</color>
     <color name="material_drawer_primary_icon">@color/secondary_text_default_material_light</color>
-    <color name="material_drawer_secondary_text">@color/secondary_text_default_material_light</color>
+    <color name="material_drawer_secondary_text">@color/secondary_text_default_material_light
+    </color>
     <color name="material_drawer_hint_text">#42000000</color>
     <color name="material_drawer_divider">#1F000000</color>
     <!-- Material DEFAULT drawer colors -->
@@ -34,9 +31,9 @@
     <color name="text_color_primary">@color/primary_text_default_material_light</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>
     <color name="floating_background">@color/background_floating_material_light</color>
-    <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_light</color>
+    <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_light
+    </color>
     <color name="chglib_material_color_text_1">@color/primary_text_default_material_light</color>
     <color name="material_divider">@color/md_light_dividers</color>
-
 
 </resources>

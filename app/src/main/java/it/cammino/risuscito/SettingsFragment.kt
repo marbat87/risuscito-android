@@ -10,12 +10,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import pub.devrel.easypermissions.EasyPermissions
 
-class SettingsFragment : PreferenceFragmentCompatDividers() {
-
+class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
     internal var mMainActivity: MainActivity? = null

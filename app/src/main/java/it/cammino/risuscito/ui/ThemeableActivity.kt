@@ -29,7 +29,6 @@ import com.google.android.gms.drive.query.Query
 import com.google.android.gms.drive.query.SearchableField
 import com.google.android.gms.tasks.Tasks
 import com.mikepenz.iconics.context.IconicsLayoutInflater2
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import it.cammino.risuscito.DatabaseCanti
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
@@ -60,8 +59,14 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s.equals("primary_color", ignoreCase = true))
-            Log.d(TAG, "onSharedPreferenceChanged: primary_color" + sharedPreferences.getInt(s, 0))
+        if (s.equals("new_primary_color", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
+            recreate()
+        }
+        if (s.equals("new_accent_color", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
+            recreate()
+        }
         if (s == Utility.SYSTEM_LANGUAGE) {
             Log.d(
                     TAG,
@@ -232,7 +237,8 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
         // Calligraphy
 //        super.attachBaseContext(CalligraphyContextWrapper.wrap(mNewBase))
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
+//        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
+        super.attachBaseContext(mNewBase)
     }
 
     private fun saveSharedPreferencesToFile(out: OutputStream): Boolean {
@@ -638,13 +644,22 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
 
     private fun setTaskDescriptionWrapper(themeUtils: ThemeUtils) {
-        if (LUtils.hasL())
+        if (LUtils.hasP())
+            setTaskDescriptionP(themeUtils)
+        else if (LUtils.hasL())
             setTaskDescriptionL(themeUtils)
     }
 
+    @Suppress("DEPRECATION")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTaskDescriptionL(themeUtils: ThemeUtils) {
         val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils.primaryColor())
+        setTaskDescription(taskDesc)
+    }
+
+    @TargetApi(Build.VERSION_CODES.P)
+    private fun setTaskDescriptionP(themeUtils: ThemeUtils) {
+        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, themeUtils.primaryColor())
         setTaskDescription(taskDesc)
     }
 

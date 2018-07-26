@@ -9,8 +9,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        risuscito:elevation="@dimen/design_appbar_elevation"
-        android:theme="@style/ActionBarThemeOverlay">
+        risuscito:elevation="@dimen/design_appbar_elevation">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -26,13 +25,12 @@
 
         </FrameLayout>
 
-        <it.cammino.risuscito.ui.FontTabLayout
+        <android.support.design.widget.TabLayout
             android:layout_height="48dp"
             android:visibility="gone"
+            style="@style/Widget.MaterialComponents.TabLayout.Risuscito"
             android:layout_width="match_parent"
-            android:id="@+id/material_tabs"
-            risuscito:fontPath="fonts/Roboto-Medium.ttf"
-            style="@style/Widget.Design.TabLayout.Risuscito" />
+            android:id="@+id/material_tabs" />
 
     </android.support.design.widget.AppBarLayout>
 

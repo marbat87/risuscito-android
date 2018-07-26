@@ -211,6 +211,10 @@ class LUtils private constructor(private val mActivity: Activity) {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         }
 
+        fun hasP(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+        }
+
         @Suppress("DEPRECATION")
         private fun fromHtmlLegacy(input: String): Spanned {
             return Html.fromHtml(input)

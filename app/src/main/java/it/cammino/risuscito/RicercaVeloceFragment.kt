@@ -35,7 +35,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.GenericIndexViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
-import kotlinx.android.synthetic.main.activity_ricerca_titolo.*
+import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import java.lang.ref.WeakReference
@@ -61,7 +61,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false)
+        rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
         mViewModel = ViewModelProviders.of(this).get<GenericIndexViewModel>(GenericIndexViewModel::class.java)
 
@@ -101,6 +101,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         consegnati_only_view.visibility = View.GONE
+        ricerca_subtitle.text = getString(R.string.fast_search_subtitle)
 
         val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
@@ -141,7 +142,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                         .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
                 return@setOnKeyListener true
             }
@@ -195,7 +196,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                         .start()
 
                 // to hide soft keyboard
-                (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                         .hideSoftInputFromWindow(textfieldRicerca?.windowToken, 0)
             } else
                 isViewShown = false
@@ -494,7 +495,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         if (tempText != s) (activity!!.findViewById<View>(R.id.tempTextField) as EditText).setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-        if (s.trim({ it <= ' ' }).length >= 3) {
+        if (s.trim { it <= ' ' }.length >= 3) {
             if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
                 searchTask!!.cancel(true)
             searchTask = SearchTask(this@RicercaVeloceFragment)

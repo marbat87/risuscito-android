@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
 import android.content.*
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
@@ -13,6 +14,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -69,6 +71,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private var mLastPlaybackState: PlaybackStateCompat? = null
     private val mUpdateProgressTask = Runnable { updateProgress() }
     private var mScheduleFuture: ScheduledFuture<*>? = null
+    private var mRegularFont: Typeface? = null
     private val mHandler = Handler()
     internal val mScrollDown: Runnable = object : Runnable {
         override fun run() {
@@ -425,12 +428,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mViewModel = ViewModelProviders.of(this).get(PaginaRenderViewModel::class.java)
 
-        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.canto_title_activity)
+        mRegularFont = ResourcesCompat.getFont(this@PaginaRenderActivity, R.font.googlesans_regular)
+
+//        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.canto_title_activity)
         risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
+        supportActionBar!!.setTitle(R.string.canto_title_activity)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        findViewById<View>(R.id.bottom_bar).setBackgroundColor(themeUtils!!.primaryColor())
+//        findViewById<View>(R.id.bottom_bar).setBackgroundColor(themeUtils!!.primaryColor())
+        bottom_bar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils!!.primaryColor()))
 
         mLUtils = LUtils.getInstance(this@PaginaRenderActivity)
 
@@ -516,7 +523,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
         }
 
-        play_scroll.setOnClickListener({ v ->
+        play_scroll.setOnClickListener { v ->
             if (v.isSelected) {
                 showScrolling(false)
                 mViewModel!!.scrollPlaying = false
@@ -526,7 +533,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel!!.scrollPlaying = true
                 mScrollDown.run()
             }
-        })
+        }
 
         fab_canti.setOnClickListener {
             val bottomSheetDialog = BottomSheetFabCanto.newInstance(
@@ -545,17 +552,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mostraAudioBool = java.lang.Boolean.parseBoolean(mViewModel!!.mostraAudio)
 
         var sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_LINK")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_MP3")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "ONLY_LINK")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "SAVE_TAB")
-        if (sFragment != null) sFragment.setmCallback(this@PaginaRenderActivity)
+        sFragment?.setmCallback(this@PaginaRenderActivity)
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -1240,10 +1247,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
@@ -1256,10 +1260,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
@@ -1271,10 +1272,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
@@ -1286,10 +1284,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4))
@@ -1332,10 +1327,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
@@ -1348,10 +1340,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
@@ -1363,10 +1352,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
@@ -1378,10 +1364,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4),
@@ -1393,10 +1376,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(5))

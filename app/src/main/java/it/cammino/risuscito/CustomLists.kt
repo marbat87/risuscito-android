@@ -1,5 +1,6 @@
 package it.cammino.risuscito
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -19,6 +20,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.PagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -50,6 +52,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var idListe: IntArray? = null
     private var movePage: Boolean = false
     private var mFab: FloatingActionButton? = null
+    private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
     private val fabBRec = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -119,6 +122,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     val fab: FloatingActionButton
+        @SuppressLint("RestrictedApi")
         get() {
             if (mFab == null) {
                 mFab = activity!!.findViewById(R.id.fab_pager)
@@ -144,7 +148,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         val mMainActivity = activity as MainActivity?
 
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_custom_lists)
+        mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
+
+        mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists)
 
         titoliListe = arrayOfNulls(0)
         idListe = IntArray(0)
@@ -322,10 +328,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 .outerCircleColorInt(
                                         themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .descriptionTextSize(15)
@@ -339,10 +342,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                         themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .icon(doneDrawable)
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark))
                 .listener(

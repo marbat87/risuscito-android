@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
@@ -14,7 +15,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
 
     constructor() : super()
 
-    override fun layoutDependsOn(parent: CoordinatorLayout?, child: View?, dependency: View?): Boolean {
+    override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         return super.layoutDependsOn(parent, child, dependency) || dependency is FloatingActionButton
     }
 
@@ -33,6 +34,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
             val dependencies = coordinatorLayout.getDependencies(child)
             for (view in dependencies) {
                 (view as? FloatingActionButton)?.hide(object : FloatingActionButton.OnVisibilityChangedListener() {
+                    @SuppressLint("RestrictedApi")
                     override fun onHidden(fab: FloatingActionButton?) {
                         super.onHidden(fab)
                         fab!!.visibility = View.INVISIBLE

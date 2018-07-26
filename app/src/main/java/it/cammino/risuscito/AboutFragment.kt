@@ -21,7 +21,6 @@ class AboutFragment : Fragment() {
 
         mMainActivity = activity as MainActivity?
 
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity!!.enableFab(false)
         if (!mMainActivity!!.isOnTablet) {
             mMainActivity!!.enableBottombar(false)
@@ -33,6 +32,8 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mMainActivity!!.setupToolbarTitle(R.string.title_activity_about)
         val mDonateClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, DonateActivity::class.java))
             activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)

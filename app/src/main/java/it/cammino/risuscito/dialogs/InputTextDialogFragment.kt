@@ -6,12 +6,14 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import it.cammino.risuscito.R
 import java.io.Serializable
 
 @Suppress("unused")
@@ -34,7 +36,8 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val mBuilder = builder ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
+        val mBuilder = builder
+                ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
 
         if (mCallback == null)
             mCallback = mBuilder.mListener
@@ -68,6 +71,8 @@ class InputTextDialogFragment : DialogFragment() {
                                 mBuilder.mTag, dialog)
                     }
         }
+
+        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
 
         val dialog = dialogBuilder.build()
 
@@ -112,7 +117,8 @@ class InputTextDialogFragment : DialogFragment() {
 
     class Builder(context: AppCompatActivity, @field:Transient var mListener: SimpleInputCallback, val mTag: String) : Serializable {
 
-        @Transient private val mContext: AppCompatActivity = context
+        @Transient
+        private val mContext: AppCompatActivity = context
         @StringRes
         var mTitle = 0
         var mPositiveButton: CharSequence? = null

@@ -29,14 +29,13 @@
             risuscito:cardElevation="@dimen/card_elevation"
             risuscito:bounded_width="@dimen/bounded_cardview_max_width">
 
-            <it.cammino.risuscito.ui.FontTabLayout
+            <android.support.design.widget.TabLayout
                 android:layout_height="48dp"
                 android:layout_width="match_parent"
                 android:id="@+id/material_tabs"
                 android:layout_gravity="top"
                 android:elevation="@dimen/design_appbar_elevation"
-                risuscito:fontPath="fonts/Roboto-Medium.ttf"
-                style="@style/Widget.Design.TabLayout.Risuscito"
+                style="@style/Widget.MaterialComponents.TabLayout.Risuscito"
                 tools:targetApi="lollipop" />
 
             <android.support.v4.view.ViewPager

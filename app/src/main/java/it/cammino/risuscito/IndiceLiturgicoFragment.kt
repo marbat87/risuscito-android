@@ -151,7 +151,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                         if (mItem.isExpanded) {
                                             Log.d(
                                                     TAG,
-                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView))
+                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
                                             mLayoutManager!!.scrollToPositionWithOffset(
                                                     recycler_view!!.getChildAdapterPosition(mView), 0)
                                         }

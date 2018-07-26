@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import com.afollestad.materialdialogs.MaterialDialog
+import it.cammino.risuscito.R
 import java.io.Serializable
 
 @Suppress("unused")
@@ -70,6 +72,8 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.mCustomView != 0) {
             dialogBuilder.customView(mBuilder.mCustomView, false)
         }
+
+        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
 
         val dialog = dialogBuilder.build()
 

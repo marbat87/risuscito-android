@@ -5,7 +5,6 @@ import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import com.android.billingclient.api.*
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
@@ -26,9 +25,10 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
 
         mBillingClient = BillingClient.newBuilder(this).setListener(this).build()
 
-        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.title_activity_donate)
+//        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.title_activity_donate)
         risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
+        supportActionBar!!.setTitle(R.string.title_activity_donate)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

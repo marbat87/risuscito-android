@@ -32,7 +32,7 @@ import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.items.InsertItem
 import kotlinx.android.synthetic.main.activity_insert_search.*
-import kotlinx.android.synthetic.main.activity_ricerca_titolo.*
+import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import java.lang.ref.WeakReference
 import java.sql.Date
@@ -53,7 +53,7 @@ class InsertVeloceFragment : Fragment() {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_ricerca_titolo, container, false)
+        rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
         val bundle = arguments
         fromAdd = bundle!!.getInt("fromAdd")
@@ -81,6 +81,7 @@ class InsertVeloceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ricerca_subtitle.text = getString(R.string.fast_search_subtitle)
         val mOnClickListener = OnClickListener<InsertItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -177,7 +178,7 @@ class InsertVeloceFragment : Fragment() {
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                         .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
                 return@setOnKeyListener true
             }
@@ -218,7 +219,7 @@ class InsertVeloceFragment : Fragment() {
         if (isResumed && isVisibleToUser) {
             Log.d(TAG, "VISIBLE: ")
             // to hide soft keyboard
-            (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                     .hideSoftInputFromWindow(textfieldRicerca?.windowToken, 0)
         }
     }
@@ -274,8 +275,8 @@ class InsertVeloceFragment : Fragment() {
             else
                 mDb.cantoDao().allByName
 
-            elenco.filter {  Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
-                    .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))}
+            elenco.filter { Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
+                    .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                     .forEach {
                         if (isCancelled) return 0
                         fragmentReference.get()!!.titoli!!.add(

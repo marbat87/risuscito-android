@@ -34,7 +34,7 @@ import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_insert_search.*
-import kotlinx.android.synthetic.main.activity_ricerca_avanzata.*
+import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -61,7 +61,7 @@ class InsertAvanzataFragment : Fragment() {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_ricerca_avanzata, container, false)
+        rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
         val bundle = arguments
         fromAdd = bundle!!.getInt("fromAdd")
@@ -106,6 +106,7 @@ class InsertAvanzataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ricerca_subtitle.text = getString(R.string.advanced_search_subtitle)
         val mOnClickListener = OnClickListener<InsertItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -206,7 +207,7 @@ class InsertAvanzataFragment : Fragment() {
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                         .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
                 return@setOnKeyListener true
             }
@@ -246,7 +247,7 @@ class InsertAvanzataFragment : Fragment() {
         if (isResumed && isVisibleToUser) {
             Log.d(TAG, "VISIBLE")
             // to hide soft keyboard
-            (activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
                     .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
         }
     }

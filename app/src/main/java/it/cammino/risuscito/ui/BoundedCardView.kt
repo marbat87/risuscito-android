@@ -1,11 +1,11 @@
 package it.cammino.risuscito.ui
 
 import android.content.Context
-import android.support.v7.widget.CardView
+import android.support.design.card.MaterialCardView
 import android.util.AttributeSet
 import it.cammino.risuscito.R
 
-class BoundedCardView : CardView {
+class BoundedCardView : MaterialCardView {
 
     private var boundedWidth: Int = 0
     private var boundedHeight: Int = 0

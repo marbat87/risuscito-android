@@ -80,9 +80,9 @@ object Utility {
     }
 
     internal fun isOnline(activity: Activity): Boolean {
-        val cm = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val cm = ContextCompat.getSystemService(activity as Context, ConnectivityManager::class.java) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo
-        return netInfo != null && netInfo.isConnectedOrConnecting
+        return netInfo != null && netInfo.isConnected
     }
 
     /* Filtra il link di input per tenere solo il nome del file */

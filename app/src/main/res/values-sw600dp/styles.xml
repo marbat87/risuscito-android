@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Widget.Design.TabLayout.Risuscito">
+    <!--<style name="Widget.Design.TabLayout.Risuscito">-->
+        <!--<item name="tabGravity">center</item>-->
+        <!--<item name="tabMode">scrollable</item>-->
+        <!--<item name="android:background">?colorBackgroundFloating</item>-->
+        <!--<item name="colorControlHighlight">#3fff</item>-->
+        <!--<item name="tabIndicatorColor">?colorAccent</item>-->
+        <!--<item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>-->
+        <!--<item name="android:theme">@style/ActionBarThemeOverlay</item>-->
+        <!--<item name="tabSelectedTextColor">?colorAccent</item>-->
+    <!--</style>-->
+
+    <style name="Widget.MaterialComponents.TabLayout.Risuscito">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="android:background">?colorBackgroundFloating</item>
-        <item name="colorControlHighlight">#3fff</item>
-        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
-        <item name="android:theme">@style/ActionBarThemeOverlay</item>
-        <item name="tabSelectedTextColor">?colorAccent</item>
     </style>
 
-    <style name="TextAppearance.Design.Tab.Risuscito">
-        <item name="android:textColor">?android:textColorSecondary</item>
-    </style>
+    <!--<style name="TextAppearance.Design.Tab.Risuscito">-->
+        <!--<item name="android:textColor">?android:textColorSecondary</item>-->
+    <!--</style>-->
 
 
 </resources>

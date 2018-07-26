@@ -11,6 +11,7 @@ import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -57,6 +58,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private var idModifica: Int = 0
     private var nomiCanti: ArrayList<String>? = null
     private var mAdapter: FastItemAdapter<SwipeableItem>? = null
+    private var mRegularFont: Typeface? = null
     private var elementi: ArrayList<SwipeableItem>? = null
     // drag & drop
     private var touchHelper: ItemTouchHelper? = null
@@ -66,6 +68,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         setContentView(R.layout.activity_crea_lista)
 
         mViewModel = ViewModelProviders.of(this).get(CreaListaViewModel::class.java)
+
+        mRegularFont = ResourcesCompat.getFont(this@CreaListaActivity, R.font.googlesans_regular)
 
         risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
@@ -466,10 +470,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .tintTarget(false)
@@ -483,10 +484,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
@@ -499,10 +497,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .outerCircleColorInt(
                                         themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3))

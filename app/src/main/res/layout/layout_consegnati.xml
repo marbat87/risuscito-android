@@ -26,16 +26,6 @@
             android:scrollbars="vertical"
             risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <!--<com.cipolat.superstateview.SuperStateView-->
-        <!--android:id="@+id/no_consegnati"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_gravity="center"-->
-        <!--risuscito:imageState="@drawable/ic_sad_book"-->
-        <!--risuscito:setSubTitleFont="Roboto-Light.ttf"-->
-        <!--risuscito:setSubTitleText="@string/no_consegnati"-->
-        <!--risuscito:subTitleStyle="@style/SuperStateViewSubTitle" />-->
-
         <RelativeLayout
             android:id="@+id/no_consegnati"
             android:layout_width="wrap_content"
@@ -51,7 +41,6 @@
                 android:src="@drawable/ic_sad_book" />
 
             <TextView
-                fontPath="fonts/Roboto-Light.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/no_consegnati_image"
@@ -59,6 +48,7 @@
                 android:layout_marginLeft="@dimen/text_min_margin"
                 android:layout_marginRight="@dimen/text_min_margin"
                 android:gravity="center_horizontal"
+                risuscito:fontFamily="@font/googlesans_italic"
                 android:text="@string/no_consegnati"
                 android:textAppearance="@style/SuperStateViewSubTitle"
                 android:textColor="?android:textColorSecondary"

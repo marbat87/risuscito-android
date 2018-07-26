@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/theme">
 
         <!--suppress AndroidElementNotAllowed -->
-        <it.cammino.risuscito.preferences.ColorPickerPreference
-            android:defaultValue="@color/theme_primary"
-            android:key="primary_color"
-            android:layout="@layout/color_preference"
+        <ColorPickerPreference
+            android:defaultValue="@color/md_indigo_500"
+            android:dialogTitle="@string/primary_color"
+            android:key="new_primary_color"
+            android:summary="@string/primary_color_desc"
             android:title="@string/primary_color"
-            android:summary="@string/primary_color_desc"/>
+            risuscito:pref_sortColors="true"
+            risuscito:pref_colors="@array/primary_colors_list" />
 
         <!--suppress AndroidElementNotAllowed -->
-        <it.cammino.risuscito.preferences.ColorPickerPreference
-            android:defaultValue="@color/theme_accent"
-            android:key="accent_color"
-            android:layout="@layout/color_preference"
+        <ColorPickerPreference
+            android:defaultValue="@color/md_orange_A200"
+            android:dialogTitle="@string/accent_color"
+            android:key="new_accent_color"
+            android:summary="@string/accent_color_desc"
             android:title="@string/accent_color"
-            android:summary="@string/accent_color_desc"/>
+            risuscito:pref_sortColors="true"
+            risuscito:pref_colors="@array/accent_colors_list"  />
 
         <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat

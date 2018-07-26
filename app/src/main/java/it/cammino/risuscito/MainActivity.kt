@@ -13,19 +13,18 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.annotation.ColorInt
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.edit
 import com.afollestad.materialcab.MaterialCab
-import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -54,11 +53,10 @@ import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
-import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.view.*
 import java.lang.ref.WeakReference
 import java.util.*
 
-class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, SimpleDialogFragment.SimpleCallback {
+class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mViewModel: MainActivityViewModel? = null
     private var mLUtils: LUtils? = null
     var materialCab: MaterialCab? = null
@@ -142,8 +140,11 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
 
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
-        mRegularFont = Typeface.createFromAsset(assets, "fonts/Roboto-Regular.ttf")
-        mMediumFont = Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
+//        mRegularFont = Typeface.createFromAsset(assets, "fonts/ font xml" +
+//                "Roboto-Regular.ttf")
+        mRegularFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_regular)
+//        mMediumFont = Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
+        mMediumFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_medium)
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_menu)
@@ -516,17 +517,17 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
         drawer!!.setSelection(R.id.navigation_home.toLong())
     }
 
-    override fun onColorSelection(
-            colorChooserDialog: ColorChooserDialog, @ColorInt color: Int) {
-        if (colorChooserDialog.isAccentMode)
-            themeUtils!!.accentColor(color)
-        else
-            themeUtils!!.primaryColor(color)
+//    override fun onColorSelection(
+//            colorChooserDialog: ColorChooserDialog, @ColorInt color: Int) {
+//        if (colorChooserDialog.isAccentMode)
+//            themeUtils!!.accentColor(color)
+//        else
+//            themeUtils!!.primaryColor(color)
 
-        recreate()
-    }
+//        recreate()
+//    }
 
-    override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
+//    override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     //  private void convertTabs(SQLiteDatabase db, String conversion) {
@@ -613,7 +614,8 @@ class MainActivity : ThemeableActivity(), ColorChooserDialog.ColorCallback, Simp
     }
 
     fun setupToolbarTitle(titleResId: Int) {
-        risuscito_toolbar!!.main_toolbarTitle.setText(titleResId)
+//        risuscito_toolbar!!.main_toolbarTitle.setText(titleResId)
+        risuscito_toolbar!!.title = getString(titleResId)
     }
 
     fun enableFab(enable: Boolean) {

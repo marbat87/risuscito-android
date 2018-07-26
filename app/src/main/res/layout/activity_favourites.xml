@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/favorites_text"
-            fontPath="fonts/Roboto-Light.ttf"
+            risuscito:fontFamily="@font/googlesans_italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/favorites_image"

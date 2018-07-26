@@ -36,8 +36,8 @@ open class HFFragment : Fragment() {
 
     private fun setChildMenuVisibility(visible: Boolean) {
         val childFm = childFragmentManager
-        @Suppress("UNNECESSARY_SAFE_CALL")
-        if (childFm?.fragments == null)
+        @Suppress("UNNECESSARY_SAFE_CALL", "NullChecksToSafeCall", "SENSELESS_COMPARISON")
+        if (childFm == null || childFm.fragments == null)
             return
         for (f in childFm.fragments)
             f?.setMenuVisibility(visible)

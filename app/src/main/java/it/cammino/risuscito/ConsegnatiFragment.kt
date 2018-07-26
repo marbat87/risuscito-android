@@ -1,20 +1,24 @@
 package it.cammino.risuscito
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
+import android.support.design.bottomappbar.BottomAppBar
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
@@ -53,10 +57,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var rootView: View? = null
     private var selectableAdapter: FastItemAdapter<CheckableItem>? = null
     private var mFab: FloatingActionButton? = null
-    private var mBottomBar: View? = null
+    private var mBottomBar: BottomAppBar? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
+    private var mRegularFont: Typeface? = null
     private val positionBRec = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
@@ -100,6 +105,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
 
     private val fab: FloatingActionButton
+        @SuppressLint("RestrictedApi")
         get() {
             if (mFab == null) {
                 mFab = activity!!.findViewById(R.id.fab_pager)
@@ -121,6 +127,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mCantiViewModel = ViewModelProviders.of(this).get(ConsegnatiViewModel::class.java)
 
         mMainActivity = activity as MainActivity?
+
+        mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
 
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_consegnati)
 
@@ -151,63 +159,109 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.enableFab(true)
 
+//        mBottomBar!!.inflateMenu(R.menu.consegnati)
+        IconicsMenuInflaterUtil.inflate(
+                activity!!.menuInflater, activity, R.menu.consegnati, mBottomBar!!.menu, false)
+        mBottomBar!!.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.select_none -> {
+                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
+                    true
+                }
+                R.id.select_all -> {
+                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
+                    true
+                }
+                R.id.cancel_change -> {
+                    mCantiViewModel!!.editMode = false
+                    chooseRecycler!!.visibility = View.INVISIBLE
+                    enableBottombar(false)
+                    selected_view!!.visibility = View.VISIBLE
+                    mMainActivity!!.enableFab(true)
+                    mCantiViewModel!!.titoliChoose = ArrayList()
+                    true
+                }
+                R.id.confirm_changes -> {
+                    mCantiViewModel!!.editMode = false
+                    SimpleDialogFragment.Builder(
+                            (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
+                            .content(R.string.save_consegnati_running)
+                            .showProgress()
+                            .progressIndeterminate(false)
+                            .progressMax(selectableAdapter!!.itemCount)
+                            .show()
+
+                    val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
+                    val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
+
+                    val intent = Intent(activity!!.applicationContext, ConsegnatiSaverService::class.java)
+                    intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
+                    activity!!.applicationContext.startService(intent)
+                    true
+                }
+                else -> false
+            }
+
+        }
+
         mLUtils = LUtils.getInstance(activity!!)
 
-        mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
+//        mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
+        mBottomBar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils.primaryColor()))
 
         //    Log.d(TAG, "onCreateView - editMode: " + mCantiViewModel.editMode);
-        val mSelectNone = if (mMainActivity!!.isOnTablet)
-            rootView!!.findViewById(R.id.select_none)
-        else
-            activity!!.findViewById<View>(R.id.select_none)
-        mSelectNone.setOnClickListener {
-            //            selectableAdapter.deselect();
-            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
-        }
-
-        val mSelectAll = if (mMainActivity!!.isOnTablet)
-            select_all
-        else
-            activity!!.select_all
-        mSelectAll.setOnClickListener {
-            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
-        }
-
-        val cancelChange = if (mMainActivity!!.isOnTablet)
-            cancel_change
-        else
-            activity!!.cancel_change
-
-        cancelChange.setOnClickListener {
-            mCantiViewModel!!.editMode = false
-            chooseRecycler!!.visibility = View.INVISIBLE
-            enableBottombar(false)
-            selected_view!!.visibility = View.VISIBLE
-            mMainActivity!!.enableFab(true)
-            mCantiViewModel!!.titoliChoose = ArrayList()
-        }
-
-        val confirmChanges = if (mMainActivity!!.isOnTablet)
-            confirm_changes
-        else
-            activity!!.confirm_changes
-        confirmChanges.setOnClickListener {
-            mCantiViewModel!!.editMode = false
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
-                    .content(R.string.save_consegnati_running)
-                    .showProgress()
-                    .progressIndeterminate(false)
-                    .progressMax(selectableAdapter!!.itemCount)
-                    .show()
-
-            val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
-            val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
-
-            val intent = Intent(activity!!.applicationContext, ConsegnatiSaverService::class.java)
-            intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
-            activity!!.applicationContext.startService(intent)
-        }
+//        val mSelectNone = if (mMainActivity!!.isOnTablet)
+//            rootView!!.findViewById(R.id.select_none)
+//        else
+//            activity!!.findViewById<View>(R.id.select_none)
+//        mSelectNone.setOnClickListener {
+//            //            selectableAdapter.deselect();
+//            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
+//        }
+//
+//        val mSelectAll = if (mMainActivity!!.isOnTablet)
+//            select_all
+//        else
+//            activity!!.select_all
+//        mSelectAll.setOnClickListener {
+//            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
+//        }
+//
+//        val cancelChange = if (mMainActivity!!.isOnTablet)
+//            cancel_change
+//        else
+//            activity!!.cancel_change
+//
+//        cancelChange.setOnClickListener {
+//            mCantiViewModel!!.editMode = false
+//            chooseRecycler!!.visibility = View.INVISIBLE
+//            enableBottombar(false)
+//            selected_view!!.visibility = View.VISIBLE
+//            mMainActivity!!.enableFab(true)
+//            mCantiViewModel!!.titoliChoose = ArrayList()
+//        }
+//
+//        val confirmChanges = if (mMainActivity!!.isOnTablet)
+//            confirm_changes
+//        else
+//            activity!!.confirm_changes
+//        confirmChanges.setOnClickListener {
+//            mCantiViewModel!!.editMode = false
+//            SimpleDialogFragment.Builder(
+//                    (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
+//                    .content(R.string.save_consegnati_running)
+//                    .showProgress()
+//                    .progressIndeterminate(false)
+//                    .progressMax(selectableAdapter!!.itemCount)
+//                    .show()
+//
+//            val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
+//            val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
+//
+//            val intent = Intent(activity!!.applicationContext, ConsegnatiSaverService::class.java)
+//            intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
+//            activity!!.applicationContext.startService(intent)
+//        }
 
         val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
@@ -361,7 +415,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                             .withId(canto.id)
                             )
                         }
-                        mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy({ it.title.toString() }))
+                        mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
                         FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
                     }
                 })
@@ -391,10 +445,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         .outerCircleColorInt(
                                 themeUtils.primaryColor()) // Specify a color for the outer circle
                         .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                        .textTypeface(
-                                Typeface.createFromAsset(
-                                        resources.assets,
-                                        "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                        .textTypeface(mRegularFont) // Specify a typeface for the text
                         .titleTextColor(R.color.primary_text_default_material_dark)
                         .textColor(R.color.secondary_text_default_material_dark)
                         .tintTarget(false) // Whether to tint the target view's color
@@ -411,36 +462,26 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         TapTargetSequence(activity!!)
                 .continueOnCancel(true)
                 .targets(
-                        TapTarget.forView(
-                                if (mMainActivity!!.isOnTablet)
-                                    rootView!!.findViewById<View>(R.id.confirm_changes) as ImageButton
-                                else
-                                    activity!!.findViewById<View>(R.id.confirm_changes) as ImageButton,
+                        TapTarget.forToolbarMenuItem(
+                                mBottomBar,
+                                R.id.confirm_changes,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_confirm))
                                 .outerCircleColorInt(
                                         themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark),
-                        TapTarget.forView(
-                                if (mMainActivity!!.isOnTablet)
-                                    rootView!!.findViewById<View>(R.id.cancel_change) as ImageButton
-                                else
-                                    activity!!.findViewById<View>(R.id.cancel_change) as ImageButton,
+                        TapTarget.forToolbarMenuItem(
+                                mBottomBar,
+                                R.id.cancel_change,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_cancel))
                                 .outerCircleColorInt(
                                         themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(
-                                        Typeface.createFromAsset(
-                                                resources.assets,
-                                                "fonts/Roboto-Regular.ttf")) // Specify a typeface for the text
+                                .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark))
                 .listener(
@@ -481,7 +522,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                             .withId(canto.id)
                                     newList.add(sampleItem)
                                 }
-                                mCantiViewModel!!.titoli = newList.sortedWith(compareBy({ it.title.toString() }))
+                                mCantiViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
                                 cantoAdapter.set(mCantiViewModel!!.titoli)
                                 no_consegnati!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                             }
