@@ -254,14 +254,16 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                         .selectedItems
                         .size
                 Log.d(TAG, "onCabItemClicked: $iRemoved")
+                val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
+                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
 
                 mUndoHelper!!.remove(
                         activity!!.main_content,
                         resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
                         getString(android.R.string.cancel).toUpperCase(),
                         Snackbar.LENGTH_SHORT,
-                        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections)
-                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+                        selectedItems)
+//                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
                 actionModeOk = true
                 mMainActivity!!.materialCab!!.finish()
                 return true
