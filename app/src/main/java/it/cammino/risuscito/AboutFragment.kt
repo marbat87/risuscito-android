@@ -22,9 +22,9 @@ class AboutFragment : Fragment() {
         mMainActivity = activity as MainActivity?
 
         mMainActivity!!.enableFab(false)
-        if (!mMainActivity!!.isOnTablet) {
+//        if (!mMainActivity!!.isOnTablet) {
             mMainActivity!!.enableBottombar(false)
-        }
+//        }
         activity!!.material_tabs.visibility = View.GONE
 
         return rootView

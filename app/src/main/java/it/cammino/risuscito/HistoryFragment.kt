@@ -68,27 +68,27 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
 
         mLUtils = LUtils.getInstance(activity!!)
 
-        mMainActivity!!.enableFab(true)
-        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
-        val fabClear = activity!!.fab_pager
-        val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                .color(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
-        fabClear.setImageDrawable(icon)
-        fabClear.setOnClickListener {
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
-                    .title(R.string.dialog_reset_history_title)
-                    .content(R.string.dialog_reset_history_desc)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
-                    .show()
-        }
+//        mMainActivity!!.enableFab(true)
+//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
+//        val fabClear = activity!!.fab_pager
+//        val icon = IconicsDrawable(activity!!)
+//                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+//                .color(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//        fabClear.setImageDrawable(icon)
+//        fabClear.setOnClickListener {
+//            SimpleDialogFragment.Builder(
+//                    (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
+//                    .title(R.string.dialog_reset_history_title)
+//                    .content(R.string.dialog_reset_history_desc)
+//                    .positiveButton(android.R.string.yes)
+//                    .negativeButton(android.R.string.no)
+//                    .show()
+//        }
 
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
-                .getBoolean(Utility.HISTORY_OPEN, false)) {
+                        .getBoolean(Utility.HISTORY_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.HISTORY_OPEN, true) }
             val mHandler = android.os.Handler()
             mHandler.postDelayed(
@@ -104,6 +104,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mMainActivity!!.enableBottombar(false)
+        initFab()
         val mOnPreClickListener = OnClickListener<SimpleHistoryItem> { _, iAdapter, item, i ->
             Log.d(TAG, "onClick: 2")
             if (mMainActivity!!.materialCab!!.isActive) {
@@ -116,8 +118,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                         .withSetSelected(!cantoAdapter!!.getAdapterItem(i).isSelected)
                 cantoAdapter!!.notifyAdapterItemChanged(i)
                 if ((cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
-                        .selectedItems
-                        .size == 0)
+                                .selectedItems
+                                .size == 0)
                     mMainActivity!!.materialCab!!.finish()
                 return@OnClickListener true
             }
@@ -315,9 +317,39 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback, Materia
                                 }
                                 FastAdapterDiffUtil.set(cantoAdapter!!, mCronologiaViewModel!!.titoli)
                                 no_history!!.visibility = if (cantoAdapter!!.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
+//                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
+                                enableFab(cantoAdapter!!.adapterItemCount != 0)
                             }
                         })
+    }
+
+    private fun enableFab(enabled: Boolean) {
+//        if (mMainActivity!!.isOnTablet)
+//            if (enabled) fab_pager.show() else fab_pager.hide()
+//        else
+            mMainActivity!!.enableFab(enabled)
+    }
+
+    private fun initFab() {
+        val icon = IconicsDrawable(activity!!)
+                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2)
+        val onClick = View.OnClickListener {
+            SimpleDialogFragment.Builder(
+                    (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
+                    .title(R.string.dialog_reset_history_title)
+                    .content(R.string.dialog_reset_history_desc)
+                    .positiveButton(android.R.string.yes)
+                    .negativeButton(android.R.string.no)
+                    .show()
+        }
+//        if (mMainActivity!!.isOnTablet) {
+//            fab_pager.setImageDrawable(icon)
+//            fab_pager.setOnClickListener(onClick)
+//        } else
+            mMainActivity!!.initFab(icon, onClick)
     }
 
     companion object {

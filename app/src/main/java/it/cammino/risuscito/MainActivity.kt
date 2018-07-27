@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
@@ -618,22 +619,41 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         risuscito_toolbar!!.title = getString(titleResId)
     }
 
+    @Suppress("PLUGIN_WARNING")
     fun enableFab(enable: Boolean) {
+//        if (!isOnTablet) {
         Log.d(TAG, "enableFab: $enable")
-        val mFab = findViewById<FloatingActionButton>(R.id.fab_pager)
+//        val mFab = findViewById<FloatingActionButton>(R.id.fab_pager)
         if (enable)
-            mFab.show()
+            fab_pager.show()
         else
-            mFab.hide()
+            fab_pager.hide()
+//        }
+    }
+
+    @Suppress("PLUGIN_WARNING")
+    fun initFab(icon: Drawable, click: View.OnClickListener) {
+        Log.d(TAG, "initFab()")
+        enableFab(false)
+        fab_pager.setImageDrawable(icon)
+        fab_pager.setOnClickListener(click)
+        enableFab(true)
+    }
+
+    @Suppress("PLUGIN_WARNING")
+    fun getFab(): FloatingActionButton {
+        return fab_pager
     }
 
     fun enableBottombar(enabled: Boolean) {
-        Log.d(TAG, "enableBottombar - enabled: $enabled")
-        val mBottomBar = findViewById<View>(R.id.bottom_bar)
-        if (enabled)
-            mLUtils!!.animateIn(mBottomBar)
-        else
-            mBottomBar.visibility = View.GONE
+        if (!isOnTablet) {
+            Log.d(TAG, "enableBottombar - enabled: $enabled")
+            val mBottomBar = findViewById<View>(R.id.bottom_bar)
+            if (enabled)
+                mLUtils!!.animateIn(mBottomBar)
+            else
+                mBottomBar.visibility = View.GONE
+        }
     }
 
     // [START signIn]

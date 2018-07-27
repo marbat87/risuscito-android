@@ -197,7 +197,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             val mEditor = sp.edit()
             val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
-//                "en" -> "en"
+                "en" -> "en"
                 else -> "it"
             }
             Log.d(TAG, "attachBaseContext - language setted: $mLanguage")

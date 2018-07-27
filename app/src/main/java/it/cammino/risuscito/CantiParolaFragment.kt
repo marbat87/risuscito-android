@@ -210,7 +210,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
 
         if (!isViewShown) {
             if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
-            val fab1 = (parentFragment as CustomLists).fab
+            val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
         }
 
@@ -256,7 +256,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
             if (view != null) {
                 isViewShown = true
                 if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
-                val fab1 = (parentFragment as CustomLists).fab
+                val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
             } else
                 isViewShown = false

@@ -31,7 +31,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.enableFab(false)
-        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
+//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
+        mMainActivity!!.enableBottombar(false)
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as ListPreference
 

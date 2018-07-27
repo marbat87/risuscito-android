@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="litanie_penitenziali_brevi_source">litanie_penitenziali_brevi_en</string>
-    <string name="preghiera_litanica_penitenziale_source">preghiera_litanica_penitenziale</string>
+    <string name="preghiera_litanica_penitenziale_source">preghiera_litanica_penitenziale_en</string>
     <string name="celebrazione_penitenziale_source">celebrazione_penitenziale_en</string>
     <string name="gloria_a_dio_cieli_source">gloria_a_dio_cieli_en</string>
     <string name="santo_e_santo_quaresima_source">santo_e_santo_quaresima_en</string>
     <string name="santo_ordinario_source">santo_ordinario_en</string>
     <string name="santo_baracche_source">santo_baracche_en</string>
-    <string name="santo_palme_source">santo_palme</string>
+    <string name="santo_palme_source">santo_palme_en</string>
     <string name="santo_1988_source">santo_1988_en</string>
     <string name="santo_1983_source">santo_1983_en</string>
     <string name="preghiera_eucarestica_II_source">preghiera_eucarestica_II_en</string>

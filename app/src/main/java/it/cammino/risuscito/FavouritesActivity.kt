@@ -65,27 +65,27 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
         mLUtils = LUtils.getInstance(activity!!)
 
-        mMainActivity!!.enableFab(true)
-        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
-        val fabClear = activity!!.fab_pager
-        val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                .color(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
-        fabClear.setImageDrawable(icon)
-        fabClear.setOnClickListener {
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
-                    .title(R.string.dialog_reset_favorites_title)
-                    .content(R.string.dialog_reset_favorites_desc)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
-                    .show()
-        }
+//        mMainActivity!!.enableFab(true)
+//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
+//        val fabClear = activity!!.fab_pager
+//        val icon = IconicsDrawable(activity!!)
+//                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+//                .color(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//        fabClear.setImageDrawable(icon)
+//        fabClear.setOnClickListener {
+//            SimpleDialogFragment.Builder(
+//                    (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
+//                    .title(R.string.dialog_reset_favorites_title)
+//                    .content(R.string.dialog_reset_favorites_desc)
+//                    .positiveButton(android.R.string.yes)
+//                    .negativeButton(android.R.string.no)
+//                    .show()
+//        }
 
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
-                .getBoolean(Utility.PREFERITI_OPEN, false)) {
+                        .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
             val mHandler = android.os.Handler()
             mHandler.postDelayed(
@@ -103,6 +103,10 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mMainActivity!!.enableBottombar(false)
+        initFab()
+
         val mOnPreClickListener = OnClickListener<SimpleItem> { _, _, _, i ->
             Log.d(TAG, "onClick: 2")
             if (mMainActivity!!.materialCab!!.isActive) {
@@ -300,21 +304,51 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                                 val newList = ArrayList<SimpleItem>()
                                 for (canto in canti) {
                                     newList.add(
-                                    SimpleItem()
-                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                            .withColor(canto.color!!)
-                                            .withId(canto.id)
-                                            .withSelectedColor(themeUtils.primaryColorDark())
+                                            SimpleItem()
+                                                    .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                                    .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                                    .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+                                                    .withColor(canto.color!!)
+                                                    .withId(canto.id)
+                                                    .withSelectedColor(themeUtils.primaryColorDark())
                                     )
                                 }
-                                mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy({ it.title.toString() }))
+                                mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
                                 FastAdapterDiffUtil.set(cantoAdapter!!, mFavoritesViewModel!!.titoli)
                                 no_favourites!!.visibility = if (cantoAdapter!!.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
+//                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
+                                enableFab(cantoAdapter!!.adapterItemCount != 0)
                             }
                         })
+    }
+
+    private fun enableFab(enabled: Boolean) {
+//        if (mMainActivity!!.isOnTablet)
+//            if (enabled) fab_pager.show() else fab_pager.hide()
+//        else
+        mMainActivity!!.enableFab(enabled)
+    }
+
+    private fun initFab() {
+        val icon = IconicsDrawable(activity!!)
+                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2)
+        val onClick = View.OnClickListener {
+            SimpleDialogFragment.Builder(
+                    (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
+                    .title(R.string.dialog_reset_favorites_title)
+                    .content(R.string.dialog_reset_favorites_desc)
+                    .positiveButton(android.R.string.yes)
+                    .negativeButton(android.R.string.no)
+                    .show()
+        }
+//        if (mMainActivity!!.isOnTablet) {
+//            fab_pager.setImageDrawable(icon)
+//            fab_pager.setOnClickListener(onClick)
+//        } else
+        mMainActivity!!.initFab(icon, onClick)
     }
 
     companion object {

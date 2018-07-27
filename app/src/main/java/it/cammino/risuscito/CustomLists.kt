@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -51,7 +50,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var titoliListe: Array<String?>? = null
     private var idListe: IntArray? = null
     private var movePage: Boolean = false
-    private var mFab: FloatingActionButton? = null
+    private var mMainActivity: MainActivity? = null
+    //    private var mFab: FloatingActionButton? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
     private val fabBRec = object : BroadcastReceiver() {
@@ -121,21 +121,21 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
     }
 
-    val fab: FloatingActionButton
-        @SuppressLint("RestrictedApi")
-        get() {
-            if (mFab == null) {
-                mFab = activity!!.findViewById(R.id.fab_pager)
-                mFab!!.visibility = View.VISIBLE
-                val icon = IconicsDrawable(activity!!)
-                        .icon(CommunityMaterial.Icon.cmd_plus)
-                        .color(Color.WHITE)
-                        .sizeDp(24)
-                        .paddingDp(4)
-                mFab!!.setImageDrawable(icon)
-            }
-            return mFab as FloatingActionButton
-        }
+//    val fab: FloatingActionButton
+//        @SuppressLint("RestrictedApi")
+//        get() {
+//            if (mFab == null) {
+//                mFab = activity!!.findViewById(R.id.fab_pager)
+//                mFab!!.visibility = View.VISIBLE
+//                val icon = IconicsDrawable(activity!!)
+//                        .icon(CommunityMaterial.Icon.cmd_plus)
+//                        .color(Color.WHITE)
+//                        .sizeDp(24)
+//                        .paddingDp(4)
+//                mFab!!.setImageDrawable(icon)
+//            }
+//            return mFab as FloatingActionButton
+//        }
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -146,33 +146,34 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel::class.java)
 
-        val mMainActivity = activity as MainActivity?
+        mMainActivity = activity as MainActivity?
 
         mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
 
-        mMainActivity.setupToolbarTitle(R.string.title_activity_custom_lists)
+        mMainActivity!!.setupToolbarTitle(R.string.title_activity_custom_lists)
 
         titoliListe = arrayOfNulls(0)
         idListe = IntArray(0)
 
         movePage = savedInstanceState != null
 
-        mMainActivity.enableFab(true)
-        if (!mMainActivity.isOnTablet) mMainActivity.enableBottombar(false)
+//        mMainActivity.enableFab(true)
+//        if (!mMainActivity.isOnTablet) mMainActivity.enableBottombar(false)
+//        mMainActivity.enableBottombar(false)
 
-        fab
-                .setOnClickListener {
-                    val customList = view_pager!!.currentItem >= 2
-                    val bottomSheetDialog = BottomSheetFabListe.newInstance(customList)
-                    bottomSheetDialog.show(fragmentManager!!, null)
-                }
+//        fab
+//                .setOnClickListener {
+//                    val customList = view_pager!!.currentItem >= 2
+//                    val bottomSheetDialog = BottomSheetFabListe.newInstance(customList)
+//                    bottomSheetDialog.show(fragmentManager!!, null)
+//                }
 
         val iFragment = InputTextDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NEW_LIST")
         iFragment?.setmCallback(this@CustomLists)
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "RESET_LIST")
-        if (sFragment != null) sFragment.setmCallback(this@CustomLists)
+        sFragment?.setmCallback(this@CustomLists)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
-        if (sFragment != null) sFragment.setmCallback(this@CustomLists)
+        sFragment?.setmCallback(this@CustomLists)
 
 //        activity!!.registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
@@ -189,6 +190,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
+        mMainActivity!!.enableBottombar(false)
+        initFab()
         activity!!.view_pager!!.adapter = mSectionsPagerAdapter
 
         tabs = activity!!.material_tabs
@@ -314,7 +317,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onNeutral(tag: String) {}
 
     private fun playIntro() {
-        fab.show()
+//        fab.show()
+        enableFab(true)
         val doneDrawable = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_check)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -322,7 +326,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(
-                                fab,
+                                getFab(),
                                 getString(R.string.showcase_listepers_title),
                                 getString(R.string.showcase_listepers_desc1))
                                 .outerCircleColorInt(
@@ -335,7 +339,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 .tintTarget(false) // Whether to tint the target view's color
                         ,
                         TapTarget.forView(
-                                fab,
+                                getFab(),
                                 getString(R.string.showcase_listepers_title),
                                 getString(R.string.showcase_listepers_desc3))
                                 .outerCircleColorInt(
@@ -349,14 +353,14 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 Log.d(TAG, "onSequenceFinish: ")
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit{putBoolean(Utility.INTRO_CUSTOMLISTS, true)}
+                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
                             }
                         })
                 .start()
@@ -441,6 +445,36 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         override fun getItemPosition(`object`: Any): Int {
             return PagerAdapter.POSITION_NONE
         }
+    }
+
+    fun getFab(): FloatingActionButton {
+//        return if (mMainActivity!!.isOnTablet) fab_pager else mMainActivity!!.getFab()
+        return mMainActivity!!.getFab()
+    }
+
+    private fun enableFab(enabled: Boolean) {
+//        if (mMainActivity!!.isOnTablet)
+//            if (enabled) fab_pager.show() else fab_pager.hide()
+//        else
+            mMainActivity!!.enableFab(enabled)
+    }
+
+    private fun initFab() {
+        val icon = IconicsDrawable(activity!!)
+                .icon(CommunityMaterial.Icon.cmd_plus)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2)
+        val onClick = View.OnClickListener {
+            val customList = view_pager!!.currentItem >= 2
+            val bottomSheetDialog = BottomSheetFabListe.newInstance(customList)
+            bottomSheetDialog.show(fragmentManager!!, null)
+        }
+//        if (mMainActivity!!.isOnTablet) {
+//            fab_pager.setImageDrawable(icon)
+//            fab_pager.setOnClickListener(onClick)
+//        } else
+            mMainActivity!!.initFab(icon, onClick)
     }
 
     companion object {

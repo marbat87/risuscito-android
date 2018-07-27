@@ -52,9 +52,9 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         mMainActivity = activity as MainActivity?
 
         mMainActivity!!.enableFab(false)
-        if (!mMainActivity!!.isOnTablet) {
-            mMainActivity!!.enableBottombar(false)
-        }
+//        if (!mMainActivity!!.isOnTablet) {
+        mMainActivity!!.enableBottombar(false)
+//        }
 
         val sp = PreferenceManager.getDefaultSharedPreferences(activity)
 
@@ -92,7 +92,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
                         .getBoolean(Utility.SIGNED_IN, false))
         rootView!!
                 .findViewById<View>(R.id.sign_in_button).visibility = if (PreferenceManager.getDefaultSharedPreferences(activity)
-                .getBoolean(Utility.SIGNED_IN, false))
+                        .getBoolean(Utility.SIGNED_IN, false))
             View.INVISIBLE
         else
             View.VISIBLE
@@ -160,7 +160,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
     private fun checkStoragePermissions() {
         Log.d(TAG, "checkStoragePermissions: ")
         if (!EasyPermissions.hasPermissions(
-                context!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        context!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             EasyPermissions.requestPermissions(
                     PermissionRequest.Builder(
                             this,

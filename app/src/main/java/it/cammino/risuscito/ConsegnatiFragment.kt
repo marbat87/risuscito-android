@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
@@ -25,7 +24,6 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
-import android.widget.ImageButton
 import androidx.core.content.edit
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -56,7 +54,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mCantiViewModel: ConsegnatiViewModel? = null
     private var rootView: View? = null
     private var selectableAdapter: FastItemAdapter<CheckableItem>? = null
-    private var mFab: FloatingActionButton? = null
+    //    private var mFab: FloatingActionButton? = null
     private var mBottomBar: BottomAppBar? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -91,7 +89,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 chooseRecycler!!.visibility = View.GONE
                 enableBottombar(false)
                 selected_view!!.visibility = View.VISIBLE
-                mMainActivity!!.enableFab(true)
+//                mMainActivity!!.enableFab(true)
+                enableFab(true)
                 mCantiViewModel!!.titoliChoose = ArrayList()
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
@@ -104,21 +103,21 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         get() = (activity as MainActivity).themeUtils!!
 
 
-    private val fab: FloatingActionButton
-        @SuppressLint("RestrictedApi")
-        get() {
-            if (mFab == null) {
-                mFab = activity!!.findViewById(R.id.fab_pager)
-                mFab!!.visibility = View.VISIBLE
-                val icon = IconicsDrawable(activity!!)
-                        .icon(CommunityMaterial.Icon.cmd_pencil)
-                        .color(Color.WHITE)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                mFab!!.setImageDrawable(icon)
-            }
-            return mFab as FloatingActionButton
-        }
+//    private val fab: FloatingActionButton
+//        get() {
+//            Log.d(TAG, "getFab null?" + (mFab == null))
+//            if (mFab == null) {
+//                mFab = activity!!.findViewById(R.id.fab_pager)
+//                mFab!!.visibility = View.VISIBLE
+//                val icon = IconicsDrawable(activity!!)
+//                        .icon(CommunityMaterial.Icon.cmd_pencil)
+//                        .color(Color.WHITE)
+//                        .sizeDp(24)
+//                        .paddingDp(2)
+//                mFab!!.setImageDrawable(icon)
+//            }
+//            return mFab as FloatingActionButton
+//        }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -132,19 +131,20 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_consegnati)
 
-        fab
-                .setOnClickListener {
-                    mCantiViewModel!!.editMode = true
-                    updateChooseList()
-                    selected_view!!.visibility = View.INVISIBLE
-                    chooseRecycler!!.visibility = View.VISIBLE
-                    enableBottombar(true)
-                    mMainActivity!!.enableFab(false)
-                    val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
-                    if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
-                        managerIntro()
-                    }
-                }
+//        fab
+//                .setOnClickListener {
+//                    mCantiViewModel!!.editMode = true
+//                    updateChooseList()
+//                    selected_view!!.visibility = View.INVISIBLE
+//                    chooseRecycler!!.visibility = View.VISIBLE
+//                    enableBottombar(true)
+////                    mMainActivity!!.enableFab(false)
+//                    enableFab(false)
+//                    val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+//                    if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+//                        managerIntro()
+//                    }
+//                }
 
         return rootView
     }
@@ -157,9 +157,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             activity!!.bottom_bar
 
         activity!!.material_tabs.visibility = View.GONE
-        mMainActivity!!.enableFab(true)
+//        mMainActivity!!.enableFab(true)
+        initFab()
 
 //        mBottomBar!!.inflateMenu(R.menu.consegnati)
+        mBottomBar!!.replaceMenu(R.menu.empty)
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.consegnati, mBottomBar!!.menu, false)
         mBottomBar!!.setOnMenuItemClickListener { menuItem ->
@@ -177,7 +179,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     chooseRecycler!!.visibility = View.INVISIBLE
                     enableBottombar(false)
                     selected_view!!.visibility = View.VISIBLE
-                    mMainActivity!!.enableFab(true)
+//                    mMainActivity!!.enableFab(true)
+                    enableFab(true)
                     mCantiViewModel!!.titoliChoose = ArrayList()
                     true
                 }
@@ -338,12 +341,14 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             chooseRecycler!!.visibility = View.VISIBLE
             enableBottombar(true)
             selected_view!!.visibility = View.INVISIBLE
-            mMainActivity!!.enableFab(false)
+//            mMainActivity!!.enableFab(false)
+            enableFab(false)
         } else {
             chooseRecycler!!.visibility = View.GONE
             enableBottombar(false)
             selected_view!!.visibility = View.VISIBLE
-            mMainActivity!!.enableFab(true)
+//            mMainActivity!!.enableFab(true)
+            enableFab(true)
         }
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
@@ -402,6 +407,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
                     val canti = mDao.choosen
                     @Suppress("SENSELESS_COMPARISON")
+                    @Suppress("SENSELESS_COMPARISON")
                     if (canti != null && mCantiViewModel!!.titoliChoose.isEmpty()) {
                         val newList = ArrayList<CheckableItem>()
                         for (canto in canti) {
@@ -422,11 +428,48 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .start()
     }
 
+    private fun getFab(): FloatingActionButton {
+//        return if (mMainActivity!!.isOnTablet) fab_pager else mMainActivity!!.getFab()
+        return mMainActivity!!.getFab()
+    }
+
     private fun enableBottombar(enabled: Boolean) {
         if (mMainActivity!!.isOnTablet)
             mBottomBar!!.visibility = if (enabled) View.VISIBLE else View.GONE
         else
             mMainActivity!!.enableBottombar(enabled)
+    }
+
+    private fun enableFab(enabled: Boolean) {
+//        if (mMainActivity!!.isOnTablet)
+//            if (enabled) fab_pager.show() else fab_pager.hide()
+//        else
+        mMainActivity!!.enableFab(enabled)
+    }
+
+    private fun initFab() {
+        val icon = IconicsDrawable(activity!!)
+                .icon(CommunityMaterial.Icon.cmd_pencil)
+                .color(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2)
+        val onClick = View.OnClickListener {
+            mCantiViewModel!!.editMode = true
+            updateChooseList()
+            selected_view!!.visibility = View.INVISIBLE
+            chooseRecycler!!.visibility = View.VISIBLE
+            enableBottombar(true)
+            enableFab(false)
+            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+            if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+                managerIntro()
+            }
+        }
+//        if (mMainActivity!!.isOnTablet) {
+//            fab_pager.setImageDrawable(icon)
+//            fab_pager.setOnClickListener(onClick)
+//        } else
+        mMainActivity!!.initFab(icon, onClick)
     }
 
     override fun onPositive(tag: String) {}
@@ -439,7 +482,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         TapTargetView.showFor(
                 activity!!, // `this` is an Activity
                 TapTarget.forView(
-                        fab,
+                        getFab(),
                         getString(R.string.title_activity_consegnati),
                         getString(R.string.showcase_consegnati_howto))
                         .outerCircleColorInt(
