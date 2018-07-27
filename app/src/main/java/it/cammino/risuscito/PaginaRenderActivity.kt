@@ -1395,9 +1395,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 //                                Log.d(TAG, "onSequenceCanceled: ");
-                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-                                prefEditor.apply()
+//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
+//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
+//                                prefEditor.apply()
+                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })

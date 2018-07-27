@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
+import androidx.core.content.edit
 import com.afollestad.materialdialogs.MaterialDialog
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -83,19 +84,20 @@ class ImportActivity : AppCompatActivity() {
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
         Log.d(TAG, "attachBaseContext - language: " + language!!)
         //ho settato almeno una volta la lingua --> imposto quella
-        if (language != "") {
+        if (language.isNotEmpty()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
         } else {
-            val mEditor = sp.edit()
+//            val mEditor = sp.edit()
             val mLanguage: String = when (ThemeableActivity.getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
                 "en" -> "en"
                 else -> "it"
             }
-            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
-            mEditor.apply()
+//            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
+//            mEditor.apply()
+            sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
             val locale = Locale(mLanguage)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)

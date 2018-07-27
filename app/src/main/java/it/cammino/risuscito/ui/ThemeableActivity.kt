@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
 import android.view.WindowManager
+import androidx.core.content.edit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.drive.Drive
@@ -189,20 +190,22 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
         Log.d(TAG, "attachBaseContext - language: " + language!!)
         // ho settato almeno una volta la lingua --> imposto quella
-        if (language.isNotEmpty() && language != "en") {
+//        if (language.isNotEmpty() && language != "en") {
+        if (language.isNotEmpty()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
         } else {
-            val mEditor = sp.edit()
+//            val mEditor = sp.edit()
             val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
                 "en" -> "en"
                 else -> "it"
             }
             Log.d(TAG, "attachBaseContext - language setted: $mLanguage")
-            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
-            mEditor.apply()
+//            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
+//            mEditor.apply()
+            sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
             val locale = Locale(mLanguage)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
