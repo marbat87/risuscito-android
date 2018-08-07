@@ -196,7 +196,7 @@
         android:layout_height="@dimen/abc_action_bar_default_height_material"
         android:layout_gravity="bottom"
         risuscito:backgroundTint="?colorPrimary"
-        risuscito:fabAlignmentMode="center"
+        risuscito:fabAlignmentMode="end"
         risuscito:contentInsetStart="0dp"
         risuscito:fabCradleVerticalOffset="15dp"
         android:theme="@style/ToolbarTheme"
