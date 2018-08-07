@@ -8,11 +8,14 @@ import android.os.SystemClock
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
@@ -37,7 +40,7 @@ import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 import java.sql.Date
 
-class CantiParolaFragment : Fragment(), MaterialCab.Callback {
+class CantiParolaFragment : Fragment() {
 
     private var mCantiViewModel: DefaultListaViewModel? = null
     // create boolean for fetching data
@@ -127,20 +130,22 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         val parent = v.parent.parent as View
         if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
             if (mSwhitchMode) {
-                mSwhitchMode = false
+//                mSwhitchMode = false
                 actionModeOk = true
-                mMainActivity!!.materialCab!!.finish()
+//                mMainActivity!!.materialCab!!.finish()
+                MaterialCab.destroy()
                 Thread(
                         Runnable {
                             scambioConVuoto(
                                     Integer.valueOf(
                                             (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
                                                     .text
-                                                    .toString())!!)
+                                                    .toString()))
                         })
                         .start()
             } else {
-                if (!mMainActivity!!.materialCab!!.isActive) {
+//                if (!mMainActivity!!.materialCab!!.isActive) {
+                if (!MaterialCab.isActive) {
                     val bundle = Bundle()
                     bundle.putInt("fromAdd", 1)
                     bundle.putInt("idLista", 1)
@@ -149,29 +154,31 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                             Integer.valueOf(
                                     (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
                                             .text
-                                            .toString())!!)
+                                            .toString()))
                     startSubActivity(bundle)
                 }
             }
         } else {
             if (!mSwhitchMode)
-                if (mMainActivity!!.materialCab!!.isActive) {
+//                if (mMainActivity!!.materialCab!!.isActive) {
+                if (MaterialCab.isActive) {
                     posizioneDaCanc = Integer.valueOf(
                             (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
                                     .text
-                                    .toString())!!
+                                    .toString())
                     idDaCanc = Integer.valueOf(
                             (v.findViewById<View>(R.id.text_id_canto_card) as TextView)
                                     .text
-                                    .toString())!!
+                                    .toString())
                     timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
                     snackBarRimuoviCanto(v)
                 } else
                     openPagina(v)
             else {
-                mSwhitchMode = false
+//                mSwhitchMode = false
                 actionModeOk = true
-                mMainActivity!!.materialCab!!.finish()
+//                mMainActivity!!.materialCab!!.finish()
+                MaterialCab.destroy()
                 Thread(
                         Runnable {
                             scambioCanto(
@@ -179,7 +186,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                                     Integer.valueOf(
                                             (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
                                                     .text
-                                                    .toString())!!)
+                                                    .toString()))
                         })
                         .start()
             }
@@ -189,9 +196,9 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     private val longClick = OnLongClickListener { v ->
         val parent = v.parent.parent as View
         posizioneDaCanc = Integer.valueOf(
-                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())!!
+                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())
         idDaCanc = Integer.valueOf(
-                (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!
+                (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
         timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
         snackBarRimuoviCanto(v)
         true
@@ -209,7 +216,8 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         mSwhitchMode = false
 
         if (!isViewShown) {
-            if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+//            if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+            if (MaterialCab.isActive) MaterialCab.destroy()
             val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
         }
@@ -221,9 +229,6 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         super.onViewCreated(view, savedInstanceState)
 
         // Creating new adapter object
-//        posizioniList = ArrayList()
-//        cantoAdapter = PosizioneRecyclerAdapter(
-//                themeUtils.primaryColorDark(), posizioniList as ArrayList<Pair<PosizioneTitleItem, List<PosizioneItem>>>, click, longClick)
         cantoAdapter = FastItemAdapter()
         cantoAdapter!!.setHasStableIds(true)
         cantoAdapter!!.set(posizioniList)
@@ -255,7 +260,8 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-                if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+//                if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+                if (MaterialCab.isActive) MaterialCab.destroy()
                 val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
             } else
@@ -264,7 +270,8 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     }
 
     override fun onDestroy() {
-        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+//        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+        if (MaterialCab.isActive) MaterialCab.destroy()
         super.onDestroy()
     }
 
@@ -283,7 +290,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                 "pagina", (v.findViewById<View>(R.id.text_source_canto) as TextView).text.toString())
         bundle.putInt(
                 "idCanto",
-                Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!)
+                Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString()))
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
@@ -342,17 +349,19 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+//        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
+        if (MaterialCab.isActive) MaterialCab.destroy()
         val parent = view.parent.parent as View
-        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())!!
-        longClickedChild = Integer.valueOf(view.item_tag.text.toString())!!
+        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())
+        longClickedChild = Integer.valueOf(view.item_tag.text.toString())
         if (!mMainActivity!!.isOnTablet)
             activity!!.toolbar_layout!!.setExpanded(true, true)
-        mMainActivity!!.materialCab!!.start(this@CantiParolaFragment)
+//        mMainActivity!!.materialCab!!.start(this@CantiParolaFragment)
+        startCab(false)
     }
 
     private fun scambioCanto(v: View, position: Int) {
-        val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())!!
+        val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
         val timestampNew = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
         if (idNew != idDaCanc || posizioneDaCanc != position) {
 
@@ -394,7 +403,7 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
         positionToInsert.id = 1
         positionToInsert.position = position
         positionToInsert.idCanto = idDaCanc
-        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
+        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
         mDao.insertPosition(positionToInsert)
 
         Snackbar.make(
@@ -404,92 +413,190 @@ class CantiParolaFragment : Fragment(), MaterialCab.Callback {
                 .show()
     }
 
-    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-        Log.d(TAG, "onCabCreated: ")
-        cab.setMenu(R.menu.menu_actionmode_lists)
-        cab.setTitle("")
-        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
-        cantoAdapter!!.notifyItemChanged(longclickedPos)
-        menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white)
-        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white)
-        actionModeOk = false
-        return true
-    }
+//    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
+//        Log.d(TAG, "onCabCreated: ")
+//        cab.setMenu(R.menu.menu_actionmode_lists)
+//        cab.setTitle("")
+//        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
+//        cantoAdapter!!.notifyItemChanged(longclickedPos)
+//        menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white)
+//        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white)
+//        actionModeOk = false
+//        return true
+//    }
+//
+//    override fun onCabItemClicked(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.action_remove_item -> {
+//                Thread(
+//                        Runnable {
+//                            val positionToDelete = CustomList()
+//                            positionToDelete.id = 1
+//                            positionToDelete.position = posizioneDaCanc
+//                            positionToDelete.idCanto = idDaCanc
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+//                            mDao.deletePosition(positionToDelete)
+//                        })
+//                        .start()
+//
+//                actionModeOk = true
+//                mMainActivity!!.materialCab!!.finish()
+//                Snackbar.make(
+//                        activity!!.findViewById<View>(R.id.main_content),
+//                        R.string.song_removed,
+//                        Snackbar.LENGTH_LONG)
+//                        .setAction(
+//                                getString(android.R.string.cancel).toUpperCase()
+//                        ) {
+//                            Thread(
+//                                    Runnable {
+//                                        val positionToInsert = CustomList()
+//                                        positionToInsert.id = 1
+//                                        positionToInsert.position = posizioneDaCanc
+//                                        positionToInsert.idCanto = idDaCanc
+//                                        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
+//                                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+//                                        mDao.insertPosition(positionToInsert)
+//                                    })
+//                                    .start()
+//                        }
+//                        .setActionTextColor(themeUtils.accentColor())
+//                        .show()
+//                mSwhitchMode = false
+//                return true
+//            }
+//            R.id.action_switch_item -> {
+//                mSwhitchMode = true
+//                mMainActivity!!.materialCab!!.setTitleRes(R.string.switch_started)
+//                Toast.makeText(
+//                        activity,
+//                        resources.getString(R.string.switch_tooltip),
+//                        Toast.LENGTH_SHORT)
+//                        .show()
+//                return true
+//            }
+//        }
+//        return true
+//    }
+//
+//    override fun onCabFinished(cab: MaterialCab): Boolean {
+//        Log.d(TAG, "onCabFinished: ")
+//        mSwhitchMode = false
+//        if (!actionModeOk) {
+//            try {
+//                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
+//                cantoAdapter!!.notifyItemChanged(longclickedPos)
+//            } catch (e: Exception) {
+//                Crashlytics.log("Possibile crash - longclickedPos: $longclickedPos")
+//                Crashlytics.logException(e)
+//            }
+//
+//        }
+//        return true
+//    }
 
-    override fun onCabItemClicked(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_remove_item -> {
-                Thread(
-                        Runnable {
-                            val positionToDelete = CustomList()
-                            positionToDelete.id = 1
-                            positionToDelete.position = posizioneDaCanc
-                            positionToDelete.idCanto = idDaCanc
-                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                            mDao.deletePosition(positionToDelete)
-                        })
-                        .start()
+    private fun startCab(switchMode: Boolean) {
+        mSwhitchMode = switchMode
+        MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
+            if (switchMode)
+                titleRes(R.string.switch_started)
+            else
+                title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
+            popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
+            contentInsetStartRes(R.dimen.mcab_default_content_inset)
+            menuRes = R.menu.menu_actionmode_lists
+            backgroundColor = themeUtils.primaryColorDark()
+//            closeDrawableRes = R.drawable.mcab_nav_close
 
-                actionModeOk = true
-                mMainActivity!!.materialCab!!.finish()
-                Snackbar.make(
-                        activity!!.findViewById<View>(R.id.main_content),
-                        R.string.song_removed,
-                        Snackbar.LENGTH_LONG)
-                        .setAction(
-                                getString(android.R.string.cancel).toUpperCase()
-                        ) {
-                            Thread(
-                                    Runnable {
-                                        val positionToInsert = CustomList()
-                                        positionToInsert.id = 1
-                                        positionToInsert.position = posizioneDaCanc
-                                        positionToInsert.idCanto = idDaCanc
-                                        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-                                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                                        mDao.insertPosition(positionToInsert)
-                                    })
-                                    .start()
-                        }
-                        .setActionTextColor(themeUtils.accentColor())
-                        .show()
-                mSwhitchMode = false
-                return true
-            }
-            R.id.action_switch_item -> {
-                mSwhitchMode = true
-                mMainActivity!!.materialCab!!.setTitleRes(R.string.switch_started)
-                Toast.makeText(
-                        activity,
-                        resources.getString(R.string.switch_tooltip),
-                        Toast.LENGTH_SHORT)
-                        .show()
-                return true
-            }
-        }
-        return true
-    }
-
-    override fun onCabFinished(cab: MaterialCab): Boolean {
-        Log.d(TAG, "onCabFinished: ")
-        mSwhitchMode = false
-        if (!actionModeOk) {
-            try {
-                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
+            onCreate { _, menu ->
+                Log.d(TAG, "MaterialCab onCreate")
+                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
                 cantoAdapter!!.notifyItemChanged(longclickedPos)
-            } catch (e: Exception) {
-                Crashlytics.log("Possibile crash - longclickedPos: $longclickedPos")
-                Crashlytics.logException(e)
+                menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(android.R.color.white)
+                menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
+                        .sizeDp(24)
+                        .paddingDp(2)
+                        .colorRes(android.R.color.white)
+                actionModeOk = false
             }
 
+            onSelection { item ->
+                Log.d(TAG, "MaterialCab onSelection")
+                when (item.itemId) {
+                    R.id.action_remove_item -> {
+                        Thread(
+                                Runnable {
+                                    val positionToDelete = CustomList()
+                                    positionToDelete.id = 1
+                                    positionToDelete.position = posizioneDaCanc
+                                    positionToDelete.idCanto = idDaCanc
+                                    val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+                                    mDao.deletePosition(positionToDelete)
+                                })
+                                .start()
+                        actionModeOk = true
+                        MaterialCab.destroy()
+                        Snackbar.make(
+                                activity!!.findViewById(R.id.main_content),
+                                R.string.song_removed,
+                                Snackbar.LENGTH_LONG)
+                                .setAction(
+                                        getString(android.R.string.cancel).toUpperCase()
+                                ) {
+                                    Thread(
+                                            Runnable {
+                                                val positionToInsert = CustomList()
+                                                positionToInsert.id = 1
+                                                positionToInsert.position = posizioneDaCanc
+                                                positionToInsert.idCanto = idDaCanc
+                                                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
+                                                val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+                                                mDao.insertPosition(positionToInsert)
+                                            })
+                                            .start()
+                                }
+                                .setActionTextColor(themeUtils.accentColor())
+                                .show()
+//                        mSwhitchMode = false
+                        true
+                    }
+                    R.id.action_switch_item -> {
+//                        mSwhitchMode = true
+                        startCab(true)
+                        Toast.makeText(
+                                activity,
+                                resources.getString(R.string.switch_tooltip),
+                                Toast.LENGTH_SHORT)
+                                .show()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            onDestroy {
+                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                mSwhitchMode = false
+                if (!actionModeOk) {
+                    try {
+                        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
+                        cantoAdapter!!.notifyItemChanged(longclickedPos)
+                    } catch (e: Exception) {
+                        Crashlytics.logException(e)
+                    }
+                }
+                true
+            }
         }
-        return true
     }
 
     private fun populateDb() {

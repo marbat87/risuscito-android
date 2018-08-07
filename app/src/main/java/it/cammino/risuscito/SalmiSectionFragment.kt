@@ -146,7 +146,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
 //        super.onCreateContextMenu(menu, v, menuInfo)
         titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
-        mCantiViewModel!!.idDaAgg = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto) as TextView).text.toString())!!
+        mCantiViewModel!!.idDaAgg = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto) as TextView).text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
         for (i in listePersonalizzate!!.indices) {

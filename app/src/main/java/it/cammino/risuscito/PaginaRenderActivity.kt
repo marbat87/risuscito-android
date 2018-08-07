@@ -77,7 +77,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun run() {
             if (mViewModel!!.speedValue != null) {
                 try {
-                    cantoView?.scrollBy(0, Integer.valueOf(mViewModel!!.speedValue)!!)
+                    cantoView?.scrollBy(0, Integer.valueOf(mViewModel!!.speedValue!!))
                 } catch (e: NumberFormatException) {
                     cantoView?.scrollBy(0, 0)
                 }
@@ -211,7 +211,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
                 sFragment?.dismiss()
                 val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"))
+                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
                 if (saveLocation == 1) {
                     // initiate media scan and put the new things into the path array to
                     // make the scanner aware of the location and the files you want to see
@@ -1162,7 +1162,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
             "DOWNLINK_CHOOSE" -> {
                 val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"))
+                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
                 if (saveLocation == 1) {
                     if (EasyPermissions.hasPermissions(
                                     this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE))
@@ -1484,7 +1484,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (!url!!.equals("", ignoreCase = true)) {
             // controllo se ho scaricato un file in locale
             val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-            val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0"))
+            val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
             if (saveLocation == 1) {
                 localUrl = if (EasyPermissions.hasPermissions(
                                 this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1598,10 +1598,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             if (mViewModel!!.speedValue == null) {
                 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed)!!
+                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed!!)
             } else {
                 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
-                speed_seekbar.progress = Integer.valueOf(mViewModel!!.speedValue)!!
+                speed_seekbar.progress = Integer.valueOf(mViewModel!!.speedValue!!)
             }
 
             //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
@@ -1649,7 +1649,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun doInBackground(vararg params: String): Int? {
             val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
             val linkToInsert = LocalLink()
-            linkToInsert.idCanto = Integer.valueOf(params[0])!!
+            linkToInsert.idCanto = Integer.valueOf(params[0])
             linkToInsert.localPath = params[1]
             mDao.insertLocalLink(linkToInsert)
             getRecordLink()

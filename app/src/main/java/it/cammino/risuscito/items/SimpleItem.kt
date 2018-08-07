@@ -115,7 +115,7 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
     fun withNumSalmo(numSalmo: String): SimpleItem {
         var numeroTemp = 0
         try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))!!
+            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))
         } catch (e: NumberFormatException) {
             Log.e(javaClass.name, e.localizedMessage, e)
         } catch (e: IndexOutOfBoundsException) {

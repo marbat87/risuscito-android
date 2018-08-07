@@ -199,7 +199,6 @@
         risuscito:fabAlignmentMode="center"
         risuscito:contentInsetStart="0dp"
         risuscito:fabCradleVerticalOffset="15dp"
-        risuscito:fabAttached="true"
         android:theme="@style/ToolbarTheme"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 

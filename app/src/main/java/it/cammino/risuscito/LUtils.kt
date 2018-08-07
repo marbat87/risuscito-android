@@ -234,7 +234,7 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         fun getResId(resName: String?, c: Class<*>): Int {
             return try {
-                val idField = c.getDeclaredField(resName)
+                val idField = c.getDeclaredField(resName!!)
                 idField.getInt(idField)
             } catch (e: Exception) {
                 Log.e(TAG, "getResId: " + e.localizedMessage, e)

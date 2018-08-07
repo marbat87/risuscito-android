@@ -18,11 +18,13 @@ package it.cammino.risuscito.playback
 import android.annotation.TargetApi
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.Handler
 import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -32,8 +34,6 @@ import android.util.Log
 import it.cammino.risuscito.LUtils
 import java.io.FileInputStream
 import java.io.IOException
-import android.media.AudioFocusRequest
-import android.os.Handler
 
 
 /** A class that implements local media playback using [MediaPlayer]  */
@@ -44,8 +44,10 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         private set
     private var mPlayOnFocusGain: Boolean = false
     private var mCallback: Callback? = null
-    @Volatile private var mCurrentPosition: Int = 0
-    @Volatile private var mCurrentMediaId: String? = null
+    @Volatile
+    private var mCurrentPosition: Int = 0
+    @Volatile
+    private var mCurrentMediaId: String? = null
     // Type of audio focus we have:
     private var mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
     private val mAudioManager: AudioManager
@@ -56,16 +58,18 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                 .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
                 .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build()
+    } else {
+        null
     }
-    else {null}
     private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(mPlaybackAttributes)
+                .setAudioAttributes(mPlaybackAttributes!!)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(this, Handler())
                 .build()
+    } else {
+        null
     }
-    else {null}
 
     internal val isConnected: Boolean
         get() = true
@@ -142,7 +146,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                 //                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 setStreamType()
 
-                Log.d(TAG, "play: " + source)
+                Log.d(TAG, "play: $source")
 
                 if (source.startsWith("http"))
                     mMediaPlayer!!.setDataSource(source)
@@ -202,7 +206,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     }
 
     internal fun seekTo(position: Int) {
-        Log.d(TAG, "seekTo called with " + position)
+        Log.d(TAG, "seekTo called with $position")
 
         if (mMediaPlayer == null) {
             // If we do not have a current media player, simply update the current position.
@@ -252,7 +256,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
      * are sure this is the case.
      */
     private fun configMediaPlayerState() {
-        Log.d(TAG, "configMediaPlayerState. mAudioFocus=" + mAudioFocus)
+        Log.d(TAG, "configMediaPlayerState. mAudioFocus=$mAudioFocus")
         if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
             // If we don't have audio focus and can't duck, we have to pause,
             if (state == PlaybackStateCompat.STATE_PLAYING) {
@@ -269,7 +273,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             // If we were playing when we lost focus, we need to resume playing.
             if (mPlayOnFocusGain) {
                 if (mMediaPlayer != null && !mMediaPlayer!!.isPlaying) {
-                    Log.d(TAG, "configMediaPlayerState startMediaPlayer. seeking to " + mCurrentPosition)
+                    Log.d(TAG, "configMediaPlayerState startMediaPlayer. seeking to $mCurrentPosition")
                     state = if (mCurrentPosition == mMediaPlayer!!.currentPosition) {
                         mMediaPlayer!!.start()
                         PlaybackStateCompat.STATE_PLAYING
@@ -290,7 +294,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
      * Called by AudioManager on audio focus changes. Implementation of [ ].
      */
     override fun onAudioFocusChange(focusChange: Int) {
-        Log.d(TAG, "onAudioFocusChange. focusChange=" + focusChange)
+        Log.d(TAG, "onAudioFocusChange. focusChange= $focusChange")
         if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
             // We have gained focus:
             mAudioFocus = AUDIO_FOCUSED
@@ -311,7 +315,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                 mPlayOnFocusGain = true
             }
         } else {
-            Log.e(TAG, "onAudioFocusChange: Ignoring unsupported focusChange: " + focusChange)
+            Log.e(TAG, "onAudioFocusChange: Ignoring unsupported focusChange: $focusChange")
         }
         configMediaPlayerState()
     }
@@ -405,7 +409,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
      * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not.
      */
     private fun relaxResources(releaseMediaPlayer: Boolean) {
-        Log.d(TAG, "relaxResources. releaseMediaPlayer=" + releaseMediaPlayer)
+        Log.d(TAG, "relaxResources. releaseMediaPlayer= $releaseMediaPlayer")
 
         mService.stopForeground(true)
 
@@ -426,7 +430,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 //                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
 //                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
 //                .build()
-        mMediaPlayer!!.setAudioAttributes(mPlaybackAttributes)
+        mMediaPlayer!!.setAudioAttributes(mPlaybackAttributes!!)
     }
 
     @Suppress("DEPRECATION")
@@ -441,7 +445,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             setStreamTypeLegacy()
     }
 
-    private fun requestAudioFocus() : Int {
+    private fun requestAudioFocus(): Int {
         return if (LUtils.hasO())
             requestAudioFocusO()
         else
@@ -449,14 +453,14 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     }
 
     @Suppress("DEPRECATION")
-    private fun  requestAudioFocusLegacy(): Int {
+    private fun requestAudioFocusLegacy(): Int {
         return mAudioManager.requestAudioFocus(
                 this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun requestAudioFocusO(): Int {
-        return mAudioManager.requestAudioFocus(mFocusRequest)
+        return mAudioManager.requestAudioFocus(mFocusRequest!!)
     }
 
     private fun abandonAudioFocus(): Int {
@@ -473,7 +477,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun abandonAudioFocusO(): Int {
-        return mAudioManager.abandonAudioFocusRequest(mFocusRequest)
+        return mAudioManager.abandonAudioFocusRequest(mFocusRequest!!)
     }
 
     /* package */  interface Callback {
@@ -496,14 +500,14 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         private val TAG = Playback::class.java.simpleName
         // The volume we set the media player to when we lose audio focus, but are
         // allowed to reduce the volume instead of stopping playback.
-        private val VOLUME_DUCK = 0.2f
+        private const val VOLUME_DUCK = 0.2f
         // The volume we set the media player when we have audio focus.
-        private val VOLUME_NORMAL = 1.0f
+        private const val VOLUME_NORMAL = 1.0f
         // we don't have audio focus, and can't duck (play at a low volume)
-        private val AUDIO_NO_FOCUS_NO_DUCK = 0
+        private const val AUDIO_NO_FOCUS_NO_DUCK = 0
         // we don't have focus, but can duck (play at a low volume)
-        private val AUDIO_NO_FOCUS_CAN_DUCK = 1
+        private const val AUDIO_NO_FOCUS_CAN_DUCK = 1
         // we have full audio focus
-        private val AUDIO_FOCUSED = 2
+        private const val AUDIO_FOCUSED = 2
     }
 }

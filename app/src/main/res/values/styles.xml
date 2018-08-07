@@ -36,6 +36,10 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
+    <style name="TextAppearance.MaterialComponents.Tab.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
     <style name="ActionBar.TitleText.Collapsed">
         <item name="android:textColor">@color/primary_text_default_material_dark</item>
     </style>

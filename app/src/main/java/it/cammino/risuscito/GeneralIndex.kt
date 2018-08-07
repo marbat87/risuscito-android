@@ -47,7 +47,7 @@ class GeneralIndex : Fragment() {
         mMainActivity!!.enableBottombar(false)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(activity)
-            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0"))
+            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
         } else
             view_pager!!.currentItem = mViewModel!!.pageViewed
         if (!mMainActivity!!.isOnTablet) tabs.setBackgroundColor(themeUtils.primaryColor())

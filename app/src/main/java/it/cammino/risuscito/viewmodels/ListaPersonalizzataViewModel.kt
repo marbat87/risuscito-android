@@ -48,7 +48,7 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
             listaPersonalizzataTitle = mListaPers.titolo
             Thread(
                     Runnable {
-                        val posizioniList = ArrayList<ListaPersonalizzataItem>()
+                        val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
 
                         for (cantoIndex in 0 until listaPersonalizzata!!.numPosizioni) {
                             val list = ArrayList<PosizioneItem>()
@@ -82,9 +82,9 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
                                     .withId(cantoIndex)
 
 
-                            posizioniList.add(result)
+                            mPosizioniList.add(result)
                         }
-                        listaPersonalizzataResult.postValue(posizioniList)
+                        listaPersonalizzataResult.postValue(mPosizioniList)
                     }).start()
         }
     }

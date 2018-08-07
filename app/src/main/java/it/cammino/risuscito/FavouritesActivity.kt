@@ -38,7 +38,7 @@ import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, MaterialCab.Callback {
+class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mFavoritesViewModel: FavoritesViewModel? = null
     private var cantoAdapter: FastItemAdapter<SimpleItem>? = null
     private var actionModeOk: Boolean = false
@@ -109,7 +109,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
         val mOnPreClickListener = OnClickListener<SimpleItem> { _, _, _, i ->
             Log.d(TAG, "onClick: 2")
-            if (mMainActivity!!.materialCab!!.isActive) {
+//            if (mMainActivity!!.materialCab!!.isActive) {
+            if (MaterialCab.isActive) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
                     return@OnClickListener true
                 mLastClickTime = SystemClock.elapsedRealtime()
@@ -117,9 +118,11 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
                         .getAdapterItem(i)
                         .withSetSelected(!cantoAdapter!!.getAdapterItem(i).isSelected)
                 cantoAdapter!!.notifyAdapterItemChanged(i)
-                //              if (cantoAdapter.getSelectedItems().size() == 0)
                 if ((cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
-                    mMainActivity!!.materialCab!!.finish()
+//                    mMainActivity!!.materialCab!!.finish()
+                    MaterialCab.destroy()
+                else
+                    startCab()
                 return@OnClickListener true
             }
             false
@@ -138,13 +141,15 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
         }
 
         val mOnPreLongClickListener = OnLongClickListener<SimpleItem> { _, _, _, i ->
-            if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
+            //            if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
+            if (MaterialCab.isActive) return@OnLongClickListener true
             if (!mMainActivity!!.isOnTablet) {
                 activity!!.toolbar_layout!!.setExpanded(true, true)
             }
-            mMainActivity!!.materialCab!!.start(this@FavouritesActivity)
+//            mMainActivity!!.materialCab!!.start(this@FavouritesActivity)
             cantoAdapter!!.getAdapterItem(i).withSetSelected(true)
             cantoAdapter!!.notifyAdapterItemChanged(i)
+            startCab()
             true
         }
 
@@ -239,55 +244,111 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback, Mate
 
     override fun onNeutral(tag: String) {}
 
-    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-        cab.setMenu(R.menu.menu_delete)
-        cab.setTitle("")
-        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-                .sizeDp(24)
-                .paddingDp(2)
-                .colorRes(android.R.color.white)
-        actionModeOk = false
-        return true
-    }
-
-    override fun onCabItemClicked(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_remove_item -> {
-                //        int iRemoved = cantoAdapter.getSelectedItems().size();
-                val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
-                        .selectedItems
-                        .size
-                Log.d(TAG, "onCabItemClicked: $iRemoved")
-                val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
-                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-
-                mUndoHelper!!.remove(
-                        activity!!.main_content,
-                        resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
-                        getString(android.R.string.cancel).toUpperCase(),
-                        Snackbar.LENGTH_SHORT,
-                        selectedItems)
+//    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
+//        cab.setMenu(R.menu.menu_delete)
+//        cab.setTitle("")
+//        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
+//                .sizeDp(24)
+//                .paddingDp(2)
+//                .colorRes(android.R.color.white)
+//        actionModeOk = false
+//        return true
+//    }
+//
+//    override fun onCabItemClicked(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.action_remove_item -> {
+//                //        int iRemoved = cantoAdapter.getSelectedItems().size();
+//                val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+//                        .selectedItems
+//                        .size
+//                Log.d(TAG, "onCabItemClicked: $iRemoved")
+//                val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
 //                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-                actionModeOk = true
-                mMainActivity!!.materialCab!!.finish()
-                return true
+//
+//                mUndoHelper!!.remove(
+//                        activity!!.main_content,
+//                        resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
+//                        getString(android.R.string.cancel).toUpperCase(),
+//                        Snackbar.LENGTH_SHORT,
+//                        selectedItems)
+////                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+//                actionModeOk = true
+//                mMainActivity!!.materialCab!!.finish()
+//                return true
+//            }
+//        }
+//        return false
+//    }
+//
+//    override fun onCabFinished(cab: MaterialCab): Boolean {
+//        Log.d(TAG, "onCabFinished: $actionModeOk")
+//        if (!actionModeOk) {
+//            try {
+//                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+//            } catch (e: Exception) {
+//                Crashlytics.logException(e)
+//            }
+//
+//        }
+//        return true
+//    }
+
+    private fun startCab() {
+        MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
+            val itemSelectedCount = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                    .selectedItems
+                    .size
+            title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
+            popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
+            contentInsetStartRes(R.dimen.mcab_default_content_inset)
+            menuRes = R.menu.menu_delete
+            backgroundColor = themeUtils.primaryColorDark()
+
+            onCreate { _, _ ->
+                Log.d(TAG, "MaterialCab onCreate")
+                actionModeOk = false
+            }
+
+            onSelection { item ->
+                Log.d(TAG, "MaterialCab onSelection")
+                when (item.itemId) {
+                    R.id.action_remove_item -> {
+                        val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                                .selectedItems
+                                .size
+                        Log.d(TAG, "onCabItemClicked: $iRemoved")
+                        val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
+                        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+
+                        mUndoHelper!!.remove(
+                                activity!!.main_content,
+                                resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
+                                getString(android.R.string.cancel).toUpperCase(),
+                                Snackbar.LENGTH_SHORT,
+                                selectedItems)
+                        actionModeOk = true
+                        MaterialCab.destroy()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            onDestroy {
+                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                if (!actionModeOk) {
+                    try {
+                        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+                    } catch (e: Exception) {
+                        Crashlytics.logException(e)
+                    }
+                }
+                true
             }
         }
-        return false
     }
 
-    override fun onCabFinished(cab: MaterialCab): Boolean {
-        Log.d(TAG, "onCabFinished: $actionModeOk")
-        if (!actionModeOk) {
-            try {
-                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-            } catch (e: Exception) {
-                Crashlytics.logException(e)
-            }
-
-        }
-        return true
-    }
 
     private fun populateDb() {
         mFavoritesViewModel!!.createDb()

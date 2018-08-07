@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <item
@@ -11,7 +12,7 @@
         risuscito:ico_icon="cmd_content_save"
         risuscito:ico_padding="2dp"
         risuscito:ico_size="24dp"
-        />
+        tools:ignore="AlwaysShowAction" />
 
     <item
         android:id="@+id/action_help"
@@ -22,6 +23,6 @@
         risuscito:ico_icon="cmd_help_circle"
         risuscito:ico_padding="2dp"
         risuscito:ico_size="24dp"
-        />
+        tools:ignore="AlwaysShowAction" />
 
 </menu>

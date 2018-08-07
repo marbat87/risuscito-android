@@ -25,7 +25,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.edit
-import com.afollestad.materialcab.MaterialCab
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -60,8 +59,6 @@ import java.util.*
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mViewModel: MainActivityViewModel? = null
     private var mLUtils: LUtils? = null
-    var materialCab: MaterialCab? = null
-        private set
     var drawer: Drawer? = null
         private set
     private var mMiniDrawer: MiniDrawer? = null
@@ -180,11 +177,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             material_tabs!!.setBackgroundColor(themeUtils!!.primaryColor())
 
         setupNavDrawer(savedInstanceState)
-
-        materialCab = MaterialCab(this, R.id.cab_stub)
-                .setBackgroundColor(themeUtils!!.primaryColorDark())
-                .setPopupMenuTheme(R.style.ThemeOverlay_AppCompat_Light)
-                .setContentInsetStartRes(R.dimen.mcab_default_content_inset)
 
         if (savedInstanceState == null) {
             supportFragmentManager
