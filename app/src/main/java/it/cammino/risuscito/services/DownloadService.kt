@@ -131,16 +131,13 @@ class DownloadService : IntentService("DownloadService") {
                 return
             } finally {
                 try {
-                    if (output != null)
-                        output.close()
-                    if (input != null)
-                        input.close()
+                    output?.close()
+                    input?.close()
                 } catch (ignored: IOException) {
                     Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
                 }
 
-                if (connection != null)
-                    connection.disconnect()
+                connection?.disconnect()
             }
         } finally {
             if (wakelock.isHeld)

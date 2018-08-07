@@ -26,7 +26,7 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         private set
     var color: ColorHolder? = null
         private set
-    var numSalmo: Int = 0
+    private var numSalmo: Int = 0
         private set
     private var normalizedTitle: String? = null
     private var filter: String? = null
@@ -82,7 +82,7 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
     fun withNumSalmo(numSalmo: String): InsertItem {
         var numeroTemp = 0
         try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))!!
+            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))
         } catch (e: NumberFormatException) {
             Log.e(javaClass.name, e.localizedMessage, e)
         } catch (e: IndexOutOfBoundsException) {

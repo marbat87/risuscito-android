@@ -11,6 +11,7 @@ import it.cammino.risuscito.database.entities.Consegnato
 
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 
+@Suppress("unused")
 @Dao
 interface ConsegnatiDao {
 

@@ -216,7 +216,6 @@ You can add up to 30 elements.</string>
     <string name="sc_scroll_desc">Using these controls you can automatically scroll the text and regulate its speed of scrolling.
 \nADVICE: Regulate the zoom to obtain a better effect.</string>
     <string name="download_error">Download error:</string>
-    <string name="dialog_back">BACK</string>
     <string name="share_by">Share with&#8230;</string>
     <string name="delete_list_dialog">Are you sure you want to delete the list?</string>
     <string name="barre_search_string">Capo</string>

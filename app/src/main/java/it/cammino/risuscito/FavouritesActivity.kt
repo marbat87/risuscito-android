@@ -203,6 +203,11 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         subscribeUiFavorites()
     }
 
+    override fun onDestroy() {
+        if (MaterialCab.isActive) MaterialCab.destroy()
+        super.onDestroy()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.help_menu, menu)

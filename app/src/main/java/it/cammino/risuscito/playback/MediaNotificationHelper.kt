@@ -21,7 +21,7 @@ import it.cammino.risuscito.R
  */
 internal object MediaNotificationHelper {
 
-    private val CHANNEL_ID = "itcr_media_playback_channel"
+    private const val CHANNEL_ID = "itcr_media_playback_channel"
 
     fun createNotification(context: Context,
                            mediaSession: MediaSessionCompat): Notification? {

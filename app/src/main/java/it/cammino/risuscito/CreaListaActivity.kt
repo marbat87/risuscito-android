@@ -141,9 +141,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         textTitleDescription.requestFocus()
 
         var iFragment = InputTextDialogFragment.findVisible(this@CreaListaActivity, "RENAME")
-        if (iFragment != null) iFragment.setmCallback(this@CreaListaActivity)
+        iFragment?.setmCallback(this@CreaListaActivity)
         iFragment = InputTextDialogFragment.findVisible(this@CreaListaActivity, "ADD_POSITION")
-        if (iFragment != null) iFragment.setmCallback(this@CreaListaActivity)
+        iFragment?.setmCallback(this@CreaListaActivity)
         val fragment = SimpleDialogFragment.findVisible(this@CreaListaActivity, "SAVE_LIST")
         fragment?.setmCallback(this@CreaListaActivity)
 

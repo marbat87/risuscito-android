@@ -22,48 +22,49 @@
 
             <RelativeLayout
                 android:id="@+id/action_title_bar"
-                android:background="?attr/colorPrimary"
                 android:layout_width="match_parent"
-                risuscito:layout_collapseMode="parallax"
                 android:layout_height="match_parent"
-                android:gravity="bottom">
+                android:background="?attr/colorPrimary"
+                android:gravity="bottom"
+                risuscito:layout_collapseMode="parallax">
 
                 <TextView
                     android:id="@+id/textTitleDescription"
+                    style="@style/TitoloSezione"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/TitoloSezione"
                     android:layout_marginTop="0dp"
-                    android:textColor="@android:color/white"
-                    android:text="@string/list_title" />
+                    android:text="@string/list_title"
+                    android:textColor="@android:color/white" />
 
                 <EditText
                     android:id="@+id/textfieldTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollHorizontally="true"
-                    android:maxLines="1"
+                    android:layout_below="@id/textTitleDescription"
+                    android:layout_marginBottom="@dimen/activity_min_margin"
                     android:layout_marginLeft="@dimen/activity_min_margin"
                     android:layout_marginRight="@dimen/activity_min_margin"
-                    android:layout_marginBottom="@dimen/activity_min_margin"
-                    android:layout_below="@id/textTitleDescription"
-                    android:textSize="30sp"
-                    android:textColor="@android:color/white"
-                    android:textCursorDrawable="@null"
-                    android:textColorHighlight="@color/ripple_color_light"
+                    android:hint="@string/list_title_modif"
                     android:imeOptions="actionDone"
-                    android:hint="@string/list_title_modif" />
+                    android:inputType="text|textCapSentences"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="@android:color/white"
+                    android:textColorHighlight="@color/ripple_color_light"
+                    android:textCursorDrawable="@null"
+                    android:textSize="30sp" />
 
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/risuscito_toolbar"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-                risuscito:popupTheme="@style/RisuscitoToolbarPopup"
                 android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                risuscito:layout_collapseMode="pin" />
+                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+                risuscito:layout_collapseMode="pin"
+                risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -71,21 +72,21 @@
 
     <LinearLayout
         android:id="@+id/recycler_container"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:paddingStart="@dimen/myListPreferredItemMargin"
-            android:paddingLeft="@dimen/myListPreferredItemMargin"
-            android:paddingEnd="@dimen/myListPreferredItemMargin"
-            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:gravity="start|center_vertical"
-            android:text="@string/list_elements"/>
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
+            android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:text="@string/list_elements"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
         <TextView
             android:id="@+id/noElementsAdded"
@@ -108,18 +109,18 @@
     </LinearLayout>
 
     <View
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_below="@id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="@drawable/toolbar_shadow" />
+        android:layout_below="@id/appbarlayout"
+        android:background="@drawable/toolbar_shadow"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_crea_lista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin_coord"
         android:layout_marginRight="@dimen/fab_margin_coord"
         risuscito:layout_anchor="@id/appbarlayout"

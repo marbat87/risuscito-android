@@ -2,11 +2,7 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
-/build
 
 app/app.iml
-/.idea/copyright
-/.idea/dictionaries
-/.idea/inspectionProfiles
 app/build
 .idea/caches/

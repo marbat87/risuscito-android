@@ -45,7 +45,7 @@ import it.cammino.risuscito.ui.BottomSheetFabCanto
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
-import kotlinx.android.synthetic.main.risuscito_toolbar.*
+import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
 import java.util.*

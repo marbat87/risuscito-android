@@ -9,6 +9,7 @@ import it.cammino.risuscito.database.entities.Argomento
 import it.cammino.risuscito.database.CantoArgomento
 import it.cammino.risuscito.database.entities.NomeArgomento
 
+@Suppress("unused")
 @Dao
 interface ArgomentiDao {
 

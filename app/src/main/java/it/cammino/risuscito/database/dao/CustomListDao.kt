@@ -5,6 +5,7 @@ import android.arch.persistence.room.*
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.CustomList
 
+@Suppress("unused")
 @Dao
 interface CustomListDao {
 

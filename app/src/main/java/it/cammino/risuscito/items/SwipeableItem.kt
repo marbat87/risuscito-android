@@ -91,8 +91,8 @@ class SwipeableItem : AbstractItem<SwipeableItem, SwipeableItem.ViewHolder>(), I
             swipedText = viewHolder.itemView.context.getString(R.string.generic_removed, name.text)
             viewHolder.swipeResultContent!!.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.context, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }
-        viewHolder.swipedAction!!.text = if (swipedAction == null) "" else swipedAction
-        viewHolder.swipedText!!.text = if (swipedText == null) "" else swipedText
+        viewHolder.swipedAction!!.text = swipedAction ?: ""
+        viewHolder.swipedText!!.text = swipedText ?: ""
         viewHolder.swipedActionRunnable = this.swipedAction
 
         DragDropUtil.bindDragHandle(viewHolder, this)

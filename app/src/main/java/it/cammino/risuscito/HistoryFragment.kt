@@ -107,7 +107,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity!!.enableBottombar(false)
         initFab()
         val mOnPreClickListener = OnClickListener<SimpleHistoryItem> { _, iAdapter, item, i ->
-            Log.d(TAG, "onClick: 2")
+            Log.d(TAG, "mOnPreClickListener: MaterialCab.isActive ${MaterialCab.isActive}")
 //            if (mMainActivity!!.materialCab!!.isActive) {
             if (MaterialCab.isActive) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
@@ -131,6 +131,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         val mOnClickListener = OnClickListener<SimpleHistoryItem> { mView, _, item, _ ->
+            Log.d(TAG, "mOnClickListener: MaterialCab.isActive ${MaterialCab.isActive}")
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
             val bundle = Bundle()
@@ -206,6 +207,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         setHasOptionsMenu(true)
         populateDb()
         subscribeUiHistory()
+    }
+
+    override fun onDestroy() {
+        if (MaterialCab.isActive) MaterialCab.destroy()
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

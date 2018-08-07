@@ -4,6 +4,7 @@ import android.arch.persistence.room.TypeConverter
 import it.cammino.risuscito.ListaPersonalizzata
 import java.sql.Date
 
+@Suppress("unused")
 class Converters {
 
     @TypeConverter

@@ -232,7 +232,6 @@
     <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
         \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
     <string name="download_error">Errore nel download:</string>
-    <string name="dialog_back">INDIETRO</string>
     <string name="share_by">Condividi con&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>

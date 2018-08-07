@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import it.cammino.risuscito.database.entities.ListaPers
 
+@Suppress("unused")
 @Dao
 interface ListePersDao {
 

@@ -222,7 +222,6 @@
     <string name="sc_scroll_desc">За допомогою цього меню можна зробити так, щоб текст перегортався автоматично та регулювати швидкість перегортання.
         \nПОРАДА: Регулюйте зум для того, щоб отримати кращий ефект.</string>
     <string name="download_error">Помилка в завантаженні:</string>
-    <string name="dialog_back">НАЗАД</string>
     <string name="share_by">Поділитися з&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
