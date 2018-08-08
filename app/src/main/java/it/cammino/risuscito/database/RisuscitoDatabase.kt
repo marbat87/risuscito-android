@@ -37,43 +37,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
     abstract fun localLinksDao(): LocalLinksDao
 
-//    private fun truncateCompleteDB() {
-//        cantoDao().truncateTable()
-//        argomentiDao().truncateArgomento()
-//        argomentiDao().truncateNomeArgomento()
-//        indiceLiturgicoDao().truncateIndiceLiturgico()
-//        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
-//        salmiDao().truncateTable()
-//        customListDao().truncateTable()
-//        listePersDao().truncateTable()
-//        localLinksDao().truncateTable()
-//        consegnatiDao().truncateTable()
-//        cronologiaDao().truncateTable()
-//    }
-//
-//    private fun truncatePartialDB() {
-//        cantoDao().truncateTable()
-//        argomentiDao().truncateArgomento()
-//        argomentiDao().truncateNomeArgomento()
-//        indiceLiturgicoDao().truncateIndiceLiturgico()
-//        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
-//        salmiDao().truncateTable()
-//    }
-
     @Transaction
     fun importFromOldDB(mContext: Context) {
-//        truncateCompleteDB()
-//        cantoDao().truncateTable()
-//        argomentiDao().truncateArgomento()
-//        argomentiDao().truncateNomeArgomento()
-//        indiceLiturgicoDao().truncateIndiceLiturgico()
-//        indiceLiturgicoDao().truncateNomeIndiceLiturgico()
-//        salmiDao().truncateTable()
-//        customListDao().truncateTable()
-//        listePersDao().truncateTable()
-//        localLinksDao().truncateTable()
-//        consegnatiDao().truncateTable()
-//        cronologiaDao().truncateTable()
         clearAllTables()
         Log.d(TAG, "importFromOldDB: " + cantoDao().count())
         if (cantoDao().count() == 0) {
@@ -102,7 +67,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             val columns = arrayOf("_id", "zoom", "scroll_x", "scroll_y", "favourite", "saved_tab", "saved_barre", "saved_speed")
             var result = db.query("ELENCO", columns, null, null, null, null, null)
             result.moveToFirst()
-            for (i in 0 until result.count) {
+            while (!result.isAfterLast) {
                 cantoDao()
                         .setBackup(
                                 result.getInt(0),
@@ -200,7 +165,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "importFromOldDB - CRONOLOGIA id:  " + result.getInt(0))
                 val cronologia = Cronologia()
                 cronologia.idCanto = result.getInt(0)
-                //          cronologia.ultimaVisita = new Date(Long.parseLong(result.getString(1)));
                 cronologia.ultimaVisita = Date(Timestamp.valueOf(result.getString(1)).time)
                 cronologiaDao().insertCronologia(cronologia)
                 result.moveToNext()
@@ -216,14 +180,12 @@ abstract class RisuscitoDatabase : RoomDatabase() {
     fun recreateDB() {
         Log.d(TAG, "recreateDB")
         val backupCanti = cantoDao().backup
-//        truncatePartialDB()
         cantoDao().truncateTable()
         argomentiDao().truncateArgomento()
         argomentiDao().truncateNomeArgomento()
         indiceLiturgicoDao().truncateIndiceLiturgico()
         indiceLiturgicoDao().truncateNomeIndiceLiturgico()
         salmiDao().truncateTable()
-//        populateInitialData(sInstance)
         Log.d(TAG, "recreateDB - canti presenti:  " + cantoDao().count())
         Log.d(TAG, "liste pers presenti: " + listePersDao().all.size)
         if (cantoDao().count() == 0) {
@@ -244,8 +206,10 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             // INDICE_LIT_NAMES
             indiceLiturgicoDao().insertNomeIndice(NomeLiturgico.defaultData())
         }
+
         // reinserisce il backup
-        for (backupCanto in backupCanti)
+        for (backupCanto in backupCanti) {
+            Log.d(TAG, "backupCanto.id + ${backupCanto.id} / backupCanto.savedTab ${backupCanto.savedTab} / backupCanto.savedBarre ${backupCanto.savedBarre}")
             cantoDao()
                     .setBackup(
                             backupCanto.id,
@@ -256,6 +220,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             backupCanto.savedTab,
                             backupCanto.savedBarre,
                             backupCanto.savedSpeed)
+        }
+
         // cancella dalle liste predefinite i canti inesistenti
         val customLists = customListDao().all
         for (position in customLists) {
@@ -270,7 +236,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
     private class PopulateDbAsync : AsyncTask<Any, Void, Void>() {
         @Transaction
         override fun doInBackground(vararg params: Any): Void? {
-//            populateInitialDataFromOldDB(params[0] as RisuscitoDatabase, params[1] as Context)
             val mDb = params[0] as RisuscitoDatabase
             val mContext = params[1] as Context
             Log.d(TAG, "PopulateDbAsync: " + mDb.cantoDao().count())
@@ -299,7 +264,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 val columns = arrayOf("_id", "zoom", "scroll_x", "scroll_y", "favourite", "saved_tab", "saved_barre", "saved_speed")
                 var result = db.query("ELENCO", columns, null, null, null, null, null)
                 result.moveToFirst()
-                for (i in 0 until result.count) {
+                while (!result.isAfterLast) {
                     mDb.cantoDao()
                             .setBackup(
                                     result.getInt(0),
@@ -530,168 +495,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: EXISTS")
             return sInstance as RisuscitoDatabase
         }
-
-//        /** Inserts the dummy data into the database if it is currently empty.  */
-//        private fun populateInitialDataFromOldDB(mDb: RisuscitoDatabase?, context: Context) {
-//            Log.d(TAG, "populateInitialDataFromOldDB: " + mDb!!.cantoDao().count())
-//            if (mDb.cantoDao().count() == 0) {
-//                mDb.beginTransaction()
-//                try {
-//
-//                    //1. POPOLO I DATI DI DEFAULT
-//                    populateInitialData(mDb)
-//
-//                    //2. RIPRISTINO BACKUP CANTI
-//                    val listaCanti = DatabaseCanti(context)
-//                    val db = listaCanti.readableDatabase
-//
-//                    val columns = arrayOf("_id", "zoom", "scroll_x", "scroll_y", "favourite", "saved_tab", "saved_barre", "saved_speed")
-//                    var result = db.query("ELENCO", columns, null, null, null, null, null)
-//                    result.moveToFirst()
-//                    for (i in 0 until result.count) {
-//                        mDb.cantoDao()
-//                                .setBackup(
-//                                        result.getInt(0),
-//                                        result.getInt(1),
-//                                        result.getInt(2),
-//                                        result.getInt(3),
-//                                        result.getInt(4),
-//                                        result.getString(5),
-//                                        result.getString(6),
-//                                        result.getString(7))
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//
-//                    //3. Riprisitino CUST_LISTS
-//                    val columns7 = arrayOf("_id", "position", "id_canto", "timestamp")
-//
-//                    result = db.query("CUST_LISTS", columns7, null, null, null, null, null)
-//                    result.moveToFirst()
-//
-//                    while (!result.isAfterLast) {
-//                        Log.d(TAG, "populateInitialData - CUST_LISTS id:  " + result.getInt(0))
-//                        val customList = CustomList()
-//                        customList.id = result.getInt(0)
-//                        customList.position = result.getInt(1)
-//                        customList.idCanto = result.getInt(2)
-//                        //          customList.timestamp = new Date(Long.parseLong(result.getString(3)));
-//                        customList.timestamp = Date(Timestamp.valueOf(result.getString(3)).time)
-//                        mDb.customListDao().insertPosition(customList)
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//
-//                    //4. Ripristino LISTE_PERS
-//                    val columns8 = arrayOf("titolo_lista", "lista")
-//
-//                    result = db.query("LISTE_PERS", columns8, null, null, null, null, null)
-//                    result.moveToFirst()
-//
-//                    while (!result.isAfterLast) {
-//                        Log.d(TAG, "populateInitialData - LISTE_PERS id:  " + result.getString(0))
-//                        val listaPers = ListaPers()
-//                        listaPers.titolo = result.getString(0)
-//                        listaPers.lista = ListaPersonalizzata.deserializeObject(result.getBlob(1)) as ListaPersonalizzata?
-//                        mDb.listePersDao().insertLista(listaPers)
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//
-//                    //5. Ripristino LOCAL_LINKS
-//                    val columns9 = arrayOf("_id", "local_path")
-//
-//                    result = db.query("LOCAL_LINKS", columns9, null, null, null, null, null)
-//                    result.moveToFirst()
-//
-//                    val localLinkList = ArrayList<LocalLink>()
-//
-//                    while (!result.isAfterLast) {
-//                        Log.d(TAG, "populateInitialData - LOCAL_LINKS id:  " + result.getInt(0))
-//                        val localLink = LocalLink()
-//                        localLink.idCanto = result.getInt(0)
-//                        localLink.localPath = result.getString(1)
-//                        localLinkList.add(localLink)
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//                    mDb.localLinksDao().insertLocalLink(localLinkList)
-//
-//                    //6. Ripristino CANTI_CONSEGNATI
-//                    val columns10 = arrayOf("_id", "id_canto")
-//
-//                    result = db.query("CANTI_CONSEGNATI", columns10, null, null, null, null, null)
-//                    result.moveToFirst()
-//
-//                    val consegnatoList = ArrayList<Consegnato>()
-//
-//                    while (!result.isAfterLast) {
-//                        Log.d(TAG, "populateInitialData - CANTI_CONSEGNATI id:  " + result.getInt(0))
-//                        val consegnato = Consegnato()
-//                        consegnato.idConsegnato = result.getInt(0)
-//                        consegnato.idCanto = result.getInt(1)
-//                        consegnatoList.add(consegnato)
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//                    mDb.consegnatiDao().insertConsegnati(consegnatoList)
-//
-//                    //7. Ripristino CRONOLOGIA
-//                    val columns11 = arrayOf("id_canto", "ultima_visita")
-//
-//                    result = db.query("CRONOLOGIA", columns11, null, null, null, null, null)
-//                    result.moveToFirst()
-//
-//                    while (!result.isAfterLast) {
-//                        Log.d(TAG, "populateInitialData - CRONOLOGIA id:  " + result.getInt(0))
-//                        val cronologia = Cronologia()
-//                        cronologia.idCanto = result.getInt(0)
-//                        //          cronologia.ultimaVisita = new Date(Long.parseLong(result.getString(1)));
-//                        cronologia.ultimaVisita = Date(Timestamp.valueOf(result.getString(1)).time)
-//                        mDb.cronologiaDao().insertCronologia(cronologia)
-//                        result.moveToNext()
-//                    }
-//                    result.close()
-//
-//                    db.close()
-//                    listaCanti.close()
-//                    mDb.setTransactionSuccessful()
-//                } finally {
-//                    mDb.endTransaction()
-//                }
-//            }
-//        }
-
-//        /** Inserts the dummy data into the database if it is currently empty.  */
-//        private fun populateInitialData(mDb: RisuscitoDatabase?) {
-//            Log.d(TAG, "populateInitialData: " + mDb!!.cantoDao().count())
-//            if (mDb.cantoDao().count() == 0) {
-//                mDb.beginTransaction()
-//                try {
-//
-//                    mDb.cantoDao().insertCanto(Canto.defaultCantoData())
-//
-//                    // ARGOMENTI
-//                    mDb.argomentiDao().insertArgomento(Argomento.defaultArgData())
-//
-//                    // ARG_NAMES
-//                    mDb.argomentiDao().insertNomeArgomento(NomeArgomento.defaultNomeArgData())
-//
-//                    // SALMI_MUSICA
-//                    mDb.salmiDao().insertSalmo(Salmo.defaultSalmiData())
-//
-//                    // INDICE_LIT
-//                    mDb.indiceLiturgicoDao().insertIndice(IndiceLiturgico.defaultData())
-//
-//                    // INDICE_LIT_NAMES
-//                    mDb.indiceLiturgicoDao().insertNomeIndice(NomeLiturgico.defaultData())
-//
-//                    mDb.setTransactionSuccessful()
-//                } finally {
-//                    mDb.endTransaction()
-//                }
-//            }
-//        }
 
         private fun populateAsync(db: RisuscitoDatabase, context: Context) {
             val task = PopulateDbAsync()

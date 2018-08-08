@@ -496,18 +496,19 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
-        if (myFragment != null && myFragment.isVisible) {
-            finish()
-            return
-        }
-
-        if (isOnTablet)
-            mMiniDrawer!!.setSelection(R.id.navigation_home.toLong())
-        else {
-            toolbar_layout!!.setExpanded(true, true)
-        }
-        drawer!!.setSelection(R.id.navigation_home.toLong())
+        backToHome()
+//        val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
+//        if (myFragment != null && myFragment.isVisible) {
+//            finish()
+//            return
+//        }
+//
+//        if (isOnTablet)
+//            mMiniDrawer!!.setSelection(R.id.navigation_home.toLong())
+//        else {
+//            toolbar_layout!!.setExpanded(true, true)
+//        }
+//        drawer!!.setSelection(R.id.navigation_home.toLong())
     }
 
 //    override fun onColorSelection(
@@ -818,6 +819,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show()
+                backToHome()
                 BackupTask().execute()
             }
             "RESTORE_ASK" -> {
@@ -828,10 +830,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         .progressIndeterminate(true)
                         .progressMax(0)
                         .show()
-                supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
-                        .commit()
+                backToHome()
                 RestoreTask().execute()
             }
             "SIGNOUT" -> signOut()
@@ -979,6 +978,21 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         override fun setOffset(slideOffset: Float) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
+    }
+
+    fun backToHome() {
+        val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
+        if (myFragment != null && myFragment.isVisible) {
+            finish()
+            return
+        }
+
+        if (isOnTablet)
+            mMiniDrawer!!.setSelection(R.id.navigation_home.toLong())
+        else {
+            toolbar_layout!!.setExpanded(true, true)
+        }
+        drawer!!.setSelection(R.id.navigation_home.toLong())
     }
 
     companion object {

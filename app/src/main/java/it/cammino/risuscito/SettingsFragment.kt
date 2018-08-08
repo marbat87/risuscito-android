@@ -1,6 +1,8 @@
 package it.cammino.risuscito
 
 import android.Manifest
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.preference.ListPreference
@@ -10,11 +12,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
+import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import pub.devrel.easypermissions.EasyPermissions
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
     internal var mMainActivity: MainActivity? = null
@@ -48,13 +52,64 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
-        val darkTheme = findPreference("dark_mode") as SwitchPreferenceCompat
-        darkTheme.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-            if (mMainActivity != null) mMainActivity!!.recreate()
-            true
-        }
+//        val darkTheme = findPreference("dark_mode") as SwitchPreferenceCompat
+//        darkTheme.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+//            if (mMainActivity != null) mMainActivity!!.recreate()
+//            true
+//        }
 
         return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
+        Log.d(TAG, "onSharedPreferenceChanged: $s")
+        if (s.equals("new_primary_color", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
+            activity!!.recreate()
+        }
+        if (s.equals("new_accent_color", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
+            activity!!.recreate()
+        }
+        if (s.equals("dark_mode", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getBoolean(s, false))
+            activity!!.recreate()
+        }
+        if (s == Utility.SYSTEM_LANGUAGE) {
+            Log.d(
+                    TAG,
+                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+                            .language)
+            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
+            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+                            .language
+                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
+                val i = activity!!.baseContext
+                        .packageManager
+                        .getLaunchIntentForPackage(activity!!.baseContext.packageName)
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    i.putExtra(Utility.DB_RESET, true)
+                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+                            .language
+                    i.putExtra(
+                            Utility.CHANGE_LANGUAGE,
+                            currentLang + "-" + sharedPreferences.getString(s, ""))
+                }
+                startActivity(i)
+            }
+        }
+        if (s == Utility.SCREEN_ON) checkScreenAwake()
     }
 
     private fun loadStorageList(external: Boolean) {
@@ -71,6 +126,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
             mEntries = resources.getStringArray(R.array.save_location_nosd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_nosd_values)
         }
+    }
+
+    // controlla se l'app deve mantenere lo schermo acceso
+    private fun checkScreenAwake() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
+        if (screenOn)
+            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else
+            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     companion object {

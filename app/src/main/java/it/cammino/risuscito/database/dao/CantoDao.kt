@@ -24,9 +24,6 @@ interface CantoDao {
     @get:Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY titolo ASC")
     val allByNameOnlyConsegnati: List<Canto>
 
-//    @get:Query("SELECT * FROM canto ORDER BY pagina ASC, titolo ASC")
-//    val liveAllByPage: LiveData<List<Canto>>
-
     @get:Query("SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, coalesce(B.localPath, A.link) as link, A.zoom, A.scrollX, A.scrollY, A.savedBarre, A.savedTab, A.savedSpeed FROM canto A LEFT JOIN locallink B ON (A.id = b.idCanto)")
     val allByWithLink: List<Canto>
 

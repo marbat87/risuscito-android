@@ -3,8 +3,6 @@ package it.cammino.risuscito.ui
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -17,7 +15,6 @@ import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
-import android.view.WindowManager
 import androidx.core.content.edit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -40,7 +37,7 @@ import java.io.*
 import java.util.*
 import java.util.concurrent.ExecutionException
 
-abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
     var themeUtils: ThemeUtils? = null
@@ -48,52 +45,52 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
     private val newDbPath: File?
         get() {
-            Log.d(javaClass.name, "dbpath:" + getDatabasePath(RisuscitoDatabase.dbName))
+            Log.d(javaClass.name, "new dbpath:" + getDatabasePath(RisuscitoDatabase.dbName))
             return getDatabasePath(RisuscitoDatabase.dbName)
         }
 
     private val oldDbPath: File
         get() {
-            Log.d(javaClass.name, "dbpath:" + getDatabasePath(DatabaseCanti.getDbName()))
+            Log.d(javaClass.name, "old dbpath:" + getDatabasePath(DatabaseCanti.getDbName()))
             return getDatabasePath(DatabaseCanti.getDbName())
         }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-        Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s.equals("new_primary_color", ignoreCase = true)) {
-            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
-            recreate()
-        }
-        if (s.equals("new_accent_color", ignoreCase = true)) {
-            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
-            recreate()
-        }
-        if (s == Utility.SYSTEM_LANGUAGE) {
-            Log.d(
-                    TAG,
-                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language)
-            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
-            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language
-                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
-                val i = baseContext
-                        .packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
-                if (i != null) {
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    i.putExtra(Utility.DB_RESET, true)
-                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language
-                    i.putExtra(
-                            Utility.CHANGE_LANGUAGE,
-                            currentLang + "-" + sharedPreferences.getString(s, ""))
-                }
-                startActivity(i)
-            }
-        }
-        if (s == Utility.SCREEN_ON) this@ThemeableActivity.checkScreenAwake()
-    }
+//    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
+//        Log.d(TAG, "onSharedPreferenceChanged: $s")
+//        if (s.equals("new_primary_color", ignoreCase = true)) {
+//            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
+//            recreate()
+//        }
+//        if (s.equals("new_accent_color", ignoreCase = true)) {
+//            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
+//            recreate()
+//        }
+//        if (s == Utility.SYSTEM_LANGUAGE) {
+//            Log.d(
+//                    TAG,
+//                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//                            .language)
+//            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
+//            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//                            .language
+//                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
+//                val i = baseContext
+//                        .packageManager
+//                        .getLaunchIntentForPackage(baseContext.packageName)
+//                if (i != null) {
+//                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                    i.putExtra(Utility.DB_RESET, true)
+//                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//                            .language
+//                    i.putExtra(
+//                            Utility.CHANGE_LANGUAGE,
+//                            currentLang + "-" + sharedPreferences.getString(s, ""))
+//                }
+//                startActivity(i)
+//            }
+//        }
+//        if (s == Utility.SCREEN_ON) this@ThemeableActivity.checkScreenAwake()
+//    }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired) {
@@ -128,19 +125,19 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
         super.onCreate(savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkScreenAwake()
-
-        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
-                .registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
-                .unregisterOnSharedPreferenceChangeListener(this)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        checkScreenAwake()
+//
+//        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
+//                .registerOnSharedPreferenceChangeListener(this)
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
+//                .unregisterOnSharedPreferenceChangeListener(this)
+//    }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired) {
@@ -155,14 +152,14 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
     }
 
     // controlla se l'app deve mantenere lo schermo acceso
-    private fun checkScreenAwake() {
-        val pref = PreferenceManager.getDefaultSharedPreferences(this)
-        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
-        if (screenOn)
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else
-            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
+//    private fun checkScreenAwake() {
+//        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+//        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
+//        if (screenOn)
+//            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        else
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//    }
 
     private fun forceOverflowMenu() {
         try {
@@ -342,23 +339,27 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             val count = metadataBuffer.count
             Log.d(javaClass.name, "saveCheckDupl - Count files old: $count")
             if (count > 0) {
-                val mDriveId = metadataBuffer.get(count - 1).driveId
-                Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: $mDriveId")
-                Log.d(
-                        javaClass.name,
-                        "saveCheckDupl - filesize in cloud " + metadataBuffer.get(0).fileSize)
-                metadataBuffer.release()
+                for (i in 0..(count - 1)) {
+//                    val mDriveId = metadataBuffer.get(count - 1).driveId
+                    val mDriveId = metadataBuffer.get(i).driveId
+                    Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: $mDriveId")
+                    Log.d(
+                            javaClass.name,
+                            "saveCheckDupl - filesize in cloud " + metadataBuffer.get(0).fileSize)
+//                    metadataBuffer.release()
 
-                val mFile = mDriveId.asDriveFile()
-                // task di cancellazione file eventualmente già presente
-                Tasks.await(client.delete(mFile))
-                Log.d(javaClass.name, "saveCheckDupl - deleted")
-
-                saveToDrive(folder, titl, mime, file, dataBase)
-            } else {
-                metadataBuffer.release()
-                saveToDrive(folder, titl, mime, file, dataBase)
+                    val mFile = mDriveId.asDriveFile()
+                    // task di cancellazione file eventualmente già presente
+                    Tasks.await(client.delete(mFile))
+                    Log.d(javaClass.name, "saveCheckDupl - deleted")
+                }
             }
+//                metadataBuffer.release()
+//                saveToDrive(folder, titl, mime, file, dataBase)
+//            } else {
+            metadataBuffer.release()
+            saveToDrive(folder, titl, mime, file, dataBase)
+//            }
         }
     }
 
@@ -376,7 +377,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             mime: String?,
             file: File?,
             dataBase: Boolean) {
-        Log.d(javaClass.name, "saveToDrive - title: $titl / database? $dataBase")
+        Log.d(javaClass.name, "saveToDrive - title: $titl / database? $dataBase / file ${file?.absolutePath}")
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
         // Synchronously check for necessary permissions
@@ -388,14 +389,16 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             // task di creazione content da file
             val driveContents = Tasks.await(client.createContents())
             if (dataBase) {
+                RisuscitoDatabase.getInstance(this).close()
+                RisuscitoDatabase.resetInstance()
                 driveContents.outputStream?.use { mOoS ->
-                    val `is` = FileInputStream(file!!)
+                    val inputStream = FileInputStream(file!!)
                     val buf = ByteArray(4096)
-                    var c = `is`.read(buf, 0, buf.size)
-                    while (c > 0) {
-                        mOoS.write(buf, 0, c)
+                    var intRead = inputStream.read(buf, 0, buf.size)
+                    while (intRead > 0) {
+                        mOoS.write(buf, 0, intRead)
                         mOoS.flush()
-                        c = `is`.read(buf, 0, buf.size)
+                        intRead = inputStream.read(buf, 0, buf.size)
                     }
                 }
             } else {
@@ -412,7 +415,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             if (driveFile != null) {
                 val metadata = Tasks.await(client.getMetadata(driveFile))
                 val mDriveId = metadata.driveId
-                Log.d(javaClass.name, "driveIdSaved: $mDriveId")
+                Log.d(javaClass.name, "driveIdSaved: $mDriveId / size ${metadata.fileSize}")
                 val error = "saveToDrive - FILE CARICATO"
                 Log.d(javaClass.name, error)
             }
@@ -445,7 +448,7 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
 
             val count = metadataBuffer.count
             metadataBuffer.release()
-            Log.d(javaClass.name, "checkDupl - Count files old: $count")
+            Log.d(javaClass.name, "checkDupl - Count files: $count")
             fileFound = count > 0
         }
         return fileFound
@@ -486,16 +489,18 @@ abstract class ThemeableActivity : AppCompatActivity(), SharedPreferences.OnShar
             var dbFile = newDbPath
             val path = dbFile!!.path
 
-            if (!dbFile.exists())
+            Log.d(TAG, "dbFILE exists? ${dbFile.exists()}")
+
+            if (dbFile.exists())
                 dbFile.delete()
 
             dbFile = File(path)
             try {
                 val fos = FileOutputStream(dbFile)
                 val mOutput = BufferedOutputStream(fos)
-//                val mInput = BufferedInputStream(driveContents.inputStream)
-                val parcelFileDescriptor = driveContents.parcelFileDescriptor
-                val mInput = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                val mInput = BufferedInputStream(driveContents.inputStream)
+//                val parcelFileDescriptor = driveContents.parcelFileDescriptor
+//                val mInput = FileInputStream(parcelFileDescriptor.fileDescriptor)
 
                 val buffer = ByteArray(1024)
                 var length = mInput.read(buffer)
