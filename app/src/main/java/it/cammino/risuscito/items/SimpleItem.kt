@@ -166,7 +166,7 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
 
         // set the text for the name
         if (filter != null && !filter!!.isEmpty()) {
-            val mPosition = normalizedTitle!!.indexOf(filter!!)
+            val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
                 val highlighted = title!!
                         .text

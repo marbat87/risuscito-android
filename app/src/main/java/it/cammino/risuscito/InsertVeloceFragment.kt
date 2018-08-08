@@ -24,7 +24,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -36,13 +35,12 @@ import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import java.lang.ref.WeakReference
 import java.sql.Date
-import java.util.*
 
 class InsertVeloceFragment : Fragment() {
 
     internal lateinit var cantoAdapter: FastItemAdapter<InsertItem>
 
-    private var titoli: MutableList<InsertItem>? = null
+    private var titoli: MutableList<InsertItem> = ArrayList()
     private var searchTask: SearchTask? = null
     private var rootView: View? = null
     private var fromAdd: Int = 0
@@ -145,14 +143,13 @@ class InsertVeloceFragment : Fragment() {
             }
         }
 
-        titoli = ArrayList()
+//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
 
         cantoAdapter.withOnClickListener(mOnClickListener).withEventHook(hookListener)
 
         matchedList.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as GeneralInsertSearch?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -248,6 +245,8 @@ class InsertVeloceFragment : Fragment() {
             searchTask!!.execute(textfieldRicerca.text.toString(), onlyConsegnati.toString())
         } else {
             if (s.isEmpty()) {
+                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                    searchTask!!.cancel(true)
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -264,7 +263,6 @@ class InsertVeloceFragment : Fragment() {
             Log.d(javaClass.name, "STRINGA: " + sParam[0])
 
             val stringa = Utility.removeAccents(sParam[0]).toLowerCase()
-//            var titoloTemp: String
             Log.d(javaClass.name, "onTextChanged: stringa $stringa")
 
             val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
@@ -278,8 +276,11 @@ class InsertVeloceFragment : Fragment() {
             elenco.filter { Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
                     .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                     .forEach {
-                        if (isCancelled) return 0
-                        fragmentReference.get()!!.titoli!!.add(
+                        if (isCancelled) {
+                            fragmentReference.get()!!.titoli.clear()
+                            return 0
+                        }
+                        fragmentReference.get()!!.titoli.add(
                                 InsertItem()
                                         .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                         .withColor(it.color!!)
@@ -290,24 +291,6 @@ class InsertVeloceFragment : Fragment() {
                                         .withFilter(stringa)
                         )
                     }
-
-//            for (canto in elenco) {
-//                if (isCancelled) return 0
-//                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
-//                if (titoloTemp.contains(stringa)) {
-//                    val insertItem = InsertItem()
-//                    insertItem
-//                            .withTitle(canto.titolo!!)
-//                            .withColor(canto.color!!)
-//                            .withPage(canto.pagina.toString())
-//                            .withId(canto.id)
-//                            .withSource(canto.source!!)
-//                            .withNormalizedTitle(titoloTemp)
-//                            .withFilter(stringa)
-//                    fragmentReference.get()!!.titoli!!.add(insertItem)
-//                }
-//            }
-
             return 0
         }
 
@@ -316,14 +299,15 @@ class InsertVeloceFragment : Fragment() {
             if (isCancelled) return
             fragmentReference.get()!!.search_no_results.visibility = View.GONE
             fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli!!.clear()
+            fragmentReference.get()!!.titoli.clear()
             //      fragmentReference.get().cantoAdapter.clear();
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+//            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
             fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
             fragmentReference
                     .get()!!

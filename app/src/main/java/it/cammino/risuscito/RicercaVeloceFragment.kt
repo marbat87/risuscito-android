@@ -25,7 +25,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.CustomList
@@ -40,7 +39,6 @@ import kotlinx.android.synthetic.main.simple_row_item.view.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import java.lang.ref.WeakReference
 import java.sql.Date
-import java.util.*
 
 class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -49,7 +47,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     // create boolean for fetching data
     private var isViewShown = true
     private var rootView: View? = null
-    private var titoli: MutableList<SimpleItem>? = null
+    private var titoli: MutableList<SimpleItem> = ArrayList()
     private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var searchTask: SearchTask? = null
@@ -115,7 +113,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             true
         }
 
-        titoli = ArrayList()
+//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
@@ -502,6 +500,8 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             searchTask!!.execute(textfieldRicerca.text.toString())
         } else {
             if (s.isEmpty()) {
+                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                    searchTask!!.cancel(true)
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -519,7 +519,6 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             val s = sSearchText[0]
 
             val stringa = Utility.removeAccents(s).toLowerCase()
-//            var titoloTemp: String
             Log.d(TAG, "onTextChanged: stringa $stringa")
 
             val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
@@ -528,8 +527,11 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             elenco.filter { Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
                     .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                     .forEach {
-                        if (isCancelled) return 0
-                        fragmentReference.get()!!.titoli!!.add(
+                        if (isCancelled) {
+                            fragmentReference.get()!!.titoli.clear()
+                            return 0
+                        }
+                        fragmentReference.get()!!.titoli.add(
                                 SimpleItem()
                                         .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                         .withColor(it.color!!)
@@ -541,23 +543,6 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                                         .withContextMenuListener(fragmentReference.get() as RicercaVeloceFragment)
                         )
                     }
-//            for (canto in elenco) {
-//                if (isCancelled) return 0
-//                titoloTemp = Utility.removeAccents(canto.titolo!!.toLowerCase())
-//                if (titoloTemp.contains(stringa)) {
-//                    val simpleItem = SimpleItem()
-//                    simpleItem
-//                            .withTitle(canto.titolo!!)
-//                            .withColor(canto.color!!)
-//                            .withPage((canto.pagina).toString())
-//                            .withId(canto.id)
-//                            .withSource(canto.source!!)
-//                            .withNormalizedTitle(titoloTemp)
-//                            .withFilter(stringa)
-//                            .withContextMenuListener(fragmentReference.get() as RicercaVeloceFragment)
-//                    fragmentReference.get()!!.titoli!!.add(simpleItem)
-//                }
-//            }
             return 0
         }
 
@@ -566,13 +551,14 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             if (isCancelled) return
             fragmentReference.get()!!.search_no_results.visibility = View.GONE
             fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli!!.clear()
+            fragmentReference.get()!!.titoli.clear()
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-            FastAdapterDiffUtil.set<FastItemAdapter<SimpleItem>, SimpleItem>(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+//            FastAdapterDiffUtil.set<FastItemAdapter<SimpleItem>, SimpleItem>(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
             fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
             fragmentReference
                     .get()!!.search_no_results.visibility = if (fragmentReference.get()!!.cantoAdapter.adapterItemCount == 0)

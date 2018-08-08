@@ -25,7 +25,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -42,7 +41,6 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.sql.Date
 import java.text.Normalizer
-import java.util.*
 import java.util.regex.Pattern
 
 class InsertAvanzataFragment : Fragment() {
@@ -50,7 +48,7 @@ class InsertAvanzataFragment : Fragment() {
     internal lateinit var cantoAdapter: FastItemAdapter<InsertItem>
     private lateinit var aTexts: Array<Array<String?>>
 
-    private var titoli: MutableList<InsertItem>? = null
+    private var titoli: MutableList<InsertItem> = ArrayList()
     private var rootView: View? = null
     private var fromAdd: Int = 0
     private var idLista: Int = 0
@@ -175,14 +173,13 @@ class InsertAvanzataFragment : Fragment() {
         }
 
         // Creating new adapter object
-        titoli = ArrayList()
+//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
 
         cantoAdapter.withOnClickListener(mOnClickListener).withEventHook(hookListener)
 
         matchedList.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as GeneralInsertSearch?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -276,6 +273,8 @@ class InsertAvanzataFragment : Fragment() {
             searchTask!!.execute(textfieldRicerca.text.toString(), onlyConsegnati.toString())
         } else {
             if (s.isEmpty()) {
+                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                    searchTask!!.cancel(true)
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -331,8 +330,11 @@ class InsertAvanzataFragment : Fragment() {
 
                     elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                             ?.forEach {
-                                if (isCancelled) return 0
-                                fragmentReference.get()!!.titoli!!.add(
+                                if (isCancelled) {
+                                    fragmentReference.get()!!.titoli.clear()
+                                    return 0
+                                }
+                                fragmentReference.get()!!.titoli.add(
                                         InsertItem()
                                                 .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                                 .withColor(it.color!!)
@@ -341,19 +343,6 @@ class InsertAvanzataFragment : Fragment() {
                                                 .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
                                 )
                             }
-//                    if (elenco != null) {
-//                        for (canto in elenco) {
-//                            if (isCancelled) return 0
-//                            val insertItem = InsertItem()
-//                            insertItem
-//                                    .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-//                                    .withColor(canto.color!!)
-//                                    .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-//                                    .withId(canto.id)
-//                                    .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-//                            fragmentReference.get()!!.titoli!!.add(insertItem)
-//                        }
-//                    }
                 }
             }
 
@@ -365,13 +354,14 @@ class InsertAvanzataFragment : Fragment() {
             if (isCancelled) return
             fragmentReference.get()!!.search_no_results.visibility = View.GONE
             fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli!!.clear()
+            fragmentReference.get()!!.titoli.clear()
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+//            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
             fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
             fragmentReference.get()!!
                     .search_no_results.visibility = if (fragmentReference.get()!!.cantoAdapter.adapterItemCount == 0)

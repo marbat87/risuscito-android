@@ -25,7 +25,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -43,7 +42,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.text.Normalizer
-import java.util.*
 import java.util.regex.Pattern
 
 class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -53,7 +51,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     // create boolean for fetching data
     private var isViewShown = true
-    private var titoli: MutableList<SimpleItem>? = null
+    private var titoli: MutableList<SimpleItem> = ArrayList()
     private var rootView: View? = null
     private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
@@ -124,13 +122,12 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             true
         }
 
-        titoli = ArrayList()
+//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as MainActivity?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -425,6 +422,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             searchTask!!.execute(textfieldRicerca.text.toString())
         } else {
             if (s.isEmpty()) {
+                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                    searchTask!!.cancel(true)
                 rootView!!.findViewById<View>(R.id.search_no_results).visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -502,8 +501,11 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
                     elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                             ?.forEach {
-                                if (isCancelled) return 0
-                                fragmentReference.get()!!.titoli!!.add(
+                                if (isCancelled) {
+                                    fragmentReference.get()!!.titoli.clear()
+                                    return 0
+                                }
+                                fragmentReference.get()!!.titoli.add(
                                         SimpleItem()
                                                 .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                                 .withColor(it.color!!)
@@ -523,13 +525,14 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             if (isCancelled) return
             fragmentReference.get()!!.search_no_results.visibility = View.GONE
             fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli!!.clear()
+            fragmentReference.get()!!.titoli.clear()
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+//            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
+            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
             fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
             fragmentReference.get()!!.search_no_results.visibility = if (fragmentReference.get()!!.cantoAdapter.adapterItemCount == 0)
                 View.VISIBLE

@@ -131,7 +131,7 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
 
         //set the text for the name
         if (filter != null && !filter!!.isEmpty()) {
-            val mPosition = normalizedTitle!!.indexOf(filter!!)
+            val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
                 val highlighted = title!!.text.toString().replace(("(?i)(" + title!!.text.toString().substring(mPosition, mPosition + filter!!.length) + ")").toRegex(), "<b>$1</b>")
                 viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted)
