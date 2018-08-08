@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.3.0" changeDate="January 2018">
-        <changelogimprovement>Android Oreo compatibility</changelogimprovement>
+    <changelogversion
+        changeDate="September 2018"
+        versionName="4.3.0">
+        <changelogimprovement>Added English translation!</changelogimprovement>
+        <changelogimprovement>Both Android Oreo and Pie compatibility</changelogimprovement>
         <changelogimprovement>New Application Icon</changelogimprovement>
-        <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a href="https://developer.android.com/preview/features/adaptive-icons.html"]Android Developer[/a])</changelogimprovement>
+        <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a
+            href="https://developer.android.com/preview/features/adaptive-icons.html"]Android
+            Developer[/a])
+        </changelogimprovement>
         <changelogimprovement>New About page (At the bottom of side menu)</changelogimprovement>
         <changelogimprovement>New style for tutorials</changelogimprovement>
-        <changelogtext>Chance to thank with small amounts is back, through Google Play</changelogtext>
+        <changelogtext>Chance to thank with small amounts is back, through Google Play
+        </changelogtext>
         <changelogbug>Fixed page numbers for last Italian songs</changelogbug>
         <changelogtext>Various "under-the-hood" code fixes</changelogtext>
         <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
         <changelogimprovement>Improved List Creation management</changelogimprovement>
         <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
         <changelogimprovement>New tablet layout</changelogimprovement>
-        <changelogimprovement>Searched text is bold in the results list of fast search</changelogimprovement>
+        <changelogimprovement>Searched text is bold in the results list of fast search
+        </changelogimprovement>
         <changelogimprovement>Completely refactored music playback</changelogimprovement>
         <changelogimprovement>Added Dark Theme</changelogimprovement>
+        <changelogimprovement>Started adjustment for Material Design and new Font
+        </changelogimprovement>
     </changelogversion>
 
 </changelog>
