@@ -289,7 +289,7 @@
     <string name="night_theme_title">Dark Theme</string>
     <string name="night_theme_desc">Enables the Dark Theme</string>
     <plurals name="item_selected">
-        <item quantity="one">%1$d видалено з закладок</item>
+        <item quantity="one">%1$d обраний</item>
         <item quantity="few">%1$d обраний</item>
         <item quantity="many">%1$d обраний</item>
         <item quantity="other">%1$d обраний</item>
