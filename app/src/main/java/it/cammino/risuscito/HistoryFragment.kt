@@ -22,7 +22,6 @@ import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -43,7 +42,7 @@ import kotlinx.android.synthetic.main.layout_history.*
 class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private var mCronologiaViewModel: CronologiaViewModel? = null
-    private var cantoAdapter: FastItemAdapter<SimpleHistoryItem>? = null
+    private var cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
 
     private var actionModeOk: Boolean = false
 
@@ -67,25 +66,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         activity!!.material_tabs.visibility = View.GONE
 
         mLUtils = LUtils.getInstance(activity!!)
-
-//        mMainActivity!!.enableFab(true)
-//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
-//        val fabClear = activity!!.fab_pager
-//        val icon = IconicsDrawable(activity!!)
-//                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-//                .color(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//        fabClear.setImageDrawable(icon)
-//        fabClear.setOnClickListener {
-//            SimpleDialogFragment.Builder(
-//                    (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
-//                    .title(R.string.dialog_reset_history_title)
-//                    .content(R.string.dialog_reset_history_desc)
-//                    .positiveButton(android.R.string.yes)
-//                    .negativeButton(android.R.string.no)
-//                    .show()
-//        }
 
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
@@ -114,11 +94,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     return@OnClickListener true
                 mLastClickTime = SystemClock.elapsedRealtime()
 
-                cantoAdapter!!
+                cantoAdapter
                         .getAdapterItem(i)
-                        .withSetSelected(!cantoAdapter!!.getAdapterItem(i).isSelected)
-                cantoAdapter!!.notifyAdapterItemChanged(i)
-                if ((cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+                        .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected)
+                cantoAdapter.notifyAdapterItemChanged(i)
+                if ((cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                                 .size == 0)
 //                    mMainActivity!!.materialCab!!.finish()
@@ -149,14 +129,14 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             if (!mMainActivity!!.isOnTablet)
                 activity!!.toolbar_layout!!.setExpanded(true, true)
 //            mMainActivity!!.materialCab!!.start(this@HistoryFragment)
-            cantoAdapter!!.getAdapterItem(i).withSetSelected(true)
-            cantoAdapter!!.notifyAdapterItemChanged(i)
+            cantoAdapter.getAdapterItem(i).withSetSelected(true)
+            cantoAdapter.notifyAdapterItemChanged(i)
             startCab()
             true
         }
 
-        cantoAdapter = FastItemAdapter()
-        cantoAdapter!!
+//        cantoAdapter = FastItemAdapter()
+        cantoAdapter
                 .withSelectable(true)
                 .withMultiSelect(true)
                 .withSelectOnLongClick(true)
@@ -164,8 +144,9 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .withOnClickListener(mOnClickListener)
                 .withOnPreLongClickListener(mOnPreLongClickListener)
                 .setHasStableIds(true)
-        FastAdapterDiffUtil.set(cantoAdapter!!, mCronologiaViewModel!!.titoli)
-        (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
+        cantoAdapter.set(mCronologiaViewModel!!.titoli)
+//        FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel!!.titoli)
+        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
         class.java))!!.deleteAllSelectedItems()
 
         history_recycler!!.adapter = cantoAdapter
@@ -306,7 +287,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                     .selectedItems
                     .size
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
@@ -325,12 +306,12 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                                 .size
                         Log.d(TAG, "onCabItemClicked: $iRemoved")
-                        val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
-                        (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
+                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
+                        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
                         mUndoHelper!!.remove(
                                 activity!!.findViewById(R.id.main_content),
                                 resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
@@ -349,7 +330,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
-                        (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
+                        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }
@@ -384,10 +365,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                             .withSelectedColor(themeUtils.primaryColorDark())
                                     mCronologiaViewModel!!.titoli.add(sampleItem)
                                 }
-                                FastAdapterDiffUtil.set(cantoAdapter!!, mCronologiaViewModel!!.titoli)
-                                no_history!!.visibility = if (cantoAdapter!!.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+//                                FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel!!.titoli)
+                                cantoAdapter.set(mCronologiaViewModel!!.titoli)
+                                no_history!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
 //                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
-                                enableFab(cantoAdapter!!.adapterItemCount != 0)
+                                enableFab(cantoAdapter.adapterItemCount != 0)
                             }
                         })
     }

@@ -21,7 +21,6 @@ import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.ListaPersonalizzataItem
@@ -48,7 +47,7 @@ class ListaPersonalizzataFragment : Fragment() {
     private var mSwhitchMode: Boolean = false
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
-    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
+    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -180,9 +179,10 @@ class ListaPersonalizzataFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Creating new adapter object
-        cantoAdapter = FastItemAdapter()
-        cantoAdapter!!.setHasStableIds(true)
-        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
+//        cantoAdapter = FastItemAdapter()
+        cantoAdapter.setHasStableIds(true)
+//        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
+        cantoAdapter.set(mCantiViewModel!!.posizioniList)
         recycler_list!!.adapter = cantoAdapter
 
         // Setting the layoutManager
@@ -398,7 +398,7 @@ class ListaPersonalizzataFragment : Fragment() {
             onCreate { _, _ ->
                 Log.d(TAG, "MaterialCab onCreate")
                 mCantiViewModel!!.posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
-                cantoAdapter!!.notifyItemChanged(longclickedPos)
+                cantoAdapter.notifyItemChanged(longclickedPos)
                 actionModeOk = false
             }
 
@@ -447,7 +447,7 @@ class ListaPersonalizzataFragment : Fragment() {
                 if (!actionModeOk) {
                     try {
                         mCantiViewModel!!.posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
-                        cantoAdapter!!.notifyItemChanged(longclickedPos)
+                        cantoAdapter.notifyItemChanged(longclickedPos)
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }
@@ -556,14 +556,8 @@ class ListaPersonalizzataFragment : Fragment() {
                                 }
                                 it
                             }
-//                            mCantiViewModel!!.posizioniList.forEach {
-//                                it.listItem!!.forEach {
-//                                    it.titolo = resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java))
-//                                    it.pagina = resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java))
-//                                    it.source = resources.getString(LUtils.getResId(it.source!!, R.string::class.java))
-//                                }
-//                            }
-                            FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
+//                            FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.posizioniList)
+                            cantoAdapter.set(mCantiViewModel!!.posizioniList)
                         })
     }
 

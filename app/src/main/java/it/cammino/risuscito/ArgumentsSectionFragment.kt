@@ -42,7 +42,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
-    private var mAdapter: FastItemAdapter<IItem<*, *>>? = null
+    private var mAdapter: FastItemAdapter<IItem<*, *>> = FastItemAdapter()
     private var mLayoutManager: LinearLayoutManager? = null
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
@@ -82,17 +82,17 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 //        recycler_view!!.layoutManager = mLayoutManager
 
         // adapter
-        mAdapter = FastItemAdapter()
+//        mAdapter = FastItemAdapter()
         val itemExpandableExtension = ExpandableExtension<IItem<*, *>>()
         itemExpandableExtension.withOnlyOneExpandedItem(true)
-        mAdapter!!.addExtension(itemExpandableExtension)
+        mAdapter.addExtension(itemExpandableExtension)
 
         val mMainActivity = mActivity as MainActivity?
         if (mMainActivity!!.isGridLayout) {
             mLayoutManager = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
             (mLayoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return when (mAdapter!!.getItemViewType(position)) {
+                    return when (mAdapter.getItemViewType(position)) {
                         R.id.fastadapter_expandable_item_id -> if (mMainActivity.hasThreeColumns) 3 else 2
                         R.id.fastadapter_sub_item_id -> 1
                         else -> -1
@@ -170,9 +170,9 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                         }
                     }
 
-                    FastAdapterDiffUtil.set<FastItemAdapter<IItem<*, *>>, IItem<*, *>>(mAdapter!!, mCantiViewModel!!.titoliList)
+                    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
                     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                    mAdapter!!.withSavedInstanceState(savedInstanceState)
+                    mAdapter.withSavedInstanceState(savedInstanceState)
                 })
                 .start()
     }
@@ -208,7 +208,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     override fun onSaveInstanceState(outState: Bundle) {
         var mOutState = outState
         if (userVisibleHint) {
-            mOutState = mAdapter!!.saveInstanceState(mOutState)
+            mOutState = mAdapter.saveInstanceState(mOutState)
         }
         super.onSaveInstanceState(mOutState)
     }

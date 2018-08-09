@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.index_list_fragment.*
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
-    private lateinit var mAdapter: FastScrollIndicatorAdapter<SimpleItem>
+    private var mAdapter: FastScrollIndicatorAdapter<SimpleItem> = FastScrollIndicatorAdapter(0)
     private var mCantiViewModel: AlphabeticIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
@@ -95,9 +95,9 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
         val mMainActivity = activity as MainActivity?
 
-        mAdapter = FastScrollIndicatorAdapter(0)
+//        mAdapter = FastScrollIndicatorAdapter(0)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
-        FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
+        FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
@@ -385,7 +385,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                             )
                                         }
                                 mCantiViewModel!!.titoli = newList
-                                FastAdapterDiffUtil.set<FastScrollIndicatorAdapter<SimpleItem>, SimpleItem>(mAdapter, mCantiViewModel!!.titoli)
+                                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)
                                 dragScrollBar.setAutoHide(false)
                             }

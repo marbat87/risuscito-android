@@ -40,7 +40,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mFavoritesViewModel: FavoritesViewModel? = null
-    private var cantoAdapter: FastItemAdapter<SimpleItem>? = null
+    private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -114,11 +114,11 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
                     return@OnClickListener true
                 mLastClickTime = SystemClock.elapsedRealtime()
-                cantoAdapter!!
+                cantoAdapter
                         .getAdapterItem(i)
-                        .withSetSelected(!cantoAdapter!!.getAdapterItem(i).isSelected)
-                cantoAdapter!!.notifyAdapterItemChanged(i)
-                if ((cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
+                        .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected)
+                cantoAdapter.notifyAdapterItemChanged(i)
+                if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
 //                    mMainActivity!!.materialCab!!.finish()
                     MaterialCab.destroy()
                 else
@@ -147,14 +147,14 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 activity!!.toolbar_layout!!.setExpanded(true, true)
             }
 //            mMainActivity!!.materialCab!!.start(this@FavouritesActivity)
-            cantoAdapter!!.getAdapterItem(i).withSetSelected(true)
-            cantoAdapter!!.notifyAdapterItemChanged(i)
+            cantoAdapter.getAdapterItem(i).withSetSelected(true)
+            cantoAdapter.notifyAdapterItemChanged(i)
             startCab()
             true
         }
 
-        cantoAdapter = FastItemAdapter()
-        cantoAdapter!!
+//        cantoAdapter = FastItemAdapter()
+        cantoAdapter
                 .withSelectable(true)
                 .withMultiSelect(true)
                 .withSelectOnLongClick(true)
@@ -162,8 +162,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .withOnClickListener(mOnClickListener)
                 .withOnPreLongClickListener(mOnPreLongClickListener)
                 .setHasStableIds(true)
-        FastAdapterDiffUtil.set(cantoAdapter!!, mFavoritesViewModel!!.titoli)
-        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
+        FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
+        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
 
         favouritesList!!.adapter = cantoAdapter
 //        val llm = LinearLayoutManager(context)
@@ -301,7 +301,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
                     .selectedItems
                     .size
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
@@ -319,12 +319,12 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                                 .size
                         Log.d(TAG, "onCabItemClicked: $iRemoved")
-                        val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
-                        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
+                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
 
                         mUndoHelper!!.remove(
                                 activity!!.main_content,
@@ -344,7 +344,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
-                        (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }
@@ -380,10 +380,10 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                                     )
                                 }
                                 mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
-                                FastAdapterDiffUtil.set(cantoAdapter!!, mFavoritesViewModel!!.titoli)
-                                no_favourites!!.visibility = if (cantoAdapter!!.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+                                FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
+                                no_favourites!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
 //                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
-                                enableFab(cantoAdapter!!.adapterItemCount != 0)
+                                enableFab(cantoAdapter.adapterItemCount != 0)
                             }
                         })
     }

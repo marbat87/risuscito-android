@@ -49,7 +49,7 @@ import kotlinx.android.synthetic.main.layout_consegnati.*
 
 class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
-    internal lateinit var cantoAdapter: FastItemAdapter<SimpleItem>
+    internal var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
     private var mCantiViewModel: ConsegnatiViewModel? = null
     private var rootView: View? = null
@@ -278,7 +278,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         // Creating new adapter object
-        cantoAdapter = FastItemAdapter()
+//        cantoAdapter = FastItemAdapter()
         cantoAdapter.withOnClickListener(mOnClickListener)
         FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
 
