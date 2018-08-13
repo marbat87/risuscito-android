@@ -216,7 +216,6 @@ You can add up to 30 elements.</string>
     <string name="sc_scroll_desc">Using these controls you can automatically scroll the text and regulate its speed of scrolling.
 \nADVICE: Regulate the zoom to obtain a better effect.</string>
     <string name="download_error">Download error:</string>
-    <string name="dialog_back">BACK</string>
     <string name="share_by">Share with&#8230;</string>
     <string name="delete_list_dialog">Are you sure you want to delete the list?</string>
     <string name="barre_search_string">Capo</string>
@@ -249,11 +248,6 @@ Do you want to proceed?</string>
     <string name="restoring_settings">Setup restoration(2/2)</string>
     <string name="general_message">Info</string>
     <string name="login_failed">Login failed: %1$+d - %2$s</string>
-    <string name="login_intro_title">Login with Google</string>
-    <string name="login_intro_desc_0">Now you can login with your Google account to enable backup/restoration of all your setup, even among different devices. The button below begins the login process.</string>
-    <string name="login_intro_desc_1">It will ask you to select the account with which to login.</string>
-    <string name="login_intro_desc_2">When accessing, open the side menu and press the indicated arrow to open the dedicated management menu.</string>
-    <string name="login_intro_desc_3">From here you can do the backup of all your setup, or restore them from the last save. NOTE: Once the backup is done, youcould access from any device and recuperate the same saved set up.</string>
     <string name="xml_error">Error in the generation of the file to be shared!</string>
     <string name="action_share_file">Send file</string>
     <string name="import_error">Import list failed!</string>
@@ -289,4 +283,8 @@ Do you want to proceed?</string>
     <string name="permission_ok">Permission granted</string>
     <string name="night_theme_title">Dark Theme</string>
     <string name="night_theme_desc">Enables the Dark Theme</string>
+    <plurals name="item_selected">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
 </resources>

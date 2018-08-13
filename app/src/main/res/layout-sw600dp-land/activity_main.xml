@@ -16,8 +16,6 @@
 
     </FrameLayout>
 
-    <!--<include layout="@layout/common_circle_progress"/>-->
-
     <FrameLayout
         android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
@@ -57,16 +55,15 @@
                     android:layout_gravity="center_horizontal"
                     risuscito:cardCornerRadius="0dp"
                     risuscito:cardElevation="@dimen/card_elevation"
-                    risuscito:bounded_width="540dp">
+                    risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab">
 
-                    <it.cammino.risuscito.ui.FontTabLayout
+                    <android.support.design.widget.TabLayout
                         android:layout_height="48dp"
                         android:visibility="gone"
                         android:layout_width="match_parent"
                         android:id="@+id/material_tabs"
                         android:elevation="@dimen/design_appbar_elevation"
-                        risuscito:fontPath="fonts/Roboto-Medium.ttf"
-                        style="@style/Widget.Design.TabLayout.Risuscito"
+                        style="@style/Widget.MaterialComponents.TabLayout.Risuscito"
                         tools:targetApi="lollipop" />
 
                     <FrameLayout

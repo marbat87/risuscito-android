@@ -31,7 +31,6 @@
         tools:replace="android:allowBackup">
         <activity
             android:name="it.cammino.risuscito.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/RisuscitoTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +39,6 @@
         </activity>
         <activity
             android:name="it.cammino.risuscito.PaginaRenderActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.PaginaRenderFullScreen"
@@ -48,49 +46,16 @@
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.GeneralInsertSearch"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.ChangelogActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.DonateActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
-        <activity
-            android:name="it.cammino.risuscito.slides.IntroMainNew"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label=""
-            android:theme="@style/WelcomeScreenTheme.SolidNavigation" />
-
-        <!--<service android:exported="false" android:name="it.cammino.risuscito.music.MusicService">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="it.cammino.risuscito.music.action.TOGGLE_PLAYBACK" />-->
-        <!--<action android:name="it.cammino.risuscito.music.action.PLAY" />-->
-        <!--<action android:name="it.cammino.risuscito.music.action.PAUSE" />-->
-        <!--<action android:name="it.cammino.risuscito.music.action.SKIP" />-->
-        <!--<action android:name="it.cammino.risuscito.music.action.REWIND" />-->
-        <!--<action android:name="it.cammino.risuscito.music.action.STOP" />-->
-        <!--</intent-filter>-->
-        <!--<intent-filter>-->
-        <!--<action android:name="it.cammino.risuscito.music.action.URL" />-->
-        <!--<data android:scheme="http" />-->
-        <!--</intent-filter>-->
-        <!--</service>-->
-        <!--<receiver android:name="it.cammino.risuscito.music.MusicIntentReceiver">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.media.AUDIO_BECOMING_NOISY" />-->
-        <!--</intent-filter>-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MEDIA_BUTTON" />-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
-
         <service
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService"
             android:enabled="true"

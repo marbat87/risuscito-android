@@ -2,4 +2,6 @@
 <resources>
     <bool name="is_tablet">false</bool>
     <bool name="is_bottom_sheet_limited">false</bool>
+    <bool name="has_three_columns">false</bool>
+    <bool name="is_grid_layout">false</bool>
 </resources>

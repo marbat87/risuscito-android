@@ -222,7 +222,6 @@
     <string name="sc_scroll_desc">За допомогою цього меню можна зробити так, щоб текст перегортався автоматично та регулювати швидкість перегортання.
         \nПОРАДА: Регулюйте зум для того, щоб отримати кращий ефект.</string>
     <string name="download_error">Помилка в завантаженні:</string>
-    <string name="dialog_back">НАЗАД</string>
     <string name="share_by">Поділитися з&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
     <string name="barre_search_string">Баре</string>
@@ -254,11 +253,6 @@
     <string name="restoring_settings">Відновлення налаштувань(2/2)</string>
     <string name="general_message">Інфо</string>
     <string name="login_failed">Наможливо з\'єднати: %1$+d - %2$s</string>
-    <string name="login_intro_title">Ввійти через Google</string>
-    <string name="login_intro_desc_0">Тепер Ви можете підключитися до Вашого Google аккаунту, щоб стали доступні функції бекапу/відновлення всіх Ваших налаштувань, також з різних пристроїв. Натисніть на кнопку внизу для логіну.</string>
-    <string name="login_intro_desc_1">Вам слід обрати аккаунт до якого хочете підключитися.</string>
-    <string name="login_intro_desc_2">Пічля підключення, вікрийте бокове меню та натисніть на стрілку, яка відкриває меню управління аккаунтом</string>
-    <string name="login_intro_desc_3">Звідси Ви можете здійснити бекап всіх налаштувань, або відновити останні збережені налаштування. НОТАТОК: Коли Ви здійснете бекап, Ви можете ввійти з будь-якого іншого пристрою та відновити ті ж самі збережені налаштування.</string>
     <string name="xml_error">Помилка в генерації файлу для обміну!</string>
     <string name="action_share_file">Відправити файл</string>
     <string name="import_error">Не вдалося імпортувати список!</string>
@@ -294,4 +288,10 @@
     <string name="permission_ok">Permission granted</string>
     <string name="night_theme_title">Dark Theme</string>
     <string name="night_theme_desc">Enables the Dark Theme</string>
+    <plurals name="item_selected">
+        <item quantity="one">%1$d обраний</item>
+        <item quantity="few">%1$d обраний</item>
+        <item quantity="many">%1$d обраний</item>
+        <item quantity="other">%1$d обраний</item>
+    </plurals>
 </resources>

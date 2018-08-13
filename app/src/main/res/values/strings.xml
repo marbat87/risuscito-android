@@ -232,7 +232,6 @@
     <string name="sc_scroll_desc">Usando questi controlli puoi far scorrere il testo automaticamente e regolarne la velocit&#224; di scorrimento.
         \nCONSIGLIO: Regola lo zoom per ottenere un effetto migliore.</string>
     <string name="download_error">Errore nel download:</string>
-    <string name="dialog_back">INDIETRO</string>
     <string name="share_by">Condividi con&#8230;</string>
     <string name="delete_list_dialog">Sei sicuro di voler eliminare la lista?</string>
     <string name="barre_search_string">Barrè</string>
@@ -264,11 +263,6 @@
     <string name="restoring_settings">Ripristino delle impostazioni(2/2)</string>
     <string name="general_message">Info</string>
     <string name="login_failed">Login fallito: %1$+d - %2$s</string>
-    <string name="login_intro_title">Login con Google</string>
-    <string name="login_intro_desc_0">Ora puoi fare login col tuo account Google per abilitare il backup/ripristino di tutte le tue impostazioni, anche tra dispositivi diversi. Il pulsante in basso d&#225; inizio al processo di login.</string>
-    <string name="login_intro_desc_1">Ti verrà chiesto di selezionare l\'account con cui effettuare login.</string>
-    <string name="login_intro_desc_2">Ad accesso effettuato, apri il men&#249; laterale e premi la freccia indicata per aprire il men&#249; di gestione dedicato.</string>
-    <string name="login_intro_desc_3">Da qui puoi effettuare il backup di tutte le tue impostazioni, oppure ripristinarle dall\'ultimo salvataggio effettuato. NOTA: Una volta effettuato il backup, potrai effettuare l\'accesso da qualsiasi altro dispositivo e recuperare le stesse impostazioni salvate.</string>
     <string name="xml_error">Errore nella generazione del file da condividere!</string>
     <string name="action_share_file">Invia file</string>
     <string name="import_error">Importazione lista fallita!</string>
@@ -287,10 +281,10 @@
     <string name="show_offertorio_summary">Abilita il canto all\'offertorio per l\'Eucarestia</string>
     <string name="canto_offertorio">All\'offertorio</string>
     <string name="title_activity_donate">Ringrazia</string>
-    <string name="purchase_success" >Pagamento effettuato correttamente</string>
-    <string name="user_canceled" >Transazione annullata dall\'utente</string>
+    <string name="purchase_success">Pagamento effettuato correttamente</string>
+    <string name="user_canceled">Transazione annullata dall\'utente</string>
     <string name="service_unavailable">Servizio non disponibile</string>
-    <string name="object_invalid" >Oggetto non disponibile</string>
+    <string name="object_invalid">Oggetto non disponibile</string>
     <string name="object_owned">Oggetto gi&#224; posseduto</string>
     <string name="generic_removed">%1$s rimosso</string>
     <string name="title_trabar_I">I</string>
@@ -304,4 +298,8 @@
     <string name="permission_ok">Permesso concesso</string>
     <string name="night_theme_title">Tema Scuro</string>
     <string name="night_theme_desc">Abilita il tema scuro</string>
+    <plurals name="item_selected">
+        <item quantity="one">%1$d selezionato</item>
+        <item quantity="other">%1$d selezionati</item>
+    </plurals>
 </resources>
