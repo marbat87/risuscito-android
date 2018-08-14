@@ -27,7 +27,7 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/material_tabs"
-            style="@style/Widget.MaterialComponents.TabLayout.Risuscito"
+            style="@style/Risuscito_tabstyle"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:visibility="gone" />

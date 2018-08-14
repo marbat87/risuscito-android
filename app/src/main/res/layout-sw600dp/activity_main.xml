@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/material_tabs"
                         android:elevation="@dimen/design_appbar_elevation"
-                        style="@style/Widget.MaterialComponents.TabLayout.Risuscito"
+                        style="@style/Risuscito_tabstyle"
                         tools:targetApi="lollipop" />
 
                     <FrameLayout
