@@ -4,7 +4,7 @@
     <changelogversion
         changeDate="Settembre 2018"
         versionName="4.3.0">
-        <changelogimprovement>Aggiunta la traduzione Inglese!</changelogimprovement>
+        <changelogimprovement>[b]Aggiunta la traduzione Inglese![/b]</changelogimprovement>
         <changelogimprovement>Compatibilità con Android Oreo e Pie</changelogimprovement>
         <changelogimprovement>Nuova icona dell'applicazione</changelogimprovement>
         <changelogimprovement>Implementata l'icona Adattiva per Android Oreo ([a
@@ -28,6 +28,7 @@
         <changelogimprovement>Riscritta la parte del lettore musicale</changelogimprovement>
         <changelogimprovement>Aggiunto il tema scuro</changelogimprovement>
         <changelogimprovement>Inizio adeguamenti Material Design e nuovo font</changelogimprovement>
+        <changelogtext>[b]La minima versione richiesta è adesso Android 4.1[/b]</changelogtext>
     </changelogversion>
 
 </changelog>

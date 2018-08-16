@@ -270,7 +270,7 @@
     <string name="show_offertorio_title">Євхаристія - принесення дарів</string>
     <string name="show_offertorio_summary">Включити пісню на принесення дарів для Євхаристії</string>
     <string name="canto_offertorio">На принесення дарів</string>
-    <string name="title_activity_donate">Подякувати</string>
+    <string name="title_activity_thanks">Подякувати</string>
     <string name="purchase_success">Платіж виконано успішно</string>
     <string name="user_canceled">Транзакції була відмінена корисиувачем</string>
     <string name="service_unavailable">"Послуга недоступна "</string>

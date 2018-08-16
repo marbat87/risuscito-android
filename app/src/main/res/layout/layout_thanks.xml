@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        risuscito:elevation="@dimen/design_appbar_elevation">
+
+        <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    </android.support.design.widget.AppBarLayout>
+    <View
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_gravity="top"
+        android:background="?toolbar_shadow" />
+
+    <WebView
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/thanks_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/loadingBar"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/cover_shadow"
+        android:elevation="5dp"
+        android:visibility="invisible"
+        tools:targetApi="lollipop">
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            style="@style/Widget.MaterialProgressBar.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="1dp"
+            android:indeterminate="true"
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+            risuscito:mpb_progressBackgroundTint="@android:color/white"
+            risuscito:mpb_progressStyle="circular"
+            risuscito:mpb_progressTint="?colorAccent" />
+
+    </FrameLayout>
+
+    <android.support.design.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:minHeight="?attr/actionBarSize"
+        android:visibility="visible"
+        tools:visibility="visible"
+        risuscito:backgroundTint="?colorPrimary">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/min_button_margin"
+            android:paddingTop="@dimen/min_button_margin"
+            android:orientation="horizontal">
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/thanks_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/min_button_margin"
+                android:layout_marginStart="@dimen/min_button_margin"
+                android:text=""
+                risuscito:elevation="@dimen/raised_button_default_elevation"
+                risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+                tools:ignore="MissingPrefix" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/thanks_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/min_button_margin"
+                android:layout_marginStart="@dimen/min_button_margin"
+                android:text=""
+                risuscito:elevation="@dimen/raised_button_default_elevation"
+                risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+                tools:ignore="MissingPrefix" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/thanks_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/min_button_margin"
+                android:layout_marginStart="@dimen/min_button_margin"
+                android:text=""
+                risuscito:elevation="@dimen/raised_button_default_elevation"
+                risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+                tools:ignore="MissingPrefix" />
+
+        </LinearLayout>
+
+    </android.support.design.bottomappbar.BottomAppBar>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -4,7 +4,7 @@
     <changelogversion
         changeDate="September 2018"
         versionName="4.3.0">
-        <changelogimprovement>Added English translation!</changelogimprovement>
+        <changelogimprovement>[b]Added English translation![/b]</changelogimprovement>
         <changelogimprovement>Both Android Oreo and Pie compatibility</changelogimprovement>
         <changelogimprovement>New Application Icon</changelogimprovement>
         <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a
@@ -19,12 +19,16 @@
         <changelogtext>Various "under-the-hood" code fixes</changelogtext>
         <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
         <changelogimprovement>Improved List Creation management</changelogimprovement>
+        <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
+        <changelogimprovement>New tablet layout</changelogimprovement>
         <changelogimprovement>Searched text is bold in the results list of fast search
         </changelogimprovement>
         <changelogimprovement>Completely refactored music playback</changelogimprovement>
         <changelogimprovement>Added Dark Theme</changelogimprovement>
         <changelogimprovement>Started adjustment for Material Design and new Font
         </changelogimprovement>
+        <changelogtext>[b]Min Android version required is now 4.1[/b]
+        </changelogtext>
     </changelogversion>
 
     <changelogversion

@@ -1,5 +1,6 @@
 package it.cammino.risuscito
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.util.Log
@@ -8,10 +9,11 @@ import android.view.View
 import com.android.billingclient.api.*
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
-import kotlinx.android.synthetic.main.layout_donate.*
+import kotlinx.android.synthetic.main.layout_thanks.*
+import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.util.*
 
-class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
+class ThanksActivity : ThemeableActivity(), PurchasesUpdatedListener {
 
     private var mBillingClient: BillingClient? = null
     private var mTokensToBeConsumed: MutableSet<String>? = null
@@ -21,19 +23,19 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_donate)
+        setContentView(R.layout.layout_thanks)
 
         mBillingClient = BillingClient.newBuilder(this).setListener(this).build()
 
-//        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.title_activity_donate)
         risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
-        supportActionBar!!.setTitle(R.string.title_activity_donate)
+        supportActionBar!!.setTitle(R.string.title_activity_thanks)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        donate_text!!.setBackgroundColor(0)
-        bottom_bar!!.setBackgroundColor(themeUtils!!.primaryColor())
+        thanks_text!!.setBackgroundColor(0)
+//        bottom_bar!!.setBackgroundColor(themeUtils!!.primaryColor())
+        bottom_bar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils!!.primaryColor()))
 
         var textColor = "#000000"
         if (ThemeUtils.isDarkMode(this)) textColor = "#ffffff"
@@ -44,15 +46,15 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
                 + "; opacity: 0.87;}"
                 + "</style></head>"
                 + "<body>"
-                + getString(R.string.donate_long_text)
+                + getString(R.string.thanks_long_text)
                 + "</body></html>")
 
-        donate_text!!.loadData(text, "text/html; charset=utf-8", "UTF-8")
-        donate_text!!.settings.textZoom = 90
+        thanks_text!!.loadData(text, "text/html; charset=utf-8", "UTF-8")
+        thanks_text!!.settings.textZoom = 90
 
-        donate_1.setOnClickListener { initiatePurchaseFlow(SKU_1_EURO, BillingClient.SkuType.INAPP) }
-        donate_5.setOnClickListener { initiatePurchaseFlow(SKU_5_EURO, BillingClient.SkuType.INAPP) }
-        donate_10.setOnClickListener { initiatePurchaseFlow(SKU_10_EURO, BillingClient.SkuType.INAPP) }
+        thanks_1.setOnClickListener { initiatePurchaseFlow(SKU_1_EURO, BillingClient.SkuType.INAPP) }
+        thanks_5.setOnClickListener { initiatePurchaseFlow(SKU_5_EURO, BillingClient.SkuType.INAPP) }
+        thanks_10.setOnClickListener { initiatePurchaseFlow(SKU_10_EURO, BillingClient.SkuType.INAPP) }
 
     }
 
@@ -63,9 +65,9 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
         skuList.add(SKU_1_EURO)
         skuList.add(SKU_5_EURO)
         skuList.add(SKU_10_EURO)
-        donate_1!!.isEnabled = false
-        donate_5!!.isEnabled = false
-        donate_10!!.isEnabled = false
+        thanks_1!!.isEnabled = false
+        thanks_5!!.isEnabled = false
+        thanks_10!!.isEnabled = false
         querySkuDetailsAsync(BillingClient.SkuType.INAPP, skuList)
     }
 
@@ -139,16 +141,16 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
                         Log.i(TAG, "Adding sku: $details")
                         when (details.sku) {
                             SKU_1_EURO -> {
-                                donate_1!!.text = details.price
-                                donate_1!!.isEnabled = true
+                                thanks_1!!.text = details.price
+                                thanks_1!!.isEnabled = true
                             }
                             SKU_5_EURO -> {
-                                donate_5!!.text = details.price
-                                donate_5!!.isEnabled = true
+                                thanks_5!!.text = details.price
+                                thanks_5!!.isEnabled = true
                             }
                             SKU_10_EURO -> {
-                                donate_10!!.text = details.price
-                                donate_10!!.isEnabled = true
+                                thanks_10!!.text = details.price
+                                thanks_10!!.isEnabled = true
                             }
                             else -> {
                             }
@@ -176,7 +178,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
                     .setSku(skuId)
                     .setType(billingType)
                     .build()
-            mBillingClient!!.launchBillingFlow(this@DonateActivity, purchaseParams)
+            mBillingClient!!.launchBillingFlow(this@ThanksActivity, purchaseParams)
         }
 
         executeServiceRequest(purchaseFlowRequest)
@@ -275,7 +277,7 @@ class DonateActivity : ThemeableActivity(), PurchasesUpdatedListener {
     }
 
     companion object {
-        private val TAG = DonateActivity::class.java.canonicalName
+        private val TAG = ThanksActivity::class.java.canonicalName
         private const val SKU_1_EURO = "sku_consumable_1_euro"
         private const val SKU_5_EURO = "sku_consumable_5_euro"
         private const val SKU_10_EURO = "sku_consumable_10_euro"

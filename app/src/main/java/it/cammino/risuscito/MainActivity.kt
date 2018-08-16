@@ -24,6 +24,7 @@ import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.edit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -663,10 +664,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addOnCompleteListener {
                     updateUI(false)
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Snackbar.make(
-                            findViewById(R.id.main_content),
-                            R.string.disconnected,
-                            Snackbar.LENGTH_SHORT)
+//                    Snackbar.make(
+//                            findViewById(R.id.main_content),
+//                            R.string.disconnected,
+//                            Snackbar.LENGTH_SHORT)
+//                            .show()
+                    Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
     }
@@ -678,10 +681,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addOnCompleteListener {
                     updateUI(false)
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Snackbar.make(
-                            findViewById(R.id.main_content),
-                            R.string.disconnected,
-                            Snackbar.LENGTH_SHORT)
+//                    Snackbar.make(
+//                            findViewById(R.id.main_content),
+//                            R.string.disconnected,
+//                            Snackbar.LENGTH_SHORT)
+//                            .show()
+                    Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
     }
@@ -707,23 +712,30 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
             PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
             if (mViewModel!!.showSnackbar) {
-                Snackbar.make(
-                        findViewById(R.id.main_content),
-                        getString(R.string.connected_as, acct!!.displayName),
-                        Snackbar.LENGTH_SHORT)
+//                Snackbar.make(
+//                        findViewById(R.id.main_content),
+//                        getString(R.string.connected_as, acct!!.displayName),
+//                        Snackbar.LENGTH_SHORT)
+//                        .show()
+                Toast.makeText(this@MainActivity, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
                         .show()
                 mViewModel!!.showSnackbar = false
             }
             updateUI(true)
         } else {
             // Sign in failed, handle failure and update UI
-            Snackbar.make(
-                    findViewById(R.id.main_content),
-                    getString(
-                            R.string.login_failed,
-                            -1,
-                            task.exception!!.localizedMessage),
-                    Snackbar.LENGTH_SHORT)
+//            Snackbar.make(
+//                    findViewById(R.id.main_content),
+//                    getString(
+//                            R.string.login_failed,
+//                            -1,
+//                            task.exception!!.localizedMessage),
+//                    Snackbar.LENGTH_SHORT)
+//                    .show()
+            Toast.makeText(this@MainActivity, getString(
+                    R.string.login_failed,
+                    -1,
+                    task.exception!!.localizedMessage), Toast.LENGTH_SHORT)
                     .show()
             acct = null
             updateUI(false)

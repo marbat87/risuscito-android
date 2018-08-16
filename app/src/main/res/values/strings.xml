@@ -280,7 +280,7 @@
     <string name="show_offertorio_title">Eucarestia - Offertorio</string>
     <string name="show_offertorio_summary">Abilita il canto all\'offertorio per l\'Eucarestia</string>
     <string name="canto_offertorio">All\'offertorio</string>
-    <string name="title_activity_donate">Ringrazia</string>
+    <string name="title_activity_thanks">Ringrazia</string>
     <string name="purchase_success">Pagamento effettuato correttamente</string>
     <string name="user_canceled">Transazione annullata dall\'utente</string>
     <string name="service_unavailable">Servizio non disponibile</string>

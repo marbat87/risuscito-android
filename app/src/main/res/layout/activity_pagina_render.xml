@@ -183,12 +183,12 @@
 
     </FrameLayout>
 
-    <View
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_below="@id/appbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/toolbar_shadow" />
+    <!--<View-->
+        <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--android:layout_below="@id/appbarlayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="4dp"-->
+        <!--android:background="@drawable/toolbar_shadow" />-->
 
     <android.support.design.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"

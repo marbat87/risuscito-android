@@ -54,7 +54,7 @@
             android:name="it.cammino.risuscito.ChangelogActivity"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.DonateActivity"
+            android:name="it.cammino.risuscito.ThanksActivity"
             android:label="" />
         <service
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService"

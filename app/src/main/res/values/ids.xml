@@ -8,7 +8,6 @@
     <item name="navigation_favorites" type="id" />
     <item name="navigation_settings" type="id" />
     <item name="navigation_changelog" type="id" />
-    <item name="navigation_donate" type="id" />
     <item name="navigation_history" type="id" />
     <item name="gdrive_backup" type="id" />
     <item name="gdrive_restore" type="id" />

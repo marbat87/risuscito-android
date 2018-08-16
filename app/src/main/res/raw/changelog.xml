@@ -4,7 +4,7 @@
     <changelogversion
         changeDate="September 2018"
         versionName="4.3.0">
-        <changelogimprovement>Added English translation!</changelogimprovement>
+        <changelogimprovement>[b]Added English translation![/b]</changelogimprovement>
         <changelogimprovement>Both Android Oreo and Pie compatibility</changelogimprovement>
         <changelogimprovement>New Application Icon</changelogimprovement>
         <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a
@@ -27,6 +27,8 @@
         <changelogimprovement>Added Dark Theme</changelogimprovement>
         <changelogimprovement>Started adjustment for Material Design and new Font
         </changelogimprovement>
+        <changelogtext>[b]Min Android version required is now 4.1[/b]
+        </changelogtext>
     </changelogversion>
 
 </changelog>

@@ -4,7 +4,7 @@
     <changelogversion
         changeDate="Settembre 2018"
         versionName="4.3.0">
-        <changelogimprovement>Aggiunta la traduzione Inglese!</changelogimprovement>
+        <changelogimprovement>[b]Aggiunta la traduzione Inglese![/b]</changelogimprovement>
         <changelogimprovement>Compatibilità con Android Oreo e Pie</changelogimprovement>
         <changelogimprovement>Nuova icona dell'applicazione</changelogimprovement>
         <changelogimprovement>Implementata l'icona Adattiva per Android Oreo ([a
@@ -20,12 +20,15 @@
         <changelogtext>Varie correzioni "nascoste" al codice</changelogtext>
         <changelogbug>Corretto un bug nella esportazione PDF in Ucraino</changelogbug>
         <changelogimprovement>Migliorata la gestione della Creazione Lista</changelogimprovement>
+        <changelogimprovement>Modificato stile di indici ed elenchi</changelogimprovement>
+        <changelogimprovement>Nuovo layout per tablet</changelogimprovement>
         <changelogimprovement>Il testo ricercato viene evidenziato nei risultati della ricerca
             veloce
         </changelogimprovement>
         <changelogimprovement>Riscritta la parte del lettore musicale</changelogimprovement>
         <changelogimprovement>Aggiunto il tema scuro</changelogimprovement>
         <changelogimprovement>Inizio adeguamenti Material Design e nuovo font</changelogimprovement>
+        <changelogtext>[b]La minima versione richiesta è adesso Android 4.1[/b]</changelogtext>
     </changelogversion>
 
     <changelogversion

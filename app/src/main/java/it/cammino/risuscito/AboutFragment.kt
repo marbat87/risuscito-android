@@ -24,6 +24,7 @@ class AboutFragment : Fragment() {
         mMainActivity!!.enableFab(false)
 //        if (!mMainActivity!!.isOnTablet) {
             mMainActivity!!.enableBottombar(false)
+            mMainActivity!!.enableBottombar(false)
 //        }
         activity!!.material_tabs.visibility = View.GONE
 
@@ -34,8 +35,8 @@ class AboutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_about)
-        val mDonateClickListener = View.OnClickListener {
-            startActivity(Intent(mMainActivity, DonateActivity::class.java))
+        val mThanksClickListener = View.OnClickListener {
+            startActivity(Intent(mMainActivity, ThanksActivity::class.java))
             activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
         }
 
@@ -83,7 +84,7 @@ class AboutFragment : Fragment() {
                         //                        .addHelpAction((Intent) null)
                         .addChangeLogAction(mChangeLogClickListener)
                         //                        .addRemoveAdsAction((Intent) null)
-                        .addDonateAction(mDonateClickListener)
+                        .addDonateAction(mThanksClickListener)
                         .addPrivacyPolicyAction("http://marbat87.altervista.org/privacy_policy.html")
                         .setShowAsCard(false)
                         .build())

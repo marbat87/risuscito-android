@@ -265,7 +265,7 @@ Do you want to proceed?</string>
     <string name="show_offertorio_title">Eucharist - Offertory</string>
     <string name="show_offertorio_summary">Enable the offertory song for the Eucharist</string>
     <string name="canto_offertorio">At the offertory</string>
-    <string name="title_activity_donate">Thank</string>
+    <string name="title_activity_thanks">Thank</string>
     <string name="purchase_success">Payment has been made successfully</string>
     <string name="user_canceled">Transaction canceled by user</string>
     <string name="service_unavailable">Service unavailable</string>
