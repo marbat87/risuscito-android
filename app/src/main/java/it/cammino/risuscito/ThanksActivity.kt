@@ -9,6 +9,7 @@ import android.view.View
 import com.android.billingclient.api.*
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
+import kotlinx.android.synthetic.main.common_circle_progress.*
 import kotlinx.android.synthetic.main.layout_thanks.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.util.*
