@@ -113,7 +113,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                     Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
                     Snackbar.make(
-                            findViewById(android.R.id.content),
+                            canto_coordinator,
                             state.errorMessage,
                             Snackbar.LENGTH_SHORT)
                             .show()
@@ -223,7 +223,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                     + Utility.filterMediaLinkNew(url!!)), null, null)
                 }
                 Snackbar.make(
-                        findViewById(android.R.id.content),
+                        canto_coordinator,
                         R.string.download_completed,
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -246,7 +246,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
                 sFragment?.dismiss()
                 Snackbar.make(
-                        findViewById(android.R.id.content),
+                        canto_coordinator,
                         getString(R.string.download_error)
                                 + " "
                                 + intent.getStringExtra(DownloadService.DATA_ERROR),
@@ -278,7 +278,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 startActivity(intent2)
             } catch (e: ActivityNotFoundException) {
                 Snackbar.make(
-                        findViewById(android.R.id.content),
+                        canto_coordinator,
                         R.string.no_pdf_reader,
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -297,7 +297,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
                 sFragment?.dismiss()
                 Snackbar.make(
-                        findViewById(android.R.id.content),
+                        canto_coordinator,
                         intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR),
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -476,7 +476,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 "%02d:%02d",
                                 TimeUnit.MILLISECONDS.toMinutes(progress.toLong()),
                                 TimeUnit.MILLISECONDS.toSeconds(progress.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress.toLong())))
-                        (findViewById<View>(R.id.time_text) as TextView).text = time
+                        time_text.text = time
                     }
 
                     override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -495,7 +495,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         mViewModel!!.speedValue = progress.toString()
-                        (findViewById<View>(R.id.slider_text) as TextView).text = getString(R.string.percent_progress, progress)
+                        slider_text.text = getString(R.string.percent_progress, progress)
                         Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel!!.speedValue)
                     }
 
@@ -655,7 +655,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
                                 mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
-                                        findViewById(android.R.id.content),
+                                        canto_coordinator,
                                         R.string.tab_saved,
                                         Snackbar.LENGTH_SHORT)
                                         .show()
@@ -663,7 +663,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .start()
                 } else {
                     Snackbar.make(
-                            findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
+                            canto_coordinator, R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -696,7 +696,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
                                 mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
-                                        findViewById(android.R.id.content),
+                                        canto_coordinator,
                                         R.string.barre_saved,
                                         Snackbar.LENGTH_SHORT)
                                         .show()
@@ -704,7 +704,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .start()
                 } else {
                     Snackbar.make(
-                            findViewById(android.R.id.content),
+                            canto_coordinator,
                             R.string.barre_not_saved,
                             Snackbar.LENGTH_SHORT)
                             .show()
@@ -861,7 +861,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel!!.mCurrentCanto!!.favorite = favouriteFlag
                     mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                     Snackbar.make(
-                            findViewById(android.R.id.content),
+                            canto_coordinator,
                             if (favouriteFlag == 1) R.string.favorite_added else R.string.favorite_removed,
                             Snackbar.LENGTH_SHORT)
                             .show()
@@ -1075,7 +1075,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             startService(i)
         } else
             Snackbar.make(
-                    findViewById(android.R.id.content),
+                    canto_coordinator,
                     R.string.no_memory_writable,
                     Snackbar.LENGTH_SHORT)
                     .show()
@@ -1136,7 +1136,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             "DOWNLOAD_MP3" -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             "DELETE_LINK" -> {
                 Snackbar.make(
-                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                        canto_coordinator, R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 DeleteLinkTask().execute(idCanto)
@@ -1151,10 +1151,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
                     }
                     Snackbar.make(
-                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                            canto_coordinator, R.string.file_delete, Snackbar.LENGTH_SHORT)
                             .show()
                 } else
-                    Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                    Snackbar.make(canto_coordinator, R.string.error, Snackbar.LENGTH_SHORT)
                             .show()
                 stopMedia()
                 refreshCatalog()
@@ -1174,7 +1174,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        editor.apply()
                         PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
-                                findViewById(android.R.id.content),
+                                canto_coordinator,
                                 R.string.forced_private,
                                 Snackbar.LENGTH_SHORT)
                                 .show()
@@ -1223,7 +1223,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onFileSelection(dialog: FileChooserDialog, file: File) {
         val path = file.absolutePath
         Snackbar.make(
-                findViewById(android.R.id.content),
+                canto_coordinator,
                 getString(R.string.file_selected) + ": " + path,
                 Snackbar.LENGTH_SHORT)
                 .show()
@@ -1496,7 +1496,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                    editor.apply()
                     PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
-                            findViewById(android.R.id.content),
+                            canto_coordinator,
                             getString(R.string.external_storage_denied),
                             Snackbar.LENGTH_SHORT)
                             .show()

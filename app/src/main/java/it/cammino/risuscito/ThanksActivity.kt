@@ -131,7 +131,7 @@ class ThanksActivity : ThemeableActivity(), PurchasesUpdatedListener {
                 if (responseCode != BillingClient.BillingResponse.OK) {
                     Log.e(TAG, "Unsuccessful query. Error code: $responseCode")
                     Snackbar.make(
-                            findViewById(R.id.main_content),
+                            main_content,
                             "Unsuccessful query. Error code: $responseCode",
                             Snackbar.LENGTH_SHORT)
                             .show()

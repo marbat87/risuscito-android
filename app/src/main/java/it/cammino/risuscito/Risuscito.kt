@@ -90,13 +90,6 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
                 TAG,
                 "onCreateView: signed in = " + PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.SIGNED_IN, false))
-        rootView!!
-                .findViewById<View>(R.id.sign_in_button).visibility = if (PreferenceManager.getDefaultSharedPreferences(activity)
-                        .getBoolean(Utility.SIGNED_IN, false))
-            View.INVISIBLE
-        else
-            View.VISIBLE
-
         checkStoragePermissions()
 
         return rootView
@@ -109,6 +102,12 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         activity!!.material_tabs.visibility = View.GONE
 
         imageView1.setOnClickListener { mMainActivity!!.drawer!!.openDrawer() }
+
+        sign_in_button.visibility = if (PreferenceManager.getDefaultSharedPreferences(activity)
+                        .getBoolean(Utility.SIGNED_IN, false))
+            View.INVISIBLE
+        else
+            View.VISIBLE
 
         sign_in_button.setOnClickListener {
             mMainActivity!!.setShowSnackbar()

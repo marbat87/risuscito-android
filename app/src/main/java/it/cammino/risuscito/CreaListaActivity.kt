@@ -290,7 +290,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             mElement = mAdapter!!.getItem(i)
             if (celebrazione!!.addPosizione(mElement.name.text.toString()) == -2) {
                 Snackbar.make(
-                        findViewById(android.R.id.content),
+                        main_content,
                         R.string.lista_pers_piena,
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -300,7 +300,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         if (celebrazione!!.getNomePosizione(0).equals("", ignoreCase = true)) {
             Snackbar.make(
-                    findViewById(android.R.id.content), R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
+                    main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
                     .show()
             return false
         }

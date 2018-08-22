@@ -30,6 +30,7 @@ import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.LiturgicIndexViewModel
 import kotlinx.android.synthetic.main.layout_recycler.*
+import kotlinx.android.synthetic.main.simple_sub_item.view.*
 import java.util.*
 
 class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -38,7 +39,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     // create boolean for fetching data
     private var isViewShown = true
-    private var titoloDaAgg: String? = null
+//    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -223,8 +224,8 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
 //        super.onCreateContextMenu(menu, v, menuInfo)
-        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
-        mCantiViewModel!!.idDaAgg = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto) as TextView).text.toString())
+//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
+        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
         for (i in listePersonalizzate!!.indices) {
@@ -410,7 +411,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                             rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg!!,
+//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista

@@ -21,6 +21,9 @@ interface CustomListDao {
     @Query("SELECT B.titolo FROM customlist A , canto B WHERE A.id = :id AND A.position = :position AND A.idCanto = B.id")
     fun getTitoloByPosition(id: Int, position: Int): String?
 
+    @Query("SELECT A.idCanto FROM customlist A WHERE A.id = :id AND A.position = :position")
+    fun getIdByPosition(id: Int, position: Int): Int?
+
     @Query("SELECT * from customlist WHERE id = :id AND position = :position")
     fun getPosition(id: Int, position: Int): CustomList
 

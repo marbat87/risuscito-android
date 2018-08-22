@@ -31,6 +31,7 @@ import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.NumericIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
+import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -39,7 +40,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
     private var mCantiViewModel: NumericIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-    private var titoloDaAgg: String? = null
+//    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -151,8 +152,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
 //        super.onCreateContextMenu(menu, v, menuInfo)
-        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
-        mCantiViewModel!!.idDaAgg = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto) as TextView).text.toString())
+//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
+        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
         for (i in listePersonalizzate!!.indices) {
@@ -337,7 +338,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                             rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg!!,
+//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista

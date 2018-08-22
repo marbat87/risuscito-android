@@ -17,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.turingtechnologies.materialscrollbar.CustomIndicator
@@ -31,6 +30,7 @@ import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
+import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -38,7 +38,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
     private var mCantiViewModel: AlphabeticIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-    private var titoloDaAgg: String? = null
+//    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -149,8 +149,8 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
 //        super.onCreateContextMenu(menu, v, menuInfo)
-        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
-        mCantiViewModel!!.idDaAgg = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto) as TextView).text.toString())
+//        titoloDaAgg = v.text_title.text.toString()
+        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
         for (i in listePersonalizzate!!.indices) {
@@ -337,7 +337,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                             rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg!!,
+//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista

@@ -53,7 +53,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     private var isViewShown = true
     private var titoli: MutableList<SimpleItem> = ArrayList()
     private var rootView: View? = null
-    private var titoloDaAgg: String? = null
+//    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
     private var searchTask: SearchTask? = null
@@ -229,7 +229,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
 //        super.onCreateContextMenu(menu, v, menuInfo)
-        titoloDaAgg = v.text_title.text.toString()
+//        titoloDaAgg = v.text_title.text.toString()
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
@@ -412,8 +412,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     override fun onNeutral(tag: String) {}
 
     private fun ricercaStringa(s: String) {
-        val tempText = (activity!!.findViewById<View>(R.id.tempTextField) as EditText).text.toString()
-        if (tempText != s) (activity!!.findViewById<View>(R.id.tempTextField) as EditText).setText(s)
+        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
+        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
@@ -424,7 +424,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             if (s.isEmpty()) {
                 if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
                     searchTask!!.cancel(true)
-                rootView!!.findViewById<View>(R.id.search_no_results).visibility = View.GONE
+                search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
             }
@@ -439,7 +439,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                             rootView!!,
                             idLista,
                             listPosition,
-                            titoloDaAgg!!,
+//                            titoloDaAgg!!,
                             mViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mViewModel!!.idListaDaAgg = idLista

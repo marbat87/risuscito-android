@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/canto_coordinator"
     android:fitsSystemWindows="true">
 
 
@@ -182,13 +183,6 @@
         <include layout="@layout/common_shadow_no_behavior" />
 
     </FrameLayout>
-
-    <!--<View-->
-        <!--risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-        <!--android:layout_below="@id/appbarlayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="4dp"-->
-        <!--android:background="@drawable/toolbar_shadow" />-->
 
     <android.support.design.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
