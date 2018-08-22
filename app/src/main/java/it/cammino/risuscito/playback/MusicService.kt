@@ -203,7 +203,7 @@ class MusicService : MediaBrowserServiceCompat() {
      *
      * @see android.app.Service.onStartCommand
      */
-    override fun onStartCommand(startIntent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         MediaButtonReceiver.handleIntent(mSession, startIntent)
         return super.onStartCommand(startIntent, flags, startId)
     }
