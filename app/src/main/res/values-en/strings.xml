@@ -130,7 +130,7 @@ You can add up to 30 elements.</string>
     <string name="dialog_delete_link">Are you sure you want to disconnect the song present in the memory? (The file will not be deleted)</string>
     <string name="delink_delete">File is disconnected</string>
     <string name="list_title">Title of the list</string>
-    <string name="list_title_modif">Modifie the title&#8230;</string>
+    <string name="list_title_modif">Edit the title&#8230;</string>
     <string name="list_elements">ELEMENTS OF THE LIST:</string>
     <string name="no_title_edited">The title has not been modified because it is empty</string>
     <string name="no_elements_added">You haven\'t yet added any elements.</string>
