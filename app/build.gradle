@@ -39,7 +39,7 @@ android {
 }
 
 ext.support_version = '28.0.0-rc02'
-ext.preference_fix_version = '28.0.0.0-alpha3'
+ext.preference_fix_version = '28.0.0.0-rc02'
 ext.lifecycle_version = '1.1.1'
 ext.room_version = '1.1.1'
 dependencies {
