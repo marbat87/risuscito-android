@@ -3,7 +3,6 @@ package it.cammino.risuscito
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -20,14 +19,12 @@ import android.widget.Toast
 import androidx.core.content.edit
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.fastadapter_extensions.UndoHelper
-import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -65,25 +62,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(activity!!)
 
-//        mMainActivity!!.enableFab(true)
-//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
-//        val fabClear = activity!!.fab_pager
-//        val icon = IconicsDrawable(activity!!)
-//                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-//                .color(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//        fabClear.setImageDrawable(icon)
-//        fabClear.setOnClickListener {
-//            SimpleDialogFragment.Builder(
-//                    (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
-//                    .title(R.string.dialog_reset_favorites_title)
-//                    .content(R.string.dialog_reset_favorites_desc)
-//                    .positiveButton(android.R.string.yes)
-//                    .negativeButton(android.R.string.no)
-//                    .show()
-//        }
-
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
@@ -105,11 +83,10 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity!!.enableBottombar(false)
-        initFab()
+        mMainActivity!!.enableFab(false)
 
         val mOnPreClickListener = OnClickListener<SimpleItem> { _, _, _, i ->
             Log.d(TAG, "onClick: 2")
-//            if (mMainActivity!!.materialCab!!.isActive) {
             if (MaterialCab.isActive) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
                     return@OnClickListener true
@@ -119,7 +96,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                         .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected)
                 cantoAdapter.notifyAdapterItemChanged(i)
                 if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
-//                    mMainActivity!!.materialCab!!.finish()
                     MaterialCab.destroy()
                 else
                     startCab()
@@ -141,19 +117,16 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         val mOnPreLongClickListener = OnLongClickListener<SimpleItem> { _, _, _, i ->
-            //            if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
             if (MaterialCab.isActive) return@OnLongClickListener true
             if (!mMainActivity!!.isOnTablet) {
                 activity!!.toolbar_layout!!.setExpanded(true, true)
             }
-//            mMainActivity!!.materialCab!!.start(this@FavouritesActivity)
             cantoAdapter.getAdapterItem(i).withSetSelected(true)
             cantoAdapter.notifyAdapterItemChanged(i)
             startCab()
             true
         }
 
-//        cantoAdapter = FastItemAdapter()
         cantoAdapter
                 .withSelectable(true)
                 .withMultiSelect(true)
@@ -166,7 +139,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
 
         favouritesList!!.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
@@ -210,12 +182,22 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.help_menu, menu)
+                activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
+            R.id.list_reset -> {
+                SimpleDialogFragment.Builder(
+                        (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
+                        .title(R.string.dialog_reset_favorites_title)
+                        .content(R.string.dialog_reset_favorites_desc)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
+                        .show()
+                return true
+            }
             R.id.action_help -> {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
@@ -242,62 +224,12 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                             mDao.resetFavorites()
                         })
                         .start()
-        }//                updateFavouritesList();
+        }
     }
 
     override fun onNegative(tag: String) {}
 
     override fun onNeutral(tag: String) {}
-
-//    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-//        cab.setMenu(R.menu.menu_delete)
-//        cab.setTitle("")
-//        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .colorRes(android.R.color.white)
-//        actionModeOk = false
-//        return true
-//    }
-//
-//    override fun onCabItemClicked(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.action_remove_item -> {
-//                //        int iRemoved = cantoAdapter.getSelectedItems().size();
-//                val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
-//                        .selectedItems
-//                        .size
-//                Log.d(TAG, "onCabItemClicked: $iRemoved")
-//                val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
-//                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-//
-//                mUndoHelper!!.remove(
-//                        activity!!.main_content,
-//                        resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
-//                        getString(android.R.string.cancel).toUpperCase(),
-//                        Snackbar.LENGTH_SHORT,
-//                        selectedItems)
-////                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-//                actionModeOk = true
-//                mMainActivity!!.materialCab!!.finish()
-//                return true
-//            }
-//        }
-//        return false
-//    }
-//
-//    override fun onCabFinished(cab: MaterialCab): Boolean {
-//        Log.d(TAG, "onCabFinished: $actionModeOk")
-//        if (!actionModeOk) {
-//            try {
-//                (cantoAdapter!!.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-//            } catch (e: Exception) {
-//                Crashlytics.logException(e)
-//            }
-//
-//        }
-//        return true
-//    }
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
@@ -382,39 +314,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
                                 FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
                                 no_favourites!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-//                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
-                                enableFab(cantoAdapter.adapterItemCount != 0)
                             }
                         })
-    }
-
-    private fun enableFab(enabled: Boolean) {
-//        if (mMainActivity!!.isOnTablet)
-//            if (enabled) fab_pager.show() else fab_pager.hide()
-//        else
-        mMainActivity!!.enableFab(enabled)
-    }
-
-    private fun initFab() {
-        val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                .color(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
-        val onClick = View.OnClickListener {
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
-                    .title(R.string.dialog_reset_favorites_title)
-                    .content(R.string.dialog_reset_favorites_desc)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
-                    .show()
-        }
-//        if (mMainActivity!!.isOnTablet) {
-//            fab_pager.setImageDrawable(icon)
-//            fab_pager.setOnClickListener(onClick)
-//        } else
-        mMainActivity!!.initFab(icon, onClick)
     }
 
     companion object {

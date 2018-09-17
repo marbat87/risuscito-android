@@ -321,7 +321,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         enableFab(true)
         val doneDrawable = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_check)
                 .sizeDp(24)
-                .paddingDp(2)
+                .paddingDp(4)
         TapTargetSequence(activity!!)
                 .continueOnCancel(true)
                 .targets(

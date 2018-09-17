@@ -43,7 +43,6 @@ class GeneralIndex : Fragment() {
         val tabs = activity!!.material_tabs
         tabs.visibility = View.VISIBLE
         mMainActivity!!.enableFab(false)
-//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableBottombar(false)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(activity)

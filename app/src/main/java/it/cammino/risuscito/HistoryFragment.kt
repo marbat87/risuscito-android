@@ -3,7 +3,6 @@ package it.cammino.risuscito
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -20,13 +19,11 @@ import android.widget.Toast
 import androidx.core.content.edit
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.fastadapter_extensions.UndoHelper
-import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -85,10 +82,10 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mMainActivity!!.enableBottombar(false)
-        initFab()
+        mMainActivity!!.enableFab(false)
+
         val mOnPreClickListener = OnClickListener<SimpleHistoryItem> { _, iAdapter, item, i ->
             Log.d(TAG, "mOnPreClickListener: MaterialCab.isActive ${MaterialCab.isActive}")
-//            if (mMainActivity!!.materialCab!!.isActive) {
             if (MaterialCab.isActive) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
                     return@OnClickListener true
@@ -101,7 +98,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 if ((cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                                 .size == 0)
-//                    mMainActivity!!.materialCab!!.finish()
                     MaterialCab.destroy()
                 else
                     startCab()
@@ -124,18 +120,15 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         val mOnPreLongClickListener = OnLongClickListener<SimpleHistoryItem> { _, _, _, i ->
-            //            if (mMainActivity!!.materialCab!!.isActive) return@OnLongClickListener true
             if (MaterialCab.isActive) return@OnLongClickListener true
             if (!mMainActivity!!.isOnTablet)
                 activity!!.toolbar_layout!!.setExpanded(true, true)
-//            mMainActivity!!.materialCab!!.start(this@HistoryFragment)
             cantoAdapter.getAdapterItem(i).withSetSelected(true)
             cantoAdapter.notifyAdapterItemChanged(i)
             startCab()
             true
         }
 
-//        cantoAdapter = FastItemAdapter()
         cantoAdapter
                 .withSelectable(true)
                 .withMultiSelect(true)
@@ -145,7 +138,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .withOnPreLongClickListener(mOnPreLongClickListener)
                 .setHasStableIds(true)
         cantoAdapter.set(mCronologiaViewModel!!.titoli)
-//        FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel!!.titoli)
         (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
         class.java))!!.deleteAllSelectedItems()
 
@@ -197,12 +189,22 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.help_menu, menu)
+                activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
+            R.id.list_reset -> {
+                SimpleDialogFragment.Builder(
+                        (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
+                        .title(R.string.dialog_reset_history_title)
+                        .content(R.string.dialog_reset_history_desc)
+                        .positiveButton(android.R.string.yes)
+                        .negativeButton(android.R.string.no)
+                        .show()
+                return true
+            }
             R.id.action_help -> {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
@@ -235,56 +237,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNeutral(tag: String) {}
 
-//    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-//        Log.d(TAG, "onCabCreated: ")
-//        cab.setMenu(R.menu.menu_delete)
-//        cab.setTitle("")
-//        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .colorRes(android.R.color.white)
-//        actionModeOk = false
-//        return true
-//    }
-//
-//    override fun onCabItemClicked(item: MenuItem): Boolean {
-//        Log.d(TAG, "onCabCreated: ")
-//        when (item.itemId) {
-//            R.id.action_remove_item -> {
-//                val iRemoved = (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
-//                        .selectedItems
-//                        .size
-//                Log.d(TAG, "onCabItemClicked: $iRemoved")
-//                val selectedItems = (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
-//                (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-//                mUndoHelper!!.remove(
-//                        activity!!.findViewById(R.id.main_content),
-//                        resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
-//                        getString(android.R.string.cancel).toUpperCase(),
-//                        Snackbar.LENGTH_SHORT,
-//                        selectedItems)
-////                (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-//                actionModeOk = true
-//                mMainActivity!!.materialCab!!.finish()
-//                return true
-//            }
-//        }
-//        return false
-//    }
-//
-//    override fun onCabFinished(cab: MaterialCab): Boolean {
-//        Log.d(TAG, "onCabFinished: $actionModeOk")
-//        if (!actionModeOk) {
-//            try {
-//                (cantoAdapter!!.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-//            } catch (e: Exception) {
-//                Crashlytics.logException(e)
-//            }
-//
-//        }
-//        return true
-//    }
-
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
             val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
@@ -295,7 +247,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_delete
             backgroundColor = themeUtils.primaryColorDark()
-//            closeDrawableRes = R.drawable.back_arrow
 
             onCreate { _, _ ->
                 Log.d(TAG, "MaterialCab onCreate")
@@ -365,42 +316,10 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                             .withSelectedColor(themeUtils.primaryColorDark())
                                     mCronologiaViewModel!!.titoli.add(sampleItem)
                                 }
-//                                FastAdapterDiffUtil.set(cantoAdapter, mCronologiaViewModel!!.titoli)
                                 cantoAdapter.set(mCronologiaViewModel!!.titoli)
                                 no_history!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-//                                mMainActivity!!.enableFab(cantoAdapter!!.adapterItemCount != 0)
-                                enableFab(cantoAdapter.adapterItemCount != 0)
                             }
                         })
-    }
-
-    private fun enableFab(enabled: Boolean) {
-//        if (mMainActivity!!.isOnTablet)
-//            if (enabled) fab_pager.show() else fab_pager.hide()
-//        else
-        mMainActivity!!.enableFab(enabled)
-    }
-
-    private fun initFab() {
-        val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                .color(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
-        val onClick = View.OnClickListener {
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
-                    .title(R.string.dialog_reset_history_title)
-                    .content(R.string.dialog_reset_history_desc)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
-                    .show()
-        }
-//        if (mMainActivity!!.isOnTablet) {
-//            fab_pager.setImageDrawable(icon)
-//            fab_pager.setOnClickListener(onClick)
-//        } else
-        mMainActivity!!.initFab(icon, onClick)
     }
 
     companion object {
