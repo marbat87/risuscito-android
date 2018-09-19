@@ -183,6 +183,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
+        menu!!.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -314,6 +315,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
                                 FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
                                 no_favourites!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+                                activity!!.invalidateOptionsMenu()
                             }
                         })
     }

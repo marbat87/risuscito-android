@@ -190,6 +190,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
+        menu!!.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -318,6 +319,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 }
                                 cantoAdapter.set(mCronologiaViewModel!!.titoli)
                                 no_history!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+                                activity!!.invalidateOptionsMenu()
                             }
                         })
     }
