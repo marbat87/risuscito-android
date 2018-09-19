@@ -130,9 +130,7 @@ class CantiParolaFragment : Fragment() {
         val parent = v.parent.parent as View
         if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
             if (mSwhitchMode) {
-//                mSwhitchMode = false
                 actionModeOk = true
-//                mMainActivity!!.materialCab!!.finish()
                 MaterialCab.destroy()
                 Thread(
                         Runnable {
@@ -144,7 +142,6 @@ class CantiParolaFragment : Fragment() {
                         })
                         .start()
             } else {
-//                if (!mMainActivity!!.materialCab!!.isActive) {
                 if (!MaterialCab.isActive) {
                     val bundle = Bundle()
                     bundle.putInt("fromAdd", 1)
@@ -160,7 +157,6 @@ class CantiParolaFragment : Fragment() {
             }
         } else {
             if (!mSwhitchMode)
-//                if (mMainActivity!!.materialCab!!.isActive) {
                 if (MaterialCab.isActive) {
                     posizioneDaCanc = Integer.valueOf(
                             (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
@@ -175,9 +171,7 @@ class CantiParolaFragment : Fragment() {
                 } else
                     openPagina(v)
             else {
-//                mSwhitchMode = false
                 actionModeOk = true
-//                mMainActivity!!.materialCab!!.finish()
                 MaterialCab.destroy()
                 Thread(
                         Runnable {
@@ -216,10 +210,10 @@ class CantiParolaFragment : Fragment() {
         mSwhitchMode = false
 
         if (!isViewShown) {
-//            if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
             if (MaterialCab.isActive) MaterialCab.destroy()
             val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
+            (parentFragment as CustomLists).initMaterialSheet(false)
         }
 
         return rootView
@@ -260,17 +254,16 @@ class CantiParolaFragment : Fragment() {
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-//                if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
                 if (MaterialCab.isActive) MaterialCab.destroy()
                 val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
+                (parentFragment as CustomLists).initMaterialSheet(false)
             } else
                 isViewShown = false
         }
     }
 
     override fun onDestroy() {
-//        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
         if (MaterialCab.isActive) MaterialCab.destroy()
         super.onDestroy()
     }
@@ -349,14 +342,12 @@ class CantiParolaFragment : Fragment() {
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-//        if (mMainActivity!!.materialCab!!.isActive) mMainActivity!!.materialCab!!.finish()
         if (MaterialCab.isActive) MaterialCab.destroy()
         val parent = view.parent.parent as View
         longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())
         longClickedChild = Integer.valueOf(view.item_tag.text.toString())
         if (!mMainActivity!!.isOnTablet)
             activity!!.toolbar_layout!!.setExpanded(true, true)
-//        mMainActivity!!.materialCab!!.start(this@CantiParolaFragment)
         startCab(false)
     }
 
@@ -413,94 +404,6 @@ class CantiParolaFragment : Fragment() {
                 .show()
     }
 
-//    override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-//        Log.d(TAG, "onCabCreated: ")
-//        cab.setMenu(R.menu.menu_actionmode_lists)
-//        cab.setTitle("")
-//        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
-//        cantoAdapter!!.notifyItemChanged(longclickedPos)
-//        menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_shuffle)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .colorRes(android.R.color.white)
-//        menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-//                .sizeDp(24)
-//                .paddingDp(2)
-//                .colorRes(android.R.color.white)
-//        actionModeOk = false
-//        return true
-//    }
-//
-//    override fun onCabItemClicked(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.action_remove_item -> {
-//                Thread(
-//                        Runnable {
-//                            val positionToDelete = CustomList()
-//                            positionToDelete.id = 1
-//                            positionToDelete.position = posizioneDaCanc
-//                            positionToDelete.idCanto = idDaCanc
-//                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-//                            mDao.deletePosition(positionToDelete)
-//                        })
-//                        .start()
-//
-//                actionModeOk = true
-//                mMainActivity!!.materialCab!!.finish()
-//                Snackbar.make(
-//                        activity!!.findViewById<View>(R.id.main_content),
-//                        R.string.song_removed,
-//                        Snackbar.LENGTH_LONG)
-//                        .setAction(
-//                                getString(android.R.string.cancel).toUpperCase()
-//                        ) {
-//                            Thread(
-//                                    Runnable {
-//                                        val positionToInsert = CustomList()
-//                                        positionToInsert.id = 1
-//                                        positionToInsert.position = posizioneDaCanc
-//                                        positionToInsert.idCanto = idDaCanc
-//                                        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-//                                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-//                                        mDao.insertPosition(positionToInsert)
-//                                    })
-//                                    .start()
-//                        }
-//                        .setActionTextColor(themeUtils.accentColor())
-//                        .show()
-//                mSwhitchMode = false
-//                return true
-//            }
-//            R.id.action_switch_item -> {
-//                mSwhitchMode = true
-//                mMainActivity!!.materialCab!!.setTitleRes(R.string.switch_started)
-//                Toast.makeText(
-//                        activity,
-//                        resources.getString(R.string.switch_tooltip),
-//                        Toast.LENGTH_SHORT)
-//                        .show()
-//                return true
-//            }
-//        }
-//        return true
-//    }
-//
-//    override fun onCabFinished(cab: MaterialCab): Boolean {
-//        Log.d(TAG, "onCabFinished: ")
-//        mSwhitchMode = false
-//        if (!actionModeOk) {
-//            try {
-//                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
-//                cantoAdapter!!.notifyItemChanged(longclickedPos)
-//            } catch (e: Exception) {
-//                Crashlytics.log("Possibile crash - longclickedPos: $longclickedPos")
-//                Crashlytics.logException(e)
-//            }
-//
-//        }
-//        return true
-//    }
-
     private fun startCab(switchMode: Boolean) {
         mSwhitchMode = switchMode
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
@@ -512,7 +415,6 @@ class CantiParolaFragment : Fragment() {
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_actionmode_lists
             backgroundColor = themeUtils.primaryColorDark()
-//            closeDrawableRes = R.drawable.mcab_nav_close
 
             onCreate { _, menu ->
                 Log.d(TAG, "MaterialCab onCreate")
@@ -566,11 +468,9 @@ class CantiParolaFragment : Fragment() {
                                 }
                                 .setActionTextColor(themeUtils.accentColor())
                                 .show()
-//                        mSwhitchMode = false
                         true
                     }
                     R.id.action_switch_item -> {
-//                        mSwhitchMode = true
                         startCab(true)
                         Toast.makeText(
                                 activity,

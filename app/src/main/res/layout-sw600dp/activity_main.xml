@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,11 +17,11 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_marginTop="?actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
 
-        <include layout="@layout/common_circle_progress"/>
+        <include layout="@layout/common_circle_progress" />
 
         <FrameLayout
             android:id="@+id/main_frame"
@@ -36,26 +36,26 @@
                 <View
                     android:id="@+id/tabletToolbarBackground"
                     android:layout_width="match_parent"
-                    android:background="?colorPrimary"
-                    android:layout_height="?actionBarSize" />
+                    android:layout_height="?actionBarSize"
+                    android:background="?colorPrimary" />
 
                 <it.cammino.risuscito.ui.BoundedCardView
                     android:id="@+id/activity_main__frame_master"
-                    risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
+                    risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
                     risuscito:cardCornerRadius="0dp"
                     risuscito:cardElevation="@dimen/card_elevation"
-                    risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab">
+                    risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
 
                     <android.support.design.widget.TabLayout
-                        android:layout_height="48dp"
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
                         android:id="@+id/material_tabs"
-                        android:elevation="@dimen/design_appbar_elevation"
                         style="@style/Risuscito_tabstyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:elevation="@dimen/design_appbar_elevation"
+                        android:visibility="gone"
                         tools:targetApi="lollipop" />
 
                     <FrameLayout
@@ -66,15 +66,46 @@
                 </it.cammino.risuscito.ui.BoundedCardView>
 
                 <!--<include layout="@layout/common_fab"/>-->
-                <android.support.design.widget.FloatingActionButton
-                    xmlns:android="http://schemas.android.com/apk/res/android"
+                <!--<android.support.design.widget.FloatingActionButton-->
+                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:id="@+id/fab_pager"-->
+                <!--android:layout_gravity="bottom|end"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
+                <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
+                <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
+
+                <it.cammino.risuscito.ui.FabSheet
                     android:id="@+id/fab_pager"
-                    android:layout_gravity="bottom|end"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
                     android:layout_marginBottom="@dimen/fab_margin_coord"
                     android:layout_marginEnd="@dimen/fab_margin_coord"
                     android:layout_marginRight="@dimen/fab_margin_coord" />
+
+                <!-- Overlay that dims the screen -->
+                <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
+                    android:id="@+id/dim_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="4dp"
+                    tools:ignore="UnusedAttribute" />
+
+                <!-- Circular reveal container for the sheet -->
+                <io.codetail.widget.RevealLinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom|end"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    tools:ignore="UnusedAttribute">
+
+                    <!-- Sheet that contains your items -->
+                    <include layout="@layout/main_fab_sheet" />
+
+                </io.codetail.widget.RevealLinearLayout>
 
             </android.support.design.widget.CoordinatorLayout>
 

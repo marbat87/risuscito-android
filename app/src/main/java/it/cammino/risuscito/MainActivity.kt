@@ -34,6 +34,8 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.gordonwong.materialsheetfab.MaterialSheetFab
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.crossfader.Crossfader
 import com.mikepenz.crossfader.view.ICrossFadeSlidingPaneLayout
@@ -49,10 +51,12 @@ import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
+import it.cammino.risuscito.ui.FabSheet
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
+import kotlinx.android.synthetic.main.main_fab_sheet.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.lang.ref.WeakReference
 import java.util.*
@@ -75,6 +79,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mSignInClient: GoogleSignInClient? = null
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
+    private var materialSheetFab: MaterialSheetFab<FabSheet>? = null
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -139,10 +144,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
-//        mRegularFont = Typeface.createFromAsset(assets, "fonts/ font xml" +
-//                "Roboto-Regular.ttf")
         mRegularFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_regular)
-//        mMediumFont = Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
         mMediumFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_medium)
 
         val icon = IconicsDrawable(this)
@@ -186,6 +188,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .commit()
         }
         if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
+
+        // Initialize material sheet FAB
+        materialSheetFab = MaterialSheetFab(fab_pager, fab_sheet, dim_overlay,
+                ContextCompat.getColor(this@MainActivity, R.color.floating_background), themeUtils!!.accentColor())
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -485,6 +491,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
+
+        if (materialSheetFab!!.isSheetVisible) {
+            materialSheetFab!!.hideSheet()
+            return
+        }
+
         if (isOnTablet) {
             if (crossFader != null && crossFader!!.isCrossFaded()) {
                 crossFader!!.crossFade()
@@ -498,35 +510,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         backToHome()
-//        val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
-//        if (myFragment != null && myFragment.isVisible) {
-//            finish()
-//            return
-//        }
-//
-//        if (isOnTablet)
-//            mMiniDrawer!!.setSelection(R.id.navigation_home.toLong())
-//        else {
-//            toolbar_layout!!.setExpanded(true, true)
-//        }
-//        drawer!!.setSelection(R.id.navigation_home.toLong())
     }
 
-//    override fun onColorSelection(
-//            colorChooserDialog: ColorChooserDialog, @ColorInt color: Int) {
-//        if (colorChooserDialog.isAccentMode)
-//            themeUtils!!.accentColor(color)
-//        else
-//            themeUtils!!.primaryColor(color)
-
-//        recreate()
-//    }
-
-//    override fun onColorChooserDismissed(dialog: ColorChooserDialog) {}
-
     // converte gli accordi salvati dalla lingua vecchia alla nuova
-    //  private void convertTabs(SQLiteDatabase db, String conversion) {
-    //  private void convertTabs(String conversion) {
     private fun convertTabs() {
         val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
 
@@ -567,8 +553,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
-    //  private void convertiBarre(SQLiteDatabase db, String conversion) {
-    //  private void convertiBarre(String conversion) {
     private fun convertiBarre() {
         val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
 
@@ -609,34 +593,72 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun setupToolbarTitle(titleResId: Int) {
-//        risuscito_toolbar!!.main_toolbarTitle.setText(titleResId)
         risuscito_toolbar!!.title = getString(titleResId)
     }
 
     @Suppress("PLUGIN_WARNING")
     fun enableFab(enable: Boolean) {
-//        if (!isOnTablet) {
         Log.d(TAG, "enableFab: $enable")
-//        val mFab = findViewById<FloatingActionButton>(R.id.fab_pager)
-        if (enable)
-            fab_pager.show()
-        else
-            fab_pager.hide()
-//        }
+        if (enable) {
+            if (materialSheetFab!!.isSheetVisible)
+                hideMaterialSheet()
+            else
+                fab_pager.show()
+        } else
+            materialSheetFab!!.hideSheetThenFab()
+//            fab_pager.hide()
     }
 
-    @Suppress("PLUGIN_WARNING")
     fun initFab(icon: Drawable, click: View.OnClickListener) {
         Log.d(TAG, "initFab()")
-        enableFab(false)
+//        enableFab(false)
         fab_pager.setImageDrawable(icon)
         fab_pager.setOnClickListener(click)
-        enableFab(true)
+        if (materialSheetFab!!.isSheetVisible) {
+            materialSheetFab!!.setEventListener(object : MaterialSheetFabEventListener() {
+                override fun onSheetHidden() {
+                    Log.d(TAG, "onSheetHidden")
+                    materialSheetFab = MaterialSheetFab(fab_pager, fab_sheet, dim_overlay,
+                            ContextCompat.getColor(this@MainActivity, R.color.floating_background), themeUtils!!.accentColor())
+                    enableFab(false)
+                    fab_pager.setImageDrawable(icon)
+                    fab_pager.setOnClickListener(click)
+                    enableFab(true)
+                }
+            })
+            materialSheetFab!!.hideSheet()
+        } else {
+            enableFab(false)
+            fab_pager.setImageDrawable(icon)
+            fab_pager.setOnClickListener(click)
+            enableFab(true)
+        }
+//        enableFab(true)
     }
 
-    @Suppress("PLUGIN_WARNING")
+    fun initMaterialSheetElements(customList: Boolean) {
+        custom_list_section.visibility = if (customList) View.VISIBLE else View.GONE
+    }
+
+    fun initMaterialSheetListeners(pulisciListener: View.OnClickListener, addListaListener: View.OnClickListener, condividiListener: View.OnClickListener, fileListener: View.OnClickListener, editListaListener: View.OnClickListener, deleteListaListener: View.OnClickListener) {
+        fab_pulisci.setOnClickListener(pulisciListener)
+        fab_add_lista.setOnClickListener(addListaListener)
+        fab_condividi.setOnClickListener(condividiListener)
+        fab_condividi_file.setOnClickListener(fileListener)
+        fab_edit_lista.setOnClickListener(editListaListener)
+        fab_delete_lista.setOnClickListener(deleteListaListener)
+    }
+
     fun getFab(): FloatingActionButton {
         return fab_pager
+    }
+
+    fun showMaterialSheet() {
+        materialSheetFab!!.showSheet()
+    }
+
+    fun hideMaterialSheet() {
+        materialSheetFab!!.hideSheet()
     }
 
     fun enableBottombar(enabled: Boolean) {
@@ -664,11 +686,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addOnCompleteListener {
                     updateUI(false)
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-//                    Snackbar.make(
-//                            findViewById(R.id.main_content),
-//                            R.string.disconnected,
-//                            Snackbar.LENGTH_SHORT)
-//                            .show()
                     Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
@@ -681,11 +698,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addOnCompleteListener {
                     updateUI(false)
                     PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-//                    Snackbar.make(
-//                            findViewById(R.id.main_content),
-//                            R.string.disconnected,
-//                            Snackbar.LENGTH_SHORT)
-//                            .show()
                     Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
@@ -712,11 +724,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
             PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
             if (mViewModel!!.showSnackbar) {
-//                Snackbar.make(
-//                        findViewById(R.id.main_content),
-//                        getString(R.string.connected_as, acct!!.displayName),
-//                        Snackbar.LENGTH_SHORT)
-//                        .show()
                 Toast.makeText(this@MainActivity, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
                         .show()
                 mViewModel!!.showSnackbar = false
@@ -724,14 +731,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             updateUI(true)
         } else {
             // Sign in failed, handle failure and update UI
-//            Snackbar.make(
-//                    findViewById(R.id.main_content),
-//                    getString(
-//                            R.string.login_failed,
-//                            -1,
-//                            task.exception!!.localizedMessage),
-//                    Snackbar.LENGTH_SHORT)
-//                    .show()
             Toast.makeText(this@MainActivity, getString(
                     R.string.login_failed,
                     -1,
@@ -888,13 +887,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun doInBackground(vararg sUrl: Void): Void? {
             activityWeakReference.get()!!.intent.removeExtra(Utility.DB_RESET)
-//            val listaCanti = DatabaseCanti(activityWeakReference.get())
-//            val db = listaCanti.readableDatabase
-//            listaCanti.reCreateDatabse(db)
-//            db.close()
-//            listaCanti.close()
-//            RisuscitoDatabase.getInstance(activityWeakReference.get()!!)
-//                    .recreateDB(activityWeakReference.get()!!)
             activityWeakReference.get()!!.convertTabs()
             activityWeakReference.get()!!.convertiBarre()
             return null

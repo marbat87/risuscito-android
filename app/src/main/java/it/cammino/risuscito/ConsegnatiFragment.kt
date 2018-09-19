@@ -364,10 +364,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(completedBRec)
     }
 
-    override fun onDestroy() {
-        enableBottombar(false)
-        super.onDestroy()
-    }
+//    override fun onDestroy() {
+//        enableBottombar(false)
+//        enableFab(false)
+//        super.onDestroy()
+//    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -441,9 +442,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun enableFab(enabled: Boolean) {
-//        if (mMainActivity!!.isOnTablet)
-//            if (enabled) fab_pager.show() else fab_pager.hide()
-//        else
         mMainActivity!!.enableFab(enabled)
     }
 

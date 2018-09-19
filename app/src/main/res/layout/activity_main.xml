@@ -47,7 +47,16 @@
     <include layout="@layout/common_bottom_bar" />
 
     <!--<include layout="@layout/common_fab"/>-->
-    <android.support.design.widget.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--<android.support.design.widget.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/fab_pager"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
+    <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
+    <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
+
+    <it.cammino.risuscito.ui.FabSheet
         android:id="@+id/fab_pager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,5 +64,22 @@
         android:layout_marginBottom="@dimen/fab_margin_coord"
         android:layout_marginEnd="@dimen/fab_margin_coord"
         android:layout_marginRight="@dimen/fab_margin_coord" />
+
+    <!-- Overlay that dims the screen -->
+    <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
+        android:id="@+id/dim_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Circular reveal container for the sheet -->
+    <io.codetail.widget.RevealLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|end"
+        android:orientation="vertical">
+
+        <!-- Sheet that contains your items -->
+        <include layout="@layout/main_fab_sheet" />
+    </io.codetail.widget.RevealLinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
