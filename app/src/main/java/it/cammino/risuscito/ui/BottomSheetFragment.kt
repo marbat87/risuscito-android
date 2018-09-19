@@ -30,52 +30,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bottom_sheet, container, false)
-
-//        val showTitle = arguments!!.getBoolean("showTitle")
-//
-//        if (showTitle)
-//            sheet_title.setText(arguments!!.getInt("title"))
-//        else
-//            sheet_title.text = ""
-//        sheet_title_area.visibility = if (showTitle) View.VISIBLE else View.GONE
-
-//        val intent = arguments!!.getParcelable<Intent>("intent")
-//        val pm = activity!!.packageManager
-//
-//        val list = pm.queryIntentActivities(intent, 0)
-//
-//        val lastApp = PreferenceManager
-//                .getDefaultSharedPreferences(activity)
-//                .getString(Utility.ULTIMA_APP_USATA, "")
-//        val lastAppInfo: ResolveInfo? = list.indices
-//                .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
-//                ?.let { list.removeAt(it) }
-//
-//        if (lastAppInfo != null)
-//            list.add(0, lastAppInfo)
-//
-//        val mList = list.map { BottomSheetItem().withItem(it) }
-//
-//        val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
-//            PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
-//
-//            val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
-//            if (intent != null) {
-//                val newIntent = intent.clone() as Intent
-//                newIntent.component = name
-//                activity!!.startActivity(newIntent)
-//                dialog.dismiss()
-//            }
-//            true
-//        }
-//
-//        val adapter = FastItemAdapter<BottomSheetItem>()
-//        adapter.add(mList)
-//        adapter.withOnClickListener(mOnClickListener)
-//        shareList.adapter = adapter
-//        shareList.layoutManager = GridLayoutManager(activity, 3)
-
-//        return view
     }
 
     /**

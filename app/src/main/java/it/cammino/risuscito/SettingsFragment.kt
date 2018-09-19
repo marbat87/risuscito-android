@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
-import android.support.v7.preference.SwitchPreferenceCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View

@@ -17,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.turingtechnologies.materialscrollbar.CustomIndicator
@@ -40,7 +39,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     private var mCantiViewModel: SalmiIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-//    private var titoloDaAgg: String? = null
+    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLastClickTime: Long = 0

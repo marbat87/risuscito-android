@@ -27,7 +27,6 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
     var color: ColorHolder? = null
         private set
     private var numSalmo: Int = 0
-        private set
     private var normalizedTitle: String? = null
     private var filter: String? = null
     var id: Int = 0
