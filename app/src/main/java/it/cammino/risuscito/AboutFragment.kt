@@ -35,10 +35,6 @@ class AboutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_about)
-        val mThanksClickListener = View.OnClickListener {
-            startActivity(Intent(mMainActivity, ThanksActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
-        }
 
         val mChangeLogClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
@@ -84,7 +80,6 @@ class AboutFragment : Fragment() {
                         //                        .addHelpAction((Intent) null)
                         .addChangeLogAction(mChangeLogClickListener)
                         //                        .addRemoveAdsAction((Intent) null)
-                        .addDonateAction(mThanksClickListener)
                         .addPrivacyPolicyAction("http://marbat87.altervista.org/privacy_policy.html")
                         .setShowAsCard(false)
                         .build())
