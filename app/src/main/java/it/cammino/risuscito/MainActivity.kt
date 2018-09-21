@@ -55,7 +55,6 @@ import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_pagina_render.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.lang.ref.WeakReference
@@ -487,7 +486,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
 
-        if (fab_canti.isOpen) {
+        if (fab_pager.isOpen) {
             fab_pager.close()
             return
         }
