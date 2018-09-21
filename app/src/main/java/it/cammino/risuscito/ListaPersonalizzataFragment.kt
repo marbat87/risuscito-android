@@ -167,7 +167,7 @@ class ListaPersonalizzataFragment : Fragment() {
             if (MaterialCab.isActive) MaterialCab.destroy()
             val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
-            (parentFragment as CustomLists).initMaterialSheet(true)
+            (parentFragment as CustomLists).initFabOptions(true)
         }
 
         return rootView
@@ -219,7 +219,7 @@ class ListaPersonalizzataFragment : Fragment() {
                 if (MaterialCab.isActive) MaterialCab.destroy()
                 val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
-                (parentFragment as CustomLists).initMaterialSheet(true)
+                (parentFragment as CustomLists).initFabOptions(true)
             } else
                 isViewShown = false
         }

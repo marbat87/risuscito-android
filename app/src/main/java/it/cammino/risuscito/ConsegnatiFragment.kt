@@ -467,7 +467,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 //            fab_pager.setImageDrawable(icon)
 //            fab_pager.setOnClickListener(onClick)
 //        } else
-        mMainActivity!!.initFab(icon, onClick)
+        mMainActivity!!.initFab(false, icon, onClick, null, false)
     }
 
     override fun onPositive(tag: String) {}

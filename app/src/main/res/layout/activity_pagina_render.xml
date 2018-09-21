@@ -183,7 +183,7 @@
     <android.support.design.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
         android:theme="@style/ToolbarTheme"
         risuscito:backgroundTint="?colorPrimary"
@@ -241,210 +241,19 @@
     <!--android:layout_height="wrap_content"-->
     <!--risuscito:layout_anchor="@id/bottom_bar" />-->
 
-    <it.cammino.risuscito.ui.FabSheet
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim_overlay" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_canti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin_bottombar"
-        android:layout_marginEnd="@dimen/fab_margin_coord"
-        android:layout_marginRight="@dimen/fab_margin_coord" />
-
-    <!-- Overlay that dims the screen -->
-    <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
-        android:id="@+id/dim_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Circular reveal container for the sheet -->
-    <io.codetail.widget.RevealLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom|end"
-        android:orientation="vertical">
-
-        <!-- Sheet that contains your items -->
-        <android.support.design.card.MaterialCardView
-            android:id="@+id/fab_sheet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <!-- Sheet items -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:id="@+id/fab_fullscreen_on"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/myListPreferredItemHeightMedium"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelector"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-fullscreen"
-                        risuscito:ico_padding="0dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:text="@string/fullscreen"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/fab_sound_off"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/myListPreferredItemHeightMedium"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelector"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:id="@+id/sound_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-headset-off"
-                        risuscito:ico_padding="0dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix" />
-
-                    <TextView
-                        android:id="@+id/text_sound_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:text="@string/audio_off"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/save_file"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/myListPreferredItemHeightMedium"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelector"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:id="@+id/save_file_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-download"
-                        risuscito:ico_padding="0dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix" />
-
-                    <TextView
-                        android:id="@+id/save_file_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:text="@string/only_link_title"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/fab_favorite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/myListPreferredItemHeightMedium"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelector"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:id="@+id/fab_favorite_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-heart"
-                        risuscito:ico_padding="0dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix" />
-
-                    <TextView
-                        android:id="@+id/fab_favorite_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:text="@string/favorite_off"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-        </android.support.design.card.MaterialCardView>
-    </io.codetail.widget.RevealLinearLayout>
+        android:layout_marginBottom="?actionBarSize"
+        risuscito:sdExpansionMode="top"
+        risuscito:sdOverlayLayout="@id/overlay" />
 
 </merge>

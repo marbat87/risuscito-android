@@ -36,7 +36,7 @@
                 <View
                     android:id="@+id/tabletToolbarBackground"
                     android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize"
+                    android:layout_height="64dp"
                     android:background="?colorPrimary" />
 
                 <!--<android.support.design.widget.FloatingActionButton-->
@@ -48,36 +48,22 @@
                 <!--risuscito:layout_anchor="@id/tabletToolbarBackground"-->
                 <!--risuscito:layout_anchorGravity="bottom|right|end" />-->
 
-                <it.cammino.risuscito.ui.FabSheet
+                <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+                    android:id="@+id/overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_dim_overlay" />
+
+                <com.leinardi.android.speeddial.SpeedDialView
                     android:id="@+id/fab_pager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="@dimen/fab_margin_coord"
                     android:layout_marginRight="@dimen/fab_margin_coord"
-                    risuscito:layout_anchor="@id/tabletToolbarBackground"
-                    risuscito:layout_anchorGravity="bottom|right|end" />
-
-                <!-- Overlay that dims the screen -->
-                <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
-                    android:id="@+id/dim_overlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:elevation="4dp"
-                    tools:ignore="UnusedAttribute" />
-
-                <!-- Circular reveal container for the sheet -->
-                <io.codetail.widget.RevealLinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:layout_gravity="top|end"
-                    android:elevation="4dp"
-                    android:orientation="vertical"
-                    tools:ignore="UnusedAttribute">
-
-                    <!-- Sheet that contains your items -->
-                    <include layout="@layout/main_fab_sheet" />
-
-                </io.codetail.widget.RevealLinearLayout>
+                    risuscito:sdExpansionMode="bottom"
+                    risuscito:sdOverlayLayout="@id/overlay" />
 
                 <it.cammino.risuscito.ui.BoundedCardView
                     android:id="@+id/activity_main__frame_master"

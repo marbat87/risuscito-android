@@ -18,30 +18,14 @@ class RisuscitoApplication : MultiDexApplication() {
 
         RisuscitoDatabase.getInstance(this)
 
-//        ViewPump.init(ViewPump.builder()
-//                .addInterceptor(CalligraphyInterceptor(
-//                        CalligraphyConfig.Builder()
-//                                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
-//                                .setFontAttrId(R.attr.fontPath)
-//                                .build()))
-//                .build())
-
-//        CalligraphyConfig.initDefault(
-//                CalligraphyConfig.Builder()
-//                        .setDefaultFontPath("fonts/Roboto-Regular.ttf")
-//                        .setFontAttrId(R.attr.fontPath)
-//                        .build())
-
         // initialize and create the image loader logic
         DrawerImageLoader.init(
                 object : AbstractDrawerImageLoader() {
                     override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable, tag: String?) {
-//                        Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
                         Picasso.get().load(uri).placeholder(placeholder).into(imageView)
                     }
 
                     override fun cancel(imageView: ImageView?) {
-//                        Picasso.with(imageView!!.context).cancelRequest(imageView)
                         Picasso.get().cancelRequest(imageView!!)
                     }
                 })

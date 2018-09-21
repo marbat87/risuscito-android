@@ -56,30 +56,18 @@
     <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
     <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
 
-    <it.cammino.risuscito.ui.FabSheet
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim_overlay" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_pager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin_coord"
-        android:layout_marginEnd="@dimen/fab_margin_coord"
-        android:layout_marginRight="@dimen/fab_margin_coord" />
-
-    <!-- Overlay that dims the screen -->
-    <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
-        android:id="@+id/dim_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Circular reveal container for the sheet -->
-    <io.codetail.widget.RevealLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom|end"
-        android:orientation="vertical">
-
-        <!-- Sheet that contains your items -->
-        <include layout="@layout/main_fab_sheet" />
-    </io.codetail.widget.RevealLinearLayout>
+        risuscito:sdExpansionMode="top"
+        risuscito:sdOverlayLayout="@id/overlay" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -220,7 +220,7 @@ class CantiEucarestiaFragment : Fragment() {
             if (MaterialCab.isActive) MaterialCab.destroy()
             val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
-            (parentFragment as CustomLists).initMaterialSheet(false)
+            (parentFragment as CustomLists).initFabOptions(false)
         }
 
         return rootView
@@ -264,7 +264,7 @@ class CantiEucarestiaFragment : Fragment() {
                 if (MaterialCab.isActive) MaterialCab.destroy()
                 val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
-                (parentFragment as CustomLists).initMaterialSheet(false)
+                (parentFragment as CustomLists).initFabOptions(false)
             } else
                 isViewShown = false
         }

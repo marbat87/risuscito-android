@@ -9,6 +9,6 @@
 
     <dimen name="play_pause_padding">14dp</dimen>
 
-    <dimen name="fab_margin_bottombar">64dp</dimen>
+    <dimen name="fab_margin_bottombar">56dp</dimen>
 
 </resources>

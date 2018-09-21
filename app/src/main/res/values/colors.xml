@@ -35,5 +35,6 @@
     </color>
     <color name="chglib_material_color_text_1">@color/primary_text_default_material_light</color>
     <color name="material_divider">@color/md_light_dividers</color>
+    <color name="background_dim_overlay">#44000000</color>
 
 </resources>

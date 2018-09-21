@@ -13,7 +13,7 @@
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
     <dimen name="fab_margin_frame">8dp</dimen>
-    <dimen name="fab_margin_bottombar">72dp</dimen>
+    <dimen name="fab_margin_bottombar">64dp</dimen>
 
     <dimen name="text_min_margin">20dip</dimen>
 

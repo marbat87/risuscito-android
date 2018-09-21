@@ -14,6 +14,7 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -34,8 +35,8 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.gordonwong.materialsheetfab.MaterialSheetFab
-import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.crossfader.Crossfader
 import com.mikepenz.crossfader.view.ICrossFadeSlidingPaneLayout
@@ -51,12 +52,11 @@ import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
-import it.cammino.risuscito.ui.FabSheet
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_pagina_render.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
-import kotlinx.android.synthetic.main.main_fab_sheet.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.lang.ref.WeakReference
 import java.util.*
@@ -79,7 +79,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mSignInClient: GoogleSignInClient? = null
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private var materialSheetFab: MaterialSheetFab<FabSheet>? = null
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -188,10 +187,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .commit()
         }
         if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
-
-        // Initialize material sheet FAB
-        materialSheetFab = MaterialSheetFab(fab_pager, fab_sheet, dim_overlay,
-                ContextCompat.getColor(this@MainActivity, R.color.floating_background), themeUtils!!.accentColor())
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -492,8 +487,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
 
-        if (materialSheetFab!!.isSheetVisible) {
-            materialSheetFab!!.hideSheet()
+        if (fab_canti.isOpen) {
+            fab_pager.close()
             return
         }
 
@@ -596,69 +591,142 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         risuscito_toolbar!!.title = getString(titleResId)
     }
 
-    @Suppress("PLUGIN_WARNING")
+    fun closeFabMenu() {
+        if (fab_pager!!.isOpen)
+            fab_pager!!.close()
+    }
+
+    fun toggleFabMenu() {
+        fab_pager!!.toggle()
+    }
+
     fun enableFab(enable: Boolean) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
-            if (materialSheetFab!!.isSheetVisible)
-                hideMaterialSheet()
-            else
-                fab_pager.show()
-        } else
-            materialSheetFab!!.hideSheetThenFab()
-//            fab_pager.hide()
-    }
+            if (fab_pager!!.isOpen)
+                fab_pager!!.close()
+            else {
+                val params = fab_pager!!.layoutParams as CoordinatorLayout.LayoutParams
+                params.behavior = if (mLUtils!!.isFabScrollingActive) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
+                fab_pager.requestLayout()
+//                fab_pager.show()
+                // This is a workaround for support library bug, call this instead of show() above.
+                fab_pager.show(object : FloatingActionButton.OnVisibilityChangedListener() {
+                    override fun onShown(fab: FloatingActionButton) {
+                        val impl = fab::class.java.getDeclaredField("impl").let {
+                            it.isAccessible = true
+                            it.get(fab)
+                        }
 
-    fun initFab(icon: Drawable, click: View.OnClickListener) {
-        Log.d(TAG, "initFab()")
-//        enableFab(false)
-        fab_pager.setImageDrawable(icon)
-        fab_pager.setOnClickListener(click)
-        if (materialSheetFab!!.isSheetVisible) {
-            materialSheetFab!!.setEventListener(object : MaterialSheetFabEventListener() {
-                override fun onSheetHidden() {
-                    Log.d(TAG, "onSheetHidden")
-                    materialSheetFab = MaterialSheetFab(fab_pager, fab_sheet, dim_overlay,
-                            ContextCompat.getColor(this@MainActivity, R.color.floating_background), themeUtils!!.accentColor())
-                    enableFab(false)
-                    fab_pager.setImageDrawable(icon)
-                    fab_pager.setOnClickListener(click)
-                    enableFab(true)
-                }
-            })
-            materialSheetFab!!.hideSheet()
+                        val implClass = if (Build.VERSION.SDK_INT >= 21) {
+                            impl::class.java.superclass
+                        } else {
+                            impl::class.java
+                        }
+
+                        val scale =
+                                implClass.getDeclaredMethod("setImageMatrixScale", Float::class.java)
+                        scale.isAccessible = true
+                        scale.invoke(impl, 1.0F)
+                    }
+                })
+            }
         } else {
-            enableFab(false)
-            fab_pager.setImageDrawable(icon)
-            fab_pager.setOnClickListener(click)
-            enableFab(true)
+            if (fab_pager!!.isOpen)
+                fab_pager!!.close()
+            fab_pager.hide()
+            val params = fab_pager!!.layoutParams as CoordinatorLayout.LayoutParams
+            params.behavior = SpeedDialView.NoBehavior()
+            fab_pager.requestLayout()
         }
-//        enableFab(true)
     }
 
-    fun initMaterialSheetElements(customList: Boolean) {
-        custom_list_section.visibility = if (customList) View.VISIBLE else View.GONE
-    }
+    fun initFab(optionMenu: Boolean, icon: Drawable, click: View.OnClickListener, action: SpeedDialView.OnActionSelectedListener?, customList: Boolean) {
+        Log.d(TAG, "initFab()")
+        enableFab(false)
+        fab_pager.setMainFabClosedDrawable(icon)
+        enableFab(true)
+        fab_pager.clearActionItems()
 
-    fun initMaterialSheetListeners(pulisciListener: View.OnClickListener, addListaListener: View.OnClickListener, condividiListener: View.OnClickListener, fileListener: View.OnClickListener, editListaListener: View.OnClickListener, deleteListaListener: View.OnClickListener) {
-        fab_pulisci.setOnClickListener(pulisciListener)
-        fab_add_lista.setOnClickListener(addListaListener)
-        fab_condividi.setOnClickListener(condividiListener)
-        fab_condividi_file.setOnClickListener(fileListener)
-        fab_edit_lista.setOnClickListener(editListaListener)
-        fab_delete_lista.setOnClickListener(deleteListaListener)
+        if (optionMenu) {
+            fab_pager.expansionMode = if (mLUtils!!.isFabScrollingActive) (if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
+            val iconColorId = R.color.text_color_secondary
+
+            fab_pager.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this@MainActivity)
+                            .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+                            .colorRes(iconColorId)
+                            .sizeDp(24)
+                            .paddingDp(4))
+                            .setLabel(getString(R.string.button_clean_list))
+                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .create()
+            )
+
+            fab_pager.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this@MainActivity)
+                            .icon(CommunityMaterial.Icon.cmd_plus)
+                            .colorRes(iconColorId)
+                            .sizeDp(24)
+                            .paddingDp(4))
+                            .setLabel(getString(R.string.action_add_list))
+                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .create()
+            )
+
+            fab_pager.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this@MainActivity)
+                            .icon(CommunityMaterial.Icon.cmd_share_variant)
+                            .colorRes(iconColorId)
+                            .sizeDp(24)
+                            .paddingDp(4))
+                            .setLabel(getString(R.string.action_share))
+                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .create()
+            )
+
+            if (customList) {
+                fab_pager.addActionItem(
+                        SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this@MainActivity)
+                                .icon(CommunityMaterial.Icon.cmd_attachment)
+                                .colorRes(iconColorId)
+                                .sizeDp(24)
+                                .paddingDp(4))
+                                .setLabel(getString(R.string.action_share_file))
+                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .create()
+                )
+
+                fab_pager.addActionItem(
+                        SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this@MainActivity)
+                                .icon(CommunityMaterial.Icon.cmd_pencil)
+                                .colorRes(iconColorId)
+                                .sizeDp(24)
+                                .paddingDp(4))
+                                .setLabel(getString(R.string.action_edit_list))
+                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .create()
+                )
+
+                fab_pager.addActionItem(
+                        SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this@MainActivity)
+                                .icon(CommunityMaterial.Icon.cmd_delete)
+                                .colorRes(iconColorId)
+                                .sizeDp(24)
+                                .paddingDp(4))
+                                .setLabel(getString(R.string.action_remove_list))
+                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .create()
+                )
+            }
+            fab_pager.setOnActionSelectedListener(action)
+
+        }
+        fab_pager.mainFab.setOnClickListener(click)
     }
 
     fun getFab(): FloatingActionButton {
-        return fab_pager
-    }
-
-    fun showMaterialSheet() {
-        materialSheetFab!!.showSheet()
-    }
-
-    fun hideMaterialSheet() {
-        materialSheetFab!!.hideSheet()
+        return fab_pager.mainFab
     }
 
     fun enableBottombar(enabled: Boolean) {
@@ -984,7 +1052,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
     }
 
-    fun backToHome() {
+    private fun backToHome() {
         val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
         if (myFragment != null && myFragment.isVisible) {
             finish()
