@@ -1553,35 +1553,40 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun initFabOptions() {
 //        fab_canti.expansionMode = if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         fab_canti.expansionMode = if (mLUtils!!.isFabScrollingActive && mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
-        val iconColorId = R.color.text_color_secondary
+        val iconColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.text_color_secondary)
+        val backgroundColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background)
 
         fab_canti.clearActionItems()
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this@PaginaRenderActivity)
                         .icon(CommunityMaterial.Icon.cmd_fullscreen)
-                        .colorRes(iconColorId)
+                        .color(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))
                         .setLabel(getString(R.string.fullscreen))
-                        .setFabBackgroundColor(ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
                         .create()
         )
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this@PaginaRenderActivity)
                         .icon(if (mostraAudioBool) CommunityMaterial.Icon.cmd_headset_off else CommunityMaterial.Icon.cmd_headset)
-                        .colorRes(iconColorId)
+                        .color(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))
                         .setLabel(getString(if (mostraAudioBool) R.string.audio_off else R.string.audio_on))
-                        .setFabBackgroundColor(ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
                         .create()
         )
 
         val text: String
         val icon = IconicsDrawable(this@PaginaRenderActivity)
-                .colorRes(iconColorId)
+                .color(iconColor)
                 .sizeDp(24)
                 .paddingDp(4)
         if (mDownload) {
@@ -1604,18 +1609,22 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
                         .setLabel(text)
-                        .setFabBackgroundColor(ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
                         .create()
         )
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
                         .icon(if (mViewModel!!.mCurrentCanto!!.favorite == 1) CommunityMaterial.Icon.cmd_heart else CommunityMaterial.Icon.cmd_heart_outline)
-                        .colorRes(iconColorId)
+                        .color(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))
                         .setLabel(getString(if (mViewModel!!.mCurrentCanto!!.favorite == 1) R.string.favorite_off else R.string.favorite_on))
-                        .setFabBackgroundColor(ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
                         .create()
         )
 

@@ -649,38 +649,45 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         if (optionMenu) {
             fab_pager.expansionMode = if (mLUtils!!.isFabScrollingActive) (if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
-            val iconColorId = R.color.text_color_secondary
+            val iconColor = ContextCompat.getColor(this@MainActivity, R.color.text_color_secondary)
+            val backgroundColor = ContextCompat.getColor(this@MainActivity, R.color.floating_background)
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                            .colorRes(iconColorId)
+                            .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.button_clean_list))
-                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
                             .create()
             )
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon.cmd_plus)
-                            .colorRes(iconColorId)
+                            .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.action_add_list))
-                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
                             .create()
             )
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon.cmd_share_variant)
-                            .colorRes(iconColorId)
+                            .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.action_share))
-                            .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
                             .create()
             )
 
@@ -688,33 +695,39 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon.cmd_attachment)
-                                .colorRes(iconColorId)
+                                .color(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_share_file))
-                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .setFabBackgroundColor(backgroundColor)
+                                .setLabelBackgroundColor(backgroundColor)
+                                .setLabelColor(iconColor)
                                 .create()
                 )
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon.cmd_pencil)
-                                .colorRes(iconColorId)
+                                .color(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_edit_list))
-                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .setFabBackgroundColor(backgroundColor)
+                                .setLabelBackgroundColor(backgroundColor)
+                                .setLabelColor(iconColor)
                                 .create()
                 )
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon.cmd_delete)
-                                .colorRes(iconColorId)
+                                .color(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_remove_list))
-                                .setFabBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.floating_background))
+                                .setFabBackgroundColor(backgroundColor)
+                                .setLabelBackgroundColor(backgroundColor)
+                                .setLabelColor(iconColor)
                                 .create()
                 )
             }

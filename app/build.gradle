@@ -13,7 +13,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         multiDexEnabled true
-        versionCode 4358
+        versionCode 4359
         versionName '4.3.0'
     }
     lintOptions {
@@ -38,7 +38,7 @@ android {
     }
 }
 
-ext.support_version = '28.0.0-rc02'
+ext.support_version = '28.0.0'
 ext.preference_fix_version = '28.0.0.0-rc02'
 ext.lifecycle_version = '1.1.1'
 ext.room_version = '1.1.1'
