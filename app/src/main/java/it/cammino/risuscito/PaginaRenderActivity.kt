@@ -1014,13 +1014,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .color(
                         ContextCompat.getColor(
                                 this@PaginaRenderActivity,
-                                if (mViewModel!!.retrieveDone)
-                                    R.color.text_color_secondary
-                                else
-                                    R.color.text_color_secondary_disabled))
+//                                if (mViewModel!!.retrieveDone)
+                                R.color.text_color_secondary
+//                                else
+//                                    R.color.text_color_secondary_disabled))
+                        ))
                 .sizeDp(24)
                 .paddingDp(2)
         play_song.setImageDrawable(icon)
+        play_song.visibility = if (mViewModel!!.retrieveDone) View.VISIBLE else View.GONE
+        loadingBar.visibility =if (mViewModel!!.retrieveDone) View.GONE else View.VISIBLE
     }
 
     private fun showScrolling(scrolling: Boolean) {
