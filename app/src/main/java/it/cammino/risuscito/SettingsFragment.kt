@@ -5,16 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import com.takisoft.preferencex.PreferenceFragmentCompat
 import it.cammino.risuscito.ui.ThemeableActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import pub.devrel.easypermissions.EasyPermissions
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -32,7 +31,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         mMainActivity = activity as MainActivity?
         if (mMainActivity != null) mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
 
-        activity!!.material_tabs.visibility = View.GONE
+//        activity!!.material_tabs.visibility = View.GONE
+        mMainActivity!!.setTabVisible(false)
         mMainActivity!!.enableFab(false)
 //        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableBottombar(false)

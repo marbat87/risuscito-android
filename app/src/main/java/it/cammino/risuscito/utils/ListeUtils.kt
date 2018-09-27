@@ -2,7 +2,7 @@ package it.cammino.risuscito.utils
 
 import android.content.Context
 import android.database.SQLException
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R

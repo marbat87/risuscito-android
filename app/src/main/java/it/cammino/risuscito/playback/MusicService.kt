@@ -26,12 +26,12 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaBrowserServiceCompat
+import androidx.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaButtonReceiver
+import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -57,12 +57,12 @@ import java.util.concurrent.TimeUnit
  *
  *
  *
- *  *  Extend [android.support.v4.media.MediaBrowserServiceCompat], implementing the media
- * browsing related methods [android.support.v4.media.MediaBrowserServiceCompat.onGetRoot] and
- * [android.support.v4.media.MediaBrowserServiceCompat.onLoadChildren];
+ *  *  Extend [androidx.media.MediaBrowserServiceCompat], implementing the media
+ * browsing related methods [androidx.media.MediaBrowserServiceCompat.onGetRoot] and
+ * [androidx.media.MediaBrowserServiceCompat.onLoadChildren];
  *  *  In onCreate, start a new [android.support.v4.media.session.MediaSessionCompat] and
  * notify its parent with the session's token
- * [android.support.v4.media.MediaBrowserServiceCompat.setSessionToken];
+ * [androidx.media.MediaBrowserServiceCompat.setSessionToken];
  *
  *
  *  *  Set a callback on the
@@ -447,7 +447,7 @@ class MusicService : MediaBrowserServiceCompat() {
         if (error != null) {
             // Error states are really only supposed to be used for errors that cause playback to
             // stop unexpectedly and persist until the user takes action to fix it.
-            stateBuilder.setErrorMessage(-1, error)
+            stateBuilder.setErrorMessage(PlaybackStateCompat.ERROR_CODE_APP_ERROR, error)
             state = PlaybackStateCompat.STATE_ERROR
         }
 

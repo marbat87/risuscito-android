@@ -3,15 +3,15 @@ package it.cammino.risuscito.items
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.materialize.holder.ColorHolder
@@ -209,6 +209,8 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
             (viewHolder.itemView.context as Activity).registerForContextMenu(viewHolder.itemView)
             viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
         }
+
+        viewHolder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
     }
 
     override fun unbindView(holder: ViewHolder) {

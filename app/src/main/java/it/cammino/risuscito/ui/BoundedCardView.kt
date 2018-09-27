@@ -1,7 +1,7 @@
 package it.cammino.risuscito.ui
 
 import android.content.Context
-import android.support.design.card.MaterialCardView
+import com.google.android.material.card.MaterialCardView
 import android.util.AttributeSet
 import it.cammino.risuscito.R
 

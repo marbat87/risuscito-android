@@ -7,10 +7,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.v4.app.NotificationCompat
-import android.support.v4.media.app.NotificationCompat.MediaStyle
-import android.support.v4.media.session.MediaButtonReceiver
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.media.app.NotificationCompat.MediaStyle
+import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import it.cammino.risuscito.R

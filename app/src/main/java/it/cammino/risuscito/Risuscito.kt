@@ -7,10 +7,10 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager.NameNotFoundException
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import androidx.core.content.edit
 import com.google.android.gms.common.SignInButton
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_risuscito.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -99,7 +98,8 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         super.onViewCreated(view, savedInstanceState)
         mMainActivity!!.setupToolbarTitle(R.string.activity_homepage)
         sign_in_button!!.setSize(SignInButton.SIZE_WIDE)
-        activity!!.material_tabs.visibility = View.GONE
+//        activity!!.material_tabs.visibility = View.GONE
+        mMainActivity!!.setTabVisible(false)
 
         imageView1.setOnClickListener { mMainActivity!!.drawer!!.openDrawer() }
 

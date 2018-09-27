@@ -1,7 +1,7 @@
 package it.cammino.risuscito.items
 
 import android.content.pm.ResolveInfo
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -54,6 +54,7 @@ class BottomSheetItem : AbstractItem<BottomSheetItem, BottomSheetItem.ViewHolder
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
         holder.mLabel!!.text = null
+        holder.mIcon!!.setImageDrawable(null)
     }
 
     override fun getViewHolder(v: View): ViewHolder {

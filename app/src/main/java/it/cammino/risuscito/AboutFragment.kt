@@ -2,13 +2,12 @@ package it.cammino.risuscito
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.vansuita.materialabout.builder.AboutBuilder
 import kotlinx.android.synthetic.main.about_layout.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class AboutFragment : Fragment() {
@@ -23,10 +22,11 @@ class AboutFragment : Fragment() {
 
         mMainActivity!!.enableFab(false)
 //        if (!mMainActivity!!.isOnTablet) {
-            mMainActivity!!.enableBottombar(false)
-            mMainActivity!!.enableBottombar(false)
+        mMainActivity!!.enableBottombar(false)
+        mMainActivity!!.enableBottombar(false)
 //        }
-        activity!!.material_tabs.visibility = View.GONE
+//        activity!!.material_tabs.visibility = View.GONE
+        mMainActivity!!.setTabVisible(false)
 
         return rootView
     }

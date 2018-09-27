@@ -1,7 +1,7 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import androidx.lifecycle.AndroidViewModel
 
 import java.util.ArrayList
 

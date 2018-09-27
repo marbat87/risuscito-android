@@ -1,24 +1,24 @@
 package it.cammino.risuscito
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
@@ -60,7 +60,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity = activity as MainActivity?
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_history)
 
-        activity!!.material_tabs.visibility = View.GONE
+//        activity!!.material_tabs.visibility = View.GONE
+        mMainActivity!!.setTabVisible(false)
 
         mLUtils = LUtils.getInstance(activity!!)
 

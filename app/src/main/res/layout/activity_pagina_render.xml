@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
@@ -12,7 +12,7 @@
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -42,11 +42,11 @@
                     <ImageView
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:contentDescription="@null"
                         android:gravity="center"
                         android:translationZ="1dp"
@@ -60,13 +60,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:text="@string/no_record"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="?android:textColorPrimary" />
@@ -84,11 +84,11 @@
                     <ImageView
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:contentDescription="@null"
                         android:gravity="center"
                         android:translationZ="1dp"
@@ -102,13 +102,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:text="@string/no_connection"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="?android:textColorPrimary" />
@@ -127,8 +127,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="end"
-                        android:paddingLeft="@dimen/activity_min_margin"
                         android:paddingStart="@dimen/activity_min_margin"
+                        android:paddingLeft="@dimen/activity_min_margin"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat"
                         android:textColor="?android:textColorPrimary"
@@ -180,7 +180,7 @@
 
     </FrameLayout>
 
-    <android.support.design.bottomappbar.BottomAppBar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
@@ -201,8 +201,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="end"
-                android:paddingLeft="@dimen/activity_min_margin"
                 android:paddingStart="@dimen/activity_min_margin"
+                android:paddingLeft="@dimen/activity_min_margin"
                 android:text="0 %"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/primary_text_default_material_dark"
@@ -233,7 +233,7 @@
 
         </LinearLayout>
 
-    </android.support.design.bottomappbar.BottomAppBar>
+    </androidx.appcompat.widget.Toolbar>
 
     <!--<android.support.design.widget.FloatingActionButton-->
     <!--android:id="@+id/fab_canti"-->

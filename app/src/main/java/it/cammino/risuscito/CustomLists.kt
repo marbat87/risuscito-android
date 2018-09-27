@@ -1,30 +1,31 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.PagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
@@ -36,7 +37,6 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -90,9 +90,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
         mMainActivity!!.enableBottombar(false)
-        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
+//        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
+        view_pager.adapter = mSectionsPagerAdapter
 
-        tabs = activity!!.material_tabs
+//        tabs = activity!!.material_tabs
+        tabs = mMainActivity!!.getMaterialTabs()
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
 
@@ -125,7 +127,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
+//        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
+        mCustomListsViewModel!!.indexToShow = view_pager.currentItem
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -142,9 +145,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         when (tag) {
             "NEW_LIST" -> {
                 val bundle = Bundle()
-                val mEditText = dialog.inputEditText
+                val mEditText = dialog.getInputField()
                 bundle.putString(
-                        "titolo", if (mEditText != null) dialog.inputEditText!!.text.toString() else "NULL")
+                        "titolo", if (mEditText != null) dialog.getInputField()!!.text.toString() else "NULL")
                 bundle.putBoolean("modifica", false)
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
@@ -162,7 +165,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RESET_LIST" -> {
-                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
+//                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
+                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
             "DELETE_LIST" ->
@@ -275,7 +279,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 idListe!![i] = list[i].id
                             }
                             mSectionsPagerAdapter!!.notifyDataSetChanged()
-                            tabs!!.setupWithViewPager(activity!!.view_pager)
+//                            tabs!!.setupWithViewPager(activity!!.view_pager)
+                            tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
                                 val myHandler = Handler()
                                 val mMyRunnable2 = Runnable {
@@ -356,7 +361,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     fun initFabOptions(customList: Boolean) {
         val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_plus)
+                .icon(CommunityMaterial.Icon2.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -387,7 +392,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+                            .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.findViewById<View>(R.id.button_condividi)?.performClick()
                     true
@@ -395,9 +401,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     val bundle = Bundle()
-                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
+//                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
+                    bundle.putInt("idDaModif", idListe!![view_pager.currentItem - 2])
                     bundle.putBoolean("modifica", true)
-                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
+//                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
+                    mCustomListsViewModel!!.indDaModif = view_pager.currentItem
                     startActivityForResult(
                             Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
                             TAG_MODIFICA_LISTA)
@@ -406,7 +414,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_delete_lista -> {
                     closeFabMenu()
-                    mCustomListsViewModel!!.listaDaCanc = activity!!.view_pager!!.currentItem - 2
+//                    mCustomListsViewModel!!.listaDaCanc = activity!!.view_pager!!.currentItem - 2
+                    mCustomListsViewModel!!.listaDaCanc = view_pager.currentItem - 2
                     mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
                     Thread(
                             Runnable {
@@ -430,7 +439,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+                            .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
                     true

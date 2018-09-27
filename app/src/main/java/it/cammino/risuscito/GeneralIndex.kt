@@ -1,18 +1,16 @@
 package it.cammino.risuscito
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.ViewModelProviders
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class GeneralIndex : Fragment() {
@@ -20,9 +18,6 @@ class GeneralIndex : Fragment() {
     private var mMainActivity: MainActivity? = null
 
     private var mViewModel: GeneralIndexViewModel? = null
-
-    private val themeUtils: ThemeUtils
-        get() = mMainActivity!!.themeUtils!!
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,24 +33,31 @@ class GeneralIndex : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view_pager!!.adapter = SectionsPagerAdapter(childFragmentManager)
+//        view_pager!!.adapter = SectionsPagerAdapter(childFragmentManager)
+        view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
 
-        val tabs = activity!!.material_tabs
-        tabs.visibility = View.VISIBLE
+        mMainActivity!!.setTabVisible(true)
+//        val tabs = mMainActivity!!.getMaterialTabs()
+//        val tabs = activity!!.material_tabs
+//        tabs.visibility = View.VISIBLE
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(activity)
-            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
+//            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
+            view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
         } else
-            view_pager!!.currentItem = mViewModel!!.pageViewed
-        if (!mMainActivity!!.isOnTablet) tabs.setBackgroundColor(themeUtils.primaryColor())
-        tabs.setupWithViewPager(view_pager)
+//            view_pager!!.currentItem = mViewModel!!.pageViewed
+            view_pager.currentItem = mViewModel!!.pageViewed
+//        if (!mMainActivity!!.isOnTablet) tabs.setBackgroundColor(themeUtils.primaryColor())
+//        tabs.setupWithViewPager(view_pager)
+        mMainActivity!!.getMaterialTabs().setupWithViewPager(view_pager)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mViewModel!!.pageViewed = view_pager!!.currentItem
+//        mViewModel!!.pageViewed = view_pager!!.currentItem
+        mViewModel!!.pageViewed = view_pager.currentItem
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {

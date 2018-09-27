@@ -1,7 +1,7 @@
 package it.cammino.risuscito.database.dao
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import it.cammino.risuscito.database.entities.ListaPers
 
 @Suppress("unused")

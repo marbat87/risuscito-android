@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,19 +13,18 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -34,6 +32,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
@@ -50,6 +51,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -88,10 +90,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     val which = intent.getStringExtra("WHICH")
                     Log.v(TAG, "NEXT_STEP: $which")
                     if (which.equals("RESTORE", ignoreCase = true)) {
-                        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, "RESTORE_RUNNING")
+                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, "RESTORE_RUNNING")
                         sFragment?.setContent(R.string.restoring_settings)
                     } else {
-                        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, "BACKUP_RUNNING")
+                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, "BACKUP_RUNNING")
                         sFragment?.setContent(R.string.backup_settings)
                     }
                 }
@@ -111,7 +113,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     val which = intent.getStringExtra("WHICH")
                     Log.v(TAG, "NEXT_STEP: $which")
                     if (which.equals("RESTORE", ignoreCase = true)) {
-                        dismissDialog("RESTORE_RUNNING")
+                        dismissProgressDialog("RESTORE_RUNNING")
                         if (intent.getBooleanExtra("RESULT", false))
                             SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
                                     .title(R.string.general_message)
@@ -119,7 +121,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                     .positiveButton(android.R.string.ok)
                                     .show()
                     } else {
-                        dismissDialog("BACKUP_RUNNING")
+                        dismissProgressDialog("BACKUP_RUNNING")
                         if (intent.getBooleanExtra("RESULT", false))
                             Snackbar.make(
                                     findViewById(R.id.main_content),
@@ -146,7 +148,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mMediumFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_medium)
 
         val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_menu)
+                .icon(CommunityMaterial.Icon2.cmd_menu)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -324,35 +326,35 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addDrawerItems(
                         PrimaryDrawerItem()
                                 .withName(R.string.activity_homepage)
-                                .withIcon(CommunityMaterial.Icon.cmd_home)
+                                .withIcon(CommunityMaterial.Icon2.cmd_home)
                                 .withIdentifier(R.id.navigation_home.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.search_name_text)
-                                .withIcon(CommunityMaterial.Icon.cmd_magnify)
+                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
                                 .withIdentifier(R.id.navigation_search.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_general_index)
-                                .withIcon(CommunityMaterial.Icon.cmd_view_list)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
                                 .withIdentifier(R.id.navigation_indexes.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_custom_lists)
-                                .withIcon(CommunityMaterial.Icon.cmd_view_carousel)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
                                 .withIdentifier(R.id.navitagion_lists.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.action_favourites)
-                                .withIcon(CommunityMaterial.Icon.cmd_heart)
+                                .withIcon(CommunityMaterial.Icon2.cmd_heart)
                                 .withIdentifier(R.id.navigation_favorites.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
@@ -366,14 +368,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_history)
-                                .withIcon(CommunityMaterial.Icon.cmd_history)
+                                .withIcon(CommunityMaterial.Icon2.cmd_history)
                                 .withIdentifier(R.id.navigation_history.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_settings)
-                                .withIcon(CommunityMaterial.Icon.cmd_settings)
+                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
                                 .withIdentifier(R.id.navigation_settings.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
@@ -381,7 +383,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         DividerDrawerItem(),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_about)
-                                .withIcon(CommunityMaterial.Icon.cmd_information_outline)
+                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
                                 .withIdentifier(R.id.navigation_changelog.toLong())
                                 .withSelectedIconColor(themeUtils!!.primaryColor())
                                 .withSelectedTextColor(themeUtils!!.primaryColor())
@@ -608,27 +610,27 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 val params = fab_pager!!.layoutParams as CoordinatorLayout.LayoutParams
                 params.behavior = if (mLUtils!!.isFabScrollingActive) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
                 fab_pager.requestLayout()
-//                fab_pager.show()
+                fab_pager.show()
                 // This is a workaround for support library bug, call this instead of show() above.
-                fab_pager.show(object : FloatingActionButton.OnVisibilityChangedListener() {
-                    override fun onShown(fab: FloatingActionButton) {
-                        val impl = fab::class.java.getDeclaredField("impl").let {
-                            it.isAccessible = true
-                            it.get(fab)
-                        }
-
-                        val implClass = if (Build.VERSION.SDK_INT >= 21) {
-                            impl::class.java.superclass
-                        } else {
-                            impl::class.java
-                        }
-
-                        val scale =
-                                implClass.getDeclaredMethod("setImageMatrixScale", Float::class.java)
-                        scale.isAccessible = true
-                        scale.invoke(impl, 1.0F)
-                    }
-                })
+//                fab_pager.show(object : FloatingActionButton.OnVisibilityChangedListener() {
+//                    override fun onShown(fab: FloatingActionButton) {
+//                        val impl = fab::class.java.getDeclaredField("impl").let {
+//                            it.isAccessible = true
+//                            it.get(fab)
+//                        }
+//
+//                        val implClass = if (Build.VERSION.SDK_INT >= 21) {
+//                            impl::class.java.superclass
+//                        } else {
+//                            impl::class.java
+//                        }
+//
+//                        val scale =
+//                                implClass.getDeclaredMethod("setImageMatrixScale", Float::class.java)
+//                        scale.isAccessible = true
+//                        scale.invoke(impl, 1.0F)
+//                    }
+//                })
             }
         } else {
             if (fab_pager!!.isOpen)
@@ -667,7 +669,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this@MainActivity)
-                            .icon(CommunityMaterial.Icon.cmd_plus)
+                            .icon(CommunityMaterial.Icon2.cmd_plus)
                             .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -680,7 +682,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this@MainActivity)
-                            .icon(CommunityMaterial.Icon.cmd_share_variant)
+                            .icon(CommunityMaterial.Icon2.cmd_share_variant)
                             .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -707,7 +709,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this@MainActivity)
-                                .icon(CommunityMaterial.Icon.cmd_pencil)
+                                .icon(CommunityMaterial.Icon2.cmd_pencil)
                                 .color(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
@@ -739,6 +741,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     fun getFab(): FloatingActionButton {
         return fab_pager.mainFab
+    }
+
+    fun setTabVisible(visible: Boolean) {
+        material_tabs.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    fun getMaterialTabs(): TabLayout {
+        return material_tabs
     }
 
     fun enableBottombar(enabled: Boolean) {
@@ -903,23 +913,33 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onPositive: TAG $tag")
         when (tag) {
             "BACKUP_ASK" -> {
-                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "BACKUP_RUNNING")
+//                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "BACKUP_RUNNING")
+//                        .title(R.string.backup_running)
+//                        .content(R.string.backup_database)
+//                        .showProgress()
+//                        .progressIndeterminate(true)
+//                        .progressMax(0)
+//                        .show()
+                ProgressDialogFragment.Builder(this@MainActivity, null, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_database)
-                        .showProgress()
                         .progressIndeterminate(true)
-                        .progressMax(0)
                         .show()
                 backToHome()
                 BackupTask().execute()
             }
             "RESTORE_ASK" -> {
-                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTORE_RUNNING")
+//                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTORE_RUNNING")
+//                        .title(R.string.restore_running)
+//                        .content(R.string.restoring_database)
+//                        .showProgress()
+//                        .progressIndeterminate(true)
+//                        .progressMax(0)
+//                        .show()
+                ProgressDialogFragment.Builder(this@MainActivity, null, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_database)
-                        .showProgress()
                         .progressIndeterminate(true)
-                        .progressMax(0)
                         .show()
                 backToHome()
                 RestoreTask().execute()
@@ -951,8 +971,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNeutral(tag: String) {}
 
-    private fun dismissDialog(tag: String) {
-        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, tag)
+//    private fun dismissDialog(tag: String) {
+//        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, tag)
+//        sFragment?.dismiss()
+//    }
+
+    private fun dismissProgressDialog(tag: String) {
+        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, tag)
         sFragment?.dismiss()
     }
 
@@ -974,12 +999,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            SimpleDialogFragment.Builder(
-                    activityWeakReference.get()!!, activityWeakReference.get()!!, "TRANSLATION")
+//            SimpleDialogFragment.Builder(
+//                    activityWeakReference.get()!!, activityWeakReference.get()!!, "TRANSLATION")
+//                    .content(R.string.translation_running)
+//                    .showProgress()
+//                    .progressIndeterminate(true)
+//                    .progressMax(0)
+//                    .show()
+            ProgressDialogFragment.Builder(activityWeakReference.get()!!, null, "TRANSLATION")
                     .content(R.string.translation_running)
-                    .showProgress()
                     .progressIndeterminate(true)
-                    .progressMax(0)
                     .show()
         }
 
@@ -987,7 +1016,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             super.onPostExecute(result)
             activityWeakReference.get()!!.intent.removeExtra(Utility.CHANGE_LANGUAGE)
             try {
-                activityWeakReference.get()!!.dismissDialog("TRANSLATION")
+                activityWeakReference.get()!!.dismissProgressDialog("TRANSLATION")
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }

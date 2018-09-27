@@ -37,4 +37,7 @@
 
     <dimen name="colorpickerpreference_widget_size">24dp</dimen>
 
+    //mai usato in configurazione normale
+    <dimen name="bounded_cardview_max_width_fab">0dp</dimen>
+
 </resources>
