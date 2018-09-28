@@ -70,13 +70,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.HISTORY_OPEN, true) }
-//            val mHandler = android.os.Handler()
-//            mHandler.postDelayed(
-//                    {
-//                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
-//                                .show()
-//                    },
-//                    250)
             Handler().postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()

@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.transaction
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -182,10 +183,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         setupNavDrawer(savedInstanceState)
 
         if (savedInstanceState == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
-                    .commit()
+            supportFragmentManager.transaction {
+                replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
+            }
         }
         if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
 
@@ -425,16 +425,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 val myFragment = supportFragmentManager
                                         .findFragmentByTag(drawerItem.identifier.toString())
                                 if (myFragment == null || !myFragment.isVisible) {
-                                    val transaction = supportFragmentManager.beginTransaction()
-                                    if (!isOnTablet)
-                                        transaction.setCustomAnimations(
-                                                R.anim.slide_in_right, R.anim.slide_out_left)
-                                    transaction
-                                            .replace(
-                                                    R.id.content_frame,
-                                                    fragment,
-                                                    drawerItem.identifier.toString())
-                                            .commit()
+                                    supportFragmentManager.transaction {
+                                        if (!isOnTablet)
+                                            setCustomAnimations(
+                                                    R.anim.slide_in_right, R.anim.slide_out_left)
+                                        replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
+                                    }
                                 }
 
                                 if (isOnTablet) mMiniDrawer!!.setSelection(drawerItem.identifier)

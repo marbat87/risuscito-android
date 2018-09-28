@@ -20,6 +20,7 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
+import androidx.core.view.postDelayed
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -200,13 +201,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 TAG,
                 "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
-//            val handler = Handler()
-//            handler.postDelayed(
-//                    {
-//                        // Do something after 5s = 5000ms
-//                        playIntro()
-//                    },
-//                    1500)
             Handler().postDelayed(1500) {
                 playIntro()
             }
@@ -434,7 +428,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         // This can vary depending on direction but remove & archive simulated here both results in
         // removal from list
-        val removeRunnable = Runnable {
+        val removeRunnable = recycler_view!!.postDelayed(2000) {
             item.setSwipedAction(Runnable {})
             val mPosition = mAdapter!!.getAdapterPosition(item)
             if (mPosition != RecyclerView.NO_POSITION) {
@@ -449,7 +443,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
             }
         }
-        recycler_view!!.postDelayed(removeRunnable, 2000)
 
         item.setSwipedAction(Runnable {
             recycler_view!!.removeCallbacks(removeRunnable)

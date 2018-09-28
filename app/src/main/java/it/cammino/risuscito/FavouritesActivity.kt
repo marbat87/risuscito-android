@@ -68,13 +68,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
-//            val mHandler = android.os.Handler()
-//            mHandler.postDelayed(
-//                    {
-//                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
-//                                .show()
-//                    },
-//                    250)
             Handler().postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()

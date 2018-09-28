@@ -24,7 +24,9 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
+import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -488,21 +490,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 menuInflater, this@PaginaRenderActivity, R.menu.canto, menu, true)
         super.onCreateOptionsMenu(menu)
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-        Log.d(
-                TAG,
-                "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
+        Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
-            val handler = Handler()
-            handler.postDelayed(
-                    {
-                        // Do something after 5s = 5000ms
-//                        if (music_buttons.visibility == View.VISIBLE)
-                        if (music_buttons.isVisible)
-                            playIntroFull()
-                        else
-                            playIntroSmall()
-                    },
-                    1500)
+            Handler().postDelayed(1500) {
+                if (music_buttons.isVisible)
+                    playIntroFull()
+                else
+                    playIntroSmall()
+            }
         }
 
         return true
@@ -1437,14 +1432,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private inner class MyWebViewClient : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {
-            view.postDelayed(
-                    {
-                        if (mViewModel!!.mCurrentCanto!!.scrollX > 0 || mViewModel!!.mCurrentCanto!!.scrollY > 0)
-                            cantoView.scrollTo(
-                                    mViewModel!!.mCurrentCanto!!.scrollX, mViewModel!!.mCurrentCanto!!.scrollY)
-                    },
-                    // Delay the scrollTo to make it work
-                    600)
+            view.postDelayed(600) {
+                if (mViewModel!!.mCurrentCanto!!.scrollX > 0 || mViewModel!!.mCurrentCanto!!.scrollY > 0)
+                    cantoView.scrollTo(
+                            mViewModel!!.mCurrentCanto!!.scrollX, mViewModel!!.mCurrentCanto!!.scrollY)
+            }
             super.onPageFinished(view, url)
         }
     }

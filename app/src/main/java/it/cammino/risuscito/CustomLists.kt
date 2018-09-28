@@ -283,13 +283,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 //                            tabs!!.setupWithViewPager(activity!!.view_pager)
                             tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
-//                                val myHandler = Handler()
-//                                val mMyRunnable2 = Runnable {
-//                                    tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
-//                                    mCustomListsViewModel!!.indexToShow = 0
-//                                    movePage = false
-//                                }
-//                                myHandler.postDelayed(mMyRunnable2, 200)
                                 Handler().postDelayed(200) {
                                     tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
                                     mCustomListsViewModel!!.indexToShow = 0
