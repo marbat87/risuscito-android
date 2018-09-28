@@ -205,7 +205,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
         holder.mTitle!!.text = null
         holder.mPage!!.text = null
         holder.mId!!.text = null
-        holder.mPageSelected = null
         holder.mTimestamp!!.text = null
     }
 

@@ -364,7 +364,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 .icon(CommunityMaterial.Icon2.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
-                .paddingDp(2)
+                .paddingDp(4)
 
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {

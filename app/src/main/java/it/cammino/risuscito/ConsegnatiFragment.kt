@@ -351,7 +351,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .icon(CommunityMaterial.Icon2.cmd_pencil)
                 .color(Color.WHITE)
                 .sizeDp(24)
-                .paddingDp(2)
+                .paddingDp(4)
         val onClick = View.OnClickListener {
             mCantiViewModel!!.editMode = true
             updateChooseList()
