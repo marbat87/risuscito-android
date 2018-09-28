@@ -2,6 +2,7 @@ package it.cammino.risuscito
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.os.SystemClock
 import android.preference.PreferenceManager
 import android.util.Log
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -68,13 +70,17 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.HISTORY_OPEN, true) }
-            val mHandler = android.os.Handler()
-            mHandler.postDelayed(
-                    {
-                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
-                                .show()
-                    },
-                    250)
+//            val mHandler = android.os.Handler()
+//            mHandler.postDelayed(
+//                    {
+//                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+//                                .show()
+//                    },
+//                    250)
+            Handler().postDelayed(250) {
+                Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+                        .show()
+            }
         }
 
         return rootView

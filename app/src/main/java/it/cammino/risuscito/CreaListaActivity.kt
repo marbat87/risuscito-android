@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -199,13 +200,16 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 TAG,
                 "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
-            val handler = Handler()
-            handler.postDelayed(
-                    {
-                        // Do something after 5s = 5000ms
-                        playIntro()
-                    },
-                    1500)
+//            val handler = Handler()
+//            handler.postDelayed(
+//                    {
+//                        // Do something after 5s = 5000ms
+//                        playIntro()
+//                    },
+//                    1500)
+            Handler().postDelayed(1500) {
+                playIntro()
+            }
         }
         if (mAdapter!!.adapterItems == null
                 || mAdapter!!.adapterItems.size == 0

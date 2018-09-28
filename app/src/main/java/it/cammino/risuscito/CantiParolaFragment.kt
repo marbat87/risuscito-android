@@ -18,6 +18,7 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
@@ -128,7 +129,8 @@ class CantiParolaFragment : Fragment() {
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
         mLastClickTime = SystemClock.elapsedRealtime()
         val parent = v.parent.parent as View
-        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+//        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+        if (parent.findViewById<View>(R.id.addCantoGenerico).isVisible) {
             if (mSwhitchMode) {
                 actionModeOk = true
                 MaterialCab.destroy()

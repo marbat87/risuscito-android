@@ -13,6 +13,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -282,13 +283,18 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 //                            tabs!!.setupWithViewPager(activity!!.view_pager)
                             tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
-                                val myHandler = Handler()
-                                val mMyRunnable2 = Runnable {
+//                                val myHandler = Handler()
+//                                val mMyRunnable2 = Runnable {
+//                                    tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
+//                                    mCustomListsViewModel!!.indexToShow = 0
+//                                    movePage = false
+//                                }
+//                                myHandler.postDelayed(mMyRunnable2, 200)
+                                Handler().postDelayed(200) {
                                     tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
                                     mCustomListsViewModel!!.indexToShow = 0
                                     movePage = false
                                 }
-                                myHandler.postDelayed(mMyRunnable2, 200)
                             }
                         })
     }

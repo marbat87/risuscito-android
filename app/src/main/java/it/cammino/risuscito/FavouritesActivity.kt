@@ -1,24 +1,26 @@
 package it.cammino.risuscito
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.os.postDelayed
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
@@ -66,13 +68,17 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(activity)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
-            val mHandler = android.os.Handler()
-            mHandler.postDelayed(
-                    {
-                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
-                                .show()
-                    },
-                    250)
+//            val mHandler = android.os.Handler()
+//            mHandler.postDelayed(
+//                    {
+//                        Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+//                                .show()
+//                    },
+//                    250)
+            Handler().postDelayed(250) {
+                Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+                        .show()
+            }
         }
 
         val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "FAVORITES_RESET")

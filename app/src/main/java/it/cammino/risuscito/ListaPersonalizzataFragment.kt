@@ -1,15 +1,9 @@
 package it.cammino.risuscito
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +12,15 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -92,7 +93,8 @@ class ListaPersonalizzataFragment : Fragment() {
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
         mLastClickTime = SystemClock.elapsedRealtime()
         val parent = v.parent.parent as View
-        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+//        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
+        if (parent.findViewById<View>(R.id.addCantoGenerico).isVisible) {
             if (mSwhitchMode) {
                 scambioConVuoto(
                         Integer.valueOf(

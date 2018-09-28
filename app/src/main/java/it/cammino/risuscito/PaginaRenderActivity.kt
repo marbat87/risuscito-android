@@ -24,6 +24,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -495,7 +496,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             handler.postDelayed(
                     {
                         // Do something after 5s = 5000ms
-                        if (music_buttons.visibility == View.VISIBLE)
+//                        if (music_buttons.visibility == View.VISIBLE)
+                        if (music_buttons.isVisible)
                             playIntroFull()
                         else
                             playIntroSmall()
@@ -558,7 +560,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_help_canto -> {
-                if (music_buttons.visibility == View.VISIBLE)
+//                if (music_buttons.visibility == View.VISIBLE)
+                if (music_buttons.isVisible)
                     playIntroFull()
                 else
                     playIntroSmall()
@@ -1023,7 +1026,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .paddingDp(2)
         play_song.setImageDrawable(icon)
         play_song.visibility = if (mViewModel!!.retrieveDone) View.VISIBLE else View.GONE
-        loadingBar.visibility =if (mViewModel!!.retrieveDone) View.GONE else View.VISIBLE
+        loadingBar.visibility = if (mViewModel!!.retrieveDone) View.GONE else View.VISIBLE
     }
 
     private fun showScrolling(scrolling: Boolean) {
