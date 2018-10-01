@@ -80,10 +80,14 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
-        currentCanto!!.zoom = (cantoView.scale * 100).toInt()
-        currentCanto!!.scrollX = cantoView.scrollX
-        currentCanto!!.scrollY = cantoView.scrollY
-        ZoomSaverTask().execute()
+        //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
+        if (currentCanto != null) {
+            currentCanto!!.zoom = (cantoView.scale * 100).toInt()
+            currentCanto!!.scrollX = cantoView.scrollX
+            currentCanto!!.scrollY = cantoView.scrollY
+            ZoomSaverTask().execute()
+        } else
+            mLUtils!!.closeActivityWithFadeOut()
     }
 
     private inner class MyWebViewClient : WebViewClient() {

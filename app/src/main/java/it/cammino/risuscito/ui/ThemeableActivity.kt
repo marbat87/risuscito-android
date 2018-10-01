@@ -8,14 +8,13 @@ import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.view.LayoutInflaterCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.view.LayoutInflaterCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.drive.Drive
@@ -26,6 +25,7 @@ import com.google.android.gms.drive.query.Filters
 import com.google.android.gms.drive.query.Query
 import com.google.android.gms.drive.query.SearchableField
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.iconics.context.IconicsLayoutInflater2
 import it.cammino.risuscito.DatabaseCanti
 import it.cammino.risuscito.LUtils
@@ -55,43 +55,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             return getDatabasePath(DatabaseCanti.getDbName())
         }
 
-//    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-//        Log.d(TAG, "onSharedPreferenceChanged: $s")
-//        if (s.equals("new_primary_color", ignoreCase = true)) {
-//            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
-//            recreate()
-//        }
-//        if (s.equals("new_accent_color", ignoreCase = true)) {
-//            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
-//            recreate()
-//        }
-//        if (s == Utility.SYSTEM_LANGUAGE) {
-//            Log.d(
-//                    TAG,
-//                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-//                            .language)
-//            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
-//            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-//                            .language
-//                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
-//                val i = baseContext
-//                        .packageManager
-//                        .getLaunchIntentForPackage(baseContext.packageName)
-//                if (i != null) {
-//                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//                    i.putExtra(Utility.DB_RESET, true)
-//                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-//                            .language
-//                    i.putExtra(
-//                            Utility.CHANGE_LANGUAGE,
-//                            currentLang + "-" + sharedPreferences.getString(s, ""))
-//                }
-//                startActivity(i)
-//            }
-//        }
-//        if (s == Utility.SCREEN_ON) this@ThemeableActivity.checkScreenAwake()
-//    }
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired) {
             forceOverflowMenu()
@@ -110,13 +73,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Utility.setupTransparentTints(
                 this@ThemeableActivity, themeUtils!!.primaryColorDark(), hasNavDrawer)
 
-//        if (LUtils.hasL()) {
-//            // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
-//            // list gets weird. We need to change either the icon or the color
-//            // of the TaskDescription.
-//            val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils!!.primaryColor())
-//            setTaskDescription(taskDesc)
-//        }
         setTaskDescriptionWrapper(themeUtils!!)
 
         // Iconic
@@ -125,7 +81,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
-//    override fun onResume() {
+    //    override fun onResume() {
+    override fun onResume() {
+        super.onResume()
+        LUtils.getInstance(this).checkScreenAwake()
+    }
 //        super.onResume()
 //        checkScreenAwake()
 //
@@ -340,7 +300,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             Log.d(javaClass.name, "saveCheckDupl - Count files old: $count")
             if (count > 0) {
                 for (i in 0..(count - 1)) {
-//                    val mDriveId = metadataBuffer.get(count - 1).driveId
                     val mDriveId = metadataBuffer.get(i).driveId
                     Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: $mDriveId")
                     Log.d(
@@ -354,9 +313,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
                     Log.d(javaClass.name, "saveCheckDupl - deleted")
                 }
             }
-//                metadataBuffer.release()
-//                saveToDrive(folder, titl, mime, file, dataBase)
-//            } else {
             metadataBuffer.release()
             saveToDrive(folder, titl, mime, file, dataBase)
 //            }
@@ -499,14 +455,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 val fos = FileOutputStream(dbFile)
                 val mOutput = BufferedOutputStream(fos)
                 val mInput = BufferedInputStream(driveContents.inputStream)
-//                val parcelFileDescriptor = driveContents.parcelFileDescriptor
-//                val mInput = FileInputStream(parcelFileDescriptor.fileDescriptor)
 
                 val buffer = ByteArray(1024)
                 var length = mInput.read(buffer)
                 while (length > 0) {
                     mOutput.write(buffer, 0, length)
-//                    mOutput.flush()
                     length = mInput.read(buffer)
                 }
                 mOutput.flush()

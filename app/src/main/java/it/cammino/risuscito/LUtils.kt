@@ -6,16 +6,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.preference.PreferenceManager
-import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -92,6 +92,16 @@ class LUtils private constructor(private val mActivity: Activity) {
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+    }
+
+    // controlla se l'app deve mantenere lo schermo acceso
+    fun checkScreenAwake() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
+        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
+        if (screenOn)
+            mActivity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else
+            mActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     internal fun listToXML(lista: ListaPersonalizzata): Uri? {
@@ -173,7 +183,7 @@ class LUtils private constructor(private val mActivity: Activity) {
 //            val editor = PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
 //            editor.putString(prefName, pref.getInt(prefName, 0).toString())
 //            editor.apply()
-            PreferenceManager.getDefaultSharedPreferences(mActivity).edit{putString(prefName, pref.getInt(prefName, 0).toString())}
+            PreferenceManager.getDefaultSharedPreferences(mActivity).edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
         }
 
     }

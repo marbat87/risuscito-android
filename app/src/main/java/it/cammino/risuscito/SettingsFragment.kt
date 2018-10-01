@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.takisoft.preferencex.PreferenceFragmentCompat
@@ -108,7 +107,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 startActivity(i)
             }
         }
-        if (s == Utility.SCREEN_ON) checkScreenAwake()
+        if (s == Utility.SCREEN_ON) LUtils.getInstance(activity!!).checkScreenAwake()
     }
 
     private fun loadStorageList(external: Boolean) {
@@ -128,14 +127,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     // controlla se l'app deve mantenere lo schermo acceso
-    private fun checkScreenAwake() {
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
-        if (screenOn)
-            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else
-            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
+//    private fun checkScreenAwake() {
+//        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+//        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
+//        if (screenOn)
+//            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        else
+//            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//    }
 
     companion object {
         private val TAG = SettingsFragment::class.java.canonicalName
