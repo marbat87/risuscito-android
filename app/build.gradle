@@ -13,7 +13,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         multiDexEnabled true
-        versionCode 4362
+        versionCode 4363
         versionName '4.3.0'
     }
     lintOptions {
@@ -74,8 +74,8 @@ dependencies {
     implementation 'com.mikepenz:fastadapter-extensions:3.3.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'pub.devrel:easypermissions:2.0.0'
-    implementation 'androidx.room:room-runtime:2.0.0-rc01'
-    kapt 'androidx.room:room-compiler:2.0.0-rc01'
+    implementation 'androidx.room:room-runtime:2.0.0'
+    kapt 'androidx.room:room-compiler:2.0.0'
     // ViewModel and LiveData
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'it.marbat.pdfjet.lib:lib:1.0.0'
