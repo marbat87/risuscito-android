@@ -26,7 +26,6 @@ import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -44,7 +43,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-    private var mUndoHelper: UndoHelper<*>? = null
+    //    private var mUndoHelper: UndoHelper<*>? = null
+    private var mRemovedItems: Set<SimpleItem>? = null
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -151,21 +151,21 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         favouritesList!!.addItemDecoration(insetDivider)
         favouritesList!!.itemAnimator = SlideLeftAlphaAnimator()
 
-        mUndoHelper = UndoHelper(
-                cantoAdapter,
-                UndoHelper.UndoListener { _, arrayList ->
-                    Log.d(TAG, "commitRemove: " + arrayList.size)
-                    arrayList
-                            .map { it.item }
-                            .forEach {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
-                                            mDao.removeFavorite(it.id)
-                                        })
-                                        .start()
-                            }
-                })
+//        mUndoHelper = UndoHelper(
+//                cantoAdapter,
+//                UndoHelper.UndoListener { _, arrayList ->
+//                    Log.d(TAG, "commitRemove: " + arrayList.size)
+//                    arrayList
+//                            .map { it.item }
+//                            .forEach {
+//                                Thread(
+//                                        Runnable {
+//                                            val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+//                                            mDao.removeFavorite(it.id)
+//                                        })
+//                                        .start()
+//                            }
+//                })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -252,19 +252,41 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                        mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
                                 .selectedItems
-                                .size
+//                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+//                                .selectedItems
+//                                .size
+                        val iRemoved = mRemovedItems!!.size
                         Log.d(TAG, "onCabItemClicked: $iRemoved")
-                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
+//                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
                         (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
 
-                        mUndoHelper!!.remove(
-                                activity!!.main_content,
-                                resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
-                                getString(android.R.string.cancel).toUpperCase(),
-                                Snackbar.LENGTH_SHORT,
-                                selectedItems)
+//                        mUndoHelper!!.remove(
+//                                activity!!.main_content,
+//                                resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved),
+//                                getString(android.R.string.cancel).toUpperCase(),
+//                                Snackbar.LENGTH_SHORT,
+//                                selectedItems)
+                        Thread(
+                                Runnable {
+                                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+                                    for (removedItem in mRemovedItems!!)
+                                        mDao.removeFavorite(removedItem.id)
+                                })
+                                .start()
+
+                        Snackbar.make(activity!!.main_content, resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
+                                .setAction(getString(android.R.string.cancel).toUpperCase()) {
+                                    Thread(
+                                            Runnable {
+                                                val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+                                                for (removedItem in mRemovedItems!!)
+                                                    mDao.setFavorite(removedItem.id)
+                                            })
+                                            .start()
+                                }.show()
+
                         actionModeOk = true
                         MaterialCab.destroy()
                         true

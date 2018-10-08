@@ -29,7 +29,8 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
         private set
     var page: StringHolder? = null
         private set
-    private var timestamp: StringHolder? = null
+    var timestamp: StringHolder? = null
+        private set
     var source: StringHolder? = null
         private set
     var color: ColorHolder? = null

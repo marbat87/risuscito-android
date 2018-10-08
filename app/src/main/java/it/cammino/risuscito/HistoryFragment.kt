@@ -25,7 +25,6 @@ import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.fastadapter_extensions.UndoHelper
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -36,6 +35,7 @@ import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
+import java.sql.Date
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
@@ -45,10 +45,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private var actionModeOk: Boolean = false
 
-    private var mUndoHelper: UndoHelper<*>? = null
+    //    private var mUndoHelper: UndoHelper<*>? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
+    private var mRemovedItems: Set<SimpleHistoryItem>? = null
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -155,24 +156,24 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         history_recycler!!.addItemDecoration(insetDivider)
         history_recycler!!.itemAnimator = SlideLeftAlphaAnimator()
 
-        mUndoHelper = UndoHelper(
-                cantoAdapter,
-                UndoHelper.UndoListener
-                { _, arrayList ->
-                    Log.d(TAG, "commitRemove: " + arrayList.size)
-                    arrayList
-                            .map { it.item }
-                            .forEach {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
-                                            val cronTemp = Cronologia()
-                                            cronTemp.idCanto = it.id
-                                            mDao.deleteCronologia(cronTemp)
-                                        })
-                                        .start()
-                            }
-                })
+//        mUndoHelper = UndoHelper(
+//                cantoAdapter,
+//                UndoHelper.UndoListener
+//                { _, arrayList ->
+//                    Log.d(TAG, "commitRemove: " + arrayList.size)
+//                    arrayList
+//                            .map { it.item }
+//                            .forEach {
+//                                Thread(
+//                                        Runnable {
+//                                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
+//                                            val cronTemp = Cronologia()
+//                                            cronTemp.idCanto = it.id
+//                                            mDao.deleteCronologia(cronTemp)
+//                                        })
+//                                        .start()
+//                            }
+//                })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -258,18 +259,47 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+//                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+//                                .selectedItems
+//                                .size
+                        mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                                 .selectedItems
-                                .size
+                        val iRemoved = mRemovedItems!!.size
                         Log.d(TAG, "onCabItemClicked: $iRemoved")
-                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
+//                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
                         (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-                        mUndoHelper!!.remove(
-                                activity!!.findViewById(R.id.main_content),
-                                resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
-                                getString(android.R.string.cancel).toUpperCase(),
-                                Snackbar.LENGTH_SHORT,
-                                selectedItems)
+//                        mUndoHelper!!.remove(
+//                                activity!!.findViewById(R.id.main_content),
+//                                resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
+//                                getString(android.R.string.cancel).toUpperCase(),
+//                                Snackbar.LENGTH_SHORT,
+//                                selectedItems)
+                        Thread(
+                                Runnable {
+                                    val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
+                                    for (removedItem in mRemovedItems!!) {
+                                        val cronTemp = Cronologia()
+                                        cronTemp.idCanto = removedItem.id
+                                        mDao.deleteCronologia(cronTemp)
+                                    }
+                                })
+                                .start()
+
+                        Snackbar.make(activity!!.main_content, resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
+                                .setAction(getString(android.R.string.cancel).toUpperCase()) {
+                                    Thread(
+                                            Runnable {
+                                                val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
+                                                for (removedItem in mRemovedItems!!) {
+                                                    val cronTemp = Cronologia()
+                                                    cronTemp.idCanto = removedItem.id
+                                                    cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedItem.timestamp!!.text.toString()))
+                                                    mDao.insertCronologia(cronTemp)
+                                                }
+
+                                            })
+                                            .start()
+                                }.show()
                         actionModeOk = true
                         MaterialCab.destroy()
                         true
