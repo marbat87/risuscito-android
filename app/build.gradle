@@ -7,7 +7,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "it.cammino.risuscito"
         minSdkVersion 16
@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:input:2.0.0-beta3'
     implementation 'com.afollestad.material-dialogs:files:2.0.0-beta3'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
-    implementation 'com.mikepenz:materialdrawer:6.1.0'
+    implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'com.mikepenz:crossfader:1.6.0'
     implementation 'com.mikepenz:community-material-typeface:2.7.94.1@aar'
     implementation 'com.mikepenz:itemanimators:1.1.0'
