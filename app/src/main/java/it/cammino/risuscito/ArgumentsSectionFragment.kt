@@ -1,19 +1,19 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -78,11 +78,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        mLayoutManager = LinearLayoutManager(activity)
-//        recycler_view!!.layoutManager = mLayoutManager
 
-        // adapter
-//        mAdapter = FastItemAdapter()
         val itemExpandableExtension = ExpandableExtension<IItem<*, *>>()
         itemExpandableExtension.withOnlyOneExpandedItem(true)
         mAdapter.addExtension(itemExpandableExtension)
@@ -195,14 +191,18 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
-                    })
-                    .start()
-        } else
-            isViewShown = false
+            if (view != null) {
+                isViewShown = true
+                Log.d(TAG, "VISIBLE")
+                Thread(
+                        Runnable {
+                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+                            listePersonalizzate = mDao.all
+                        })
+                        .start()
+            } else
+                isViewShown = false
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -220,8 +220,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
