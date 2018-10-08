@@ -132,8 +132,14 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         if (filter != null && !filter!!.isEmpty()) {
             val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
-                val highlighted = title!!.text.toString().replace(("(?i)(" + title!!.text.toString().substring(mPosition, mPosition + filter!!.length) + ")").toRegex(), "<b>$1</b>")
-                viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted)
+//                val highlighted = title!!.text.toString().replace(("(?i)(" + title!!.text.toString().substring(mPosition, mPosition + filter!!.length) + ")").toRegex(), "<b>$1</b>")
+                val stringTitle = title!!.text.toString()
+                val highlighted = StringBuilder(if (mPosition > 0) stringTitle.substring(0, mPosition) else "")
+                        .append("<b>")
+                        .append(stringTitle.substring(mPosition, mPosition + filter!!.length))
+                        .append("</b>")
+                        .append(stringTitle.substring(mPosition + filter!!.length))
+                viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
             } else
                 StringHolder.applyTo(title, viewHolder.mTitle)
         } else
