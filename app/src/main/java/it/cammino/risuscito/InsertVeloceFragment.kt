@@ -6,13 +6,6 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -22,6 +15,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
@@ -297,21 +297,17 @@ class InsertVeloceFragment : Fragment() {
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()!!.search_no_results.visibility = View.GONE
-            fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli.clear()
-            //      fragmentReference.get().cantoAdapter.clear();
+            fragmentReference.get()?.search_no_results?.visibility = View.GONE
+            fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
+            fragmentReference.get()?.titoli?.clear()
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-//            FastAdapterDiffUtil.set(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
-            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
-            fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
-            fragmentReference
-                    .get()!!
-                    .search_no_results.visibility = if (fragmentReference.get()!!.cantoAdapter.adapterItemCount == 0)
+            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
+            fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
+            fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE
