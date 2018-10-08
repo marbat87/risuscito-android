@@ -425,13 +425,13 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                                PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                                PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
                             }
                         })
                 .start()
