@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Base.Theme.MyTheme" parent="@style/PreferenceFixTheme.MaterialComponents.Light.NoActionBar" />
+    <style name="Base.Theme.MyTheme" parent="@style/Theme.MaterialComponents.Light.NoActionBar" />
 
     <style name="Theme.MyTheme" parent="Base.Theme.MyTheme">
         <item name="fontFamily">@font/googlesans_regular</item>
@@ -23,7 +23,7 @@
 
         <!--<item name="md_medium_font">Roboto-Medium.ttf</item>-->
         <!--<item name="md_regular_font">Roboto-Regular.ttf</item>-->
-        <item name="md_btn_ripple_color">@color/ripple_color_light</item>
+        <item name="md_corner_radius">16dp</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
@@ -36,19 +36,26 @@
         <item name="material_drawer_divider">@color/material_drawer_divider</item>
         <item name="material_drawer_selected">@color/material_drawer_selected</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
 
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
         <item name="colorBackgroundFloating">@color/floating_background</item>
         <item name="cardBackgroundColor">@color/floating_background</item>
-        <item name="android:colorBackgroundFloating" tools:ignore="NewApi">@color/floating_background</item>
+        <item name="android:colorBackgroundFloating" tools:ignore="NewApi">
+            @color/floating_background
+        </item>
         <item name="android:textColorHint">@color/text_color_secondary</item>
         <item name="android:contextPopupMenuStyle" tools:targetApi="n">@style/PopupMenuStyle</item>
+        <item name="md_font_title">@font/googlesans_medium</item>
+        <item name="md_font_body">@font/googlesans_regular</item>
+        <item name="md_font_button">@font/googlesans_medium</item>
     </style>
 
-    <style name="RisuscitoTheme" parent="Theme.MyTheme" >
+    <style name="RisuscitoTheme" parent="Theme.MyTheme">
         <item name="toolbar_shadow">@drawable/toolbar_shadow</item>
     </style>
 

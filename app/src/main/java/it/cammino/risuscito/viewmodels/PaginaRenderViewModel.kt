@@ -1,6 +1,6 @@
 package it.cammino.risuscito.viewmodels
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 import it.cammino.risuscito.database.entities.Canto
 

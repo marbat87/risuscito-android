@@ -52,10 +52,6 @@
         <activity
             android:name="it.cammino.risuscito.ChangelogActivity"
             android:label="" />
-        <activity
-            android:name="it.cammino.risuscito.ThanksActivity"
-            android:label="" />
-
         <service
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService"
             android:enabled="true"
@@ -74,7 +70,7 @@
             android:exported="false" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="it.cammino.risuscito.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -118,7 +114,7 @@
             intents to your MediaBrowserServiceCompat implementation.
             Required on pre-Lollipop. More information at
             http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

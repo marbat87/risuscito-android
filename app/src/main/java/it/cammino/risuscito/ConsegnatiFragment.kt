@@ -1,33 +1,32 @@
 package it.cammino.risuscito
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import android.support.design.bottomappbar.BottomAppBar
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -37,13 +36,13 @@ import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
 
@@ -54,7 +53,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mCantiViewModel: ConsegnatiViewModel? = null
     private var rootView: View? = null
     private var selectableAdapter: FastItemAdapter<CheckableItem>? = null
-    //    private var mFab: FloatingActionButton? = null
     private var mBottomBar: BottomAppBar? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -68,7 +66,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(
                         javaClass.name,
                         "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
-                val fragment = SimpleDialogFragment.findVisible(
+                val fragment = ProgressDialogFragment.findVisible(
                         (activity as AppCompatActivity?)!!, "CONSEGNATI_SAVING")
                 fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
             } catch (e: IllegalArgumentException) {
@@ -82,14 +80,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             // Implement UI change code here once notification is received
             try {
                 Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
-                val fragment = SimpleDialogFragment.findVisible(
+                val fragment = ProgressDialogFragment.findVisible(
                         (activity as AppCompatActivity?)!!, "CONSEGNATI_SAVING")
                 fragment?.dismiss()
-                //                updateConsegnatiList();
                 chooseRecycler!!.visibility = View.GONE
                 enableBottombar(false)
                 selected_view!!.visibility = View.VISIBLE
-//                mMainActivity!!.enableFab(true)
                 enableFab(true)
                 mCantiViewModel!!.titoliChoose = ArrayList()
             } catch (e: IllegalArgumentException) {
@@ -101,23 +97,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
-
-
-//    private val fab: FloatingActionButton
-//        get() {
-//            Log.d(TAG, "getFab null?" + (mFab == null))
-//            if (mFab == null) {
-//                mFab = activity!!.findViewById(R.id.fab_pager)
-//                mFab!!.visibility = View.VISIBLE
-//                val icon = IconicsDrawable(activity!!)
-//                        .icon(CommunityMaterial.Icon.cmd_pencil)
-//                        .color(Color.WHITE)
-//                        .sizeDp(24)
-//                        .paddingDp(2)
-//                mFab!!.setImageDrawable(icon)
-//            }
-//            return mFab as FloatingActionButton
-//        }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -131,21 +110,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_consegnati)
 
-//        fab
-//                .setOnClickListener {
-//                    mCantiViewModel!!.editMode = true
-//                    updateChooseList()
-//                    selected_view!!.visibility = View.INVISIBLE
-//                    chooseRecycler!!.visibility = View.VISIBLE
-//                    enableBottombar(true)
-////                    mMainActivity!!.enableFab(false)
-//                    enableFab(false)
-//                    val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
-//                    if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
-//                        managerIntro()
-//                    }
-//                }
-
         return rootView
     }
 
@@ -156,12 +120,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         else
             activity!!.bottom_bar
 
-        activity!!.material_tabs.visibility = View.GONE
-//        mMainActivity!!.enableFab(true)
+        mMainActivity!!.setTabVisible(false)
         initFab()
 
-//        mBottomBar!!.inflateMenu(R.menu.consegnati)
-        mBottomBar!!.replaceMenu(R.menu.empty)
+//        mBottomBar!!.replaceMenu(R.menu.empty)
+        mBottomBar!!.menu.clear()
+//        mBottomBar!!.inflateMenu(R.menu.empty)
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.consegnati, mBottomBar!!.menu, false)
         mBottomBar!!.setOnMenuItemClickListener { menuItem ->
@@ -179,17 +143,22 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     chooseRecycler!!.visibility = View.INVISIBLE
                     enableBottombar(false)
                     selected_view!!.visibility = View.VISIBLE
-//                    mMainActivity!!.enableFab(true)
                     enableFab(true)
                     mCantiViewModel!!.titoliChoose = ArrayList()
                     true
                 }
                 R.id.confirm_changes -> {
                     mCantiViewModel!!.editMode = false
-                    SimpleDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
+//                    SimpleDialogFragment.Builder(
+//                            (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
+//                            .content(R.string.save_consegnati_running)
+//                            .showProgress()
+//                            .progressIndeterminate(false)
+//                            .progressMax(selectableAdapter!!.itemCount)
+//                            .show()
+                    ProgressDialogFragment.Builder(
+                            (activity as AppCompatActivity?)!!, null, "CONSEGNATI_SAVING")
                             .content(R.string.save_consegnati_running)
-                            .showProgress()
                             .progressIndeterminate(false)
                             .progressMax(selectableAdapter!!.itemCount)
                             .show()
@@ -209,62 +178,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(activity!!)
 
-//        mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
-        mBottomBar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils.primaryColor()))
-
-        //    Log.d(TAG, "onCreateView - editMode: " + mCantiViewModel.editMode);
-//        val mSelectNone = if (mMainActivity!!.isOnTablet)
-//            rootView!!.findViewById(R.id.select_none)
-//        else
-//            activity!!.findViewById<View>(R.id.select_none)
-//        mSelectNone.setOnClickListener {
-//            //            selectableAdapter.deselect();
-//            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
-//        }
-//
-//        val mSelectAll = if (mMainActivity!!.isOnTablet)
-//            select_all
-//        else
-//            activity!!.select_all
-//        mSelectAll.setOnClickListener {
-//            (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
-//        }
-//
-//        val cancelChange = if (mMainActivity!!.isOnTablet)
-//            cancel_change
-//        else
-//            activity!!.cancel_change
-//
-//        cancelChange.setOnClickListener {
-//            mCantiViewModel!!.editMode = false
-//            chooseRecycler!!.visibility = View.INVISIBLE
-//            enableBottombar(false)
-//            selected_view!!.visibility = View.VISIBLE
-//            mMainActivity!!.enableFab(true)
-//            mCantiViewModel!!.titoliChoose = ArrayList()
-//        }
-//
-//        val confirmChanges = if (mMainActivity!!.isOnTablet)
-//            confirm_changes
-//        else
-//            activity!!.confirm_changes
-//        confirmChanges.setOnClickListener {
-//            mCantiViewModel!!.editMode = false
-//            SimpleDialogFragment.Builder(
-//                    (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
-//                    .content(R.string.save_consegnati_running)
-//                    .showProgress()
-//                    .progressIndeterminate(false)
-//                    .progressMax(selectableAdapter!!.itemCount)
-//                    .show()
-//
-//            val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
-//            val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
-//
-//            val intent = Intent(activity!!.applicationContext, ConsegnatiSaverService::class.java)
-//            intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
-//            activity!!.applicationContext.startService(intent)
-//        }
+//        mBottomBar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils.primaryColor()))
+        mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
 
         val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
@@ -278,12 +193,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         // Creating new adapter object
-//        cantoAdapter = FastItemAdapter()
         cantoAdapter.withOnClickListener(mOnClickListener)
         FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
 
         cantiRecycler!!.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
@@ -312,7 +225,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
 
         chooseRecycler!!.adapter = selectableAdapter
-//        val llm2 = LinearLayoutManager(context)
         val llm2 = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
@@ -329,11 +241,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onResume() {
         super.onResume()
         //    Log.d(getClass().getName(), "onResume: ");
-//        activity!!
         LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         positionBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED))
-//        activity!!
         LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         completedBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED))
@@ -341,7 +251,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             chooseRecycler!!.visibility = View.VISIBLE
             enableBottombar(true)
             selected_view!!.visibility = View.INVISIBLE
-//            mMainActivity!!.enableFab(false)
             enableFab(false)
         } else {
             chooseRecycler!!.visibility = View.GONE
@@ -358,15 +267,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onPause() {
         super.onPause()
-//        activity!!.unregisterReceiver(positionBRec)
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(positionBRec)
-//        activity!!.unregisterReceiver(completedBRec)
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(completedBRec)
-    }
-
-    override fun onDestroy() {
-        enableBottombar(false)
-        super.onDestroy()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -441,18 +343,15 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun enableFab(enabled: Boolean) {
-//        if (mMainActivity!!.isOnTablet)
-//            if (enabled) fab_pager.show() else fab_pager.hide()
-//        else
         mMainActivity!!.enableFab(enabled)
     }
 
     private fun initFab() {
         val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_pencil)
+                .icon(CommunityMaterial.Icon2.cmd_pencil)
                 .color(Color.WHITE)
                 .sizeDp(24)
-                .paddingDp(2)
+                .paddingDp(4)
         val onClick = View.OnClickListener {
             mCantiViewModel!!.editMode = true
             updateChooseList()
@@ -465,11 +364,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 managerIntro()
             }
         }
-//        if (mMainActivity!!.isOnTablet) {
-//            fab_pager.setImageDrawable(icon)
-//            fab_pager.setOnClickListener(onClick)
-//        } else
-        mMainActivity!!.initFab(icon, onClick)
+        mMainActivity!!.initFab(false, icon, onClick, null, false)
     }
 
     override fun onPositive(tag: String) {}
@@ -556,14 +451,14 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             if (cantos != null) {
                                 val newList = ArrayList<SimpleItem>()
                                 for (canto in cantos) {
-                                    val sampleItem = SimpleItem()
-                                    sampleItem
+                                    val simpleItem = SimpleItem()
+                                    simpleItem
                                             .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
                                             .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
                                             .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
                                             .withColor(canto.color!!)
                                             .withId(canto.id)
-                                    newList.add(sampleItem)
+                                    newList.add(simpleItem)
                                 }
                                 mCantiViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
                                 cantoAdapter.set(mCantiViewModel!!.titoli)

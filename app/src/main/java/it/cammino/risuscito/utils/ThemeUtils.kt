@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import it.cammino.risuscito.R
 
 class ThemeUtils(context: Activity) {

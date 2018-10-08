@@ -2,21 +2,12 @@ package it.cammino.risuscito
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -24,10 +15,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
+import androidx.core.view.ViewCompat
+import androidx.core.view.postDelayed
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
@@ -132,7 +135,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         SearchTask().execute(savedInstanceState)
 
         val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_plus)
+                .icon(CommunityMaterial.Icon2.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
@@ -198,13 +201,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 TAG,
                 "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
-            val handler = Handler()
-            handler.postDelayed(
-                    {
-                        // Do something after 5s = 5000ms
-                        playIntro()
-                    },
-                    1500)
+            Handler().postDelayed(1500) {
+                playIntro()
+            }
         }
         if (mAdapter!!.adapterItems == null
                 || mAdapter!!.adapterItems.size == 0
@@ -334,20 +333,20 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RENAME" -> {
-                val mEditText = dialog.inputEditText
+                val mEditText = dialog.getInputField()
                 val mElement = mAdapter!!.adapterItems[mViewModel!!.positionToRename]
-                mElement.withName(mEditText?.text?.toString() ?: "NULL")
+                mElement.withName(mEditText!!.text.toString())
                 mAdapter!!.notifyAdapterItemChanged(mViewModel!!.positionToRename)
             }
             "ADD_POSITION" -> {
                 noElementsAdded.visibility = View.GONE
-                val mEditText = dialog.inputEditText
+                val mEditText = dialog.getInputField()
                 if (modifica) nomiCanti!!.add("")
                 if (mAdapter!!.adapterItemCount == 0) {
                     elementi!!.clear()
                     elementi!!.add(
                             SwipeableItem()
-                                    .withName(mEditText?.text?.toString() ?: "NULL")
+                                    .withName(mEditText!!.text.toString())
                                     .withTouchHelper(touchHelper!!)
                                     .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.add(elementi)
@@ -358,7 +357,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .adapterItems
                             .add(
                                     SwipeableItem()
-                                            .withName(mEditText?.text?.toString() ?: "NULL")
+                                            .withName(mEditText!!.text.toString())
                                             .withTouchHelper(touchHelper!!)
                                             .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.notifyAdapterItemInserted(mSize)
@@ -429,7 +428,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         // This can vary depending on direction but remove & archive simulated here both results in
         // removal from list
-        val removeRunnable = Runnable {
+        val removeRunnable = recycler_view!!.postDelayed(2000) {
             item.setSwipedAction(Runnable {})
             val mPosition = mAdapter!!.getAdapterPosition(item)
             if (mPosition != RecyclerView.NO_POSITION) {
@@ -444,7 +443,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
             }
         }
-        recycler_view!!.postDelayed(removeRunnable, 2000)
 
         item.setSwipedAction(Runnable {
             recycler_view!!.removeCallbacks(removeRunnable)

@@ -42,7 +42,8 @@
             risuscito:ico_size="24dp"
             risuscito:ico_padding="2dp"
             android:scaleType="fitCenter"
-            tools:ignore="MissingPrefix" />
+            tools:ignore="MissingPrefix"
+            android:contentDescription="@null" />
 
     </FrameLayout>
 

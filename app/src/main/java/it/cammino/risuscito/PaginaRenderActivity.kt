@@ -2,19 +2,12 @@ package it.cammino.risuscito
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.content.*
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.os.*
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -26,21 +19,33 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
-import com.afollestad.materialdialogs.folderselector.FileChooserDialog
+import androidx.core.os.postDelayed
+import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
+import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.files.fileChooser
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.snackbar.Snackbar
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
+import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.services.PdfExportService
-import it.cammino.risuscito.ui.BottomSheetFabCanto
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
@@ -53,11 +58,12 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback, FileChooserDialog.FileCallback {
+class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback, ProgressDialogFragment.ProgressCallback {
+
     val cambioAccordi = CambioAccordi(this, null)
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
     var mostraAudioBool: Boolean = false
-    var mDownload: Boolean = false
+    private var mDownload: Boolean = false
 
     private var mViewModel: PaginaRenderViewModel? = null
     private var pagina: String? = null
@@ -104,7 +110,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-                    val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
+                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
                     sFragment?.dismiss()
                     stopSeekbarUpdate()
                     music_seekbar.progress = 0
@@ -112,13 +118,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                     Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
                     Snackbar.make(
-                            canto_coordinator,
+                            findViewById(android.R.id.content),
                             state.errorMessage,
                             Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-                    val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
+                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
                     sFragment?.dismiss()
                     scheduleSeekbarUpdate()
                     showPlaying(true)
@@ -194,7 +200,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.v(TAG, "BROADCAST_DOWNLOAD_PROGRESS")
                 Log.v(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
-                val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
                 sFragment?.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -207,7 +213,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
-                val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
                 sFragment?.dismiss()
                 val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
                 val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
@@ -222,7 +228,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                     + Utility.filterMediaLinkNew(url!!)), null, null)
                 }
                 Snackbar.make(
-                        canto_coordinator,
+                        findViewById(android.R.id.content),
                         R.string.download_completed,
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -242,10 +248,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_ERROR")
                 Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
-                val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
                 sFragment?.dismiss()
                 Snackbar.make(
-                        canto_coordinator,
+                        findViewById(android.R.id.content),
                         getString(R.string.download_error)
                                 + " "
                                 + intent.getStringExtra(DownloadService.DATA_ERROR),
@@ -262,7 +268,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             Log.d(TAG, "BROADCAST_EXPORT_COMPLETED")
             Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH))
-            val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
+            val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
             sFragment?.dismiss()
             val localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH)
             val file = File(localPDFPath)
@@ -277,7 +283,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 startActivity(intent2)
             } catch (e: ActivityNotFoundException) {
                 Snackbar.make(
-                        canto_coordinator,
+                        findViewById(android.R.id.content),
                         R.string.no_pdf_reader,
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -293,10 +299,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 Log.d(
                         TAG,
                         "DATA_EXPORT_ERROR: " + intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR))
-                val sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
                 sFragment?.dismiss()
                 Snackbar.make(
-                        canto_coordinator,
+                        findViewById(android.R.id.content),
                         intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR),
                         Snackbar.LENGTH_SHORT)
                         .show()
@@ -306,86 +312,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         }
     }
-    private val fabBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            val clickedId = intent.getIntExtra(BottomSheetFabCanto.DATA_ITEM_ID, 0)
-            when (clickedId) {
-                BottomSheetFabCanto.FULLSCREEN -> {
-                    mHandler.removeCallbacks(mScrollDown)
-                    saveZoom(false, false)
-                    val bundle = Bundle()
-                    bundle.putString(Utility.URL_CANTO, cantoView.url)
-                    bundle.putInt(Utility.SPEED_VALUE, speed_seekbar.progress)
-                    bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel!!.scrollPlaying)
-                    bundle.putInt(Utility.ID_CANTO, idCanto)
 
-                    val intent2 = Intent(this@PaginaRenderActivity, PaginaRenderFullScreen::class.java)
-                    intent2.putExtras(bundle)
-                    mLUtils!!.startActivityWithFadeIn(intent2)
-                }
-                BottomSheetFabCanto.SOUND -> {
-                    music_controls.visibility = if (mostraAudioBool) View.GONE else View.VISIBLE
-                    mostraAudioBool = !mostraAudioBool
-                    mViewModel!!.mostraAudio = mostraAudioBool.toString()
-                }
-                BottomSheetFabCanto.SAVE_FILE -> if (!url!!.isEmpty()) {
-                    if (mDownload) {
-                        if (personalUrl!!.isEmpty()) {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
-                                    .title(R.string.dialog_delete_mp3_title)
-                                    .content(R.string.dialog_delete_mp3)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                    .title(R.string.dialog_delete_link_title)
-                                    .content(R.string.dialog_delete_link)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        }
-                    } else {
-                        SimpleDialogFragment.Builder(
-                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-                                .title(R.string.download_link_title)
-                                .content(R.string.downlink_message)
-                                .positiveButton(R.string.downlink_download)
-                                .negativeButton(R.string.downlink_choose)
-                                .neutralButton(android.R.string.cancel)
-                                .show()
-                    }
-                } else {
-                    if (mDownload) {
-                        SimpleDialogFragment.Builder(
-                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                .title(R.string.dialog_delete_link_title)
-                                .content(R.string.dialog_delete_link)
-                                .positiveButton(android.R.string.yes)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    } else {
-                        SimpleDialogFragment.Builder(
-                                this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
-                                .title(R.string.only_link_title)
-                                .content(R.string.only_link)
-                                .positiveButton(android.R.string.yes)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    }
-                }
-                BottomSheetFabCanto.FAVORITE -> {
-                    val favoriteYet = mViewModel!!.mCurrentCanto!!.favorite == 1
-                    updateFavouriteFlag(if (favoriteYet) 0 else 1)
-                }
-                else -> {
-                }
-            }
-        }
-    }
     private val catalogReadyBR = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
@@ -429,23 +356,22 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mRegularFont = ResourcesCompat.getFont(this@PaginaRenderActivity, R.font.googlesans_regular)
 
-//        (findViewById<View>(R.id.main_toolbarTitle) as TextView).setText(R.string.canto_title_activity)
         risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
+        bottom_bar.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
         supportActionBar!!.setTitle(R.string.canto_title_activity)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-//        findViewById<View>(R.id.bottom_bar).setBackgroundColor(themeUtils!!.primaryColor())
-        bottom_bar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils!!.primaryColor()))
+//        bottom_bar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils!!.primaryColor()))
 
         mLUtils = LUtils.getInstance(this@PaginaRenderActivity)
 
         val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_plus)
+                .icon(CommunityMaterial.Icon2.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
-        fab_canti.setImageDrawable(icon)
+        fab_canti.setMainFabClosedDrawable(icon)
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -534,25 +460,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
         }
 
-        fab_canti.setOnClickListener {
-            val bottomSheetDialog = BottomSheetFabCanto.newInstance(
-                    mostraAudioBool,
-                    mDownload,
-                    mViewModel!!.mCurrentCanto!!.favorite == 1,
-                    url != "",
-                    personalUrl != "")
-            bottomSheetDialog.show(supportFragmentManager, null)
-        }
-
         if (mViewModel!!.mostraAudio == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
             mViewModel!!.mostraAudio = pref.getBoolean(Utility.SHOW_AUDIO, true).toString()
         }
         mostraAudioBool = java.lang.Boolean.parseBoolean(mViewModel!!.mostraAudio)
 
-        var sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
-        sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_LINK")
+        val sFragment1 = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+        sFragment1?.setmCallback(this@PaginaRenderActivity)
+        var sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_LINK")
         sFragment?.setmCallback(this@PaginaRenderActivity)
         sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
         sFragment?.setmCallback(this@PaginaRenderActivity)
@@ -574,20 +490,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 menuInflater, this@PaginaRenderActivity, R.menu.canto, menu, true)
         super.onCreateOptionsMenu(menu)
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-        Log.d(
-                TAG,
-                "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
+        Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
-            val handler = Handler()
-            handler.postDelayed(
-                    {
-                        // Do something after 5s = 5000ms
-                        if (music_buttons.visibility == View.VISIBLE)
-                            playIntroFull()
-                        else
-                            playIntroSmall()
-                    },
-                    1500)
+            Handler().postDelayed(1500) {
+                if (music_buttons.isVisible)
+                    playIntroFull()
+                else
+                    playIntroSmall()
+            }
         }
 
         return true
@@ -619,13 +529,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 }
             R.id.action_exp_pdf -> {
-                SimpleDialogFragment.Builder(
-                        this@PaginaRenderActivity, this@PaginaRenderActivity, "EXPORT_PDF")
+//                SimpleDialogFragment.Builder(
+//                        this@PaginaRenderActivity, this@PaginaRenderActivity, "EXPORT_PDF")
+//                        .content(R.string.export_running)
+//                        .showProgress()
+//                        .progressIndeterminate(true)
+//                        .progressMax(0)
+//                        .show().isCancelable = true
+                ProgressDialogFragment.Builder(this@PaginaRenderActivity, null, "EXPORT_PDF")
                         .content(R.string.export_running)
-                        .showProgress()
                         .progressIndeterminate(true)
-                        .progressMax(0)
-                        .show().isCancelable = true
+                        .setCanceable()
+                        .show()
                 val i = Intent(applicationContext, PdfExportService::class.java)
                 i.putExtra(PdfExportService.DATA_PRIMA_NOTA, primaNota)
                 i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, mViewModel!!.notaCambio)
@@ -640,7 +555,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_help_canto -> {
-                if (music_buttons.visibility == View.VISIBLE)
+//                if (music_buttons.visibility == View.VISIBLE)
+                if (music_buttons.isVisible)
                     playIntroFull()
                 else
                     playIntroSmall()
@@ -654,7 +570,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
                                 mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
-                                        canto_coordinator,
+                                        findViewById(android.R.id.content),
                                         R.string.tab_saved,
                                         Snackbar.LENGTH_SHORT)
                                         .show()
@@ -662,7 +578,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .start()
                 } else {
                     Snackbar.make(
-                            canto_coordinator, R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -695,7 +611,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
                                 mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
                                 Snackbar.make(
-                                        canto_coordinator,
+                                        findViewById(android.R.id.content),
                                         R.string.barre_saved,
                                         Snackbar.LENGTH_SHORT)
                                         .show()
@@ -703,7 +619,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .start()
                 } else {
                     Snackbar.make(
-                            canto_coordinator,
+                            findViewById(android.R.id.content),
                             R.string.barre_not_saved,
                             Snackbar.LENGTH_SHORT)
                             .show()
@@ -778,6 +694,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
+
+        if (fab_canti.isOpen) {
+            fab_canti.close()
+            return
+        }
+
         if (mViewModel!!.notaCambio == null
                 || mViewModel!!.mCurrentCanto!!.savedTab == null
                 || mViewModel!!.barreCambio == null
@@ -801,8 +723,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     public override fun onResume() {
-//        mCastSession = mSessionManager!!.currentCastSession
-//        mSessionManager!!.addSessionManagerListener(mSessionManagerListener, CastSession::class.java)
         super.onResume()
 
         Log.d(TAG, "onResume: ")
@@ -821,15 +741,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mLocalBroadcastManager.registerReceiver(
                 exportCompleted, IntentFilter(PdfExportService.BROADCAST_EXPORT_COMPLETED))
         mLocalBroadcastManager.registerReceiver(exportError, IntentFilter(PdfExportService.BROADCAST_EXPORT_ERROR))
-        mLocalBroadcastManager.registerReceiver(fabBRec, IntentFilter(BottomSheetFabCanto.CHOOSE_DONE))
         mLocalBroadcastManager.registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
     }
-
-//    override fun onPause() {
-//        super.onPause()
-//        mSessionManager!!.removeSessionManagerListener(mSessionManagerListener, CastSession::class.java)
-//        mCastSession = null
-//    }
 
     public override fun onDestroy() {
         super.onDestroy()
@@ -841,7 +754,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
             mLocalBroadcastManager.unregisterReceiver(exportCompleted)
             mLocalBroadcastManager.unregisterReceiver(exportError)
-            mLocalBroadcastManager.unregisterReceiver(fabBRec)
             mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
         } catch (e: IllegalArgumentException) {
             Log.e(TAG, e.localizedMessage, e)
@@ -850,22 +762,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (isFinishing) stopMedia()
         stopSeekbarUpdate()
         mExecutorService.shutdown()
-    }
-
-    // aggiorna il flag che indica se la pagina è tra i preferiti
-    fun updateFavouriteFlag(favouriteFlag: Int) {
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                    mViewModel!!.mCurrentCanto!!.favorite = favouriteFlag
-                    mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                    Snackbar.make(
-                            canto_coordinator,
-                            if (favouriteFlag == 1) R.string.favorite_added else R.string.favorite_removed,
-                            Snackbar.LENGTH_SHORT)
-                            .show()
-                })
-                .start()
     }
 
     // recupera e setta il record per la registrazione
@@ -1057,24 +953,29 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .absolutePath
                     + "/Risuscitò/"
                     + Utility.filterMediaLinkNew(url!!))
-            SimpleDialogFragment.Builder(
-                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
-                    .title(R.string.download_running)
-                    .showProgress()
-                    .positiveButton(android.R.string.cancel)
+//            SimpleDialogFragment.Builder(
+//                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+//                    .title(R.string.download_running)
+//                    .showProgress()
+//                    .positiveButton(android.R.string.cancel)
+//                    .progressIndeterminate(false)
+//                    .progressMax(100)
+//                    .show()
+            ProgressDialogFragment.Builder(this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                    .content(R.string.download_running)
                     .progressIndeterminate(false)
                     .progressMax(100)
+                    .positiveButton(android.R.string.cancel)
                     .show()
             val i = Intent(applicationContext, DownloadService::class.java)
             i.action = DownloadService.ACTION_DOWNLOAD
-//            val uri = Uri.parse(url)
             val uri = url!!.toUri()
             i.data = uri
             i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
             startService(i)
         } else
             Snackbar.make(
-                    canto_coordinator,
+                    findViewById(android.R.id.content),
                     R.string.no_memory_writable,
                     Snackbar.LENGTH_SHORT)
                     .show()
@@ -1082,17 +983,22 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun startInternalDownload() {
         val localFilePath = this@PaginaRenderActivity.filesDir.toString() + "/" + Utility.filterMediaLink(url!!)
-        SimpleDialogFragment.Builder(
-                this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
-                .title(R.string.download_running)
-                .showProgress()
-                .positiveButton(android.R.string.cancel)
+//        SimpleDialogFragment.Builder(
+//                this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+//                .title(R.string.download_running)
+//                .showProgress()
+//                .positiveButton(android.R.string.cancel)
+//                .progressIndeterminate(false)
+//                .progressMax(100)
+//                .show()
+        ProgressDialogFragment.Builder(this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                .content(R.string.download_running)
                 .progressIndeterminate(false)
                 .progressMax(100)
+                .positiveButton(android.R.string.cancel)
                 .show()
         val i = Intent(applicationContext, DownloadService::class.java)
         i.action = DownloadService.ACTION_DOWNLOAD
-//        val uri = Uri.parse(url)
         val uri = url!!.toUri()
         i.data = uri
         i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
@@ -1102,26 +1008,29 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
         val icon = IconicsDrawable(this@PaginaRenderActivity)
-                .icon(if (started) CommunityMaterial.Icon.cmd_pause else CommunityMaterial.Icon.cmd_play)
+                .icon(if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
                 .color(
                         ContextCompat.getColor(
                                 this@PaginaRenderActivity,
-                                if (mViewModel!!.retrieveDone)
-                                    R.color.text_color_secondary
-                                else
-                                    R.color.text_color_secondary_disabled))
+//                                if (mViewModel!!.retrieveDone)
+                                R.color.text_color_secondary
+//                                else
+//                                    R.color.text_color_secondary_disabled))
+                        ))
                 .sizeDp(24)
                 .paddingDp(2)
         play_song.setImageDrawable(icon)
+        play_song.visibility = if (mViewModel!!.retrieveDone) View.VISIBLE else View.GONE
+        loadingBar.visibility = if (mViewModel!!.retrieveDone) View.GONE else View.VISIBLE
     }
 
     private fun showScrolling(scrolling: Boolean) {
         val icon = IconicsDrawable(this@PaginaRenderActivity)
                 .icon(
                         if (scrolling)
-                            CommunityMaterial.Icon.cmd_pause_circle_outline
+                            CommunityMaterial.Icon2.cmd_pause_circle_outline
                         else
-                            CommunityMaterial.Icon.cmd_play_circle_outline)
+                            CommunityMaterial.Icon2.cmd_play_circle_outline)
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -1135,7 +1044,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             "DOWNLOAD_MP3" -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             "DELETE_LINK" -> {
                 Snackbar.make(
-                        canto_coordinator, R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 DeleteLinkTask().execute(idCanto)
@@ -1150,10 +1059,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
                     }
                     Snackbar.make(
-                            canto_coordinator, R.string.file_delete, Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                             .show()
                 } else
-                    Snackbar.make(canto_coordinator, R.string.error, Snackbar.LENGTH_SHORT)
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
                             .show()
                 stopMedia()
                 refreshCatalog()
@@ -1168,12 +1077,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     // Have permission, do the thing!
                         startExternalDownload()
                     else {
-//                        val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                        editor.putString(Utility.SAVE_LOCATION, "0")
-//                        editor.apply()
                         PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
-                                canto_coordinator,
+                                findViewById(android.R.id.content),
                                 R.string.forced_private,
                                 Snackbar.LENGTH_SHORT)
                                 .show()
@@ -1182,11 +1088,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else
                     startInternalDownload()
             }
-            "ONLY_LINK" -> FileChooserDialog.Builder(this@PaginaRenderActivity)
-                    .mimeType("audio/*") // Optional MIME type filter
-                    .tag("optional-identifier")
-                    .goUpLabel("Up") // custom go up label, default label is "..."
-                    .show(this@PaginaRenderActivity)
+            "ONLY_LINK" -> createFileChooser()
+//                FileChooserDialog.Builder(this@PaginaRenderActivity)
+//                    .mimeType("audio/*") // Optional MIME type filter
+//                    .tag("optional-identifier")
+//                    .goUpLabel("Up") // custom go up label, default label is "..."
+//                    .show(this@PaginaRenderActivity)
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
@@ -1201,11 +1108,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-            "DOWNLINK_CHOOSE" -> FileChooserDialog.Builder(this@PaginaRenderActivity)
-                    .mimeType("audio/*") // Optional MIME type filter
-                    .tag("optional-identifier")
-                    .goUpLabel("Up") // custom go up label, default label is "..."
-                    .show(this@PaginaRenderActivity)
+            "DOWNLINK_CHOOSE" -> createFileChooser()
+//                FileChooserDialog.Builder(this@PaginaRenderActivity)
+//                    .mimeType("audio/*") // Optional MIME type filter
+//                    .tag("optional-identifier")
+//                    .goUpLabel("Up") // custom go up label, default label is "..."
+//                    .show(this@PaginaRenderActivity)
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
@@ -1219,18 +1127,33 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     override fun onNeutral(tag: String) {}
 
-    override fun onFileSelection(dialog: FileChooserDialog, file: File) {
-        val path = file.absolutePath
-        Snackbar.make(
-                canto_coordinator,
-                getString(R.string.file_selected) + ": " + path,
-                Snackbar.LENGTH_SHORT)
+    private fun createFileChooser() {
+        MaterialDialog(this@PaginaRenderActivity)
+                .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase() == "mp3" }) { _, file ->
+                    val path = file.absolutePath
+                    Snackbar.make(
+                            findViewById(android.R.id.content),
+                            getString(R.string.file_selected) + ": " + path,
+                            Snackbar.LENGTH_SHORT)
+                            .show()
+                    stopMedia()
+                    InsertLinkTask().execute(idCanto.toString(), path)
+                }
                 .show()
-        stopMedia()
-        InsertLinkTask().execute(idCanto.toString(), path)
     }
 
-    override fun onFileChooserDismissed(dialog: FileChooserDialog) {}
+//    override fun onFileSelection(dialog: FileChooserDialog, file: File) {
+//        val path = file.absolutePath
+//        Snackbar.make(
+//                findViewById(android.R.id.content),
+//                getString(R.string.file_selected) + ": " + path,
+//                Snackbar.LENGTH_SHORT)
+//                .show()
+//        stopMedia()
+//        InsertLinkTask().execute(idCanto.toString(), path)
+//    }
+//
+//    override fun onFileChooserDismissed(dialog: FileChooserDialog) {}
 
     private fun playIntroSmall() {
         music_controls.visibility = View.VISIBLE
@@ -1290,10 +1213,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                //                                Log.d(TAG, "onSequenceFinish: ");
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
@@ -1301,10 +1220,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                //                                Log.d(TAG, "onSequenceCanceled: ");
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
@@ -1382,10 +1297,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                //                                Log.d(TAG, "onSequenceFinish: ");
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
@@ -1393,10 +1304,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                //                                Log.d(TAG, "onSequenceCanceled: ");
-//                                val prefEditor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                                prefEditor.putBoolean(Utility.INTRO_PAGINARENDER, true)
-//                                prefEditor.apply()
                                 PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
@@ -1425,13 +1332,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-        SimpleDialogFragment.Builder(
-                this@PaginaRenderActivity, this@PaginaRenderActivity, "BUFFERING")
+//        SimpleDialogFragment.Builder(
+//                this@PaginaRenderActivity, this@PaginaRenderActivity, "BUFFERING")
+//                .content(R.string.wait)
+//                .showProgress()
+//                .progressIndeterminate(true)
+//                .progressMax(0)
+//                .show().isCancelable = true
+        ProgressDialogFragment.Builder(this@PaginaRenderActivity, null, "BUFFERING")
                 .content(R.string.wait)
-                .showProgress()
                 .progressIndeterminate(true)
-                .progressMax(0)
-                .show().isCancelable = true
+                .setCanceable()
+                .show()
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.playFromMediaId(id, null)
     }
@@ -1490,12 +1402,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     // Have permission, do the thing!
                     Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, true)
                 } else {
-//                    val editor = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit()
-//                    editor.putString(Utility.SAVE_LOCATION, "0")
-//                    editor.apply()
                     PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
-                            canto_coordinator,
+                            findViewById(android.R.id.content),
                             getString(R.string.external_storage_denied),
                             Snackbar.LENGTH_SHORT)
                             .show()
@@ -1518,18 +1427,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             music_buttons.visibility = if (mDownload) View.VISIBLE else View.INVISIBLE
             no_record.visibility = if (mDownload) View.INVISIBLE else View.VISIBLE
         }// NON c'è la registrazione online
+        initFabOptions()
     }
 
     private inner class MyWebViewClient : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {
-            view.postDelayed(
-                    {
-                        if (mViewModel!!.mCurrentCanto!!.scrollX > 0 || mViewModel!!.mCurrentCanto!!.scrollY > 0)
-                            cantoView.scrollTo(
-                                    mViewModel!!.mCurrentCanto!!.scrollX, mViewModel!!.mCurrentCanto!!.scrollY)
-                    },
-                    // Delay the scrollTo to make it work
-                    600)
+            view.postDelayed(600) {
+                if (mViewModel!!.mCurrentCanto!!.scrollX > 0 || mViewModel!!.mCurrentCanto!!.scrollY > 0)
+                    cantoView.scrollTo(
+                            mViewModel!!.mCurrentCanto!!.scrollX, mViewModel!!.mCurrentCanto!!.scrollY)
+            }
             super.onPageFinished(view, url)
         }
     }
@@ -1659,6 +1566,193 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             super.onPostExecute(integer)
             refreshCatalog()
             checkRecordsState()
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private inner class UpdateFavoriteTask : AsyncTask<Int, Void, Int>() {
+        override fun doInBackground(vararg params: Int?): Int? {
+            val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+            mViewModel!!.mCurrentCanto!!.favorite = params[0]!!
+            mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    if (params[0]!! == 1) R.string.favorite_added else R.string.favorite_removed,
+                    Snackbar.LENGTH_SHORT)
+                    .show()
+            return 0
+        }
+
+        override fun onPostExecute(integer: Int?) {
+            super.onPostExecute(integer)
+            initFabOptions()
+        }
+    }
+
+    private fun initFabOptions() {
+//        fab_canti.expansionMode = if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        fab_canti.expansionMode = if (mLUtils!!.isFabScrollingActive && mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        val iconColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.text_color_secondary)
+        val backgroundColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background)
+
+        fab_canti.clearActionItems()
+
+        fab_canti.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this@PaginaRenderActivity)
+                        .icon(CommunityMaterial.Icon.cmd_fullscreen)
+                        .color(iconColor)
+                        .sizeDp(24)
+                        .paddingDp(4))
+                        .setLabel(getString(R.string.fullscreen))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
+                        .create()
+        )
+
+        fab_canti.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this@PaginaRenderActivity)
+                        .icon(if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
+                        .color(iconColor)
+                        .sizeDp(24)
+                        .paddingDp(4))
+                        .setLabel(getString(if (mostraAudioBool) R.string.audio_off else R.string.audio_on))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
+                        .create()
+        )
+
+        val text: String
+        val icon = IconicsDrawable(this@PaginaRenderActivity)
+                .color(iconColor)
+                .sizeDp(24)
+                .paddingDp(4)
+        if (mDownload) {
+            text = if (personalUrl != "") {
+                icon.icon(CommunityMaterial.Icon2.cmd_link_variant_off)
+                getString(R.string.dialog_delete_link_title)
+            } else {
+                icon.icon(CommunityMaterial.Icon.cmd_delete)
+                getString(R.string.fab_delete_unlink)
+            }
+        } else {
+            text = if (url != "") {
+                icon.icon(CommunityMaterial.Icon.cmd_download)
+                getString(R.string.save_file)
+            } else {
+                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
+                getString(R.string.only_link_title)
+            }
+        }
+        fab_canti.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
+                        .setLabel(text)
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
+                        .create()
+        )
+
+        fab_canti.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
+                        .icon(if (mViewModel!!.mCurrentCanto!!.favorite == 1) CommunityMaterial.Icon2.cmd_heart else CommunityMaterial.Icon2.cmd_heart_outline)
+                        .color(iconColor)
+                        .sizeDp(24)
+                        .paddingDp(4))
+                        .setLabel(getString(if (mViewModel!!.mCurrentCanto!!.favorite == 1) R.string.favorite_off else R.string.favorite_on))
+                        .setFabBackgroundColor(backgroundColor)
+                        .setLabelBackgroundColor(backgroundColor)
+                        .setLabelColor(iconColor)
+                        .create()
+        )
+
+        fab_canti.setOnActionSelectedListener {
+            when (it.id) {
+                R.id.fab_fullscreen_on -> {
+                    fab_canti.close()
+                    mHandler.removeCallbacks(mScrollDown)
+                    saveZoom(false, false)
+                    val bundle = Bundle()
+                    bundle.putString(Utility.URL_CANTO, cantoView.url)
+                    bundle.putInt(Utility.SPEED_VALUE, speed_seekbar.progress)
+                    bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel!!.scrollPlaying)
+                    bundle.putInt(Utility.ID_CANTO, idCanto)
+
+                    val intent2 = Intent(this@PaginaRenderActivity, PaginaRenderFullScreen::class.java)
+                    intent2.putExtras(bundle)
+                    mLUtils!!.startActivityWithFadeIn(intent2)
+                    true
+                }
+                R.id.fab_sound_off -> {
+                    fab_canti.close()
+                    music_controls.visibility = if (mostraAudioBool) View.GONE else View.VISIBLE
+                    mostraAudioBool = !mostraAudioBool
+                    mViewModel!!.mostraAudio = mostraAudioBool.toString()
+                    true
+                }
+                R.id.fab_save_file -> {
+                    fab_canti.close()
+                    if (!url!!.isEmpty()) {
+                        if (mDownload) {
+                            if (personalUrl!!.isEmpty()) {
+                                SimpleDialogFragment.Builder(
+                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+                                        .title(R.string.dialog_delete_mp3_title)
+                                        .content(R.string.dialog_delete_mp3)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
+                                        .show()
+                            } else {
+                                SimpleDialogFragment.Builder(
+                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+                                        .title(R.string.dialog_delete_link_title)
+                                        .content(R.string.dialog_delete_link)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
+                                        .show()
+                            }
+                        } else {
+                            SimpleDialogFragment.Builder(
+                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+                                    .title(R.string.download_link_title)
+                                    .content(R.string.downlink_message)
+                                    .positiveButton(R.string.downlink_download)
+                                    .negativeButton(R.string.downlink_choose)
+                                    .neutralButton(android.R.string.cancel)
+                                    .show()
+                        }
+                    } else {
+                        if (mDownload) {
+                            SimpleDialogFragment.Builder(
+                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+                                    .title(R.string.dialog_delete_link_title)
+                                    .content(R.string.dialog_delete_link)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        } else {
+                            SimpleDialogFragment.Builder(
+                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+                                    .title(R.string.only_link_title)
+                                    .content(R.string.only_link)
+                                    .positiveButton(android.R.string.yes)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        }
+                    }
+                    true
+                }
+                R.id.fab_favorite -> {
+                    fab_canti.close()
+                    val favoriteYet = mViewModel!!.mCurrentCanto!!.favorite == 1
+                    UpdateFavoriteTask().execute(if (favoriteYet) 0 else 1)
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
         }
     }
 

@@ -1,10 +1,10 @@
 package it.cammino.risuscito
 
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.v4.content.ContextCompat
+import com.google.android.material.appbar.AppBarLayout
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.MenuItem
 import it.cammino.risuscito.ui.ThemeableActivity

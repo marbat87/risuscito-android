@@ -1,23 +1,22 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.turingtechnologies.materialscrollbar.CustomIndicator
@@ -40,7 +39,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
     private var mCantiViewModel: NumericIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-//    private var titoloDaAgg: String? = null
+    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null

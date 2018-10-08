@@ -1,7 +1,7 @@
 package it.cammino.risuscito.database.dao
 
-import android.arch.persistence.room.*
-import android.arch.persistence.room.OnConflictStrategy.REPLACE
+import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import it.cammino.risuscito.database.entities.LocalLink
 
 @Suppress("unused")

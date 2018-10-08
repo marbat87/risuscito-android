@@ -1,11 +1,11 @@
 package it.cammino.risuscito.database
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.*
-import android.arch.persistence.room.migration.Migration
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
+import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import it.cammino.risuscito.DatabaseCanti
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.database.dao.*

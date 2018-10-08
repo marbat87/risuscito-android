@@ -2,4 +2,5 @@
 <resources>
     <bool name="has_three_columns">false</bool>
     <bool name="is_grid_layout">true</bool>
+    <bool name="fab_behavior_active">false</bool>
 </resources>

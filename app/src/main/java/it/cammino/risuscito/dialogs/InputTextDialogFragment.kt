@@ -1,19 +1,19 @@
 package it.cammino.risuscito.dialogs
 
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
-import com.afollestad.materialdialogs.DialogAction
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
-import it.cammino.risuscito.R
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import java.io.Serializable
 
 @Suppress("unused")
@@ -35,6 +35,7 @@ class InputTextDialogFragment : DialogFragment() {
         retainInstance = true
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
                 ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
@@ -42,53 +43,69 @@ class InputTextDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-        val dialogBuilder = MaterialDialog.Builder(activity!!)
-                .input("", if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", false) { _, _ -> }
-                .autoDismiss(mBuilder.mAutoDismiss)
+//        val dialogBuilder = MaterialDialog.Builder(activity!!)
+//                .input("", if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", false) { _, _ -> }
+//                .autoDismiss(mBuilder.mAutoDismiss)
+        val dialog = MaterialDialog(activity!!)
+                .input(prefill = if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
 
         if (mBuilder.mTitle != 0)
-            dialogBuilder.title(mBuilder.mTitle)
+            dialog.title(res = mBuilder.mTitle)
+
+        if (!mBuilder.mAutoDismiss)
+            dialog.noAutoDismiss()
 
         if (mBuilder.mPositiveButton != null) {
-            dialogBuilder.positiveText(mBuilder.mPositiveButton!!)
-                    .onPositive(object : MaterialDialog.SingleButtonCallback {
-                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                            Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-                            mCallback!!.onPositive(mBuilder.mTag, dialog)
-                        }
-                    })
+            dialog.positiveButton(text = mBuilder.mPositiveButton) { mDialog ->
+                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
+                mCallback!!.onPositive(mBuilder.mTag, mDialog)
+            }
         }
 
         if (mBuilder.mNegativeButton != null) {
-            dialogBuilder.negativeText(mBuilder.mNegativeButton!!)
-                    .onNegative { dialog, _ -> mCallback!!.onNegative(mBuilder.mTag, dialog) }
+            dialog.negativeButton(text = mBuilder.mNegativeButton) { mDialog ->
+                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
+                mCallback!!.onNegative(mBuilder.mTag, mDialog)
+            }
         }
 
-        if (mBuilder.mNeutralButton != null) {
-            dialogBuilder.negativeText(mBuilder.mNeutralButton!!)
-                    .onNeutral { dialog, _ ->
-                        mCallback!!.onNeutral(
-                                mBuilder.mTag, dialog)
-                    }
-        }
 
-        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
+//        if (mBuilder.mTitle != 0)
+//            dialogBuilder.title(mBuilder.mTitle)
 
-        val dialog = dialogBuilder.build()
+//        if (mBuilder.mPositiveButton != null) {
+//            dialogBuilder.positiveText(mBuilder.mPositiveButton!!)
+//                    .onPositive(object : MaterialDialog.SingleButtonCallback {
+//                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+//                            Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
+//                            mCallback!!.onPositive(mBuilder.mTag, dialog)
+//                        }
+//                    })
+//        }
 
-        val mEditText = dialog.inputEditText
+//        if (mBuilder.mNegativeButton != null) {
+//            dialogBuilder.negativeText(mBuilder.mNegativeButton!!)
+//                    .onNegative { dialog, _ -> mCallback!!.onNegative(mBuilder.mTag, dialog) }
+//        }
+
+//        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
+
+//        val dialog = dialogBuilder.build()
+
+        val mEditText = dialog.getInputField()
         if (mEditText != null) {
 
             if (mBuilder.mPrefill != null)
                 mEditText.selectAll()
 
-            mEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+//            mEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
 
         }
 
         dialog.setCancelable(mBuilder.mCanceable)
 
-        dialog.setOnKeyListener(DialogInterface.OnKeyListener { arg0, keyCode, event ->
+        dialog.setOnKeyListener(DialogInterface.OnKeyListener
+        { arg0, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 arg0.cancel()
                 return@OnKeyListener true
@@ -97,10 +114,6 @@ class InputTextDialogFragment : DialogFragment() {
         })
 
         return dialog
-    }
-
-    fun setContent(@StringRes res: Int) {
-        (dialog as MaterialDialog).setContent(res)
     }
 
     fun setmCallback(callback: SimpleInputCallback) {
@@ -123,7 +136,6 @@ class InputTextDialogFragment : DialogFragment() {
         var mTitle = 0
         var mPositiveButton: CharSequence? = null
         var mNegativeButton: CharSequence? = null
-        var mNeutralButton: CharSequence? = null
         var mCanceable = false
         var mAutoDismiss = true
         var mPrefill: CharSequence? = null
@@ -150,11 +162,6 @@ class InputTextDialogFragment : DialogFragment() {
 
         fun negativeButton(@StringRes text: Int): Builder {
             mNegativeButton = this.mContext.resources.getText(text)
-            return this
-        }
-
-        fun neutralButton(@StringRes text: Int): Builder {
-            mNeutralButton = this.mContext.resources.getText(text)
             return this
         }
 

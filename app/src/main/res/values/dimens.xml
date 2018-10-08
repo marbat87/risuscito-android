@@ -13,6 +13,7 @@
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
     <dimen name="fab_margin_frame">8dp</dimen>
+    <dimen name="fab_margin_bottombar">64dp</dimen>
 
     <dimen name="text_min_margin">20dip</dimen>
 
@@ -35,5 +36,8 @@
     <dimen name="bounded_cardview_max_width">1dp</dimen>
 
     <dimen name="colorpickerpreference_widget_size">24dp</dimen>
+
+    //mai usato in configurazione normale
+    <dimen name="bounded_cardview_max_width_fab">0dp</dimen>
 
 </resources>

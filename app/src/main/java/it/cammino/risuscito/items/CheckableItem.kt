@@ -2,9 +2,9 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView

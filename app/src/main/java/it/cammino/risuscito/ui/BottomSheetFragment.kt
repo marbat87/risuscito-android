@@ -5,14 +5,14 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.annotation.StringRes
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.app.DialogFragment
-import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.content.edit
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.R
@@ -30,52 +30,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bottom_sheet, container, false)
-
-//        val showTitle = arguments!!.getBoolean("showTitle")
-//
-//        if (showTitle)
-//            sheet_title.setText(arguments!!.getInt("title"))
-//        else
-//            sheet_title.text = ""
-//        sheet_title_area.visibility = if (showTitle) View.VISIBLE else View.GONE
-
-//        val intent = arguments!!.getParcelable<Intent>("intent")
-//        val pm = activity!!.packageManager
-//
-//        val list = pm.queryIntentActivities(intent, 0)
-//
-//        val lastApp = PreferenceManager
-//                .getDefaultSharedPreferences(activity)
-//                .getString(Utility.ULTIMA_APP_USATA, "")
-//        val lastAppInfo: ResolveInfo? = list.indices
-//                .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
-//                ?.let { list.removeAt(it) }
-//
-//        if (lastAppInfo != null)
-//            list.add(0, lastAppInfo)
-//
-//        val mList = list.map { BottomSheetItem().withItem(it) }
-//
-//        val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
-//            PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
-//
-//            val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
-//            if (intent != null) {
-//                val newIntent = intent.clone() as Intent
-//                newIntent.component = name
-//                activity!!.startActivity(newIntent)
-//                dialog.dismiss()
-//            }
-//            true
-//        }
-//
-//        val adapter = FastItemAdapter<BottomSheetItem>()
-//        adapter.add(mList)
-//        adapter.withOnClickListener(mOnClickListener)
-//        shareList.adapter = adapter
-//        shareList.layoutManager = GridLayoutManager(activity, 3)
-
-//        return view
     }
 
     /**

@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/canto_coordinator"
     android:fitsSystemWindows="true">
 
-
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
@@ -16,12 +12,12 @@
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_marginTop="?actionBarSize">
 
         <RelativeLayout
             android:id="@+id/container"
@@ -46,11 +42,11 @@
                     <ImageView
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:contentDescription="@null"
                         android:gravity="center"
                         android:translationZ="1dp"
@@ -64,13 +60,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:text="@string/no_record"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="?android:textColorPrimary" />
@@ -88,11 +84,11 @@
                     <ImageView
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                         android:contentDescription="@null"
                         android:gravity="center"
                         android:translationZ="1dp"
@@ -106,13 +102,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
                         android:text="@string/no_connection"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="?android:textColorPrimary" />
@@ -131,8 +127,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:gravity="end"
-                        android:paddingLeft="@dimen/activity_min_margin"
                         android:paddingStart="@dimen/activity_min_margin"
+                        android:paddingLeft="@dimen/activity_min_margin"
                         android:text="00:00"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat"
                         android:textColor="?android:textColorPrimary"
@@ -161,11 +157,31 @@
                         android:paddingRight="@dimen/play_pause_padding"
                         android:scaleType="fitCenter"
                         android:soundEffectsEnabled="true"
-                        risuscito:ico_color="@color/text_color_secondary_disabled"
+                        android:visibility="gone"
+                        risuscito:ico_color="@color/text_color_secondary"
                         risuscito:ico_icon="cmd-play"
-                        risuscito:ico_padding="5dp"
+                        risuscito:ico_padding="2dp"
                         risuscito:ico_size="24dp"
                         tools:ignore="MissingPrefix" />
+
+                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                        android:id="@+id/loadingBar"
+                        style="@style/Widget.MaterialProgressBar.ProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="25dp"
+                        android:minHeight="25dp"
+                        android:maxHeight="25dp"
+                        android:maxWidth="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:elevation="1dp"
+                        android:indeterminate="true"
+                        android:paddingLeft="@dimen/play_pause_padding"
+                        android:paddingRight="@dimen/play_pause_padding"
+                        risuscito:mpb_progressBackgroundTint="@android:color/transparent"
+                        risuscito:mpb_progressStyle="circular"
+                        risuscito:mpb_progressTint="?colorAccent"
+                        tools:targetApi="lollipop" />
 
                 </LinearLayout>
 
@@ -184,21 +200,19 @@
 
     </FrameLayout>
 
-    <android.support.design.bottomappbar.BottomAppBar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        risuscito:backgroundTint="?colorPrimary"
-        risuscito:fabAlignmentMode="end"
-        risuscito:contentInsetStart="0dp"
-        risuscito:fabCradleVerticalOffset="15dp"
         android:theme="@style/ToolbarTheme"
+        risuscito:backgroundTint="?colorPrimary"
+        risuscito:contentInsetStart="0dp"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 
         <LinearLayout
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <TextView
@@ -207,8 +221,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="end"
-                android:paddingLeft="@dimen/activity_min_margin"
                 android:paddingStart="@dimen/activity_min_margin"
+                android:paddingLeft="@dimen/activity_min_margin"
                 android:text="0 %"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
                 android:textColor="@color/primary_text_default_material_dark"
@@ -239,12 +253,27 @@
 
         </LinearLayout>
 
-    </android.support.design.bottomappbar.BottomAppBar>
+    </androidx.appcompat.widget.Toolbar>
 
-    <android.support.design.widget.FloatingActionButton
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/fab_canti"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--risuscito:layout_anchor="@id/bottom_bar" />-->
+
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim_overlay" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_canti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        risuscito:layout_anchor="@id/bottom_bar" />
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="?actionBarSize"
+        risuscito:sdExpansionMode="top"
+        risuscito:sdOverlayLayout="@id/overlay" />
 
-</android.support.design.widget.CoordinatorLayout>
+</merge>

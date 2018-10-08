@@ -1,8 +1,8 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.RisuscitoDatabase

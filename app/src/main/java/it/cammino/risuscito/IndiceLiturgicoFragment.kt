@@ -1,20 +1,19 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.TextView
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -39,7 +38,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     // create boolean for fetching data
     private var isViewShown = true
-//    private var titoloDaAgg: String? = null
+    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null

@@ -1,34 +1,33 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.view.PagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
@@ -36,11 +35,9 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.ui.BottomSheetFabListe
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -51,91 +48,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var idListe: IntArray? = null
     private var movePage: Boolean = false
     private var mMainActivity: MainActivity? = null
-    //    private var mFab: FloatingActionButton? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
-    private val fabBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            val clickedId = intent.getIntExtra(BottomSheetFabListe.DATA_ITEM_ID, 0)
-            when (clickedId) {
-                BottomSheetFabListe.CLEAN -> SimpleDialogFragment.Builder(
-                        (activity as AppCompatActivity?)!!, this@CustomLists, "RESET_LIST")
-                        .title(R.string.dialog_reset_list_title)
-                        .content(R.string.reset_list_question)
-                        .positiveButton(android.R.string.yes)
-                        .negativeButton(android.R.string.no)
-                        .show()
-                BottomSheetFabListe.ADD_LIST -> InputTextDialogFragment.Builder(
-                        (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
-                        .title(R.string.lista_add_desc)
-                        .positiveButton(android.R.string.ok)
-                        .negativeButton(android.R.string.cancel)
-                        .show()
-                BottomSheetFabListe.SHARE_TEXT -> {
-                    val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
-                            .view
-                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
-                }
-                BottomSheetFabListe.EDIT_LIST -> {
-                    val bundle = Bundle()
-                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
-                    bundle.putBoolean("modifica", true)
-                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
-                    startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
-                            TAG_MODIFICA_LISTA)
-                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
-                }
-                BottomSheetFabListe.DELETE_LIST -> {
-                    mCustomListsViewModel!!.listaDaCanc = activity!!.view_pager!!.currentItem - 2
-                    mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(context).listePersDao()
-                                val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
-                                mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
-                                mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
-                                SimpleDialogFragment.Builder(
-                                        (activity as AppCompatActivity?)!!,
-                                        this@CustomLists,
-                                        "DELETE_LIST")
-                                        .title(R.string.action_remove_list)
-                                        .content(R.string.delete_list_dialog)
-                                        .positiveButton(android.R.string.yes)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            })
-                            .start()
-                }
-                BottomSheetFabListe.SHARE_FILE -> {
-                    val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
-                            .view
-                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
-                }
-                else -> {
-                }
-            }
-        }
-    }
-
-//    val fab: FloatingActionButton
-//        @SuppressLint("RestrictedApi")
-//        get() {
-//            if (mFab == null) {
-//                mFab = activity!!.findViewById(R.id.fab_pager)
-//                mFab!!.visibility = View.VISIBLE
-//                val icon = IconicsDrawable(activity!!)
-//                        .icon(CommunityMaterial.Icon.cmd_plus)
-//                        .color(Color.WHITE)
-//                        .sizeDp(24)
-//                        .paddingDp(4)
-//                mFab!!.setImageDrawable(icon)
-//            }
-//            return mFab as FloatingActionButton
-//        }
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -157,26 +71,12 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         movePage = savedInstanceState != null
 
-//        mMainActivity.enableFab(true)
-//        if (!mMainActivity.isOnTablet) mMainActivity.enableBottombar(false)
-//        mMainActivity.enableBottombar(false)
-
-//        fab
-//                .setOnClickListener {
-//                    val customList = view_pager!!.currentItem >= 2
-//                    val bottomSheetDialog = BottomSheetFabListe.newInstance(customList)
-//                    bottomSheetDialog.show(fragmentManager!!, null)
-//                }
-
         val iFragment = InputTextDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NEW_LIST")
         iFragment?.setmCallback(this@CustomLists)
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "RESET_LIST")
         sFragment?.setmCallback(this@CustomLists)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
         sFragment?.setmCallback(this@CustomLists)
-
-//        activity!!.registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
-        LocalBroadcastManager.getInstance(activity!!).registerReceiver(fabBRec, IntentFilter(BottomSheetFabListe.CHOOSE_DONE))
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
         Log.d(
@@ -191,10 +91,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
         mMainActivity!!.enableBottombar(false)
-        initFab()
-        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
+//        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
+        view_pager.adapter = mSectionsPagerAdapter
 
-        tabs = activity!!.material_tabs
+//        tabs = activity!!.material_tabs
+        tabs = mMainActivity!!.getMaterialTabs()
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
 
@@ -227,13 +128,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
-    }
-
-    override fun onDestroy() {
-//        activity!!.unregisterReceiver(fabBRec)
-        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(fabBRec)
-        super.onDestroy()
+//        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
+        mCustomListsViewModel!!.indexToShow = view_pager.currentItem
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -250,9 +146,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         when (tag) {
             "NEW_LIST" -> {
                 val bundle = Bundle()
-                val mEditText = dialog.inputEditText
+                val mEditText = dialog.getInputField()
                 bundle.putString(
-                        "titolo", if (mEditText != null) dialog.inputEditText!!.text.toString() else "NULL")
+                        "titolo", if (mEditText != null) dialog.getInputField()!!.text.toString() else "NULL")
                 bundle.putBoolean("modifica", false)
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
@@ -270,7 +166,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RESET_LIST" -> {
-                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
+//                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
+                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
             "DELETE_LIST" ->
@@ -317,11 +214,10 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onNeutral(tag: String) {}
 
     private fun playIntro() {
-//        fab.show()
         enableFab(true)
         val doneDrawable = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_check)
                 .sizeDp(24)
-                .paddingDp(2)
+                .paddingDp(4)
         TapTargetSequence(activity!!)
                 .continueOnCancel(true)
                 .targets(
@@ -384,15 +280,14 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 idListe!![i] = list[i].id
                             }
                             mSectionsPagerAdapter!!.notifyDataSetChanged()
-                            tabs!!.setupWithViewPager(activity!!.view_pager)
+//                            tabs!!.setupWithViewPager(activity!!.view_pager)
+                            tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
-                                val myHandler = Handler()
-                                val mMyRunnable2 = Runnable {
+                                Handler().postDelayed(200) {
                                     tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
                                     mCustomListsViewModel!!.indexToShow = 0
                                     movePage = false
                                 }
-                                myHandler.postDelayed(mMyRunnable2, 200)
                             }
                         })
     }
@@ -448,33 +343,119 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     fun getFab(): FloatingActionButton {
-//        return if (mMainActivity!!.isOnTablet) fab_pager else mMainActivity!!.getFab()
         return mMainActivity!!.getFab()
     }
 
     private fun enableFab(enabled: Boolean) {
-//        if (mMainActivity!!.isOnTablet)
-//            if (enabled) fab_pager.show() else fab_pager.hide()
-//        else
-            mMainActivity!!.enableFab(enabled)
+        mMainActivity!!.enableFab(enabled)
     }
 
-    private fun initFab() {
+    private fun closeFabMenu() {
+        mMainActivity!!.closeFabMenu()
+    }
+
+    private fun toggleFabMenu() {
+        mMainActivity!!.toggleFabMenu()
+    }
+
+    fun initFabOptions(customList: Boolean) {
         val icon = IconicsDrawable(activity!!)
-                .icon(CommunityMaterial.Icon.cmd_plus)
+                .icon(CommunityMaterial.Icon2.cmd_plus)
                 .color(Color.WHITE)
                 .sizeDp(24)
-                .paddingDp(2)
-        val onClick = View.OnClickListener {
-            val customList = view_pager!!.currentItem >= 2
-            val bottomSheetDialog = BottomSheetFabListe.newInstance(customList)
-            bottomSheetDialog.show(fragmentManager!!, null)
+                .paddingDp(4)
+
+        val actionListener = SpeedDialView.OnActionSelectedListener {
+            when (it.id) {
+                R.id.fab_pulisci -> {
+                    closeFabMenu()
+                    SimpleDialogFragment.Builder(
+                            (activity as AppCompatActivity?)!!, this@CustomLists, "RESET_LIST")
+                            .title(R.string.dialog_reset_list_title)
+                            .content(R.string.reset_list_question)
+                            .positiveButton(android.R.string.yes)
+                            .negativeButton(android.R.string.no)
+                            .show()
+                    true
+                }
+                R.id.fab_add_lista -> {
+                    closeFabMenu()
+                    InputTextDialogFragment.Builder(
+                            (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
+                            .title(R.string.lista_add_desc)
+                            .positiveButton(android.R.string.ok)
+                            .negativeButton(android.R.string.cancel)
+                            .show()
+                    true
+                }
+                R.id.fab_condividi -> {
+                    closeFabMenu()
+                    val mView = mSectionsPagerAdapter!!
+//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+                            .getRegisteredFragment(view_pager.currentItem)
+                            .view
+                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
+                    true
+                }
+                R.id.fab_edit_lista -> {
+                    closeFabMenu()
+                    val bundle = Bundle()
+//                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
+                    bundle.putInt("idDaModif", idListe!![view_pager.currentItem - 2])
+                    bundle.putBoolean("modifica", true)
+//                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
+                    mCustomListsViewModel!!.indDaModif = view_pager.currentItem
+                    startActivityForResult(
+                            Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
+                            TAG_MODIFICA_LISTA)
+                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+                    true
+                }
+                R.id.fab_delete_lista -> {
+                    closeFabMenu()
+//                    mCustomListsViewModel!!.listaDaCanc = activity!!.view_pager!!.currentItem - 2
+                    mCustomListsViewModel!!.listaDaCanc = view_pager.currentItem - 2
+                    mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
+                    Thread(
+                            Runnable {
+                                val mDao = RisuscitoDatabase.getInstance(activity!!).listePersDao()
+                                val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
+                                mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
+                                mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
+                                SimpleDialogFragment.Builder(
+                                        (activity as AppCompatActivity?)!!,
+                                        this@CustomLists,
+                                        "DELETE_LIST")
+                                        .title(R.string.action_remove_list)
+                                        .content(R.string.delete_list_dialog)
+                                        .positiveButton(android.R.string.yes)
+                                        .negativeButton(android.R.string.no)
+                                        .show()
+                            })
+                            .start()
+                    true
+                }
+                R.id.fab_condividi_file -> {
+                    closeFabMenu()
+                    val mView = mSectionsPagerAdapter!!
+//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
+                            .getRegisteredFragment(view_pager.currentItem)
+                            .view
+                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
+                    true
+                }
+                else -> {
+                    closeFabMenu()
+                    false
+                }
+            }
         }
-//        if (mMainActivity!!.isOnTablet) {
-//            fab_pager.setImageDrawable(icon)
-//            fab_pager.setOnClickListener(onClick)
-//        } else
-            mMainActivity!!.initFab(icon, onClick)
+
+        val click = View.OnClickListener {
+            toggleFabMenu()
+        }
+
+        mMainActivity!!.initFab(true, icon, click, actionListener, customList)
     }
 
     companion object {

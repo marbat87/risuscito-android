@@ -3,11 +3,11 @@ package it.cammino.risuscito.items
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
@@ -205,6 +205,7 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
         holder.mTitle!!.text = null
         holder.mPage!!.text = null
         holder.mId!!.text = null
+        holder.mTimestamp!!.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

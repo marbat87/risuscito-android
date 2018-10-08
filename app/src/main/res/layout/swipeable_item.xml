@@ -47,7 +47,7 @@
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/container"
         android:layout_gravity="center"
         android:layout_width="match_parent"
@@ -88,6 +88,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:ignore="RtlHardcoded" />
 
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>

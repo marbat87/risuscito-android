@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,14 +25,14 @@
 
         </FrameLayout>
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/material_tabs"
             style="@style/Risuscito_tabstyle"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:visibility="gone" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/common_circle_progress" />
 
@@ -47,13 +47,27 @@
     <include layout="@layout/common_bottom_bar" />
 
     <!--<include layout="@layout/common_fab"/>-->
-    <android.support.design.widget.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--<android.support.design.widget.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/fab_pager"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
+    <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
+    <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
+
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim_overlay" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_pager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin_coord"
-        android:layout_marginEnd="@dimen/fab_margin_coord"
-        android:layout_marginRight="@dimen/fab_margin_coord" />
+        risuscito:sdExpansionMode="top"
+        risuscito:sdOverlayLayout="@id/overlay" />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

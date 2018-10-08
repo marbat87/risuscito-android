@@ -1,15 +1,18 @@
 package it.cammino.risuscito
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.KeyEvent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.afollestad.materialdialogs.MaterialDialog
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -33,29 +36,52 @@ class ImportActivity : AppCompatActivity() {
             Log.d(TAG, "onCreate: data = " + data.toString())
             Log.d(TAG, "onCreate: schema = " + data.scheme)
             intent.data = null
-            val dialog = MaterialDialog.Builder(this)
-                    .title(R.string.app_name)
-                    .content(R.string.dialog_import)
-                    .positiveText(android.R.string.yes)
-                    .negativeText(android.R.string.no)
-                    .onPositive { _, _ ->
-                        val i = Intent(this@ImportActivity, XmlImportService::class.java)
-                        i.action = XmlImportService.ACTION_URL
-                        i.data = data
-                        startService(i)
+//            val dialog = MaterialDialog.Builder(this)
+//                    .title(R.string.app_name)
+//                    .content(R.string.dialog_import)
+//                    .positiveText(android.R.string.yes)
+//                    .negativeText(android.R.string.no)
+//                    .onPositive { _, _ ->
+//                        val i = Intent(this@ImportActivity, XmlImportService::class.java)
+//                        i.action = XmlImportService.ACTION_URL
+//                        i.data = data
+//                        startService(i)
+//                    }
+//                    .onNegative { _, _ -> finish() }
+//                    .show()
+//            dialog.setOnKeyListener(DialogInterface.OnKeyListener { arg0, keyCode, event ->
+//                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+//                    arg0.dismiss()
+//                    finish()
+//                    return@OnKeyListener true
+//                }
+//                false
+//            })
+//            dialog.setCancelable(false)
+            MaterialDialog(this)
+                    .show {
+                        title(R.string.app_name)
+                        message(R.string.dialog_import)
+                        positiveButton(android.R.string.yes) {
+                            val i = Intent(this@ImportActivity, XmlImportService::class.java)
+                            i.action = XmlImportService.ACTION_URL
+                            i.data = data
+                            startService(i)
+                        }
+                        negativeButton(android.R.string.no) {
+                            finish()
+                        }
+                        cancelable(false)
+                        cancelOnTouchOutside(false)
                     }
-                    .onNegative { _, _ -> finish() }
-                    .show()
-            dialog.setOnKeyListener(DialogInterface.OnKeyListener { arg0, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                    arg0.dismiss()
-                    finish()
-                    return@OnKeyListener true
-                }
-                false
-            })
-            dialog.setCancelable(false)
-
+                    .setOnKeyListener { arg0, keyCode, event ->
+                        if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                            arg0.dismiss()
+                            finish()
+                            true
+                        } else
+                            false
+                    }
             //registra un receiver per ricevere la notifica di completamento import e potersi terminare
             LocalBroadcastManager.getInstance(applicationContext).registerReceiver(importFinishBRec, IntentFilter(
                     XmlImportService.ACTION_FINISH))

@@ -1,6 +1,6 @@
 package it.cammino.risuscito.database.entities
 
-import android.arch.persistence.room.Entity
+import androidx.room.Entity
 
 @Entity(primaryKeys = ["idArgomento", "idCanto"])
 class Argomento {

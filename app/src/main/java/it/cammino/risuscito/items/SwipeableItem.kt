@@ -1,11 +1,11 @@
 package it.cammino.risuscito.items
 
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter_extensions.drag.IExtendedDraggable
@@ -104,7 +104,7 @@ class SwipeableItem : AbstractItem<SwipeableItem, SwipeableItem.ViewHolder>(), I
         holder.swipedAction!!.text = null
         holder.swipedText!!.text = null
         holder.swipedActionRunnable = null
-        holder.mDragHandler = null
+//        holder.mDragHandler = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

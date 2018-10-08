@@ -2,14 +2,14 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.materialize.holder.ColorHolder
@@ -172,8 +172,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem, ListaPerso
         holder.idPosizione!!.text = null
         holder.nomePosizione!!.text = null
         holder.tag!!.text = null
-//        holder.addCanto = null
-//        holder.list = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

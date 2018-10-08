@@ -8,6 +8,7 @@ import android.os.Handler
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.postDelayed
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -79,20 +80,21 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
-        currentCanto!!.zoom = (cantoView.scale * 100).toInt()
-        currentCanto!!.scrollX = cantoView.scrollX
-        currentCanto!!.scrollY = cantoView.scrollY
-        ZoomSaverTask().execute()
+        //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
+        if (currentCanto != null) {
+            currentCanto!!.zoom = (cantoView.scale * 100).toInt()
+            currentCanto!!.scrollX = cantoView.scrollX
+            currentCanto!!.scrollY = cantoView.scrollY
+            ZoomSaverTask().execute()
+        } else
+            mLUtils!!.closeActivityWithFadeOut()
     }
 
     private inner class MyWebViewClient : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {
-            view.postDelayed(
-                    {
-                        ZoomLoaderTask().execute()
-                    },
-                    // Delay the scrollTo to make it work
-                    500)
+            view.postDelayed(500) {
+                ZoomLoaderTask().execute()
+            }
             super.onPageFinished(view, url)
         }
     }

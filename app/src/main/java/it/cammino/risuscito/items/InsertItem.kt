@@ -2,12 +2,12 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
@@ -27,7 +27,6 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
     var color: ColorHolder? = null
         private set
     private var numSalmo: Int = 0
-        private set
     private var normalizedTitle: String? = null
     private var filter: String? = null
     var id: Int = 0
