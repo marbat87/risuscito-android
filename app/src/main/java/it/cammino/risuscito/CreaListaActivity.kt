@@ -567,7 +567,26 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
             }
 
-            mAdapter!!.notifyDataSetChanged()
+//            mAdapter!!.notifyDataSetChanged()
+//
+//            if (mViewModel!!.tempTitle.isEmpty()) {
+//                textfieldTitle.setText(titoloLista)
+//                collapsingToolbarLayout.title = titoloLista
+//            } else {
+//                textfieldTitle.setText(mViewModel!!.tempTitle)
+//                collapsingToolbarLayout.title = mViewModel!!.tempTitle
+//            }
+
+            return 0
+        }
+
+//        override fun onPreExecute() {
+//            super.onPreExecute()
+////            mAdapter!!.clear()
+//        }
+
+        override fun onPostExecute(result: Int?) {
+            mAdapter!!.set(elementi)
 
             if (mViewModel!!.tempTitle.isEmpty()) {
                 textfieldTitle.setText(titoloLista)
@@ -576,17 +595,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 textfieldTitle.setText(mViewModel!!.tempTitle)
                 collapsingToolbarLayout.title = mViewModel!!.tempTitle
             }
-
-            return 0
-        }
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            mAdapter!!.clear()
-        }
-
-        override fun onPostExecute(result: Int?) {
-            mAdapter!!.add(elementi)
             if (elementi!!.size > 0) noElementsAdded.visibility = View.GONE
         }
     }
