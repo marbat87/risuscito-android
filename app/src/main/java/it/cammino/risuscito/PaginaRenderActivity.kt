@@ -409,9 +409,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     }
 
                     override fun onStopTrackingTouch(seekBar: SeekBar) {
-                        MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
-                                .transportControls
-                                .seekTo(seekBar.progress.toLong())
+//                        MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+//                                .transportControls
+//                                .seekTo(seekBar.progress.toLong())
+                        val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+                        controller?.transportControls?.seekTo(seekBar.progress.toLong()) ?: return
                         scheduleSeekbarUpdate()
                     }
                 })
@@ -482,7 +484,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
         mMediaBrowser = MediaBrowserCompat(
-                this, ComponentName(this, MusicService::class.java), mConnectionCallback, null)
+                this, ComponentName(this, MusicService::
+        class.java), mConnectionCallback, null)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
