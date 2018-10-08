@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="is_grid_layout">true</bool>
+    <bool name="fab_behavior_active">false</bool>
+</resources>

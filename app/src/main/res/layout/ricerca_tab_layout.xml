@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/ricerca_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        tools:text="@string/fast_search_subtitle"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+
+    <EditText
+        android:id="@+id/textfieldRicerca"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_min_margin"
+        android:layout_marginRight="@dimen/activity_min_margin"
+        android:hint="@string/search_hint"
+        android:imeOptions="actionDone"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textColorHighlight="@color/ripple_color_light"
+        android:inputType="text" />
+
+    <RelativeLayout
+        android:id="@+id/consegnati_only_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/myListPreferredItemHeightSmall"
+        android:layout_gravity="center_vertical">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/consegnati_only_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginRight="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:layout_toLeftOf="@id/consegnati_only_check"
+            android:layout_toStartOf="@id/consegnati_only_check"
+            android:text="@string/consegnati_only"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pulisci_ripple"
+        risuscito:fontFamily="@font/googlesans_medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="@dimen/min_button_margin"
+        android:text="@string/button_pulisci"
+        risuscito:elevation="@dimen/raised_button_default_elevation"
+        risuscito:pressedTranslationZ="@dimen/raised_button_pressed_elevation"
+        tools:ignore="MissingPrefix" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/tinted_progressbar" />
+
+        <TextView
+            android:id="@+id/search_no_results"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dip"
+            android:text="@string/search_no_results"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/matchedList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadeScrollbars="true"
+            android:scrollbars="vertical"
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    android:focusableInTouchMode="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        risuscito:elevation="0dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
+            risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <RelativeLayout
+                android:id="@+id/action_title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorPrimary"
+                android:gravity="bottom"
+                risuscito:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/textTitleDescription"
+                    style="@style/TitoloSezione"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/textfieldTitle"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/list_title"
+                    android:textColor="@android:color/white" />
+
+                <EditText
+                    android:id="@+id/textfieldTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_min_margin"
+                    android:layout_marginLeft="@dimen/activity_min_margin"
+                    android:layout_marginRight="@dimen/activity_min_margin"
+                    android:layout_toEndOf="@id/textTitleDescription"
+                    android:layout_toRightOf="@id/textTitleDescription"
+                    android:hint="@string/list_title_modif"
+                    android:imeOptions="actionDone"
+                    android:inputType="text|textCapSentences"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="@android:color/white"
+                    android:textColorHighlight="@color/ripple_color_light"
+                    android:textCursorDrawable="@null"
+                    android:textSize="30sp" />
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/risuscito_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ToolbarTheme"
+                risuscito:layout_collapseMode="pin"
+                risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <View
+        android:id="@+id/tabletToolbarBackground"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="top"
+        android:background="?colorPrimary"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <it.cammino.risuscito.ui.BoundedCardView
+        android:id="@+id/activity_main__frame_master"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|top"
+        risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
+        risuscito:cardCornerRadius="0dp"
+        risuscito:cardElevation="@dimen/card_elevation"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="start|center_vertical"
+                android:paddingEnd="@dimen/myListPreferredItemMargin"
+                android:paddingLeft="@dimen/myListPreferredItemMargin"
+                android:paddingRight="@dimen/myListPreferredItemMargin"
+                android:paddingStart="@dimen/myListPreferredItemMargin"
+                android:text="@string/list_elements"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/toolbar_shadow" />
+
+            <TextView
+                android:id="@+id/noElementsAdded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_min_margin"
+                android:text="@string/no_elements_added" />
+
+            <include layout="@layout/hint_layout" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical" />
+
+        </LinearLayout>
+
+    </it.cammino.risuscito.ui.BoundedCardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_crea_lista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/fab_margin_coord"
+        android:layout_marginRight="@dimen/fab_margin_coord"
+        risuscito:layout_anchor="@id/tabletToolbarBackground"
+        risuscito:layout_anchorGravity="bottom|right|end" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

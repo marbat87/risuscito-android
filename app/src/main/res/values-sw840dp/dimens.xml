@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fab_margin_coord">48dp</dimen>
+    <dimen name="bounded_cardview_max_width">800dp</dimen>
+    <dimen name="bounded_cardview_max_width_fab">600dp</dimen>
+
+</resources>

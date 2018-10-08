@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="start|center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="24dp"
+    android:paddingTop="8dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp">
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/working_progress"
+        style="@style/Widget.MaterialProgressBar.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        risuscito:mpb_progressStyle="circular"
+        risuscito:mpb_progressTint="?colorAccent"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/md_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="start"
+        android:paddingStart="16dp"
+        android:paddingLeft="16dp"
+        android:textAlignment="viewStart"
+        android:textSize="16sp"
+        tools:ignore="NewApi,RtlSymmetry,UnusedAttribute"
+        tools:text="Message" />
+
+</LinearLayout>

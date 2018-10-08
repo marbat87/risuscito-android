@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="bounded_cardview_max_width">1000dp</dimen>
+    <dimen name="bounded_cardview_max_width_fab">800dp</dimen>
+
+</resources>

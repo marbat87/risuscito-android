@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="it.cammino.risuscito"
+    android:installLocation="auto">
+
+    <!-- Some Chromebooks don't support touch. Although not essential,
+         it's a good idea to explicitly include this declaration. -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        android:maxSdkVersion="20" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:name="it.cammino.risuscito.ui.RisuscitoApplication"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/RisuscitoTheme"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name="it.cammino.risuscito.MainActivity"
+            android:theme="@style/RisuscitoTheme.Launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="it.cammino.risuscito.PaginaRenderActivity"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.PaginaRenderFullScreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.GeneralInsertSearch"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.CreaListaActivity"
+            android:label="" />
+        <activity
+            android:name="it.cammino.risuscito.ChangelogActivity"
+            android:label="" />
+        <service
+            android:name="it.cammino.risuscito.services.ConsegnatiSaverService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="it.cammino.risuscito.services.DownloadService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="it.cammino.risuscito.services.PdfExportService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="it.cammino.risuscito.services.XmlImportService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="it.cammino.risuscito.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name="it.cammino.risuscito.ImportActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@style/RisuscitoTheme.Invisibile">
+            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="application/octet-stream"
+                    android:pathPattern=".*\\.risuscito"
+                    tools:ignore="GoogleAppIndexingUrlError" />
+            </intent-filter>
+        </activity>
+
+        <!-- Main music service, provides media browsing and media playback services to
+         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
+         MediaBrowser (for browsing) and MediaController (for play session control) -->
+        <service
+            android:name="it.cammino.risuscito.playback.MusicService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <!-- A receiver that will receive media buttons and send as
+            intents to your MediaBrowserServiceCompat implementation.
+            Required on pre-Lollipop. More information at
+            http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

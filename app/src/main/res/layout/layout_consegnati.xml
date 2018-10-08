@@ -1,54 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chooseRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:fadeScrollbars="true"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cantiRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
         android:fadeScrollbars="true"
+        android:scrollbars="vertical"
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <RelativeLayout
-        android:layout_gravity="center"
-        android:id="@+id/no_consegnati"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <FrameLayout
+        android:id="@+id/selected_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/consegnati_image"
-            android:layout_centerHorizontal="true"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:src="@drawable/sad_book"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cantiRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadeScrollbars="true"
+            android:scrollbars="vertical"
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <TextView
-            android:id="@+id/consegnati_text"
-            android:layout_below="@id/consegnati_image"
-            android:layout_marginLeft="@dimen/text_min_margin"
-            android:layout_marginRight="@dimen/text_min_margin"
+        <RelativeLayout
+            android:id="@+id/no_consegnati"
             android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:textColor="?android:textColorSecondary"
             android:layout_height="wrap_content"
-            android:text="@string/no_consegnati"
-            fontPath="fonts/Roboto-Light.ttf"
-            tools:ignore="MissingPrefix"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:layout_gravity="center">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/no_consegnati_image"
+                android:layout_width="120dip"
+                android:layout_height="120dip"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/no_consegnati"
+                android:src="@drawable/ic_sad_book" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/no_consegnati_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/text_min_margin"
+                android:layout_marginRight="@dimen/text_min_margin"
+                android:gravity="center_horizontal"
+                risuscito:fontFamily="@font/googlesans_italic"
+                android:text="@string/no_consegnati"
+                android:textAppearance="@style/SuperStateViewSubTitle"
+                android:textColor="?android:textColorSecondary"
+                tools:ignore="MissingPrefix" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
 
 </FrameLayout>

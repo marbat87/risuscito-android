@@ -2,5 +2,8 @@
 <resources>
 
     <dimen name="product_logo_bottom">24dp</dimen>
+    <dimen name="fab_margin_coord">48dp</dimen>
+    <dimen name="bounded_cardview_max_width">700dp</dimen>
+    <dimen name="bounded_cardview_max_width_fab">600dp</dimen>
 
 </resources>

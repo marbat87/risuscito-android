@@ -2,6 +2,7 @@
 <me.zhanghai.android.materialprogressbar.MaterialProgressBar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/loadingBar"
     risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_gravity="center_horizontal|top"
@@ -14,4 +15,5 @@
     android:elevation="1dp"
     risuscito:mpb_progressTint="?colorAccent"
     risuscito:mpb_progressBackgroundTint="@android:color/white"
-    style="@style/Widget.MaterialProgressBar.ProgressBar" />
+    style="@style/Widget.MaterialProgressBar.ProgressBar"
+    tools:targetApi="lollipop" />

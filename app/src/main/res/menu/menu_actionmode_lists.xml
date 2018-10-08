@@ -1,15 +1,19 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_switch_item"
         android:orderInCategory="99"
         risuscito:showAsAction="always"
-        android:title="@string/action_switch_to" />
+        android:icon="@drawable/ic_shuffle_24dp"
+        android:title="@string/action_switch_to"
+        tools:ignore="AlwaysShowAction" />
 
     <item
         android:id="@+id/action_remove_item"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_delete_24dp"
         risuscito:showAsAction="always"
         android:title="@string/action_remove" />
 

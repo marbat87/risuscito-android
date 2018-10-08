@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tag"
+            android:id="@+id/generic_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
@@ -27,20 +27,21 @@
             style="@style/TitoloSezione" />
 
         <LinearLayout
-            android:id="@+id/list"
+            android:id="@+id/generic_list"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <RelativeLayout
             android:id="@+id/addCantoGenerico"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:minHeight="@dimen/myListPreferredItemHeightMedium"
             android:orientation="horizontal"
-            android:background="?attr/customSelector" >
+            android:background="?attr/customSelector"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/text_id_posizione"
@@ -62,7 +63,7 @@
                 android:layout_height="40dp"
                 android:scaleType="center"
                 android:contentDescription="@string/select_canto"
-                risuscito:ico_color="@color/icon_ative_black"
+                risuscito:ico_color="?android:textColorSecondary"
                 risuscito:ico_icon="cmd-plus-circle-outline"
                 risuscito:ico_size="24dp"
                 tools:ignore="MissingPrefix" />
@@ -80,4 +81,4 @@
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

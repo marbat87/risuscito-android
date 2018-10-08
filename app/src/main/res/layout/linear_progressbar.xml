@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="8dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/md_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/googlesans_regular"
+        android:textSize="16sp"
+        tools:text="Message" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/working_progress"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
+            risuscito:mpb_progressStyle="horizontal"
+            risuscito:mpb_progressTint="?colorAccent" />
+
+        <TextView
+            android:id="@+id/md_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/working_progress"
+            android:layout_alignStart="@id/working_progress"
+            android:layout_alignLeft="@id/working_progress"
+            android:gravity="start"
+            android:minWidth="36dp"
+            android:textAlignment="viewStart"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="100%" />
+
+        <TextView
+            android:id="@+id/md_minMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/working_progress"
+            android:layout_alignEnd="@id/working_progress"
+            android:layout_alignRight="@id/working_progress"
+            android:gravity="end"
+            android:minWidth="48dp"
+            android:textAlignment="viewEnd"
+            android:textSize="16sp"
+            tools:text="100%" />
+
+    </RelativeLayout>
+
+</LinearLayout>

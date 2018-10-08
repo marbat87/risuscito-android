@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <include layout="@layout/risuscito_toolbar_noelevation" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
+
+        <View
+            android:id="@+id/tabletToolbarBackground"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="?colorPrimary" />
+
+        <it.cammino.risuscito.ui.BoundedCardView
+            android:id="@+id/activity_main__frame_master"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            risuscito:bounded_width="@dimen/bounded_cardview_max_width"
+            risuscito:cardCornerRadius="0dp"
+            risuscito:cardElevation="@dimen/card_elevation"
+            risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/material_tabs"
+                style="@style/Risuscito_tabstyle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="top"
+                android:elevation="@dimen/design_appbar_elevation"
+                tools:targetApi="lollipop" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="48dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_gravity="top"
+                android:layout_marginTop="48dp"
+                android:background="?toolbar_shadow" />
+
+        </it.cammino.risuscito.ui.BoundedCardView>
+
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/tempTextField"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@null"
+        android:inputType="none"
+        android:visibility="gone" />
+
+</merge>

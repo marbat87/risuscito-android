@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        risuscito:layout_scrollFlags="scroll|enterAlways">
+        android:layout_height="wrap_content">
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
@@ -16,45 +16,84 @@
 
     </FrameLayout>
 
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_marginTop="?actionBarSize"
-        android:id="@+id/main_content"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
 
-        <include layout="@layout/common_circle_progress"/>
-
-        <include layout="@layout/common_shadow"/>
+        <include layout="@layout/common_circle_progress" />
 
         <FrameLayout
             android:id="@+id/main_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/toolbar_layout"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/main_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:elevation="@dimen/design_appbar_elevation"
-                android:theme="@style/ActionBarThemeOverlay">
+                android:layout_height="match_parent">
 
-                <android.support.design.widget.TabLayout
-                    android:layout_height="48dp"
-                    android:visibility="gone"
+                <View
+                    android:id="@+id/tabletToolbarBackground"
                     android:layout_width="match_parent"
-                    android:id="@+id/material_tabs"
-                    style="@style/Widget.Design.TabLayout.Risuscito" />
+                    android:layout_height="?actionBarSize"
+                    android:background="?colorPrimary" />
 
-            </android.support.design.widget.AppBarLayout>
+                <it.cammino.risuscito.ui.BoundedCardView
+                    android:id="@+id/activity_main__frame_master"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
+                    risuscito:cardCornerRadius="0dp"
+                    risuscito:cardElevation="@dimen/card_elevation"
+                    risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
 
-            <FrameLayout
-                android:id="@+id/content_frame"
-                risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/material_tabs"
+                        style="@style/Risuscito_tabstyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:elevation="@dimen/design_appbar_elevation"
+                        android:visibility="gone"
+                        tools:targetApi="lollipop" />
+
+                    <FrameLayout
+                        android:id="@+id/content_frame"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </it.cammino.risuscito.ui.BoundedCardView>
+
+                <!--<include layout="@layout/common_fab"/>-->
+                <!--<android.support.design.widget.FloatingActionButton-->
+                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:id="@+id/fab_pager"-->
+                <!--android:layout_gravity="bottom|end"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
+                <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
+                <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
+
+                <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+                    android:id="@+id/overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_dim_overlay" />
+
+                <com.leinardi.android.speeddial.SpeedDialView
+                    android:id="@+id/fab_pager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    risuscito:sdExpansionMode="top"
+                    risuscito:sdOverlayLayout="@id/overlay" />
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </FrameLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </FrameLayout>
 
 </merge>

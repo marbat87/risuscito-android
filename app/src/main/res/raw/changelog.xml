@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="4.2.1" changeDate="February 2017">
-        <changelogimprovement>Now requires Android 4.0 or upper (API 14)</changelogimprovement>
-        <changelogimprovement>Adde new song "Come pecora che vede"</changelogimprovement>
-        <changelogimprovement>Added the option to enable offertory song</changelogimprovement>
-        <changelogtext>Removed donations page and link due to Google policy. You can still manually donate to marbat87@outlook.it through Paypal</changelogtext>
+    <changelogversion
+        changeDate="September 2018"
+        versionName="4.3.0">
+        <changelogimprovement>[b]Added English translation![/b]</changelogimprovement>
+        <changelogimprovement>Both Android Oreo and Pie compatibility</changelogimprovement>
+        <changelogimprovement>New Application Icon</changelogimprovement>
+        <changelogimprovement>Implemented Adaptive Icon for Android Oreo ([a
+            href="https://developer.android.com/preview/features/adaptive-icons.html"]Android
+            Developer[/a])
+        </changelogimprovement>
+        <changelogimprovement>New About page (At the bottom of side menu)</changelogimprovement>
+        <changelogimprovement>New style for tutorials</changelogimprovement>
+        <changelogbug>Fixed page numbers for last Italian songs</changelogbug>
+        <changelogtext>Various "under-the-hood" code fixes</changelogtext>
+        <changelogbug>Fixed a bug in PDF export for Ukrainian language</changelogbug>
+        <changelogimprovement>Improved List Creation management</changelogimprovement>
+        <changelogimprovement>Modified style of indexes and lists</changelogimprovement>
+        <changelogimprovement>New tablet layout</changelogimprovement>
+        <changelogimprovement>Searched text is bold in the results list of fast search
+        </changelogimprovement>
+        <changelogimprovement>Completely refactored music playback</changelogimprovement>
+        <changelogimprovement>Added Dark Theme</changelogimprovement>
+        <changelogimprovement>Started adjustment for Material Design and new Font
+        </changelogimprovement>
+        <changelogtext>[b]Min Android version required is now 4.1[/b]
+        </changelogtext>
     </changelogversion>
 
 </changelog>

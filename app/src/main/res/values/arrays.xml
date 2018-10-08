@@ -18,11 +18,11 @@
     </string-array>
 
     <string-array name="save_location_sd_entries">
-        <item>Memoria privata</item>
-        <item>Memoria pubblica</item>
+        <item>@string/private_memory</item>
+        <item>@string/public_memory</item>
     </string-array>
     <string-array name="save_location_nosd_entries">
-        <item>Memoria privata</item>
+        <item>@string/private_memory</item>
     </string-array>
 
     <string-array name="save_location_sd_values" translatable="false">
@@ -34,64 +34,58 @@
         <item>0</item>
     </string-array>
 
-    <!--<array name="colors_primary">-->
-        <!--<item>#3F51B5</item>-->
-        <!--<item>#9E9E9E</item>-->
-        <!--<item>#424242</item>-->
-        <!--<item>#1C1C1C</item>-->
-        <!--<item>#000000</item>-->
-        <!--<item>#607D8B</item>-->
-        <!--<item>#37474F</item>-->
-        <!--<item>#795548</item>-->
-        <!--<item>#D32F2F</item>-->
-        <!--<item>#E91E63</item>-->
-        <!--<item>#9C27B0</item>-->
-        <!--<item>#5E35B1</item>-->
-        <!--<item>#1976D2</item>-->
-        <!--<item>#03A9F4</item>-->
-        <!--<item>#00BCD4</item>-->
-        <!--<item>#009688</item>-->
-        <!--<item>#4CAF50</item>-->
-        <!--<item>#8BC34A</item>-->
-        <!--<item>#CDDC39</item>-->
-        <!--<item>#FDD835</item>-->
-        <!--<item>#FFB300</item>-->
-        <!--<item>#FB8C00</item>-->
-        <!--<item>#F4511E</item>-->
-        <!--<item>#075E54</item>-->
-    <!--</array>-->
-
-    <!--<array name="colors_accent">-->
-        <!--<item>#3F51B5</item>-->
-        <!--<item>#9E9E9E</item>-->
-        <!--<item>#607D8B</item>-->
-        <!--<item>#37474F</item>-->
-        <!--<item>#795548</item>-->
-        <!--<item>#D32F2F</item>-->
-        <!--<item>#E91E63</item>-->
-        <!--<item>#9C27B0</item>-->
-        <!--<item>#5E35B1</item>-->
-        <!--<item>#1976D2</item>-->
-        <!--<item>#03A9F4</item>-->
-        <!--<item>#00BCD4</item>-->
-        <!--<item>#009688</item>-->
-        <!--<item>#4CAF50</item>-->
-        <!--<item>#8BC34A</item>-->
-        <!--<item>#CDDC39</item>-->
-        <!--<item>#FDD835</item>-->
-        <!--<item>#FFB300</item>-->
-        <!--<item>#FB8C00</item>-->
-        <!--<item>#F4511E</item>-->
-    <!--</array>-->
-
     <string-array name="pref_languages_entries">
         <item>@string/lang_it</item>
         <item>@string/lang_uk</item>
+        <item>@string/lang_en</item>
     </string-array>
 
-    <string-array name="pref_languages_values" translatable="false">
-        <item>it</item>
-        <item>uk</item>
+    <string-array name="pref_languages_values">
+        <item>@string/lang_it_value</item>
+        <item>@string/lang_uk_value</item>
+        <item>@string/lang_en_value</item>
     </string-array>
+
+    <integer-array name="primary_colors_list">
+        <item>@color/md_amber_500</item>
+        <item>@color/md_blue_500</item>
+        <item>@color/md_brown_500</item>
+        <item>@color/md_cyan_500</item>
+        <item>@color/md_green_500</item>
+        <item>@color/md_grey_500</item>
+        <item>@color/md_indigo_500</item>
+        <item>@color/md_lime_500</item>
+        <item>@color/md_orange_500</item>
+        <item>@color/md_pink_500</item>
+        <item>@color/md_purple_500</item>
+        <item>@color/md_teal_500</item>
+        <item>@color/md_red_500</item>
+        <item>@color/md_deep_orange_500</item>
+        <item>@color/md_deep_purple_500</item>
+        <item>@color/md_light_blue_500</item>
+        <item>@color/md_blue_grey_500</item>
+        <item>@color/md_light_green_500</item>
+        <item>@color/md_yellow_500</item>
+    </integer-array>
+
+    <integer-array name="accent_colors_list">
+        <item>@color/md_amber_A200</item>
+        <item>@color/md_blue_A200</item>
+        <item>@color/md_cyan_A200</item>
+        <item>@color/md_green_A200</item>
+        <item>@color/md_indigo_A200</item>
+        <item>@color/md_lime_A200</item>
+        <item>@color/md_orange_A200</item>
+        <item>@color/md_pink_A200</item>
+        <item>@color/md_purple_A200</item>
+        <item>@color/md_teal_A200</item>
+        <item>@color/md_red_A200</item>
+        <item>@color/md_deep_orange_A200</item>
+        <item>@color/md_deep_purple_A200</item>
+        <item>@color/md_light_blue_A200</item>
+        <item>@color/md_light_green_A200</item>
+        <item>@color/md_yellow_A200</item>
+    </integer-array>
+
 
 </resources>

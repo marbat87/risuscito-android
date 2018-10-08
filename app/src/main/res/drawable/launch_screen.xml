@@ -6,7 +6,7 @@
     <item
         android:bottom="@dimen/product_logo_bottom">
         <bitmap
-            android:src="@drawable/ic_launcher_web"
+            android:src="@drawable/ic_launcher_144dp"
             android:gravity="center"/>
     </item>
     <item
