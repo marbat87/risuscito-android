@@ -189,7 +189,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val mediaController = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
             if (mediaController != null) {
                 mediaController.unregisterCallback(mMediaControllerCallback)
-
                 MediaControllerCompat.setMediaController(this@PaginaRenderActivity, null)
             }
         }
@@ -344,8 +343,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (mMediaBrowser != null) {
             mMediaBrowser!!.disconnect()
         }
-        if (MediaControllerCompat.getMediaController(this) != null)
-            MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback)
+//        if (MediaControllerCompat.getMediaController(this) != null)
+//            MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback)
+        val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+        controller?.unregisterCallback(mMediaControllerCallback)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1283,13 +1285,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-//        SimpleDialogFragment.Builder(
-//                this@PaginaRenderActivity, this@PaginaRenderActivity, "BUFFERING")
-//                .content(R.string.wait)
-//                .showProgress()
-//                .progressIndeterminate(true)
-//                .progressMax(0)
-//                .show().isCancelable = true
         ProgressDialogFragment.Builder(this@PaginaRenderActivity, null, "BUFFERING")
                 .content(R.string.wait)
                 .progressIndeterminate(true)
