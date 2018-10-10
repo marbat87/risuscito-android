@@ -14,7 +14,7 @@ android {
         targetSdkVersion 28
         multiDexEnabled true
         versionCode 4364
-        versionName '4.3.0'
+        versionName '4.3.1'
     }
     lintOptions {
         abortOnError false
