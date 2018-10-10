@@ -65,9 +65,9 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(activity!!)
 
-        if (!PreferenceManager.getDefaultSharedPreferences(activity)
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
-            PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
             Handler().postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()

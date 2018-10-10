@@ -63,14 +63,13 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity = activity as MainActivity?
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_history)
 
-//        activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.setTabVisible(false)
 
         mLUtils = LUtils.getInstance(activity!!)
 
-        if (!PreferenceManager.getDefaultSharedPreferences(activity)
+        if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
-            PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.HISTORY_OPEN, true) }
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.HISTORY_OPEN, true) }
             Handler().postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()

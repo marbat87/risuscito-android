@@ -180,9 +180,6 @@ class LUtils private constructor(private val mActivity: Activity) {
             Log.d(TAG, "onCreateView: $prefName STRING")
         } catch (e: ClassCastException) {
             Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
-//            val editor = PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
-//            editor.putString(prefName, pref.getInt(prefName, 0).toString())
-//            editor.apply()
             PreferenceManager.getDefaultSharedPreferences(mActivity).edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
         }
 

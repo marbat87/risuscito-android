@@ -256,10 +256,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             chooseRecycler!!.visibility = View.GONE
             enableBottombar(false)
             selected_view!!.visibility = View.VISIBLE
-//            mMainActivity!!.enableFab(true)
             enableFab(true)
         }
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
         }
@@ -359,7 +358,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             chooseRecycler!!.visibility = View.VISIBLE
             enableBottombar(true)
             enableFab(false)
-            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
             if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
                 managerIntro()
             }

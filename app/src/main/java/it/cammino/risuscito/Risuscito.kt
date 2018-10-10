@@ -53,7 +53,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
 
-        val sp = PreferenceManager.getDefaultSharedPreferences(activity)
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
         // get version numbers
         val lastVersion = sp.getString(VERSION_KEY, NO_VERSION)

@@ -59,7 +59,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val list = pm.queryIntentActivities(intent, 0)
 
         val lastApp = PreferenceManager
-                .getDefaultSharedPreferences(activity)
+                .getDefaultSharedPreferences(context)
                 .getString(Utility.ULTIMA_APP_USATA, "")
         val lastAppInfo: ResolveInfo? = list.indices
                 .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
@@ -71,7 +71,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val mList = list.map { BottomSheetItem().withItem(it) }
 
         val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
-            PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
 
             val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
             if (intent != null) {

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.takisoft.preferencex.PreferenceFragmentCompat
@@ -30,10 +31,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         mMainActivity = activity as MainActivity?
         if (mMainActivity != null) mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
 
-//        activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.setTabVisible(false)
         mMainActivity!!.enableFab(false)
-//        if (!mMainActivity!!.isOnTablet) mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableBottombar(false)
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as ListPreference
@@ -43,18 +42,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
         listPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             listPreference.entries = mEntries
-            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val saveLocation = pref.getString(Utility.SAVE_LOCATION, "0")
             listPreference.setDefaultValue(saveLocation)
             listPreference.entryValues = mEntryValues
             false
         }
-
-//        val darkTheme = findPreference("dark_mode") as SwitchPreferenceCompat
-//        darkTheme.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-//            if (mMainActivity != null) mMainActivity!!.recreate()
-//            true
-//        }
 
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -123,18 +116,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         } else {
             mEntries = resources.getStringArray(R.array.save_location_nosd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_nosd_values)
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
         }
     }
-
-    // controlla se l'app deve mantenere lo schermo acceso
-//    private fun checkScreenAwake() {
-//        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-//        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
-//        if (screenOn)
-//            activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        else
-//            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//    }
 
     companion object {
         private val TAG = SettingsFragment::class.java.canonicalName

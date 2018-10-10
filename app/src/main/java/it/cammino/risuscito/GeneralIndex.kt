@@ -43,7 +43,7 @@ class GeneralIndex : Fragment() {
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
         if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
 //            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
             view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
         } else

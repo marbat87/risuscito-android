@@ -98,7 +98,7 @@ class CantiParolaFragment : Fragment() {
 
             result.append(getTitoloToSendFromPosition(3))
             result.append("\n")
-            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
             if (pref.getBoolean(Utility.SHOW_PACE, false)) {
                 result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
@@ -524,7 +524,7 @@ class CantiParolaFragment : Fragment() {
                             posizioniList.add(
                                     getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
 
-                            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+                            val pref = PreferenceManager.getDefaultSharedPreferences(context)
                             if (pref.getBoolean(Utility.SHOW_PACE, false))
                                 posizioniList.add(
                                         getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))

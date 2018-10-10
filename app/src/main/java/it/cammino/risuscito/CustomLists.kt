@@ -78,7 +78,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
         sFragment?.setmCallback(this@CustomLists)
 
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         Log.d(
                 TAG,
                 "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false))

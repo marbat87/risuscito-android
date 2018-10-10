@@ -83,7 +83,7 @@ class CantiEucarestiaFragment : Fragment() {
 
             result.append(getTitoloToSendFromPosition(progressivePos++))
             result.append("\n")
-            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
             if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
                 result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
                 result.append("\n")
@@ -529,7 +529,7 @@ class CantiEucarestiaFragment : Fragment() {
                         Observer { canti ->
                             posizioniList.clear()
                             var progressiveTag = 0
-                            val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+                            val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
                             posizioniList.add(
                                     getCantofromPosition(
