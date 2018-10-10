@@ -29,7 +29,6 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.IconicsDrawable
@@ -123,9 +122,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity!!.setTabVisible(false)
         initFab()
 
-//        mBottomBar!!.replaceMenu(R.menu.empty)
         mBottomBar!!.menu.clear()
-//        mBottomBar!!.inflateMenu(R.menu.empty)
         IconicsMenuInflaterUtil.inflate(
                 activity!!.menuInflater, activity, R.menu.consegnati, mBottomBar!!.menu, false)
         mBottomBar!!.setOnMenuItemClickListener { menuItem ->
@@ -149,13 +146,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 }
                 R.id.confirm_changes -> {
                     mCantiViewModel!!.editMode = false
-//                    SimpleDialogFragment.Builder(
-//                            (activity as AppCompatActivity?)!!, this@ConsegnatiFragment, "CONSEGNATI_SAVING")
-//                            .content(R.string.save_consegnati_running)
-//                            .showProgress()
-//                            .progressIndeterminate(false)
-//                            .progressMax(selectableAdapter!!.itemCount)
-//                            .show()
                     ProgressDialogFragment.Builder(
                             (activity as AppCompatActivity?)!!, null, "CONSEGNATI_SAVING")
                             .content(R.string.save_consegnati_running)
@@ -178,7 +168,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(activity!!)
 
-//        mBottomBar!!.backgroundTint = ColorStateList(arrayOf(intArrayOf()), intArrayOf(themeUtils.primaryColor()))
         mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
 
         val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
@@ -194,7 +183,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         // Creating new adapter object
         cantoAdapter.withOnClickListener(mOnClickListener)
-        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
+//        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
+        cantoAdapter.set(mCantiViewModel!!.titoli)
 
         cantiRecycler!!.adapter = cantoAdapter
         val llm = if (mMainActivity!!.isGridLayout)
@@ -222,7 +212,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             true
         }
         selectableAdapter!!.withEventHook(CheckableItem.CheckBoxClickEvent())
-        FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
+//        FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
+        selectableAdapter!!.set(mCantiViewModel!!.titoliChoose)
 
         chooseRecycler!!.adapter = selectableAdapter
         val llm2 = if (mMainActivity!!.isGridLayout)
@@ -323,7 +314,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             )
                         }
                         mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
-                        FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
+//                        FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
+                        selectableAdapter!!.set(mCantiViewModel!!.titoliChoose)
                     }
                 })
                 .start()
