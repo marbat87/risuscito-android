@@ -332,8 +332,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ")
-        if (mMediaBrowser != null) {
-            mMediaBrowser!!.connect()
+//        if (mMediaBrowser != null) {
+//            mMediaBrowser!!.connect()
+//        }
+        try {
+            mMediaBrowser?.connect()
+        } catch (e: IllegalStateException) {
+            Log.e(TAG, "onStart: mMediaBrowser connecting")
         }
     }
 
