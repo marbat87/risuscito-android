@@ -390,7 +390,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
-                        PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
+                        PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
                     }
                 })
     }

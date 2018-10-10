@@ -81,23 +81,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    //    override fun onResume() {
     override fun onResume() {
         super.onResume()
         LUtils.getInstance(this).checkScreenAwake()
     }
-//        super.onResume()
-//        checkScreenAwake()
-//
-//        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
-//                .registerOnSharedPreferenceChangeListener(this)
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
-//                .unregisterOnSharedPreferenceChangeListener(this)
-//    }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired) {
@@ -111,15 +98,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         return keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired || super.onKeyDown(keyCode, event)
     }
 
-    // controlla se l'app deve mantenere lo schermo acceso
-//    private fun checkScreenAwake() {
-//        val pref = PreferenceManager.getDefaultSharedPreferences(this)
-//        val screenOn = pref.getBoolean(Utility.SCREEN_ON, false)
-//        if (screenOn)
-//            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        else
-//            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//    }
 
     private fun forceOverflowMenu() {
         try {
@@ -147,21 +125,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
         Log.d(TAG, "attachBaseContext - language: " + language!!)
         // ho settato almeno una volta la lingua --> imposto quella
-//        if (language.isNotEmpty() && language != "en") {
         if (language.isNotEmpty()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
         } else {
-//            val mEditor = sp.edit()
             val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
                 "en" -> "en"
                 else -> "it"
             }
             Log.d(TAG, "attachBaseContext - language setted: $mLanguage")
-//            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
-//            mEditor.apply()
             sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
             val locale = Locale(mLanguage)
             Locale.setDefault(locale)
@@ -195,9 +169,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
         }
 
-        // Calligraphy
-//        super.attachBaseContext(CalligraphyContextWrapper.wrap(mNewBase))
-//        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
         super.attachBaseContext(mNewBase)
     }
 

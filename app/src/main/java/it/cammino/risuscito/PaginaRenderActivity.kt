@@ -408,9 +408,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     }
 
                     override fun onStopTrackingTouch(seekBar: SeekBar) {
-//                        MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
-//                                .transportControls
-//                                .seekTo(seekBar.progress.toLong())
                         val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
                         controller?.transportControls?.seekTo(seekBar.progress.toLong()) ?: return
                         scheduleSeekbarUpdate()
@@ -769,10 +766,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(idCanto)
 
-        personalUrl = if (localLink?.localPath != null && !localLink.localPath!!.isEmpty())
-            localLink.localPath
-        else
-            ""
+//        personalUrl = if (localLink?.localPath != null && !localLink.localPath!!.isEmpty())
+//            localLink.localPath
+//        else
+//            ""
+        personalUrl = localLink?.localPath ?: ""
     }
 
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
