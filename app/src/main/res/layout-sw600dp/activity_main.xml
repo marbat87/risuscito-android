@@ -41,12 +41,12 @@
 
                 <it.cammino.risuscito.ui.BoundedCardView
                     android:id="@+id/activity_main__frame_master"
+                    style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
                     risuscito:cardCornerRadius="0dp"
-                    risuscito:cardElevation="@dimen/card_elevation"
                     risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
 
                     <com.google.android.material.tabs.TabLayout

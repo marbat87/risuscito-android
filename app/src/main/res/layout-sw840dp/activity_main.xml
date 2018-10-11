@@ -58,21 +58,21 @@
                     android:id="@+id/fab_pager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="@dimen/fab_margin_coord"
                     android:layout_marginRight="@dimen/fab_margin_coord"
-                    android:layout_gravity="top|end"
                     risuscito:sdExpansionMode="bottom"
                     risuscito:sdOverlayLayout="@id/overlay" />
 
                 <it.cammino.risuscito.ui.BoundedCardView
                     android:id="@+id/activity_main__frame_master"
+                    style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
-                    risuscito:cardCornerRadius="0dp"
-                    risuscito:cardElevation="@dimen/card_elevation">
+                    risuscito:cardCornerRadius="0dp">
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/material_tabs"
