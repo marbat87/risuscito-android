@@ -50,6 +50,7 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
+import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
 import java.util.*
@@ -1099,19 +1100,27 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNeutral(tag: String) {}
 
     private fun createFileChooser() {
-        MaterialDialog(this@PaginaRenderActivity)
-                .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase() == "mp3" }) { _, file ->
-                    val path = file.absolutePath
-                    Snackbar.make(
-                            findViewById(android.R.id.content),
-                            getString(R.string.file_selected) + ": " + path,
-                            Snackbar.LENGTH_SHORT)
-                            .show()
-                    stopMedia()
-                    InsertLinkTask().execute(idCanto.toString(), path)
-                }
-                .show()
+        if (EasyPermissions.hasPermissions(this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            MaterialDialog(this@PaginaRenderActivity)
+                    .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase() == "mp3" }) { _, file ->
+                        val path = file.absolutePath
+                        Snackbar.make(
+                                findViewById(android.R.id.content),
+                                getString(R.string.file_selected) + ": " + path,
+                                Snackbar.LENGTH_SHORT)
+                                .show()
+                        stopMedia()
+                        InsertLinkTask().execute(idCanto.toString(), path)
+                    }
+                    .show()
+        } else AppSettingsDialog.Builder(this@PaginaRenderActivity).build().show()
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE)
+//    }
 
     private fun playIntroSmall() {
         music_controls.visibility = View.VISIBLE

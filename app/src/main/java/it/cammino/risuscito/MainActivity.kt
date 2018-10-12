@@ -607,26 +607,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 params.behavior = if (mLUtils!!.isFabScrollingActive) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
                 fab_pager.requestLayout()
                 fab_pager.show()
-                // This is a workaround for support library bug, call this instead of show() above.
-//                fab_pager.show(object : FloatingActionButton.OnVisibilityChangedListener() {
-//                    override fun onShown(fab: FloatingActionButton) {
-//                        val impl = fab::class.java.getDeclaredField("impl").let {
-//                            it.isAccessible = true
-//                            it.get(fab)
-//                        }
-//
-//                        val implClass = if (Build.VERSION.SDK_INT >= 21) {
-//                            impl::class.java.superclass
-//                        } else {
-//                            impl::class.java
-//                        }
-//
-//                        val scale =
-//                                implClass.getDeclaredMethod("setImageMatrixScale", Float::class.java)
-//                        scale.isAccessible = true
-//                        scale.invoke(impl, 1.0F)
-//                    }
-//                })
             }
         } else {
             if (fab_pager!!.isOpen)
@@ -909,13 +889,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onPositive: TAG $tag")
         when (tag) {
             "BACKUP_ASK" -> {
-//                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "BACKUP_RUNNING")
-//                        .title(R.string.backup_running)
-//                        .content(R.string.backup_database)
-//                        .showProgress()
-//                        .progressIndeterminate(true)
-//                        .progressMax(0)
-//                        .show()
                 ProgressDialogFragment.Builder(this@MainActivity, null, "BACKUP_RUNNING")
                         .title(R.string.backup_running)
                         .content(R.string.backup_database)
@@ -925,13 +898,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 BackupTask().execute()
             }
             "RESTORE_ASK" -> {
-//                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTORE_RUNNING")
-//                        .title(R.string.restore_running)
-//                        .content(R.string.restoring_database)
-//                        .showProgress()
-//                        .progressIndeterminate(true)
-//                        .progressMax(0)
-//                        .show()
                 ProgressDialogFragment.Builder(this@MainActivity, null, "RESTORE_RUNNING")
                         .title(R.string.restore_running)
                         .content(R.string.restoring_database)
@@ -967,11 +933,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNeutral(tag: String) {}
 
-//    private fun dismissDialog(tag: String) {
-//        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, tag)
-//        sFragment?.dismiss()
-//    }
-
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, tag)
         sFragment?.dismiss()
@@ -995,13 +956,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun onPreExecute() {
             super.onPreExecute()
-//            SimpleDialogFragment.Builder(
-//                    activityWeakReference.get()!!, activityWeakReference.get()!!, "TRANSLATION")
-//                    .content(R.string.translation_running)
-//                    .showProgress()
-//                    .progressIndeterminate(true)
-//                    .progressMax(0)
-//                    .show()
             ProgressDialogFragment.Builder(activityWeakReference.get()!!, null, "TRANSLATION")
                     .content(R.string.translation_running)
                     .progressIndeterminate(true)
@@ -1080,13 +1034,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private inner class MyCrossfaderClass(context: Context) : SlidingPaneLayout(context), ICrossFadeSlidingPaneLayout {
-        override fun setCanSlide(canSlide: Boolean) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun setOffset(slideOffset: Float) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+        override fun setCanSlide(canSlide: Boolean) {}
+        override fun setOffset(slideOffset: Float) {}
     }
 
     private fun backToHome() {
