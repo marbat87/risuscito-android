@@ -33,30 +33,21 @@ class GeneralIndex : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        view_pager!!.adapter = SectionsPagerAdapter(childFragmentManager)
         view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
 
         mMainActivity!!.setTabVisible(true)
-//        val tabs = mMainActivity!!.getMaterialTabs()
-//        val tabs = activity!!.material_tabs
-//        tabs.visibility = View.VISIBLE
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-//            view_pager!!.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
             view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
         } else
-//            view_pager!!.currentItem = mViewModel!!.pageViewed
             view_pager.currentItem = mViewModel!!.pageViewed
-//        if (!mMainActivity!!.isOnTablet) tabs.setBackgroundColor(themeUtils.primaryColor())
-//        tabs.setupWithViewPager(view_pager)
         mMainActivity!!.getMaterialTabs().setupWithViewPager(view_pager)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        mViewModel!!.pageViewed = view_pager!!.currentItem
         mViewModel!!.pageViewed = view_pager.currentItem
     }
 
@@ -78,7 +69,6 @@ class GeneralIndex : Fragment() {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            //            Locale l = getActivity().getResources().getConfiguration().locale;
             val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
             when (position) {
                 0 -> return getString(R.string.letter_order_text).toUpperCase(l)
