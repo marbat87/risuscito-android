@@ -1,15 +1,10 @@
 package it.cammino.risuscito
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +13,15 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
@@ -55,7 +56,7 @@ class CantiParolaFragment : Fragment() {
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
-    private var actionModeOk: Boolean = false
+    //    private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
     private var mLUtils: LUtils? = null
@@ -132,7 +133,7 @@ class CantiParolaFragment : Fragment() {
 //        if (parent.findViewById<View>(R.id.addCantoGenerico).visibility == View.VISIBLE) {
         if (parent.findViewById<View>(R.id.addCantoGenerico).isVisible) {
             if (mSwhitchMode) {
-                actionModeOk = true
+//                actionModeOk = true
                 MaterialCab.destroy()
                 Thread(
                         Runnable {
@@ -173,7 +174,7 @@ class CantiParolaFragment : Fragment() {
                 } else
                     openPagina(v)
             else {
-                actionModeOk = true
+//                actionModeOk = true
                 MaterialCab.destroy()
                 Thread(
                         Runnable {
@@ -357,53 +358,72 @@ class CantiParolaFragment : Fragment() {
         val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
         val timestampNew = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
         if (idNew != idDaCanc || posizioneDaCanc != position) {
+            val roomDb = RisuscitoDatabase.getInstance(context!!)
+            roomDb.beginTransaction()
 
-            val positionToDelete = CustomList()
-            positionToDelete.id = 1
-            positionToDelete.position = position
-            positionToDelete.idCanto = idNew
-            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-            mDao.deletePosition(positionToDelete)
+            try {
+                val positionToDelete = CustomList()
+                positionToDelete.id = 1
+                positionToDelete.position = position
+                positionToDelete.idCanto = idNew
+                val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+                mDao.deletePosition(positionToDelete)
 
-            mDao.updatePositionNoTimestamp(idNew, 1, posizioneDaCanc, idDaCanc)
+                mDao.updatePositionNoTimestamp(idNew, 1, posizioneDaCanc, idDaCanc)
 
-            val positionToInsert = CustomList()
-            positionToInsert.id = 1
-            positionToInsert.position = position
-            positionToInsert.idCanto = idDaCanc
-            positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampNew))
-            mDao.insertPosition(positionToInsert)
-            Snackbar.make(
-                    activity!!.findViewById<View>(R.id.main_content),
-                    R.string.switch_done,
-                    Snackbar.LENGTH_SHORT)
-                    .show()
+                val positionToInsert = CustomList()
+                positionToInsert.id = 1
+                positionToInsert.position = position
+                positionToInsert.idCanto = idDaCanc
+                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampNew))
+                mDao.insertPosition(positionToInsert)
+
+                roomDb.setTransactionSuccessful()
+                Snackbar.make(
+                        activity!!.findViewById<View>(R.id.main_content),
+                        R.string.switch_done,
+                        Snackbar.LENGTH_SHORT)
+                        .show()
+            } catch (e: SQLiteConstraintException) {
+                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            } finally {
+                roomDb.endTransaction()
+            }
         } else {
             Snackbar.make(rootView!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
         }
     }
 
     private fun scambioConVuoto(position: Int) {
+        val roomDb = RisuscitoDatabase.getInstance(context!!)
+        roomDb.beginTransaction()
 
-        val positionToDelete = CustomList()
-        positionToDelete.id = 1
-        positionToDelete.position = posizioneDaCanc
-        positionToDelete.idCanto = idDaCanc
-        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-        mDao.deletePosition(positionToDelete)
+        try {
+            val positionToDelete = CustomList()
+            positionToDelete.id = 1
+            positionToDelete.position = posizioneDaCanc
+            positionToDelete.idCanto = idDaCanc
+            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+            mDao.deletePosition(positionToDelete)
 
-        val positionToInsert = CustomList()
-        positionToInsert.id = 1
-        positionToInsert.position = position
-        positionToInsert.idCanto = idDaCanc
-        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
-        mDao.insertPosition(positionToInsert)
+            val positionToInsert = CustomList()
+            positionToInsert.id = 1
+            positionToInsert.position = position
+            positionToInsert.idCanto = idDaCanc
+            positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
+            mDao.insertPosition(positionToInsert)
 
-        Snackbar.make(
-                activity!!.findViewById<View>(R.id.main_content),
-                R.string.switch_done,
-                Snackbar.LENGTH_SHORT)
-                .show()
+            roomDb.setTransactionSuccessful()
+            Snackbar.make(
+                    activity!!.findViewById<View>(R.id.main_content),
+                    R.string.switch_done,
+                    Snackbar.LENGTH_SHORT)
+                    .show()
+        } catch (e: SQLiteConstraintException) {
+            Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+        } finally {
+            roomDb.endTransaction()
+        }
     }
 
     private fun startCab(switchMode: Boolean) {
@@ -430,7 +450,7 @@ class CantiParolaFragment : Fragment() {
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white)
-                actionModeOk = false
+//                actionModeOk = false
             }
 
             onSelection { item ->
@@ -447,7 +467,7 @@ class CantiParolaFragment : Fragment() {
                                     mDao.deletePosition(positionToDelete)
                                 })
                                 .start()
-                        actionModeOk = true
+//                        actionModeOk = true
                         MaterialCab.destroy()
                         Snackbar.make(
                                 activity!!.findViewById(R.id.main_content),
@@ -486,16 +506,16 @@ class CantiParolaFragment : Fragment() {
             }
 
             onDestroy {
-                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 mSwhitchMode = false
-                if (!actionModeOk) {
-                    try {
-                        posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
-                        cantoAdapter!!.notifyItemChanged(longclickedPos)
-                    } catch (e: Exception) {
-                        Crashlytics.logException(e)
-                    }
+//                if (!actionModeOk) {
+                try {
+                    posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
+                    cantoAdapter!!.notifyItemChanged(longclickedPos)
+                } catch (e: Exception) {
+                    Crashlytics.logException(e)
                 }
+//                }
                 true
             }
         }
