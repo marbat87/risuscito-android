@@ -27,6 +27,9 @@ interface CustomListDao {
     @Query("SELECT * from customlist WHERE id = :id AND position = :position")
     fun getPosition(id: Int, position: Int): CustomList
 
+    @Query("SELECT * from customlist WHERE id = :id AND position = :position AND idCanto = :idCanto")
+    fun getPositionSpecific(id: Int, position: Int, idCanto: Int): CustomList
+
     @Query("UPDATE customlist SET idCanto = :idCanto WHERE id = :id AND position = :position")
     fun updatePositionNoTimestamp(idCanto: Int, id: Int, position: Int)
 
@@ -36,7 +39,7 @@ interface CustomListDao {
     @Update
     fun updatePosition(position: CustomList): Int
 
-    @Insert(onConflict = OnConflictStrategy.FAIL)
+    @Insert
     fun insertPosition(position: CustomList)
 
     @Query("DELETE FROM customlist WHERE id = :id")
@@ -44,4 +47,8 @@ interface CustomListDao {
 
     @Delete
     fun deletePosition(position: CustomList)
+
+    @Query("SELECT COUNT(*) FROM customlist WHERE id = :idLista AND position = :position AND idCanto = :idCanto")
+    fun checkExistsPosition(idLista : Int, position : Int, idCanto : Int): Int
 }
+

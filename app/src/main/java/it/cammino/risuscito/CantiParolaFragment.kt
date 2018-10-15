@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.content.Intent
-import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -356,17 +355,13 @@ class CantiParolaFragment : Fragment() {
 
     private fun scambioCanto(v: View, position: Int) {
         val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
-        val timestampNew = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
         if (idNew != idDaCanc || posizioneDaCanc != position) {
-            val roomDb = RisuscitoDatabase.getInstance(context!!)
-            roomDb.beginTransaction()
-
-            try {
-                val positionToDelete = CustomList()
-                positionToDelete.id = 1
-                positionToDelete.position = position
-                positionToDelete.idCanto = idNew
-                val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+            if (mDao.checkExistsPosition(1, position, idDaCanc) > 0
+                    || mDao.checkExistsPosition(1, posizioneDaCanc, idNew) > 0) {
+                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            } else {
+                val positionToDelete = mDao.getPositionSpecific(1, position, idNew)
                 mDao.deletePosition(positionToDelete)
 
                 mDao.updatePositionNoTimestamp(idNew, 1, posizioneDaCanc, idDaCanc)
@@ -375,19 +370,14 @@ class CantiParolaFragment : Fragment() {
                 positionToInsert.id = 1
                 positionToInsert.position = position
                 positionToInsert.idCanto = idDaCanc
-                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampNew))
+                positionToInsert.timestamp = positionToDelete.timestamp
                 mDao.insertPosition(positionToInsert)
 
-                roomDb.setTransactionSuccessful()
                 Snackbar.make(
                         activity!!.findViewById<View>(R.id.main_content),
                         R.string.switch_done,
                         Snackbar.LENGTH_SHORT)
                         .show()
-            } catch (e: SQLiteConstraintException) {
-                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-            } finally {
-                roomDb.endTransaction()
             }
         } else {
             Snackbar.make(rootView!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
@@ -395,34 +385,25 @@ class CantiParolaFragment : Fragment() {
     }
 
     private fun scambioConVuoto(position: Int) {
-        val roomDb = RisuscitoDatabase.getInstance(context!!)
-        roomDb.beginTransaction()
-
-        try {
-            val positionToDelete = CustomList()
-            positionToDelete.id = 1
-            positionToDelete.position = posizioneDaCanc
-            positionToDelete.idCanto = idDaCanc
-            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+        if (mDao.checkExistsPosition(1, position, idDaCanc) > 0)
+            Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+        else {
+            val positionToDelete = mDao.getPositionSpecific(1, posizioneDaCanc, idDaCanc)
             mDao.deletePosition(positionToDelete)
 
             val positionToInsert = CustomList()
             positionToInsert.id = 1
             positionToInsert.position = position
             positionToInsert.idCanto = idDaCanc
-            positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
+            positionToInsert.timestamp = positionToDelete.timestamp
             mDao.insertPosition(positionToInsert)
 
-            roomDb.setTransactionSuccessful()
             Snackbar.make(
                     activity!!.findViewById<View>(R.id.main_content),
                     R.string.switch_done,
                     Snackbar.LENGTH_SHORT)
                     .show()
-        } catch (e: SQLiteConstraintException) {
-            Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-        } finally {
-            roomDb.endTransaction()
         }
     }
 
