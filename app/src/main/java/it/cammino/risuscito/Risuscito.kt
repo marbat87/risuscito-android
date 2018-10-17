@@ -51,11 +51,9 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         mMainActivity = activity as MainActivity?
 
         mMainActivity!!.enableFab(false)
-//        if (!mMainActivity!!.isOnTablet) {
         mMainActivity!!.enableBottombar(false)
-//        }
 
-        val sp = PreferenceManager.getDefaultSharedPreferences(activity)
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
         // get version numbers
         val lastVersion = sp.getString(VERSION_KEY, NO_VERSION)
@@ -87,7 +85,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
         Log.d(
                 TAG,
-                "onCreateView: signed in = " + PreferenceManager.getDefaultSharedPreferences(activity)
+                "onCreateView: signed in = " + PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.SIGNED_IN, false))
         checkStoragePermissions()
 
@@ -98,12 +96,11 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         super.onViewCreated(view, savedInstanceState)
         mMainActivity!!.setupToolbarTitle(R.string.activity_homepage)
         sign_in_button!!.setSize(SignInButton.SIZE_WIDE)
-//        activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.setTabVisible(false)
 
         imageView1.setOnClickListener { mMainActivity!!.drawer!!.openDrawer() }
 
-        sign_in_button.visibility = if (PreferenceManager.getDefaultSharedPreferences(activity)
+        sign_in_button.visibility = if (PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.SIGNED_IN, false))
             View.INVISIBLE
         else
@@ -117,7 +114,6 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     override fun onResume() {
         super.onResume()
-//        activity!!.registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
@@ -126,7 +122,6 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     override fun onDestroy() {
         super.onDestroy()
-//        activity!!.unregisterReceiver(signInVisibility)
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(signInVisibility)
     }
 
@@ -139,7 +134,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "CHANGELOG" -> {
-                PreferenceManager.getDefaultSharedPreferences(activity).edit { putString(VERSION_KEY, thisVersion) }
+                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(VERSION_KEY, thisVersion) }
             }
         }
     }
@@ -179,9 +174,6 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
         // Some permissions have been denied
         Log.d(TAG, "onPermissionsDenied: ")
-//        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-//        editor.putString(Utility.SAVE_LOCATION, "0")
-//        editor.apply()
         PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
         Snackbar.make(rootView!!, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT)
                 .show()

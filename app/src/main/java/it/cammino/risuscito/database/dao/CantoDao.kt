@@ -12,16 +12,13 @@ import it.cammino.risuscito.database.entities.Canto
 @Dao
 interface CantoDao {
 
-    @get:Query("SELECT * FROM canto ORDER BY titolo ASC")
+    @get:Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed FROM canto ORDER BY titolo ASC")
     val allByName: List<Canto>
 
-    @get:Query("SELECT * FROM canto")
+    @get:Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed FROM canto")
     val liveAll: LiveData<List<Canto>>
 
-//    @get:Query("SELECT * FROM canto ORDER BY titolo ASC")
-//    val liveAllByName: LiveData<List<Canto>>
-
-    @get:Query("SELECT A.* FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY titolo ASC")
+    @get:Query("SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, link, A.zoom, A.scrollX, A.scrollY, A.savedBarre, A.savedTab, coalesce(A.savedSpeed,\"2\") as savedSpeed FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY titolo ASC")
     val allByNameOnlyConsegnati: List<Canto>
 
     @get:Query("SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, coalesce(B.localPath, A.link) as link, A.zoom, A.scrollX, A.scrollY, A.savedBarre, A.savedTab, A.savedSpeed FROM canto A LEFT JOIN locallink B ON (A.id = b.idCanto)")
@@ -33,13 +30,13 @@ interface CantoDao {
     @Query("DELETE FROM canto")
     fun truncateTable()
 
-    @Query("SELECT * FROM canto WHERE id = :id")
+    @Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed FROM canto WHERE id = :id")
     fun getCantoById(id: Int): Canto
 
-    @Query("SELECT * from canto WHERE source = :src")
+    @Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed from canto WHERE source = :src")
     fun getCantiWithSource(src: String): List<Canto>?
 
-    @Query("SELECT A.* from canto A, consegnato B WHERE A.source = :src AND A.id = B.idCanto")
+    @Query("SELECT A.id, A.pagina, A.titolo, A.source, A.favorite, A.color, link, A.zoom, A.scrollX, A.scrollY, A.savedBarre, A.savedTab, coalesce(A.savedSpeed,\"2\") as savedSpeed from canto A, consegnato B WHERE A.source = :src AND A.id = B.idCanto")
     fun getCantiWithSourceOnlyConsegnati(src: String): List<Canto>?
 
     @Query("SELECT COUNT(*) FROM canto")

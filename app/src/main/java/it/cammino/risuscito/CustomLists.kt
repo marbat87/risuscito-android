@@ -78,7 +78,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
         sFragment?.setmCallback(this@CustomLists)
 
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         Log.d(
                 TAG,
                 "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false))
@@ -248,15 +248,13 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                Log.d(TAG, "onSequenceFinish: ")
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                Log.d(TAG, "onSequenceCanceled: ")
-                                PreferenceManager.getDefaultSharedPreferences(activity).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
                             }
                         })
                 .start()

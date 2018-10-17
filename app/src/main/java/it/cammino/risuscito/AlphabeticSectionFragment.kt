@@ -148,8 +148,6 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = v.text_title.text.toString()
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 

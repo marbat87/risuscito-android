@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.database.SQLException
@@ -9,13 +8,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -24,6 +16,14 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -48,7 +48,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     private var isViewShown = true
     private var rootView: View? = null
     private var titoli: MutableList<SimpleItem> = ArrayList()
-//    private var titoloDaAgg: String? = null
+    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var searchTask: SearchTask? = null
     private var mLUtils: LUtils? = null
@@ -549,19 +549,17 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()!!.search_no_results.visibility = View.GONE
-            fragmentReference.get()!!.search_progress.visibility = View.VISIBLE
-            fragmentReference.get()!!.titoli.clear()
+            fragmentReference.get()?.search_no_results?.visibility = View.GONE
+            fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
+            fragmentReference.get()?.titoli?.clear()
         }
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
             if (isCancelled) return
-//            FastAdapterDiffUtil.set<FastItemAdapter<SimpleItem>, SimpleItem>(fragmentReference.get()!!.cantoAdapter, fragmentReference.get()!!.titoli)
-            fragmentReference.get()!!.cantoAdapter.set(fragmentReference.get()!!.titoli)
-            fragmentReference.get()!!.search_progress.visibility = View.INVISIBLE
-            fragmentReference
-                    .get()!!.search_no_results.visibility = if (fragmentReference.get()!!.cantoAdapter.adapterItemCount == 0)
+            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
+            fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
+            fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE

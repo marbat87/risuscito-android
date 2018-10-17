@@ -2,6 +2,12 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="11 October 2018"
+        versionName="4.3.1">
+        <changelogbug>Bugfixes</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="September 2018"
         versionName="4.3.0">
         <changelogimprovement>[b]Added English translation![/b]</changelogimprovement>

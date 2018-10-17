@@ -150,8 +150,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
