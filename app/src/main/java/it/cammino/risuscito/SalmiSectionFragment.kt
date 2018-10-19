@@ -149,11 +149,13 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle("Aggiungi canto a:")
 
-        for (i in listePersonalizzate!!.indices) {
-            val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
-            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+        if (listePersonalizzate != null) {
+            for (i in listePersonalizzate!!.indices) {
+                val subMenu = menu.addSubMenu(
+                        ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+                for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                    subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+                }
             }
         }
 

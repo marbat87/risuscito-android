@@ -766,7 +766,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     // recupera e setta il record per la registrazione
     private fun getRecordLink() {
-        url = if (mViewModel!!.mCurrentCanto!!.link != null && mViewModel!!.mCurrentCanto!!.link != "")
+        url = if (mViewModel!!.mCurrentCanto!!.link != null && !mViewModel!!.mCurrentCanto!!.link!!.isEmpty())
             getString(LUtils.getResId(mViewModel!!.mCurrentCanto!!.link, R.string::class.java))
         else
             ""
