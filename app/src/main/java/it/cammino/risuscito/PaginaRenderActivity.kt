@@ -565,17 +565,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_tab -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedTab.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                                Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        R.string.tab_saved,
-                                        Snackbar.LENGTH_SHORT)
-                                        .show()
-                            })
-                            .start()
+//                    Thread(
+//                            Runnable {
+//                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+//                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+//                                Snackbar.make(
+//                                        findViewById(android.R.id.content),
+//                                        R.string.tab_saved,
+//                                        Snackbar.LENGTH_SHORT)
+//                                        .show()
+//                            })
+//                            .start()
+                    UpdateCantoTask().execute(1)
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
@@ -606,17 +607,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_barre -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedBarre.equals(mViewModel!!.barreCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                                Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        R.string.barre_saved,
-                                        Snackbar.LENGTH_SHORT)
-                                        .show()
-                            })
-                            .start()
+//                    Thread(
+//                            Runnable {
+//                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+//                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+//                                Snackbar.make(
+//                                        findViewById(android.R.id.content),
+//                                        R.string.barre_saved,
+//                                        Snackbar.LENGTH_SHORT)
+//                                        .show()
+//                            })
+//                            .start()
+                    UpdateCantoTask().execute(2)
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content),
@@ -795,12 +797,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
             }
 
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
-                        mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                    })
-                    .start()
+//            Thread(
+//                    Runnable {
+//                        val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
+//                        mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+//                    })
+//                    .start()
+            UpdateCantoTask().execute(0)
         }
     }
 
@@ -1535,11 +1538,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
             mViewModel!!.mCurrentCanto!!.favorite = params[0]!!
             mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-//            Snackbar.make(
-//                    findViewById(android.R.id.content),
-//                    if (params[0]!! == 1) R.string.favorite_added else R.string.favorite_removed,
-//                    Snackbar.LENGTH_SHORT)
-//                    .show()
             return params[0]
         }
 
@@ -1554,8 +1552,26 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
+        override fun doInBackground(vararg params: Int?): Int? {
+            val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+            mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+            return params[0]
+        }
+
+        override fun onPostExecute(integer: Int?) {
+            super.onPostExecute(integer)
+            if (integer != 0)
+                Snackbar.make(
+                        findViewById(android.R.id.content),
+                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+                        Snackbar.LENGTH_SHORT)
+                        .show()
+        }
+    }
+
     private fun initFabOptions() {
-//        fab_canti.expansionMode = if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         fab_canti.expansionMode = if (mLUtils!!.isFabScrollingActive && mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         val iconColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.text_color_secondary)
         val backgroundColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background)
