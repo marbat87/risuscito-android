@@ -1,22 +1,22 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.turingtechnologies.materialscrollbar.CustomIndicator
@@ -38,7 +38,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
     private var mCantiViewModel: AlphabeticIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-//    private var titoloDaAgg: String? = null
+    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -67,8 +67,11 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
+//                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+//                            listePersonalizzate = mDao.all
+                        if (context != null)
+                            listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
+
                     })
                     .start()
         }

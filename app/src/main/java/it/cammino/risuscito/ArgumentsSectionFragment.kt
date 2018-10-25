@@ -196,8 +196,10 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                 Log.d(TAG, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+//                            listePersonalizzate = mDao.all
+                            if (context != null)
+                                listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                         })
                         .start()
             } else

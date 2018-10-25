@@ -1,19 +1,19 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -59,12 +59,14 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "LITURGICO_REPLACE_2")
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
+//                        listePersonalizzate = mDao.all
 
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
+//                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+                        if (context != null)
+                            listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                     })
                     .start()
         }

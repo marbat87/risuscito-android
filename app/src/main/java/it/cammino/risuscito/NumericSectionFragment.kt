@@ -134,8 +134,10 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 Log.d(javaClass.name, "VISIBLE")
                 Thread(
                         Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+//                            listePersonalizzate = mDao.all
+                            if (context != null)
+                                listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                         })
                         .start()
             } else
