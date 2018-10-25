@@ -1,12 +1,13 @@
 package it.cammino.risuscito
 
-import androidx.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.appbar.AppBarLayout
-import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.MenuItem
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.google.android.material.appbar.AppBarLayout
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.ChangelogViewModel
 import kotlinx.android.synthetic.main.changelog_layout.*
@@ -37,14 +38,16 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
         finish()
-        overridePendingTransition(0, R.anim.slide_out_bottom)
+//        overridePendingTransition(0, R.anim.slide_out_bottom)
+        Animatoo.animateSlideDown(this@ChangelogActivity)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                overridePendingTransition(0, R.anim.slide_out_bottom)
+//                overridePendingTransition(0, R.anim.slide_out_bottom)
+                Animatoo.animateSlideDown(this@ChangelogActivity)
                 true
             }
             else -> false

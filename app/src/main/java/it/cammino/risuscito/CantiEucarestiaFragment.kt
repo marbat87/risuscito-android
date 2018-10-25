@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
@@ -278,7 +279,8 @@ class CantiEucarestiaFragment : Fragment() {
         val intent = Intent(activity, GeneralInsertSearch::class.java)
         intent.putExtras(bundle)
         parentFragment!!.startActivityForResult(intent, TAG_INSERT_EUCARESTIA)
-        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+//        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+        Animatoo.animateShrink(activity)
     }
 
     private fun openPagina(v: View) {

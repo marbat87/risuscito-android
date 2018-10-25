@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import android.util.Log
 import android.view.MenuItem
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
@@ -58,7 +59,8 @@ class GeneralInsertSearch : ThemeableActivity() {
             android.R.id.home -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
-                overridePendingTransition(0, R.anim.slide_out_right)
+//                overridePendingTransition(0, R.anim.slide_out_right)
+                Animatoo.animateShrink(this@GeneralInsertSearch)
                 return true
             }
         }
@@ -69,7 +71,8 @@ class GeneralInsertSearch : ThemeableActivity() {
         Log.d(TAG, "onBackPressed: ")
         setResult(Activity.RESULT_CANCELED)
         finish()
-        overridePendingTransition(0, R.anim.slide_out_right)
+//        overridePendingTransition(0, R.anim.slide_out_right)
+        Animatoo.animateShrink(this@GeneralInsertSearch)
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentPagerAdapter(fm) {

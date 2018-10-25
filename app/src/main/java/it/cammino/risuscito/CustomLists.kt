@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -153,7 +154,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
                         Intent(activity, CreaListaActivity::class.java).putExtras(bundle), TAG_CREA_LISTA)
-                activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+//                activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+                Animatoo.animateSlideUp(activity)
             }
         }
     }
@@ -406,7 +408,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     startActivityForResult(
                             Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
                             TAG_MODIFICA_LISTA)
-                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+//                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+                    Animatoo.animateSlideUp(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {

@@ -16,6 +16,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -48,7 +49,8 @@ class LUtils private constructor(private val mActivity: Activity) {
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)
-        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+//        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+        Animatoo.animateSlideLeft(mActivity)
 
         Thread(
                 Runnable {
@@ -62,17 +64,21 @@ class LUtils private constructor(private val mActivity: Activity) {
 
     fun startActivityWithFadeIn(intent: Intent) {
         mActivity.startActivity(intent)
-        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on)
+//        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on)
+        Animatoo.animateZoom(mActivity)
     }
 
     fun closeActivityWithTransition() {
         mActivity.finish()
-        mActivity.overridePendingTransition(0, R.anim.slide_out_right)
+//        mActivity.overridePendingTransition(0, R.anim.slide_out_right)
+        Animatoo.animateSlideRight(mActivity)
     }
 
     internal fun closeActivityWithFadeOut() {
         mActivity.finish()
-        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
+//        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
+        Animatoo.animateShrink(mActivity)
+
     }
 
     internal fun goFullscreen() {

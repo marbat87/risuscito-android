@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
@@ -102,7 +103,8 @@ class InsertVeloceFragment : Fragment() {
 
                             activity!!.setResult(Activity.RESULT_OK)
                             activity!!.finish()
-                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+                            Animatoo.animateShrink(activity)
                         })
                         .start()
             } else {
@@ -115,7 +117,8 @@ class InsertVeloceFragment : Fragment() {
                                 mDao.updateLista(listaPers)
                                 activity!!.setResult(Activity.RESULT_OK)
                                 activity!!.finish()
-                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+                                Animatoo.animateShrink(activity)
                             }
                         })
                         .start()

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
@@ -226,7 +227,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             if (saveList()) {
                                 setResult(Activity.RESULT_OK)
                                 finish()
-                                overridePendingTransition(0, R.anim.slide_out_bottom)
+//                                overridePendingTransition(0, R.anim.slide_out_bottom)
+                                Animatoo.animateSlideDown(this@CreaListaActivity)
                             }
                         })
                         .start()
@@ -246,7 +248,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 } else {
                     setResult(Activity.RESULT_CANCELED)
                     finish()
-                    overridePendingTransition(0, R.anim.slide_out_bottom)
+//                    overridePendingTransition(0, R.anim.slide_out_bottom)
+                    Animatoo.animateSlideDown(this@CreaListaActivity)
                 }
                 return true
             }
@@ -267,7 +270,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         } else {
             setResult(Activity.RESULT_CANCELED)
             finish()
-            overridePendingTransition(0, R.anim.slide_out_bottom)
+//            overridePendingTransition(0, R.anim.slide_out_bottom)
+            Animatoo.animateSlideDown(this@CreaListaActivity)
         }
     }
 
@@ -386,7 +390,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         if (saveList()) {
                             setResult(Activity.RESULT_OK)
                             finish()
-                            overridePendingTransition(0, R.anim.slide_out_bottom)
+//                            overridePendingTransition(0, R.anim.slide_out_bottom)
+                            Animatoo.animateSlideDown(this@CreaListaActivity)
                         }
                     })
                     .start()
@@ -399,7 +404,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             "SAVE_LIST" -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
-                overridePendingTransition(0, R.anim.slide_out_bottom)
+//                overridePendingTransition(0, R.anim.slide_out_bottom)
+                Animatoo.animateSlideDown(this@CreaListaActivity)
             }
         }
     }

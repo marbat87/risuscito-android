@@ -1,5 +1,6 @@
 package it.cammino.risuscito
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
@@ -13,12 +14,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
@@ -257,7 +260,6 @@ class CantiParolaFragment : Fragment() {
             if (view != null) {
                 isViewShown = true
                 if (MaterialCab.isActive) MaterialCab.destroy()
-//                val fab1 = (parentFragment as CustomLists).getFab()
                 (parentFragment as CustomLists).initFabOptions(false)
 
             } else
@@ -274,7 +276,8 @@ class CantiParolaFragment : Fragment() {
         val intent = Intent(activity, GeneralInsertSearch::class.java)
         intent.putExtras(bundle)
         parentFragment!!.startActivityForResult(intent, TAG_INSERT_PAROLA)
-        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+//        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+        Animatoo.animateShrink(activity)
     }
 
     private fun openPagina(v: View) {
