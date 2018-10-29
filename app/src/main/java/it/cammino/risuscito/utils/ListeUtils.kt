@@ -1,9 +1,12 @@
 package it.cammino.risuscito.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.SQLException
-import com.google.android.material.snackbar.Snackbar
+import android.os.AsyncTask
+import android.util.Log
 import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -99,12 +102,28 @@ object ListeUtils {
 
     // aggiunge il canto premuto ai preferiti
     fun addToFavorites(mContext: Context, rootView: View, idDaAgg: Int) {
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(mContext).favoritesDao()
-                    mDao.setFavorite(idDaAgg)
-                    Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
-                })
-                .start()
+        UpdateFavoriteTask().execute(mContext, rootView, idDaAgg)
+//        Thread(
+//                Runnable {
+//                    val mDao = RisuscitoDatabase.getInstance(mContext).favoritesDao()
+//                    mDao.setFavorite(idDaAgg)
+//                    Snackbar.make(rootView, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
+//                })
+//                .start()
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class UpdateFavoriteTask : AsyncTask<Any, Void, View>() {
+        override fun doInBackground(vararg params: Any?): View? {
+            val mDao = RisuscitoDatabase.getInstance(params[0] as Context).favoritesDao()
+            mDao.setFavorite(params[2] as Int)
+            return params[1] as View
+        }
+
+        override fun onPostExecute(rootView: View?) {
+            super.onPostExecute(rootView)
+            Log.d("UpdateFavoriteTask", "snackbar from AsyncTask")
+            Snackbar.make(rootView!!, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
+        }
     }
 }
