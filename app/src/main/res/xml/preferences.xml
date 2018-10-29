@@ -96,7 +96,7 @@
             android:title="@string/save_location_title"
             android:summary="@string/save_location_summary"
             android:entries="@array/save_location_sd_entries"
-            android:entryValues="@array/save_location_nosd_values"
+            android:entryValues="@array/save_location_sd_values"
             android:key="memoria_salvataggio_scelta" />
 
         <!--suppress AndroidElementNotAllowed -->
