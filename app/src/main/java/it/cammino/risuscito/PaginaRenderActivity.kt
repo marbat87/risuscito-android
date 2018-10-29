@@ -555,7 +555,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_help_canto -> {
-//                if (music_buttons.visibility == View.VISIBLE)
                 if (music_buttons.isVisible)
                     playIntroFull()
                 else
@@ -1295,7 +1294,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mLastPlaybackState!!.state != PlaybackStateCompat.STATE_STOPPED) {
+        if (mLastPlaybackState?.state != PlaybackStateCompat.STATE_STOPPED) {
             val controller = MediaControllerCompat.getMediaController(this)
             controller?.transportControls?.stop()
         }
