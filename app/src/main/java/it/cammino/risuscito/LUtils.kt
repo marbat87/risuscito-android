@@ -77,7 +77,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     internal fun closeActivityWithFadeOut() {
         mActivity.finish()
 //        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
-        Animatoo.animateShrink(mActivity)
+        Animatoo.animateZoom(mActivity)
 
     }
 

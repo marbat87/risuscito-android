@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!--<style name="ActionBarThemeOverlay" parent="">-->
-        <!--<item name="colorControlNormal">@android:color/white</item>-->
-        <!--<item name="colorControlHighlight">#3fff</item>-->
-        <!--<item name="android:textColorPrimary">@color/primary_text_default_material_dark</item>-->
-    <!--</style>-->
-
-    <!-- styles.xml -->
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
@@ -32,10 +25,6 @@
         <item name="tabIndicatorColor">?colorAccent</item>
         <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Tab.Risuscito</item>
     </style>
-
-    <!--<style name="TextAppearance.MaterialComponents.Tab.Risuscito.Colored">-->
-        <!--<item name="android:textColor">@color/mtrl_tabs_icon_color_selector_colored</item>-->
-    <!--</style>-->
 
     <style name="TextAppearance.MaterialComponents.Tab.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
