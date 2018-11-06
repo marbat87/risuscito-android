@@ -228,7 +228,8 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle("Aggiungi canto a:")
+//        menu.setHeaderTitle("Aggiungi canto a:")
+        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
             for (i in listePersonalizzate!!.indices) {

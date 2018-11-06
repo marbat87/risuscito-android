@@ -210,7 +210,8 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 //        super.onCreateContextMenu(menu, v, menuInfo)
 //        titoloDaAgg = v.text_title.findviewtext.toString()
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle("Aggiungi canto a:")
+//        menu.setHeaderTitle("Aggiungi canto a:")
+        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
             for (i in listePersonalizzate!!.indices) {
