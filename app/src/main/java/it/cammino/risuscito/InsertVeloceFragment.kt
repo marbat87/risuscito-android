@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -192,7 +191,8 @@ class InsertVeloceFragment : Fragment() {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        ricercaStringa(s.toString(), consegnati_only_check.isChecked)
+                        if (consegnati_only_check != null)
+                            ricercaStringa(s.toString(), consegnati_only_check.isChecked)
                     }
                 }
         )
@@ -237,8 +237,10 @@ class InsertVeloceFragment : Fragment() {
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
-        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
-        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
+        val tempText = activity!!.tempTextField.text.toString()
+//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+        if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {

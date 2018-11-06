@@ -15,7 +15,6 @@ import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -122,7 +121,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             true
         }
 
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
@@ -413,8 +411,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     override fun onNeutral(tag: String) {}
 
     private fun ricercaStringa(s: String) {
-        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
-        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
+        val tempText = activity!!.tempTextField.text.toString()
+//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+        if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
