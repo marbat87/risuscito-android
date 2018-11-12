@@ -24,7 +24,7 @@ android {
     }
 
     lintOptions {
-        isAbortOnError = true
+        isAbortOnError = false
         disable("PrivateResource")
     }
 
