@@ -284,7 +284,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 this@MainActivity, this@MainActivity, "BACKUP_ASK")
                                 .title(R.string.gdrive_backup)
                                 .content(R.string.gdrive_backup_content)
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.backup_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gdrive_restore.toLong()) {
@@ -292,7 +292,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 this@MainActivity, this@MainActivity, "RESTORE_ASK")
                                 .title(R.string.gdrive_restore)
                                 .content(R.string.gdrive_restore_content)
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.restore_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_signout.toLong()) {
@@ -300,7 +300,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 this@MainActivity, this@MainActivity, "SIGNOUT")
                                 .title(R.string.gplus_signout)
                                 .content(R.string.dialog_acc_disconn_text)
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.disconnect_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_revoke.toLong()) {
@@ -308,7 +308,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 this@MainActivity, this@MainActivity, "REVOKE")
                                 .title(R.string.gplus_revoke)
                                 .content(R.string.dialog_acc_revoke_text)
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.disconnect_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }
@@ -636,7 +636,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .color(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
-                            .setLabel(getString(R.string.button_clean_list))
+                            .setLabel(getString(R.string.dialog_reset_list_title))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
                             .setLabelColor(iconColor)
@@ -931,7 +931,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, tag)

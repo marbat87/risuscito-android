@@ -359,7 +359,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                                                                     + " "
                                                                     + cantoPresente.titolo
                                                                     + getString(R.string.dialog_wonna_replace))
-                                                    .positiveButton(android.R.string.yes)
+                                                    .positiveButton(R.string.replace_confirm)
                                                     .negativeButton(android.R.string.no)
                                                     .show()
                                         })
@@ -409,12 +409,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun ricercaStringa(s: String) {
-//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
         val tempText = activity!!.tempTextField.text.toString()
-//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
         if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
@@ -456,7 +454,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }

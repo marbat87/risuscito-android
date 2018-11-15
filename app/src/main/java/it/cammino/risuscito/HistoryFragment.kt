@@ -45,7 +45,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private var actionModeOk: Boolean = false
 
-    //    private var mUndoHelper: UndoHelper<*>? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
@@ -142,7 +141,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         class.java))!!.deleteAllSelectedItems()
 
         history_recycler!!.adapter = cantoAdapter
-        //        val llm = LinearLayoutManager(context)
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         else
@@ -154,25 +152,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         history_recycler!!.addItemDecoration(insetDivider)
         history_recycler!!.itemAnimator = SlideLeftAlphaAnimator()
-
-//        mUndoHelper = UndoHelper(
-//                cantoAdapter,
-//                UndoHelper.UndoListener
-//                { _, arrayList ->
-//                    Log.d(TAG, "commitRemove: " + arrayList.size)
-//                    arrayList
-//                            .map { it.item }
-//                            .forEach {
-//                                Thread(
-//                                        Runnable {
-//                                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
-//                                            val cronTemp = Cronologia()
-//                                            cronTemp.idCanto = it.id
-//                                            mDao.deleteCronologia(cronTemp)
-//                                        })
-//                                        .start()
-//                            }
-//                })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -201,7 +180,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
-                        .positiveButton(android.R.string.yes)
+                        .positiveButton(R.string.clear_confirm)
                         .negativeButton(android.R.string.no)
                         .show()
                 return true
@@ -236,7 +215,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
@@ -258,21 +237,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-//                        val iRemoved = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
-//                                .selectedItems
-//                                .size
                         mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                         val iRemoved = mRemovedItems!!.size
                         Log.d(TAG, "onCabItemClicked: $iRemoved")
-//                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.selections
                         (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-//                        mUndoHelper!!.remove(
-//                                activity!!.findViewById(R.id.main_content),
-//                                resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved),
-//                                getString(android.R.string.cancel).toUpperCase(),
-//                                Snackbar.LENGTH_SHORT,
-//                                selectedItems)
                         Thread(
                                 Runnable {
                                     val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()

@@ -38,7 +38,6 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -59,12 +58,10 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "LITURGICO_REPLACE_2")
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
-//                        listePersonalizzate = mDao.all
 
         if (!isViewShown) {
             Thread(
                     Runnable {
-//                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                         if (context != null)
                             listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                     })
@@ -92,10 +89,6 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
             true
         }
 
-//        mLayoutManager = LinearLayoutManager(activity)
-//        recycler_view!!.layoutManager = mLayoutManager
-
-//        mAdapter = FastItemAdapter()
         val itemExpandableExtension = ExpandableExtension<IItem<*, *>>()
         itemExpandableExtension.withOnlyOneExpandedItem(true)
         mAdapter.addExtension(itemExpandableExtension)
@@ -225,7 +218,6 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -356,7 +348,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                                                     + " "
                                                                     + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(android.R.string.yes)
+                                                    .positiveButton(R.string.replace_confirm)
                                                     .negativeButton(android.R.string.no)
                                                     .show()
                                         })
@@ -403,7 +395,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
         Thread(
@@ -413,7 +405,6 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                             rootView!!,
                             idLista,
                             listPosition,
-//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -428,7 +419,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }

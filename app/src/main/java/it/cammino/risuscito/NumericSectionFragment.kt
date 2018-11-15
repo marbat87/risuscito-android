@@ -39,7 +39,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
     private var mCantiViewModel: NumericIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -91,7 +90,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
         val mMainActivity = activity as MainActivity?
 
-//        mAdapter = FastScrollIndicatorAdapter(1)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
@@ -134,8 +132,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 Log.d(javaClass.name, "VISIBLE")
                 Thread(
                         Runnable {
-//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-//                            listePersonalizzate = mDao.all
                             if (context != null)
                                 listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                         })
@@ -153,7 +149,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -283,7 +278,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                                                 + " "
                                                                 + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                 + getString(R.string.dialog_wonna_replace)))
-                                                .positiveButton(android.R.string.yes)
+                                                .positiveButton(R.string.replace_confirm)
                                                 .negativeButton(android.R.string.no)
                                                 .show()
                                     })
@@ -330,7 +325,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
         Thread(
@@ -340,7 +335,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                             rootView!!,
                             idLista,
                             listPosition,
-//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -355,7 +349,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }
@@ -387,7 +381,6 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                                             .withContextMenuListener(this@NumericSectionFragment)
                                             )
                                         }
-//                            }
                                 mCantiViewModel!!.titoli = newList
                                 FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)

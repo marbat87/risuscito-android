@@ -92,10 +92,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
         mMainActivity!!.enableBottombar(false)
-//        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
         view_pager.adapter = mSectionsPagerAdapter
 
-//        tabs = activity!!.material_tabs
         tabs = mMainActivity!!.getMaterialTabs()
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
@@ -129,7 +127,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
         mCustomListsViewModel!!.indexToShow = view_pager.currentItem
     }
 
@@ -162,13 +159,12 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
+//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RESET_LIST" -> {
-//                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
@@ -213,7 +209,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun playIntro() {
         enableFab(true)
@@ -280,7 +276,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 idListe!![i] = list[i].id
                             }
                             mSectionsPagerAdapter!!.notifyDataSetChanged()
-//                            tabs!!.setupWithViewPager(activity!!.view_pager)
                             tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
                                 Handler().postDelayed(200) {
@@ -373,7 +368,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             (activity as AppCompatActivity?)!!, this@CustomLists, "RESET_LIST")
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
-                            .positiveButton(android.R.string.yes)
+                            .positiveButton(R.string.reset_confirm)
                             .negativeButton(android.R.string.no)
                             .show()
                     true
@@ -383,7 +378,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     InputTextDialogFragment.Builder(
                             (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
                             .title(R.string.lista_add_desc)
-                            .positiveButton(android.R.string.ok)
+                            .positiveButton(R.string.create_confirm)
                             .negativeButton(android.R.string.cancel)
                             .show()
                     true
@@ -391,7 +386,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.findViewById<View>(R.id.button_condividi)?.performClick()
@@ -400,10 +394,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     val bundle = Bundle()
-//                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
                     bundle.putInt("idDaModif", idListe!![view_pager.currentItem - 2])
                     bundle.putBoolean("modifica", true)
-//                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
                     mCustomListsViewModel!!.indDaModif = view_pager.currentItem
                     startActivityForResult(
                             Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
@@ -429,7 +421,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                         "DELETE_LIST")
                                         .title(R.string.action_remove_list)
                                         .content(R.string.delete_list_dialog)
-                                        .positiveButton(android.R.string.yes)
+                                        .positiveButton(R.string.delete_confirm)
                                         .negativeButton(android.R.string.no)
                                         .show()
                             })

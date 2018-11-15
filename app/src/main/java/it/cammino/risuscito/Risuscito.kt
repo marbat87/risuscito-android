@@ -7,16 +7,16 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager.NameNotFoundException
 import android.os.Bundle
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.common.SignInButton
+import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import kotlinx.android.synthetic.main.activity_risuscito.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -141,7 +141,7 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

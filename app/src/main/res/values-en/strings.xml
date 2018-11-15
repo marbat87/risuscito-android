@@ -11,7 +11,6 @@
     <string name="search_name_text">Song searching</string>
     <string name="arg_search_text">Analytical index</string>
     <string name="button_pulisci">CLEAR</string>
-    <string name="button_clean_list">Clear list</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>
@@ -123,9 +122,6 @@ You can add up to 30 elements.</string>
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memory not available or in mode of read only</string>
     <string name="salmi_musica_index">Psalms index set in music</string>
-    <string name="downlink_message">Do you wish to use the download in function of recording from internet to replay it without connection, or to associate an mp3 file present in the memory of your device?</string>
-    <string name="downlink_download">DOWNLOAD</string>
-    <string name="downlink_choose">Associate</string>
     <string name="only_link">Do you want to associate an mp3 file present in the memory of your device?</string>
     <string name="dialog_delete_link">Are you sure you want to disconnect the song present in the memory? (The file will not be deleted)</string>
     <string name="delink_delete">File is disconnected</string>
@@ -286,4 +282,18 @@ Do you want to proceed?</string>
         <item quantity="one">%1$d selected</item>
         <item quantity="other">%1$d selected</item>
     </plurals>
+    <string name="download_message">Do you wish to use the download in function of recording from internet to replay it without connection?</string>
+    <string name="download_confirm">download</string>
+    <string name="associate_confirm">associate</string>
+    <string name="save_exit_confirm">save and exit</string>
+    <string name="discard_exit_confirm">discard and exit</string>
+    <string name="replace_confirm">replace</string>
+    <string name="reset_confirm">reset</string>
+    <string name="delete_confirm">delete</string>
+    <string name="clear_confirm">empty</string>
+    <string name="backup_confirm">backup</string>
+    <string name="restore_confirm">restore</string>
+    <string name="disconnect_confirm">disconnect</string>
+    <string name="unlink_confirm">disconnect</string>
+    <string name="create_confirm">create</string>
 </resources>

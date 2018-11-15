@@ -339,7 +339,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                                                                     + " "
                                                                     + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(android.R.string.yes)
+                                                    .positiveButton(R.string.replace_confirm)
                                                     .negativeButton(android.R.string.no)
                                                     .show()
                                         })
@@ -414,7 +414,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }
@@ -488,7 +488,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun ricercaStringa(s: String) {
 //        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()

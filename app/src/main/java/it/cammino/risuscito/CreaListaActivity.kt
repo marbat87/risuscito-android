@@ -240,15 +240,14 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
-                            .positiveButton(R.string.confirm)
-                            .negativeButton(R.string.dismiss)
-                            .neutralButton(android.R.string.cancel)
+                            .positiveButton(R.string.save_exit_confirm)
+                            .negativeButton(R.string.discard_exit_confirm)
+//                            .neutralButton(android.R.string.cancel)
                             .show()
                     return true
                 } else {
                     setResult(Activity.RESULT_CANCELED)
                     finish()
-//                    overridePendingTransition(0, R.anim.slide_out_bottom)
                     Animatoo.animateSlideDown(this@CreaListaActivity)
                 }
                 return true
@@ -263,9 +262,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             SimpleDialogFragment.Builder(this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
                     .title(R.string.save_list_title)
                     .content(R.string.save_list_question)
-                    .positiveButton(R.string.confirm)
-                    .negativeButton(R.string.dismiss)
-                    .neutralButton(android.R.string.cancel)
+                    .positiveButton(R.string.save_exit_confirm)
+                    .negativeButton(R.string.discard_exit_confirm)
+//                    .neutralButton(android.R.string.cancel)
                     .show()
         } else {
             setResult(Activity.RESULT_CANCELED)
@@ -380,7 +379,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
+//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
@@ -410,7 +409,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
         if (modifica) Collections.swap(nomiCanti!!, oldPosition, newPosition) // change canto

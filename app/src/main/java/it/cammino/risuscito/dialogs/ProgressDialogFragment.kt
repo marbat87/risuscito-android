@@ -230,7 +230,7 @@ class ProgressDialogFragment : DialogFragment() {
     interface ProgressCallback {
         fun onPositive(tag: String)
         fun onNegative(tag: String)
-        fun onNeutral(tag: String)
+//        fun onNeutral(tag: String)
     }
 
     companion object {

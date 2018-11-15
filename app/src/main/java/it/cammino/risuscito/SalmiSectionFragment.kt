@@ -39,7 +39,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     private var mCantiViewModel: SalmiIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLastClickTime: Long = 0
@@ -62,8 +61,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (!isViewShown) {
             Thread(
                     Runnable {
-//                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-//                        listePersonalizzate = mDao.all
                         if (context != null)
                             listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                     })
@@ -93,7 +90,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
         val mMainActivity = activity as MainActivity?
 
-//        mAdapter = FastScrollIndicatorAdapter(2)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
@@ -146,10 +142,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -280,7 +273,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                                                     + " "
                                                                     + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(android.R.string.yes)
+                                                    .positiveButton(R.string.replace_confirm)
                                                     .negativeButton(android.R.string.no)
                                                     .show()
                                         })
@@ -328,7 +321,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
         Thread(
@@ -338,7 +331,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                             rootView!!,
                             idLista,
                             listPosition,
-//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -353,7 +345,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }
@@ -379,21 +371,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                         Observer<List<SalmoCanto>> { canti ->
                             if (canti != null) {
                                 val newList = ArrayList<SimpleItem>()
-//                                for (canto in canti) {
-//                                    val sampleItem = SimpleItem()
-//                                    sampleItem
-//                                            .withTitle(resources.getString(resources.getIdentifier(canto.titoloSalmo,
-//                                                    "string", activity!!.packageName)))
-//                                            .withPage(resources.getString(resources.getIdentifier(canto.pagina,
-//                                                    "string", activity!!.packageName)))
-//                                            .withSource(resources.getString(resources.getIdentifier(canto.source,
-//                                                    "string", activity!!.packageName)))
-//                                            .withColor(canto.color!!)
-//                                            .withId(canto.id)
-//                                            .withNumSalmo(canto.numSalmo!!)
-//                                            .withContextMenuListener(this@SalmiSectionFragment)
-//                                    newList.add(sampleItem)
-//                                }
                                 canti.forEach {
                                     newList.add(
                                             SimpleItem()

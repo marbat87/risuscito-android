@@ -38,7 +38,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -196,8 +195,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                 Log.d(TAG, "VISIBLE")
                 Thread(
                         Runnable {
-//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-//                            listePersonalizzate = mDao.all
                             if (context != null)
                                 listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                         })
@@ -223,7 +220,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -354,7 +350,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                                                                     + " "
                                                                     + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
                                                                     + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(android.R.string.yes)
+                                                    .positiveButton(R.string.replace_confirm)
                                                     .negativeButton(android.R.string.no)
                                                     .show()
                                         })
@@ -399,7 +395,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
         Thread(
@@ -409,7 +405,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                             rootView!!,
                             idLista,
                             listPosition,
-//                            titoloDaAgg!!,
                             mCantiViewModel!!.idDaAgg)
                     if (!titoloPresente.isEmpty()) {
                         mCantiViewModel!!.idListaDaAgg = idLista
@@ -424,7 +419,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                                                 + " "
                                                 + titoloPresente
                                                 + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
+                                .positiveButton(R.string.replace_confirm)
                                 .negativeButton(android.R.string.no)
                                 .show()
                     }

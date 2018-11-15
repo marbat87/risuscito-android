@@ -333,9 +333,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ")
-//        if (mMediaBrowser != null) {
-//            mMediaBrowser!!.connect()
-//        }
         try {
             mMediaBrowser?.connect()
         } catch (e: IllegalStateException) {
@@ -349,8 +346,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (mMediaBrowser != null) {
             mMediaBrowser!!.disconnect()
         }
-//        if (MediaControllerCompat.getMediaController(this) != null)
-//            MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback)
         val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
         controller?.unregisterCallback(mMediaControllerCallback)
 
@@ -530,8 +525,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
-                            .positiveButton(android.R.string.yes)
-                            .negativeButton(android.R.string.no)
+                            .positiveButton(R.string.save_exit_confirm)
+                            .negativeButton(R.string.discard_exit_confirm)
                             .show()
                     return true
                 }
@@ -564,17 +559,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_tab -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedTab.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
-//                    Thread(
-//                            Runnable {
-//                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-//                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-//                                Snackbar.make(
-//                                        findViewById(android.R.id.content),
-//                                        R.string.tab_saved,
-//                                        Snackbar.LENGTH_SHORT)
-//                                        .show()
-//                            })
-//                            .start()
                     UpdateCantoTask().execute(1)
                 } else {
                     Snackbar.make(
@@ -606,17 +590,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_barre -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedBarre.equals(mViewModel!!.barreCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
-//                    Thread(
-//                            Runnable {
-//                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-//                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-//                                Snackbar.make(
-//                                        findViewById(android.R.id.content),
-//                                        R.string.barre_saved,
-//                                        Snackbar.LENGTH_SHORT)
-//                                        .show()
-//                            })
-//                            .start()
                     UpdateCantoTask().execute(2)
                 } else {
                     Snackbar.make(
@@ -717,8 +690,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
+                    .positiveButton(R.string.save_exit_confirm)
+                    .negativeButton(R.string.discard_exit_confirm)
                     .show()
         }
     }
@@ -796,12 +769,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
             }
 
-//            Thread(
-//                    Runnable {
-//                        val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
-//                        mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-//                    })
-//                    .start()
             UpdateCantoTask().execute(0)
         }
     }
@@ -1087,7 +1054,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-            "DOWNLINK_CHOOSE" -> createFileChooser()
+//            "DOWNLINK_CHOOSE" -> createFileChooser()
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
@@ -1099,7 +1066,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1603,36 +1570,74 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .create()
         )
 
-        val text: String
-        val icon = IconicsDrawable(this@PaginaRenderActivity)
-                .color(iconColor)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val text: String
+//        val icon = IconicsDrawable(this@PaginaRenderActivity)
+//                .color(iconColor)
+//                .sizeDp(24)
+//                .paddingDp(4)
         if (mDownload) {
-            text = if (personalUrl != "") {
+            val icon = IconicsDrawable(this@PaginaRenderActivity)
+                    .color(iconColor)
+                    .sizeDp(24)
+                    .paddingDp(4)
+            val text = if (personalUrl != "") {
                 icon.icon(CommunityMaterial.Icon2.cmd_link_variant_off)
                 getString(R.string.dialog_delete_link_title)
             } else {
                 icon.icon(CommunityMaterial.Icon.cmd_delete)
                 getString(R.string.fab_delete_unlink)
             }
+            fab_canti.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_delete_file, icon)
+                            .setLabel(text)
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
+                            .create()
+            )
         } else {
-            text = if (url != "") {
-                icon.icon(CommunityMaterial.Icon.cmd_download)
-                getString(R.string.save_file)
-            } else {
-                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
-                getString(R.string.only_link_title)
-            }
+//            text = if (url != "") {
+//                icon.icon(CommunityMaterial.Icon.cmd_download)
+//                getString(R.string.save_file)
+//            } else {
+//                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
+//                getString(R.string.only_link_title)
+//            }
+            if (url!!.isNotEmpty())
+                fab_canti.addActionItem(
+                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this@PaginaRenderActivity)
+                                .icon(CommunityMaterial.Icon.cmd_download)
+                                .color(iconColor)
+                                .sizeDp(24)
+                                .paddingDp(4))
+                                .setLabel(getString(R.string.save_file))
+                                .setFabBackgroundColor(backgroundColor)
+                                .setLabelBackgroundColor(backgroundColor)
+                                .setLabelColor(iconColor)
+                                .create()
+                )
+            fab_canti.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this@PaginaRenderActivity)
+                            .icon(CommunityMaterial.Icon2.cmd_link_variant)
+                            .color(iconColor)
+                            .sizeDp(24)
+                            .paddingDp(4))
+                            .setLabel(getString(R.string.only_link_title))
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
+                            .create()
+            )
+
         }
-        fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
-                        .setLabel(text)
-                        .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor)
-                        .setLabelColor(iconColor)
-                        .create()
-        )
+//        fab_canti.addActionItem(
+//                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
+//                        .setLabel(text)
+//                        .setFabBackgroundColor(backgroundColor)
+//                        .setLabelBackgroundColor(backgroundColor)
+//                        .setLabelColor(iconColor)
+//                        .create()
+//        )
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
@@ -1671,56 +1676,96 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel!!.mostraAudio = mostraAudioBool.toString()
                     true
                 }
+                R.id.fab_delete_file -> {
+                    fab_canti.close()
+                    if (url!!.isNotEmpty() && personalUrl!!.isEmpty()) {
+                        SimpleDialogFragment.Builder(
+                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+                                .title(R.string.dialog_delete_mp3_title)
+                                .content(R.string.dialog_delete_mp3)
+                                .positiveButton(R.string.delete_confirm)
+                                .negativeButton(android.R.string.no)
+                                .show()
+                    } else {
+                        SimpleDialogFragment.Builder(
+                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+                                .title(R.string.dialog_delete_link_title)
+                                .content(R.string.dialog_delete_link)
+                                .positiveButton(R.string.unlink_confirm)
+                                .negativeButton(android.R.string.no)
+                                .show()
+                    }
+                    true
+                }
                 R.id.fab_save_file -> {
                     fab_canti.close()
-                    if (!url!!.isEmpty()) {
-                        if (mDownload) {
-                            if (personalUrl!!.isEmpty()) {
-                                SimpleDialogFragment.Builder(
-                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
-                                        .title(R.string.dialog_delete_mp3_title)
-                                        .content(R.string.dialog_delete_mp3)
-                                        .positiveButton(android.R.string.yes)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            } else {
-                                SimpleDialogFragment.Builder(
-                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                        .title(R.string.dialog_delete_link_title)
-                                        .content(R.string.dialog_delete_link)
-                                        .positiveButton(android.R.string.yes)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            }
-                        } else {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-                                    .title(R.string.download_link_title)
-                                    .content(R.string.downlink_message)
-                                    .positiveButton(R.string.downlink_download)
-                                    .negativeButton(R.string.downlink_choose)
-                                    .neutralButton(android.R.string.cancel)
-                                    .show()
-                        }
-                    } else {
-                        if (mDownload) {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                    .title(R.string.dialog_delete_link_title)
-                                    .content(R.string.dialog_delete_link)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
-                                    .title(R.string.only_link_title)
-                                    .content(R.string.only_link)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        }
-                    }
+                    SimpleDialogFragment.Builder(
+                            this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+                            .title(R.string.save_file)
+                            .content(R.string.download_message)
+                            .positiveButton(R.string.download_confirm)
+                            .negativeButton(android.R.string.no)
+//                            .neutralButton(android.R.string.cancel)
+                            .show()
+//                    if (!url!!.isEmpty()) {
+//                        if (mDownload) {
+//                            if (personalUrl!!.isEmpty()) {
+//                                SimpleDialogFragment.Builder(
+//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+//                                        .title(R.string.dialog_delete_mp3_title)
+//                                        .content(R.string.dialog_delete_mp3)
+//                                        .positiveButton(android.R.string.yes)
+//                                        .negativeButton(android.R.string.no)
+//                                        .show()
+//                            } else {
+//                                SimpleDialogFragment.Builder(
+//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+//                                        .title(R.string.dialog_delete_link_title)
+//                                        .content(R.string.dialog_delete_link)
+//                                        .positiveButton(android.R.string.yes)
+//                                        .negativeButton(android.R.string.no)
+//                                        .show()
+//                            }
+//                        } else {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+//                                    .title(R.string.download_link_title)
+//                                    .content(R.string.downlink_message)
+//                                    .positiveButton(R.string.downlink_download)
+//                                    .negativeButton(R.string.downlink_choose)
+//                                    .neutralButton(android.R.string.cancel)
+//                                    .show()
+//                        }
+//                    } else {
+//                        if (mDownload) {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+//                                    .title(R.string.dialog_delete_link_title)
+//                                    .content(R.string.dialog_delete_link)
+//                                    .positiveButton(android.R.string.yes)
+//                                    .negativeButton(android.R.string.no)
+//                                    .show()
+//                        } else {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+//                                    .title(R.string.only_link_title)
+//                                    .content(R.string.only_link)
+//                                    .positiveButton(android.R.string.yes)
+//                                    .negativeButton(android.R.string.no)
+//                                    .show()
+//                        }
+//                    }
+                    true
+                }
+                R.id.fab_link_file -> {
+                    fab_canti.close()
+                    SimpleDialogFragment.Builder(
+                            this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+                            .title(R.string.only_link_title)
+                            .content(R.string.only_link)
+                            .positiveButton(R.string.associate_confirm)
+                            .negativeButton(android.R.string.no)
+                            .show()
                     true
                 }
                 R.id.fab_favorite -> {
