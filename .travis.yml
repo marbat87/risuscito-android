@@ -2,6 +2,7 @@ language: android
 jdk: oraclejdk8
 
 before_install:
+ - echo "MAVEN_OPTS='-Xmx2g -XX:MaxPermSize=512m'" > ~/.mavenrc
  - yes | sdkmanager "platforms;android-28"
  - chmod +x gradlew
 
