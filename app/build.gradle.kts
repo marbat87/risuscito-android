@@ -50,7 +50,6 @@ val preferenceFixVersion = "1.0.0"
 val lifecycleVersion = "1.1.1"
 val roomVersion = "1.1.1"
 dependencies {
-    implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
     implementation("androidx.multidex:multidex:2.0.0")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
     implementation("com.afollestad.material-dialogs:core:2.0.0-beta5")
