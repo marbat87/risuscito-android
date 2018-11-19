@@ -432,34 +432,72 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     }
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        Thread(
-                Runnable {
-                    val titoloPresente = ListeUtils.addToListaNoDup(
-                            context!!,
-                            rootView!!,
-                            idLista,
-                            listPosition,
-//                            titoloDaAgg!!,
-                            mViewModel!!.idDaAgg)
-                    if (!titoloPresente.isEmpty()) {
-                        mViewModel!!.idListaDaAgg = idLista
-                        mViewModel!!.posizioneDaAgg = listPosition
-                        SimpleDialogFragment.Builder(
-                                (activity as AppCompatActivity?)!!,
-                                this@RicercaAvanzataFragment,
-                                "AVANZATA_REPLACE_2")
-                                .title(R.string.dialog_replace_title)
-                                .content(
-                                        getString(R.string.dialog_present_yet)
-                                                + " "
-                                                + titoloPresente
-                                                + getString(R.string.dialog_wonna_replace))
-                                .positiveButton(R.string.replace_confirm)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    }
-                })
-                .start()
+        AddToListaNoDupTask(this@RicercaAvanzataFragment, idLista, listPosition).execute()
+//        Thread(
+//                Runnable {
+//                    val titoloPresente = ListeUtils.addToListaNoDup(
+//                            context!!,
+//                            rootView!!,
+//                            idLista,
+//                            listPosition,
+////                            titoloDaAgg!!,
+//                            mViewModel!!.idDaAgg)
+//                    if (!titoloPresente.isEmpty()) {
+//                        mViewModel!!.idListaDaAgg = idLista
+//                        mViewModel!!.posizioneDaAgg = listPosition
+//                        SimpleDialogFragment.Builder(
+//                                (activity as AppCompatActivity?)!!,
+//                                this@RicercaAvanzataFragment,
+//                                "AVANZATA_REPLACE_2")
+//                                .title(R.string.dialog_replace_title)
+//                                .content(
+//                                        getString(R.string.dialog_present_yet)
+//                                                + " "
+//                                                + titoloPresente
+//                                                + getString(R.string.dialog_wonna_replace))
+//                                .positiveButton(R.string.replace_confirm)
+//                                .negativeButton(android.R.string.no)
+//                                .show()
+//                    }
+//                })
+//                .start()
+    }
+
+    private class AddToListaNoDupTask internal constructor(fragment: RicercaAvanzataFragment, private val idLista: Int, private val listPosition: Int) : AsyncTask<Any, Void, String>() {
+
+        private val fragmentReference: WeakReference<RicercaAvanzataFragment> = WeakReference(fragment)
+
+        override fun doInBackground(vararg params: Any?): String? {
+
+            return ListeUtils.addToListaNoDup(
+                    fragmentReference.get()!!.context!!,
+                    fragmentReference.get()!!.rootView!!,
+                    idLista,
+                    listPosition,
+                    fragmentReference.get()!!.mViewModel!!.idDaAgg)
+        }
+
+        override fun onPostExecute(titoloPresente: String?) {
+            super.onPostExecute(titoloPresente)
+            if (titoloPresente != null && titoloPresente.isNotEmpty()) {
+                fragmentReference.get()!!.mViewModel!!.idListaDaAgg = idLista
+                fragmentReference.get()!!.mViewModel!!.posizioneDaAgg = listPosition
+                SimpleDialogFragment.Builder(
+                        (fragmentReference.get()!!.activity as AppCompatActivity?)!!,
+                        fragmentReference.get()!!,
+                        "AVANZATA_REPLACE_2")
+                        .title(R.string.dialog_replace_title)
+                        .content(
+                                fragmentReference.get()!!.getString(R.string.dialog_present_yet)
+                                        + " "
+                                        + titoloPresente
+                                        + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace))
+                        .positiveButton(R.string.replace_confirm)
+                        .negativeButton(android.R.string.no)
+                        .show()
+            } else
+                Snackbar.make(fragmentReference.get()!!.rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, Int?>() {

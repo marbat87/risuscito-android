@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -30,6 +31,7 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.LiturgicIndexViewModel
 import kotlinx.android.synthetic.main.layout_recycler.*
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
+import java.lang.ref.WeakReference
 import java.util.*
 
 class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
@@ -398,33 +400,71 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
 //    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        Thread(
-                Runnable {
-                    val titoloPresente = ListeUtils.addToListaNoDup(
-                            context!!,
-                            rootView!!,
-                            idLista,
-                            listPosition,
-                            mCantiViewModel!!.idDaAgg)
-                    if (!titoloPresente.isEmpty()) {
-                        mCantiViewModel!!.idListaDaAgg = idLista
-                        mCantiViewModel!!.posizioneDaAgg = listPosition
-                        SimpleDialogFragment.Builder(
-                                (activity as AppCompatActivity?)!!,
-                                this@IndiceLiturgicoFragment,
-                                "LITURGICO_REPLACE_2")
-                                .title(R.string.dialog_replace_title)
-                                .content(
-                                        (getString(R.string.dialog_present_yet)
-                                                + " "
-                                                + titoloPresente
-                                                + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(R.string.replace_confirm)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    }
-                })
-                .start()
+        AddToListaNoDupTask(this@IndiceLiturgicoFragment, idLista, listPosition).execute()
+//        Thread(
+//                Runnable {
+//                    val titoloPresente = ListeUtils.addToListaNoDup(
+//                            context!!,
+//                            rootView!!,
+//                            idLista,
+//                            listPosition,
+//                            mCantiViewModel!!.idDaAgg)
+//                    if (!titoloPresente.isEmpty()) {
+//                        mCantiViewModel!!.idListaDaAgg = idLista
+//                        mCantiViewModel!!.posizioneDaAgg = listPosition
+//                        SimpleDialogFragment.Builder(
+//                                (activity as AppCompatActivity?)!!,
+//                                this@IndiceLiturgicoFragment,
+//                                "LITURGICO_REPLACE_2")
+//                                .title(R.string.dialog_replace_title)
+//                                .content(
+//                                        (getString(R.string.dialog_present_yet)
+//                                                + " "
+//                                                + titoloPresente
+//                                                + getString(R.string.dialog_wonna_replace)))
+//                                .positiveButton(R.string.replace_confirm)
+//                                .negativeButton(android.R.string.no)
+//                                .show()
+//                    }
+//                })
+//                .start()
+    }
+
+    private class AddToListaNoDupTask internal constructor(fragment: IndiceLiturgicoFragment, private val idLista: Int, private val listPosition: Int) : AsyncTask<Any, Void, String>() {
+
+        private val fragmentReference: WeakReference<IndiceLiturgicoFragment> = WeakReference(fragment)
+
+        override fun doInBackground(vararg params: Any?): String? {
+
+            return ListeUtils.addToListaNoDup(
+                    fragmentReference.get()!!.context!!,
+                    fragmentReference.get()!!.rootView!!,
+                    idLista,
+                    listPosition,
+                    fragmentReference.get()!!.mCantiViewModel!!.idDaAgg)
+        }
+
+        override fun onPostExecute(titoloPresente: String?) {
+            super.onPostExecute(titoloPresente)
+            if (titoloPresente != null && titoloPresente.isNotEmpty()) {
+                fragmentReference.get()!!.mCantiViewModel!!.idListaDaAgg = idLista
+                fragmentReference.get()!!.mCantiViewModel!!.posizioneDaAgg = listPosition
+                SimpleDialogFragment.Builder(
+                        (fragmentReference.get()!!.activity as AppCompatActivity?)!!,
+                        fragmentReference.get()!!,
+                        "LITURGICO_REPLACE_2")
+                        .title(R.string.dialog_replace_title)
+                        .content(
+                                (fragmentReference.get()!!.getString(R.string.dialog_present_yet)
+                                        + " "
+                                        + titoloPresente
+                                        + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
+                        .positiveButton(R.string.replace_confirm)
+                        .negativeButton(android.R.string.no)
+                        .show()
+            } else
+                Snackbar.make(fragmentReference.get()!!.rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     companion object {
