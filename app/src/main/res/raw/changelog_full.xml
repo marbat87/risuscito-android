@@ -6,6 +6,7 @@
         versionName="4.3.2">
         <changelogbug>Bugfixes</changelogbug>
         <changelogimprovement>New animations</changelogimprovement>
+        <changelogimprovement>Added title filter in "Handed over Songs" selection</changelogimprovement>
     </changelogversion>
 
     <changelogversion

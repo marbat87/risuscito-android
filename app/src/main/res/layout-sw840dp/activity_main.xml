@@ -9,6 +9,14 @@
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
+        <com.ferfalk.simplesearchview.SimpleSearchView
+            android:id="@+id/searchView"
+            risuscito:type="card"
+            android:hint="@string/title_filter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?colorPrimary" />
+
         <ViewStub
             android:id="@+id/cab_stub"
             android:layout_width="match_parent"

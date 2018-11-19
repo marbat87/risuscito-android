@@ -189,6 +189,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
         if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
 
+        searchView.setBackIconColor(themeUtils!!.primaryColor())
+        searchView.setBackgroundColor(themeUtils!!.primaryColor())
+
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -484,6 +487,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
 
+        if (searchView.onBackPressed()) {
+            return
+        }
+
         if (fab_pager.isOpen) {
             fab_pager.close()
             return
@@ -622,7 +629,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "initFab()")
         enableFab(false)
         fab_pager.setMainFabClosedDrawable(icon)
-        enableFab(true)
+//        enableFab(true)
         fab_pager.clearActionItems()
 
         if (optionMenu) {

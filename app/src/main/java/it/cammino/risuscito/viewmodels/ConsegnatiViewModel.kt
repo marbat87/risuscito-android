@@ -15,6 +15,7 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
     var editMode: Boolean = false
 
     var titoliChoose: List<CheckableItem> = ArrayList()
+    var titoliChooseFiltered: List<CheckableItem> = ArrayList()
 
     var titoli: List<SimpleItem> = ArrayList()
 

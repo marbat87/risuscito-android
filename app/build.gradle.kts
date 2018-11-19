@@ -19,8 +19,13 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4373
+        versionCode = 4374
         versionName = "4.3.2"
+    }
+
+    compileOptions {
+        setSourceCompatibility(JavaVersion.VERSION_1_8)
+        setTargetCompatibility(JavaVersion.VERSION_1_8)
     }
 
     lintOptions {
@@ -91,4 +96,5 @@ dependencies {
     implementation("com.github.turing-tech:MaterialScrollBar:13.2.5")
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")
+    implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")
 }

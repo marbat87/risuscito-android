@@ -296,4 +296,5 @@ Do you want to proceed?</string>
     <string name="disconnect_confirm">disconnect</string>
     <string name="unlink_confirm">disconnect</string>
     <string name="create_confirm">create</string>
+    <string name="title_filter">filtra per titolo</string>
 </resources>

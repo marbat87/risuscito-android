@@ -23,6 +23,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize" />
 
+            <com.ferfalk.simplesearchview.SimpleSearchView
+                android:id="@+id/searchView"
+                risuscito:type="card"
+                android:hint="@string/title_filter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?colorPrimary" />
+
         </FrameLayout>
 
         <com.google.android.material.tabs.TabLayout
