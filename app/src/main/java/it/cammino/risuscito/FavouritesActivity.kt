@@ -238,7 +238,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                         mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
                                 .selectedItems
                         val iRemoved = mRemovedItems!!.size
-//                        val selectedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.selections
                         (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
                         Thread(
                                 Runnable {

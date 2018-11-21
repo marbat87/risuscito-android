@@ -57,9 +57,9 @@ val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.0")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
-    implementation("com.afollestad.material-dialogs:core:2.0.0-beta5")
-    implementation("com.afollestad.material-dialogs:input:2.0.0-beta5")
-    implementation("com.afollestad.material-dialogs:files:2.0.0-beta5")
+    implementation("com.afollestad.material-dialogs:core:2.0.0-beta6")
+    implementation("com.afollestad.material-dialogs:input:2.0.0-beta6")
+    implementation("com.afollestad.material-dialogs:files:2.0.0-beta6")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.0")
     implementation("com.mikepenz:materialdrawer:6.1.1")
     implementation("com.mikepenz:crossfader:1.6.0")

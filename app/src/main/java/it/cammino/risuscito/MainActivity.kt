@@ -629,7 +629,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "initFab()")
         enableFab(false)
         fab_pager.setMainFabClosedDrawable(icon)
-//        enableFab(true)
+        enableFab(true)
         fab_pager.clearActionItems()
 
         if (optionMenu) {

@@ -3,7 +3,6 @@ package it.cammino.risuscito
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -32,7 +31,6 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
-import java.lang.ref.WeakReference
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
@@ -225,11 +223,13 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                     return true
                 }
                 R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@AlphabeticSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@AlphabeticSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_fine -> {
@@ -249,43 +249,17 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                     .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            Thread(
-                                    Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                                        mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                                        Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                .show()
-                                    })
-                                    .start()
+                            ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                             .lista!!
                                             .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
-                                            val cantoPresente = mDao.getCantoById(
-                                                    Integer.parseInt(
-                                                            listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                                    .lista!!
-                                                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)))
-                                            SimpleDialogFragment.Builder(
-                                                    (activity as AppCompatActivity?)!!,
-                                                    this@AlphabeticSectionFragment,
-                                                    "ALPHA_REPLACE")
-                                                    .title(R.string.dialog_replace_title)
-                                                    .content(
-                                                            (getString(R.string.dialog_present_yet)
-                                                                    + " "
-                                                                    + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
-                                                                    + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(R.string.replace_confirm)
-                                                    .negativeButton(android.R.string.no)
-                                                    .show()
-                                        })
-                                        .start()
+                                ListeUtils.manageReplaceDialog(this@AlphabeticSectionFragment, Integer.parseInt(
+                                        listePersonalizzate!![mCantiViewModel!!.idListaClick]
+                                                .lista!!
+                                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)), "ALPHA_REPLACE")
                             }
                         }
                         return true
@@ -304,98 +278,19 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                            Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                        })
-                        .start()
+                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             "ALPHA_REPLACE_2" ->
-                Thread(
-                        Runnable {
-                            val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                            mCustomListDao.updatePositionNoTimestamp(
-                                    mCantiViewModel!!.idDaAgg,
-                                    mCantiViewModel!!.idListaDaAgg,
-                                    mCantiViewModel!!.posizioneDaAgg)
-                            Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                        })
-                        .start()
+                ListeUtils.updatePosizione(context!!, rootView!!, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 
     override fun onNegative(tag: String) {}
 
-//    override fun onNeutral(tag: String) {}
-
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        AddToListaNoDupTask(this@AlphabeticSectionFragment, idLista, listPosition).execute()
-//        Thread(
-//                Runnable {
-//                    val titoloPresente = ListeUtils.addToListaNoDup(
-//                            context!!,
-//                            rootView!!,
-//                            idLista,
-//                            listPosition,
-//                            mCantiViewModel!!.idDaAgg)
-//                    if (!titoloPresente.isEmpty()) {
-//                        mCantiViewModel!!.idListaDaAgg = idLista
-//                        mCantiViewModel!!.posizioneDaAgg = listPosition
-//                        SimpleDialogFragment.Builder(
-//                                (activity as AppCompatActivity?)!!,
-//                                this@AlphabeticSectionFragment,
-//                                "ALPHA_REPLACE_2")
-//                                .title(R.string.dialog_replace_title)
-//                                .content(
-//                                        (getString(R.string.dialog_present_yet)
-//                                                + " "
-//                                                + titoloPresente
-//                                                + getString(R.string.dialog_wonna_replace)))
-//                                .positiveButton(R.string.replace_confirm)
-//                                .negativeButton(android.R.string.no)
-//                                .show()
-//                    }
-//                })
-//                .start()
-    }
-
-    private class AddToListaNoDupTask internal constructor(fragment: AlphabeticSectionFragment, private val idLista: Int, private val listPosition: Int) : AsyncTask<Any, Void, String>() {
-
-        private val fragmentReference: WeakReference<AlphabeticSectionFragment> = WeakReference(fragment)
-
-        override fun doInBackground(vararg params: Any?): String? {
-
-            return ListeUtils.addToListaNoDup(
-                    fragmentReference.get()!!.context!!,
-                    fragmentReference.get()!!.rootView!!,
-                    idLista,
-                    listPosition,
-                    fragmentReference.get()!!.mCantiViewModel!!.idDaAgg)
-        }
-
-        override fun onPostExecute(titoloPresente: String?) {
-            super.onPostExecute(titoloPresente)
-            if (titoloPresente != null && titoloPresente.isNotEmpty()) {
-                fragmentReference.get()!!.mCantiViewModel!!.idListaDaAgg = idLista
-                fragmentReference.get()!!.mCantiViewModel!!.posizioneDaAgg = listPosition
-                SimpleDialogFragment.Builder(
-                        (fragmentReference.get()!!.activity as AppCompatActivity?)!!,
-                        fragmentReference.get()!!,
-                        "ALPHA_REPLACE_2")
-                        .title(R.string.dialog_replace_title)
-                        .content(
-                                (fragmentReference.get()!!.getString(R.string.dialog_present_yet)
-                                        + " "
-                                        + titoloPresente
-                                        + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
-                        .positiveButton(R.string.replace_confirm)
-                        .negativeButton(android.R.string.no)
-                        .show()
-            } else
-                Snackbar.make(fragmentReference.get()!!.rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-        }
+        mCantiViewModel!!.idListaDaAgg = idLista
+        mCantiViewModel!!.posizioneDaAgg = listPosition
+        ListeUtils.addToListaNoDup(this@AlphabeticSectionFragment, idLista, listPosition, mCantiViewModel!!.idDaAgg, "ALPHA_REPLACE_2")
     }
 
     private fun populateDb() {
