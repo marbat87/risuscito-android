@@ -200,7 +200,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                                 })
                                                 .start()
                                     }
-                                    .setActionTextColor(themeUtils.accentColor())
                                     .show()
                         })
                         .start()

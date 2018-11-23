@@ -255,7 +255,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         return if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg)
                     true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -329,7 +329,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                             listePersonalizzate!![mViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mViewModel!!.idListaClick])
+                            ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mViewModel!!.idListaClick]
                                             .lista!!
@@ -364,10 +364,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 listePersonalizzate!![mViewModel!!.idListaClick]
                         .lista!!
                         .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
             }
             "AVANZATA_REPLACE_2" ->
-                ListeUtils.updatePosizione(context!!, rootView!!, mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
         }
     }
 

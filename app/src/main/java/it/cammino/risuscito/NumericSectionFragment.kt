@@ -175,7 +175,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         Log.d(TAG, "onContextItemSelected: " + item!!.itemId)
         if (userVisibleHint) when (item.itemId) {
             R.id.add_to_favorites -> {
-                ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
+                ListeUtils.addToFavorites(this@NumericSectionFragment, mCantiViewModel!!.idDaAgg)
                 return true
             }
             R.id.add_to_p_iniziale -> {
@@ -248,7 +248,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                 .lista!!
                                 .addCanto(
                                         (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                        ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                        ListeUtils.updateListaPersonalizzata(this@NumericSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
                     } else {
                         if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                         .lista!!
@@ -277,10 +277,10 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@NumericSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             "NUMERIC_REPLACE_2" ->
-                ListeUtils.updatePosizione(context!!, rootView!!, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@NumericSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 

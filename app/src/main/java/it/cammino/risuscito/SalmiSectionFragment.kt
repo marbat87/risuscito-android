@@ -169,7 +169,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@SalmiSectionFragment, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -242,7 +242,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                     .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                            ListeUtils.updateListaPersonalizzata(this@SalmiSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                             .lista!!
@@ -272,10 +272,10 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@SalmiSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             "SALMI_REPLACE_2" ->
-                ListeUtils.updatePosizione(context!!, rootView!!, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@SalmiSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 

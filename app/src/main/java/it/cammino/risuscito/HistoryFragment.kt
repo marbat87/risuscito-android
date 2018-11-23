@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
@@ -28,14 +27,13 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
+import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
-import java.sql.Date
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
@@ -48,7 +46,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-    private var mRemovedItems: Set<SimpleHistoryItem>? = null
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -237,37 +234,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
-                                .selectedItems
-                        val iRemoved = mRemovedItems!!.size
-                        Log.d(TAG, "onCabItemClicked: $iRemoved")
-                        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
-                        Thread(
-                                Runnable {
-                                    val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
-                                    for (removedItem in mRemovedItems!!) {
-                                        val cronTemp = Cronologia()
-                                        cronTemp.idCanto = removedItem.id
-                                        mDao.deleteCronologia(cronTemp)
-                                    }
-                                })
-                                .start()
-
-                        Snackbar.make(activity!!.main_content, resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                                .setAction(getString(android.R.string.cancel).toUpperCase()) {
-                                    Thread(
-                                            Runnable {
-                                                val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
-                                                for (removedItem in mRemovedItems!!) {
-                                                    val cronTemp = Cronologia()
-                                                    cronTemp.idCanto = removedItem.id
-                                                    cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedItem.timestamp!!.text.toString()))
-                                                    mDao.insertCronologia(cronTemp)
-                                                }
-
-                                            })
-                                            .start()
-                                }.show()
+                        ListeUtils.removeHistoriesWithUndo(this@HistoryFragment, (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+                                .selectedItems)
                         actionModeOk = true
                         MaterialCab.destroy()
                         true

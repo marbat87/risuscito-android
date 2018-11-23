@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
@@ -31,6 +30,7 @@ import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
@@ -43,7 +43,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-    private var mRemovedItems: Set<SimpleItem>? = null
+//    private var mRemovedItems: Set<SimpleItem>? = null
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -235,28 +235,24 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
-                                .selectedItems
-                        val iRemoved = mRemovedItems!!.size
-                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
-                        Thread(
-                                Runnable {
-                                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
-                                    for (removedItem in mRemovedItems!!)
-                                        mDao.removeFavorite(removedItem.id)
-                                })
-                                .start()
-
-                        Snackbar.make(activity!!.main_content, resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                                .setAction(getString(android.R.string.cancel).toUpperCase()) {
-                                    Thread(
-                                            Runnable {
-                                                val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
-                                                for (removedItem in mRemovedItems!!)
-                                                    mDao.setFavorite(removedItem.id)
-                                            })
-                                            .start()
-                                }.show()
+//                        val mRemovedItems = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+//                                .selectedItems
+                        ListeUtils.removeFavoritesWithUndo(this@FavouritesActivity, (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                                .selectedItems)
+//                        val iRemoved = mRemovedItems!!.size
+//                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+//                        Thread(
+//                                Runnable {
+//                                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+//                                    for (removedItem in mRemovedItems!!)
+//                                        mDao.removeFavorite(removedItem.id)
+//                                })
+//                                .start()
+//                        Snackbar.make(activity!!.main_content, resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
+//                                .setAction(getString(android.R.string.cancel).toUpperCase()) {
+//                                    for (removedItem in mRemovedItems!!)
+//                                        ListeUtils.addToFavoritesNoSnackbar(this@FavouritesActivity, removedItem.id)
+//                                }.show()
 
                         actionModeOk = true
                         MaterialCab.destroy()

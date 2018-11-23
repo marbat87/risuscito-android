@@ -233,7 +233,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@RicercaVeloceFragment, mViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -306,7 +306,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                             listePersonalizzate!![mViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto((mViewModel!!.idDaAgg).toString(), mViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mViewModel!!.idListaClick])
+                            ListeUtils.updateListaPersonalizzata(this@RicercaVeloceFragment, listePersonalizzate!![mViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mViewModel!!.idListaClick]
                                             .lista!!
@@ -349,10 +349,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                 listePersonalizzate!![mViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mViewModel!!.idDaAgg).toString(), mViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@RicercaVeloceFragment, listePersonalizzate!![mViewModel!!.idListaClick])
             }
             "VELOCE_REPLACE_2" ->
-                ListeUtils.updatePosizione(context!!, rootView!!, mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@RicercaVeloceFragment, mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
         }
     }
 

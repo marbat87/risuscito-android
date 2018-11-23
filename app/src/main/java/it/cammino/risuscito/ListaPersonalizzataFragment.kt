@@ -343,7 +343,6 @@ class ListaPersonalizzataFragment : Fragment() {
                                     mCantiViewModel!!.listaPersonalizzata!!.addCanto(cantoDaCanc, posizioneDaCanc)
                                     runUpdate()
                                 }
-                                .setActionTextColor(themeUtils.accentColor())
                                 .show()
                         true
                     }

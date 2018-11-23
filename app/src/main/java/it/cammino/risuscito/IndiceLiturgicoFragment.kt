@@ -244,7 +244,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@IndiceLiturgicoFragment, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -318,7 +318,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                                     .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                            ListeUtils.updateListaPersonalizzata(this@IndiceLiturgicoFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                             .lista!!
@@ -347,10 +347,10 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(context!!, rootView!!, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@IndiceLiturgicoFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             "LITURGICO_REPLACE_2" ->
-                ListeUtils.updatePosizione(context!!, rootView!!, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@IndiceLiturgicoFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 
