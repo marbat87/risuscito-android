@@ -7,6 +7,7 @@
         <changelogbug>Bugfixes</changelogbug>
         <changelogimprovement>New animations</changelogimprovement>
         <changelogimprovement>Added title filter in "Handed over Songs" selection</changelogimprovement>
+        <changelogbug>Added missing Capo in song "who is she?"</changelogbug>
     </changelogversion>
 
 </changelog>
